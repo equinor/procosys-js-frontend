@@ -5,7 +5,7 @@ Frontend javascript application for Project Completion System (ProCoSys)
 
 1) Settings
 
-Duplicate the `settings.template.js` file and rename to `settings.js`.
+Duplicate the `settings.template.json` file and rename to `settings.json`.
 Fill in the blanks from you Azure AD or any other provider supported by MSAL.js
 ```
 $ yarn install

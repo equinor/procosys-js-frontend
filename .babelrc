@@ -1,0 +1,10 @@
+{
+    "presets": [
+        "@babel/env",
+        "@babel/preset-react"
+    ],
+    "plugins": [
+        //Lets us use React.lazy(() => {})
+        "syntax-dynamic-import"
+    ]
+}

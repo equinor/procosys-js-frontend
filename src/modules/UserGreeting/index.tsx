@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
+
 import { RouteComponentProps } from 'react-router'
-import { useUser } from '../../contexts/UserContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const UserGreeting: React.FC<any> = ({ match }: RouteComponentProps<any>) => {
-    const user = useUser();
+    const {account} = useAuth();
 
     return (
         <div className="section">
             <div className="row">
                 <div className="col s12 center-align">
-                    Hello {user.name}
+                    Hello {account.name}
                 </div>
             </div>
         </div>

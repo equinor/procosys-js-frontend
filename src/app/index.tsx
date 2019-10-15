@@ -1,32 +1,40 @@
-import React from 'react'
-import { useUser } from '../contexts/UserContext';
-import { Link, Switch, Route, BrowserRouter as Router, RouteComponentProps } from 'react-router-dom';
-import UserGreeting from './../modules/UserGreeting';
+import { Link, Route, RouteComponentProps, BrowserRouter as Router, Switch } from 'react-router-dom';
+import React, {Suspense} from 'react'
+
 import LazyRoute from '../components/LazyRoute';
-import AuthenticationService from './../core/services/AuthenticationService'
+import Spinner from '../components/spinner';
+import UserGreeting from './../modules/UserGreeting';
+import { hot } from 'react-hot-loader';
+import { useAuth } from '../contexts/AuthContext';
+const Login = React.lazy(() => import('../modules/Login'));
+
 
 const ProCoSysRouter = () => {
+    const auth = useAuth();
     return (
         <Router>
             <Link to="/hello">Welcome</Link>
             <Switch>
                 <Route path="/hello" component={(routeProps: RouteComponentProps) => (LazyRoute(UserGreeting, routeProps))} />
-                <Route path="/" exact render={() => <div><h3>Home</h3><button onClick={() => AuthenticationService.logout()}>Logout</button></div>} />
+                <Route path="/" exact render={() => <div><h3>Home</h3><button onClick={() => auth.logout()}>Logout</button></div>} />
                 <Route render={() => <h3>404</h3>} />
             </Switch>
         </Router>
     );
 }
 
-const index = () => {
-    const user = useUser();
-    console.log("User: ", user);
+const App = () => {
+    const auth = useAuth();
+    auth.handleRedirectCallback((err) => console.log("Redirect Err", err));
+
+    console.log("User: ", auth);
     return (
-        <div>
-            Hello {user.data.name}
-            <ProCoSysRouter />
-        </div>
+        <React.Fragment>
+            <Suspense fallback={<Spinner />}>
+                {auth.account ? <ProCoSysRouter /> : <Login />}
+            </Suspense>
+        </React.Fragment>
     )
 }
 
-export default index
+export default hot(module)(App)

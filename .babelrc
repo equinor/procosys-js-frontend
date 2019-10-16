@@ -1,10 +1,17 @@
 {
     "presets": [
-        "@babel/env",
+        "@babel/preset-env",
         "@babel/preset-react"
     ],
     "plugins": [
         //Lets us use React.lazy(() => {})
-        "syntax-dynamic-import"
-    ]
+        "@babel/plugin-syntax-dynamic-import"
+    ],
+    "env": {
+        "test": {
+            "plugins": [
+                "@babel/plugin-transform-runtime"
+            ]
+        }
+    }
 }

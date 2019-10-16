@@ -12,6 +12,11 @@ $ yarn install
 $ yarn start
 ```
 
+# Development
+`yarn start` - Starts the dev environment with hot reloading
+`yarn test` - runs the test suite
+`yarn test-watch` - Continues re-testing when files change
+
 # Libraries
 
 ### Microsoft Authentication Library (MSAL)
@@ -24,7 +29,16 @@ https://reactjs.org/
 # Testing
 
 ### JEST
+Testing Framework
 https://jestjs.io/
+
+### TS-JEST
+For running tests with Typescript and Typechecking
+https://github.com/kulshekhar/ts-jest
+
+### React Testing Library
+For abstraction of boilerplate code when testing and test helper functions
+https://testing-library.com/docs/react-testing-library/api
 
 # (Build) Tools for the job
 

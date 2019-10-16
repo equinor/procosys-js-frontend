@@ -1,5 +1,5 @@
 import { Account, Configuration, UserAgentApplication } from 'msal';
-import React, {createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 import { authResponseCallback } from 'msal/lib-commonjs/UserAgentApplication';
 
@@ -40,12 +40,12 @@ const authParams = {
 const authContext = createContext<IAuthContext | null>(null);
 
 export const useAuth = () => {
-    const auth =  useContext(authContext);
+    const auth = useContext(authContext);
     if (!auth) throw "useAuth can only be used within authContext";
     return auth;
 }
 
-export const AuthProvider = ({children} : any) => {
+export const AuthProvider = ({ children }: any) => {
     const auth = useProvideAuth();
     return <authContext.Provider value={auth}>{children}</authContext.Provider>
 }

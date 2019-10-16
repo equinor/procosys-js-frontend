@@ -1,5 +1,5 @@
 import { Link, Route, RouteComponentProps, BrowserRouter as Router, Switch } from 'react-router-dom';
-import React, {Suspense} from 'react'
+import React, { Suspense } from 'react'
 
 import LazyRoute from '../components/LazyRoute';
 import Spinner from '../components/spinner';

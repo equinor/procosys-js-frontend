@@ -1,9 +1,67 @@
-import * as React from 'react';
+import React from 'react';
+import styled from 'styled-components';
 
-export default function Spinner() {
-    return (
-        <div>
-            Loading...
-        </div>
-    );
+interface ISpinnerSizeProps {
+    small?: boolean;
+    medium?: boolean;
+    large?: boolean;
 }
+
+const Spinner: React.FC<ISpinnerSizeProps> = ({ small = true, medium = false, large = false }: ISpinnerSizeProps) => {
+    let size = { width: 20, height: 20, radius: 5 };
+    size = medium ? { width: 30, height: 30, radius: 10 } : size;
+    size = large ? { width: 50, height: 50, radius: 20 } : size;
+
+    return (
+        <StyledSpinner viewBox={`0 0 ${size.width} ${size.height}`} {...size}>
+            <circle
+                className="path"
+                cx={`${size.width / 2}`}
+                cy={`${size.height / 2}`}
+                r={`${size.radius}`}
+                fill="none"
+                strokeWidth="2"
+            />
+        </StyledSpinner>
+    );
+};
+
+interface ISpinnerProps {
+    width: number;
+    height: number;
+}
+
+const StyledSpinner = styled.svg<ISpinnerProps>`
+    animation: rotate 2s linear infinite;
+    margin: -${props => props.height / 2}px 0 -${props => props.width / 2}px 0;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
+
+  & .path {
+    stroke: #5652BF;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
+  }
+`;
+
+export default Spinner;

@@ -37,6 +37,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
+        alias: {
+            'react-dom': '@hot-loader/react-dom'
+        }
     },
     output: {
         // `filename` provides a template for naming your bundles (remember to use `[name]`)

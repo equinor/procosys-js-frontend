@@ -14,7 +14,9 @@ $ yarn start
 
 # Development
 `yarn start` - Starts the dev environment with hot reloading
+
 `yarn test` - runs the test suite
+
 `yarn test-watch` - Continues re-testing when files change
 
 # Libraries
@@ -29,16 +31,22 @@ https://reactjs.org/
 # Testing
 
 ### JEST
-Testing Framework
 https://jestjs.io/
 
+Testing Framework
+
+
 ### TS-JEST
-For running tests with Typescript and Typechecking
 https://github.com/kulshekhar/ts-jest
 
+For running tests with Typescript and Typechecking
+
+
 ### React Testing Library
-For abstraction of boilerplate code when testing and test helper functions
 https://testing-library.com/docs/react-testing-library/api
+
+For abstraction of boilerplate code when testing and test helper functions
+
 
 # (Build) Tools for the job
 

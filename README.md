@@ -17,7 +17,7 @@ $ yarn start
 
 `yarn test` - runs the test suite
 
-`yarn test-watch` - Continues re-testing when files change
+`yarn test-watch` - continual re-testing when files change
 
 # Libraries
 

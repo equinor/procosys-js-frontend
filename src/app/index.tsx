@@ -2,7 +2,7 @@ import { Link, Route, RouteComponentProps, BrowserRouter as Router, Switch } fro
 import React, { Suspense } from 'react'
 
 import LazyRoute from '../components/LazyRoute';
-import Spinner from '../components/spinner';
+import Spinner from '../components/Spinner';
 import UserGreeting from './../modules/UserGreeting';
 import { hot } from 'react-hot-loader';
 import { useAuth } from '../contexts/AuthContext';

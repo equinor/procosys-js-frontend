@@ -1,5 +1,5 @@
 import { Link, Route, RouteComponentProps, BrowserRouter as Router, Switch } from 'react-router-dom';
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 
 import LazyRoute from '../components/LazyRoute';
 import Spinner from '../components/Spinner';
@@ -27,7 +27,10 @@ const App = () => {
     const auth = useAuth();
     auth.handleRedirectCallback((err) => console.log("Redirect Err", err));
 
-    console.log("User: ", auth);
+    useEffect(() => {
+        console.log("AuthContext: ", auth);
+    }, [auth])
+
     return (
         <React.Fragment>
             <Suspense fallback={<Spinner />}>

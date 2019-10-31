@@ -1,9 +1,16 @@
 # Project Completion System Javascript
 Frontend javascript application for Project Completion System (ProCoSys)
 
-# How to run
+## Software
+### Required Software
+- NodeJS - https://nodejs.org/en/
+- Yarn Pkg - https://yarnpkg.com/lang/en/
 
-1) Settings
+### Optional Software
+- Docker - https://www.docker.com/ (Only if you want to test production environment)
+
+
+# How to run
 
 Duplicate the `settings.template.json` file and rename to `settings.json`.
 Fill in the blanks from you Azure AD or any other provider supported by MSAL.js
@@ -18,6 +25,20 @@ $ yarn start
 `yarn test` - runs the test suite
 
 `yarn test-watch` - continual re-testing when files change
+
+# Docker & Docker Compose
+
+```
+docker-compose up
+```
+This starts the application in a production like environment. 
+
+## Manual
+
+```
+$ docker build --force-rm -t pcs:latest -f .docker/Dockerfile .
+$ docker run -it -p 80:80 pcs:latest
+```
 
 # Libraries
 

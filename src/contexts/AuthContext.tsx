@@ -74,7 +74,7 @@ function useProvideAuth() {
     const [hasCheckedInitialUser, setHasCheckedInitialUser] = useState(false);
     const timerRef = useRef<number | null>(null);
 
-    const renewTokenMinutesBeforeExpiry = 1;
+    const renewTokenMinutesBeforeExpiry = 5;
 
     const login = () => {
         authInstance.loginRedirect();
@@ -85,27 +85,23 @@ function useProvideAuth() {
     }
 
     const reAuthenticate = async () => {
-        console.log("ReAuthenticating");
         try {
-            console.log("Old expiry: ", authInstance.getAccount().idToken.exp);
             await renewIdToken();
-            console.log("New expiry: ", authInstance.getAccount().idToken.exp);
             setAccount(authInstance.getAccount());
         } catch (err) {
             console.log("Failed to renew idToken", err);
-            //authInstance.logout();
+            authInstance.logout();
         }
 
     }
 
     useEffect(() => {
-        console.log("Running effect");
         if (!account) return;
         const tokenExpiresAt = account.idToken.exp as unknown as number;
         const notifyApplicationAtDateTime = new Date((tokenExpiresAt - (renewTokenMinutesBeforeExpiry * 60)) * 1000);
         const notifyApplicationIn = notifyApplicationAtDateTime.getTime() - Date.now();
         console.log('Will notify application at: ', notifyApplicationAtDateTime);
-        console.log('This is in ' + notifyApplicationIn + 'ms');
+        console.log('This is in ' + Math.floor(notifyApplicationIn / 1000 / 60) + ' minutes');
         if (notifyApplicationIn <= 0) {
             console.log("This token is old, we should re-authenticate");
             reAuthenticate();
@@ -114,7 +110,6 @@ function useProvideAuth() {
         timerRef.current = setTimeout(() => reAuthenticate(), notifyApplicationIn);
 
         return () => {
-            console.log("Cleaning effect");
             if (timerRef.current) {
                 clearTimeout(timerRef.current)
             }
@@ -126,7 +121,6 @@ function useProvideAuth() {
         var authAccount = authInstance.getAccount() as any;
 
         if (authAccount) {
-            authAccount.idToken.exp = Math.floor(Date.now() / 1000 + 90);
             setAccount(authAccount);
             getAccessToken(authParams)
                 .then((accessToken) => {

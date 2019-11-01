@@ -65,7 +65,12 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         /* Automatically creates our index.html page */
-        new HtmlWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: 'ProCoSys',
+            meta: {
+                viewport: 'width=device-width, initial-scale=1'
+            }
+        }),
         /* Deletes our build directory when building */
         new CleanWebpackPlugin()
     ]

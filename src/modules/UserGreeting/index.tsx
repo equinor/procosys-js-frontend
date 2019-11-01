@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router'
 import { useAuth } from '../../contexts/AuthContext';
 
 const UserGreeting: React.FC<any> = ({ match }: RouteComponentProps<any>) => {
-    const {account} = useAuth();
+    const { account } = useAuth();
 
     return (
         <div className="section">

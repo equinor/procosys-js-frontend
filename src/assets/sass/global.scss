@@ -1,6 +1,8 @@
 @import './css-reset.scss';
+@import '../fonts/equinor/equinor-font.css';
 
 body {
-  background-color: #FFF;
-  color: #373737;
+    font-family: Equinor, sans-serif;
+    background-color: #FFF;
+    color: #373737;
 }

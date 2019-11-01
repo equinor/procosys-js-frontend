@@ -1,0 +1,9 @@
+@font-face {
+    font-family: Equinor;
+    src:
+        local('☻'),
+        url(Equinor-Regular.woff2) format('woff2'),
+        url(Equinor-Regular.woff) format('woff');
+    font-style: normal;
+    font-weight: 400;
+}

@@ -1,0 +1,9 @@
+@font-face {
+    font-family: Equinor;
+    src:
+        local('☻'),
+        url(Equinor-MediumItalic.woff2) format('woff2'),
+        url(Equinor-MediumItalic.woff) format('woff');
+    font-style: italic;
+    font-weight: 500;
+}

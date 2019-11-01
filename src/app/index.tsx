@@ -6,6 +6,7 @@ import Spinner from '../components/Spinner';
 import UserGreeting from './../modules/UserGreeting';
 import { hot } from 'react-hot-loader';
 import { useAuth } from '../contexts/AuthContext';
+import Header from '../modules/Header';
 const Login = React.lazy(() => import('../modules/Login'));
 
 
@@ -13,6 +14,7 @@ const ProCoSysRouter = () => {
     const auth = useAuth();
     return (
         <Router>
+            <Header />
             <Link to="/hello">Welcome</Link>
             <Switch>
                 <Route path="/hello" component={(routeProps: RouteComponentProps) => (LazyRoute(UserGreeting, routeProps))} />

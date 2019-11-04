@@ -14,6 +14,9 @@ pids
 build/
 public/
 
+# Jest test runner coverage files
+.coverage/
+
 # Dependency directories
 node_modules/
 jspm_packages/

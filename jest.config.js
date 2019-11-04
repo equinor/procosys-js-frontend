@@ -12,8 +12,16 @@ module.exports = {
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
     moduleNameMapper: {
         "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-        "\\.(css|less)$": "<rootDir>/__mocks__/fileMock.js"
+        "\\.(css|less|scss)$": "<rootDir>/__mocks__/fileMock.js"
     },
     testPathIgnorePatterns: ['/node_modules/', '/build/'],
     setupFilesAfterEnv: ['./jest.setup.js'],
+    collectCoverage: true,
+    collectCoverageFrom: [
+        "**/src/**/*.{ts,tsx,js,jsx}",
+        "!**/src/**/style.{ts,tsx,js,jsx}",
+        "!**/node_modules/**",
+        "!**/build/**"
+    ],
+    coverageDirectory: ".coverage"
 };

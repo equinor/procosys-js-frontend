@@ -1,5 +1,6 @@
 import { Link, Route, RouteComponentProps, BrowserRouter as Router, Switch } from 'react-router-dom';
 import React, { Suspense, useEffect } from 'react'
+import { ThemeProvider } from 'styled-components';
 
 import LazyRoute from '../components/LazyRoute';
 import Spinner from '../components/Spinner';
@@ -8,6 +9,13 @@ import { hot } from 'react-hot-loader';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../modules/Header';
 const Login = React.lazy(() => import('../modules/Login'));
+
+const edsColors = require('@equinor/eds-tokens/base/colors.json');
+const customColors = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!./../assets/sass/colors.scss');
+const themeColors = { ...edsColors, ...customColors }
+
+const edsShadows = require('@equinor/eds-tokens/base/elevation.json');
+
 
 
 const ProCoSysRouter = () => {
@@ -34,11 +42,11 @@ const App = () => {
     }, [auth])
 
     return (
-        <React.Fragment>
+        <ThemeProvider theme={{ color: themeColors, shadow: edsShadows }}>
             <Suspense fallback={<Spinner />}>
                 {auth.account ? <ProCoSysRouter /> : <Login />}
             </Suspense>
-        </React.Fragment>
+        </ThemeProvider>
     )
 }
 

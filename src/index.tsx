@@ -2,14 +2,12 @@ import './assets/sass/global.scss';
 
 import App from './app/index';
 import { AuthProvider } from './contexts/AuthContext';
-import { ThemeProvider } from 'styled-components';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { UserAgentApplication } from 'msal';
 
 const settings = require('./../settings.json');
-const colors = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!./assets/sass/colors.scss');
-console.log("Colors: ", colors);
+
 
 
 const auth = {
@@ -30,9 +28,7 @@ if (window.parent === window) {
 
     ReactDOM.render(
         <AuthProvider>
-            <ThemeProvider theme={{ colors }}>
-                <App />
-            </ThemeProvider>
+            <App />
         </AuthProvider>,
         document.getElementById('root'));
 } else {

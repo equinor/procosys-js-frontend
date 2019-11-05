@@ -837,6 +837,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.4.tgz#a87b4b04e5ae14a88d48ebef15015f6b7d1f5677"
   integrity sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ==
 
+"@equinor/eds-tokens@^0.0.1-alpha.4":
+  version "0.0.1-alpha.4"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.0.1-alpha.4.tgz#b0f92ce368aeb651200e7ab03a5b8cd88ec88583"
+  integrity sha512-1NNxwArxauit+yUy7mmf+ivFSCpA/D9b5t/G7s9tw5vIn6KzGzxnFcKDBZmP1IVtQDCiojBMvIyjO+divlEldA==
+
 "@hot-loader/react-dom@^16.10.2":
   version "16.10.2"
   resolved "https://registry.yarnpkg.com/@hot-loader/react-dom/-/react-dom-16.10.2.tgz#91920442252acac6f343eef5df41aca333f7dcea"

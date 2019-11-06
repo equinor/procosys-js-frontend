@@ -10,11 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Header from '../modules/Header';
 const Login = React.lazy(() => import('../modules/Login'));
 
-const edsColors = require('@equinor/eds-tokens/base/colors.json');
-const customColors = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!./../assets/sass/colors.scss');
-const themeColors = { ...edsColors, ...customColors }
-
-const edsShadows = require('@equinor/eds-tokens/base/elevation.json');
+import theme from './../assets/theme';
 
 
 
@@ -42,7 +38,7 @@ const App = () => {
     }, [auth])
 
     return (
-        <ThemeProvider theme={{ color: themeColors, shadow: edsShadows }}>
+        <ThemeProvider theme={theme}>
             <Suspense fallback={<Spinner />}>
                 {auth.account ? <ProCoSysRouter /> : <Login />}
             </Suspense>

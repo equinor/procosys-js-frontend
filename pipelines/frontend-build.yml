@@ -9,7 +9,7 @@ variables:
   imageName: 'frontend'
   dockerRegistryServiceConnection: 'ACR - pcspreservation'
   containerRegistry: 'pcspreservation.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.docker/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
 
 
 stages:

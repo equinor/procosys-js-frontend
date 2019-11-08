@@ -1,0 +1,19 @@
+trigger: none
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  imageName: 'frontend'
+  containerRegistry: 'ACR - pcspreservation'
+
+steps:
+- task: Docker@2
+  displayName: 'Build frontend'
+  inputs:
+    repository: pcs/pres/dev/$(imageName)
+    command: buildAndPush
+    Dockerfile: .docker/Dockerfile
+    tags: |
+      latest
+      $(Build.BuildId)

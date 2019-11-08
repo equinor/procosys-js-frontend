@@ -2,7 +2,9 @@
 FROM node:12.12-alpine as build
 WORKDIR /app
 COPY . /app
-RUN ls
+RUN ls -la
+COPY package.json /app/package.json
+RUN ls -la
 #RUN yarn install
 #RUN yarn build --mode=production
 

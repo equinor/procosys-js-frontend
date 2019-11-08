@@ -1,4 +1,7 @@
-trigger: none
+trigger:
+  branches:
+    include:
+      - pipeline-build
 
 resources:
 - repo: self

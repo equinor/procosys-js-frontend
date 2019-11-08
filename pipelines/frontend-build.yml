@@ -1,20 +1,33 @@
 trigger: none
 
-pool:
-  vmImage: 'Ubuntu-16.04'
+resources:
+- repo: self
 
 variables:
   System.Debug: 'true'
+  vmImageName: 'ubuntu-latest'
   imageName: 'frontend'
-  containerRegistry: 'ACR - pcspreservation'
+  dockerRegistryServiceConnection: 'ACR - pcspreservation'
+  containerRegistry: 'pcspreservation.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/.docker/Dockerfile'
 
-steps:
-- task: Docker@2
-  displayName: 'Build frontend'
-  inputs:
-    repository: pcs/pres/dev/$(imageName)
-    command: buildAndPush
-    Dockerfile: .docker/Dockerfile
-    tags: |
-      latest
-      $(Build.BuildId)
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: pcs/pres/dev/$(imageName)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          latest
+          $(Build.BuildId)

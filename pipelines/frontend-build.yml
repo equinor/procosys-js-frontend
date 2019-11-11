@@ -12,7 +12,7 @@ variables:
   imageName: 'frontend'
   dockerRegistryServiceConnection: 'ACR - pcspreservation'
   containerRegistry: 'pcspreservation.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  dockerfilePath: '$(Build.SourcesDirectory)/.docker/Dockerfile'
 
 
 stages:
@@ -30,6 +30,7 @@ stages:
       inputs:
         command: buildAndPush
         repository: pcs/pres/dev/$(imageName)
+        buildContext: $(Build.SourcesDirectory)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |

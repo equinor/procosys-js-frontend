@@ -2,6 +2,7 @@
 FROM node:12.12-alpine as build
 WORKDIR /app
 COPY . /app
+RUN cp settings.template.json settings.json
 RUN yarn install
 RUN yarn build --mode=production
 

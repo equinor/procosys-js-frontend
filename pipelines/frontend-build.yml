@@ -33,14 +33,17 @@ stages:
         azureContainerRegistry: $(containerRegistry)
         dockerComposeFile: $(dockerComposeFile)
         additionalImageTags: $(Build.BuildId)
+        dockerComposeFileArgs: |
+          firstArg=testarg
+          secondArg=secondtestarg
 
-    - task: DockerCompose@0
-      displayName: Push services
-      inputs:
-        action: Push services
-        azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-        azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: $(dockerComposeFile)
-        projectName: $(Build.Repository.Name)
-        qualifyImageNames: true
-        additionalImageTags: $(Build.BuildId)
+    # - task: DockerCompose@0
+    #   displayName: Push services
+    #   inputs:
+    #     action: Push services
+    #     azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
+    #     azureContainerRegistry: $(containerRegistry)
+    #     dockerComposeFile: $(dockerComposeFile)
+    #     projectName: $(Build.Repository.Name)
+    #     qualifyImageNames: true
+    #     additionalImageTags: $(Build.BuildId)

@@ -34,7 +34,7 @@ stages:
         dockerComposeFile: $(dockerComposeFile)
         additionalImageTags: $(Build.BuildId)
         dockerComposeFileArgs: |
-          firstArg='/app/settings.json'
+          firstArg=$(Build.BuildId)
 
     # - task: DockerCompose@0
     #   displayName: Push services

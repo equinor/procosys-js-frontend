@@ -1,6 +1,7 @@
 version: '3'
 services:
     web:
+        image: preservationfrontend
         build:
             context: .
             dockerfile: .docker/Dockerfile

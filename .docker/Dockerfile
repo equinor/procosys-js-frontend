@@ -3,7 +3,7 @@ FROM node:12.12-alpine as build
 ARG buildnumber
 WORKDIR /app
 COPY settings.template.json /app/settings.json
-RUN echo $firstArg
+RUN echo $buildnumber
 # COPY . /app
 # RUN yarn install
 # RUN yarn build --mode=production

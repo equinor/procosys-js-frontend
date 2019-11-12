@@ -34,8 +34,8 @@ stages:
         dockerComposeFile: $(dockerComposeFile)
         additionalImageTags: $(Build.BuildId)
         dockerComposeFileArgs: |
-          firstArg=testarg
-          secondArg=secondtestarg
+          firstArg='testarg'
+          secondArg='secondtestarg'
 
     # - task: DockerCompose@0
     #   displayName: Push services

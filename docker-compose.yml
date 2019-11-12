@@ -6,6 +6,6 @@ services:
             context: .
             dockerfile: .docker/Dockerfile
             args:
-                args1: $firstArg
+                buildnumber: $firstArg
         ports:
             - "80:80"

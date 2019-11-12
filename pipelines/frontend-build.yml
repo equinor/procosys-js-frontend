@@ -40,7 +40,7 @@ stages:
         action: Push services
         azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
         azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: '$(Build.SourcesDirectory)/src/Docker-compose.yml'
+        dockerComposeFile: $(dockerComposeFile)
         projectName: $(Build.Repository.Name)
         qualifyImageNames: true
         additionalImageTags: $(Build.BuildId)

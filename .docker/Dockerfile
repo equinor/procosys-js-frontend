@@ -1,8 +1,8 @@
 # build environment
 FROM node:12.12-alpine as build
 WORKDIR /app
+COPY settings.template.json /app/settings.json
 COPY . /app
-RUN cp settings.template.json settings.json
 RUN yarn install
 RUN yarn build --mode=production
 

@@ -4,6 +4,7 @@ WORKDIR /app
 COPY settings.template.json /app/settings.json
 RUN echo $firstArg
 RUN echo $secondArg
+RUN echo $buildArg
 # COPY . /app
 # RUN yarn install
 # RUN yarn build --mode=production

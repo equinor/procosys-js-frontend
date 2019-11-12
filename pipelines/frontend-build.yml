@@ -12,7 +12,7 @@ variables:
   imageName: 'frontend'
   dockerRegistryServiceConnection: 'ACR - pcspreservation'
   containerRegistry: 'pcspreservation.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.docker/Dockerfile'
+  dockerComposeFile: 'docker-compose.yml'
 
 
 stages:
@@ -25,14 +25,22 @@ stages:
       vmImage: $(vmImageName)
     steps:
     - checkout: self
-    - task: Docker@2
-      displayName: Build and push an image to container registry
+    - task: DockerCompose@0
+      displayName: Build
       inputs:
-        command: buildAndPush
-        repository: pcs/pres/dev/$(imageName)
-        buildContext: $(Build.SourcesDirectory)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          latest
-          $(Build.BuildId)
+        action: Build services
+        azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
+        azureContainerRegistry: $(containerRegistry)
+        dockerComposeFile: $(dockerComposeFile)
+        additionalImageTags: $(Build.BuildId)
+
+    - task: DockerCompose@0
+      displayName: Push services
+      inputs:
+        action: Push services
+        azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
+        azureContainerRegistry: $(containerRegistry)
+        dockerComposeFile: '$(Build.SourcesDirectory)/src/Docker-compose.yml'
+        projectName: $(Build.Repository.Name)
+        qualifyImageNames: true
+        additionalImageTags: $(Build.BuildId)

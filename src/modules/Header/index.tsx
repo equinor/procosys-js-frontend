@@ -6,6 +6,10 @@ import { Dropdown } from './../../components';
 const plants = [{
     text: "JOHAN SVERDRUP",
     value: "JOHAN_SVERDRUP"
+},
+{
+    text: "JOHAN CASTBERG",
+    value: "JOHAN_CASTBERG"
 }];
 
 

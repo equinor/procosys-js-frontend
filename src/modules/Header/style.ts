@@ -29,7 +29,7 @@ export const PlantSelector = styled.div`
     display: flex;
     align-items: center;
     button {
-        color: ${(props: any) => props.theme.color.interactive.primary__resting.hex};
+        color: var(--interactive-primary--resting);
     }
     font-weight: 500;
 `

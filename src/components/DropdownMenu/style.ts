@@ -5,12 +5,11 @@ export const Container = styled.div`
     width: 100%;
     ul {
         position: absolute;
-        bottom: -2rem;
+        top: 2rem;
         width: 100%;
-        background-color: ${props => props.theme.color.ui.background__default.hex};
+        background-color: var(--ui-background--default);
         border-radius: 4px;
-        padding: 4px;
-        box-shadow: ${props => props.theme.shadow.raised}
+        box-shadow: var(--shadow-raised)
     }
 `;
 
@@ -35,17 +34,24 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     ${props => props.isOpen && css`
-        background-color: ${props => props.theme.color.interactive.primary__selected_highlight.hex};
+        background-color: var(--interactive-primary--selected-highlight);
+        /* :focus & {
+            outline: none;
+        } */
     `}
 `
 
-export const DropdownItem = styled.li`
-    background-color: transparent;
+export type DropDownItemProps = {
+    selected: boolean;
+}
+
+export const DropdownItem = styled.li<DropDownItemProps>`
+    background-color: ${props => props.selected ? 'var(--ui-background--light)' : 'transparent'};
+    padding: 24px 16px;
     border: 0;
-    button {
-        text-align:left;
-        width: 100%;
-        background-color: transparent;
-        border: 0;
-    }
+    text-align:left;
+    font-weight: normal;
 `
+DropdownItem.defaultProps = {
+    selected: false
+}

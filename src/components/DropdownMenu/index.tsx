@@ -1,5 +1,6 @@
-import React, { useState, useRef, useMemo } from 'react'
-import { Container, DropdownButton, DropdownItem, DropdownIcon } from './style';
+import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
+import React, { useMemo, useRef, useState } from 'react'
+
 import { Shevron } from './../../assets/icons';
 import { useClickOutsideNotifier } from './../../hooks';
 
@@ -19,29 +20,21 @@ const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
 const DropdownMenu = ({ disabled = false, data = [], selected, onChange = () => { } }: IDropDownProps) => {
-    console.log("Re-rendering");
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(selected);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    useMemo(() => {
-        console.log("State: ", isOpen);
-    }, [isOpen])
-
 
     useClickOutsideNotifier(() => {
-        console.log("Closing...", isOpen);
-        isOpen && setIsOpen(false);
+        setIsOpen(false);
     }, containerRef);
 
     const toggleDropdown = () => {
-        console.log("Toggling menu - future: ", !isOpen);
         setIsOpen(!isOpen);
     }
 
     const selectItem = (item: dropdownItem) => {
-        console.log("Selecting item");
         onChange(item, selectedItem);
         setSelectedItem(item);
         setIsOpen(false);
@@ -65,7 +58,6 @@ const DropdownMenu = ({ disabled = false, data = [], selected, onChange = () => 
             </DropdownButton>
             {(isOpen && data.length > 0 && !disabled) && (
                 <ul onKeyDown={(e) => {
-                    console.log("Keydown");
                     e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                 }
                 }>
@@ -78,11 +70,9 @@ const DropdownMenu = ({ disabled = false, data = [], selected, onChange = () => 
                             data-value={item.value}
                             tabIndex={0}
                             onKeyDown={(e) => {
-                                console.log("Keydown");
                                 e.keyCode === KEYCODE_ENTER && selectItem(item);
                             }}
                             onClick={() => {
-                                console.log("Clicked Item ", item)
                                 selectItem(item);
                             }}
                             data-selected={isSelectedValue}>

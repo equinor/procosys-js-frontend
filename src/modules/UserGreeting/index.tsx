@@ -1,3 +1,4 @@
+import {Button, Container} from './style';
 import React, { useState } from 'react'
 
 import { RouteComponentProps } from 'react-router'
@@ -7,13 +8,11 @@ const UserGreeting: React.FC<any> = ({ match }: RouteComponentProps<any>) => {
     const { account } = useAuth();
 
     return (
-        <div className="section">
-            <div className="row">
-                <div className="col s12 center-align">
-                    Hello {account.name}
-                </div>
-            </div>
-        </div>
+        <Container>
+                <h1>{account.name}</h1>
+                <br />
+                <Button>Logout</Button>
+        </Container>
     )
 }
 

@@ -1,7 +1,5 @@
-import { Account, AuthResponse, Configuration, UserAgentApplication } from 'msal';
+import { Account, Configuration, UserAgentApplication } from 'msal';
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-
-import { authResponseCallback } from 'msal/lib-commonjs/UserAgentApplication';
 
 const settings = require('./../../settings.json');
 
@@ -21,12 +19,6 @@ const authConfig: Configuration = {
 };
 
 export const authInstance = new UserAgentApplication(authConfig);
-
-declare type authErrorCallback = (errorMessage: authError) => void;
-declare type authError = {
-    message: string;
-    code: string;
-}
 
 declare type AccessTokenRequest = {
     scopes: Array<string>;
@@ -51,19 +43,15 @@ const getAccessToken = async (request: AccessTokenRequest): Promise<string> => {
 };
 
 const renewIdToken = async (): Promise<void> => {
-    console.log('Renewing: ');
-    const respo = authInstance.acquireTokenSilent({ scopes: [authConfig.auth.clientId], forceRefresh: true });
-    console.log('State: ', respo);
-    await respo;
-    console.log('^ Finished ^');
-
+    console.info('Renewing ID Token: ');
+    await authInstance.acquireTokenSilent({ scopes: [authConfig.auth.clientId], forceRefresh: true });
+    console.info('^ Finished renewing ID Token ^');
 };
 
 
 function useProvideAuth(): AuthContext {
     const [account, setAccount] = useState<null | Account>(null);
     const [accessToken, setAccessToken] = useState<null | string>(null);
-    const [hasCheckedInitialUser, setHasCheckedInitialUser] = useState(false);
     const timerRef = useRef<number | null>(null);
 
     const renewTokenMinutesBeforeExpiry = 5;
@@ -81,7 +69,7 @@ function useProvideAuth(): AuthContext {
             await renewIdToken();
             setAccount(authInstance.getAccount());
         } catch (err) {
-            console.log('Failed to renew idToken', err);
+            console.error('Failed to renew idToken', err);
             authInstance.logout();
         }
 
@@ -92,10 +80,10 @@ function useProvideAuth(): AuthContext {
         const tokenExpiresAt = account.idToken.exp as unknown as number;
         const notifyApplicationAtDateTime = new Date((tokenExpiresAt - (renewTokenMinutesBeforeExpiry * 60)) * 1000);
         const notifyApplicationIn = notifyApplicationAtDateTime.getTime() - Date.now();
-        console.log('Will notify application at: ', notifyApplicationAtDateTime);
-        console.log('This is in ' + Math.floor(notifyApplicationIn / 1000 / 60) + ' minutes');
+        console.info('Will notify application at: ', notifyApplicationAtDateTime);
+        console.info('This is in ' + Math.floor(notifyApplicationIn / 1000 / 60) + ' minutes');
         if (notifyApplicationIn <= 0) {
-            console.log('This token is old, we should re-authenticate');
+            console.error('This token is old, we should re-authenticate');
             reAuthenticate();
             return;
         }
@@ -109,7 +97,7 @@ function useProvideAuth(): AuthContext {
         };
     }, [account]);
 
-    if (!hasCheckedInitialUser) {
+    useEffect(() => {
         const authAccount = authInstance.getAccount() as any;
 
         if (authAccount) {
@@ -119,8 +107,7 @@ function useProvideAuth(): AuthContext {
                     setAccessToken(accessToken);
                 });
         }
-        setHasCheckedInitialUser(true);
-    }
+    }, []);
 
     return {
         account,

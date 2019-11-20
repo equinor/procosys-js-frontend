@@ -14,7 +14,8 @@
         "start": "webpack-dev-server",
         "build": "webpack",
         "test": "jest",
-        "test-watch": "jest --watch"
+        "test-watch": "jest --watch",
+        "lint": "./node_modules/.bin/eslint ."
     },
     "devDependencies": {
         "@babel/cli": "^7.6.4",

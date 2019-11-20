@@ -1,7 +1,6 @@
-import { getByText, render } from '@testing-library/react';
-
 import Login from '../index';
 import React from 'react';
+import { render } from '@testing-library/react';
 import { useAuth } from '../../../contexts/AuthContext';
 
 jest.mock('../../../contexts/AuthContext');

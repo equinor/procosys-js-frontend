@@ -27,7 +27,7 @@ describe('Initial module loading on application render', () => {
         };
         useAuth.mockImplementation(() => resp);
         const { getByText } = render(<App />);
-        const lazyElement = await waitForElement(() => getByText('No plant'));
+        const lazyElement = await waitForElement(() => getByText('No plant selected'));
         expect(lazyElement).toBeInTheDocument();
     });
 

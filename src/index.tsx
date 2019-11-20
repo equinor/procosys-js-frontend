@@ -1,23 +1,13 @@
 import './assets/sass/global.scss';
 
+import { AuthProvider, authInstance } from './contexts/AuthContext';
 import React, {useRef} from 'react';
 
 import App from './app/index';
-import { AuthProvider } from './contexts/AuthContext';
 import ReactDOM from 'react-dom';
-import { UserAgentApplication } from 'msal';
-
-const settings = require('./../settings.json');
-
-const auth = {
-    clientId: settings.auth.clientId,
-    redirectUri: window.location.origin,
-    authority: settings.auth.authority,
-};
 
 const start = async (): Promise<void> => {
-    const authService = new UserAgentApplication({ auth });
-    authService.handleRedirectCallback((err) => console.log('Redirect Err', err));
+    authInstance.handleRedirectCallback((err) => console.error('Auth Redirect Err', err));
 
 
     /**

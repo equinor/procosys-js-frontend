@@ -10,7 +10,6 @@ type AuthContext = {
     accessToken: string | null;
     login(): void;
     logout(): void;
-    handleRedirectCallback(errorCallback: authErrorCallback): void;
 }
 
 const authConfig: Configuration = {
@@ -21,7 +20,7 @@ const authConfig: Configuration = {
     }
 };
 
-const authInstance = new UserAgentApplication(authConfig);
+export const authInstance = new UserAgentApplication(authConfig);
 
 declare type authErrorCallback = (errorMessage: authError) => void;
 declare type authError = {
@@ -59,6 +58,7 @@ const renewIdToken = async (): Promise<void> => {
     console.log('^ Finished ^');
 
 };
+
 
 function useProvideAuth(): AuthContext {
     const [account, setAccount] = useState<null | Account>(null);
@@ -122,27 +122,11 @@ function useProvideAuth(): AuthContext {
         setHasCheckedInitialUser(true);
     }
 
-
-
-    const handleRedirectCallback = (callback: authErrorCallback): void => {
-
-        const authHandler: authResponseCallback = (error) => {
-            if (error) {
-                console.log('Error: ', error);
-                callback({ message: error.errorMessage, code: error.errorCode });
-                return;
-            }
-        };
-
-        authInstance.handleRedirectCallback(authHandler);
-    };
-
     return {
         account,
         accessToken,
         login,
-        logout,
-        handleRedirectCallback,
+        logout
     };
 }
 

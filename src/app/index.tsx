@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react';
 
 import GeneralRouter from './GeneralRouter';
 import Spinner from '../components/Spinner';
@@ -9,12 +9,12 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Login = React.lazy(() => import('../modules/Login'));
 
-const App = () => {
+const App = (): JSX.Element => {
     const auth = useAuth();
 
     useEffect(() => {
-        console.log("AuthContext: ", auth);
-    }, [auth])
+        console.log('AuthContext: ', auth);
+    }, [auth]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -22,7 +22,7 @@ const App = () => {
                 {auth.account ? <GeneralRouter /> : <Login />}
             </Suspense>
         </ThemeProvider>
-    )
-}
+    );
+};
 
-export default hot(module)(App)
+export default hot(module)(App);

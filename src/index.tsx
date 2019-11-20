@@ -15,9 +15,9 @@ const auth = {
     authority: settings.auth.authority,
 };
 
-const start = async () => {
-    let authService = new UserAgentApplication({ auth });
-    authService.handleRedirectCallback((err) => console.log("Redirect Err", err));
+const start = async (): Promise<void> => {
+    const authService = new UserAgentApplication({ auth });
+    authService.handleRedirectCallback((err) => console.log('Redirect Err', err));
 
 
     /**
@@ -30,7 +30,7 @@ const start = async () => {
 
 
 
-    const Root = () => {
+    const Root = (): JSX.Element => {
         const rootRef = useRef<HTMLDivElement | null>(null);
         const overlayRef = useRef<HTMLDivElement | null>(null);
         const ProcosysContext = React.createContext({});
@@ -46,8 +46,8 @@ const start = async () => {
                     {/* Empty on purpose */}
                 </div>
             </ProcosysContext.Provider>
-        )
-    }
+        );
+    };
 
     const element = document.createElement('div');
     element.setAttribute('id', 'app-container');

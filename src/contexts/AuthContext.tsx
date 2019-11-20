@@ -1,11 +1,11 @@
-import { Account, Configuration, UserAgentApplication, AuthResponse } from 'msal';
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { Account, AuthResponse, Configuration, UserAgentApplication } from 'msal';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 import { authResponseCallback } from 'msal/lib-commonjs/UserAgentApplication';
 
 const settings = require('./../../settings.json');
 
-interface IAuthContext {
+type AuthContext = {
     account: any | null;
     accessToken: string | null;
     login(): void;
@@ -37,38 +37,30 @@ const authParams = {
     scopes: settings.auth.defaultScopes,
 };
 
-const authContext = createContext<IAuthContext | null>(null);
+const authContext = createContext<AuthContext | null>(null);
 
-export const useAuth = () => {
+export const useAuth = (): AuthContext => {
     const auth = useContext(authContext);
-    if (!auth) throw "useAuth can only be used within authContext";
+    if (!auth) throw 'useAuth can only be used within authContext';
     return auth;
-}
-
-export const AuthProvider = ({ children }: any) => {
-    const auth = useProvideAuth();
-    return <authContext.Provider value={auth}>{children}</authContext.Provider>
-}
+};
 
 const getAccessToken = async (request: AccessTokenRequest): Promise<string> => {
-    try {
-        const response = await authInstance.acquireTokenSilent({ scopes: request.scopes })
-        return response.accessToken;
-    } catch (err) {
-        throw err;
-    }
-}
+    const response = await authInstance.acquireTokenSilent({ scopes: request.scopes });
+    return response.accessToken;
+
+};
 
 const renewIdToken = async (): Promise<void> => {
-    console.log("Renewing: ");
+    console.log('Renewing: ');
     const respo = authInstance.acquireTokenSilent({ scopes: [authConfig.auth.clientId], forceRefresh: true });
-    console.log("State: ", respo);
+    console.log('State: ', respo);
     await respo;
-    console.log("^ Finished ^");
+    console.log('^ Finished ^');
 
-}
+};
 
-function useProvideAuth() {
+function useProvideAuth(): AuthContext {
     const [account, setAccount] = useState<null | Account>(null);
     const [accessToken, setAccessToken] = useState<null | string>(null);
     const [hasCheckedInitialUser, setHasCheckedInitialUser] = useState(false);
@@ -76,24 +68,24 @@ function useProvideAuth() {
 
     const renewTokenMinutesBeforeExpiry = 5;
 
-    const login = () => {
+    const login = (): void => {
         authInstance.loginRedirect();
-    }
+    };
 
-    const logout = () => {
+    const logout = (): void => {
         authInstance.logout();
-    }
+    };
 
-    const reAuthenticate = async () => {
+    const reAuthenticate = async (): Promise<void> => {
         try {
             await renewIdToken();
             setAccount(authInstance.getAccount());
         } catch (err) {
-            console.log("Failed to renew idToken", err);
+            console.log('Failed to renew idToken', err);
             authInstance.logout();
         }
 
-    }
+    };
 
     useEffect(() => {
         if (!account) return;
@@ -103,22 +95,22 @@ function useProvideAuth() {
         console.log('Will notify application at: ', notifyApplicationAtDateTime);
         console.log('This is in ' + Math.floor(notifyApplicationIn / 1000 / 60) + ' minutes');
         if (notifyApplicationIn <= 0) {
-            console.log("This token is old, we should re-authenticate");
+            console.log('This token is old, we should re-authenticate');
             reAuthenticate();
             return;
         }
         timerRef.current = setTimeout(() => reAuthenticate(), notifyApplicationIn);
 
-        return () => {
+        return (): void => {
             if (timerRef.current) {
-                clearTimeout(timerRef.current)
+                clearTimeout(timerRef.current);
             }
             timerRef.current = null;
-        }
-    }, [account])
+        };
+    }, [account]);
 
     if (!hasCheckedInitialUser) {
-        var authAccount = authInstance.getAccount() as any;
+        const authAccount = authInstance.getAccount() as any;
 
         if (authAccount) {
             setAccount(authAccount);
@@ -132,18 +124,18 @@ function useProvideAuth() {
 
 
 
-    const handleRedirectCallback = (callback: authErrorCallback) => {
+    const handleRedirectCallback = (callback: authErrorCallback): void => {
 
-        const authHandler: authResponseCallback = (error, response) => {
+        const authHandler: authResponseCallback = (error) => {
             if (error) {
-                console.log("Error: ", error);
+                console.log('Error: ', error);
                 callback({ message: error.errorMessage, code: error.errorCode });
                 return;
             }
-        }
+        };
 
         authInstance.handleRedirectCallback(authHandler);
-    }
+    };
 
     return {
         account,
@@ -151,5 +143,14 @@ function useProvideAuth() {
         login,
         logout,
         handleRedirectCallback,
-    }
+    };
 }
+
+type AuthProviderProps = {
+    children: JSX.Element;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
+    const auth = useProvideAuth();
+    return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+};

@@ -1,11 +1,12 @@
-import App from './../index';
 import { render, waitForElement } from '@testing-library/react';
+
+import App from './../index';
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
 jest.mock('../../contexts/AuthContext');
 
-describe("Initial module loading on application render", () => {
+describe('Initial module loading on application render', () => {
 
     it('Renders login when not signed in', async () => {
         const resp = {
@@ -26,9 +27,9 @@ describe("Initial module loading on application render", () => {
         };
         useAuth.mockImplementation(() => resp);
         const { getByText } = render(<App />);
-        const lazyElement = await waitForElement(() => getByText('Welcome'));
+        const lazyElement = await waitForElement(() => getByText('No plant'));
         expect(lazyElement).toBeInTheDocument();
-    })
+    });
 
 });
 

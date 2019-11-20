@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface ISpinnerSizeProps {
+interface SpinnerSizeProps {
     small?: boolean;
     medium?: boolean;
     large?: boolean;
 }
 
-const Spinner: React.FC<ISpinnerSizeProps> = ({ small = true, medium = false, large = false }: ISpinnerSizeProps) => {
+const Spinner: React.FC<SpinnerSizeProps> = ({ medium = false, large = false }: SpinnerSizeProps) => {
     let size = { width: 20, height: 20, radius: 5 };
     size = medium ? { width: 30, height: 30, radius: 10 } : size;
     size = large ? { width: 50, height: 50, radius: 20 } : size;
@@ -26,16 +26,16 @@ const Spinner: React.FC<ISpinnerSizeProps> = ({ small = true, medium = false, la
     );
 };
 
-interface ISpinnerProps {
+interface SpinnerProps {
     width: number;
     height: number;
 }
 
-const StyledSpinner = styled.svg<ISpinnerProps>`
+const StyledSpinner = styled.svg<SpinnerProps>`
     animation: rotate 2s linear infinite;
-    margin: -${props => props.height / 2}px 0 -${props => props.width / 2}px 0;
-    width: ${props => props.width}px;
-    height: ${props => props.height}px;
+    margin: -${(props): number => props.height / 2}px 0 -${(props): number => props.width / 2}px 0;
+    width: ${(props): number => props.width}px;
+    height: ${(props): number => props.height}px;
 
   & .path {
     stroke: #5652BF;

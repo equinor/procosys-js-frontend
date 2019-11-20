@@ -1,30 +1,32 @@
 import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react';
 
 import { Shevron } from './../../assets/icons';
 import { useClickOutsideNotifier } from './../../hooks';
-
 type dropdownItem = {
     text: string;
-    value: any;
-}
+    value: string | number;
+};
 
-interface IDropDownProps {
+interface DropDownProps {
     data: Array<dropdownItem>;
     selected?: dropdownItem;
     disabled?: boolean;
-    onChange?: (newValue: dropdownItem, oldValue?: dropdownItem, ) => void;
+    onChange?: (newValue: dropdownItem, oldValue?: dropdownItem) => void;
 }
 
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
-const DropdownMenu = ({ disabled = false, data = [], selected, onChange = () => { } }: IDropDownProps) => {
-
+const DropdownMenu = ({
+    disabled = false,
+    data = [],
+    selected,
+    onChange = (): void => {},
+}: DropDownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(selected);
     const containerRef = useRef<HTMLDivElement>(null);
-
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -32,13 +34,13 @@ const DropdownMenu = ({ disabled = false, data = [], selected, onChange = () => 
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
-    }
+    };
 
-    const selectItem = (item: dropdownItem) => {
+    const selectItem = (item: dropdownItem): void => {
         onChange(item, selectedItem);
         setSelectedItem(item);
         setIsOpen(false);
-    }
+    };
 
     const selectedText = (selectedItem && selectedItem.text) || 'Select';
     return (
@@ -49,45 +51,51 @@ const DropdownMenu = ({ disabled = false, data = [], selected, onChange = () => 
                 role="listbox"
                 isOpen={isOpen}
                 aria-expanded={isOpen}
-                aria-haspopup={true}>
+                aria-haspopup={true}
+            >
                 {selectedText}
 
                 <DropdownIcon>
                     <img src={Shevron} />
                 </DropdownIcon>
             </DropdownButton>
-            {(isOpen && data.length > 0 && !disabled) && (
-                <ul onKeyDown={(e) => {
-                    e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
-                }
-                }>
+            {isOpen && data.length > 0 && !disabled && (
+                <ul
+                    onKeyDown={(e): void => {
+                        e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
+                    }}
+                >
                     {data.map((item, index) => {
-                        const isSelectedValue = selectedItem && item.value === selectedItem.value || false;
-                        return (<DropdownItem
-                            key={index}
-                            role="option"
-                            selected={isSelectedValue}
-                            data-value={item.value}
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                                e.keyCode === KEYCODE_ENTER && selectItem(item);
-                            }}
-                            onClick={() => {
-                                selectItem(item);
-                            }}
-                            data-selected={isSelectedValue}>
-                            {item.text}
-                        </DropdownItem>)
+                        const isSelectedValue =
+                            (selectedItem && item.value === selectedItem.value) || false;
+                        return (
+                            <DropdownItem
+                                key={index}
+                                role="option"
+                                selected={isSelectedValue}
+                                data-value={item.value}
+                                tabIndex={0}
+                                onKeyDown={(e): void => {
+                                    e.keyCode === KEYCODE_ENTER && selectItem(item);
+                                }}
+                                onClick={(): void => {
+                                    selectItem(item);
+                                }}
+                                data-selected={isSelectedValue}
+                            >
+                                {item.text}
+                            </DropdownItem>
+                        );
                     })}
                 </ul>
             )}
-            {(isOpen && data.length <= 0 && !disabled) && (
+            {isOpen && data.length <= 0 && !disabled && (
                 <ul>
                     <li data-value={-1}>No items available</li>
                 </ul>
             )}
         </Container>
-    )
-}
+    );
+};
 
-export default DropdownMenu
+export default DropdownMenu;

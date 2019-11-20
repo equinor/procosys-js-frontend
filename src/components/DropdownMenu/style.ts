@@ -33,25 +33,25 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     align-items: center;
     padding: 6px;
     width: 100%;
-    ${props => props.isOpen && css`
+    ${(props): any => props.isOpen && css`
         background-color: var(--interactive-primary--selected-highlight);
         /* :focus & {
             outline: none;
         } */
     `}
-`
+`;
 
 export type DropDownItemProps = {
     selected: boolean;
 }
 
 export const DropdownItem = styled.li<DropDownItemProps>`
-    background-color: ${props => props.selected ? 'var(--ui-background--light)' : 'transparent'};
+    background-color: ${(props): any => props.selected ? 'var(--ui-background--light)' : 'transparent'};
     padding: 24px 16px;
     border: 0;
     text-align:left;
     font-weight: normal;
-`
+`;
 DropdownItem.defaultProps = {
     selected: false
-}
+};

@@ -1,15 +1,16 @@
-import React from 'react';
-import { Nav, IconContainer, LogoContainer, PlantSelector, Spacer, MenuContainer, MenuItem } from './style';
-import { Matrix, User, Lock, Info } from '../../assets/icons';
+import { IconContainer, LogoContainer, MenuContainer, MenuItem, Nav, PlantSelector } from './style';
+import { Info, Lock, Matrix, User } from '../../assets/icons';
+
 import { Dropdown } from './../../components';
+import React from 'react';
 
 const plants = [{
-    text: "JOHAN SVERDRUP",
-    value: "JOHAN_SVERDRUP"
+    text: 'JOHAN SVERDRUP',
+    value: 'JOHAN_SVERDRUP'
 },
 {
-    text: "JOHAN CASTBERG",
-    value: "JOHAN_CASTBERG"
+    text: 'JOHAN CASTBERG',
+    value: 'JOHAN_CASTBERG'
 }];
 
 
@@ -33,7 +34,7 @@ const Header = () => {
             </MenuContainer>
 
         </Nav>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

@@ -1,4 +1,4 @@
-import { act, fireEvent, queryByText, render, wait } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import DropdownMenu from './../index';
 import React from 'react';
@@ -6,13 +6,15 @@ import { ThemeProvider } from 'styled-components';
 import theme from './../../../assets/theme';
 
 const renderWithTheme = (Component) => {
-    return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>)
-}
+    return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
+};
 
-const items = [{ text: "Hello", value: "world" }, { text: "Foo", value: "Bar" }]
+const items = [
+    { text: 'Hello', value: 'world' },
+    { text: 'Foo', value: 'Bar' },
+];
 
-describe("<DropdownMenu />", () => {
-
+describe('<DropdownMenu />', () => {
     it('Renders with no default value', async () => {
         const { getByText } = renderWithTheme(<DropdownMenu />);
         expect(getByText('Select')).toBeInTheDocument();
@@ -39,10 +41,12 @@ describe("<DropdownMenu />", () => {
     });
 
     it('Should trigger onChange when new item is selected', () => {
-        const eventWatcher = jest.fn(() => { });
-        const { getByText } = renderWithTheme(<DropdownMenu data={items} onChange={eventWatcher} />);
+        const eventWatcher = jest.fn(() => {});
+        const { getByText } = renderWithTheme(
+            <DropdownMenu data={items} onChange={eventWatcher} />
+        );
         //Activate dropdown
-        const dropdownButton = getByText('Select')
+        const dropdownButton = getByText('Select');
         dropdownButton.click();
         // Click on item
         getByText(items[1].text).click();
@@ -52,10 +56,12 @@ describe("<DropdownMenu />", () => {
     });
 
     it('Should trigger onChange with already selected value in callback', () => {
-        const eventWatcher = jest.fn(() => { });
-        const { getByText } = renderWithTheme(<DropdownMenu data={items} onChange={eventWatcher} selected={items[1]} />);
+        const eventWatcher = jest.fn(() => {});
+        const { getByText } = renderWithTheme(
+            <DropdownMenu data={items} onChange={eventWatcher} selected={items[1]} />
+        );
         //Activate dropdown
-        const dropdownButton = getByText(items[1].text)
+        const dropdownButton = getByText(items[1].text);
         dropdownButton.click();
         // Click on item
         getByText(items[0].text).click();
@@ -67,7 +73,7 @@ describe("<DropdownMenu />", () => {
     it('Should have default item selected', () => {
         const { getByText } = renderWithTheme(<DropdownMenu data={items} selected={items[1]} />);
         expect(getByText('Foo')).toBeInTheDocument();
-    })
+    });
 
     it('Hides dropdown when  asd clicking outside of element', () => {
         const { getByText, queryByText, rerender } = render(
@@ -76,26 +82,23 @@ describe("<DropdownMenu />", () => {
                 <DropdownMenu data={items} />
             </div>
         );
-            
+
         getByText('Select').click();
         expect(queryByText(items[0].text)).toBeInTheDocument();
 
-        /** 
+        /**
          * POSSIBLE LIBRARY BUG
          * Code fails to re-render callback with new state in test environment
-         * 
-         * Open Stack Overflow Question: 
+         *
+         * Open Stack Overflow Question:
          * https://stackoverflow.com/questions/58915420/react-hook-callback-uses-old-state-when-ran-in-jest-react-testing-library
-         * 
-         * Workaround: 
+         *
+         * Workaround:
          * re-render
          */
         fireEvent.mouseDown(getByText('ClickMe'));
         rerender();
 
-
         expect(queryByText(items[0].text)).toBeNull();
-
     });
-
 });

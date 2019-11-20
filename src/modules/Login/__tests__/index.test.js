@@ -1,6 +1,7 @@
-import React from 'react';
-import { render, getByText } from '@testing-library/react';
+import { getByText, render } from '@testing-library/react';
+
 import Login from '../index';
+import React from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 
 jest.mock('../../../contexts/AuthContext');
@@ -13,15 +14,15 @@ describe('Login Module', () => {
     it('Should render Login without errors', () => {
 
         useAuth.mockImplementation(() => response);
-        const { getByText, container } = render(<Login />);
+        const { getByText } = render(<Login />);
         expect(getByText('Login')).toBeInTheDocument();
     });
 
     it('Should trigger login function when trying to sign in', () => {
         useAuth.mockImplementation(() => response);
-        const { getByText, container } = render(<Login />);
-        var element = getByText('Login');
+        const { getByText } = render(<Login />);
+        const element = getByText('Login');
         element.click();
         expect(response.login.mock.calls.length).toBe(1);
-    })
-})
+    });
+});

@@ -1,3 +1,3 @@
 import useClickOutsideNotifier from './useClickOutsideNotifier';
 
-export { useClickOutsideNotifier }
+export { useClickOutsideNotifier };

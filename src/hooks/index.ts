@@ -1,3 +1,2 @@
-import useClickOutsideNotifier from './useClickOutsideNotifier';
-
-export { useClickOutsideNotifier };
+export {default as useClickOutsideNotifier} from './useClickOutsideNotifier';
+export {default as useCurrentUser} from './useCurrentUser';

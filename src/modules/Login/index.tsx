@@ -1,11 +1,11 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { useAuth } from './../../contexts/AuthContext';
+import { useProcosysContext } from '../../core/ProcosysContext';
 
 const logo = require('./../../assets/img/equinor-logo.png');
 
 const Login = (): JSX.Element => {
-    const auth = useAuth();
+    const {auth} = useProcosysContext();
 
     return (
         <div className="section">

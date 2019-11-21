@@ -2,32 +2,24 @@ import { render, waitForElement } from '@testing-library/react';
 
 import App from './../index';
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import useCurrentUser from '../../hooks/useCurrentUser';
 
-jest.mock('../../contexts/AuthContext');
+jest.mock('../../hooks/useCurrentUser');
 
 describe('Initial module loading on application render', () => {
 
     it('Renders login when not signed in', async () => {
-        const resp = {
-            account: null,
-            login: () => null,
-            handleRedirectCallback: () => null
-        };
-        useAuth.mockImplementation(() => resp);
+        useCurrentUser.mockImplementation(() => null);
         const { getByText } = render(<App />);
         const lazyElement = await waitForElement(() => getByText('Login'));
         expect(lazyElement).toBeInTheDocument();
     });
 
     it('Renders application when signed in', async () => {
-        const resp = {
-            account: { name: 'Darth Vader' },
-            handleRedirectCallback: () => null
-        };
-        useAuth.mockImplementation(() => resp);
+        const resp = {};
+        useCurrentUser.mockImplementation(() => resp);
         const { getByText } = render(<App />);
-        const lazyElement = await waitForElement(() => getByText('No plant selected'));
+        const lazyElement = await waitForElement(() => getByText('TODO: Select first plant in list of available plants for user'));
         expect(lazyElement).toBeInTheDocument();
     });
 

@@ -1,13 +1,15 @@
 import './assets/sass/global.scss';
 
-import { AuthProvider, authInstance } from './contexts/AuthContext';
+import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
 import React, {useRef} from 'react';
 
 import App from './app/index';
+import AuthService from './auth/AuthService';
 import ReactDOM from 'react-dom';
 
 const start = async (): Promise<void> => {
-    authInstance.handleRedirectCallback((err) => console.error('Auth Redirect Err', err));
+    const authService = new AuthService();
+    authService.handleRedirectCallback();
 
 
     /**
@@ -23,14 +25,14 @@ const start = async (): Promise<void> => {
     const Root = (): JSX.Element => {
         const rootRef = useRef<HTMLDivElement | null>(null);
         const overlayRef = useRef<HTMLDivElement | null>(null);
-        const ProcosysContext = React.createContext({});
+        const context = createProcosysContext({
+            auth: authService
+        });
 
         return (
-            <ProcosysContext.Provider value={{}}>
+            <ProcosysContext.Provider value={context}>
                 <div id="procosys-root" ref={rootRef}>
-                    <AuthProvider>
-                        <App />
-                    </AuthProvider>
+                    <App />
                 </div>
                 <div id="procosys-overlay" ref={overlayRef}>
                     {/* Empty on purpose */}

@@ -1,17 +1,19 @@
 import {Button, Container} from './style';
 
+import AuthUser from '../../auth/AuthUser';
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import {useParams} from 'react-router-dom';
 
 const Preservation = (): JSX.Element => {
-    const { account } = useAuth();
+    const user = useCurrentUser() as AuthUser;
+
     const { plant } = useParams();
 
     return (
         <Container>
             <h1>Preservation</h1>
-            <h1>{account.name} - {plant}</h1>
+            <h1>{user.fullname} - {plant}</h1>
             <br />
             <Button>Logout</Button>
         </Container>

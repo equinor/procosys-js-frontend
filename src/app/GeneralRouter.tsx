@@ -4,7 +4,7 @@ import ProcosysRouter from './ProcosysRouter';
 import React from 'react';
 
 const NoPlant = (): JSX.Element => {
-    return <h1>No plant selected</h1>;
+    return <h1>TODO: Select first plant in list of available plants for user</h1>;
 };
 
 const GeneralRouter = (): JSX.Element => {

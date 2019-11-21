@@ -1,27 +1,28 @@
 import Login from '../index';
 import React from 'react';
 import { render } from '@testing-library/react';
-import { useAuth } from '../../../contexts/AuthContext';
+import {useProcosysContext} from '../../../core/ProcosysContext';
 
-jest.mock('../../../contexts/AuthContext');
+jest.mock('../../../core/ProcosysContext');
 
-const response = {
-    login: jest.fn()
-};
 
 describe('Login Module', () => {
-    it('Should render Login without errors', () => {
+    useProcosysContext.mockImplementation(() => ({auth: {login: jest.fn()}}));
 
-        useAuth.mockImplementation(() => response);
+
+
+    it('Should render Login without errors', () => {
         const { getByText } = render(<Login />);
         expect(getByText('Login')).toBeInTheDocument();
     });
 
     it('Should trigger login function when trying to sign in', () => {
-        useAuth.mockImplementation(() => response);
+
+        const spy = jest.fn();
+        useProcosysContext.mockImplementation(() => ({auth: {login: spy}}));
         const { getByText } = render(<Login />);
         const element = getByText('Login');
         element.click();
-        expect(response.login.mock.calls.length).toBe(1);
+        expect(spy.mock.calls.length).toBe(1);
     });
 });

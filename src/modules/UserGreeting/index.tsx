@@ -1,19 +1,21 @@
 import {Button, Container} from './style';
 
+import AuthUser from '../../auth/AuthUser';
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import {useParams} from 'react-router-dom';
+import { useProcosysContext } from '../../core/ProcosysContext';
 
 const UserGreeting = (): JSX.Element => {
-    const { account } = useAuth();
+    const user = useCurrentUser() as AuthUser;
+    const {auth} = useProcosysContext();
     const { plant } = useParams();
-    const auth = useAuth();
 
     return (
         <Container>
-            <h1>{account.name} - {plant}</h1>
+            <h1>{user.fullname} - {plant}</h1>
             <br />
-            <Button onClick={auth.logout}>Logout</Button>
+            <Button onClick={(): void => auth.logout()}>Logout</Button>
         </Container>
     );
 };

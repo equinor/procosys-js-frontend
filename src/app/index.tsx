@@ -1,25 +1,21 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 
 import GeneralRouter from './GeneralRouter';
 import Spinner from '../components/Spinner';
 import { ThemeProvider } from 'styled-components';
 import { hot } from 'react-hot-loader';
 import theme from './../assets/theme';
-import { useAuth } from '../contexts/AuthContext';
+import useCurrentUser from '../hooks/useCurrentUser';
 
 const Login = React.lazy(() => import('../modules/Login'));
 
 const App = (): JSX.Element => {
-    const auth = useAuth();
-
-    useEffect(() => {
-        console.log('AuthContext: ', auth);
-    }, [auth]);
+    const user = useCurrentUser();
 
     return (
         <ThemeProvider theme={theme}>
             <Suspense fallback={<Spinner />}>
-                {auth.account ? <GeneralRouter /> : <Login />}
+                {user ? <GeneralRouter /> : <Login />}
             </Suspense>
         </ThemeProvider>
     );

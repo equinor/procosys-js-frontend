@@ -63,9 +63,8 @@ export default class AuthService implements IAuthService {
     }
 
     handleRedirectCallback(): void {
-        this.authInstance.handleRedirectCallback((err, response) => {
+        this.authInstance.handleRedirectCallback((err, /* response */) => {
             if (err) throw new AuthenticationError(err.message);
-            console.log('AuthResponse: ', response);
         });
     }
 
@@ -77,7 +76,6 @@ export default class AuthService implements IAuthService {
     getCurrentUser(): AuthUser | null {
         const account = this.authInstance.getAccount();
         if (!account) return null;
-        console.log(account);
         return new AuthUser({username: account.userName, fullname: account.name, id: account.accountIdentifier});
     }
 }

@@ -14,6 +14,7 @@ const Spinner: React.FC<SpinnerSizeProps> = ({ medium = false, large = false }: 
 
     return (
         <StyledSpinner viewBox={`0 0 ${size.width} ${size.height}`} {...size}>
+            <title>Loading</title>
             <circle
                 className="path"
                 cx={`${size.width / 2}`}

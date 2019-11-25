@@ -1,16 +1,22 @@
 import { render, waitForElement } from '@testing-library/react';
 
 import App from './../index';
+import ProCoSysClient from '../../http/ProCoSysClient';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import {useProcosysContext} from '../../core/ProcosysContext';
 
 jest.mock('../../core/ProcosysContext');
+jest.mock('../../http/ProCoSysClient');
 
 jest.mock('../../hooks/useCurrentUser');
 
 describe('Renders <App />', () => {
     useProcosysContext.mockImplementation(() => ({auth: {login: jest.fn()}}));
+    ProCoSysClient.mockImplementation(() => ({
+        getAllPlantsForUser: () => []
+    }));
 
     it('Renders login when not signed in', async () => {
         useCurrentUser.mockImplementation(() => null);
@@ -31,15 +37,21 @@ describe('Renders <App />', () => {
         const fakeLoginInterceptor = jest.fn();
         useProcosysContext.mockImplementation(() => ({auth: {login: fakeLoginInterceptor}}));
         useCurrentUser.mockImplementation(() => ({}));
-        render(<App />);
+        await act(async () => {
+            render(<App />);
+        });
         expect(fakeLoginInterceptor).toBeCalledTimes(0);
     });
 
     it('Renders application when signed in', async () => {
         useCurrentUser.mockImplementation(() => ({}));
         const { getByText } = render(<App />);
-        const lazyElement = await waitForElement(() => getByText('TODO: Select first plant in list of available plants for user'));
+        let lazyElement = null;
+        await act(async () => {
+            lazyElement = await waitForElement(() => getByText('You dont have access to any plants'));
+        });
         expect(lazyElement).toBeInTheDocument();
+
     });
 
 });

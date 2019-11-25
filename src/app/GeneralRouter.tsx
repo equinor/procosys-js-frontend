@@ -1,10 +1,49 @@
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import { Redirect, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 
+import ProcosysClient from '../http/ProCoSysClient';
 import ProcosysRouter from './ProcosysRouter';
-import React from 'react';
+import Spinner from '../components/Spinner';
 
 const NoPlant = (): JSX.Element => {
-    return <h1>TODO: Select first plant in list of available plants for user</h1>;
+
+    const [selectedPlant, setSelectedPlant] = useState<string|null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const history = useHistory();
+
+    function redirect(plant: string): void {
+        setSelectedPlant(plant);
+        const from = {from: {pathname: '/' + plant}};
+        history.replace(from);
+    }
+
+    useEffect(() => {
+        (async (): Promise<void> => {
+            const client = new ProcosysClient();
+            const plantsResponse = await client.getAllPlantsForUser();
+            if (plantsResponse.length > 0) {
+                const plant = plantsResponse[0].Id.replace('PCS$','');
+                redirect(plant);
+            }
+            setLoading(false);
+        })();
+    },[]);
+
+    if (loading) {
+        return <Spinner />;
+    }
+    if (selectedPlant) {
+        return (
+            <Redirect
+                to={{
+                    pathname: `/${selectedPlant}/`,
+                    state: { from: '/' }
+                }}
+            />
+        );
+    }
+
+    return <h1>You dont have access to any plants</h1>;
 };
 
 const GeneralRouter = (): JSX.Element => {

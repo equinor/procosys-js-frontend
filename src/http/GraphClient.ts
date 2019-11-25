@@ -1,10 +1,11 @@
-import {ApiClient, RequestCanceler} from './HttpClient';
-
+import ApiClient from './ApiClient';
 import { AxiosRequestConfig } from 'axios';
+import {RequestCanceler} from './HttpClient';
 
-const RESOURCE_ID = 'https://graph.microsoft.com/profile';
+const Settings = require('../../settings.json');
 
-const BASE_URL = 'https://graph.microsoft.com/v1.0';
+const RESOURCE_ID = Settings.externalResources.graphApi.scope.join(' ');
+const BASE_URL = `${Settings.externalResources.graphApi.url}${Settings.externalResources.graphApi.version}`;
 
 export type ProfileResponse = {
     displayName: string;

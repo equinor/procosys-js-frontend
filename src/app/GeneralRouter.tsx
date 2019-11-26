@@ -13,8 +13,7 @@ const NoPlant = (): JSX.Element => {
 
     function redirect(plant: string): void {
         setSelectedPlant(plant);
-        const from = {from: {pathname: '/' + plant}};
-        history.replace(from);
+        history.replace('/' + plant);
     }
 
     useEffect(() => {

@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 
-import GeneralRouter from './GeneralRouter';
-import Spinner from '../components/Spinner';
+import Loading from '../components/Loading';
 import { ThemeProvider } from 'styled-components';
 import { hot } from 'react-hot-loader';
 import theme from './../assets/theme';
@@ -9,6 +8,7 @@ import useCurrentUser from '../hooks/useCurrentUser';
 import { useProcosysContext } from '../core/ProcosysContext';
 
 const Login = React.lazy(() => import('../modules/Login'));
+const GeneralRouter = React.lazy(() => import('./GeneralRouter'));
 
 const App = (): JSX.Element => {
     const user = useCurrentUser();
@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
 
     return (
         <ThemeProvider theme={theme}>
-            <Suspense fallback={<Spinner />}>
+            <Suspense fallback={<Loading />}>
                 {user ? <GeneralRouter /> : <Login />}
             </Suspense>
         </ThemeProvider>

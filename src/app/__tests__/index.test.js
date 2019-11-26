@@ -15,7 +15,7 @@ jest.mock('../../hooks/useCurrentUser');
 describe('Renders <App />', () => {
     useProcosysContext.mockImplementation(() => ({auth: {login: jest.fn()}}));
     ProCoSysClient.mockImplementation(() => ({
-        getAllPlantsForUser: () => []
+        getAllPlantsForUserAsync: () => []
     }));
 
     it('Renders login when not signed in', async () => {

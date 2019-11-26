@@ -15,7 +15,7 @@ const useRouter = (): any => {
             pathname: location.pathname,
             match,
             location,
-            history
+            history,
         };
     }, [params, match, location, history]);
 };

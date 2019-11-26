@@ -18,7 +18,7 @@ class ProCoSysClient extends ApiClient {
         }, (error) => Promise.reject(error));
     }
 
-    async getAllPlantsForUser(): Promise<PlantResponse[]> {
+    async getAllPlantsForUserAsync(): Promise<PlantResponse[]> {
         const endpoint = '/plants';
         const result = await this.client.get(endpoint);
         return result.data as PlantResponse[];

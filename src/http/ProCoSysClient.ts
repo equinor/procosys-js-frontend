@@ -6,7 +6,11 @@ export type PlantResponse = {
     Title: string;
 }
 
+/**
+ * API for interacting with data in ProCoSys.
+ */
 class ProCoSysClient extends ApiClient {
+
     constructor() {
         super(Settings.externalResources.procosysApi.scopes.join(' '), Settings.externalResources.procosysApi.url);
         this.client.interceptors.request.use((config) => {
@@ -18,6 +22,9 @@ class ProCoSysClient extends ApiClient {
         }, (error) => Promise.reject(error));
     }
 
+    /**
+     * Get all available plants for the currently logged in user
+     */
     async getAllPlantsForUserAsync(): Promise<PlantResponse[]> {
         const endpoint = '/plants';
         const result = await this.client.get(endpoint);

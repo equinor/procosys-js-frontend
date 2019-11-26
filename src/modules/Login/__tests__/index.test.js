@@ -5,8 +5,8 @@ import { render } from '@testing-library/react';
 describe('Module: <Login />', () => {
 
     it('Should render Login without errors', () => {
-        const { getByTitle } = render(<Login />);
-        expect(getByTitle('Loading')).toBeInTheDocument();
+        const { getByText } = render(<Login />);
+        expect(getByText('Authenticating')).toBeInTheDocument();
     });
 
 });

@@ -3,7 +3,7 @@ import {
     RouteComponentProps,
     BrowserRouter as Router,
     Switch,
-    useRouteMatch,
+    useRouteMatch
 } from 'react-router-dom';
 
 import Header from '../modules/Header';
@@ -14,7 +14,6 @@ import UserGreeting from './../modules/UserGreeting';
 
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
-    console.log('path: ', path);
     return (
         <Router>
             <Header />
@@ -27,7 +26,13 @@ const ProcosysRouter = (): JSX.Element => {
                         LazyRoute(UserGreeting, routeProps)
                     }
                 />
-                <Route path={`${path}/preservation`} component={Preservation} />
+                <Route
+                    path={`${path}/preservation`}
+                    exact
+                    component={(routeProps: RouteComponentProps): JSX.Element =>
+                        LazyRoute(Preservation, routeProps)
+                    }
+                />
                 <Route render={(): JSX.Element => <h3>404 - 2</h3>} />
             </Switch>
         </Router>

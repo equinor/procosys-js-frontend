@@ -37,7 +37,7 @@ describe('Renders <App />', () => {
         const fakeLoginInterceptor = jest.fn();
         useProcosysContext.mockImplementation(() => ({auth: {login: fakeLoginInterceptor}}));
         useCurrentUser.mockImplementation(() => ({}));
-        await act(async () => {
+        act(() => {
             render(<App />);
         });
         expect(fakeLoginInterceptor).toBeCalledTimes(0);

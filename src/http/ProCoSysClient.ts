@@ -1,9 +1,12 @@
 import ApiClient from './ApiClient';
+import { AxiosRequestConfig } from 'axios';
+import PascalCaseConverter from '../util/PascalCaseConverter';
+import { RequestCanceler } from './HttpClient';
 const Settings = require('../../settings.json');
 
 export type PlantResponse = {
-    Id: string;
-    Title: string;
+    id: string;
+    title: string;
 }
 
 /**
@@ -25,10 +28,13 @@ class ProCoSysClient extends ApiClient {
     /**
      * Get all available plants for the currently logged in user
      */
-    async getAllPlantsForUserAsync(): Promise<PlantResponse[]> {
+    async getAllPlantsForUserAsync(setRequestCanceller?: RequestCanceler): Promise<PlantResponse[]> {
         const endpoint = '/plants';
-        const result = await this.client.get(endpoint);
-        return result.data as PlantResponse[];
+        const settings: AxiosRequestConfig = {
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get(endpoint, settings);
+        return PascalCaseConverter.objectToCamelCase(result.data) as PlantResponse[];
     }
 }
 

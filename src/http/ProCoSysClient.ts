@@ -1,7 +1,9 @@
 import ApiClient from './ApiClient';
-import { AxiosRequestConfig } from 'axios';
+import {AxiosRequestConfig} from 'axios';
+import {IAuthService} from '../auth/AuthService';
 import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
+
 const Settings = require('../../settings.json');
 
 export type PlantResponse = {
@@ -14,8 +16,8 @@ export type PlantResponse = {
  */
 class ProCoSysClient extends ApiClient {
 
-    constructor() {
-        super(Settings.externalResources.procosysApi.scopes.join(' '), Settings.externalResources.procosysApi.url);
+    constructor(authService: IAuthService) {
+        super(authService, Settings.externalResources.procosysApi.scopes.join(' '), Settings.externalResources.procosysApi.url);
         this.client.interceptors.request.use((config) => {
             config.params = {
                 ...config.params,

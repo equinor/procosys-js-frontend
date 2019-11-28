@@ -9,7 +9,10 @@ const authConfig: Configuration = {
         clientId: settings.auth.clientId,
         redirectUri: window.location.origin,
         authority: settings.auth.authority,
-    }
+    },
+    // system: {
+    //     logger: new Logger((lvl: any, message: any, piEnabled?: boolean ): void => { console.log('Auth: ', message);})
+    // }
 };
 
 export interface IAuthService {
@@ -63,9 +66,14 @@ export default class AuthService implements IAuthService {
     }
 
     handleRedirectCallback(): void {
-        this.authInstance.handleRedirectCallback((err, /* response */) => {
-            if (err) throw new AuthenticationError(err.message);
-        });
+        try {
+            this.authInstance.handleRedirectCallback((err, /* response */) => {
+                if (err) throw new AuthenticationError(err.message);
+            });
+        } catch (err) {
+            console.error('Failed to handle Redirect Callback');
+            throw err;
+        }
     }
 
     async getAccessTokenAsync(resource: string): Promise<AccessToken> {

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, Canceler } from 'axios';
+import axios, { Canceler as AxiosCanceler, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 const axiosSettings: AxiosRequestConfig = {
 };
@@ -7,6 +7,9 @@ const axiosSettings: AxiosRequestConfig = {
  * Callback for setting up request canceler
  */
 export type RequestCanceler = ((callback: Canceler) => void);
+
+export type Canceler = AxiosCanceler;
+
 
 /**
  * Generic HTTP Client with common configuration

@@ -1,5 +1,6 @@
 import ApiClient from './ApiClient';
 import { AxiosRequestConfig } from 'axios';
+import {IAuthService} from '../auth/AuthService';
 import {RequestCanceler} from './HttpClient';
 
 const Settings = require('../../settings.json');
@@ -22,8 +23,8 @@ export type ProfileResponse = {
  */
 export default class GraphClient extends ApiClient {
 
-    constructor() {
-        super(RESOURCE_ID, BASE_URL);
+    constructor(authService: IAuthService) {
+        super(authService, RESOURCE_ID, BASE_URL);
     }
 
     /**

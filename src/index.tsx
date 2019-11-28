@@ -17,10 +17,9 @@ const start = async (): Promise<void> => {
      * This is done by the MSAL library, when trying to do a silent refresh
      *  */
     if (window.parent != window) {
+        console.info('Aborted further app loading iFrame');
         return;
     }
-
-
 
     const Root = (): JSX.Element => {
         const rootRef = useRef<HTMLDivElement | null>(null);

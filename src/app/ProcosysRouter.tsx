@@ -13,14 +13,13 @@ import React from 'react';
 const UserGreeting = React.lazy(() => import('./../modules/UserGreeting'));
 const Preservation = React.lazy(() => import('./../modules/Preservation'));
 
+const Page404 = (): JSX.Element => {
+    return <h3>404 - 2</h3>;
+};
+
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
 
-    //Verify plant access
-    //Store plant as default plant
-
-    // Get all access roles
-    // Cache them
     return (
         <Router>
             <Header />
@@ -40,7 +39,7 @@ const ProcosysRouter = (): JSX.Element => {
                         LazyRoute(Preservation, routeProps)
                     }
                 />
-                <Route render={(): JSX.Element => <h3>404 - 2</h3>} />
+                <Route component={Page404} />
             </Switch>
         </Router>
     );

@@ -10,13 +10,13 @@ type createContextOptions = {
     auth: IAuthService;
 }
 
+const ProcosysContext = React.createContext<IProcosysContext>({} as IProcosysContext);
+
 export const createProcosysContext = ({auth}: createContextOptions): IProcosysContext => {
     return {
         auth: auth
     };
 };
-
-const ProcosysContext = React.createContext<IProcosysContext>({} as IProcosysContext);
 
 export const useProcosysContext = (): IProcosysContext => useContext(ProcosysContext);
 

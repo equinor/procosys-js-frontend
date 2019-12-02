@@ -1,48 +1,87 @@
-trigger:
-  branches:
-    include:
-      - pipeline-build
+trigger: none
 
 resources:
-- repo: self
+  repositories:
+  - repository: self
+  - repository: templates
+    type: github
+    name: equinor/procosys-preservation-infra
+    endpoint: 'Preservation - Frontend'
 
+# Global variables for the pipeline
 variables:
-  System.Debug: 'true'
-  vmImageName: 'ubuntu-latest'
-  imageName: 'frontend'
-  dockerRegistryServiceConnection: 'ACR - pcspreservation'
-  containerRegistry: 'pcspreservation.azurecr.io'
-  dockerComposeFile: 'docker-compose.yml'
+ - template: templates/variables/preservation-variables.yml@templates
+ - template: templates/variables/procosys-global-variables.yml@templates
 
+ - name: 'repositoryName'
+   value: procosys/frontend
 
 stages:
-- stage: Build
-  displayName: Build and push stage
-  jobs:  
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - checkout: self
-    - task: DockerCompose@0
-      displayName: Build
-      inputs:
-        action: Build services
-        azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-        azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: $(dockerComposeFile)
-        additionalImageTags: $(Build.BuildId)
-        dockerComposeFileArgs: |
-          firstArg=$(Build.BuildId)
+# common stage. Docker build, tag and push
+- stage: common
+  displayName: 'Common'
+  variables:
+    envName: 'common'
+    envRg: '${{ variables.envRgName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    dockerfilePath: '/.docker/Dockerfile'  
+    repositoryName: ${{ variables.repositoryName }}
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-    # - task: DockerCompose@0
-    #   displayName: Push services
-    #   inputs:
-    #     action: Push services
-    #     azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-    #     azureContainerRegistry: $(containerRegistry)
-    #     dockerComposeFile: $(dockerComposeFile)
-    #     projectName: $(Build.Repository.Name)
-    #     qualifyImageNames: true
-    #     additionalImageTags: $(Build.BuildId)
+  jobs:
+
+  - job: 'json' 
+    displayName: 'set_json_values'
+    dependsOn: ''
+    steps:
+      - task: geeklearningio.gl-vsts-tasks-file-patch.json-patch-task.JsonPatch@3
+        displayName: 'Patch files settings.json'
+        inputs:
+          JsonWorkingDir: '$(Build.SourcesDirectory)'
+          JsonTargetFilters: settings.template.json
+          JsonPatchContent: |
+            + /auth/clientId => "id"
+            + /auth/authority => "authority"
+            + /auth/defaultScopes => "defaultScopes"
+          OutputPatchFile: true
+          FailIfNoPatchApplied: true
+
+  - template: /templates/pipelines/dockerbuild.yml@templates
+    parameters:
+      deploymentName: 'docker_build_push'
+      dependsOn: ''
+      env: '${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: ${{ variables.dockerfilePath }}
+      repository: ${{ variables.repositoryName }}
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+
+# Dev deploy stage
+- stage: dev
+  displayName: 'Dev'
+  variables:
+    envName: 'dev'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+
+
+
+  jobs:
+
+  - template: /templates/pipelines/webapprelease.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'publish_container_to_webapp'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      webApp: '${{ variables.apiWebAppName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      envRg: '${{ variables.envRg }}'
+      env: '${{ variables.envName }}'
+      containerRegistry: '${{ variables.containerRegistry }}'
+      repository: 'preservation/api'

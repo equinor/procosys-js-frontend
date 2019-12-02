@@ -3,5 +3,17 @@
         "clientId": "",
         "authority": "",
         "defaultScopes": []
+    },
+    "externalResources": {
+        "procosysApi": {
+            "url": "",
+            "scope": [],
+            "version": ""
+        },
+        "graphApi": {
+            "url": "",
+            "scope": [],
+            "version": ""
+        }
     }
 }

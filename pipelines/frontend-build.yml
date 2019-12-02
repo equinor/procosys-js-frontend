@@ -42,17 +42,14 @@ stages:
           JsonWorkingDir: '$(Build.SourcesDirectory)'
           JsonTargetFilters: settings.template.json
           JsonPatchContent: |
-            # Auth
             + /auth/clientId => "$(clientId)"
             + /auth/authority => "$(authority)"
             + /auth/defaultScopes => $(defaultScopes)
 
-            # ExternalResources
             + /externalResources/procosysApi/url => "$(procosysApiUrl)"
             + /externalResources/procosysApi/scope => "$(procosysApiScope)"
             + /externalResources/procosysApi/version => $(procosysApiVersion)
 
-            # GraphApi
             + /externalResources/graphApi/url => "$(graphApiUrl)"
             + /externalResources/graphApi/scope => "$(graphApiScope)"
             + /externalResources/graphApi/version => $(graphApiVersion)

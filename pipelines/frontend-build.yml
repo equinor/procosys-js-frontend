@@ -45,15 +45,6 @@ stages:
             + /auth/clientId => "$(clientId)"
             + /auth/authority => "$(authority)"
             + /auth/defaultScopes => $(defaultScopes)
-
-            + /externalResources/procosysApi/url => "$(procosysApiUrl)"
-            + /externalResources/procosysApi/scope => $(procosysApiScope)
-            + /externalResources/procosysApi/version => "$(procosysApiVersion)"
-
-            + /externalResources/graphApi/url => "$(graphApiUrl)"
-            + /externalResources/graphApi/scope => $(graphApiScope)
-            + /externalResources/graphApi/version => "$(graphApiVersion)"
-
           OutputPatchFile: true
           FailIfNoPatchApplied: true
 

@@ -27,8 +27,7 @@ stages:
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    dockerfilePath: '/.docker/Dockerfile'  
-    repositoryName: ${{ variables.repositoryName }}
+    dockerfilePath: '/.docker/Dockerfile'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   jobs:
@@ -43,9 +42,9 @@ stages:
           JsonWorkingDir: '$(Build.SourcesDirectory)'
           JsonTargetFilters: settings.template.json
           JsonPatchContent: |
-            + /auth/clientId => "id"
-            + /auth/authority => "authority"
-            + /auth/defaultScopes => "defaultScopes"
+            + /auth/clientId => "$(clientId)"
+            + /auth/authority => "$(authority)"
+            + /auth/defaultScopes => $(defaultScopes)
           OutputPatchFile: true
           FailIfNoPatchApplied: true
 
@@ -70,8 +69,6 @@ stages:
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
 
-
-
   jobs:
 
   - template: /templates/pipelines/webapprelease.yml@templates
@@ -79,9 +76,9 @@ stages:
       dependsOn: ''
       deploymentName: 'publish_container_to_webapp'
       serviceConnection: '${{ variables.serviceConnection }}'
-      webApp: '${{ variables.apiWebAppName }}'
+      webApp: '${{ variables.frontendWebAppName }}'
       envGroup: '${{ variables.envGroupName }}'
       envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
       containerRegistry: '${{ variables.containerRegistry }}'
-      repository: 'preservation/api'
+      repository: ${{ variables.repositoryName }}

@@ -63,7 +63,7 @@ stages:
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
       deploymentName: 'docker_build_push'
-      dependsOn: 'set_json_values'
+      dependsOn: 'Patch files settings.json'
       env: '${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: ${{ variables.dockerfilePath }}

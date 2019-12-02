@@ -45,6 +45,7 @@ stages:
             + /auth/clientId => "$(clientId)"
             + /auth/authority => "$(authority)"
             + /auth/defaultScopes => $(defaultScopes)
+            + /externalResources/procosysApi/url => "$(procosysApiUrl)"
           OutputPatchFile: true
           FailIfNoPatchApplied: true
 

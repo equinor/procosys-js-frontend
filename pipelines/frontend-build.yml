@@ -31,15 +31,10 @@ stages:
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   jobs:
-  - template: /templates/pipelines/frontendsettings.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'config_settings'
-
-  - template: /templates/pipelines/dockerbuild.yml@templates
+  - template: /templates/pipelines/dockerbuild-frontend.yml@templates
     parameters:
       deploymentName: 'docker_build_push'
-      dependsOn: 'config_settings'
+      dependsOn: ''
       env: '${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: ${{ variables.dockerfilePath }}

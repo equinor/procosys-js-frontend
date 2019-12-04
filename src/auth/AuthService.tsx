@@ -69,7 +69,7 @@ export default class AuthService implements IAuthService {
     }
 
     aquireConcent(resource: string): void {
-        this.authInstance.acquireTokenRedirect({scopes: [resource]});
+        this.authInstance.loginRedirect({scopes: [resource]});
     }
 
     logout(): void {

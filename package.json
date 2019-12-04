@@ -15,7 +15,8 @@
         "build": "webpack",
         "test": "jest",
         "test-watch": "jest --watch",
-        "lint": "./node_modules/.bin/eslint"
+        "lint": "./node_modules/.bin/eslint",
+        "lint-all": "./node_modules/.bin/eslint --ext .js,.jsx,.ts,.tsx src/"
     },
     "husky": {
         "hooks": {

@@ -1,11 +1,8 @@
 version: '3'
 services:
     web:
-        image: preservationfrontend
         build:
             context: .
             dockerfile: .docker/Dockerfile
-            args:
-                buildnumber: $firstArg
         ports:
             - "80:80"

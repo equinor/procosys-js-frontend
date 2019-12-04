@@ -1,9 +1,12 @@
 # build environment
 FROM node:12.12-alpine as build
+RUN ls
 WORKDIR /app
+RUN ls
 COPY . /app
-RUN yarn install
-RUN yarn build --mode=production
+RUN ls
+# RUN yarn install
+# RUN yarn build --mode=production
 
 # # production environment
 # FROM nginx:1.16.1-alpine

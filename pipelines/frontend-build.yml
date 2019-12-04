@@ -36,37 +36,37 @@ stages:
       dependsOn: ''
       deploymentName: 'config_settings'
 
-#   - template: /templates/pipelines/dockerbuild.yml@templates
-#     parameters:
-#       deploymentName: 'docker_build_push'
-#       dependsOn: 'config_settings'
-#       env: '${{ variables.envName }}'
-#       envGroup: '${{ variables.envGroupName }}'
-#       dockerfilePath: ${{ variables.dockerfilePath }}
-#       repository: ${{ variables.repositoryName }}
-#       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+  - template: /templates/pipelines/dockerbuild.yml@templates
+    parameters:
+      deploymentName: 'docker_build_push'
+      dependsOn: 'config_settings'
+      env: '${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: ${{ variables.dockerfilePath }}
+      repository: ${{ variables.repositoryName }}
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
-# # Dev deploy stage
-# - stage: dev
-#   displayName: 'Dev'
-#   variables:
-#     envName: 'dev'
-#     envRg: '${{ variables.envRgName }}'
-#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-#     containerRegistry: '${{ variables.containerRegistryName }}' 
+# Dev deploy stage
+- stage: dev
+  displayName: 'Dev'
+  variables:
+    envName: 'dev'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
 
-#   jobs:
+  jobs:
 
-#   - template: /templates/pipelines/webapprelease.yml@templates
-#     parameters:
-#       dependsOn: ''
-#       deploymentName: 'publish_container_to_webapp'
-#       serviceConnection: '${{ variables.serviceConnection }}'
-#       webApp: '${{ variables.frontendWebAppName }}'
-#       envGroup: '${{ variables.envGroupName }}'
-#       envRg: '${{ variables.envRg }}'
-#       env: '${{ variables.envName }}'
-#       containerRegistry: '${{ variables.containerRegistry }}'
-#       repository: ${{ variables.repositoryName }}
+  - template: /templates/pipelines/webapprelease.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'publish_container_to_webapp'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      webApp: '${{ variables.frontendWebAppName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      envRg: '${{ variables.envRg }}'
+      env: '${{ variables.envName }}'
+      containerRegistry: '${{ variables.containerRegistry }}'
+      repository: ${{ variables.repositoryName }}

@@ -56,11 +56,8 @@ stages:
           OutputPatchFile: true
           FailIfNoPatchApplied: true
 
-      - task: PowerShell@2
-        inputs:
-          script: Rename-Item $(Build.SourcesDirectory/settings.template.json settings.json
+      - pwsh: 'Rename-Item $(Build.SourcesDirectory/settings.template.json settings.json'
           
-
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
       deploymentName: 'docker_build_push'

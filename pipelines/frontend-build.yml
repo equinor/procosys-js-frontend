@@ -38,6 +38,7 @@ stages:
       env: '${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: ${{ variables.dockerfilePath }}
+      buildContext: '$(Build.SourcesDirectory)'
       repository: ${{ variables.repositoryName }}
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 

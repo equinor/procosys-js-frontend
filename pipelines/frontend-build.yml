@@ -56,7 +56,7 @@ stages:
           OutputPatchFile: true
           FailIfNoPatchApplied: true
 
-      - pwsh: 'Rename-Item $(Build.SourcesDirectory/settings.template.json settings.json'
+      - pwsh: Rename-Item $(Build.SourcesDirectory/settings.template.json settings.json
           
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:

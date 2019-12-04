@@ -30,43 +30,20 @@ stages:
     dockerfilePath: '/.docker/Dockerfile'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-  jobs:
-
-  - job: 'json' 
-    displayName: 'set_json_values'
+- template: /templates/pipelines/frontendsettings.yml@templates
+  parameters:
     dependsOn: ''
-    steps:
-      - task: geeklearningio.gl-vsts-tasks-file-patch.json-patch-task.JsonPatch@3
-        displayName: 'Patch files settings.json'
-        inputs:
-          JsonWorkingDir: '$(Build.SourcesDirectory)'
-          JsonTargetFilters: settings.template.json
-          JsonPatchContent: |
-            + /auth/clientId => "$(clientId)"
-            + /auth/authority => "$(authority)"
-            + /auth/defaultScopes => $(defaultScopes)
+    deploymentName: 'config_settings'
 
-            + /externalResources/procosysApi/url => "$(procosysApiUrl)"
-            + /externalResources/procosysApi/scope => $(procosysApiScope)
-            + /externalResources/procosysApi/version => "$(procosysApiVersion)"
-            
-            + /externalResources/graphApi/url => "$(graphApiUrl)"
-            + /externalResources/graphApi/scope => $(graphApiScope)
-            + /externalResources/graphApi/version => "$(graphApiVersion)"
-          OutputPatchFile: true
-          FailIfNoPatchApplied: true
-
-      - pwsh: Rename-Item $(Build.SourcesDirectory)/settings.template.json settings.json
-          
-  - template: /templates/pipelines/dockerbuild.yml@templates
-    parameters:
-      deploymentName: 'docker_build_push'
-      dependsOn: 'json'
-      env: '${{ variables.envName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerfilePath: ${{ variables.dockerfilePath }}
-      repository: ${{ variables.repositoryName }}
-      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+- template: /templates/pipelines/dockerbuild.yml@templates
+  parameters:
+    deploymentName: 'docker_build_push'
+    dependsOn: 'config_settings'
+    env: '${{ variables.envName }}'
+    envGroup: '${{ variables.envGroupName }}'
+    dockerfilePath: ${{ variables.dockerfilePath }}
+    repository: ${{ variables.repositoryName }}
+    dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # Dev deploy stage
 - stage: dev

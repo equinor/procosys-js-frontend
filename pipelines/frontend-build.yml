@@ -34,7 +34,7 @@ stages:
   - template: /templates/pipelines/frontendsettings.yml@templates
     parameters:
       dependsOn: ''
-      deploymentName: ''
+      deploymentName: 'config_settings'
 
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:

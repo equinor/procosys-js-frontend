@@ -1,12 +1,9 @@
 # build environment
 FROM node:12.12-alpine as build
-ARG buildnumber
 WORKDIR /app
-COPY settings.template.json /app/settings.json
-RUN echo $buildnumber
-# COPY . /app
-# RUN yarn install
-# RUN yarn build --mode=production
+COPY . /app
+RUN yarn install
+RUN yarn build --mode=production
 
 # # production environment
 # FROM nginx:1.16.1-alpine

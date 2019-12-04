@@ -47,7 +47,7 @@ describe('Renders <App /> when authenticated', () => {
             const {container} = render(<App />);
             renderedContainer = container;
         });
-        expect(renderedContainer.textContent).toContain('You dont have access to any plants');
+        expect(renderedContainer.textContent).toContain('You dont seem to have an account in ProCoSys - use AccessIT to request access');
     });
 
 });

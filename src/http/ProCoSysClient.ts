@@ -17,7 +17,7 @@ export type PlantResponse = {
 class ProCoSysClient extends ApiClient {
 
     constructor(authService: IAuthService) {
-        super(authService, Settings.externalResources.procosysApi.scopes.join(' '), Settings.externalResources.procosysApi.url);
+        super(authService, Settings.externalResources.procosysApi.scope.join(' '), Settings.externalResources.procosysApi.url);
         this.client.interceptors.request.use((config) => {
             config.params = {
                 ...config.params,

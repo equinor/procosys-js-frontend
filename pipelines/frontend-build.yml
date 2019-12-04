@@ -30,20 +30,21 @@ stages:
     dockerfilePath: '/.docker/Dockerfile'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-- template: /templates/pipelines/frontendsettings.yml@templates
-  parameters:
-    dependsOn: ''
-    deploymentName: 'config_settings'
+  jobs:
+  - template: /templates/pipelines/frontendsettings.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: ''
 
-- template: /templates/pipelines/dockerbuild.yml@templates
-  parameters:
-    deploymentName: 'docker_build_push'
-    dependsOn: 'config_settings'
-    env: '${{ variables.envName }}'
-    envGroup: '${{ variables.envGroupName }}'
-    dockerfilePath: ${{ variables.dockerfilePath }}
-    repository: ${{ variables.repositoryName }}
-    dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+  - template: /templates/pipelines/dockerbuild.yml@templates
+    parameters:
+      deploymentName: 'docker_build_push'
+      dependsOn: 'config_settings'
+      env: '${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: ${{ variables.dockerfilePath }}
+      repository: ${{ variables.repositoryName }}
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # Dev deploy stage
 - stage: dev

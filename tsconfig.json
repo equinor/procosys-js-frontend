@@ -1,12 +1,7 @@
 {
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUnusedParameters": false,
-        "noImplicitReturns": true,
         "esModuleInterop": true,
-        "noUnusedLocals": false,
-        "noImplicitAny": true,
         "target": "es5",
         "module": "esnext",
         "moduleResolution": "node",

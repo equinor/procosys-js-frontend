@@ -1,14 +1,27 @@
+import { IconContainer, LogoContainer, MenuContainer, MenuItem, Nav, PlantSelector } from './style';
+import { Info, Lock, Matrix, User } from '../../assets/icons';
+
+import { Dropdown } from './../../components';
 import React from 'react';
-import { Nav, IconContainer, LogoContainer, PlantSelector, PlantSelectorDropdown, MenuContainer, MenuItem } from './style';
-import { Matrix, User, Lock, Info } from '../../assets/icons';
+
+const plants = [{
+    text: 'JOHAN SVERDRUP',
+    value: 'JOHAN_SVERDRUP'
+},
+{
+    text: 'JOHAN CASTBERG',
+    value: 'JOHAN_CASTBERG'
+}];
 
 
 const Header = () => {
     return (
         <Nav>
             <IconContainer><img src={Matrix} /></IconContainer>
-            <LogoContainer>ProCoSys</LogoContainer>
-            <PlantSelector><PlantSelectorDropdown>Plant Selector</PlantSelectorDropdown></PlantSelector>
+            <LogoContainer><span>ProCoSys</span></LogoContainer>
+            <PlantSelector>
+                <Dropdown data={plants} />
+            </PlantSelector>
             <MenuContainer>
                 <MenuItem>New</MenuItem>
                 <MenuItem>Reports</MenuItem>
@@ -21,7 +34,7 @@ const Header = () => {
             </MenuContainer>
 
         </Nav>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

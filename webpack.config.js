@@ -68,7 +68,7 @@ module.exports = {
         /*HTML5 - Always route to index.html (React handles routing) */
         historyApiFallback: true
     },
-    devtool: "source-map",
+    devtool: 'source-map',
     optimization: {
         splitChunks: {
             chunks: 'all'
@@ -86,4 +86,4 @@ module.exports = {
         /* Deletes our build directory when building */
         new CleanWebpackPlugin()
     ]
-}
+};

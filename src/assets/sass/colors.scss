@@ -1,1 +1,16 @@
-$green: #007079;
+:root {
+    --text--default: #3D3D3D;
+    --text--primary-white: #FFF;
+
+    // UI
+    --ui-background--default: #ffffff;
+    --ui-background--light: #f7f7f7;
+
+    // Interactive
+    --interactive-primary--selected-highlight: #e6faec;
+    --interactive-primary--resting: #007079;
+
+    // Shadows
+
+    --shadow-raised: 0px 1px 5px rgba(0, 0, 0, 0.2),0px 3px 4px rgba(0, 0, 0, 0.12),0px 2px 4px rgba(0, 0, 0, 0.14);
+}

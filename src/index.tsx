@@ -1,45 +1,53 @@
 import './assets/sass/global.scss';
 
+import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
+import React, {useRef} from 'react';
+
 import App from './app/index';
-import { AuthProvider } from './contexts/AuthContext';
-import { ThemeProvider } from 'styled-components';
-import React from 'react';
+import AuthService from './auth/AuthService';
 import ReactDOM from 'react-dom';
-import { UserAgentApplication } from 'msal';
 
-const settings = require('./../settings.json');
-const colors = require('sass-extract-loader?{"plugins": ["sass-extract-js"]}!./assets/sass/colors.scss');
-console.log("Colors: ", colors);
+const start = async (): Promise<void> => {
+    const authService = new AuthService();
+    authService.handleRedirectCallback();
 
 
-const auth = {
-    clientId: settings.auth.clientId,
-    redirectUri: window.location.origin,
-    authority: settings.auth.authority,
-};
+    /**
+     * Prevent the application from loading itself when triggered from an iFrame
+     * This is done by the MSAL library, when trying to do a silent refresh
+     *  */
+    if (window.parent != window) {
+        console.info('Aborted further app loading iFrame');
+        return;
+    }
 
-/**
- * Prevent the application from loading itself when triggered from an iFrame
- * This is done by the MSAL library, which
- *  */
-if (window.parent === window) {
-    var element = document.createElement('div');
-    element.setAttribute('id', 'root');
-    element.setAttribute('class', 'container');
+    const Root = (): JSX.Element => {
+        const rootRef = useRef<HTMLDivElement | null>(null);
+        const overlayRef = useRef<HTMLDivElement | null>(null);
+        const context = createProcosysContext({
+            auth: authService
+        });
+
+        return (
+            <ProcosysContext.Provider value={context}>
+                <div id="procosys-root" ref={rootRef}>
+                    <App />
+                </div>
+                <div id="procosys-overlay" ref={overlayRef}>
+                    {/* Empty on purpose */}
+                </div>
+            </ProcosysContext.Provider>
+        );
+    };
+
+    const element = document.createElement('div');
+    element.setAttribute('id', 'app-container');
     document.body.appendChild(element);
 
     ReactDOM.render(
-        <AuthProvider>
-            <ThemeProvider theme={{ colors }}>
-                <App />
-            </ThemeProvider>
-        </AuthProvider>,
-        document.getElementById('root'));
-} else {
-    let context = new UserAgentApplication({ auth });
+        <Root />,
+        document.getElementById('app-container'));
 
-    context.handleRedirectCallback((error: any) => {
-        console.error(`MSAL Frame error: ${error}`);
-    });
-}
+};
 
+start();

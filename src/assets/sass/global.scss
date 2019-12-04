@@ -4,6 +4,19 @@
 
 body {
     font-family: Equinor, sans-serif;
-    background-color: #FFF;
-    color: #000;
+    background-color: var(--ui-background--default);
+    color: var(--text--default);
+}
+#procosys-root {
+    height: 100vh;
+}
+
+#procosys-overlay {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 0px;
+    height: 0px;
+    overflow: visible;
+    z-index: 999;
 }

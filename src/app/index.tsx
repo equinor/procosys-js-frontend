@@ -1,45 +1,30 @@
-import { Link, Route, RouteComponentProps, BrowserRouter as Router, Switch } from 'react-router-dom';
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense } from 'react';
 
-import LazyRoute from '../components/LazyRoute';
-import Spinner from '../components/Spinner';
-import UserGreeting from './../modules/UserGreeting';
+import Loading from '../components/Loading';
+import { ThemeProvider } from 'styled-components';
 import { hot } from 'react-hot-loader';
-import { useAuth } from '../contexts/AuthContext';
-import Header from '../modules/Header';
+import theme from './../assets/theme';
+import { useProcosysContext } from '../core/ProcosysContext';
+
 const Login = React.lazy(() => import('../modules/Login'));
+const GeneralRouter = React.lazy(() => import('./GeneralRouter'));
 
+const App = (): JSX.Element => {
+    const {auth} = useProcosysContext();
 
-const ProCoSysRouter = () => {
-    const auth = useAuth();
-    return (
-        <Router>
-            <Header />
-            <Link to="/hello">Welcome</Link>
-            <Switch>
-                <Route path="/hello" component={(routeProps: RouteComponentProps) => (LazyRoute(UserGreeting, routeProps))} />
-                <Route path="/" exact render={() => <div><h3>Home</h3><button onClick={() => auth.logout()}>Logout</button></div>} />
-                <Route render={() => <h3>404</h3>} />
-            </Switch>
-        </Router>
-    );
-}
+    const userIsLoggedIn = auth.getCurrentUser() != null;
 
-const App = () => {
-    const auth = useAuth();
-    auth.handleRedirectCallback((err) => console.log("Redirect Err", err));
-
-    useEffect(() => {
-        console.log("AuthContext: ", auth);
-    }, [auth])
+    if (!userIsLoggedIn) {
+        auth.login();
+    }
 
     return (
-        <React.Fragment>
-            <Suspense fallback={<Spinner />}>
-                {auth.account ? <ProCoSysRouter /> : <Login />}
+        <ThemeProvider theme={theme}>
+            <Suspense fallback={<Loading />}>
+                {userIsLoggedIn ? <GeneralRouter /> : <Login />}
             </Suspense>
-        </React.Fragment>
-    )
-}
+        </ThemeProvider>
+    );
+};
 
-export default hot(module)(App)
+export default hot(module)(App);

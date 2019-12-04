@@ -1,15 +1,14 @@
-import { RouteComponentProps } from "react-router"
-import React, { Suspense } from "react"
+import React, { Suspense } from 'react';
 
+import Loading from './Loading';
+import { RouteComponentProps } from 'react-router';
 
-const LazyRoute = (CustomComponent: React.FC<any>, routeProps: RouteComponentProps<any>) => {
+const LazyRoute = (CustomComponent: React.FC<any>, routeProps: RouteComponentProps<any>): JSX.Element => {
     return (
-        <div>
-            <Suspense fallback={<div>Loading...</div>} >
-                <CustomComponent {...routeProps} />
-            </Suspense>
-        </div>
-    )
-}
+        <Suspense fallback={<Loading />} >
+            <CustomComponent {...routeProps} />
+        </Suspense>
+    );
+};
 
 export default LazyRoute;

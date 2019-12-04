@@ -22,8 +22,17 @@ export default class ApiClient extends HttpClient {
         this.authService = authService;
         this.client.interceptors.request.use(async (config): Promise<AxiosRequestConfig> => {
             if (!this.authService) throw 'Missing authService initialization in API client';
-            const accessToken = await this.authService.getAccessTokenAsync(resource);
-            config.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
+            try {
+                const accessToken = await this.authService.getAccessTokenAsync(resource);
+                config.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
+            } catch (authError) {
+                if (['consent_required','interaction_required','login_required'].indexOf(authError.errorCode) !== -1) {
+                    this.authService.aquireConcent(resource);
+                    return config;
+                }
+                throw authError;
+            }
+
             return config;
         });
     }

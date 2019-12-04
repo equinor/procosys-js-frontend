@@ -15,7 +15,14 @@ const authConfig: Configuration = {
     // }
 };
 
+const defaultLoginScopes = settings.auth.defaultScopes;
+
 export interface IAuthService {
+    /**
+     * Get the users concent to external application
+     */
+    aquireConcent(resource: string): void;
+
     /**
      * Redirects the user to authority for authentication
      */
@@ -58,7 +65,11 @@ export default class AuthService implements IAuthService {
     }
 
     login(): void {
-        this.authInstance.loginRedirect();
+        this.authInstance.loginRedirect({scopes: defaultLoginScopes});
+    }
+
+    aquireConcent(resource: string): void {
+        this.authInstance.acquireTokenRedirect({scopes: [resource]});
     }
 
     logout(): void {

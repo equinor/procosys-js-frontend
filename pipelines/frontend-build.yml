@@ -1,0 +1,68 @@
+trigger: none
+
+resources:
+  repositories:
+  - repository: self
+  - repository: templates
+    type: github
+    name: equinor/procosys-preservation-infra
+    endpoint: 'Preservation - Frontend'
+
+# Global variables for the pipeline
+variables:
+ - template: templates/variables/procosys-web-variables.yml@templates
+ - template: templates/variables/procosys-global-variables.yml@templates
+
+ - name: 'repositoryName'
+   value: procosys/frontend
+
+stages:
+# common stage. Docker build, tag and push
+- stage: common
+  displayName: 'Common'
+  variables:
+    envName: 'common'
+    envRg: '${{ variables.envRgName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    dockerfilePath: '/.docker/Dockerfile'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+
+  jobs:
+  - template: /templates/pipelines/dockerbuild-frontend.yml@templates
+    parameters:
+      deploymentName: 'docker_build_push'
+      dependsOn: ''
+      env: '${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: ${{ variables.dockerfilePath }}
+      buildContext: '$(Build.SourcesDirectory)'
+      repository: ${{ variables.repositoryName }}
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+
+# Dev deploy stage
+- stage: dev
+  displayName: 'Dev'
+  variables:
+    envName: 'dev'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+
+  jobs:
+
+  - template: /templates/pipelines/webapprelease.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'publish_container_to_webapp'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      webApp: '${{ variables.frontendWebAppName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      envRg: '${{ variables.envRg }}'
+      env: '${{ variables.envName }}'
+      containerRegistry: '${{ variables.containerRegistry }}'
+      repository: ${{ variables.repositoryName }}

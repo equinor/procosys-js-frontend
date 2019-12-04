@@ -10,7 +10,7 @@ resources:
 
 # Global variables for the pipeline
 variables:
- - template: templates/variables/preservation-variables.yml@templates
+ - template: templates/variables/procosys-web-variables.yml@templates
  - template: templates/variables/procosys-global-variables.yml@templates
 
  - name: 'repositoryName'

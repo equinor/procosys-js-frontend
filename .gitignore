@@ -47,3 +47,5 @@ typings/
 
 # Sensitive files
 settings.json
+
+.vs

@@ -42,11 +42,12 @@ export default class CacheService implements ICacheService {
         if (!key || !key.length) {
             throw MissingStorageKeyException;
         }
-        this.cacheKey = key;
+        this.cacheKey = key.toLowerCase();
         this.storageEngine = storage;
     }
 
     private getStorageKey(key: string): string {
+        key = key.toLowerCase();
         key = key.trim().replace(' ', '_');
         return `${this.cacheKey}:${key}`;
     }

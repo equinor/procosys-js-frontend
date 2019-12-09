@@ -6,10 +6,16 @@ describe('Caching Service', () => {
     beforeEach(() => sessionStorage.clear());
     const storedData = {hello: 'world'};
 
+    it('Should lowercase keys', () => {
+        service.setCache('Dataset_1', storedData);
+        const retrievedData = sessionStorage.getItem('testing:dataset_1');
+        const parsedData = JSON.parse(retrievedData);
+        expect(parsedData.data).toEqual(storedData);
+    });
 
     it('Should store data to cache', () => {
         service.setCache('dataset_1', storedData);
-        const retrievedData = sessionStorage.getItem('Testing:dataset_1');
+        const retrievedData = sessionStorage.getItem('testing:dataset_1');
         const parsedData = JSON.parse(retrievedData);
         expect(parsedData.data).toEqual(storedData);
     });

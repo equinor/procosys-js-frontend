@@ -1,36 +1,43 @@
 import React, {useEffect, useState} from 'react';
 
+import CacheService from '../../core/CacheService';
 import {Container} from './style';
 import { Redirect } from 'react-router-dom';
 import Spinner from '../../components/Spinner';
 import { useCurrentUser } from '../../core/UserContext';
 import useRouter from '../../hooks/useRouter';
 
+const cache = new CacheService('default', localStorage);
+
 const NoPlant = (): JSX.Element => {
 
     const [selectedPlant, setSelectedPlant] = useState<string|null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
     const {history} = useRouter();
     const {plants} = useCurrentUser();
+    const cachedPlant = cache.getCache('plant');
+
+    if (cachedPlant && !selectedPlant) {
+        const plant = cachedPlant.data.id.replace('PCS$','');
+        history.replace('/' + plant);
+        setSelectedPlant(plant);
+    }
 
     useEffect(() => {
-        const allPlants = plants;
-        let plant = null;
-        if (allPlants.length > 0) {
-            plant = allPlants[0].id.replace('PCS$','');
-            setSelectedPlant(plant);
+        if (!cachedPlant) {
+            const allPlants = plants;
+            let plant = null;
+            if (allPlants.length > 0) {
+                plant = allPlants[0].id.replace('PCS$','');
+                setSelectedPlant(plant);
+            }
+            plant && history.replace('/' + plant);
         }
-        setLoading(false);
-        plant && history.replace('/' + plant);
     },[plants]);
 
-    if (loading) {
-        return (
-            <Container>
-                <div><Spinner large /></div>
-                <div><h1>Initializing application...</h1></div>
-            </Container>);
+    if (plants.length <= 0) {
+        return (<Container><h1>You dont have access to any plants</h1></Container>);
     }
+
     if (selectedPlant) {
         return (
             <Redirect
@@ -41,7 +48,12 @@ const NoPlant = (): JSX.Element => {
         );
     }
 
-    return (<Container><h1>You dont have access to any plants</h1></Container>);
+    return (
+        <Container>
+            <div><Spinner large /></div>
+            <div><h1>Initializing application...</h1></div>
+        </Container>);
+
 };
 
 export default NoPlant;

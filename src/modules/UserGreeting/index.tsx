@@ -3,14 +3,14 @@ import GraphClient, { ProfileResponse } from '../../http/GraphClient';
 import React, {useEffect, useState} from 'react';
 
 import { Canceler } from 'axios';
+import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
-import {useParams} from 'react-router-dom';
 import { useProcosysContext } from '../../core/ProcosysContext';
 
 const UserGreeting = (): JSX.Element => {
     const user = useCurrentUser();
     const {auth} = useProcosysContext();
-    const { plant } = useParams();
+    const { plant } = useCurrentPlant();
     const [imageUrl, setImageUrl] = useState<string | null>();
     const [profileData, setProfileData] = useState<ProfileResponse | null>();
     let profileRequestToken: null | Canceler = null;
@@ -56,7 +56,7 @@ const UserGreeting = (): JSX.Element => {
             <h2>{(profileData && profileData.jobTitle) || 'Loading user data'}</h2>
             {(imageUrl && <img src={imageUrl} />) || 'Loading image'}
             <br />
-            <h1>PLANT: {plant}</h1>
+            <h1>PLANT: {plant.title}</h1>
 
             <Button onClick={(): void => auth.logout()}>Logout</Button>
         </Container>

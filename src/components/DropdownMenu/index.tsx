@@ -3,7 +3,8 @@ import React, { useRef, useState } from 'react';
 
 import { Shevron } from './../../assets/icons';
 import { useClickOutsideNotifier } from './../../hooks';
-type dropdownItem = {
+
+export type dropdownItem = {
     text: string;
     value: string | number;
 };
@@ -32,7 +33,7 @@ const DropdownMenu = ({
         setIsOpen(false);
     }, containerRef);
 
-    const toggleDropdown = () => {
+    const toggleDropdown = (): void => {
         setIsOpen(!isOpen);
     };
 

@@ -1,11 +1,10 @@
-@import './css-reset.scss';
-@import '../fonts/equinor/equinor-font.css';
-@import './colors.scss';
-
-body {
+* {
     font-family: Equinor, sans-serif;
-    background-color: var(--ui-background--default);
     color: var(--text--default);
+    font-size: 16px;
+}
+body {
+    background-color: var(--ui-background--default);
 }
 #procosys-root {
     height: 100vh;
@@ -19,4 +18,24 @@ body {
     height: 0px;
     overflow: visible;
     z-index: 999;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

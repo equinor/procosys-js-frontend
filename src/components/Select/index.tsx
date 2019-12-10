@@ -4,27 +4,27 @@ import React, { useRef, useState } from 'react';
 import { Shevron } from './../../assets/icons';
 import { useClickOutsideNotifier } from './../../hooks';
 
-export type dropdownItem = {
+export type SelectItem = {
     text: string;
     value: string | number;
 };
 
-interface DropDownProps {
-    data: Array<dropdownItem>;
-    selected?: dropdownItem;
+type SelectProps =  {
+    data: Array<SelectItem>;
+    selected?: SelectItem;
     disabled?: boolean;
-    onChange?: (newValue: dropdownItem, oldValue?: dropdownItem) => void;
+    onChange?: (newValue: SelectItem, oldValue?: SelectItem) => void;
 }
 
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
-const DropdownMenu = ({
+const Select = ({
     disabled = false,
     data = [],
     selected,
     onChange = (): void => {},
-}: DropDownProps): JSX.Element => {
+}: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(selected);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ const DropdownMenu = ({
         setIsOpen(!isOpen);
     };
 
-    const selectItem = (item: dropdownItem): void => {
+    const selectItem = (item: SelectItem): void => {
         onChange(item, selectedItem);
         setSelectedItem(item);
         setIsOpen(false);
@@ -99,4 +99,4 @@ const DropdownMenu = ({
     );
 };
 
-export default DropdownMenu;
+export default Select;

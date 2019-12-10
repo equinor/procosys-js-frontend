@@ -1,9 +1,9 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import DropdownMenu from './../index';
+import DropdownMenu from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import theme from './../../../assets/theme';
+import theme from '../../../assets/theme';
 
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
@@ -76,7 +76,7 @@ describe('<DropdownMenu />', () => {
     });
 
     it('Hides dropdown when  asd clicking outside of element', () => {
-        const { getByText, queryByText, rerender } = render(
+        const { getByText, queryByText } = render(
             <div>
                 <div>ClickMe</div>
                 <DropdownMenu data={items} />
@@ -85,19 +85,7 @@ describe('<DropdownMenu />', () => {
 
         getByText('Select').click();
         expect(queryByText(items[0].text)).toBeInTheDocument();
-
-        /**
-         * POSSIBLE LIBRARY BUG
-         * Code fails to re-render callback with new state in test environment
-         *
-         * Open Stack Overflow Question:
-         * https://stackoverflow.com/questions/58915420/react-hook-callback-uses-old-state-when-ran-in-jest-react-testing-library
-         *
-         * Workaround:
-         * re-render
-         */
         fireEvent.mouseDown(getByText('ClickMe'));
-        rerender();
 
         expect(queryByText(items[0].text)).toBeNull();
     });

@@ -1,4 +1,4 @@
-import './assets/sass/global.scss';
+import './assets/sass/procosys-styles.scss';
 
 import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
 import React, {useRef} from 'react';

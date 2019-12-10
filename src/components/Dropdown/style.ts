@@ -1,15 +1,15 @@
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
-    position: relative;
     width: 100%;
     ul {
         position: absolute;
-        top: 2rem;
-        width: 100%;
+        margin-top: 0.5rem;
+        max-height: 300px;
         background-color: var(--ui-background--default);
         border-radius: 4px;
-        box-shadow: var(--shadow-raised)
+        box-shadow: var(--shadow-raised);
+        overflor-y: scroll;
     }
 `;
 
@@ -41,17 +41,9 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     `}
 `;
 
-export type DropDownItemProps = {
-    selected: boolean;
-}
-
-export const DropdownItem = styled.li<DropDownItemProps>`
-    background-color: ${(props): any => props.selected ? 'var(--ui-background--light)' : 'transparent'};
+export const DropdownItem = styled.li`
     padding: 24px 16px;
     border: 0;
     text-align:left;
     font-weight: normal;
 `;
-DropdownItem.defaultProps = {
-    selected: false
-};

@@ -1,9 +1,9 @@
 import { IconContainer, LogoContainer, MenuContainer, MenuItem, Nav, PlantSelector } from './style';
 import { Info, Lock, Matrix, User } from '../../assets/icons';
 import React, {useState} from 'react';
+import Select, { SelectItem } from '../../components/Select';
 
-import { Dropdown } from './../../components';
-import { dropdownItem } from '../../components/DropdownMenu';
+import Dropdown from '../../components/Dropdown';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 
@@ -16,7 +16,7 @@ const Header: React.FC = (): JSX.Element => {
         return user.plants.map(plant => ({text: plant.title, value: plant.id}));
     });
 
-    const changePlant = (plantOption: dropdownItem): void => {
+    const changePlant = (plantOption: SelectItem): void => {
         plant.setCurrentPlant(plantOption.value as string);
     };
 
@@ -25,10 +25,14 @@ const Header: React.FC = (): JSX.Element => {
             <IconContainer><img src={Matrix} /></IconContainer>
             <LogoContainer><span>ProCoSys</span></LogoContainer>
             <PlantSelector>
-                <Dropdown data={plants} selected={{text: plant.plant.title, value: plant.plant.title}} onChange={changePlant} />
+                <Select data={plants} selected={{text: plant.plant.title, value: plant.plant.title}} onChange={changePlant} />
             </PlantSelector>
             <MenuContainer>
-                <MenuItem>New</MenuItem>
+                <MenuItem>
+                    <Dropdown text='New'>
+                        <h2>Hello World</h2>
+                    </Dropdown>
+                </MenuItem>
                 <MenuItem>Reports</MenuItem>
                 <MenuItem>Search</MenuItem>
             </MenuContainer>

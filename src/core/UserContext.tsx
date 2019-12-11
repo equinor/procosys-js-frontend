@@ -5,6 +5,7 @@ import Error from '../components/Error';
 import Loading from '../components/Loading';
 import ProCoSysClient from '../http/ProCoSysClient';
 import propTypes from 'prop-types';
+import styled from 'styled-components';
 import { useProcosysContext } from './ProcosysContext';
 
 type Plant = {
@@ -25,6 +26,10 @@ export type User = {
 
 const UserContext = React.createContext<User>({} as User);
 
+const Container = styled.div`
+    height: 200px;
+`;
+
 export const UserContextProvider: React.FC = (props): JSX.Element => {
     const {auth} = useProcosysContext();
     const {children} = props;
@@ -35,12 +40,18 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     const [loading, setLoading] = useState(true);
     const [permissions, setPermissions] = useState<User['permissions']>([]);
     const [plants, setPlants] = useState<User['plants']>([]);
+    const [errorEncountered, setErrorEncountered] = useState(false);
     const apiClient = new ProCoSysClient(auth);
     let plantRequestCanceler: Canceler;
 
     async function fetchPlants(): Promise<void> {
-        const plantResponse = await apiClient.getAllPlantsForUserAsync((c) => {plantRequestCanceler = c;});
-        setPlants(plantResponse);
+        try {
+            const plantResponse = await apiClient.getAllPlantsForUserAsync((c) => {plantRequestCanceler = c;});
+            setPlants(plantResponse);
+        } catch (error) {
+            setErrorEncountered(true);
+        }
+
         setLoading(false);
     }
 
@@ -50,11 +61,15 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     },[]);
 
     if (loading) {
-        return (<Loading title="Collecting information about your account" />);
+        return (<Container><Loading title="Collecting information about your account" /></Container>);
+    }
+
+    if (errorEncountered) {
+        return (<Container><Error large title='We encountered an unexpected error, try again or contact support for further assistance' /></Container>);
     }
 
     if (name === '' || !plants.length) {
-        return <Error title='You dont seem to have an account in ProCoSys - use AccessIT to request access' />;
+        return (<Container><Error large title='You dont seem to have an account in ProCoSys - use AccessIT to request access' /></Container>);
     }
 
     return (

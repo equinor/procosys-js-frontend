@@ -42,4 +42,7 @@ export const MenuContainer = styled.div`
 
 export const MenuItem = styled.div`
     padding: 0px 16px;
+    a {
+        text-decoration: none;
+    }
 `;

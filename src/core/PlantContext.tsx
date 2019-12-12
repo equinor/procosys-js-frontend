@@ -8,14 +8,15 @@ import { useCurrentUser } from './UserContext';
 import { useParams } from 'react-router';
 import useRouter from '../hooks/useRouter';
 
-type Plant = {
+type PlantContextDetails = {
     id: string;
     title: string;
+    pathId: string;
 }
 
 const PlantContext = React.createContext<PlantContextProps>({} as PlantContextProps);
 type PlantContextProps = {
-    plant: Plant;
+    plant: PlantContextDetails;
     setCurrentPlant: (plantId: string) => void;
 }
 
@@ -32,9 +33,9 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
         return <ErrorComponent title='Missing plant in path' />;
     }
 
-    const [currentPlant, setCurrentPlantInContext] = useState<Plant>(() => {
+    const [currentPlant, setCurrentPlantInContext] = useState<PlantContextDetails>(() => {
         const plant = user.plants.filter(plant => plant.id === `PCS$${plantInPath}`)[0];
-        return plant;
+        return {id: plant.id, title: plant.title, pathId: plantInPath};
     });
 
     const setCurrentPlant = (plantId: string): void => {
@@ -43,7 +44,8 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
         if (plantsFiltered.length <= 0) {
             throw new InvalidParameterException(`PlantID: ${plantId} does not exist`);
         }
-        const plant = plantsFiltered[0];
+        const plant = plantsFiltered[0] as PlantContextDetails;
+        plant.pathId = normalizedPlantId;
         cache.setCache('plant', plant);
         setCurrentPlantInContext(plant);
     };

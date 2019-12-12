@@ -9,7 +9,7 @@ export const Container = styled.div`
         background-color: var(--ui-background--default);
         border-radius: 4px;
         box-shadow: var(--shadow-raised);
-        overflor-y: scroll;
+        overflow-y: scroll;
     }
 `;
 

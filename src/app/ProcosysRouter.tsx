@@ -1,7 +1,6 @@
 import {
     Route,
     RouteComponentProps,
-    BrowserRouter as Router,
     Switch,
     useRouteMatch
 } from 'react-router-dom';
@@ -20,30 +19,27 @@ const Page404 = (): JSX.Element => {
 
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
-
     return (
         <PlantContextProvider>
-            <Router>
-                <Header />
+            <Header />
 
-                <Switch>
-                    <Route
-                        path={path}
-                        exact
-                        component={(routeProps: RouteComponentProps): JSX.Element =>
-                            LazyRoute(UserGreeting, routeProps)
-                        }
-                    />
-                    <Route
-                        path={`${path}/preservation`}
-                        exact
-                        component={(routeProps: RouteComponentProps): JSX.Element =>
-                            LazyRoute(Preservation, routeProps)
-                        }
-                    />
-                    <Route component={Page404} />
-                </Switch>
-            </Router>
+            <Switch>
+                <Route
+                    path={path}
+                    exact
+                    component={(routeProps: RouteComponentProps): JSX.Element =>
+                        LazyRoute(UserGreeting, routeProps)
+                    }
+                />
+                <Route
+                    path={`${path}/preservation`}
+                    exact
+                    component={(routeProps: RouteComponentProps): JSX.Element =>
+                        LazyRoute(Preservation, routeProps)
+                    }
+                />
+                <Route component={Page404} />
+            </Switch>
         </PlantContextProvider>
     );
 };

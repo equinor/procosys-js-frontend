@@ -5,7 +5,7 @@ import ErrorComponent from '../components/Error';
 import Loading from '../components/Loading';
 import propTypes from 'prop-types';
 import { useCurrentUser } from './UserContext';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import useRouter from '../hooks/useRouter';
 
 type PlantContextDetails = {
@@ -26,7 +26,7 @@ const cache = new CacheService('Default', localStorage);
 
 export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
     const user = useCurrentUser();
-    const {history} = useRouter();
+    const {history, location} = useRouter();
     const {plant: plantInPath} = useParams();
 
     if (!plantInPath || plantInPath === '') {
@@ -51,20 +51,10 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
     };
 
     useEffect(() => {
-        // const defaultPlantCache = cache.getCache('plant');
-
-        // // From Cache
-        // if (defaultPlantCache) {
-        //     const defaultPlant = defaultPlantCache.data as Plant;
-        //     if (defaultPlant) {
-        //         const userHasAccessToDefaultPlant = user.plants.filter(plant => plant.id === defaultPlant.id);
-        //         if (userHasAccessToDefaultPlant) {
-        //             setCurrentPlant(defaultPlant);
-        //         }
-        //     }
-        // }
-        if (!currentPlant) return;
-        history.push(`/${currentPlant.id.replace('PCS$','')}`);
+        if (!currentPlant || currentPlant.pathId === plantInPath) return;
+        let newPath = `/${currentPlant.pathId}`;
+        newPath = location.pathname.replace(plantInPath,currentPlant.pathId);
+        history.push(newPath);
     }, [currentPlant]);
 
     useEffect(() => {

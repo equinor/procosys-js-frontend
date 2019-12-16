@@ -9,7 +9,6 @@ export const Nav = styled.nav`
 `;
 
 export const SubNav = styled.nav`
-    display: flex;
     border-bottom: 2px solid var(--ui-background--medium);
     a {
         display: inline-block;

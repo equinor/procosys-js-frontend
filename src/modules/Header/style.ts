@@ -5,7 +5,21 @@ export const Nav = styled.nav`
     grid-template-columns: auto auto 200px 1fr auto;
     grid-column-gap: 10px;
     grid-template-rows: 64px;
-    border-bottom: 2px solid #E6E6E6;
+    border-bottom: 2px solid var(--ui-background--light);
+`;
+
+export const SubNav = styled.nav`
+    display: flex;
+    border-bottom: 2px solid var(--ui-background--medium);
+    a {
+        display: inline-block;
+        padding: 16px;
+        text-decoration: none;
+        &.active {
+            border-bottom: 2px solid var(--interactive-primary--resting);
+            margin-bottom: -2px;
+        }
+    }
 `;
 
 export const IconContainer = styled.div`

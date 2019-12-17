@@ -1,14 +1,33 @@
-import { Container } from './ScopeOverview.style';
-import React from 'react';
+import { Container, Header } from './ScopeOverview.style';
+import React, {useMemo} from 'react';
+
+import { Select } from '../../../../components';
+import { SelectItem } from '../../../../components/Select';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
 
-    const {project} = usePreservationContext();
+    const {project, availableProjects, setCurrentProject} = usePreservationContext();
+
+    const projectSelectOptions = useMemo(() => {
+        return availableProjects.map(project => {
+            return {
+                text: project.description,
+                value: project.id
+            };
+        });
+    }, [availableProjects]);
+
+    const changeProject = (project: SelectItem): void => {
+        setCurrentProject(project.value as number);
+    };
 
     return (
         <Container>
-            <h1>Preservation tags</h1>
+            <Header>
+                <h1>Preservation tags</h1>
+                <Select data={projectSelectOptions} selected={{text: project.description, value: project.id}} onChange={changeProject} />
+            </Header>
             <h3>{project.description}</h3>
             <table>
                 <thead>

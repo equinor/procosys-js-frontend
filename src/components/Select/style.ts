@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
-    width: 100%;
+    display: inline-block;
     ul {
         position: absolute;
         margin-top: 0.5rem;

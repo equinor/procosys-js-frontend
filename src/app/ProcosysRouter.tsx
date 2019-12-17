@@ -2,6 +2,7 @@ import {
     Route,
     RouteComponentProps,
     Switch,
+    useParams,
     useRouteMatch
 } from 'react-router-dom';
 
@@ -19,11 +20,12 @@ const Page404 = (): JSX.Element => {
 
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
+    const {plant} = useParams();
     return (
         <PlantContextProvider>
             <Header />
 
-            <Switch>
+            <Switch key={plant}>
                 <Route
                     path={path}
                     exact

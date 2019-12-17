@@ -1,9 +1,11 @@
 import React, {useContext} from 'react';
 
 import {IAuthService} from '../auth/AuthService';
+import ProCoSysClient from '../http/ProCoSysClient';
 
 export interface IProcosysContext {
     auth: IAuthService;
+    procosysApiClient: ProCoSysClient;
 }
 
 type createContextOptions = {
@@ -14,7 +16,8 @@ const ProcosysContext = React.createContext<IProcosysContext>({} as IProcosysCon
 
 export const createProcosysContext = ({auth}: createContextOptions): IProcosysContext => {
     return {
-        auth: auth
+        auth: auth,
+        procosysApiClient: new ProCoSysClient(auth)
     };
 };
 

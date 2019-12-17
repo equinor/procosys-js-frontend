@@ -25,7 +25,7 @@ const start = async (): Promise<void> => {
         const rootRef = useRef<HTMLDivElement | null>(null);
         const overlayRef = useRef<HTMLDivElement | null>(null);
         const context = createProcosysContext({
-            auth: authService
+            auth: authService,
         });
 
         return (

@@ -6,6 +6,7 @@ import Loading from '../components/Loading';
 import propTypes from 'prop-types';
 import { useCurrentUser } from './UserContext';
 import { useParams } from 'react-router-dom';
+import { useProcosysContext } from './ProcosysContext';
 import useRouter from '../hooks/useRouter';
 
 type PlantContextDetails = {
@@ -26,6 +27,7 @@ const cache = new CacheService('Default', localStorage);
 
 export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
     const user = useCurrentUser();
+    const {procosysApiClient} = useProcosysContext();
     const {history, location} = useRouter();
     const {plant: plantInPath} = useParams();
 
@@ -56,6 +58,10 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
         newPath = location.pathname.replace(plantInPath,currentPlant.pathId);
         history.push(newPath);
     }, [currentPlant]);
+
+    useEffect(() => {
+        procosysApiClient.setCurrentPlant(currentPlant.id);
+    },[currentPlant]);
 
     useEffect(() => {
         setCurrentPlant(plantInPath);

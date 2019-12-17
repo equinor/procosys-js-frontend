@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import { Canceler } from '../http/HttpClient';
 import Error from '../components/Error';
 import Loading from '../components/Loading';
-import ProCoSysClient from '../http/ProCoSysClient';
 import propTypes from 'prop-types';
 import styled from 'styled-components';
 import { useProcosysContext } from './ProcosysContext';
@@ -31,7 +30,7 @@ const Container = styled.div`
 `;
 
 export const UserContextProvider: React.FC = (props): JSX.Element => {
-    const {auth} = useProcosysContext();
+    const {auth, procosysApiClient} = useProcosysContext();
     const {children} = props;
     const [name, setName] = useState(() => {
         const account = auth.getCurrentUser();
@@ -41,12 +40,11 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     const [permissions, setPermissions] = useState<User['permissions']>([]);
     const [plants, setPlants] = useState<User['plants']>([]);
     const [errorEncountered, setErrorEncountered] = useState(false);
-    const apiClient = new ProCoSysClient(auth);
     let plantRequestCanceler: Canceler;
 
     async function fetchPlants(): Promise<void> {
         try {
-            const plantResponse = await apiClient.getAllPlantsForUserAsync((c) => {plantRequestCanceler = c;});
+            const plantResponse = await procosysApiClient.getAllPlantsForUserAsync((c) => {plantRequestCanceler = c;});
             setPlants(plantResponse);
         } catch (error) {
             setErrorEncountered(true);

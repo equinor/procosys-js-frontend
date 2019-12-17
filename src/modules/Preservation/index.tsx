@@ -1,22 +1,31 @@
-import {Button, Container} from './style';
+import {Route, Switch, useRouteMatch} from 'react-router-dom';
 
+import { Container } from './style';
+import { PreservationContextProvider } from './context/PreservationContext';
 import React from 'react';
-import { useCurrentUser } from '../../core/UserContext';
-import {useParams} from 'react-router-dom';
+import ScopeOverview from './views/ScopeOverview/ScopeOverview';
 
 const Preservation = (): JSX.Element => {
 
-    const user = useCurrentUser();
-
-    const { plant } = useParams();
+    const { path } = useRouteMatch();
 
     return (
-        <Container>
-            <h1>Preservation</h1>
-            <h1>{user.name} - {plant}</h1>
-            <br />
-            <Button>Logout</Button>
-        </Container>
+        <PreservationContextProvider>
+            <Container>
+                <Switch>
+                    <Route
+                        path={path}
+                        exact
+                        component={ScopeOverview}
+                    />
+                    <Route
+                        component={(): JSX.Element =>
+                            (<h2>Sorry, this page does not exist</h2>)
+                        }
+                    />
+                </Switch>
+            </Container>
+        </PreservationContextProvider>
     );
 };
 

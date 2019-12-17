@@ -1,4 +1,5 @@
 import App from './../index';
+import ProCoSysClient from '../../http/ProCoSysClient';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { render } from '@testing-library/react';
@@ -41,7 +42,10 @@ describe('Renders <App /> when authenticated', () => {
     });
 
     it('Renders Plant Selector when signed in, without plant access', async () => {
-        useProcosysContext.mockImplementation(() => ({auth: {getCurrentUser: () => ({ })}}));
+        useProcosysContext.mockImplementation(() => ({
+            auth: {getCurrentUser: () => ({ })},
+            procosysApiClient: ProCoSysClient()
+        }));
         let renderedContainer = null;
         await act(async () => {
             const {container} = render(<App />);

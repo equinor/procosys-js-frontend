@@ -33,8 +33,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
 
     const setCurrentProject = (projectId: number): void => {
-        console.log('Settings current project: ', projectId);
-        if (!availableProjects) {
+        if (!availableProjects || !projectId) {
             return;
         }
 
@@ -43,7 +42,6 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
             setCurrentProjectInContext(project);
             return;
         }
-
         throw new InvalidProjectException();
     };
 
@@ -68,6 +66,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
         try {
             if (defaultProject) {
                 setCurrentProject(defaultProject.id);
+                return;
             }
             throw new InvalidProjectException();
         } catch (error) {

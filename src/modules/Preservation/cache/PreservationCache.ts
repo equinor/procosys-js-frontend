@@ -9,7 +9,7 @@ enum storageKeys {
 const localStorageCache = new CacheService(storageKeys.PRESERVATION, localStorage);
 
 const setDefaultProject = (project: ProjectDetails): void => {
-    localStorageCache.setCache(storageKeys.PROJECT, JSON.stringify(project));
+    localStorageCache.setCache(storageKeys.PROJECT, project);
 };
 
 const getDefaultProject = (): ProjectDetails | null => {

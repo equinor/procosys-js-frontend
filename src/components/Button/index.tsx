@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledButton, StyledButtonLabel } from './style';
+import { StyledButton } from './style';
 
 interface ButtonProps {
     primary?: boolean;
@@ -10,9 +10,7 @@ interface ButtonProps {
 const Button = (props: ButtonProps): JSX.Element => {
     return (
         <StyledButton {...props}>
-            <StyledButtonLabel {...props}>
-                {props.text}
-            </StyledButtonLabel>
+            {props.text}
         </StyledButton>
     );
 };

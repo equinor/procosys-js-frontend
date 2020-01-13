@@ -47,9 +47,7 @@ export type DropDownItemProps = {
 }
 
 export const DropdownItem = styled.li<DropDownItemProps>`
-    background-color: ${(props): any => props.selected
-        ? css`${tokens.colors.ui.background__light.rgba}`
-        : 'transparent'};
+    background-color: ${(props): any => props.selected ? tokens.colors.ui.background__light.rgba : 'transparent'};
     padding: 24px 16px;
     border: 0;
     text-align:left;

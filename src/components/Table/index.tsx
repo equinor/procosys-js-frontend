@@ -17,6 +17,7 @@
 // } from '../../assets/edsIcons';
 import MaterialTable, {MaterialTableProps} from 'material-table';
 
+import {Account} from '@equinor/eds-icons';
 import React from 'react';
 
 const tableIcons = {
@@ -40,9 +41,13 @@ const tableIcons = {
 };
 
 const Table = (props: MaterialTableProps<any>): any => {
-    return (<MaterialTable
-        icons={tableIcons}
-        {...props} />);
+    return (
+        <>
+            <span>{Account}</span>
+            <MaterialTable
+                icons={tableIcons}
+                {...props} />
+        </>);
 };
 
 export default Table;

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -11,6 +12,7 @@ export const Container = styled.div`
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
         overflow-y: scroll;
+        z-index: 100;
     }
 `;
 

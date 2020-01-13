@@ -8,7 +8,7 @@ import { usePreservationContext } from '../../context/PreservationContext';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
 
-    const {project, availableProjects, setCurrentProject} = usePreservationContext();
+    const {project, availableProjects, setCurrentProject, apiClient} = usePreservationContext();
 
     const projectSelectOptions = useMemo(() => {
         return availableProjects.map(project => {
@@ -18,6 +18,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             };
         });
     }, [availableProjects]);
+
+    useMemo(async () => {
+        const tags = await apiClient.getTags();
+        console.log('Tags: ', tags);
+    },[]);
 
     const changeProject = (project: SelectItem): void => {
         setCurrentProject(project.value as number);

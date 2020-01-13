@@ -1,7 +1,7 @@
 import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
 import React, { useRef, useState } from 'react';
 
-import { Shevron } from './../../assets/icons';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
 export type SelectItem = {
@@ -23,7 +23,7 @@ const Select = ({
     disabled = false,
     data = [],
     selected,
-    onChange = (): void => {},
+    onChange = (): void => {/*eslint-disable-line no-empty */},
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(selected);
@@ -57,7 +57,7 @@ const Select = ({
                 {selectedText}
 
                 <DropdownIcon>
-                    <img src={Shevron} />
+                    <KeyboardArrowDownIcon />
                 </DropdownIcon>
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (

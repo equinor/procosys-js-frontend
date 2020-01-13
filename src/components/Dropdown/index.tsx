@@ -1,23 +1,24 @@
 import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
 import React, { useRef, useState } from 'react';
 
-import { Shevron } from './../../assets/icons';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
 type DropdownProps = {
     disabled?: boolean;
-    text: string;
-    children: JSX.Element[] | JSX.Element;
+    text?: string;
+    children?: JSX.Element[] | JSX.Element;
+    Icon?: JSX.Element;
 }
 
 const KEYCODE_ESCAPE = 27;
 
 const Select: React.FC<DropdownProps> = ({
-    disabled = false, text = '', children
+    disabled = false, text = '', Icon = <KeyboardArrowDownIcon />,  children
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    children = React.Children.toArray(children);
+    children = children ? React.Children.toArray(children) : [];
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -40,7 +41,7 @@ const Select: React.FC<DropdownProps> = ({
                 {text}
 
                 <DropdownIcon>
-                    <img src={Shevron} />
+                    {Icon}
                 </DropdownIcon>
             </DropdownButton>
             {isOpen && children && children.length > 0 && !disabled && (

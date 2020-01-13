@@ -5,11 +5,12 @@ interface ButtonProps {
     primary?: boolean;
     disabled?: boolean;
     text: string;
+    onClick?: () => void;
 }
 
 const Button = (props: ButtonProps): JSX.Element => {
     return (
-        <StyledButton {...props}>
+        <StyledButton onClick={props.onClick} {...props}>
             {props.text}
         </StyledButton>
     );

@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 
 import { Select } from '../../../../components';
 import { SelectItem } from '../../../../components/Select';
+import Table from './../../../../components/Table';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -28,38 +29,37 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <h1>Preservation tags</h1>
                 <Select data={projectSelectOptions} selected={{ text: project.description, value: project.id }} onChange={changeProject} />
             </Header>
-            <h3>{project.description}</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Tag No</th>
-                        <th>Tag Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>T-2000-HDF</td>
-                        <td>This is a tag</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>T-1000-SJD</td>
-                        <td>This is a tag</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>T-1000-SJD</td>
-                        <td>This is a tag</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>T-1000-SJD</td>
-                        <td>This is a tag</td>
-                    </tr>
-                </tbody>
-            </table>
+            <Table columns={[
+                {title: 'Tag nr', field: 'tagno'},
+                {title: 'Description', field: 'description'},
+                {title: 'Next', field: 'nextpreservation'},
+                {title: 'OS', field: 'os'},
+                {title: 'POnr', field: 'pono'},
+                {title: 'Area', field: 'area'},
+                {title: 'Resp', field: 'responsible'},
+                {title: 'Disc', field: 'disc'},
+                {title: 'Status', field: 'status'},
+            ]}
+            data={[
+                {
+                    tagno: '20CJ009-M01',
+                    description: 'RETURN CIRCULATION PUMP - MOTOR',
+                    nextpreservation: '2019W26',
+                    os: 0,
+                    pono: 'AB123',
+                    area: 'A123',
+                    responsible: 'AIGPH',
+                    disc: 'A',
+                    status: 'Active'
+
+                }
+            ]}
+            options={{
+                showTitle: false,
+                selection: true
+            }}
+            onSelectionChange={(test): void => console.log('Selection changed: ', test)}
+            style={{boxShadow: 'none'}} />
         </Container>
     );
 };

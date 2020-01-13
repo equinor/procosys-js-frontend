@@ -30,7 +30,7 @@ const Select: React.FC<DropdownProps> = ({
     };
 
     return (
-        <Container ref={containerRef} alignRight={openLeft || false}>
+        <Container ref={containerRef} openLeft={openLeft || false}>
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 type ContainerProps = {
-    alignRight?: boolean;
+    openLeft?: boolean;
 }
 export const Container = styled.div<ContainerProps>`
     width: 100%;
@@ -15,7 +15,7 @@ export const Container = styled.div<ContainerProps>`
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
         overflow-y: scroll;
-        ${(props): any => props.alignRight && css`
+        ${(props): any => props.openLeft && css`
             right: 0px;
         `}
     }

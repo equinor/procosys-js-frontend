@@ -1,7 +1,11 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div`
+type ContainerProps = {
+    alignRight?: boolean;
+}
+export const Container = styled.div<ContainerProps>`
     width: 100%;
     ul {
         position: absolute;
@@ -11,6 +15,9 @@ export const Container = styled.div`
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
         overflow-y: scroll;
+        ${(props): any => props.alignRight && css`
+            right: 0px;
+        `}
     }
 `;
 

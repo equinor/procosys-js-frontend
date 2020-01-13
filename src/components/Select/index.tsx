@@ -14,6 +14,7 @@ type SelectProps =  {
     selected?: SelectItem;
     disabled?: boolean;
     onChange?: (newValue: SelectItem, oldValue?: SelectItem) => void;
+    openLeft?: boolean;
 }
 
 const KEYCODE_ENTER = 13;
@@ -24,6 +25,7 @@ const Select = ({
     data = [],
     selected,
     onChange = (): void => {/*eslint-disable-line no-empty */},
+    openLeft,
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(selected);
@@ -45,7 +47,7 @@ const Select = ({
 
     const selectedText = (selectedItem && selectedItem.text) || 'Select';
     return (
-        <Container ref={containerRef}>
+        <Container ref={containerRef} openLeft={openLeft || false}>
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}

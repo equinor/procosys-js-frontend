@@ -9,12 +9,13 @@ type DropdownProps = {
     text?: string;
     children?: JSX.Element[] | JSX.Element;
     Icon?: JSX.Element;
+    openLeft?: boolean;
 }
 
 const KEYCODE_ESCAPE = 27;
 
 const Select: React.FC<DropdownProps> = ({
-    disabled = false, text = '', Icon = <KeyboardArrowDownIcon />,  children
+    disabled = false, text = '', Icon = <KeyboardArrowDownIcon />,  children, openLeft
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +30,7 @@ const Select: React.FC<DropdownProps> = ({
     };
 
     return (
-        <Container ref={containerRef}>
+        <Container ref={containerRef} alignRight={openLeft || false}>
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}

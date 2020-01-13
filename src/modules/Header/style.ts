@@ -1,21 +1,22 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Nav = styled.nav`
     display: grid;
     grid-template-columns: auto auto 200px 1fr auto;
     grid-column-gap: 10px;
     grid-template-rows: 64px;
-    border-bottom: 2px solid var(--ui-background--light);
+    border-bottom: 2px solid ${tokens.colors.ui.background__light.rgba};
 `;
 
 export const SubNav = styled.nav`
-    border-bottom: 2px solid var(--ui-background--medium);
+    border-bottom: 2px solid ${tokens.colors.ui.background__medium.rgba};
     a {
         display: inline-block;
         padding: 16px;
         text-decoration: none;
         &.active {
-            border-bottom: 2px solid var(--interactive-primary--resting);
+            border-bottom: 2px solid ${tokens.colors.interactive.primary__resting.rgba};
             margin-bottom: -2px;
         }
     }
@@ -42,7 +43,7 @@ export const PlantSelector = styled.div`
     display: flex;
     align-items: center;
     button {
-        color: var(--interactive-primary--resting);
+        color: ${tokens.colors.interactive.primary__resting.rgba};
     }
     font-weight: 500;
 `;

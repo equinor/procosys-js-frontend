@@ -29,13 +29,37 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <h1>Preservation tags</h1>
                 <Select data={projectSelectOptions} selected={{text: project.description, value: project.id}} onChange={changeProject} />
             </Header>
-            <h3>{project.description}</h3>
             <Table columns={[
-                {title: 'Test', field: 'name'}
+                {title: 'Tag nr', field: 'tagno'},
+                {title: 'Description', field: 'description'},
+                {title: 'Next', field: 'nextpreservation'},
+                {title: 'OS', field: 'os'},
+                {title: 'POnr', field: 'pono'},
+                {title: 'Area', field: 'area'},
+                {title: 'Resp', field: 'responsible'},
+                {title: 'Disc', field: 'disc'},
+                {title: 'Status', field: 'status'},
             ]}
             data={[
-                {name: 'Hello'}
-            ]}/>
+                {
+                    tagno: '20CJ009-M01',
+                    description: 'RETURN CIRCULATION PUMP - MOTOR',
+                    nextpreservation: '2019W26',
+                    os: 0,
+                    pono: 'AB123',
+                    area: 'A123',
+                    responsible: 'AIGPH',
+                    disc: 'A',
+                    status: 'Active'
+
+                }
+            ]}
+            options={{
+                showTitle: false,
+                selection: true
+            }}
+            onSelectionChange={(test): void => console.log('Selection changed: ', test)}
+            style={{boxShadow: 'none'}} />
         </Container>
     );
 };

@@ -1,5 +1,5 @@
 import { Container, Header } from './ScopeOverview.style';
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 
 import { Select } from '../../../../components';
 import { SelectItem } from '../../../../components/Select';
@@ -8,7 +8,7 @@ import { usePreservationContext } from '../../context/PreservationContext';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
 
-    const {project, availableProjects, setCurrentProject} = usePreservationContext();
+    const { project, availableProjects, setCurrentProject } = usePreservationContext();
 
     const projectSelectOptions = useMemo(() => {
         return availableProjects.map(project => {
@@ -27,7 +27,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         <Container>
             <Header>
                 <h1>Preservation tags</h1>
-                <Select data={projectSelectOptions} selected={{text: project.description, value: project.id}} onChange={changeProject} />
+                <Select data={projectSelectOptions} selected={{ text: project.description, value: project.id }} onChange={changeProject} />
             </Header>
             <Table columns={[
                 {title: 'Tag nr', field: 'tagno'},

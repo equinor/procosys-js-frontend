@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     width: 100%;
@@ -6,9 +7,9 @@ export const Container = styled.div`
         position: absolute;
         margin-top: 0.5rem;
         max-height: 300px;
-        background-color: var(--ui-background--default);
+        background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
-        box-shadow: var(--shadow-raised);
+        box-shadow: ${tokens.elevation.raised};
         overflow-y: scroll;
     }
 `;
@@ -34,7 +35,7 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     ${(props): any => props.isOpen && css`
-        background-color: var(--interactive-primary--selected-highlight);
+        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
         /* :focus & {
             outline: none;
         } */

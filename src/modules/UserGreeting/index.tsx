@@ -1,7 +1,7 @@
-import {Button, Container} from './style';
+import { Container } from './style';
+import { Button } from '@equinor/eds-core-react';
 import GraphClient, { ProfileResponse } from '../../http/GraphClient';
-import React, {useEffect, useState} from 'react';
-
+import React, { useEffect, useState } from 'react';
 import { Canceler } from 'axios';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
@@ -9,7 +9,7 @@ import { useProcosysContext } from '../../core/ProcosysContext';
 
 const UserGreeting = (): JSX.Element => {
     const user = useCurrentUser();
-    const {auth} = useProcosysContext();
+    const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const [imageUrl, setImageUrl] = useState<string | null>();
     const [profileData, setProfileData] = useState<ProfileResponse | null>();
@@ -20,7 +20,7 @@ const UserGreeting = (): JSX.Element => {
     useEffect(() => {
         (async (): Promise<void> => {
             try {
-                const imageData = await graphClient.getProfilePictureAsync((cancel) => {profileRequestToken = cancel;});
+                const imageData = await graphClient.getProfilePictureAsync((cancel) => { profileRequestToken = cancel; });
                 const imageUrl = URL.createObjectURL(imageData);
                 setImageUrl(imageUrl);
             } catch (error) {
@@ -32,7 +32,7 @@ const UserGreeting = (): JSX.Element => {
         return (): void => {
             imageRequestToken && imageRequestToken();
         };
-    },[]);
+    }, []);
 
     useEffect(() => {
         (async (): Promise<void> => {

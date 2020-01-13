@@ -39,11 +39,9 @@ const tableIcons = {
 
 const Table = (props: MaterialTableProps<any>): any => {
     return (
-        <>
-            <MaterialTable
-                icons={tableIcons}
-                {...props} />
-        </>);
+        <MaterialTable
+            icons={tableIcons}
+            {...props} />);
 };
 
 export default Table;

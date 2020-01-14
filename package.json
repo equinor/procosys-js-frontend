@@ -74,7 +74,7 @@
         "webpack-dev-server": "^3.8.2"
     },
     "dependencies": {
-        "@equinor/eds-core-react": "^0.0.1-alpha.8",
+        "@equinor/eds-core-react": "0.0.1-alpha.9",
         "@equinor/eds-tokens": "^0.0.1-alpha.5",
         "@material-ui/core": "^4.8.3",
         "@material-ui/icons": "^4.5.1",

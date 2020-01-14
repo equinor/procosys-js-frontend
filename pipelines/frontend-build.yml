@@ -48,6 +48,8 @@ stages:
 # Dev deploy stage
 - stage: dev
   displayName: 'Dev'
+  dependsOn: 'common'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'

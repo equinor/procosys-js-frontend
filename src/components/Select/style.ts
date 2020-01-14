@@ -1,15 +1,25 @@
 import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
+import { tokens } from '@equinor/eds-tokens';
+
+type ContainerProps = {
+    openLeft?: boolean;
+}
+
+export const Container = styled.div<ContainerProps>`
     display: inline-block;
     ul {
         position: absolute;
         margin-top: 0.5rem;
-        background-color: var(--ui-background--default);
+        background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
-        box-shadow: var(--shadow-raised);
+        box-shadow: ${tokens.elevation.raised};
         max-height: 300px;
         overflow-y: scroll;
+        ${(props): any => props.openLeft && css`
+            right: 0px;
+        `}
+        z-index: 100;
     }
 `;
 
@@ -34,7 +44,7 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     ${(props): any => props.isOpen && css`
-        background-color: var(--interactive-primary--selected-highlight);
+        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
         /* :focus & {
             outline: none;
         } */
@@ -46,12 +56,13 @@ export type DropDownItemProps = {
 }
 
 export const DropdownItem = styled.li<DropDownItemProps>`
-    background-color: ${(props): any => props.selected ? 'var(--ui-background--light)' : 'transparent'};
+    background-color: ${(props): any => props.selected ? tokens.colors.ui.background__light.rgba : 'transparent'};
     padding: 24px 16px;
     border: 0;
     text-align:left;
     font-weight: normal;
 `;
+
 DropdownItem.defaultProps = {
     selected: false
 };

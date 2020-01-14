@@ -1,16 +1,21 @@
 import { IconContainer, LogoContainer, MenuContainer, MenuItem, Nav, PlantSelector, SubNav } from './style';
-import { Info, Lock, Matrix, User } from '../../assets/icons';
 import { NavLink, useParams } from 'react-router-dom';
 import React, {useState} from 'react';
 import Select, { SelectItem } from '../../components/Select';
 
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import AppsOutlinedIcon from '@material-ui/icons/AppsOutlined';
 import Dropdown from '../../components/Dropdown';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
+import { useProcosysContext } from '../../core/ProcosysContext';
 
 const Header: React.FC = (): JSX.Element => {
 
     const user = useCurrentUser();
+    const {auth} = useProcosysContext();
     const plant = useCurrentPlant();
     const params = useParams<any>();
 
@@ -22,10 +27,14 @@ const Header: React.FC = (): JSX.Element => {
         plant.setCurrentPlant(plantOption.value as string);
     };
 
+    const logout = (): void => {
+        auth.logout();
+    };
+
     return (
         <div>
             <Nav>
-                <IconContainer><img src={Matrix} /></IconContainer>
+                <IconContainer><AppsOutlinedIcon /></IconContainer>
                 <LogoContainer><span>ProCoSys</span></LogoContainer>
                 <PlantSelector>
                     <Select data={plants} selected={{text: plant.plant.title, value: plant.plant.title}} onChange={changePlant} />
@@ -75,9 +84,13 @@ const Header: React.FC = (): JSX.Element => {
                     <MenuItem><a href={`/${params.plant}/Reports`}>Reports</a></MenuItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuItem><img src={Info} /></MenuItem>
-                    <MenuItem><img src={Lock} /></MenuItem>
-                    <MenuItem><img src={User} /></MenuItem>
+                    <MenuItem><InfoOutlinedIcon /></MenuItem>
+                    <MenuItem><LockOutlinedIcon /></MenuItem>
+                    <MenuItem>
+                        <Dropdown Icon={<AccountCircleOutlinedIcon />} openLeft>
+                            <a href="#" title="Logout" onClick={logout}>Logout</a>
+                        </Dropdown>
+                    </MenuItem>
                 </MenuContainer>
             </Nav>
             <SubNav>

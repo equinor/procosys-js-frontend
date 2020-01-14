@@ -8,7 +8,7 @@ import { usePreservationContext } from '../../context/PreservationContext';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
 
-    const { project, availableProjects, setCurrentProject } = usePreservationContext();
+    const { project, availableProjects, setCurrentProject, apiClient } = usePreservationContext();
 
     const projectSelectOptions = useMemo(() => {
         return availableProjects.map(project => {

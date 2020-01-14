@@ -11,10 +11,15 @@ const AddScope = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
     const goToNextStep = (): void => {
-        setStep((currentStep) => currentStep+1);
+        setStep((currentStep) => {
+            if (currentStep >= 2) {
+                return currentStep;
+            }
+            return currentStep-1;
+        });
     };
 
-    const goBackOneStep = (): void => {
+    const goToPreviousStep = (): void => {
         setStep((currentStep) => {
             if (currentStep >= 2) {
                 return (currentStep-1);
@@ -31,7 +36,7 @@ const AddScope = (): JSX.Element => {
     case 1:
         return <SelectTags nextStep={goToNextStep} setSelectedTags={setSelectedTagsFromComponent} />;
     case 2:
-        return <SetTagProperties previousStep={goBackOneStep} nextStep={goToNextStep} tags={selectedTags} />;
+        return <SetTagProperties previousStep={goToPreviousStep} nextStep={goToNextStep} tags={selectedTags} />;
     }
 
     return <h1>Unknown step</h1>;

@@ -2,7 +2,11 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div`
+type ContainerProps = {
+    openLeft?: boolean;
+}
+
+export const Container = styled.div<ContainerProps>`
     display: inline-block;
     ul {
         position: absolute;
@@ -12,6 +16,9 @@ export const Container = styled.div`
         box-shadow: ${tokens.elevation.raised};
         max-height: 300px;
         overflow-y: scroll;
+        ${(props): any => props.openLeft && css`
+            right: 0px;
+        `}
         z-index: 100;
     }
 `;

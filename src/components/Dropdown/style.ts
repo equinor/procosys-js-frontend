@@ -5,8 +5,9 @@ import { tokens } from '@equinor/eds-tokens';
 type ContainerProps = {
     openLeft?: boolean;
 }
+
 export const Container = styled.div<ContainerProps>`
-    width: 100%;
+    display: inline-block;
     ul {
         position: absolute;
         margin-top: 0.5rem;

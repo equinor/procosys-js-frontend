@@ -1,13 +1,16 @@
-import { Container, Header } from './ScopeOverview.style';
 import React, { useMemo } from 'react';
+import { NavLink, useRouteMatch } from 'react-router-dom';
 
+import { Container, Header } from './ScopeOverview.style';
 import { Select } from '../../../../components';
 import { SelectItem } from '../../../../components/Select';
+import Dropdown from '../../../../components/Dropdown';
 import Table from './../../../../components/Table';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
 
+    const path = useRouteMatch();
     const { project, availableProjects, setCurrentProject, apiClient } = usePreservationContext();
 
     const projectSelectOptions = useMemo(() => {
@@ -33,17 +36,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             <Header>
                 <h1>Preservation tags</h1>
                 <Select data={projectSelectOptions} selected={{ text: project.description, value: project.id }} onChange={changeProject} />
+                <Dropdown text="Add scope">
+                    <NavLink to={`${path.url}/AddScope`}>Add tags manually</NavLink>
+                    <NavLink to={`${path.url}`}>Generate scope by Tag Function</NavLink>
+                    <NavLink to={`${path.url}`}>Create area tag</NavLink>
+                </Dropdown>
             </Header>
             <Table columns={[
-                {title: 'Tag nr', field: 'tagno'},
-                {title: 'Description', field: 'description'},
-                {title: 'Next', field: 'nextpreservation'},
-                {title: 'OS', field: 'os'},
-                {title: 'POnr', field: 'pono'},
-                {title: 'Area', field: 'area'},
-                {title: 'Resp', field: 'responsible'},
-                {title: 'Disc', field: 'disc'},
-                {title: 'Status', field: 'status'},
+                { title: 'Tag nr', field: 'tagno' },
+                { title: 'Description', field: 'description' },
+                { title: 'Next', field: 'nextpreservation' },
+                { title: 'OS', field: 'os' },
+                { title: 'POnr', field: 'pono' },
+                { title: 'Area', field: 'area' },
+                { title: 'Resp', field: 'responsible' },
+                { title: 'Disc', field: 'disc' },
+                { title: 'Status', field: 'status' },
             ]}
             data={[
                 {
@@ -64,7 +72,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selection: true
             }}
             onSelectionChange={(test): void => console.log('Selection changed: ', test)}
-            style={{boxShadow: 'none'}} />
+            style={{ boxShadow: 'none' }} />
         </Container>
     );
 };

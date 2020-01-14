@@ -20,7 +20,7 @@ const Page404 = (): JSX.Element => {
 
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
-    const {plant} = useParams();
+    const { plant } = useParams();
     return (
         <PlantContextProvider>
             <Header />
@@ -35,7 +35,6 @@ const ProcosysRouter = (): JSX.Element => {
                 />
                 <Route
                     path={`${path}/preservation`}
-                    exact
                     component={(routeProps: RouteComponentProps): JSX.Element =>
                         LazyRoute(Preservation, routeProps)
                     }

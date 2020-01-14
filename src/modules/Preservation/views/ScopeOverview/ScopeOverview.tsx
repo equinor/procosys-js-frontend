@@ -19,6 +19,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         });
     }, [availableProjects]);
 
+    useMemo(async () => {
+        const tags = await apiClient.getTags();
+        console.log('Tags: ', tags);
+    },[]);
+
     const changeProject = (project: SelectItem): void => {
         setCurrentProject(project.value as number);
     };

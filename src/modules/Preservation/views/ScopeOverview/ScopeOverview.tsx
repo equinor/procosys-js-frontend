@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useRouteMatch } from 'react-router-dom';
 
 import { Container, Header } from './ScopeOverview.style';
 import { Select } from '../../../../components';
@@ -11,7 +11,7 @@ import { usePreservationContext } from '../../context/PreservationContext';
 const ScopeOverview: React.FC = (): JSX.Element => {
 
     const { project, availableProjects, setCurrentProject } = usePreservationContext();
-    const params = useParams<any>();
+    const path = useRouteMatch();
 
     const projectSelectOptions = useMemo(() => {
         return availableProjects.map(project => {
@@ -32,9 +32,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <h1>Preservation tags</h1>
                 <Select data={projectSelectOptions} selected={{ text: project.description, value: project.id }} onChange={changeProject} />
                 <Dropdown text="Add scope">
-                    <NavLink to={`/${params.plant}/Preservation/AddScope`}>Add tags manually</NavLink>
-                    <NavLink to={`/${params.plant}/Preservation`}>Generate scope by Tag Function</NavLink>
-                    <NavLink to={`/${params.plant}/Preservation`}>Create area tag</NavLink>
+                    <NavLink to={`${path.url}/AddScope`}>Add tags manually</NavLink>
+                    <NavLink to={`${path.url}`}>Generate scope by Tag Function</NavLink>
+                    <NavLink to={`${path.url}`}>Create area tag</NavLink>
                 </Dropdown>
             </Header>
             <Table columns={[

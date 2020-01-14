@@ -19,6 +19,7 @@ export const Container = styled.div<ContainerProps>`
         ${(props): any => props.openLeft && css`
             right: 0px;
         `}
+        z-index: 100;
     }
 `;
 

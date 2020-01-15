@@ -3,6 +3,7 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "target": "es5",
+        "allowJs": true,
         "module": "esnext",
         "moduleResolution": "node",
         "strict": true,

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import { Canceler } from '../../../http/HttpClient';
 import Loading from '../../../components/Loading';
@@ -6,13 +6,14 @@ import PreservationApiClient from '../http/PreservationApiClient';
 import { ProjectDetails } from '../types';
 import preservationCache from '../cache/PreservationCache';
 import propTypes from 'prop-types';
+import { useCurrentPlant } from '../../../core/PlantContext';
 import { useProcosysContext } from '../../../core/ProcosysContext';
 
 const PreservationContext = React.createContext<PreservationContextProps>({} as PreservationContextProps);
 type PreservationContextProps = {
     project: ProjectDetails;
     setCurrentProject: (projectId: number) => void;
-    apiClient: PreservationApiClient | null;
+    apiClient: PreservationApiClient;
     availableProjects: ProjectDetails[];
 }
 
@@ -26,7 +27,9 @@ class InvalidProjectException extends Error {
 
 export const PreservationContextProvider: React.FC = ({children}): JSX.Element => {
 
-    const {procosysApiClient} = useProcosysContext();
+    const {procosysApiClient, auth} = useProcosysContext();
+    const {plant} = useCurrentPlant();
+    const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
 
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
 
@@ -62,6 +65,10 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
     },[]);
 
     useEffect(() => {
+        preservationApiClient.setCurrentPlant(plant.id);
+    },[plant]);
+
+    useEffect(() => {
         const defaultProject = preservationCache.getDefaultProject();
         try {
             if (defaultProject) {
@@ -89,7 +96,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
 
     return (
         <PreservationContext.Provider value={{
-            project: currentProject, setCurrentProject, apiClient: null, availableProjects
+            project: currentProject, setCurrentProject, apiClient: preservationApiClient, availableProjects
         }}>
             {children}
         </PreservationContext.Provider>

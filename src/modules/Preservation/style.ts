@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin: 50px 35px;
@@ -18,6 +19,6 @@ export const Button = styled.button`
     padding: 10px 16px;
     border-radius: 4px;
     border: none;
-    background-color: var(--interactive-primary--resting);
+    background-color: ${tokens.colors.interactive.primary__resting.rgba};
     font-weight: 500;
 `;

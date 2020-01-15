@@ -1,6 +1,6 @@
 import {Container} from './style';
 import React from 'react';
-import { Warning } from '../../assets/icons';
+import WarningOutlinedIcon from '@material-ui/icons/WarningOutlined';
 
 type ErrorProps = {
     title?: string;
@@ -8,18 +8,21 @@ type ErrorProps = {
     medium?: boolean;
 }
 
+type size = 'inherit' | 'default' | 'small' | 'large';
+
 /**
  *
  * @param title Text to display with loading indicator
  */
 const Error = ({title, large = false, medium = false}: ErrorProps): JSX.Element => {
-    let size = '24px';
+    let size: size = 'small';
 
-    size = medium && '48px' || size;
-    size = large && '72px' || size;
+    size = medium && 'default' || size;
+    size = large && 'large' || size;
     return (
         <Container>
-            <img src={Warning} width={size} />
+            <WarningOutlinedIcon fontSize={size} />
+
             {(<h1>{title || 'Unknown Error'}</h1>)}
         </Container>
     );

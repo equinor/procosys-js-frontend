@@ -6,10 +6,16 @@ export const Container = styled.div`
 `;
 
 export const Header = styled.header`
-    flex-direction: row;
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
     };
 
+    div {
+        margin-right: var(--grid-unit);
+    }
+
+    a {
+        text-decoration: none;
+    }
 `;

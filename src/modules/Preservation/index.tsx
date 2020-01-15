@@ -1,9 +1,10 @@
-import {Route, Switch, useRouteMatch} from 'react-router-dom';
+import React from 'react';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { Container } from './style';
 import { PreservationContextProvider } from './context/PreservationContext';
-import React from 'react';
 import ScopeOverview from './views/ScopeOverview/ScopeOverview';
+import AddScope from './views/AddScope/AddScope';
 
 const Preservation = (): JSX.Element => {
 
@@ -13,6 +14,11 @@ const Preservation = (): JSX.Element => {
         <PreservationContextProvider>
             <Container>
                 <Switch>
+                    <Route
+                        path={`${path}/AddScope`}
+                        exact
+                        component={AddScope}
+                    />
                     <Route
                         path={path}
                         exact

@@ -1,25 +1,17 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-interface StyledNotificationProps {
-    isVisible: boolean;
-}
-
-export const StyledNotification = styled.div<StyledNotificationProps>`
+export const StyledSnackbarNotification = styled.div`
     visibility: visible;
     min-width: 250px;
-    margin-left: -125px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 2px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2), 0px 1px 18px rgba(0, 0, 0, 0.12),
+        0px 6px 10px rgba(0, 0, 0, 0.14);
+    border-radius: 4px;
+    background-color: #333333;
+    color: #ffffff;
+    text-align: left;
     padding: 16px;
     position: fixed;
     z-index: 1;
-    left: 50%;
+    left: 2%;
     bottom: 30px;
-    ${(props): any =>
-        !props.isVisible &&
-        css`
-            visibility: hidden;
-        `}
 `;

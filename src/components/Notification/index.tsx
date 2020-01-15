@@ -1,39 +1,48 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { StyledNotification } from './style';
+import { StyledSnackbarNotification } from './style';
 
-let lastMessageId: string;
-
-//todo: Should we use 'uuid'?
-function generateNotificationId(): string {
-    return (Math.random().toString(36) + Date.now().toString(36)).substr(2, 10);
-}
+let lastTimeoutNumber = -1;
 
 interface NotificationProps {
-    variant?: string; //Can be 'snackbar', 'alert', 'notification'
-    visible?: boolean;
     message?: string;
 }
 
 const Notification = (props: NotificationProps): JSX.Element => {
-    const { visible = true, message } = props;
     return (
-        <StyledNotification isVisible={visible}>{message}</StyledNotification>
+        <StyledSnackbarNotification>{props.message}</StyledSnackbarNotification>
     );
 };
 
-export const showNotification = (message: string, duration: number) => {
-    const overlay = document.getElementById('procosys-overlay');
-    const messageId: string = generateNotificationId();
-    lastMessageId = messageId;
+/**
+ * Displays a snackbar notification at the bottom of the page, left aligned.
+ * Only the last snackbar notification will show.
+ *
+ * @param message Message to display
+ * @param duration Duration of notification, in milliseconds
+ */
+export const showSnackbarNotification = (
+    message: string,
+    duration: number
+): any => {
+    if (lastTimeoutNumber == -1) {
+        const container = document.getElementById('procosys-overlay');
+        render(<div id="procosys-snackbar-notification"></div>, container);
+    }
 
-    render(<Notification message={message} visible={true} />, overlay);
+    const notificationContainer = document.getElementById(
+        'procosys-snackbar-notification'
+    );
 
-    setTimeout(() => {
-        if (messageId === lastMessageId) {
-            render(<Notification visible={false} />, overlay);
-        }
+    render(<Notification message={message} />, notificationContainer);
+
+    if (lastTimeoutNumber != -1) {
+        clearTimeout(lastTimeoutNumber);
+    }
+
+    const timeoutNumber = setTimeout(() => {
+        render(<div />, notificationContainer);
     }, duration);
-};
 
-export default Notification;
+    lastTimeoutNumber = timeoutNumber;
+};

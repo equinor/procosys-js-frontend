@@ -15,14 +15,14 @@ const AddScope = (): JSX.Element => {
             if (currentStep >= 2) {
                 return currentStep;
             }
-            return currentStep-1;
+            return currentStep + 1;
         });
     };
 
     const goToPreviousStep = (): void => {
         setStep((currentStep) => {
             if (currentStep >= 2) {
-                return (currentStep-1);
+                return (currentStep - 1);
             }
             return currentStep;
         });

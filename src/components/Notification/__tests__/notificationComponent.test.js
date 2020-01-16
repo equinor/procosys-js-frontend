@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../../assets/theme';
@@ -10,12 +10,13 @@ const renderWithTheme = Component => {
 
 describe('Button that shows a notification when clicked.', () => {
     it('Renders as a button', async () => {
-        const { getByText } = renderWithTheme(
+        const { getByText, queryByText } = renderWithTheme(
             <div id="procosys-overlay">
                 <input
                     type="button"
                     value="Click on me"
                     onClick={() => {
+                        console.log('Har trykket knapp. ');
                         showSnackbarNotification(
                             'This is a notification',
                             3000
@@ -24,12 +25,10 @@ describe('Button that shows a notification when clicked.', () => {
                 />
             </div>
         );
+
         expect(getByText('Click on me')).toBeInTheDocument();
-
-        //getByText('Click on me').click();
-        fireEvent.mouseDown(getByText('Click on me'));
-
-        //expect( queryByText('This is a notification')).toBeInTheDocument();
+        getByText('Click on me').click();
+        expect(queryByText('This is a notification')).toBeInTheDocument();
     });
 
     //   fireEvent.mouseDown(getByText('ClickMe'));

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../../assets/theme';
-import showSnackbarNotification from '../index';
+import { showSnackbarNotification } from '../index';
 
 const renderWithTheme = Component => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
@@ -16,7 +16,6 @@ describe('Button that shows a notification when clicked.', () => {
                     type="button"
                     value="Click on me"
                     onClick={() => {
-                        console.log('Har trykket knapp. ');
                         showSnackbarNotification(
                             'This is a notification',
                             3000
@@ -29,9 +28,7 @@ describe('Button that shows a notification when clicked.', () => {
         expect(getByText('Click on me')).toBeInTheDocument();
         getByText('Click on me').click();
         expect(queryByText('This is a notification')).toBeInTheDocument();
+        await new Promise(r => setTimeout(r, 3100));
+        expect(queryByText('This is a notification')).not.toBeInTheDocument();
     });
-
-    //   fireEvent.mouseDown(getByText('ClickMe'));
-
-    //    expect(queryByText('Item 1')).toBeNull();
 });

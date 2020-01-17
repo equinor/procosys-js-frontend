@@ -2,7 +2,9 @@ import React from 'react';
 import { render } from 'react-dom';
 import { StyledSnackbarNotification } from './style';
 
-let lastTimeoutNumber = -1;
+let lastTimeoutId = -1;
+const container = document.createElement('div');
+document.body.appendChild(container);
 
 interface NotificationProps {
     message?: string;
@@ -25,24 +27,11 @@ export const showSnackbarNotification = (
     message: string,
     duration: number
 ): any => {
-    if (lastTimeoutNumber == -1) {
-        const container = document.getElementById('procosys-overlay');
-        render(<div id="procosys-snackbar-notification"></div>, container);
-    }
+    render(<Notification message={message} />, container);
 
-    const notificationContainer = document.getElementById(
-        'procosys-snackbar-notification'
-    );
+    clearTimeout(lastTimeoutId);
 
-    render(<Notification message={message} />, notificationContainer);
-
-    if (lastTimeoutNumber != -1) {
-        clearTimeout(lastTimeoutNumber);
-    }
-
-    const timeoutNumber = setTimeout(() => {
-        render(<div />, notificationContainer);
+    lastTimeoutId = setTimeout(() => {
+        render(<div />, container);
     }, duration);
-
-    lastTimeoutNumber = timeoutNumber;
 };

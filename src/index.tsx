@@ -1,7 +1,7 @@
 import './assets/sass/procosys-styles.scss';
 
 import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 
 import App from './app/index';
 import AuthService from './auth/AuthService';
@@ -10,7 +10,6 @@ import ReactDOM from 'react-dom';
 const start = async (): Promise<void> => {
     const authService = new AuthService();
     authService.handleRedirectCallback();
-
 
     /**
      * Prevent the application from loading itself when triggered from an iFrame
@@ -44,10 +43,7 @@ const start = async (): Promise<void> => {
     element.setAttribute('id', 'app-container');
     document.body.appendChild(element);
 
-    ReactDOM.render(
-        <Root />,
-        document.getElementById('app-container'));
-
+    ReactDOM.render(<Root />, document.getElementById('app-container'));
 };
 
 start();

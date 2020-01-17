@@ -8,8 +8,8 @@ const renderWithTheme = Component => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-describe('Button that shows a notification when clicked.', () => {
-    it('Renders as a button', async () => {
+describe('NotificationService', () => {
+    it('Should display a notification for three seconds.', async () => {
         const { getByText, queryByText } = renderWithTheme(
             <div id="procosys-overlay">
                 <input
@@ -25,7 +25,6 @@ describe('Button that shows a notification when clicked.', () => {
             </div>
         );
 
-        expect(getByText('Click on me')).toBeInTheDocument();
         getByText('Click on me').click();
         expect(queryByText('This is a notification')).toBeInTheDocument();
         await new Promise(r => setTimeout(r, 3100));

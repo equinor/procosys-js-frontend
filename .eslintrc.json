@@ -68,7 +68,7 @@
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
         "react/react-in-jsx-scope": "error",
-        "react/jsx-filename-extension": ["error", { "extensions": [".tsx", ".jsx"] }],
+        "react/jsx-filename-extension": ["error", { "extensions": [".tsx", ".jsx", ".js"] }],
         "react/display-name": "off"
     }
 }

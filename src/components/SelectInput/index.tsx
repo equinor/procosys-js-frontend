@@ -10,6 +10,7 @@ type SelectProps = {
     disabled?: boolean;
     onChange?: (index: number) => void;
     selectedIndex?: number;
+    label?: string;
 };
 
 const SelectInput = ({
@@ -17,8 +18,9 @@ const SelectInput = ({
     onChange = (): void => {
         /**/
     },
-    data,
     selectedIndex = -1,
+    label,
+    data,
 }: SelectProps): JSX.Element => {
     const inputReference = useRef<HTMLSelectElement>(null);
 
@@ -31,7 +33,7 @@ const SelectInput = ({
     return (
         <Container>
             <label>
-                <span>Preservation Journey</span>
+                {label && <span>{label}</span>}
                 <Select
                     disabled={disabled}
                     onChange={selectionChanged}

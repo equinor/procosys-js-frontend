@@ -18,6 +18,7 @@ const SetTagProperties = (props: SelectTagsProps): JSX.Element => {
                     console.log('Element changed: ', data)
                 }
                 data={[{ text: 'Option 1' }, { text: 'Option 2' }]}
+                label={'Select Journey'}
             />
             <Button onClick={props.nextStep}>Next</Button>
             <Button onClick={props.previousStep}>Previous</Button>

@@ -1,17 +1,16 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties';
 import { Tag } from './types';
 
 const AddScope = (): JSX.Element => {
-
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(2);
 
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
     const goToNextStep = (): void => {
-        setStep((currentStep) => {
+        setStep(currentStep => {
             if (currentStep >= 2) {
                 return currentStep;
             }
@@ -20,9 +19,9 @@ const AddScope = (): JSX.Element => {
     };
 
     const goToPreviousStep = (): void => {
-        setStep((currentStep) => {
+        setStep(currentStep => {
             if (currentStep >= 2) {
-                return (currentStep - 1);
+                return currentStep - 1;
             }
             return currentStep;
         });
@@ -32,15 +31,25 @@ const AddScope = (): JSX.Element => {
         setSelectedTags(tags);
     };
 
-    switch(step) {
-    case 1:
-        return <SelectTags nextStep={goToNextStep} setSelectedTags={setSelectedTagsFromComponent} />;
-    case 2:
-        return <SetTagProperties previousStep={goToPreviousStep} nextStep={goToNextStep} tags={selectedTags} />;
+    switch (step) {
+        case 1:
+            return (
+                <SelectTags
+                    nextStep={goToNextStep}
+                    setSelectedTags={setSelectedTagsFromComponent}
+                />
+            );
+        case 2:
+            return (
+                <SetTagProperties
+                    previousStep={goToPreviousStep}
+                    nextStep={goToNextStep}
+                    tags={selectedTags}
+                />
+            );
     }
 
     return <h1>Unknown step</h1>;
-
 };
 
 export default AddScope;

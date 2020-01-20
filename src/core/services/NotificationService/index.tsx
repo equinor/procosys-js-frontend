@@ -3,8 +3,9 @@ import { render } from 'react-dom';
 import { StyledSnackbarNotification } from './style';
 
 let lastTimeoutId = -1;
-const container = document.createElement('div');
-document.body.appendChild(container);
+const snackbarContainer = document.createElement('div');
+snackbarContainer.setAttribute('id', 'notification-snackbar-container');
+document.body.appendChild(snackbarContainer);
 
 interface NotificationProps {
     message?: string;
@@ -27,11 +28,10 @@ export const showSnackbarNotification = (
     message: string,
     duration: number
 ): any => {
-    render(<Notification message={message} />, container);
-
     clearTimeout(lastTimeoutId);
+    render(<Notification message={message} />, snackbarContainer);
 
     lastTimeoutId = setTimeout(() => {
-        render(<div />, container);
+        render(<></>, snackbarContainer);
     }, duration);
 };

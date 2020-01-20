@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
 import { Tag } from './types';
@@ -26,6 +26,8 @@ const KEYCODE_ENTER = 13;
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
+    const [tableData, setTableData] = useState<TagRow[]>([]);
+
     // TODO: remove when API is implemented
     const testData: TagRow[] = [
         { tagId: 10, tagNo: 'Tag 1', description: 'desc 1', tableData: { checked: false } },
@@ -37,49 +39,35 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         { tagId: 70, tagNo: 'Tag 7', description: 'desc 7', tableData: { checked: false } }
     ];
 
-    let tagRows: TagRow[] = [];
-    let selectedTagIds: number[] = [];
-
     const getTableData = (): TagRow[] => {
-
         // TODO: replace with API call to fetch data
-        const tableData = testData;
+        return testData;
+    };    
 
+    useMemo(() => {
         // set selected rows from tags in state
         tableData.forEach(tagRow => {
             props.tags.forEach(tagInState => {
                 if (tagInState.id === tagRow.tagId) {
                     tagRow.tableData.checked = true;
-                    selectedTagIds.push(tagInState.id);
                 }
             });
-        });        
-        
-        return tableData;
-    };
+        });  
+    }, [props.tags, tableData]);
 
-    // TODO: how to get the initial table data? (one time only?)
-    useMemo(() => {
-        tagRows = getTableData();
-    }, [tagRows]);
+    useEffect(() => {
+        setTableData(getTableData());
+    }, []);
 
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
-        selectedTagIds = selectedRows.map(row => {
-            return row.tagId;
-        });
-    };
-
-    const goToNext = (): void => {
         // set selected tags into state
-        props.setSelectedTags(selectedTagIds.map(tagId => {
-            return { id: tagId }; 
-        }));
-        
-        props.nextStep();
+        props.setSelectedTags(selectedRows.map(row => {
+            return { id: row.tagId }; 
+        }));        
     };
 
+    // TODO: implement search..
     const searchTags = (tagNo: string): void => {
-        // TODO: implement search..
         console.log('Search tag number: ' + tagNo);
     };
 
@@ -101,7 +89,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     />  
                 </Search> 
                 <Next>
-                    <Button onClick={goToNext}>Next</Button>
+                    <Button onClick={props.nextStep}>Next</Button>
                 </Next>                            
             </ActionBar>
             <Tags>
@@ -112,7 +100,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         { title: 'Tag nr', field: 'tagNo' },
                         { title: 'Description', field: 'description' },
                     ]}
-                    data={tagRows} 
+                    data={tableData} 
                     options={{
                         showTitle: false,
                         selection: true                        

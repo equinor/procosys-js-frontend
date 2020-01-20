@@ -95,7 +95,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     />  
                 </Search> 
                 <Next>
-                    <Button onClick={props.nextStep}>Next</Button>
+                    <Button onClick={props.nextStep} disabled={props.tags.length === 0}>Next</Button>
                 </Next>                            
             </ActionBar>
             <Tags>

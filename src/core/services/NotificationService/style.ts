@@ -9,7 +9,6 @@ export const StyledSnackbarNotification = styled.div`
     color: #ffffff;
     padding: calc(var(--grid-unit) * 2);
     position: fixed;
-    z-index: 1;
     left: calc(var(--grid-unit) * 4);
     bottom: calc(var(--grid-unit) * 4);
 `;

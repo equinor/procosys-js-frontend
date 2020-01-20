@@ -43,7 +43,10 @@ const start = async (): Promise<void> => {
     element.setAttribute('id', 'app-container');
     document.body.appendChild(element);
 
-    ReactDOM.render(<Root />, document.getElementById('app-container'));
+    ReactDOM.render(
+        <Root />,
+        document.getElementById('app-container'));
+
 };
 
 start();

@@ -7,7 +7,6 @@ import { SelectItem } from '../../../../components/Select';
 import Dropdown from '../../../../components/Dropdown';
 import Table from './../../../../components/Table';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const path = useRouteMatch();
@@ -34,7 +33,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = (project: SelectItem): void => {
         setCurrentProject(project.value as number);
-        showSnackbarNotification('æest' + project.value, 3000);
     };
 
     return (

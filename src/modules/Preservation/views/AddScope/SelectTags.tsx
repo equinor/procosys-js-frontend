@@ -23,6 +23,12 @@ type TagRow = {
 
 const KEYCODE_ENTER = 13;
 
+const tableColumns = [
+    { title: 'TagId', field: 'tagId', hidden: true },
+    { title: 'Tag nr', field: 'tagNo' },
+    { title: 'Description', field: 'description' },
+];
+
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
@@ -95,11 +101,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             <Tags>
                 <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
                 <Table 
-                    columns={[
-                        { title: 'TagId', field: 'tagId', hidden: true },
-                        { title: 'Tag nr', field: 'tagNo' },
-                        { title: 'Description', field: 'description' },
-                    ]}
+                    columns={tableColumns}
                     data={tableData} 
                     options={{
                         showTitle: false,

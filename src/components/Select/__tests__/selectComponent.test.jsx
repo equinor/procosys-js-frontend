@@ -1,11 +1,11 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import DropdownMenu from '../index';
 import React from 'react';
+import Select from '../index';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../../assets/theme';
 
-const renderWithTheme = (Component) => {
+const renderWithTheme = Component => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
@@ -14,27 +14,31 @@ const items = [
     { text: 'Foo', value: 'Bar' },
 ];
 
-describe('<DropdownMenu />', () => {
+describe('<Select />', () => {
     it('Renders with no default value', async () => {
-        const { getByText } = renderWithTheme(<DropdownMenu />);
+        const { getByText } = renderWithTheme(<Select>Select</Select>);
         expect(getByText('Select')).toBeInTheDocument();
     });
 
     it('Renders with no supplied select items', async () => {
-        const { getByText } = renderWithTheme(<DropdownMenu />);
+        const { getByText } = renderWithTheme(<Select>Select</Select>);
         getByText('Select').click();
         expect(getByText('No items available')).toBeInTheDocument();
     });
 
     it('Should be disabled', () => {
-        const { queryByText, getByText } = renderWithTheme(<DropdownMenu disabled />);
+        const { queryByText, getByText } = renderWithTheme(
+            <Select disabled>Select</Select>
+        );
         getByText('Select').click();
 
         expect(queryByText('No items available')).toBeNull();
     });
 
     it('Should contain all items given by options', () => {
-        const { getByText } = renderWithTheme(<DropdownMenu data={items} />);
+        const { getByText } = renderWithTheme(
+            <Select data={items}>Select</Select>
+        );
         getByText('Select').click();
         expect(getByText(items[0].text)).toBeInTheDocument();
         expect(getByText(items[1].text)).toBeInTheDocument();
@@ -43,7 +47,9 @@ describe('<DropdownMenu />', () => {
     it('Should trigger onChange when new item is selected', () => {
         const eventWatcher = jest.fn(() => {});
         const { getByText } = renderWithTheme(
-            <DropdownMenu data={items} onChange={eventWatcher} />
+            <Select data={items} onChange={eventWatcher}>
+                Select
+            </Select>
         );
         //Activate dropdown
         const dropdownButton = getByText('Select');
@@ -52,34 +58,26 @@ describe('<DropdownMenu />', () => {
         getByText(items[1].text).click();
 
         expect(eventWatcher).toHaveBeenCalledTimes(1);
-        expect(eventWatcher).toHaveBeenCalledWith(items[1], undefined);
-    });
-
-    it('Should trigger onChange with already selected value in callback', () => {
-        const eventWatcher = jest.fn(() => {});
-        const { getByText } = renderWithTheme(
-            <DropdownMenu data={items} onChange={eventWatcher} selected={items[1]} />
-        );
-        //Activate dropdown
-        const dropdownButton = getByText(items[1].text);
-        dropdownButton.click();
-        // Click on item
-        getByText(items[0].text).click();
-
-        expect(eventWatcher).toHaveBeenCalledTimes(1);
-        expect(eventWatcher).toHaveBeenCalledWith(items[0], items[1]);
+        expect(eventWatcher).toHaveBeenCalledWith(1);
     });
 
     it('Should have default item selected', () => {
-        const { getByText } = renderWithTheme(<DropdownMenu data={items} selected={items[1]} />);
-        expect(getByText('Foo')).toBeInTheDocument();
+        const { getByText } = renderWithTheme(
+            <Select data={items} selectedIndex={1}>
+                Irrelevant
+            </Select>
+        );
+        getByText('Irrelevant').click();
+
+        const element = getByText(items[1].text);
+        expect(element.dataset['selected']).toBe('true');
     });
 
-    it('Hides dropdown when  asd clicking outside of element', () => {
+    it('Hides dropdown when clicking outside of element', () => {
         const { getByText, queryByText } = render(
             <div>
                 <div>ClickMe</div>
-                <DropdownMenu data={items} />
+                <Select data={items}>Select</Select>
             </div>
         );
 

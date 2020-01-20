@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
-import SelectInput from '../../../../components/SelectInput';
+import SelectInput from '../../../../components/Select';
 import { Tag } from './types';
 import { TextField } from '@equinor/eds-core-react';
 import styled from 'styled-components';
@@ -66,17 +66,22 @@ const SetTagProperties = (props: SelectTagsProps): JSX.Element => {
                             onChange={setJourney}
                             data={[{ text: 'Option 1' }, { text: 'Option 2' }]}
                             label={'Preservation journey for all selected tags'}
-                        />
+                        >
+                            {'Select'}
+                        </SelectInput>
                     </InputContainer>
                     <InputContainer>
                         <SelectInput
                             onChange={setStep}
                             data={[{ text: 'Option 1' }, { text: 'Option 2' }]}
                             label={'Select step'}
-                        />
+                        >
+                            {'Select'}
+                        </SelectInput>
                     </InputContainer>
                     <InputContainer>
                         <TextField
+                            id={'Remark'}
                             style={{ maxWidth: '480px' }}
                             label="Remark for whole preservation journey"
                             placeholder="Write Here"

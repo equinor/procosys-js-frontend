@@ -44,6 +44,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         );
                     })}
                 </Dropdown>
+
                 <Dropdown text="Add scope">
                     <NavLink to={`${path.url}/AddScope`}>
                         Add tags manually

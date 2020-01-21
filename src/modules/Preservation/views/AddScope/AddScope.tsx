@@ -31,22 +31,12 @@ const AddScope = (): JSX.Element => {
         setSelectedTags(tags);
     };
 
+
     switch (step) {
         case 1:
-            return (
-                <SelectTags
-                    nextStep={goToNextStep}
-                    setSelectedTags={setSelectedTagsFromComponent}
-                />
-            );
+            return <SelectTags nextStep={goToNextStep} setSelectedTags={setSelectedTagsFromComponent} tags={selectedTags} />;
         case 2:
-            return (
-                <SetTagProperties
-                    previousStep={goToPreviousStep}
-                    nextStep={goToNextStep}
-                    tags={selectedTags}
-                />
-            );
+            return <SetTagProperties previousStep={goToPreviousStep} nextStep={goToNextStep} tags={selectedTags} />;
     }
 
     return <h1>Unknown step</h1>;

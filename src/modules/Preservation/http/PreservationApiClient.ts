@@ -1,6 +1,6 @@
 import ApiClient from '../../../http/ApiClient';
-import {AxiosRequestConfig} from 'axios';
-import {IAuthService} from '../../../auth/AuthService';
+import { AxiosRequestConfig } from 'axios';
+import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
@@ -8,6 +8,33 @@ const Settings = require('../../../../settings.json');
 export type TagResponse = {
     id: number;
 };
+
+export type Journey = {
+    id: number;
+    text: string;
+}
+
+export type Step = {
+    id: number;
+    text: string;
+}
+
+
+/**
+ * Wraps the data return in a promise and delays the response.
+ *
+ * @param data Any data that is to be returned by the promise
+ * @param fail Should the promise be rejected? Default: false
+ */
+function DelayData(data: any, fail = false): Promise<any> {
+    return new Promise((resolve, reject) => {
+        if (fail) {
+            setTimeout(() => reject(data), 3000);
+        } else {
+            setTimeout(() => resolve(data), 3000);
+        }
+    });
+}
 
 /**
  * API for interacting with data in ProCoSys.
@@ -60,10 +87,39 @@ class PreservationApiClient extends ApiClient {
         const endpoint = '/Tags';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<TagResponse[]>(endpoint,settings);
+        const result = await this.client.get<TagResponse[]>(endpoint, settings);
         return result.data;
     }
+
+    async getPreservationJourneys(setRequestCanceller?: RequestCanceler): Promise<Journey[]> {
+        // const endpoint = '/Journeys';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        return DelayData([{
+            text: 'Journey 1',
+            id: 1
+        },
+        {
+            text: 'Journey 2',
+            id: 2
+        }]);
+    }
+
+    async getPreservationSteps(setRequestCanceller?: RequestCanceler): Promise<Step[]> {
+        // const endpoint = '/Steps';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        return DelayData([{
+            text: 'Step 1',
+            id: 1
+        },
+        {
+            text: 'Step 2',
+            id: 2
+        }]);
+    }
 }
+
 
 
 export default PreservationApiClient;

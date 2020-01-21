@@ -1,32 +1,40 @@
 import React from 'react';
-import SelectTags from '../SelectTags';
+import SetTagProperties from '../SetTagProperties';
 import { render } from '@testing-library/react';
 
-jest.mock('../../../context/PreservationContext', () => ({
-    usePreservationContext: jest.fn(() => {
-        return {
-            project: {
-                description: 'test project'
-            }
-        };
-    })
-}));
+const journeys = [{
+    text: 'Journey 1',
+    id: 1
+},
+{
+    text: 'Journey 2',
+    id: 2
+}];
 
-let selectedTags = [];
+const steps = [{
+    text: 'Step 1',
+    id: 1
+},
+{
+    text: 'Step 2',
+    id: 2
+}];
 
-describe('Module: <SelectTags />', () => {
+describe('Module: <SetTagProperties />', () => {
 
-    it('Should render Next button disabled when no rows are selected', () => {
-        const { getByText } = render(<SelectTags tags={selectedTags} />);
-        expect(getByText('Next')).toHaveProperty('disabled', true);
+    it('Should render Add To Scope button disabled when form is invalid', () => {
+        const { getByText } = render(<SetTagProperties journeys={journeys} steps={steps} />);
+        expect(getByText('Add to scope')).toHaveProperty('disabled', true);
     });
 
-    it('Should render Next button enabled when rows are selected', () => {
-        selectedTags = [
-            { id: 1 }
-        ];
+    it('Should render Add button enabled when form is valid', () => {
 
-        const { getByText } = render(<SelectTags tags={selectedTags} />);
-        expect(getByText('Next')).toHaveProperty('disabled', false);
+        const { getByText, queryByText } = render(<SetTagProperties journeys={journeys} steps={steps} />);
+        getByText('Select journey').click();
+        queryByText(journeys[0].text).click();
+        getByText('Select step').click();
+        queryByText(steps[0].text).click();
+
+        expect(getByText('Add to scope')).toHaveProperty('disabled', false);
     });
 });

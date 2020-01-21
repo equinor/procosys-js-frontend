@@ -3,30 +3,27 @@ import React, { useMemo, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import SelectInput from '../../../../../components/Select';
-import { Tag } from '../types';
 import { TextField } from '@equinor/eds-core-react';
 
-type SelectTagsProps = {
+type SetTagPropertiesProps = {
     nextStep: () => void;
     previousStep: () => void;
-    tags: Tag[];
+    journeys: {
+        id: number;
+        text: string;
+    }[];
+    steps: {
+        id: number;
+        text: string;
+    }[];
 };
 
-const journeyOptions = [{
-    text: 'Journey 1'
-},
-{
-    text: 'Journey 2'
-}];
-
-const stepOptions = [{
-    text: 'Step 1'
-},
-{
-    text: 'Step 2'
-}];
-
-const SetTagProperties = (props: SelectTagsProps): JSX.Element => {
+const SetTagProperties = ({
+    nextStep,
+    previousStep,
+    journeys = [],
+    steps = []
+}: SetTagPropertiesProps): JSX.Element => {
     const [journey, setJourney] = useState(-1);
     const [step, setStep] = useState(-1);
     const [formIsValid, setFormIsValid] = useState(false);
@@ -39,25 +36,41 @@ const SetTagProperties = (props: SelectTagsProps): JSX.Element => {
         setFormIsValid(false);
     }, [journey, step]);
 
+    const journeysDataMapped = useMemo(() => {
+        return journeys.map((itm) => {
+            return {
+                text: itm.text
+            };
+        });
+    }, [journeys]);
+
+    const stepsDataMapped = useMemo(() => {
+        return steps.map((itm) => {
+            return {
+                text: itm.text
+            };
+        });
+    }, [steps]);
+
     return (
         <Container>
             <div>
                 <InputContainer>
                     <SelectInput
                         onChange={setJourney}
-                        data={journeyOptions}
+                        data={journeysDataMapped}
                         label={'Preservation journey for all selected tags'}
                     >
-                        {journeyOptions[step].text || 'Select'}
+                        {(journey > -1 && journeys[journey].text) || 'Select journey'}
                     </SelectInput>
                 </InputContainer>
                 <InputContainer>
                     <SelectInput
                         onChange={setStep}
-                        data={stepOptions}
-                        label={'Select step'}
+                        data={stepsDataMapped}
+                        label={'Preservation step'}
                     >
-                        {stepOptions[step].text || 'Select'}
+                        {(step > -1 && steps[step].text) || 'Select step'}
                     </SelectInput>
                 </InputContainer>
                 <InputContainer>
@@ -71,11 +84,11 @@ const SetTagProperties = (props: SelectTagsProps): JSX.Element => {
                 </InputContainer>
             </div>
             <ButtonContainer>
-                <Button onClick={props.previousStep} variant="outlined">
+                <Button onClick={previousStep} variant="outlined">
                     Previous
                 </Button>
                 <Button
-                    onClick={props.nextStep}
+                    onClick={nextStep}
                     color="primary"
                     disabled={!formIsValid}
                 >

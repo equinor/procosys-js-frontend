@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import SelectTags from './SelectTags';
-import SetTagProperties from './SetTagProperties';
+import SetTagProperties from './SetTagProperties/SetTagProperties';
 import { Tag } from './types';
 
 const AddScope = (): JSX.Element => {

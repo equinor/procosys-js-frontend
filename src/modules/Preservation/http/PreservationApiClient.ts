@@ -19,6 +19,12 @@ export type Step = {
     text: string;
 }
 
+export type TagData = {
+    tagId: number;
+    tagNo: string;
+    description: string;
+}
+
 
 /**
  * Wraps the data return in a promise and delays the response.
@@ -118,8 +124,29 @@ class PreservationApiClient extends ApiClient {
             id: 2
         }]);
     }
+
+    async getTagsForAddPreservationScope(tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagData[]> {
+        // const endpoint = '/Tags/Search';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        const testData: TagData[] = [
+            { tagId: 10, tagNo: 'Tag 1', description: 'desc 1' },
+            { tagId: 20, tagNo: 'Tag 2', description: 'desc 2' },
+            { tagId: 30, tagNo: 'Tag 3', description: 'desc 3' },
+            { tagId: 40, tagNo: 'Tag 4', description: 'desc 4' },
+            { tagId: 50, tagNo: 'Tag 5', description: 'desc 5' },
+            { tagId: 60, tagNo: 'Tag 6', description: 'desc 6' },
+            { tagId: 70, tagNo: 'Tag 7', description: 'desc 7' }
+        ];
+
+        // TODO: temp filtering while testing
+        const result = testData.filter(
+            tagRow => tagRow.tagNo.toLowerCase().startsWith(tagNo.toLowerCase())
+        );
+
+        return DelayData(result);
+    }
 }
-
-
 
 export default PreservationApiClient;

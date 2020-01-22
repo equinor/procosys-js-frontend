@@ -126,7 +126,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     async getTagsForAddPreservationScope(tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagData[]> {
-        // const endpoint = '/Tags';
+        // const endpoint = '/Tags/Search';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 

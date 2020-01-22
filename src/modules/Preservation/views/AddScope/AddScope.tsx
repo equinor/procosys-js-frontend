@@ -48,11 +48,7 @@ const AddScope = (): JSX.Element => {
         });
     };
 
-    const setSelectedTagsFromComponent = (tags: Tag[]): void => {
-        setSelectedTags(tags);
-    };
-
-    const searchTagsFromComponent = async (tagNo: string | null): Promise<void> => {
+    const searchTags = async (tagNo: string | null): Promise<void> => {
         let result: TagRow[] = [];
 
         if (tagNo && tagNo.length > 0) {
@@ -70,12 +66,12 @@ const AddScope = (): JSX.Element => {
 
     switch (step) {
         case 1:
-            return <SelectTags 
-                nextStep={goToNextStep} 
-                setSelectedTags={setSelectedTagsFromComponent} 
-                searchTags={searchTagsFromComponent}
-                selectedTags={selectedTags} 
-                scopeTableData={scopeTableData} 
+            return <SelectTags
+                nextStep={goToNextStep}
+                setSelectedTags={setSelectedTags}
+                searchTags={searchTags}
+                selectedTags={selectedTags}
+                scopeTableData={scopeTableData}
             />;
         case 2:
             return <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />;

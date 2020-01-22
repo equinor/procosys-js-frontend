@@ -9,7 +9,7 @@ import Table from './../../../../components/Table';
 type SelectTagsProps = {
     selectedTags: Tag[];
     scopeTableData: TagRow[];
-    setSelectedTags: (tags: Array<Tag>) => void;
+    setSelectedTags: (tags: Tag[]) => void;
     searchTags: (tagNo: string | null) => void;
     nextStep: () => void;
 }
@@ -29,18 +29,6 @@ const tableColumns = [
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
-
-    // TODO: not sure we need this, verify when API data is returned
-    // useMemo(() => {
-    //     // set selected rows from tags in state
-    //     props.scopeTableData.forEach(tagRow => {
-    //         props.selectedTags.forEach(selectedTag => {
-    //             if (selectedTag.id === tagRow.tagId) {
-    //                 tagRow.tableData.checked = true;
-    //             }
-    //         });
-    //     });  
-    // }, [props.selectedTags, props.scopeTableData]);
 
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
         // set selected tags into state

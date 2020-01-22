@@ -2,6 +2,7 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
+import { TagRow } from '../views/AddScope/types';
 
 const Settings = require('../../../../settings.json');
 
@@ -118,8 +119,29 @@ class PreservationApiClient extends ApiClient {
             id: 2
         }]);
     }
+
+    async getTagsForAddPreservationScope(tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagRow[]> {
+        // const endpoint = '/Tags';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        const testData: TagRow[] = [
+            { tagId: 10, tagNo: 'Tag 1', description: 'desc 1' },
+            { tagId: 20, tagNo: 'Tag 2', description: 'desc 2' },
+            { tagId: 30, tagNo: 'Tag 3', description: 'desc 3' },
+            { tagId: 40, tagNo: 'Tag 4', description: 'desc 4' },
+            { tagId: 50, tagNo: 'Tag 5', description: 'desc 5' },
+            { tagId: 60, tagNo: 'Tag 6', description: 'desc 6' },
+            { tagId: 70, tagNo: 'Tag 7', description: 'desc 7' }
+        ];
+
+        // TODO: temp filtering while testing
+        const result = testData.filter(
+            tagRow => tagRow.tagNo.toLowerCase().startsWith(tagNo.toLowerCase())
+        );
+
+        return DelayData(result);
+    }
 }
-
-
 
 export default PreservationApiClient;

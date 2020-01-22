@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
 import { Tag, TagRow } from './types';
@@ -30,16 +30,17 @@ const tableColumns = [
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
-    useMemo(() => {
-        // set selected rows from tags in state
-        props.scopeTableData.forEach(tagRow => {
-            props.selectedTags.forEach(selectedTag => {
-                if (selectedTag.id === tagRow.tagId) {
-                    tagRow.tableData.checked = true;
-                }
-            });
-        });  
-    }, [props.selectedTags, props.scopeTableData]);
+    // TODO: not sure we need this, verify when API data is returned
+    // useMemo(() => {
+    //     // set selected rows from tags in state
+    //     props.scopeTableData.forEach(tagRow => {
+    //         props.selectedTags.forEach(selectedTag => {
+    //             if (selectedTag.id === tagRow.tagId) {
+    //                 tagRow.tableData.checked = true;
+    //             }
+    //         });
+    //     });  
+    // }, [props.selectedTags, props.scopeTableData]);
 
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
         // set selected tags into state

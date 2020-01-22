@@ -1,27 +1,18 @@
-import { Journey, Step } from '../../http/PreservationApiClient';
 import React, { useEffect, useState } from 'react';
 
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
-import { Tag, TagRow } from './types';
+import { Journey, Step } from '../../http/PreservationApiClient';
 import { usePreservationContext } from '../../context/PreservationContext';
-
-const testData: TagRow[] = [
-    { tagId: 10, tagNo: 'Tag 1', description: 'desc 1', tableData: { checked: false } },
-    { tagId: 20, tagNo: 'Tag 2', description: 'desc 2', tableData: { checked: false } },
-    { tagId: 30, tagNo: 'Tag 3', description: 'desc 3', tableData: { checked: false } },
-    { tagId: 40, tagNo: 'Tag 4', description: 'desc 4', tableData: { checked: false } },
-    { tagId: 50, tagNo: 'Tag 5', description: 'desc 5', tableData: { checked: false } },
-    { tagId: 60, tagNo: 'Tag 6', description: 'desc 6', tableData: { checked: false } },
-    { tagId: 70, tagNo: 'Tag 7', description: 'desc 7', tableData: { checked: false } }
-];
+import { Tag, TagRow } from './types';
 
 const AddScope = (): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
-    const [step, setStep] = useState(2);
 
+    const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [preservationSteps, setPreservationSteps] = useState<Step[]>([]);
 
@@ -38,19 +29,6 @@ const AddScope = (): JSX.Element => {
             setPreservationSteps(data);
         })();
     }, []);
-
-    const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
-
-    const getTableData = (): TagRow[] => {
-        // TODO: replace with API call to fetch data
-        const tagData = testData;
-
-        tagData.forEach((t) => {
-            t.tableData.checked = false;
-        });
-
-        return tagData;
-    };
 
     const goToNextStep = (): void => {
         setStep(currentStep => {
@@ -74,17 +52,11 @@ const AddScope = (): JSX.Element => {
         setSelectedTags(tags);
     };
 
-    const searchTagsFromComponent = (tagNo: string | null): void => {
+    const searchTagsFromComponent = async (tagNo: string | null): Promise<void> => {
         let result: TagRow[] = [];
 
         if (tagNo && tagNo.length > 0) {
-            // TODO: pass tagNo parameter
-            result = getTableData();
-
-            // TODO: temp filtering while testing
-            result = result.filter(
-                tagRow => tagRow.tagNo.toLowerCase().startsWith(tagNo.toLowerCase())
-            );
+            result = await apiClient.getTagsForAddPreservationScope(tagNo);
 
             if (result.length === 0) {
                 // TODO: replace with Notification

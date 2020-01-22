@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { Journey, Step } from '../../http/PreservationApiClient';
+import React, { useEffect, useState } from 'react';
 
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
 import { Tag, TagRow } from './types';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 const testData: TagRow[] = [
     { tagId: 10, tagNo: 'Tag 1', description: 'desc 1', tableData: { checked: false } },
@@ -15,9 +17,27 @@ const testData: TagRow[] = [
 ];
 
 const AddScope = (): JSX.Element => {
-    const [step, setStep] = useState(1);
+
+    const { apiClient } = usePreservationContext();
+    const [step, setStep] = useState(2);
 
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [journeys, setJourneys] = useState<Journey[]>([]);
+    const [preservationSteps, setPreservationSteps] = useState<Step[]>([]);
+
+    useEffect(() => {
+        (async (): Promise<void> => {
+            const data = await apiClient.getPreservationJourneys();
+            setJourneys(data);
+        })();
+    }, []);
+
+    useEffect(() => {
+        (async (): Promise<void> => {
+            const data = await apiClient.getPreservationSteps();
+            setPreservationSteps(data);
+        })();
+    }, []);
 
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
 
@@ -86,7 +106,7 @@ const AddScope = (): JSX.Element => {
                 scopeTableData={scopeTableData} 
             />;
         case 2:
-            return <SetTagProperties previousStep={goToPreviousStep} nextStep={goToNextStep} tags={selectedTags} />;
+            return <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />;
     }
 
     return <h1>Unknown step</h1>;

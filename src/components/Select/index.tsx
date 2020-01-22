@@ -11,7 +11,7 @@ export type SelectItem = {
 };
 
 type SelectProps = {
-    data: Array<SelectItem>;
+    data: SelectItem[];
     selectedIndex?: number;
     disabled?: boolean;
     onChange?: (newIndex: number) => void;

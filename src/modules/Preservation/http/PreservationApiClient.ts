@@ -2,7 +2,6 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
-import { TagRow } from '../views/AddScope/types';
 
 const Settings = require('../../../../settings.json');
 
@@ -18,6 +17,12 @@ export type Journey = {
 export type Step = {
     id: number;
     text: string;
+}
+
+export type TagData = {
+    tagId: number;
+    tagNo: string;
+    description: string;
 }
 
 
@@ -120,12 +125,12 @@ class PreservationApiClient extends ApiClient {
         }]);
     }
 
-    async getTagsForAddPreservationScope(tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagRow[]> {
+    async getTagsForAddPreservationScope(tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagData[]> {
         // const endpoint = '/Tags';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
-        const testData: TagRow[] = [
+        const testData: TagData[] = [
             { tagId: 10, tagNo: 'Tag 1', description: 'desc 1' },
             { tagId: 20, tagNo: 'Tag 2', description: 'desc 2' },
             { tagId: 30, tagNo: 'Tag 3', description: 'desc 3' },

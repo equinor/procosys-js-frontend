@@ -4,10 +4,9 @@ import { tokens } from '@equinor/eds-tokens';
 
 type ContainerProps = {
     openLeft?: boolean;
-}
+};
 
 export const Container = styled.div<ContainerProps>`
-    display: inline-block;
     ul {
         position: absolute;
         margin-top: 0.5rem;
@@ -16,9 +15,11 @@ export const Container = styled.div<ContainerProps>`
         box-shadow: ${tokens.elevation.raised};
         max-height: 300px;
         overflow-y: scroll;
-        ${(props): any => props.openLeft && css`
-            right: 0px;
-        `}
+        ${(props): any =>
+        props.openLeft &&
+        css`
+                right: 0px;
+            `}
         z-index: 100;
     }
 `;
@@ -37,32 +38,36 @@ interface DropdownButtonProps {
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
     background-color: transparent;
-    border: 0;
+    max-width: 264px;
+    border: none;
     display: flex;
-    text-overflow: '...';
+    width: 100%;
     align-items: center;
     padding: 6px;
-    width: 100%;
-    ${(props): any => props.isOpen && css`
-        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-        /* :focus & {
-            outline: none;
-        } */
-    `}
+    background-color: ${tokens.colors.ui.background__light.rgba};
+    border-bottom: 1px solid black;
+    ${(props): any =>
+        props.isOpen &&
+        css`
+            background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+        `}
 `;
 
 export type DropDownItemProps = {
     selected: boolean;
-}
+};
 
 export const DropdownItem = styled.li<DropDownItemProps>`
-    background-color: ${(props): any => props.selected ? tokens.colors.ui.background__light.rgba : 'transparent'};
+    background-color: ${(props): any =>
+        props.selected
+            ? tokens.colors.ui.background__light.rgba
+            : 'transparent'};
     padding: 24px 16px;
     border: 0;
-    text-align:left;
+    text-align: left;
     font-weight: normal;
 `;
 
 DropdownItem.defaultProps = {
-    selected: false
+    selected: false,
 };

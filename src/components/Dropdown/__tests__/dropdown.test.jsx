@@ -38,7 +38,7 @@ describe('<Dropdown />', () => {
             {items}
         </Dropdown>);
         getByText('Heading').click();
-        expect(queryAllByText('Item', {exact: false}).length).toBe(2);
+        expect(queryAllByText('Item', { exact: false }).length).toBe(2);
     });
 
     it('Hides dropdown when clicking outside of element', () => {
@@ -52,10 +52,20 @@ describe('<Dropdown />', () => {
         );
 
         getByText('Heading').click();
-        expect(queryByText('Item 1')).toBeInTheDocument();
-
         fireEvent.mouseDown(getByText('ClickMe'));
 
+        expect(queryByText('Item 1')).toBeNull();
+    });
+
+    it('Hides dropdown when selecting option', () => {
+        const { getByText, queryByText } = renderWithTheme(
+            <Dropdown text='Heading'>
+                {items}
+            </Dropdown>
+        );
+
+        getByText('Heading').click();
+        getByText('Item 1').click();
         expect(queryByText('Item 1')).toBeNull();
     });
 });

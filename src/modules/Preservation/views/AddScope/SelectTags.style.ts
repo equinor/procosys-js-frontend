@@ -14,12 +14,12 @@ export const Header = styled.header`
     };
 `;
 
-export const ActionBar = styled.div`
+export const ActionContainer = styled.div`
     display: flex;
     margin-top: calc(var(--grid-unit) * 3);
 `;
 
-export const Search = styled.div`
+export const SearchContainer = styled.div`
     display: flex;
     flex: 1;
 
@@ -28,7 +28,7 @@ export const Search = styled.div`
     }
 `;
 
-export const Next = styled.div`
+export const ButtonContainer = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -36,8 +36,13 @@ export const Next = styled.div`
     margin-right: calc(var(--grid-unit));
 `;
 
-export const Tags = styled.div`
-    margin-top: calc(var(--grid-unit) * 4);    
+interface TagsContainerProps {
+    hasData: boolean;
+}
+
+export const TagsContainer = styled.div<TagsContainerProps>`
+    margin-top: calc(var(--grid-unit) * 4);
+    display: ${(props): any => props.hasData ? 'inline-block' : 'none'}
 `;
 
 export const TagsHeader = styled.div`

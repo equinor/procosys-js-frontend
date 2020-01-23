@@ -10,12 +10,16 @@ type DropdownProps = {
     children?: JSX.Element[] | JSX.Element;
     Icon?: JSX.Element;
     openLeft?: boolean;
-}
+};
 
 const KEYCODE_ESCAPE = 27;
 
 const Select: React.FC<DropdownProps> = ({
-    disabled = false, text = '', Icon = <KeyboardArrowDownIcon />,  children, openLeft
+    disabled = false,
+    text = '',
+    Icon = <KeyboardArrowDownIcon />,
+    children,
+    openLeft,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -39,11 +43,9 @@ const Select: React.FC<DropdownProps> = ({
                 aria-expanded={isOpen}
                 aria-haspopup={true}
             >
-                {text}
+                {text || 'Select'}
 
-                <DropdownIcon>
-                    {Icon}
-                </DropdownIcon>
+                <DropdownIcon>{Icon}</DropdownIcon>
             </DropdownButton>
             {isOpen && children && children.length > 0 && !disabled && (
                 <ul
@@ -56,6 +58,7 @@ const Select: React.FC<DropdownProps> = ({
                             <DropdownItem
                                 key={index}
                                 role="option"
+                                onClick={toggleDropdown}
                                 tabIndex={0}
                             >
                                 {item}

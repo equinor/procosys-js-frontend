@@ -1,4 +1,4 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, SelectableItem } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem } from './style';
 import React, { ReactNode, useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -71,8 +71,10 @@ const Select = ({
                     }}
                     data-selected={isSelectedItem}
                 >
-                    {itm.icon || null}
-                    {itm.text}
+                    <ItemContent>
+                        {itm.icon || null}
+                        {itm.text}
+                    </ItemContent>
                 </SelectableItem>);
             }
 
@@ -88,8 +90,10 @@ const Select = ({
                 }}
                 data-selected={isSelectedItem}
             >
-                {itm.icon || null}
-                {itm.text}
+                <ItemContent>
+                    {itm.icon || null}
+                    {itm.text}
+                </ItemContent>
                 <CascadingItem>
                     {createNodesForItems(itm.children)}
                 </CascadingItem>

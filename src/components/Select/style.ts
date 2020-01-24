@@ -9,7 +9,7 @@ type ContainerProps = {
 export const Container = styled.div<ContainerProps>`
     ul {
         position: absolute;
-        background-color: ${tokens.colors.ui.background__default.rgba};
+        background-color: transparent;
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
         ${(props): any =>
@@ -18,10 +18,6 @@ export const Container = styled.div<ContainerProps>`
                 right: 0px;
             `}
         z-index: 100;
-
-        li:hover {
-            background-color: ${tokens.colors.ui.background__light.rgba};
-        }
     }
 
     ul.container {
@@ -63,18 +59,17 @@ export type SelectableItemProps = {
 
 export const SelectableItem = styled.li<SelectableItemProps>`
     position: relative;
-    display: flex;
-    align-items: center;
-    background-color: ${(props): any =>
+    background-color: transparent;
+
+    :first-child {
+        background-color: ${(props): any =>
         props.selected
             ? tokens.colors.ui.background__light.rgba
             : 'transparent'};
-    padding: 24px 16px;
-    border: 0;
-    text-align: left;
-    font-weight: normal;
-    :hover ul, ul:hover ul {
-        display: flex;
+    }
+
+    :hover > ul {
+        display: block;
     }
 `;
 
@@ -84,6 +79,7 @@ SelectableItem.defaultProps = {
 
 export const CascadingItem = styled.ul`
     display: none;
+    background-color: transparent;
     left: 100%;
     top: -1px;
     max-width: 264px;
@@ -91,5 +87,23 @@ export const CascadingItem = styled.ul`
     width: 100%;
     align-items: center;
     margin-left: var(--grid-unit);
-    background-color: ${tokens.colors.ui.background__light.rgba};
+    li {
+        left: calc(var(--grid-unit) * -1);
+    }
+`;
+
+
+export const ItemContent = styled.div`
+    display: flex;
+    align-items: center;
+
+    padding: 24px 16px;
+    border: 0;
+    text-align: left;
+    font-weight: normal;
+    margin-left: var(--grid-unit);
+    background-color: ${tokens.colors.ui.background__default.rgba};
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba};
+    }
 `;

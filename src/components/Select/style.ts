@@ -9,18 +9,23 @@ type ContainerProps = {
 export const Container = styled.div<ContainerProps>`
     ul {
         position: absolute;
-        margin-top: 0.5rem;
         background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
-        max-height: 300px;
-        overflow-y: scroll;
         ${(props): any =>
         props.openLeft &&
         css`
                 right: 0px;
             `}
         z-index: 100;
+
+        li:hover {
+            background-color: ${tokens.colors.ui.background__light.rgba};
+        }
+    }
+
+    ul.container {
+        margin-top: 0.5rem;
     }
 `;
 
@@ -37,7 +42,6 @@ interface DropdownButtonProps {
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    background-color: transparent;
     max-width: 264px;
     border: none;
     display: flex;
@@ -53,11 +57,14 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
         `}
 `;
 
-export type DropDownItemProps = {
+export type SelectableItemProps = {
     selected: boolean;
 };
 
-export const DropdownItem = styled.li<DropDownItemProps>`
+export const SelectableItem = styled.li<SelectableItemProps>`
+    position: relative;
+    display: flex;
+    align-items: center;
     background-color: ${(props): any =>
         props.selected
             ? tokens.colors.ui.background__light.rgba
@@ -66,8 +73,23 @@ export const DropdownItem = styled.li<DropDownItemProps>`
     border: 0;
     text-align: left;
     font-weight: normal;
+    :hover ul, ul:hover ul {
+        display: flex;
+    }
 `;
 
-DropdownItem.defaultProps = {
+SelectableItem.defaultProps = {
     selected: false,
 };
+
+export const CascadingItem = styled.ul`
+    display: none;
+    left: 100%;
+    top: -1px;
+    max-width: 264px;
+    border: none;
+    width: 100%;
+    align-items: center;
+    margin-left: var(--grid-unit);
+    background-color: ${tokens.colors.ui.background__light.rgba};
+`;

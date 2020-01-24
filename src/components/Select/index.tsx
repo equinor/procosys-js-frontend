@@ -1,4 +1,4 @@
-import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, SelectableItem } from './style';
 import React, { ReactNode, useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -50,6 +50,53 @@ const Select = ({
         setIsOpen(false);
     };
 
+    const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
+
+        return items.map((itm, index) => {
+
+            const isSelectedItem = index === selectedIndex;
+            if (!itm.children) {
+                return (<SelectableItem
+                    key={index}
+                    role="option"
+                    selected={isSelectedItem}
+                    data-value={itm.text}
+                    tabIndex={0}
+                    onKeyDown={(e): void => {
+                        e.keyCode === KEYCODE_ENTER &&
+                            selectItem(index);
+                    }}
+                    onClick={(): void => {
+                        selectItem(index);
+                    }}
+                    data-selected={isSelectedItem}
+                >
+                    {itm.icon || null}
+                    {itm.text}
+                </SelectableItem>);
+            }
+
+            return (<SelectableItem
+                key={index}
+                role="option"
+                selected={isSelectedItem}
+                data-value={itm.text}
+                tabIndex={0}
+                onKeyDown={(e): void => {
+                    e.keyCode === KEYCODE_ENTER &&
+                        selectItem(index);
+                }}
+                data-selected={isSelectedItem}
+            >
+                {itm.icon || null}
+                {itm.text}
+                <CascadingItem>
+                    {createNodesForItems(itm.children)}
+                </CascadingItem>
+            </SelectableItem>);
+        });
+    };
+
     return (
         <Container ref={containerRef} openLeft={openLeft || false}>
             {label}
@@ -69,33 +116,12 @@ const Select = ({
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
                 <ul
+                    className='container'
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
-                    {data.map((item, index) => {
-                        const isSelectedValue = selectedIndex === index;
-                        return (
-                            <DropdownItem
-                                key={index}
-                                role="option"
-                                selected={isSelectedValue}
-                                data-value={item.text}
-                                tabIndex={0}
-                                onKeyDown={(e): void => {
-                                    e.keyCode === KEYCODE_ENTER &&
-                                        selectItem(index);
-                                }}
-                                onClick={(): void => {
-                                    selectItem(index);
-                                }}
-                                data-selected={isSelectedValue}
-                            >
-                                {item.icon || null}
-                                {item.text}
-                            </DropdownItem>
-                        );
-                    })}
+                    {createNodesForItems(data)}
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (

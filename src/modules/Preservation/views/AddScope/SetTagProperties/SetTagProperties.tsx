@@ -2,6 +2,7 @@ import { ButtonContainer, Container, InputContainer } from './SetTagProperties.s
 import React, { useMemo, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
+import FirstPage from '@material-ui/icons/FirstPage';
 import SelectInput from '../../../../../components/Select';
 import { TextField } from '@equinor/eds-core-react';
 
@@ -25,7 +26,7 @@ const SetTagProperties = ({
     steps = []
 }: SetTagPropertiesProps): JSX.Element => {
     const [journey, setJourney] = useState(-1);
-    const [step, setStep] = useState(-1);
+    const [step, setStep] = useState<number>(-1);
     const [formIsValid, setFormIsValid] = useState(false);
 
     useMemo(() => {
@@ -51,6 +52,20 @@ const SetTagProperties = ({
             };
         });
     }, [steps]);
+
+    const fakeData = [{
+        text: 'Testing',
+        icon: <FirstPage />,
+        children: [{
+            text: 'Testing sub'
+        }],
+    }, {
+        text: 'Testing 2',
+        icon: <FirstPage />,
+        children: [{
+            text: 'Testing sub 2'
+        }],
+    }];
 
     return (
         <Container>
@@ -81,6 +96,15 @@ const SetTagProperties = ({
                         placeholder="Write Here"
                         helpertext="For example: Check according to predecure 123, or check specifications from supplier"
                     />
+                </InputContainer>
+                <InputContainer>
+                    <SelectInput
+                        onChange={setJourney}
+                        data={fakeData}
+                        label={'Preservation journey for all selected tags'}
+                    >
+                        {(journey > -1 && journeys[journey].text) || 'Testing'}
+                    </SelectInput>
                 </InputContainer>
             </div>
             <ButtonContainer>

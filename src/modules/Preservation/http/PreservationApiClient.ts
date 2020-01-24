@@ -109,7 +109,6 @@ class PreservationApiClient extends ApiClient {
             endpoint,
             settings
         );
-        //console.table(result.data);
         return result.data;
     }
 

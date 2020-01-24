@@ -1,6 +1,6 @@
 import ApiClient from './ApiClient';
-import {AxiosRequestConfig} from 'axios';
-import {IAuthService} from '../auth/AuthService';
+import { AxiosRequestConfig } from 'axios';
+import { IAuthService } from '../auth/AuthService';
 import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
 
@@ -13,6 +13,7 @@ export type PlantResponse = {
 
 export type ProjectResponse = {
     id: number;
+    name: string;
     description: string;
     parentDescription: string;
 }
@@ -82,7 +83,7 @@ class ProCoSysClient extends ApiClient {
         const endpoint = '/projects';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get(endpoint,settings);
+        const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as ProjectResponse[];
     }
 }

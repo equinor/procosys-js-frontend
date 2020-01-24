@@ -2,9 +2,10 @@ import React from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
 import { Tag, TagRow } from './types';
-import { Container, Header, ActionContainer, SearchContainer, ButtonContainer, TagsContainer, TagsHeader } from './SelectTags.style';
+import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer } from './SelectTags.style';
 import { usePreservationContext } from '../../context/PreservationContext';
 import Table from './../../../../components/Table';
+import Loading from './../../../../components/Loading';
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -12,28 +13,26 @@ type SelectTagsProps = {
     setSelectedTags: (tags: Tag[]) => void;
     searchTags: (tagNo: string | null) => void;
     nextStep: () => void;
+    isLoading: boolean;
 }
 
 const KEYCODE_ENTER = 13;
 
 const tableColumns = [
-    { title: 'TagId', field: 'tagId', hidden: true },
     { title: 'Tag nr', field: 'tagNo' },
     { title: 'Description', field: 'description' },
-    { title: 'PO no', field: 'poNo' },
-    { title: 'Comm pkg', field: 'commPkg' },
-    { title: 'Preserved', field: 'preserved' },
-    { title: 'MC package nr', field: 'mcPkg' },
-    { title: 'MC package description', field: 'mcPkgDescription' }
+    { title: 'PO no', field: 'purchaseOrderNumber' },
+    { title: 'Comm pkg', field: 'commPkgNo' },
+    { title: 'Preserved', field: 'isPreserved' },
+    { title: 'MC package nr', field: 'mcPkgNo' }
 ];
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
-        // set selected tags into state
         props.setSelectedTags(selectedRows.map(row => {
-            return { id: row.tagId }; 
+            return { tagNo: row.tagNo }; 
         }));        
     };
 
@@ -43,8 +42,8 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <h1>Add preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            <ActionContainer>
-                <SearchContainer>
+            <Actions>
+                <Search>
                     <TextField 
                         id="tagSearch"
                         placeholder="Search by tag number" 
@@ -56,12 +55,12 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                             e.currentTarget.value.length === 0 && props.searchTags(null);
                         }}
                     />  
-                </SearchContainer> 
-                <ButtonContainer>
+                </Search> 
+                <Next>
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
-                </ButtonContainer>                            
-            </ActionContainer>
-            <TagsContainer hasData={props.scopeTableData.length > 0}>
+                </Next>                            
+            </Actions>
+            <Tags>
                 <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
                 <Table 
                     columns={tableColumns}
@@ -75,8 +74,16 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         boxShadow: 'none' 
                     }}                
                     onSelectionChange={rowSelectionChanged}
+                    isLoading={props.isLoading}
+                    components={{
+                        OverlayLoading: (): any => (
+                            <LoadingContainer>
+                                <Loading title="Loading tags" />
+                            </LoadingContainer>                            
+                        )
+                    }}
                 />
-            </TagsContainer>
+            </Tags>
         </Container>
     );
 };

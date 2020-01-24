@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -14,12 +15,12 @@ export const Header = styled.header`
     };
 `;
 
-export const ActionContainer = styled.div`
+export const Actions = styled.div`
     display: flex;
     margin-top: calc(var(--grid-unit) * 3);
 `;
 
-export const SearchContainer = styled.div`
+export const Search = styled.div`
     display: flex;
     flex: 1;
 
@@ -28,7 +29,7 @@ export const SearchContainer = styled.div`
     }
 `;
 
-export const ButtonContainer = styled.div`
+export const Next = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -36,16 +37,16 @@ export const ButtonContainer = styled.div`
     margin-right: calc(var(--grid-unit));
 `;
 
-interface TagsContainerProps {
-    hasData: boolean;
-}
-
-export const TagsContainer = styled.div<TagsContainerProps>`
+export const Tags = styled.div`
     margin-top: calc(var(--grid-unit) * 4);
-    display: ${(props): any => props.hasData ? 'inline-block' : 'none'}
 `;
 
 export const TagsHeader = styled.div`
     font-weight: bold;
     margin-bottom: calc(var(--grid-unit));
+`;
+
+export const LoadingContainer = styled.div`
+    background-color: ${tokens.colors.ui.background__default.rgba};
+    height: 100%
 `;

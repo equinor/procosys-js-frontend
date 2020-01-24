@@ -5,16 +5,18 @@ import SetTagProperties from './SetTagProperties/SetTagProperties';
 import { Journey, Step } from '../../http/PreservationApiClient';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { Tag, TagRow } from './types';
+import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 
 const AddScope = (): JSX.Element => {
 
-    const { apiClient } = usePreservationContext();
+    const { apiClient, project } = usePreservationContext();
 
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [preservationSteps, setPreservationSteps] = useState<Step[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         (async (): Promise<void> => {
@@ -49,17 +51,18 @@ const AddScope = (): JSX.Element => {
     };
 
     const searchTags = async (tagNo: string | null): Promise<void> => {
+        setIsLoading(true);
         let result: TagRow[] = [];
 
         if (tagNo && tagNo.length > 0) {
-            result = await apiClient.getTagsForAddPreservationScope(tagNo);
+            result = await apiClient.getTagsForAddPreservationScope(project.name, tagNo);
 
             if (result.length === 0) {
-                // TODO: replace with Notification
-                alert(`No tags starting with "${tagNo}" found.`);
+                showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
             }
         }
 
+        setIsLoading(false);
         setSelectedTags([]);
         setScopeTableData(result);
     };
@@ -72,6 +75,7 @@ const AddScope = (): JSX.Element => {
                 searchTags={searchTags}
                 selectedTags={selectedTags}
                 scopeTableData={scopeTableData}
+                isLoading={isLoading}
             />;
         case 2:
             return <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />;

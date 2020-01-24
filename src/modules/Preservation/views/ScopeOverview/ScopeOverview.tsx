@@ -1,14 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { NavLink, useRouteMatch } from 'react-router-dom';
-
 import {
     Container,
     HeaderContainer,
     Header,
     IconBar,
 } from './ScopeOverview.style';
-import { Select } from '../../../../components';
-import { SelectItem } from '../../../../components/Select';
 import Dropdown from '../../../../components/Dropdown';
 import Table from './../../../../components/Table';
 import { usePreservationContext } from '../../context/PreservationContext';
@@ -36,15 +33,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         apiClient,
     } = usePreservationContext();
 
-    const projectSelectOptions = useMemo(() => {
-        return availableProjects.map(project => {
-            return {
-                text: project.description,
-                value: project.id,
-            };
-        });
-    }, [availableProjects]);
-
     async function getPreservedTags(): Promise<void> {
         const tags = await apiClient.getPreservedTags();
         setTags(tags);
@@ -52,8 +40,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     useMemo(getPreservedTags, []);
 
-    const changeProject = (project: SelectItem): void => {
-        setCurrentProject(project.value as number);
+    const changeProject = (event: React.MouseEvent, index: number): void => {
+        event.preventDefault();
+        setCurrentProject(availableProjects[index].id);
     };
 
     const startPreservation = (): void => {
@@ -89,14 +78,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             <HeaderContainer>
                 <Header>
                     <h1>Preservation tags</h1>
-                    <Select
-                        data={projectSelectOptions}
-                        selected={{
-                            text: project.description,
-                            value: project.id,
-                        }}
-                        onChange={changeProject}
-                    />
+                    <Dropdown text={project.description}>
+                        {availableProjects.map((projectItem, index) => {
+                            return (
+                                <a
+                                    href="#"
+                                    key={index}
+                                    onClick={(event): void =>
+                                        changeProject(event, index)
+                                    }
+                                >
+                                    {projectItem.description}
+                                </a>
+                            );
+                        })}
+                    </Dropdown>
+
                     <Dropdown text="Add scope">
                         <NavLink to={`${path.url}/AddScope`}>
                             Add tags manually

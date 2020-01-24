@@ -1,34 +1,40 @@
 import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
-import React, { useRef, useState } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
 export type SelectItem = {
     text: string;
-    value: string | number;
+    icon?: ReactNode;
+    children?: SelectItem[];
 };
 
-type SelectProps =  {
-    data: Array<SelectItem>;
-    selected?: SelectItem;
+type SelectProps = {
+    data: SelectItem[];
+    selectedIndex?: number;
     disabled?: boolean;
-    onChange?: (newValue: SelectItem, oldValue?: SelectItem) => void;
+    onChange?: (newIndex: number) => void;
     openLeft?: boolean;
-}
+    children: ReactNode;
+    label?: string;
+};
 
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
 const Select = ({
     disabled = false,
+    selectedIndex = -1,
     data = [],
-    selected,
-    onChange = (): void => {/*eslint-disable-line no-empty */},
+    onChange = (): void => {
+        /*eslint-disable-line no-empty */
+    },
     openLeft,
+    children,
+    label,
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(selected);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useClickOutsideNotifier(() => {
@@ -39,15 +45,14 @@ const Select = ({
         setIsOpen(!isOpen);
     };
 
-    const selectItem = (item: SelectItem): void => {
-        onChange(item, selectedItem);
-        setSelectedItem(item);
+    const selectItem = (index: number): void => {
+        onChange(index);
         setIsOpen(false);
     };
 
-    const selectedText = (selectedItem && selectedItem.text) || 'Select';
     return (
         <Container ref={containerRef} openLeft={openLeft || false}>
+            {label}
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}
@@ -56,7 +61,7 @@ const Select = ({
                 aria-expanded={isOpen}
                 aria-haspopup={true}
             >
-                {selectedText}
+                {children}
 
                 <DropdownIcon>
                     <KeyboardArrowDownIcon />
@@ -69,23 +74,24 @@ const Select = ({
                     }}
                 >
                     {data.map((item, index) => {
-                        const isSelectedValue =
-                            (selectedItem && item.value === selectedItem.value) || false;
+                        const isSelectedValue = selectedIndex === index;
                         return (
                             <DropdownItem
                                 key={index}
                                 role="option"
                                 selected={isSelectedValue}
-                                data-value={item.value}
+                                data-value={item.text}
                                 tabIndex={0}
                                 onKeyDown={(e): void => {
-                                    e.keyCode === KEYCODE_ENTER && selectItem(item);
+                                    e.keyCode === KEYCODE_ENTER &&
+                                        selectItem(index);
                                 }}
                                 onClick={(): void => {
-                                    selectItem(item);
+                                    selectItem(index);
                                 }}
                                 data-selected={isSelectedValue}
                             >
+                                {item.icon || null}
                                 {item.text}
                             </DropdownItem>
                         );

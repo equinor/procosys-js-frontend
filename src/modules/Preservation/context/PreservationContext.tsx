@@ -56,6 +56,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
                 .then(projects => projects.map((project): ProjectDetails => {
                     return {
                         id: project.id,
+                        name: project.name,
                         description: project.description
                     };
                 }));

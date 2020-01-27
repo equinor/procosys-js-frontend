@@ -64,6 +64,12 @@ const SetTagProperties = ({
         icon: <FirstPage />,
         children: [{
             text: 'Testing sub 2'
+        },
+        {
+            text: 'Testing sub 2-3'
+        },
+        {
+            text: 'Testing sub 2-3-4'
         }],
     }];
 

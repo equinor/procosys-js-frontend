@@ -11,13 +11,23 @@ export const Container = styled.div<ContainerProps>`
         position: absolute;
         background-color: transparent;
         border-radius: 4px;
-        box-shadow: ${tokens.elevation.raised};
         ${(props): any =>
         props.openLeft &&
         css`
                 right: 0px;
             `}
         z-index: 100;
+
+        li div {
+            box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+        }
+
+        li:first-child div {
+            box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
+        }
+        li:only-child div {
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+        }
     }
 
     ul.container {
@@ -84,7 +94,7 @@ export const CascadingItem = styled.ul`
     top: -1px;
     max-width: 264px;
     border: none;
-    width: 100%;
+    width: max-content;
     align-items: center;
     margin-left: var(--grid-unit);
     li {
@@ -96,7 +106,6 @@ export const CascadingItem = styled.ul`
 export const ItemContent = styled.div`
     display: flex;
     align-items: center;
-
     padding: 24px 16px;
     border: 0;
     text-align: left;

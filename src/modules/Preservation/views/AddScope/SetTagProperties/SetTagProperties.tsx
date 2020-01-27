@@ -40,7 +40,8 @@ const SetTagProperties = ({
     const journeysDataMapped = useMemo(() => {
         return journeys.map((itm) => {
             return {
-                text: itm.text
+                text: itm.text,
+                value: itm.text
             };
         });
     }, [journeys]);
@@ -48,28 +49,61 @@ const SetTagProperties = ({
     const stepsDataMapped = useMemo(() => {
         return steps.map((itm) => {
             return {
-                text: itm.text
+                text: itm.text,
+                value: itm.text
             };
         });
     }, [steps]);
 
+    const setJourneyFromForm = (value: string): void => {
+        setJourney(journeys.findIndex(pJourney => pJourney.text === value));
+    };
+
+    const setStepFromForm = (value: string): void => {
+        setStep(steps.findIndex(pStep => pStep.text === value));
+    };
+
+    const setRequirement = (req: any): void => {
+        console.log('Setting requirement', req);
+    };
+
     const fakeData = [{
         text: 'Testing',
+        value: '1',
         icon: <FirstPage />,
+        selected: true,
         children: [{
-            text: 'Testing sub'
+            text: 'Testing sub',
+            value: '1-1',
+        }, {
+            text: 'Sub-Sub',
+            value: '1-2',
+            selected: true,
+            children: [{
+                text: 'sub-sub-sub',
+                selected: true,
+                value: '1-2-1'
+            }]
         }],
     }, {
-        text: 'Testing 2',
+        text: 'Testing no-menu',
         icon: <FirstPage />,
+        value: '2',
+    }, {
+        text: 'Testing 3',
+        icon: <FirstPage />,
+        value: '3',
         children: [{
-            text: 'Testing sub 2'
+            text: 'Testing sub 3-1',
+            value: '3-1',
         },
         {
-            text: 'Testing sub 2-3'
+            text: 'Testing sub 3-2',
+            value: '3-2',
         },
         {
-            text: 'Testing sub 2-3-4'
+            text: 'Testing sub 3-3',
+            value: '3-3',
         }],
     }];
 
@@ -78,7 +112,7 @@ const SetTagProperties = ({
             <div>
                 <InputContainer>
                     <SelectInput
-                        onChange={setJourney}
+                        onChange={setJourneyFromForm}
                         data={journeysDataMapped}
                         label={'Preservation journey for all selected tags'}
                     >
@@ -87,7 +121,7 @@ const SetTagProperties = ({
                 </InputContainer>
                 <InputContainer>
                     <SelectInput
-                        onChange={setStep}
+                        onChange={setStepFromForm}
                         data={stepsDataMapped}
                         label={'Preservation step'}
                     >
@@ -105,11 +139,11 @@ const SetTagProperties = ({
                 </InputContainer>
                 <InputContainer>
                     <SelectInput
-                        onChange={setJourney}
+                        onChange={setRequirement}
                         data={fakeData}
                         label={'Preservation journey for all selected tags'}
                     >
-                        {(journey > -1 && journeys[journey].text) || 'Testing'}
+                        {'Testing'}
                     </SelectInput>
                 </InputContainer>
             </div>

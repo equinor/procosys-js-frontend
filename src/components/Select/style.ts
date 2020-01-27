@@ -22,11 +22,16 @@ export const Container = styled.div<ContainerProps>`
             box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
         }
 
-        li:first-child div {
+        li:first-child > div {
             box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
         }
-        li:only-child div {
+        li:only-child > div {
             box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+        }
+
+
+        > div:hover, li[data-selected="true"] > div {
+            background-color: ${tokens.colors.ui.background__light.rgba};
         }
     }
 
@@ -113,7 +118,5 @@ export const ItemContent = styled.div`
     font-weight: normal;
     margin-left: var(--grid-unit);
     background-color: ${tokens.colors.ui.background__default.rgba};
-    :hover {
-        background-color: ${tokens.colors.ui.background__light.rgba};
-    }
+
 `;

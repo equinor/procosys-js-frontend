@@ -7,15 +7,16 @@ import { useClickOutsideNotifier } from './../../hooks';
 
 export type SelectItem = {
     text: string;
+    value: any;
+    selected?: boolean;
     icon?: ReactNode;
     children?: SelectItem[];
 };
 
 type SelectProps = {
     data: SelectItem[];
-    selectedIndex?: number;
     disabled?: boolean;
-    onChange?: (newIndex: number) => void;
+    onChange?: (newValue: any) => void;
     openLeft?: boolean;
     children: ReactNode;
     label?: string;
@@ -26,7 +27,6 @@ const KEYCODE_ESCAPE = 27;
 
 const Select = ({
     disabled = false,
-    selectedIndex = -1,
     data = [],
     onChange = (): void => {
         /*eslint-disable-line no-empty */
@@ -46,8 +46,8 @@ const Select = ({
         setIsOpen(!isOpen);
     };
 
-    const selectItem = (index: number): void => {
-        onChange(index);
+    const selectItem = (value: any): void => {
+        onChange(value);
         setIsOpen(false);
     };
 
@@ -55,22 +55,20 @@ const Select = ({
 
         return items.map((itm, index) => {
 
-            const isSelectedItem = index === selectedIndex;
             if (!itm.children) {
                 return (<SelectableItem
                     key={index}
                     role="option"
-                    selected={isSelectedItem}
-                    data-value={itm.text}
+                    selected={!!itm.selected}
                     tabIndex={0}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ENTER &&
-                            selectItem(index);
+                            selectItem(itm.value);
                     }}
                     onClick={(): void => {
-                        selectItem(index);
+                        selectItem(itm.value);
                     }}
-                    data-selected={isSelectedItem}
+                    data-selected={!!itm.selected}
                 >
                     <ItemContent>
                         {itm.icon || null}
@@ -82,14 +80,15 @@ const Select = ({
             return (<SelectableItem
                 key={index}
                 role="option"
-                selected={isSelectedItem}
+                selected={!!itm.selected}
                 data-value={itm.text}
                 tabIndex={0}
                 onKeyDown={(e): void => {
-                    e.keyCode === KEYCODE_ENTER &&
-                        selectItem(index);
+                    if (e.keyCode === KEYCODE_ENTER) {
+                        // We should do something to support keyboard navigation
+                    }
                 }}
-                data-selected={isSelectedItem}
+                data-selected={!!itm.selected}
             >
                 <ItemContent>
                     {itm.icon || null}

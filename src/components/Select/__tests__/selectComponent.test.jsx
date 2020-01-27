@@ -45,7 +45,7 @@ describe('<Select />', () => {
     });
 
     it('Should trigger onChange when new item is selected', () => {
-        const eventWatcher = jest.fn(() => {});
+        const eventWatcher = jest.fn(() => { });
         const { getByText } = renderWithTheme(
             <Select data={items} onChange={eventWatcher}>
                 Select
@@ -58,19 +58,21 @@ describe('<Select />', () => {
         getByText(items[1].text).click();
 
         expect(eventWatcher).toHaveBeenCalledTimes(1);
-        expect(eventWatcher).toHaveBeenCalledWith(1);
+        expect(eventWatcher).toHaveBeenCalledWith(items[1].value);
     });
 
     it('Should have default item selected', () => {
+        const itemsCopy = [...items];
+        itemsCopy[0].selected = true;
         const { getByText } = renderWithTheme(
-            <Select data={items} selectedIndex={1}>
+            <Select data={items}>
                 Irrelevant
             </Select>
         );
         getByText('Irrelevant').click();
 
-        const element = getByText(items[1].text);
-        expect(element.dataset['selected']).toBe('true');
+        const element = getByText(items[0].text);
+        expect(element.parentElement.dataset['selected']).toBe('true');
     });
 
     it('Hides dropdown when clicking outside of element', () => {

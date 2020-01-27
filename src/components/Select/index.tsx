@@ -2,6 +2,7 @@ import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, Se
 import React, { ReactNode, useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { useClickOutsideNotifier } from './../../hooks';
 
 export type SelectItem = {
@@ -93,6 +94,7 @@ const Select = ({
                 <ItemContent>
                     {itm.icon || null}
                     {itm.text}
+                    <KeyboardArrowRightIcon />
                 </ItemContent>
                 <CascadingItem>
                     {createNodesForItems(itm.children)}

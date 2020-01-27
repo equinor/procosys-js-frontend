@@ -106,6 +106,7 @@ export const CascadingItem = styled.ul`
 export const ItemContent = styled.div`
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 24px 16px;
     border: 0;
     text-align: left;

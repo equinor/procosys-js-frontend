@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
-import { CheckBox } from '@material-ui/icons';
+import CheckBoxIcon from '@material-ui/icons/Checkbox';
 import { Tag, TagRow } from './types';
 import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
 import { usePreservationContext } from '../../context/PreservationContext';
@@ -27,7 +27,7 @@ const tableColumns = [
     { 
         title: 'Preserved', 
         field: 'isPreserved',
-        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBox />
+        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />
     },
     { title: 'MC pkg', field: 'mcPkgNo' }
 ];

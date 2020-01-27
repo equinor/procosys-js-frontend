@@ -1,6 +1,5 @@
-import { Journey, Step } from '../../http/PreservationApiClient';
+import { Journey, Tag, TagRow } from './types';
 import React, { useEffect, useState } from 'react';
-import { Tag, TagRow } from './types';
 
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
@@ -15,20 +14,12 @@ const AddScope = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
-    const [preservationSteps, setPreservationSteps] = useState<Step[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         (async (): Promise<void> => {
             const data = await apiClient.getPreservationJourneys();
             setJourneys(data);
-        })();
-    }, []);
-
-    useEffect(() => {
-        (async (): Promise<void> => {
-            const data = await apiClient.getPreservationSteps();
-            setPreservationSteps(data);
         })();
     }, []);
 
@@ -78,7 +69,11 @@ const AddScope = (): JSX.Element => {
                 isLoading={isLoading}
             />;
         case 2:
-            return <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />;
+            return <SetTagProperties
+                journeys={journeys}
+                previousStep={goToPreviousStep}
+                nextStep={goToNextStep}
+            />;
     }
 
     return <h1>Unknown step</h1>;

@@ -1,35 +1,35 @@
 import { ButtonContainer, Container, InputContainer } from './SetTagProperties.style';
-import React, { useMemo, useState } from 'react';
+import { Journey, Step } from '../types';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
-import FirstPage from '@material-ui/icons/FirstPage';
 import SelectInput from '../../../../../components/Select';
 import { TextField } from '@equinor/eds-core-react';
 
 type SetTagPropertiesProps = {
     nextStep: () => void;
     previousStep: () => void;
-    journeys: {
-        id: number;
-        text: string;
-    }[];
-    steps: {
-        id: number;
-        text: string;
-    }[];
+    journeys: Journey[];
 };
+
+interface Option {
+    text: string;
+    value: any;
+}
 
 const SetTagProperties = ({
     nextStep,
     previousStep,
     journeys = [],
-    steps = []
 }: SetTagPropertiesProps): JSX.Element => {
     const [journey, setJourney] = useState(-1);
     const [step, setStep] = useState<number>(-1);
     const [formIsValid, setFormIsValid] = useState(false);
 
-    useMemo(() => {
+    const [mappedJourneys, setMappedJourneys] = useState<Option[]>([]);
+    const [mappedSteps, setMappedSteps] = useState<Option[]>([]);
+
+    useEffect(() => {
         if (journey > -1 && step > -1) {
             setFormIsValid(true);
             return;
@@ -37,75 +37,52 @@ const SetTagProperties = ({
         setFormIsValid(false);
     }, [journey, step]);
 
-    const journeysDataMapped = useMemo(() => {
-        return journeys.map((itm) => {
+    useEffect(() => {
+        const mapped = journeys.map((itm: Journey) => {
             return {
-                text: itm.text,
-                value: itm.text
+                text: itm.title,
+                value: itm.id
             };
         });
+        setMappedJourneys(mapped);
     }, [journeys]);
 
-    const stepsDataMapped = useMemo(() => {
-        return steps.map((itm) => {
-            return {
-                text: itm.text,
-                value: itm.text
-            };
-        });
-    }, [steps]);
+    useEffect(() => {
+        if (journeys.length > 0 && journeys[journey]) {
+            const mapped = journeys[journey].steps.map((itm: Step) => {
+                return {
+                    text: itm.mode.title,
+                    value: itm.id
+                };
+            });
+            setMappedSteps(mapped);
+        }
+    }, [journey]);
 
-    const setJourneyFromForm = (value: string): void => {
-        setJourney(journeys.findIndex(pJourney => pJourney.text === value));
+    const setJourneyFromForm = (value: number): void => {
+        setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
     };
 
-    const setStepFromForm = (value: string): void => {
-        setStep(steps.findIndex(pStep => pStep.text === value));
+    const setStepFromForm = (value: number): void => {
+        setStep(journeys[journey].steps.findIndex((pStep: Step) => pStep.id === value));
     };
 
     const setRequirement = (req: any): void => {
         console.log('Setting requirement', req);
     };
 
-    const fakeData = [{
-        text: 'Testing',
-        value: '1',
-        icon: <FirstPage />,
-        selected: true,
-        children: [{
-            text: 'Testing sub',
-            value: '1-1',
-        }, {
-            text: 'Sub-Sub',
-            value: '1-2',
-            selected: true,
-            children: [{
-                text: 'sub-sub-sub',
-                selected: true,
-                value: '1-2-1'
-            }]
-        }],
-    }, {
-        text: 'Testing no-menu',
-        icon: <FirstPage />,
-        value: '2',
-    }, {
-        text: 'Testing 3',
-        icon: <FirstPage />,
-        value: '3',
-        children: [{
-            text: 'Testing sub 3-1',
-            value: '3-1',
-        },
-        {
-            text: 'Testing sub 3-2',
-            value: '3-2',
-        },
-        {
-            text: 'Testing sub 3-3',
-            value: '3-3',
-        }],
-    }];
+    if (journeys.length <= 0) {
+        return (<Container>
+            <div>
+                Unable to read Journey data
+            </div>
+            <ButtonContainer>
+                <Button onClick={previousStep} variant="outlined">
+                    Previous
+                </Button>
+            </ButtonContainer>
+        </Container>);
+    }
 
     return (
         <Container>
@@ -113,19 +90,19 @@ const SetTagProperties = ({
                 <InputContainer>
                     <SelectInput
                         onChange={setJourneyFromForm}
-                        data={journeysDataMapped}
+                        data={mappedJourneys}
                         label={'Preservation journey for all selected tags'}
                     >
-                        {(journey > -1 && journeys[journey].text) || 'Select journey'}
+                        {(journey > -1 && journeys[journey].title) || 'Select journey'}
                     </SelectInput>
                 </InputContainer>
                 <InputContainer>
                     <SelectInput
                         onChange={setStepFromForm}
-                        data={stepsDataMapped}
+                        data={mappedSteps}
                         label={'Preservation step'}
                     >
-                        {(step > -1 && steps[step].text) || 'Select step'}
+                        {(step > -1 && journeys[journey].steps[step].mode.title) || 'Select step'}
                     </SelectInput>
                 </InputContainer>
                 <InputContainer>
@@ -140,7 +117,7 @@ const SetTagProperties = ({
                 <InputContainer>
                     <SelectInput
                         onChange={setRequirement}
-                        data={fakeData}
+                        data={[]}
                         label={'Preservation journey for all selected tags'}
                     >
                         {'Testing'}

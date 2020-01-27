@@ -1,3 +1,12 @@
 export type Tag = {
-    id: number;
+    tagNo: string;
+}
+
+export type TagRow = {
+    tagNo: string;
+    description: string;
+    purchaseOrderNumber: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    isPreserved: boolean;
 }

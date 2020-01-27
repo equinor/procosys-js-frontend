@@ -19,6 +19,15 @@ export type Step = {
     text: string;
 }
 
+export type TagSearchResponse = {
+    tagNo: string;
+    description: string;
+    purchaseOrderNumber: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    isPreserved: boolean;
+}
+
 
 /**
  * Wraps the data return in a promise and delays the response.
@@ -118,8 +127,20 @@ class PreservationApiClient extends ApiClient {
             id: 2
         }]);
     }
-}
 
+    async getTagsForAddPreservationScope(projectName: string, tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagSearchResponse[]> {
+        const endpoint = '/Tags/Search';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                startsWithTagNo: tagNo
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get<TagSearchResponse[]>(endpoint, settings);
+        return result.data;
+    }
+}
 
 
 export default PreservationApiClient;

@@ -1,80 +1,44 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
-import { Tag } from './types';
-import { Container, Header, ActionBar, Search, Next, Tags, TagsHeader } from './SelectTags.style';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { Tag, TagRow } from './types';
+import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
 import { usePreservationContext } from '../../context/PreservationContext';
 import Table from './../../../../components/Table';
+import Loading from './../../../../components/Loading';
 
 type SelectTagsProps = {
-    tags: Tag[];
-    setSelectedTags: (tags: Array<Tag>) => void;
+    selectedTags: Tag[];
+    scopeTableData: TagRow[];
+    setSelectedTags: (tags: Tag[]) => void;
+    searchTags: (tagNo: string | null) => void;
     nextStep: () => void;
+    isLoading: boolean;
 }
-
-type TagRow = {
-    tagId: number;
-    tagNo: string;
-    description: string;
-    tableData: {
-        checked: boolean;
-    };
-};
 
 const KEYCODE_ENTER = 13;
 
 const tableColumns = [
-    { title: 'TagId', field: 'tagId', hidden: true },
-    { title: 'Tag nr', field: 'tagNo' },
+    { title: 'Tag no', field: 'tagNo' },
     { title: 'Description', field: 'description' },
+    { title: 'PO no', field: 'purchaseOrderNumber' },
+    { title: 'Comm pkg', field: 'commPkgNo' },
+    { 
+        title: 'Preserved', 
+        field: 'isPreserved',
+        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />
+    },
+    { title: 'MC pkg', field: 'mcPkgNo' }
 ];
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
-    const [tableData, setTableData] = useState<TagRow[]>([]);
-
-    // TODO: remove when API is implemented
-    const testData: TagRow[] = [
-        { tagId: 10, tagNo: 'Tag 1', description: 'desc 1', tableData: { checked: false } },
-        { tagId: 20, tagNo: 'Tag 2', description: 'desc 2', tableData: { checked: false } },
-        { tagId: 30, tagNo: 'Tag 3', description: 'desc 3', tableData: { checked: false } },
-        { tagId: 40, tagNo: 'Tag 4', description: 'desc 4', tableData: { checked: false } },
-        { tagId: 50, tagNo: 'Tag 5', description: 'desc 5', tableData: { checked: false } },
-        { tagId: 60, tagNo: 'Tag 6', description: 'desc 6', tableData: { checked: false } },
-        { tagId: 70, tagNo: 'Tag 7', description: 'desc 7', tableData: { checked: false } }
-    ];
-
-    const getTableData = (): TagRow[] => {
-        // TODO: replace with API call to fetch data
-        return testData;
-    };    
-
-    useMemo(() => {
-        // set selected rows from tags in state
-        tableData.forEach(tagRow => {
-            props.tags.forEach(tagInState => {
-                if (tagInState.id === tagRow.tagId) {
-                    tagRow.tableData.checked = true;
-                }
-            });
-        });  
-    }, [props.tags, tableData]);
-
-    useEffect(() => {
-        setTableData(getTableData());
-    }, []);
-
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
-        // set selected tags into state
         props.setSelectedTags(selectedRows.map(row => {
-            return { id: row.tagId }; 
+            return { tagNo: row.tagNo }; 
         }));        
-    };
-
-    // TODO: implement search..
-    const searchTags = (tagNo: string): void => {
-        console.log('Search tag number: ' + tagNo);
     };
 
     return (
@@ -83,34 +47,61 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <h1>Add preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            <ActionBar>
+            <Actions>
                 <Search>
                     <TextField 
                         id="tagSearch"
                         placeholder="Search by tag number" 
                         helperText="Type the start of a tag number and press enter to load tags"
                         onKeyDown={(e: any): void => {
-                            e.keyCode === KEYCODE_ENTER && searchTags(e.currentTarget.value);
+                            e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
+                        }}
+                        onInput={(e: any): void => {
+                            e.currentTarget.value.length === 0 && props.searchTags(null);
                         }}
                     />  
                 </Search> 
                 <Next>
-                    <Button onClick={props.nextStep} disabled={props.tags.length === 0}>Next</Button>
+                    <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </Next>                            
-            </ActionBar>
+            </Actions>
             <Tags>
                 <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
                 <Table 
                     columns={tableColumns}
-                    data={tableData} 
+                    data={props.scopeTableData} 
                     options={{
                         showTitle: false,
-                        selection: true                        
+                        search: false,
+                        draggable: false,
+                        pageSize: 10,
+                        pageSizeOptions: [10, 50, 100],
+                        headerStyle: {
+                            backgroundColor: '#f7f7f7'
+                        },
+                        selection: true,
+                        selectionProps: (data: TagRow): any => ({
+                            disabled: data.isPreserved,
+                            // Bug: 'Select all' will also select disabled checkboxes: https://github.com/mbrn/material-table/issues/686
+                            // Disabled checkbox should be hidden, but that would also hide the 'select all' problem
+                            // style: { display: rowData.isPreserved && 'none' }
+                        })
                     }} 
                     style={{
                         boxShadow: 'none' 
                     }}                
                     onSelectionChange={rowSelectionChanged}
+                    isLoading={props.isLoading}
+                    components={{
+                        OverlayLoading: (): any => (
+                            <LoadingContainer>
+                                <Loading title="Loading tags" />
+                            </LoadingContainer>                            
+                        ),
+                        Toolbar: (data): any => (
+                            <Toolbar>{data.selectedRows.length} tags selected</Toolbar>
+                        )
+                    }}
                 />
             </Tags>
         </Container>

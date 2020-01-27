@@ -1,8 +1,9 @@
 import React from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from './types';
-import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer } from './SelectTags.style';
+import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
 import { usePreservationContext } from '../../context/PreservationContext';
 import Table from './../../../../components/Table';
 import Loading from './../../../../components/Loading';
@@ -19,12 +20,16 @@ type SelectTagsProps = {
 const KEYCODE_ENTER = 13;
 
 const tableColumns = [
-    { title: 'Tag nr', field: 'tagNo' },
+    { title: 'Tag no', field: 'tagNo' },
     { title: 'Description', field: 'description' },
     { title: 'PO no', field: 'purchaseOrderNumber' },
     { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'Preserved', field: 'isPreserved' },
-    { title: 'MC package nr', field: 'mcPkgNo' }
+    { 
+        title: 'Preserved', 
+        field: 'isPreserved',
+        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />
+    },
+    { title: 'MC pkg', field: 'mcPkgNo' }
 ];
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
@@ -67,8 +72,20 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     data={props.scopeTableData} 
                     options={{
                         showTitle: false,
+                        search: false,
+                        draggable: false,
+                        pageSize: 10,
+                        pageSizeOptions: [10, 50, 100],
+                        headerStyle: {
+                            backgroundColor: '#f7f7f7'
+                        },
                         selection: true,
-                        search: false
+                        selectionProps: (data: TagRow): any => ({
+                            disabled: data.isPreserved,
+                            // Bug: 'Select all' will also select disabled checkboxes: https://github.com/mbrn/material-table/issues/686
+                            // Disabled checkbox should be hidden, but that would also hide the 'select all' problem
+                            // style: { display: rowData.isPreserved && 'none' }
+                        })
                     }} 
                     style={{
                         boxShadow: 'none' 
@@ -80,6 +97,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                             <LoadingContainer>
                                 <Loading title="Loading tags" />
                             </LoadingContainer>                            
+                        ),
+                        Toolbar: (data): any => (
+                            <Toolbar>{data.selectedRows.length} tags selected</Toolbar>
                         )
                     }}
                 />

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, TextField } from '@equinor/eds-core-react';
-import CheckBoxIcon from '@material-ui/icons/Checkbox';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from './types';
 import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
 import { usePreservationContext } from '../../context/PreservationContext';

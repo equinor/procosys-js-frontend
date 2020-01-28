@@ -163,19 +163,15 @@ const SetTagProperties = ({
     };
 
     const getTextForRequirementValue = (value: number | null = null): string | null => {
-        console.log('Getting text for ', value);
         if (!value) { return null; }
         let reqDefIndex = -1;
         const result = requirementTypes.find(el => {
-            console.log('Looking: ', el);
             reqDefIndex = el.requirementDefinitions.findIndex(RD => RD.id === value);
             if (reqDefIndex > -1) {
-                console.log('Found it: ', reqDefIndex);
                 return true;
             }
             return false;
         });
-        console.log('Looking for text: ', result);
 
         if (result) {
             return `${result.title} - ${result.requirementDefinitions[reqDefIndex].title}`;
@@ -184,28 +180,20 @@ const SetTagProperties = ({
     };
 
     const setRequirement = (reqValue: number, index: number): void => {
-        console.log('Setting requirement', reqValue, index);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
             copy[index].requirementValue = reqValue;
-            console.log('New requirements: ', copy);
             return copy;
         });
     };
 
     const setInterval = (intervalValue: number, index: number): void => {
-        console.log('Setting interval', intervalValue, index);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
             copy[index].interval = intervalValue;
-            console.log('New requirements: ', copy);
             return copy;
         });
     };
-
-    useEffect(() => {
-        console.log('Requirements changed');
-    }, [requirements]);
 
     if (journeys.length <= 0 || requirementTypes.length <= 0) {
         return (<Container>

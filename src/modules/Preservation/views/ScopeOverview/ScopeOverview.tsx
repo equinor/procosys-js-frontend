@@ -37,7 +37,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const getTags = async (): Promise<void> => {
         const tags = await apiClient.getPreservedTags(project.name);
-        console.log('HAR HENTET TAGGEDR: ', tags);
         setTags(tags);
     };
 
@@ -79,7 +78,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
      */
     useEffect(
         () => {
-            console.log('selected tags er nå: ', selectedTags);
             setStartPreservationDisabled(
                 selectedTags.length === 0 ||
                 selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
@@ -145,12 +143,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 columns={[
                     { title: 'Tag nr', field: 'tagNo' },
                     { title: 'Description', field: 'description' },
-                    { title: 'Next', field: 'next' },
-                    //{ title: 'OS', field: 'os' },
+                    { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
+                    { title: 'Due time', field: 'firstUpcomingRequirement.nextDueWeeks' },
                     { title: 'PO nr', field: 'purchaseOrderNo' },
                     { title: 'Area', field: 'areaCode' },
-                    { title: 'Resp', field: 'responsible' },
-                    { title: 'Disc', field: 'disciplineCode' },
+                    { title: 'Responsible', field: 'responsibleCode' },
+                    { title: 'Discipline', field: 'disciplineCode' },
                     { title: 'Status', field: 'status' },
                 ]}
 

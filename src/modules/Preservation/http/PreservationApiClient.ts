@@ -24,6 +24,7 @@ export interface PreservedTagResponse {
     stepId: string;
     tagFunctionCode: string;
     needUserInput: string;
+    responsibleCode: string;
     firstUpcomingRequirement: {
         id: string;
         requirementDefintionId: string;
@@ -126,24 +127,6 @@ class PreservationApiClient extends ApiClient {
             },
             error => Promise.reject(error)
         );
-    }
-
-    /**
-     * Get all available tags for currently logged in user in current plant context
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getTags(
-        setRequestCanceller?: RequestCanceler
-    ): Promise<PreservedTagResponse[]> {
-        const endpoint = '/Tags';
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<PreservedTagResponse[]>(
-            endpoint,
-            settings
-        );
-        return result.data;
     }
 
     /**

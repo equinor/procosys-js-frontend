@@ -17,6 +17,7 @@ export interface PreservedTag {
     stepId: string;
     tagFunctionCode: string;
     needUserInput: string;
+    responsibleCode: string;
     firstUpcomingRequirement: {
         id: string;
         requirementDefintionId: string;

@@ -15,8 +15,48 @@ import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import { PreservedTag } from './types';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
+
+interface PreservedTag {
+    id: string;
+    tagNo: string;
+    description: string;
+    mode: string;
+    areaCode: string;
+    next: string;
+    calloffNo: string;
+    commPkgNo: string;
+    disciplineCode: string;
+    isAreaTag: string;
+    isVoided: string;
+    mcPkgNo: string;
+    projectName: string;
+    purchaseOrderNo: string;
+    status: string;
+    stepId: string;
+    tagFunctionCode: string;
+    needUserInput: string;
+    responsibleCode: string;
+    firstUpcomingRequirement: {
+        id: string;
+        requirementDefintionId: string;
+        nextDueTimeUtc: string;
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: string;
+    };
+    requirements: {
+        id: string;
+        requirementDefintionId: string;
+        nextDueTimeUtc: string;
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: string;
+    }[];
+    tableData: {
+        checked: boolean;
+    };
+}
+
+
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(

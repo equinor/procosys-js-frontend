@@ -1,6 +1,6 @@
 import { ButtonContainer, ButtonContent, Container, FormFieldSpacer, InputContainer } from './SetTagProperties.style';
 import { Journey, RequirementType, Step } from '../types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
@@ -40,7 +40,7 @@ const SetTagProperties = ({
     const [journey, setJourney] = useState(-1);
     const [step, setStep] = useState<number>(-1);
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
-    const [remark, setRemark] = useState<string>('');
+    const remarkInputRef = useRef();
     const [formIsValid, setFormIsValid] = useState(false);
 
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
@@ -247,7 +247,7 @@ const SetTagProperties = ({
                         id={'Remark'} ø
                         style={{ maxWidth: '480px' }}
                         label="Remark for whole preservation journey"
-
+                        inputRef={remarkInputRef}
                         placeholder="Write Here"
                         helpertext="For example: Check according to predecure 123, or check specifications from supplier"
                     />

@@ -53,7 +53,6 @@ interface DropdownButtonProps {
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    max-width: 264px;
     border: none;
     display: flex;
     width: 100%;

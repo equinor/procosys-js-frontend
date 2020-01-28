@@ -48,6 +48,34 @@ export interface JourneyResponse {
     ];
 }
 
+export interface RequirementTypeResponse {
+    resultType: string;
+    errors: string[];
+    data: [{
+        id: number;
+        code: string;
+        title: string;
+        isVoided: boolean;
+        sortKey: number;
+        requirementDefinitions: [{
+            id: number;
+            title: string;
+            isVoided: boolean;
+            defaultIntervalWeeks: number;
+            sortKey: number;
+            fields: [{
+                id: number;
+                label: string;
+                isVoided: boolean;
+                sortKey: string;
+                fieldType: string;
+                unit: string | null;
+                showPrevious: boolean;
+            }];
+            needsUserInput: boolean;
+        }];
+    }];
+}
 
 
 /**
@@ -122,7 +150,12 @@ class PreservationApiClient extends ApiClient {
         return result.data;
     }
 
-    async getPreservationJourneys(setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+    /**
+     * Get all journeys
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getJourneys(setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
         const endpoint = '/Journeys';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -140,6 +173,24 @@ class PreservationApiClient extends ApiClient {
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get<TagSearchResponse[]>(endpoint, settings);
+        return result.data;
+    }
+
+    /**
+     * Get all requirement types
+     *
+     * @param includeVoided Include voided Requirements in result
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse> {
+        const endpoint = '/RequirementTypes';
+        const settings: AxiosRequestConfig = {
+            params: {
+                includeVoided: includeVoided
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
         return result.data;
     }
 }

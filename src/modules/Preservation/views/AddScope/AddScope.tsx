@@ -1,11 +1,11 @@
+import { Journey, Step } from '../../http/PreservationApiClient';
 import React, { useEffect, useState } from 'react';
+import { Tag, TagRow } from './types';
 
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
-import { Journey, Step } from '../../http/PreservationApiClient';
-import { usePreservationContext } from '../../context/PreservationContext';
-import { Tag, TagRow } from './types';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 const AddScope = (): JSX.Element => {
 

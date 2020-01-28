@@ -56,15 +56,12 @@ interface PreservedTag {
     };
 }
 
-
-
 const ScopeOverview: React.FC = (): JSX.Element => {
-    const [startPreservationDisabled, setStartPreservationDisabled] = useState(
-        true
-    );
+    const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
 
     const [tags, setTags] = useState<PreservedTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const path = useRouteMatch();
 
@@ -76,8 +73,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     } = usePreservationContext();
 
     const getTags = async (): Promise<void> => {
+        setIsLoading(true);
         const tags = await apiClient.getPreservedTags(project.name);
         setTags(tags);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -91,9 +90,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject(availableProjects[index].id);
     };
 
-
     const startPreservation = (): void => {
-        console.log('Start preservation for selected tags.', selectedTags);
         apiClient.startPreservation(selectedTags.map(t => t.id)).then(
             () => {
                 getTags().then(
@@ -184,11 +181,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     { title: 'Tag nr', field: 'tagNo' },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
-                    { title: 'Due time', field: 'firstUpcomingRequirement.nextDueWeeks' },
+                    { title: 'OS', field: 'firstUpcomingRequirement.nextDueWeeks' },
                     { title: 'PO nr', field: 'purchaseOrderNo' },
                     { title: 'Area', field: 'areaCode' },
-                    { title: 'Responsible', field: 'responsibleCode' },
-                    { title: 'Discipline', field: 'disciplineCode' },
+                    { title: 'Resp', field: 'responsibleCode' },
+                    { title: 'Disc', field: 'disciplineCode' },
                     { title: 'Status', field: 'status' },
                 ]}
 
@@ -196,7 +193,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 options={{
                     showTitle: false,
                     selection: true,
+                    pageSize: 10,
+                    pageSizeOptions: [10, 50, 100],
+                    headerStyle: {
+                        backgroundColor: '#f7f7f7'
+                    },
+
+                    rowStyle: rowData => {
+                        if (rowData.firstUpcomingRequirement?.nextDueWeeks < 0) {
+                            return { color: '#B30D2F' };
+                        }
+                        return {};
+                    }
+
                 }}
+
+                isLoading={isLoading}
                 onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}
             />

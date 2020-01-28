@@ -141,7 +141,7 @@ class PreservationApiClient extends ApiClient {
 
         const settings: AxiosRequestConfig = {
             params: {
-                projectName: projectName,
+                projectName: 'Project-16',
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -163,22 +163,18 @@ class PreservationApiClient extends ApiClient {
         await this.client.put(endpoint, tags, settings);
     }
 
-    async getPreservationJourneys(
-        setRequestCanceller?: RequestCanceler
-    ): Promise<Journey[]> {
+    async getPreservationJourneys(setRequestCanceller?: RequestCanceler): Promise<Journey[]> {
         // const endpoint = '/Journeys';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        return DelayData([
-            {
-                text: 'Journey 1',
-                id: 1,
-            },
-            {
-                text: 'Journey 2',
-                id: 2,
-            },
-        ]);
+        return DelayData([{
+            text: 'Journey 1',
+            id: 1
+        },
+        {
+            text: 'Journey 2',
+            id: 2
+        }]);
     }
 
     async getPreservationSteps(

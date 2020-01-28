@@ -5,6 +5,7 @@ export const InputContainer = styled.div`
     margin: calc(var(--grid-unit) * 2) 0px;
     display: flex;
     flex-direction: row;
+    align-items: center;
 `;
 
 export const Container = styled.div`

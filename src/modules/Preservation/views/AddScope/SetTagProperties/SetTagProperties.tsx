@@ -1,5 +1,5 @@
 import { ButtonContainer, ButtonContent, Container, FormFieldSpacer, InputContainer } from './SetTagProperties.style';
-import { Journey, RequirementType, Step } from '../types';
+import { Journey, RequirementDefinition, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -8,6 +8,7 @@ import BatteryChargingFullOutlinedIcon from '@material-ui/icons/BatteryChargingF
 import BearingIcon from '../../../../../assets/icons/Bearing';
 import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
 import { Button } from '@equinor/eds-core-react';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import FlashOnOutlinedIcon from '@material-ui/icons/FlashOnOutlined';
 import N2Icon from '../../../../../assets/icons/N2';
 import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
@@ -27,6 +28,11 @@ type SetTagPropertiesProps = {
 interface RequirementFormInput {
     requirementValue: number | null;
     interval: number | null;
+}
+
+interface SelectedRequirementResult {
+    requirement: RequirementType;
+    requirementDefinition: RequirementDefinition;
 }
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
@@ -94,16 +100,6 @@ const SetTagProperties = ({
         }
     }, [journey]);
 
-    const addRequirementInput = (): void => {
-        setRequirements(oldValue => {
-            const newRequirement = {
-                requirementValue: null,
-                interval: null
-            };
-            return [...oldValue, newRequirement];
-        });
-    };
-
     const getIconForRequirement = (code: string): JSX.Element | null => {
         switch (code.toLowerCase()) {
             case 'rotation':
@@ -153,7 +149,6 @@ const SetTagProperties = ({
     }, [requirementTypes]);
 
 
-
     const setJourneyFromForm = (value: number): void => {
         setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
     };
@@ -162,7 +157,7 @@ const SetTagProperties = ({
         setStep(journeys[journey].steps.findIndex((pStep: Step) => pStep.id === value));
     };
 
-    const getTextForRequirementValue = (value: number | null = null): string | null => {
+    const getRequirementForValue = (value: number | null = null): SelectedRequirementResult | null => {
         if (!value) { return null; }
         let reqDefIndex = -1;
         const result = requirementTypes.find(el => {
@@ -174,15 +169,32 @@ const SetTagProperties = ({
         });
 
         if (result) {
-            return `${result.title} - ${result.requirementDefinitions[reqDefIndex].title}`;
+            return {
+                requirement: result,
+                requirementDefinition: result.requirementDefinitions[reqDefIndex]
+            };
         }
         return null;
     };
 
+    const addRequirementInput = (): void => {
+        setRequirements(oldValue => {
+            const newRequirement = {
+                requirementValue: null,
+                interval: null
+            };
+            return [...oldValue, newRequirement];
+        });
+    };
+
     const setRequirement = (reqValue: number, index: number): void => {
+        const newRequirement = getRequirementForValue(reqValue);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
             copy[index].requirementValue = reqValue;
+            if (newRequirement) {
+                copy[index].interval = newRequirement.requirementDefinition.defaultIntervalWeeks;
+            }
             return copy;
         });
     };
@@ -191,6 +203,14 @@ const SetTagProperties = ({
         setRequirements((oldReq) => {
             const copy = [...oldReq];
             copy[index].interval = intervalValue;
+            return copy;
+        });
+    };
+
+    const deleteRequirement = (index: number): void => {
+        setRequirements(oldReq => {
+            const copy = [...oldReq];
+            copy.splice(index, 1);
             return copy;
         });
     };
@@ -244,6 +264,7 @@ const SetTagProperties = ({
                 <h2>Requirements for all selected tags</h2>
 
                 {requirements.map((requirement, index) => {
+                    const requirementForValue = getRequirementForValue(requirement.requirementValue);
                     return (
                         <React.Fragment key={`requirementInput_${index}`}>
                             <InputContainer key={`req_${index}`}>
@@ -252,16 +273,22 @@ const SetTagProperties = ({
                                     data={mappedRequirements}
                                     label={'Preservation journey for all selected tags'}
                                 >
-                                    {getTextForRequirementValue(requirement.requirementValue) || 'Select'}
+                                    {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
                                 </SelectInput>
                                 <FormFieldSpacer>
                                     <SelectInput
                                         onChange={(value): void => setInterval(value, index)}
                                         data={mappedIntervals}
+                                        disabled={!requirement.requirementValue}
                                         label={'Interval'}
                                     >
                                         {mappedIntervals.find(el => el.value === requirement.interval)?.text || 'Select'}
                                     </SelectInput>
+                                </FormFieldSpacer>
+                                <FormFieldSpacer>
+                                    <Button variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
+                                        <DeleteOutlinedIcon />
+                                    </Button>
                                 </FormFieldSpacer>
                             </InputContainer>
                         </React.Fragment>

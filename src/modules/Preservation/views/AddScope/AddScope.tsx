@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
+import TagDetails from './TagDetails';
 import { Journey, Step } from '../../http/PreservationApiClient';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { Tag, TagRow } from './types';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
+import { PropertiesContainer, TagProperties, SelectedTags } from './AddScope.style';
 
 const AddScope = (): JSX.Element => {
 
@@ -67,6 +69,45 @@ const AddScope = (): JSX.Element => {
         setScopeTableData(result);
     };
 
+    const removeSelectedTag = (tagNo: string): void => {
+        const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
+        const tableDataIndex = scopeTableData.findIndex(tagRow => tagRow.tagNo === tagNo);
+
+        // remove from selected tags array
+        if (selectedIndex > -1) {
+            const newSelectedTags = [
+                ...selectedTags.slice(0, selectedIndex),
+                ...selectedTags.slice(selectedIndex + 1)
+            ];
+
+            setSelectedTags(newSelectedTags);
+        }
+
+        // remove checked state from table data
+        if (tableDataIndex > -1) {
+            const newScopeTableData = [...scopeTableData];
+            const tagToUncheck = newScopeTableData[tableDataIndex];
+
+            if (tagToUncheck.tableData) {
+                tagToUncheck.tableData.checked = false;
+                setScopeTableData(newScopeTableData);
+            }
+        }
+    };
+
+    // const testTags = [
+    //     {
+    //         tagNo: '123456789',
+    //         description: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
+    //         mcPkgNo: '1904-U006'
+    //     },     
+    //     {
+    //         tagNo: '112-123541-01',
+    //         description: 'Guybrush Threepwood',
+    //         mcPkgNo: '9987-X123'
+    //     }
+    // ];
+
     switch (step) {
         case 1:
             return <SelectTags
@@ -78,7 +119,16 @@ const AddScope = (): JSX.Element => {
                 isLoading={isLoading}
             />;
         case 2:
-            return <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />;
+            return (
+                <PropertiesContainer>
+                    <TagProperties>
+                        <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />
+                    </TagProperties>
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
+                    </SelectedTags>
+                </PropertiesContainer>
+            );
     }
 
     return <h1>Unknown step</h1>;

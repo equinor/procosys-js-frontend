@@ -37,7 +37,11 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
 
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
         props.setSelectedTags(selectedRows.map(row => {
-            return { tagNo: row.tagNo }; 
+            return { 
+                tagNo: row.tagNo,
+                description: row.description,
+                mcPkgNo: row.mcPkgNo
+            }; 
         }));        
     };
 
@@ -85,6 +89,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                             // Bug: 'Select all' will also select disabled checkboxes: https://github.com/mbrn/material-table/issues/686
                             // Disabled checkbox should be hidden, but that would also hide the 'select all' problem
                             // style: { display: rowData.isPreserved && 'none' }
+                        }),
+                        rowStyle: (data): any => ({
+                            backgroundColor: data.tableData.checked && '#e6faec'
                         })
                     }} 
                     style={{

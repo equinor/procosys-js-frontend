@@ -1,5 +1,7 @@
 export type Tag = {
     tagNo: string;
+    description: string;
+    mcPkgNo: string;
 }
 
 export type TagRow = {
@@ -9,4 +11,7 @@ export type TagRow = {
     commPkgNo: string;
     mcPkgNo: string;
     isPreserved: boolean;
+    tableData?: {
+        checked: boolean;
+    };
 }

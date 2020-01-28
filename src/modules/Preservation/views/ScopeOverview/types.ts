@@ -2,6 +2,7 @@ export interface PreservedTag {
     id: string;
     tagNo: string;
     description: string;
+    mode: string;
     areaCode: string;
     next: string;
     calloffNo: string;
@@ -16,10 +17,22 @@ export interface PreservedTag {
     stepId: string;
     tagFunctionCode: string;
     needUserInput: string;
-    //requirements: Requirements[]; //todo
+    firstUpcomingRequirement: {
+        id: string;
+        requirementDefintionId: string;
+        nextDueTimeUtc: string;
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: string;
+    };
+    requirements: {
+        id: string;
+        requirementDefintionId: string;
+        nextDueTimeUtc: string;
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: string;
+    }[];
+    tableData: {
+        checked: boolean;
+    };
 }
 
-export interface Requirements {
-    nextDueTimeUtc: string;
-    nextDueAsYearAndWeek: string;
-}

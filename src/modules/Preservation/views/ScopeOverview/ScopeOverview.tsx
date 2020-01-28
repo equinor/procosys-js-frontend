@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useRouteMatch } from 'react-router-dom';
 import {
     Container,
@@ -16,6 +16,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { PreservedTag } from './types';
+import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(
@@ -23,9 +24,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     );
 
     const [tags, setTags] = useState<PreservedTag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
 
     const path = useRouteMatch();
+
     const {
         project,
         availableProjects,
@@ -33,45 +35,57 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         apiClient,
     } = usePreservationContext();
 
-    async function getPreservedTags(): Promise<void> {
-        const tags = await apiClient.getPreservedTags();
+    const getTags = async (): Promise<void> => {
+        const tags = await apiClient.getPreservedTags(project.name);
+        console.log('HAR HENTET TAGGEDR: ', tags);
         setTags(tags);
-    }
+    };
 
-    useMemo(getPreservedTags, []);
+    useEffect(() => {
+        (async (): Promise<void> => {
+            getTags();
+        })();
+    }, []);
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
         setCurrentProject(availableProjects[index].id);
     };
 
+
     const startPreservation = (): void => {
-        console.log('Start preservation for selected tags.' + selectedTags);
-        apiClient.startPreservation(selectedTags);
-        getPreservedTags();
-        setStartPreservationDisabled(true); //after rendring, tags are unselected, but onSelectionChange is not called
+        console.log('Start preservation for selected tags.', selectedTags);
+        apiClient.startPreservation(selectedTags.map(t => t.id)).then(
+            () => {
+                getTags().then(
+                    () => {
+                        showSnackbarNotification(
+                            'Status was set to \'Active\' for selected tags.',
+                            5000
+                        );
+                    }
+                );
+            }
+        );
     };
 
-    const onSelectionHandler = (selectedTags: any): void => {
-        const selected: string[] = [];
-        let enableStartPreservation = true;
-        if (selectedTags.length === 0) {
-            enableStartPreservation = false;
-        } else {
-            selectedTags.forEach((element: PreservedTag) => {
-                selected.push(element.id);
-                if (
-                    enableStartPreservation &&
-                    element.status !== 'NotStarted'
-                ) {
-                    enableStartPreservation = false;
-                }
-            });
-        }
-        setStartPreservationDisabled(!enableStartPreservation);
-        console.log('Set selected tags: ' + selected);
-        setSelectedTags(selected);
+    const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
+        setSelectedTags(selectedTags);
     };
+
+    /**
+     * Start Preservation button is set to disabled if no rows are selected or 
+     * if there are selected rows with other status than NotStarted
+     */
+    useEffect(
+        () => {
+            console.log('selected tags er nå: ', selectedTags);
+            setStartPreservationDisabled(
+                selectedTags.length === 0 ||
+                selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
+            );
+        }
+    );
 
     return (
         <Container>
@@ -139,6 +153,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     { title: 'Disc', field: 'disciplineCode' },
                     { title: 'Status', field: 'status' },
                 ]}
+
                 data={tags}
                 options={{
                     showTitle: false,

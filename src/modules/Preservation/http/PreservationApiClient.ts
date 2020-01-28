@@ -9,6 +9,7 @@ export interface PreservedTagResponse {
     id: string;
     tagNo: string;
     description: string;
+    mode: string;
     areaCode: string;
     next: string;
     calloffNo: string;
@@ -23,6 +24,23 @@ export interface PreservedTagResponse {
     stepId: string;
     tagFunctionCode: string;
     needUserInput: string;
+    firstUpcomingRequirement: {
+        id: string;
+        requirementDefintionId: string;
+        nextDueTimeUtc: string;
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: string;
+    };
+    requirements: {
+        id: string;
+        requirementDefintionId: string;
+        nextDueTimeUtc: string;
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: string;
+    }[];
+    tableData: {
+        checked: boolean;
+    };
 }
 
 export type Journey = {
@@ -133,11 +151,16 @@ class PreservationApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getPreservedTags(
+    async getPreservedTags(projectName: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse[]> {
         const endpoint = '/Tags/Preserved';
-        const settings: AxiosRequestConfig = {};
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         const result = await this.client.get<PreservedTagResponse[]>(
@@ -152,7 +175,6 @@ class PreservationApiClient extends ApiClient {
      * @param tags  List with tag IDs
      */
     async startPreservation(tags: string[]): Promise<void> {
-        console.log('Start preservation for a set of tags: ' + tags);
         const endpoint = '/Tags/Preserved/StartPreservation';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);

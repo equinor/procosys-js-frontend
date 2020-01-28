@@ -73,14 +73,14 @@ const AddScope = (): JSX.Element => {
         const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
         const tableDataIndex = scopeTableData.findIndex(tagRow => tagRow.tagNo === tagNo);
 
-        // remove from selected tags array
+        // remove from selected tags
         if (selectedIndex > -1) {
-            const newSelectedTags = [
-                ...selectedTags.slice(0, selectedIndex),
-                ...selectedTags.slice(selectedIndex + 1)
-            ];
-
-            setSelectedTags(newSelectedTags);
+            setSelectedTags(() => {
+                return [
+                    ...selectedTags.slice(0, selectedIndex),
+                    ...selectedTags.slice(selectedIndex + 1)
+                ];
+            });
         }
 
         // remove checked state from table data

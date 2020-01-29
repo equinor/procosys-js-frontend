@@ -5,19 +5,39 @@ import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
 
-export type TagResponse = {
+export interface PreservedTagResponse {
     id: number;
-};
+    tagNo: string;
+    description: string;
+    mode: string;
+    areaCode: string;
+    calloffNo: string;
+    commPkgNo: string;
+    disciplineCode: string;
+    isAreaTag: boolean;
+    isVoided: boolean;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    status: string;
+    tagFunctionCode: string;
+    responsibleCode: string;
+    remark: string;
+    readyToBePreserved: boolean;
+    firstUpcomingRequirement: {
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: number;
+    };
+}
 
 export type Journey = {
     id: number;
     text: string;
-}
+};
 
 export type Step = {
     id: number;
     text: string;
-}
+};
 
 export type TagSearchResponse = {
     tagNo: string;
@@ -99,15 +119,21 @@ function DelayData(data: any, fail = false): Promise<any> {
  * API for interacting with data in ProCoSys.
  */
 class PreservationApiClient extends ApiClient {
-
     constructor(authService: IAuthService) {
-        super(authService, Settings.externalResources.preservationApi.scope.join(' '), Settings.externalResources.preservationApi.url);
-        this.client.interceptors.request.use((config) => {
-            config.params = {
-                ...config.params
-            };
-            return config;
-        }, (error) => Promise.reject(error));
+        super(
+            authService,
+            Settings.externalResources.preservationApi.scope.join(' '),
+            Settings.externalResources.preservationApi.url
+        );
+        this.client.interceptors.request.use(
+            config => {
+                config.params = {
+                    ...config.params,
+                };
+                return config;
+            },
+            error => Promise.reject(error)
+        );
     }
 
     /**
@@ -127,27 +153,50 @@ class PreservationApiClient extends ApiClient {
             this.plantIdInterceptorId = null;
         }
         // const plant = plantId.replace('PCS$', '');
-        this.plantIdInterceptorId = this.client.interceptors.request.use((config) => {
-
-            config.headers = {
-                ...config.headers,
-                'x-plant': plantId
-            };
-            return config;
-        }, (error) => Promise.reject(error));
+        this.plantIdInterceptorId = this.client.interceptors.request.use(
+            config => {
+                config.headers = {
+                    ...config.headers,
+                    'x-plant': plantId,
+                };
+                return config;
+            },
+            error => Promise.reject(error)
+        );
     }
 
     /**
-     * Get all available tags for currently logged in user in current plant context
+     * Get preserved tags for currently logged in user in current plant context
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getTags(setRequestCanceller?: RequestCanceler): Promise<TagResponse[]> {
-        const endpoint = '/Tags';
-        const settings: AxiosRequestConfig = {};
+    async getPreservedTags(projectName: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<PreservedTagResponse[]> {
+        const endpoint = '/Tags/Preserved';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<TagResponse[]>(endpoint, settings);
+
+        const result = await this.client.get<PreservedTagResponse[]>(
+            endpoint,
+            settings
+        );
         return result.data;
+    }
+
+    /**
+     * Start preservation for the given tags.
+     * @param tags  List with tag IDs
+     */
+    async startPreservation(tags: number[]): Promise<void> {
+        const endpoint = '/Tags/Preserved/StartPreservation';
+        const settings: AxiosRequestConfig = {};
+        await this.client.put(endpoint, tags, settings);
     }
 
     /**
@@ -163,16 +212,23 @@ class PreservationApiClient extends ApiClient {
         return result.data;
     }
 
-    async getTagsForAddPreservationScope(projectName: string, tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagSearchResponse[]> {
+    async getTagsForAddPreservationScope(
+        projectName: string,
+        tagNo: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagSearchResponse[]> {
         const endpoint = '/Tags/Search';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
-                startsWithTagNo: tagNo
-            }
+                startsWithTagNo: tagNo,
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<TagSearchResponse[]>(endpoint, settings);
+        const result = await this.client.get<TagSearchResponse[]>(
+            endpoint,
+            settings
+        );
         return result.data;
     }
 

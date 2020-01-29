@@ -1,13 +1,57 @@
-import { Container, Header } from './ScopeOverview.style';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useRouteMatch } from 'react-router-dom';
-import React, { useMemo } from 'react';
-
+import {
+    Container,
+    HeaderContainer,
+    Header,
+    IconBar,
+} from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Table from './../../../../components/Table';
 import { usePreservationContext } from '../../context/PreservationContext';
+import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
+import CompareArrowsOutlinedIcon from '@material-ui/icons/CompareArrowsOutlined';
+import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
+import IconButton from '@material-ui/core/IconButton';
+import { showSnackbarNotification } from '../../../../core/services/NotificationService';
+import Loading from './../../../../components/Loading';
+import { tokens } from '@equinor/eds-tokens';
+
+interface PreservedTag {
+    id: number;
+    tagNo: string;
+    description: string;
+    mode: string;
+    areaCode: string;
+    calloffNo: string;
+    commPkgNo: string;
+    disciplineCode: string;
+    isAreaTag: boolean;
+    isVoided: boolean;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    status: string;
+    tagFunctionCode: string;
+    responsibleCode: string;
+    remark: string;
+    readyToBePreserved: boolean;
+    firstUpcomingRequirement: {
+        nextDueAsYearAndWeek: string;
+        nextDueWeeks: number;
+    };
+}
 
 const ScopeOverview: React.FC = (): JSX.Element => {
+    const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
+
+    const [tags, setTags] = useState<PreservedTag[]>([]);
+    const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const path = useRouteMatch();
+
     const {
         project,
         availableProjects,
@@ -15,9 +59,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         apiClient,
     } = usePreservationContext();
 
-    useMemo(async () => {
-        const tags = await apiClient.getTags();
-        console.log('Tags: ', tags);
+    const getTags = async (): Promise<void> => {
+        setIsLoading(true);
+        const tags = await apiClient.getPreservedTags(project.name);
+        setTags(tags);
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        (async (): Promise<void> => {
+            getTags();
+        })();
     }, []);
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
@@ -25,68 +77,130 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject(availableProjects[index].id);
     };
 
+    const startPreservation = (): void => {
+        apiClient.startPreservation(selectedTags.map(t => t.id)).then(
+            () => {
+                getTags().then(
+                    () => {
+                        showSnackbarNotification(
+                            'Status was set to \'Active\' for selected tags.',
+                            5000
+                        );
+                    }
+                );
+            }
+        );
+    };
+
+    const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
+        setSelectedTags(selectedTags);
+    };
+
+    /**
+     * Start Preservation button is set to disabled if no rows are selected or 
+     * if there are selected rows with other status than NotStarted
+     */
+    useEffect(
+        () => {
+            setStartPreservationDisabled(
+                selectedTags.length === 0 ||
+                selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
+            );
+        }, [selectedTags]);
+
     return (
         <Container>
-            <Header>
-                <h1>Preservation tags</h1>
-                <Dropdown text={project.description}>
-                    {availableProjects.map((projectItem, index) => {
-                        return (
-                            <a
-                                href="#"
-                                key={index}
-                                onClick={(event): void =>
-                                    changeProject(event, index)
-                                }
-                            >
-                                {projectItem.description}
-                            </a>
-                        );
-                    })}
-                </Dropdown>
+            <HeaderContainer>
+                <Header>
+                    <h1>Preservation tags</h1>
+                    <Dropdown text={project.description}>
+                        {availableProjects.map((projectItem, index) => {
+                            return (
+                                <a
+                                    href="#"
+                                    key={index}
+                                    onClick={(event): void =>
+                                        changeProject(event, index)
+                                    }
+                                >
+                                    {projectItem.description}
+                                </a>
+                            );
+                        })}
+                    </Dropdown>
 
-                <Dropdown text="Add scope">
-                    <NavLink to={`${path.url}/AddScope`}>
-                        Add tags manually
-                    </NavLink>
-                    <NavLink to={`${path.url}`}>
-                        Generate scope by Tag Function
-                    </NavLink>
-                    <NavLink to={`${path.url}`}>Create area tag</NavLink>
-                </Dropdown>
-            </Header>
+                    <Dropdown text="Add scope">
+                        <NavLink to={`${path.url}/AddScope`}>
+                            Add tags manually
+                        </NavLink>
+                        <NavLink to={`${path.url}`}>
+                            Generate scope by Tag Function
+                        </NavLink>
+                        <NavLink to={`${path.url}`}>Create area tag</NavLink>
+                    </Dropdown>
+                </Header>
+                <IconBar>
+                    <IconButton
+                        onClick={(): void => {
+                            startPreservation();
+                        }}
+                        disabled={startPreservationDisabled}
+                    >
+                        <PlayArrowOutlinedIcon />
+                    </IconButton>
+                    <IconButton>
+                        <CompareArrowsOutlinedIcon />
+                    </IconButton>
+                    <IconButton>
+                        <CreateOutlinedIcon />
+                    </IconButton>
+                    <IconButton>
+                        <DeleteOutlinedIcon />
+                    </IconButton>
+                    <IconButton>
+                        <PrintOutlinedIcon />
+                    </IconButton>
+                </IconBar>
+            </HeaderContainer>
             <Table
                 columns={[
-                    { title: 'Tag nr', field: 'tagno' },
+                    { title: 'Tag nr', field: 'tagNo' },
                     { title: 'Description', field: 'description' },
-                    { title: 'Next', field: 'nextpreservation' },
-                    { title: 'OS', field: 'os' },
-                    { title: 'POnr', field: 'pono' },
-                    { title: 'Area', field: 'area' },
-                    { title: 'Resp', field: 'responsible' },
-                    { title: 'Disc', field: 'disc' },
+                    { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
+                    { title: 'Due', field: 'firstUpcomingRequirement.nextDueWeeks' },
+                    { title: 'PO nr', field: 'purchaseOrderNo' },
+                    { title: 'Area', field: 'areaCode' },
+                    { title: 'Resp', field: 'responsibleCode' },
+                    { title: 'Disc', field: 'disciplineCode' },
                     { title: 'Status', field: 'status' },
                 ]}
-                data={[
-                    {
-                        tagno: '20CJ009-M01',
-                        description: 'RETURN CIRCULATION PUMP - MOTOR',
-                        nextpreservation: '2019W26',
-                        os: 0,
-                        pono: 'AB123',
-                        area: 'A123',
-                        responsible: 'AIGPH',
-                        disc: 'A',
-                        status: 'Active',
-                    },
-                ]}
+
+                data={tags}
                 options={{
                     showTitle: false,
                     selection: true,
+                    pageSize: 10,
+                    pageSizeOptions: [10, 50, 100],
+                    headerStyle: {
+                        backgroundColor: '#f7f7f7'
+                    },
+
+                    rowStyle: rowData => {
+                        return {
+                            color: rowData.firstUpcomingRequirement?.nextDueWeeks < 0 && tokens.colors.interactive.danger__text.rgba
+                        };
+                        return {};
+                    }
+
                 }}
-                onSelectionChange={(test): void =>
-                    console.log('Selection changed: ', test)
-                }
+                components={{
+                    OverlayLoading: (): any => (
+                        <Loading title="Loading tags" />
+                    )
+                }}
+
+                isLoading={isLoading}
+                onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}
             />
         </Container>

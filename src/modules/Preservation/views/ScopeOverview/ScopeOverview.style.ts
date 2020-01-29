@@ -5,17 +5,29 @@ export const Container = styled.div`
     flex-direction: column;
 `;
 
+export const HeaderContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+`;
+
 export const Header = styled.header`
+    display: flex;
+
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 
     div {
-        margin-right: var(--grid-unit);
+        display: flex;
     }
 
     a {
         text-decoration: none;
     }
+`;
+
+export const IconBar = styled.div`
+    display: flex;
 `;

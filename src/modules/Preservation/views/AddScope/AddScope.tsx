@@ -1,13 +1,13 @@
+import { Journey, RequirementType, Tag, TagRow } from './types';
 import React, { useEffect, useState } from 'react';
 
+import { Canceler } from 'axios';
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
 import TagDetails from './TagDetails';
-import { Journey, Step } from '../../http/PreservationApiClient';
-import { usePreservationContext } from '../../context/PreservationContext';
-import { Tag, TagRow } from './types';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 import { PropertiesContainer, TagProperties, SelectedTags } from './AddScope.style';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 const AddScope = (): JSX.Element => {
 
@@ -17,21 +17,31 @@ const AddScope = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
-    const [preservationSteps, setPreservationSteps] = useState<Step[]>([]);
+    const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            const data = await apiClient.getPreservationJourneys();
+            const data = await apiClient.getJourneys((cancel: Canceler) => requestCancellor = cancel);
             setJourneys(data);
         })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
     }, []);
 
     useEffect(() => {
+        let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            const data = await apiClient.getPreservationSteps();
-            setPreservationSteps(data);
+            const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
+            setRequirementTypes(response.data);
         })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
     }, []);
 
     const goToNextStep = (): void => {
@@ -109,7 +119,12 @@ const AddScope = (): JSX.Element => {
             return (
                 <PropertiesContainer>
                     <TagProperties>
-                        <SetTagProperties journeys={journeys} steps={preservationSteps} previousStep={goToPreviousStep} nextStep={goToNextStep} />
+                        <SetTagProperties 
+                            journeys={journeys}
+                            requirementTypes={requirementTypes}
+                            previousStep={goToPreviousStep} 
+                            nextStep={goToNextStep}
+                        />
                     </TagProperties>
                     <SelectedTags>
                         <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />

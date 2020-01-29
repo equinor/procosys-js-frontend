@@ -1,20 +1,22 @@
-import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem } from './style';
 import React, { ReactNode, useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { useClickOutsideNotifier } from './../../hooks';
 
 export type SelectItem = {
     text: string;
+    value: any;
+    selected?: boolean;
     icon?: ReactNode;
     children?: SelectItem[];
 };
 
 type SelectProps = {
     data: SelectItem[];
-    selectedIndex?: number;
     disabled?: boolean;
-    onChange?: (newIndex: number) => void;
+    onChange?: (newValue: any) => void;
     openLeft?: boolean;
     children: ReactNode;
     label?: string;
@@ -25,7 +27,6 @@ const KEYCODE_ESCAPE = 27;
 
 const Select = ({
     disabled = false,
-    selectedIndex = -1,
     data = [],
     onChange = (): void => {
         /*eslint-disable-line no-empty */
@@ -45,9 +46,60 @@ const Select = ({
         setIsOpen(!isOpen);
     };
 
-    const selectItem = (index: number): void => {
-        onChange(index);
+    const selectItem = (value: any): void => {
+        onChange(value);
         setIsOpen(false);
+    };
+
+    const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
+
+        return items.map((itm, index) => {
+
+            if (!itm.children) {
+                return (<SelectableItem
+                    key={index}
+                    role="option"
+                    selected={!!itm.selected}
+                    tabIndex={0}
+                    onKeyDown={(e): void => {
+                        e.keyCode === KEYCODE_ENTER &&
+                            selectItem(itm.value);
+                    }}
+                    onClick={(): void => {
+                        selectItem(itm.value);
+                    }}
+                    data-selected={!!itm.selected}
+                >
+                    <ItemContent>
+                        {itm.icon || null}
+                        {itm.text}
+                    </ItemContent>
+                </SelectableItem>);
+            }
+
+            return (<SelectableItem
+                key={index}
+                role="option"
+                selected={!!itm.selected}
+                data-value={itm.text}
+                tabIndex={0}
+                onKeyDown={(e): void => {
+                    if (e.keyCode === KEYCODE_ENTER) {
+                        // We should do something to support keyboard navigation
+                    }
+                }}
+                data-selected={!!itm.selected}
+            >
+                <ItemContent>
+                    {itm.icon || null}
+                    {itm.text}
+                    <KeyboardArrowRightIcon />
+                </ItemContent>
+                <CascadingItem>
+                    {createNodesForItems(itm.children)}
+                </CascadingItem>
+            </SelectableItem>);
+        });
     };
 
     return (
@@ -69,33 +121,12 @@ const Select = ({
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
                 <ul
+                    className='container'
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
-                    {data.map((item, index) => {
-                        const isSelectedValue = selectedIndex === index;
-                        return (
-                            <DropdownItem
-                                key={index}
-                                role="option"
-                                selected={isSelectedValue}
-                                data-value={item.text}
-                                tabIndex={0}
-                                onKeyDown={(e): void => {
-                                    e.keyCode === KEYCODE_ENTER &&
-                                        selectItem(index);
-                                }}
-                                onClick={(): void => {
-                                    selectItem(index);
-                                }}
-                                data-selected={isSelectedValue}
-                            >
-                                {item.icon || null}
-                                {item.text}
-                            </DropdownItem>
-                        );
-                    })}
+                    {createNodesForItems(data)}
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (

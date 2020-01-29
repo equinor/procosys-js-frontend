@@ -9,18 +9,34 @@ type ContainerProps = {
 export const Container = styled.div<ContainerProps>`
     ul {
         position: absolute;
-        margin-top: 0.5rem;
-        background-color: ${tokens.colors.ui.background__default.rgba};
+        background-color: transparent;
         border-radius: 4px;
-        box-shadow: ${tokens.elevation.raised};
-        max-height: 300px;
-        overflow-y: scroll;
         ${(props): any =>
         props.openLeft &&
         css`
                 right: 0px;
             `}
         z-index: 100;
+
+        li div {
+            box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+        }
+
+        li:first-child > div {
+            box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
+        }
+        li:only-child > div {
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+        }
+
+
+        > div:hover, li[data-selected="true"] > div {
+            background-color: ${tokens.colors.ui.background__light.rgba};
+        }
+    }
+
+    ul.container {
+        margin-top: 0.5rem;
     }
 `;
 
@@ -37,8 +53,6 @@ interface DropdownButtonProps {
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    background-color: transparent;
-    max-width: 264px;
     border: none;
     display: flex;
     width: 100%;
@@ -53,21 +67,55 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
         `}
 `;
 
-export type DropDownItemProps = {
+export type SelectableItemProps = {
     selected: boolean;
 };
 
-export const DropdownItem = styled.li<DropDownItemProps>`
-    background-color: ${(props): any =>
+export const SelectableItem = styled.li<SelectableItemProps>`
+    position: relative;
+    background-color: transparent;
+
+    :first-child {
+        background-color: ${(props): any =>
         props.selected
             ? tokens.colors.ui.background__light.rgba
             : 'transparent'};
+    }
+
+    :hover > ul {
+        display: block;
+    }
+`;
+
+SelectableItem.defaultProps = {
+    selected: false,
+};
+
+export const CascadingItem = styled.ul`
+    display: none;
+    background-color: transparent;
+    left: 100%;
+    top: -1px;
+    max-width: 264px;
+    border: none;
+    width: max-content;
+    align-items: center;
+    margin-left: var(--grid-unit);
+    li {
+        left: calc(var(--grid-unit) * -1);
+    }
+`;
+
+
+export const ItemContent = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 24px 16px;
     border: 0;
     text-align: left;
     font-weight: normal;
-`;
+    margin-left: var(--grid-unit);
+    background-color: ${tokens.colors.ui.background__default.rgba};
 
-DropdownItem.defaultProps = {
-    selected: false,
-};
+`;

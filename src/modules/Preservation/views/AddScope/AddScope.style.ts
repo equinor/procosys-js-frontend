@@ -5,14 +5,12 @@ export const PropertiesContainer = styled.div`
 `;
 
 export const TagProperties = styled.div`
-    flex: 2;
+    width: 70%;
 `;
 
 export const SelectedTags = styled.div`
-    flex: 1;
-    /* flex-grow: 0;
-    flex-basis: 600px; */
-
+    width: 30%;
     margin-left: calc(var(--grid-unit) * 10);
+    margin-bottom: calc(var(--grid-unit) * 4);
 `;
 

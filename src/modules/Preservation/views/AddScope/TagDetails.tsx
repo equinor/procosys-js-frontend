@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Tag } from './types';
-import { Container, Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
+import { Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -66,7 +66,7 @@ const TagDetails = ({
     };
 
     return (
-        <Container>
+        <div>
             <Header>
                 <h1>Selected tags</h1>
             </Header>
@@ -80,7 +80,7 @@ const TagDetails = ({
                     })
                 }
             </TagList>
-        </Container>
+        </div>
     );
 };
 

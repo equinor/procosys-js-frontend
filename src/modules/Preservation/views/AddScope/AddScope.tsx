@@ -95,19 +95,6 @@ const AddScope = (): JSX.Element => {
         }
     };
 
-    // const testTags = [
-    //     {
-    //         tagNo: '123456789',
-    //         description: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
-    //         mcPkgNo: '1904-U006'
-    //     },     
-    //     {
-    //         tagNo: '112-123541-01',
-    //         description: 'Guybrush Threepwood',
-    //         mcPkgNo: '9987-X123'
-    //     }
-    // ];
-
     switch (step) {
         case 1:
             return <SelectTags

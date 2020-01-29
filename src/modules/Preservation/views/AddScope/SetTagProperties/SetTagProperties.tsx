@@ -1,5 +1,5 @@
 import { ButtonContainer, ButtonContent, Container, FormFieldSpacer, InputContainer } from './SetTagProperties.style';
-import { Journey, RequirementDefinition, RequirementType, Step } from '../types';
+import { Journey, Requirement, RequirementDefinition, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -19,15 +19,15 @@ import ThermostatIcon from '../../../../../assets/icons/Thermostat';
 import { tokens } from '@equinor/eds-tokens';
 
 type SetTagPropertiesProps = {
-    nextStep: () => void;
+    submitForm: (stepId: number, requirements: Requirement[], remark: string | null) => void;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
 };
 
 interface RequirementFormInput {
-    requirementValue: number | null;
-    interval: number | null;
+    requirementDefinitionId: number | null;
+    intervalWeeks: number | null;
 }
 
 interface SelectedRequirementResult {
@@ -38,15 +38,15 @@ interface SelectedRequirementResult {
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
 
 const SetTagProperties = ({
-    nextStep,
+    submitForm,
     previousStep,
     journeys = [],
     requirementTypes = [],
 }: SetTagPropertiesProps): JSX.Element => {
     const [journey, setJourney] = useState(-1);
-    const [step, setStep] = useState<number>(-1);
+    const [step, setStep] = useState<Step>();
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
-    const remarkInputRef = useRef();
+    const remarkInputRef = useRef<HTMLInputElement>(null);
     const [formIsValid, setFormIsValid] = useState(false);
 
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
@@ -65,9 +65,9 @@ const SetTagProperties = ({
      * Form validation
      */
     useEffect(() => {
-        if (journey > -1 && step > -1 && requirements.length > 0) {
+        if (journey > -1 && step && requirements.length > 0) {
             const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
-                return req.interval != null && req.requirementValue != null;
+                return req.intervalWeeks != null && req.requirementDefinitionId != null;
             };
             const requirementsIsValid = requirements.every(hasAllPropertiesSet);
 
@@ -141,10 +141,10 @@ const SetTagProperties = ({
                     text: itm.title,
                     value: itm.id,
                     icon: getIconForRequirement(itm.code),
-                    children: itm.requirementDefinitions.map((child) => {
+                    children: itm.requirementDefinitions.map((reqDef) => {
                         return {
-                            text: child.title,
-                            value: child.id
+                            text: reqDef.title,
+                            value: reqDef.id
                         };
                     })
                 });
@@ -153,20 +153,38 @@ const SetTagProperties = ({
         setMappedRequirements(mapped);
     }, [requirementTypes]);
 
+    const submit = (): void => {
+        const remarkValue = remarkInputRef.current?.value || null;
+        const requirementsMappedForApi: Requirement[] = [];
+        requirements.forEach((req) => {
+            if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
+                requirementsMappedForApi.push({
+                    requirementDefinitionId: req.intervalWeeks,
+                    intervalWeeks: req.intervalWeeks
+                });
+            }
+        });
+        if (step && requirementsMappedForApi.length > 0) {
+            submitForm(step.id, requirementsMappedForApi, remarkValue);
+        }
+
+    };
+
 
     const setJourneyFromForm = (value: number): void => {
         setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
     };
 
-    const setStepFromForm = (value: number): void => {
-        setStep(journeys[journey].steps.findIndex((pStep: Step) => pStep.id === value));
+    const setStepFromForm = (stepId: number): void => {
+        const step = journeys[journey].steps.find((pStep: Step) => pStep.id === stepId);
+        setStep(step);
     };
 
-    const getRequirementForValue = (value: number | null = null): SelectedRequirementResult | null => {
-        if (!value) { return null; }
+    const getRequirementForValue = (reqDefValue: number | null = null): SelectedRequirementResult | null => {
+        if (!reqDefValue) { return null; }
         let reqDefIndex = -1;
         const result = requirementTypes.find(el => {
-            reqDefIndex = el.requirementDefinitions.findIndex(RD => RD.id === value);
+            reqDefIndex = el.requirementDefinitions.findIndex(RD => RD.id === reqDefValue);
             if (reqDefIndex > -1) {
                 return true;
             }
@@ -185,20 +203,20 @@ const SetTagProperties = ({
     const addRequirementInput = (): void => {
         setRequirements(oldValue => {
             const newRequirement = {
-                requirementValue: null,
-                interval: null
+                requirementDefinitionId: null,
+                intervalWeeks: null
             };
             return [...oldValue, newRequirement];
         });
     };
 
-    const setRequirement = (reqValue: number, index: number): void => {
-        const newRequirement = getRequirementForValue(reqValue);
+    const setRequirement = (reqDefValue: number, index: number): void => {
+        const newRequirement = getRequirementForValue(reqDefValue);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
-            copy[index].requirementValue = reqValue;
             if (newRequirement) {
-                copy[index].interval = newRequirement.requirementDefinition.defaultIntervalWeeks;
+                copy[index].requirementDefinitionId = newRequirement.requirementDefinition.id;
+                copy[index].intervalWeeks = newRequirement.requirementDefinition.defaultIntervalWeeks;
             }
             return copy;
         });
@@ -207,7 +225,7 @@ const SetTagProperties = ({
     const setInterval = (intervalValue: number, index: number): void => {
         setRequirements((oldReq) => {
             const copy = [...oldReq];
-            copy[index].interval = intervalValue;
+            copy[index].intervalWeeks = intervalValue;
             return copy;
         });
     };
@@ -252,7 +270,7 @@ const SetTagProperties = ({
                         disabled={mappedSteps.length <= 0}
                         label={'Preservation step'}
                     >
-                        {(step > -1 && journeys[journey].steps[step].mode.title) || 'Select step'}
+                        {(step && step.mode.title) || 'Select step'}
                     </SelectInput>
                 </InputContainer>
                 <InputContainer>
@@ -269,7 +287,7 @@ const SetTagProperties = ({
                 <h2>Requirements for all selected tags</h2>
 
                 {requirements.map((requirement, index) => {
-                    const requirementForValue = getRequirementForValue(requirement.requirementValue);
+                    const requirementForValue = getRequirementForValue(requirement.requirementDefinitionId);
                     return (
                         <React.Fragment key={`requirementInput_${index}`}>
                             <InputContainer key={`req_${index}`}>
@@ -284,10 +302,10 @@ const SetTagProperties = ({
                                     <SelectInput
                                         onChange={(value): void => setInterval(value, index)}
                                         data={mappedIntervals}
-                                        disabled={!requirement.requirementValue}
+                                        disabled={!requirement.requirementDefinitionId}
                                         label={'Interval'}
                                     >
-                                        {mappedIntervals.find(el => el.value === requirement.interval)?.text || 'Select'}
+                                        {mappedIntervals.find(el => el.value === requirement.intervalWeeks)?.text || 'Select'}
                                     </SelectInput>
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
@@ -311,7 +329,7 @@ const SetTagProperties = ({
                     Previous
                 </Button>
                 <Button
-                    onClick={nextStep}
+                    onClick={submit}
                     color="primary"
                     disabled={!formIsValid}
                 >

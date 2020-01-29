@@ -44,6 +44,11 @@ export interface Responsible {
  * Requirement type
  */
 
+export interface Requirement {
+    requirementDefinitionId: number;
+    intervalWeeks: number;
+}
+
 export interface RequirementType {
     id: number;
     code: string;

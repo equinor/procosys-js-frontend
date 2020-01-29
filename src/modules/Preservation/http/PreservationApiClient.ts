@@ -97,6 +97,11 @@ export interface RequirementTypeResponse {
     }];
 }
 
+interface PreserveTagRequirement {
+    requirementDefinitionId: number;
+    intervalWeeks: number;
+}
+
 
 /**
  * Wraps the data return in a promise and delays the response.
@@ -163,6 +168,27 @@ class PreservationApiClient extends ApiClient {
             },
             error => Promise.reject(error)
         );
+    }
+
+    async preserveTags(
+        listOfTagNo: string[],
+        stepId: number,
+        requirements: PreserveTagRequirement[],
+        projectName: string,
+        remark?: string | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/Tags/Preserved';
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        this.client.post(endpoint, {
+            tagNos: listOfTagNo,
+            projectName: projectName,
+            stepId: stepId,
+            requirements,
+            remark
+        });
     }
 
     /**

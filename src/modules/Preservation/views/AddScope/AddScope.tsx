@@ -1,4 +1,4 @@
-import { Journey, RequirementType, Tag, TagRow } from './types';
+import { Journey, Requirement, RequirementType, Tag, TagRow } from './types';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -60,6 +60,15 @@ const AddScope = (): JSX.Element => {
         });
     };
 
+    const submitForm = (stepId: number, requirements: Requirement[], remark: string | null): void => {
+        try {
+            apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
+        } catch {
+            showSnackbarNotification('An error occured while trying to add tags to preservation scope', 5000);
+        }
+
+    };
+
     const searchTags = async (tagNo: string | null): Promise<void> => {
         setIsLoading(true);
         let result: TagRow[] = [];
@@ -92,7 +101,7 @@ const AddScope = (): JSX.Element => {
                 journeys={journeys}
                 requirementTypes={requirementTypes}
                 previousStep={goToPreviousStep}
-                nextStep={goToNextStep}
+                submitForm={submitForm}
             />;
     }
 

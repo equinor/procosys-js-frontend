@@ -4,7 +4,7 @@ export interface Tag {
     mcPkgNo: string;
 }
 
-export type TagRow = {
+export interface TagRow {
     tagNo: string;
     description: string;
     purchaseOrderNumber: string;

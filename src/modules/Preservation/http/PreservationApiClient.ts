@@ -28,6 +28,55 @@ export type TagSearchResponse = {
     isPreserved: boolean;
 }
 
+export interface JourneyResponse {
+    id: number;
+    title: string;
+    isVoided: boolean;
+    steps: [
+        {
+            id: number;
+            isVoided: boolean;
+            mode: {
+                id: number;
+                title: string;
+            };
+            responsible: {
+                id: number;
+                name: string;
+            };
+        }
+    ];
+}
+
+export interface RequirementTypeResponse {
+    resultType: string;
+    errors: string[];
+    data: [{
+        id: number;
+        code: string;
+        title: string;
+        isVoided: boolean;
+        sortKey: number;
+        requirementDefinitions: [{
+            id: number;
+            title: string;
+            isVoided: boolean;
+            defaultIntervalWeeks: number;
+            sortKey: number;
+            fields: [{
+                id: number;
+                label: string;
+                isVoided: boolean;
+                sortKey: string;
+                fieldType: string;
+                unit: string | null;
+                showPrevious: boolean;
+            }];
+            needsUserInput: boolean;
+        }];
+    }];
+}
+
 
 /**
  * Wraps the data return in a promise and delays the response.
@@ -35,6 +84,7 @@ export type TagSearchResponse = {
  * @param data Any data that is to be returned by the promise
  * @param fail Should the promise be rejected? Default: false
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function DelayData(data: any, fail = false): Promise<any> {
     return new Promise((resolve, reject) => {
         if (fail) {
@@ -100,32 +150,17 @@ class PreservationApiClient extends ApiClient {
         return result.data;
     }
 
-    async getPreservationJourneys(setRequestCanceller?: RequestCanceler): Promise<Journey[]> {
-        // const endpoint = '/Journeys';
+    /**
+     * Get all journeys
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getJourneys(setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+        const endpoint = '/Journeys';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        return DelayData([{
-            text: 'Journey 1',
-            id: 1
-        },
-        {
-            text: 'Journey 2',
-            id: 2
-        }]);
-    }
-
-    async getPreservationSteps(setRequestCanceller?: RequestCanceler): Promise<Step[]> {
-        // const endpoint = '/Steps';
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-        return DelayData([{
-            text: 'Step 1',
-            id: 1
-        },
-        {
-            text: 'Step 2',
-            id: 2
-        }]);
+        const result = await this.client.get<JourneyResponse[]>(endpoint, settings);
+        return result.data;
     }
 
     async getTagsForAddPreservationScope(projectName: string, tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagSearchResponse[]> {
@@ -138,6 +173,24 @@ class PreservationApiClient extends ApiClient {
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get<TagSearchResponse[]>(endpoint, settings);
+        return result.data;
+    }
+
+    /**
+     * Get all requirement types
+     *
+     * @param includeVoided Include voided Requirements in result
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse> {
+        const endpoint = '/RequirementTypes';
+        const settings: AxiosRequestConfig = {
+            params: {
+                includeVoided: includeVoided
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
         return result.data;
     }
 }

@@ -68,12 +68,17 @@ const SetTagProperties = ({
      * Form validation
      */
     useEffect(() => {
-        if (journey > -1 && step > -1) {
-            setFormIsValid(true);
+        if (journey > -1 && step > -1 && requirements.length > 0) {
+            const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
+                return req.interval != null && req.requirementValue != null;
+            };
+            const requirementsIsValid = requirements.every(hasAllPropertiesSet);
+
+            setFormIsValid(requirementsIsValid);
             return;
         }
         setFormIsValid(false);
-    }, [journey, step]);
+    }, [journey, step, requirements]);
 
     /**
      * Map journeys into menu elements
@@ -287,7 +292,7 @@ const SetTagProperties = ({
                                     <SelectInput
                                         onChange={(value): void => setRequirement(value, index)}
                                         data={mappedRequirements}
-                                        label={'Preservation journey for all selected tags'}
+                                        label={'Requirement'}
                                     >
                                         {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
                                     </SelectInput>
@@ -302,7 +307,7 @@ const SetTagProperties = ({
                                         </SelectInput>
                                     </FormFieldSpacer>
                                     <FormFieldSpacer>
-                                        <Button variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
+                                        <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
                                             <DeleteOutlinedIcon />
                                         </Button>
                                     </FormFieldSpacer>
@@ -319,14 +324,14 @@ const SetTagProperties = ({
                 </div>
                 <ButtonContainer>
                     <Button onClick={previousStep} variant="outlined">
-                    Previous
+                        Previous
                     </Button>
                     <Button
                         onClick={nextStep}
                         color="primary"
                         disabled={!formIsValid}
                     >
-                    Add to scope
+                        Add to scope
                     </Button>
                 </ButtonContainer>
             </Container>

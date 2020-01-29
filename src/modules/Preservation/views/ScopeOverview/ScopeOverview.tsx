@@ -167,7 +167,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     { title: 'Tag nr', field: 'tagNo' },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
-                    { title: 'OS', field: 'firstUpcomingRequirement.nextDueWeeks' },
+                    { title: 'Due', field: 'firstUpcomingRequirement.nextDueWeeks' },
                     { title: 'PO nr', field: 'purchaseOrderNo' },
                     { title: 'Area', field: 'areaCode' },
                     { title: 'Resp', field: 'responsibleCode' },

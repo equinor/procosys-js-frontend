@@ -26,21 +26,8 @@ export interface PreservedTagResponse {
     needUserInput: string;
     responsibleCode: string;
     firstUpcomingRequirement: {
-        id: string;
-        requirementDefintionId: string;
-        nextDueTimeUtc: string;
         nextDueAsYearAndWeek: string;
         nextDueWeeks: string;
-    };
-    requirements: {
-        id: string;
-        requirementDefintionId: string;
-        nextDueTimeUtc: string;
-        nextDueAsYearAndWeek: string;
-        nextDueWeeks: string;
-    }[];
-    tableData: {
-        checked: boolean;
     };
 }
 
@@ -141,7 +128,7 @@ class PreservationApiClient extends ApiClient {
 
         const settings: AxiosRequestConfig = {
             params: {
-                projectName: 'Project-16',
+                projectName: projectName,
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

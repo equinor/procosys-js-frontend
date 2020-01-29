@@ -16,6 +16,8 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
+import Loading from './../../../../components/Loading';
+import { tokens } from '@equinor/eds-tokens';
 
 interface PreservedTag {
     id: string;
@@ -38,21 +40,8 @@ interface PreservedTag {
     needUserInput: string;
     responsibleCode: string;
     firstUpcomingRequirement: {
-        id: string;
-        requirementDefintionId: string;
-        nextDueTimeUtc: string;
         nextDueAsYearAndWeek: string;
         nextDueWeeks: string;
-    };
-    requirements: {
-        id: string;
-        requirementDefintionId: string;
-        nextDueTimeUtc: string;
-        nextDueAsYearAndWeek: string;
-        nextDueWeeks: string;
-    }[];
-    tableData: {
-        checked: boolean;
     };
 }
 
@@ -200,12 +189,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     },
 
                     rowStyle: rowData => {
-                        if (rowData.firstUpcomingRequirement?.nextDueWeeks < 0) {
-                            return { color: '#B30D2F' };
-                        }
+                        return {
+                            color: rowData.firstUpcomingRequirement?.nextDueWeeks < 0 && tokens.colors.interactive.danger__text.rgba
+                        };
                         return {};
                     }
 
+                }}
+                components={{
+                    OverlayLoading: (): any => (
+                        <Loading title="Loading tags" />
+                    ),
                 }}
 
                 isLoading={isLoading}

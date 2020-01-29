@@ -91,7 +91,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                             // style: { display: rowData.isPreserved && 'none' }
                         }),
                         rowStyle: (data): any => ({
-                            backgroundColor: data.tableData.checked && '#e6faec'
+                            backgroundColor: data.tableData.checked && '#EAEAEA'
                         })
                     }} 
                     style={{

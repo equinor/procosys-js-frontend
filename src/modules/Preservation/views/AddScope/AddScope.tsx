@@ -71,20 +71,18 @@ const AddScope = (): JSX.Element => {
 
     const removeSelectedTag = (tagNo: string): void => {
         const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
-        const tableDataIndex = scopeTableData.findIndex(tagRow => tagRow.tagNo === tagNo);
-
-        // remove from selected tags
-        if (selectedIndex > -1) {
+        const tableDataIndex = scopeTableData.findIndex(tag => tag.tagNo === tagNo);
+        
+        if (selectedIndex > -1 && tableDataIndex > -1) {
+            // remove from selected tags
             setSelectedTags(() => {
                 return [
                     ...selectedTags.slice(0, selectedIndex),
                     ...selectedTags.slice(selectedIndex + 1)
                 ];
             });
-        }
 
-        // remove checked state from table data
-        if (tableDataIndex > -1) {
+            // remove checked state from table data (needed to reflect change when navigating to "previous" step)
             const newScopeTableData = [...scopeTableData];
             const tagToUncheck = newScopeTableData[tableDataIndex];
 
@@ -92,6 +90,8 @@ const AddScope = (): JSX.Element => {
                 tagToUncheck.tableData.checked = false;
                 setScopeTableData(newScopeTableData);
             }
+
+            showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
         }
     };
 

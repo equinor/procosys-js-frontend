@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 import { Tag } from './types';
-import { Container, Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection, ExpandButton, DeleteButton } from './TagDetails.style';
+import { Container, Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
+import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -16,7 +17,7 @@ const TagDetails = ({
     removeTag
 }: TagDetailsProps): JSX.Element => {
 
-    const [expandedTagNo, setExpandedTagNo] = useState();
+    const [expandedTagNo, setExpandedTagNo] = useState<string | null>();
 
     const toggleDetails = (tagNo: string): void => {
         if (tagNo === expandedTagNo) {
@@ -32,19 +33,19 @@ const TagDetails = ({
         return (
             <TagContainer key={tag.tagNo}>
                 <Collapse>
-                    <ExpandButton onClick={(): void => toggleDetails(tag.tagNo)}>
+                    <IconButton size='small' onClick={(): void => toggleDetails(tag.tagNo)}>
                         {                        
                             isExpanded
-                                ? <KeyboardArrowUpIcon style={{ padding: '16px'}} />
-                                : <KeyboardArrowDownIcon style={{ padding: '16px' }} />
+                                ? <KeyboardArrowUpIcon />
+                                : <KeyboardArrowDownIcon />
                         }
-                    </ExpandButton>
+                    </IconButton>
                     <CollapseInfo>
                         {tag.tagNo} - {tag.description}
                     </CollapseInfo>
-                    <DeleteButton>
-                        <DeleteOutlineIcon style={{ padding: '16px'}} onClick={(): void => removeTag(tag.tagNo)} />
-                    </DeleteButton>                    
+                    <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
+                        <DeleteOutlineIcon />
+                    </IconButton>                        
                 </Collapse>
                 {
                     isExpanded && (

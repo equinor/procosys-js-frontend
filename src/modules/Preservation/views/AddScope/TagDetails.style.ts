@@ -22,6 +22,18 @@ export const TagContainer = styled.div`
     font-size: 16px;
     line-height: 24px;
 
+    button:hover {
+        background: ${tokens.colors.interactive.primary__hover_alt.rgba};
+    }
+
+    svg {
+        padding: 16px;
+    }
+
+    svg path {
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+    }
+
     /* display: flex;
     flex-direction: column; */
 `;
@@ -32,21 +44,13 @@ export const Collapse = styled.div`
 `;
 
 export const CollapseInfo = styled.div`
-    padding: 16px;
+    padding: 20px 16px 16px 16px;
     /* flex-grow: 0; */
     /* flex-basis: 200px; */
 
     /* word-wrap: none; */
     /* text-overflow: ellipsis; */
     /* overflow: hidden; */
-`;
-
-export const ExpandButton = styled.div`
-    cursor: pointer;
-`;
-
-export const DeleteButton = styled.div`
-    cursor: pointer;
 `;
 
 export const Expand = styled.div`

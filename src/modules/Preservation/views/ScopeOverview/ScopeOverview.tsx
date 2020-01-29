@@ -20,28 +20,26 @@ import Loading from './../../../../components/Loading';
 import { tokens } from '@equinor/eds-tokens';
 
 interface PreservedTag {
-    id: string;
+    id: number;
     tagNo: string;
     description: string;
     mode: string;
     areaCode: string;
-    next: string;
     calloffNo: string;
     commPkgNo: string;
     disciplineCode: string;
-    isAreaTag: string;
-    isVoided: string;
+    isAreaTag: boolean;
+    isVoided: boolean;
     mcPkgNo: string;
-    projectName: string;
     purchaseOrderNo: string;
     status: string;
-    stepId: string;
     tagFunctionCode: string;
-    needUserInput: string;
     responsibleCode: string;
+    remark: string;
+    readyToBePreserved: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
-        nextDueWeeks: string;
+        nextDueWeeks: number;
     };
 }
 
@@ -108,8 +106,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.length === 0 ||
                 selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
             );
-        }
-    );
+        }, [selectedTags]);
 
     return (
         <Container>
@@ -199,7 +196,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 components={{
                     OverlayLoading: (): any => (
                         <Loading title="Loading tags" />
-                    ),
+                    )
                 }}
 
                 isLoading={isLoading}

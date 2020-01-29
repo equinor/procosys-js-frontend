@@ -6,28 +6,26 @@ import { RequestCanceler } from '../../../http/HttpClient';
 const Settings = require('../../../../settings.json');
 
 export interface PreservedTagResponse {
-    id: string;
+    id: number;
     tagNo: string;
     description: string;
     mode: string;
     areaCode: string;
-    next: string;
     calloffNo: string;
     commPkgNo: string;
     disciplineCode: string;
-    isAreaTag: string;
-    isVoided: string;
+    isAreaTag: boolean;
+    isVoided: boolean;
     mcPkgNo: string;
-    projectName: string;
     purchaseOrderNo: string;
     status: string;
-    stepId: string;
     tagFunctionCode: string;
-    needUserInput: string;
     responsibleCode: string;
+    remark: string;
+    readyToBePreserved: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
-        nextDueWeeks: string;
+        nextDueWeeks: number;
     };
 }
 
@@ -195,7 +193,7 @@ class PreservationApiClient extends ApiClient {
      * Start preservation for the given tags.
      * @param tags  List with tag IDs
      */
-    async startPreservation(tags: string[]): Promise<void> {
+    async startPreservation(tags: number[]): Promise<void> {
         const endpoint = '/Tags/Preserved/StartPreservation';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);

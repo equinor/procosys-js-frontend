@@ -20,6 +20,18 @@ const steps = [{
     id: 2
 }];
 
+jest.mock('../../../../context/PreservationContext', () => ({
+    usePreservationContext: jest.fn(() => {
+        return {
+            project: {
+                id: 1,
+                name: 'test',
+                description: 'project'
+            }
+        };
+    })
+}));
+
 describe('Module: <SetTagProperties />', () => {
 
     it('Should render Add To Scope button disabled when form is invalid', () => {

@@ -7,7 +7,9 @@ jest.mock('../../../context/PreservationContext', () => ({
     usePreservationContext: jest.fn(() => {
         return {
             project: {
-                description: 'test project'
+                id: 1,
+                name: 'test',
+                description: 'project'
             }
         };
     })
@@ -18,7 +20,7 @@ let selectedTags = [];
 describe('Module: <SelectTags />', () => {
 
     it('Should render Next button disabled when no rows are selected', () => {
-        const { getByText } = render(<SelectTags tags={selectedTags} />);
+        const { getByText } = render(<SelectTags selectedTags={selectedTags} />);
         expect(getByText('Next')).toHaveProperty('disabled', true);
     });
 
@@ -27,7 +29,7 @@ describe('Module: <SelectTags />', () => {
             { id: 1 }
         ];
 
-        const { getByText } = render(<SelectTags tags={selectedTags} />);
+        const { getByText } = render(<SelectTags selectedTags={selectedTags} />);
         expect(getByText('Next')).toHaveProperty('disabled', false);
     });
 });

@@ -65,12 +65,17 @@ const SetTagProperties = ({
      * Form validation
      */
     useEffect(() => {
-        if (journey > -1 && step > -1) {
-            setFormIsValid(true);
+        if (journey > -1 && step > -1 && requirements.length > 0) {
+            const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
+                return req.interval != null && req.requirementValue != null;
+            };
+            const requirementsIsValid = requirements.every(hasAllPropertiesSet);
+
+            setFormIsValid(requirementsIsValid);
             return;
         }
         setFormIsValid(false);
-    }, [journey, step]);
+    }, [journey, step, requirements]);
 
     /**
      * Map journeys into menu elements

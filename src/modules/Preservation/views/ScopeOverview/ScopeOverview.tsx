@@ -47,8 +47,6 @@ interface PreservedTag {
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
     const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
-
-
     const [tags, setTags] = useState<PreservedTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -110,7 +108,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 );
             }
         );
-
     };
 
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
@@ -140,7 +137,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
         }, [selectedTags]);
-
 
     return (
         <Container>
@@ -174,18 +170,21 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Dropdown>
                 </Header>
                 <IconBar>
-                    <Button onClick={(): void => { preservedThisWeek(); }} disabled={preservedThisWeekDisabled}>Preserved this week</Button>
-
+                    <Button
+                        onClick={(): void => {
+                            preservedThisWeek();
+                        }}
+                        disabled={preservedThisWeekDisabled}>Preserved this week
+                    </Button>
                     <IconButton
                         onClick={(): void => {
                             startPreservation();
                         }}
-                        disabled={startPreservationDisabled}
-                    >
+                        disabled={startPreservationDisabled}>
                         <PlayArrowOutlinedIcon />
                     </IconButton>
                     <IconButton
-                        disabled={true}>
+                        disabled>
                         <CompareArrowsOutlinedIcon />
                     </IconButton>
                     <IconButton

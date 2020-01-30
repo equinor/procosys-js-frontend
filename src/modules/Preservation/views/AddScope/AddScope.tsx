@@ -6,7 +6,7 @@ import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
 import TagDetails from './TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
-import { PropertiesContainer, TagProperties, SelectedTags } from './AddScope.style';
+import { PropertiesContainer, TagProperties, SelectedTags, Divider } from './AddScope.style';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const AddScope = (): JSX.Element => {
@@ -126,6 +126,7 @@ const AddScope = (): JSX.Element => {
                             nextStep={goToNextStep}
                         />
                     </TagProperties>
+                    <Divider />
                     <SelectedTags>
                         <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
                     </SelectedTags>

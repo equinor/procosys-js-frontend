@@ -48,7 +48,11 @@ export const TagsHeader = styled.div`
 
 export const LoadingContainer = styled.div`
     background-color: ${tokens.colors.ui.background__default.rgba};
-    height: 100%
+    height: 100%;
+
+    h1 {
+        font-size: calc(var(--grid-unit) * 3);
+    }
 `;
 
 export const Toolbar = styled.div`

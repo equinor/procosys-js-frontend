@@ -60,11 +60,12 @@ const AddScope = (): JSX.Element => {
         });
     };
 
-    const submitForm = (stepId: number, requirements: Requirement[], remark: string | null): void => {
+    const submitForm = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
-            apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
-        } catch {
-            showSnackbarNotification('An error occured while trying to add tags to preservation scope', 5000);
+            await apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
+        } catch (error) {
+            console.error(error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
         }
 
     };

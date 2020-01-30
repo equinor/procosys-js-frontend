@@ -159,7 +159,7 @@ const SetTagProperties = ({
         requirements.forEach((req) => {
             if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
                 requirementsMappedForApi.push({
-                    requirementDefinitionId: req.intervalWeeks,
+                    requirementDefinitionId: req.requirementDefinitionId,
                     intervalWeeks: req.intervalWeeks
                 });
             }
@@ -222,10 +222,12 @@ const SetTagProperties = ({
         });
     };
 
-    const setInterval = (intervalValue: number, index: number): void => {
+    const setIntervalValue = (intervalValue: number, index: number): void => {
         setRequirements((oldReq) => {
             const copy = [...oldReq];
+            console.log(`Changing requirement at Index: ${index}`, copy[index]);
             copy[index].intervalWeeks = intervalValue;
+            console.log('New requirement list: ', [...copy]);
             return copy;
         });
     };
@@ -300,7 +302,7 @@ const SetTagProperties = ({
                                 </SelectInput>
                                 <FormFieldSpacer>
                                     <SelectInput
-                                        onChange={(value): void => setInterval(value, index)}
+                                        onChange={(value): void => setIntervalValue(value, index)}
                                         data={mappedIntervals}
                                         disabled={!requirement.requirementDefinitionId}
                                         label={'Interval'}

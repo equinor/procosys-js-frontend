@@ -102,6 +102,25 @@ interface PreserveTagRequirement {
     intervalWeeks: number;
 }
 
+interface ErrorResponse {
+    ErrorCount: number;
+    Errors: {
+        PropertyName: string;
+        ErrorMessage: string;
+    }[];
+}
+
+class PreservationApiError extends Error {
+
+    data: ErrorResponse;
+
+    constructor(message: string, apiResponse: ErrorResponse) {
+        super(message);
+        this.data = apiResponse;
+        this.name = 'PreservationApiError';
+    }
+}
+
 
 /**
  * Wraps the data return in a promise and delays the response.
@@ -170,6 +189,18 @@ class PreservationApiClient extends ApiClient {
         );
     }
 
+    /**
+     *
+     * @param listOfTagNo List of Tag Numbers
+     * @param stepId Step ID
+     * @param requirements List of Requirements
+     * @param projectName Name of affected project
+     * @param remark Optional: Remark for all tags
+     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+     *
+     * @returns Promise<void>
+     * @throws PreservationApiError
+     */
     async preserveTags(
         listOfTagNo: string[],
         stepId: number,
@@ -181,14 +212,20 @@ class PreservationApiClient extends ApiClient {
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                tagNos: listOfTagNo,
+                projectName: projectName,
+                stepId: stepId,
+                requirements,
+                remark
+            });
+        } catch (error) {
+            const response = error.response.data as ErrorResponse;
+            const errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
+            throw new PreservationApiError(errorMessage, response);
+        }
 
-        this.client.post(endpoint, {
-            tagNos: listOfTagNo,
-            projectName: projectName,
-            stepId: stepId,
-            requirements,
-            remark
-        });
     }
 
     /**

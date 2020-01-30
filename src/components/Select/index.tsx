@@ -61,6 +61,7 @@ const Select = ({
                     role="option"
                     selected={!!itm.selected}
                     tabIndex={0}
+                    data-value={itm.value}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ENTER &&
                             selectItem(itm.value);
@@ -81,7 +82,7 @@ const Select = ({
                 key={index}
                 role="option"
                 selected={!!itm.selected}
-                data-value={itm.text}
+                data-value={itm.value}
                 tabIndex={0}
                 onKeyDown={(e): void => {
                     if (e.keyCode === KEYCODE_ENTER) {

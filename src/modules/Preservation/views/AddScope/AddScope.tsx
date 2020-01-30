@@ -1,4 +1,5 @@
-import { Journey, RequirementType, Tag, TagRow } from './types';
+import { Divider, PropertiesContainer, SelectedTags, TagProperties } from './AddScope.style';
+import { Journey, Requirement, RequirementType, Tag, TagRow } from './types';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -6,12 +7,13 @@ import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
 import TagDetails from './TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
-import { PropertiesContainer, TagProperties, SelectedTags, Divider } from './AddScope.style';
+import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const AddScope = (): JSX.Element => {
 
     const { apiClient, project } = usePreservationContext();
+    const history = useHistory();
 
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -62,6 +64,17 @@ const AddScope = (): JSX.Element => {
         });
     };
 
+    const submitForm = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
+        try {
+            await apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
+            history.push('/');
+        } catch (error) {
+            console.error(error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+
+    };
+
     const searchTags = async (tagNo: string | null): Promise<void> => {
         setIsLoading(true);
         let result: TagRow[] = [];
@@ -82,7 +95,7 @@ const AddScope = (): JSX.Element => {
     const removeSelectedTag = (tagNo: string): void => {
         const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
         const tableDataIndex = scopeTableData.findIndex(tag => tag.tagNo === tagNo);
-        
+
         if (selectedIndex > -1 && tableDataIndex > -1) {
             // remove from selected tags
             setSelectedTags(() => {
@@ -119,11 +132,11 @@ const AddScope = (): JSX.Element => {
             return (
                 <PropertiesContainer>
                     <TagProperties>
-                        <SetTagProperties 
+                        <SetTagProperties
                             journeys={journeys}
                             requirementTypes={requirementTypes}
-                            previousStep={goToPreviousStep} 
-                            nextStep={goToNextStep}
+                            previousStep={goToPreviousStep}
+                            submitForm={submitForm}
                         />
                     </TagProperties>
                     <Divider />

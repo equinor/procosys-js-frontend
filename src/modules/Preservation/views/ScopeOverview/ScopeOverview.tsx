@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, useRouteMatch } from 'react-router-dom';
 import {
     Container,
-    HeaderContainer,
     Header,
+    HeaderContainer,
     IconBar,
     TableToolbar
 } from './ScopeOverview.style';
-import Dropdown from '../../../../components/Dropdown';
-import Table from './../../../../components/Table';
-import { usePreservationContext } from '../../context/PreservationContext';
-import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
+import { Link, useRouteMatch } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
+import { Button } from '@equinor/eds-core-react';
 import CompareArrowsOutlinedIcon from '@material-ui/icons/CompareArrowsOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
+import Dropdown from '../../../../components/Dropdown';
 import IconButton from '@material-ui/core/IconButton';
+import Loading from './../../../../components/Loading';
+import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
+import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
+import Table from './../../../../components/Table';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
-import { Button } from '@equinor/eds-core-react';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 interface PreservedTag {
     id: number;
@@ -115,7 +117,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     /**
-     * Start Preservation button is set to disabled if no rows are selected or 
+     * Start Preservation button is set to disabled if no rows are selected or
      * if there are selected rows with other status than NotStarted
      */
     useEffect(
@@ -127,7 +129,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }, [selectedTags]);
 
     /**
-     * 'Preserved this week' button is set to disabled if no rows are selected or 
+     * 'Preserved this week' button is set to disabled if no rows are selected or
      * if there are selected rows that are not raady to be preserved
      */
     useEffect(
@@ -159,13 +161,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         })}
                     </Dropdown>
                     <Dropdown text="Add scope">
-                        <NavLink to={`${path.url}/AddScope`}>
+                        <Link to={'/AddScope'}>
                             Add tags manually
-                        </NavLink>
-                        <NavLink to={`${path.url}`}>
+                        </Link>
+                        <Link to={`${path.url}`}>
                             Generate scope by Tag Function
-                        </NavLink>
-                        <NavLink to={`${path.url}`}>Create area tag</NavLink>
+                        </Link>
+                        <Link to={`${path.url}`}>Create area tag</Link>
                     </Dropdown>
                 </Header>
                 <IconBar>

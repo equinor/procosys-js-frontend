@@ -11,7 +11,7 @@ export const TagProperties = styled.div`
 
 export const SelectedTags = styled.div`
     width: 30%;
-    margin-left: calc(var(--grid-unit));
+    margin-left: var(--grid-unit);
     margin-bottom: calc(var(--grid-unit) * 4);
 `;
 

@@ -83,6 +83,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const startPreservation = (): void => {
         apiClient.startPreservation(selectedTags.map(t => t.id)).then(
             () => {
+                setSelectedTags([]);
                 getTags().then(
                     () => {
                         showSnackbarNotification(
@@ -95,13 +96,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         );
     };
 
-    const preservedThisWeekHandler = (): void => {
+    const preservedThisWeek = (): void => {
         apiClient.preserve(selectedTags.map(t => t.id)).then(
             () => {
+                setSelectedTags([]);
                 getTags().then(
                     () => {
                         showSnackbarNotification(
-                            'Selected tags has been preserved for this week.',
+                            'Selected tags have been preserved for this week.',
                             5000
                         );
                     }
@@ -128,8 +130,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }, [selectedTags]);
 
     /**
-     * Start Preservation button is set to disabled if no rows are selected or 
-     * if there are selected rows with other status than NotStarted
+     * 'Preserved this week' button is set to disabled if no rows are selected or 
+     * if there are selected rows that are not raady to be preserved
      */
     useEffect(
         () => {
@@ -172,7 +174,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Dropdown>
                 </Header>
                 <IconBar>
-                    <Button onClick={(): void => { preservedThisWeekHandler(); }} disabled={preservedThisWeekDisabled}>Preserved this week</Button>
+                    <Button onClick={(): void => { preservedThisWeek(); }} disabled={preservedThisWeekDisabled}>Preserved this week</Button>
 
                     <IconButton
                         onClick={(): void => {
@@ -182,16 +184,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     >
                         <PlayArrowOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <CompareArrowsOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <CreateOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <DeleteOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <PrintOutlinedIcon />
                     </IconButton>
                 </IconBar>
@@ -237,7 +243,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}
             />
-        </Container >
+        </Container>
     );
 };
 

@@ -75,9 +75,7 @@ const TagDetails = ({
             </div>
             <TagList>
                 {
-                    selectedTags.map((tag) => {
-                        return createTagSection(tag);
-                    })
+                    selectedTags.map(tag => createTagSection(tag))
                 }
             </TagList>
         </div>

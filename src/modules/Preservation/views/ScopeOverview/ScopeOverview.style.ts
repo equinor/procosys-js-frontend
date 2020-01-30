@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -13,6 +14,7 @@ export const HeaderContainer = styled.div`
 
 export const Header = styled.header`
     display: flex;
+    align-items: baseline;
 
     h1 {
         display: inline-block;
@@ -20,7 +22,7 @@ export const Header = styled.header`
     }
 
     div {
-        display: flex;
+        margin-right: calc(var(--grid-unit) * 2);
     }
 
     a {
@@ -30,4 +32,12 @@ export const Header = styled.header`
 
 export const IconBar = styled.div`
     display: flex;
+`;
+
+export const TableToolbar = styled.div`
+    font-size: calc(var(--grid-unit) * 2);
+    line-height: calc(var(--grid-unit) * 3);
+    margin-top: calc(var(--grid-unit) * 2);
+    margin-bottom: var(--grid-unit);
+    color: ${tokens.colors.text.static_icons__secondary.rgba};
 `;

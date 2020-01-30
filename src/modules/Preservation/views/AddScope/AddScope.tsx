@@ -67,7 +67,7 @@ const AddScope = (): JSX.Element => {
     const submitForm = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
             await apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
-            history.push({ pathname: '.' });
+            history.push('/');
         } catch (error) {
             console.error(error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);

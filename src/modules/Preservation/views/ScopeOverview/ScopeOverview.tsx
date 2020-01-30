@@ -161,7 +161,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Dropdown>
 
                     <Dropdown text="Add scope">
-                        <Link to={'AddScope'}>
+                        <Link to={'/AddScope'}>
                             Add tags manually
                         </Link>
                         <Link to={`${path.url}`}>

@@ -5,6 +5,7 @@ import {
     HeaderContainer,
     Header,
     IconBar,
+    TableToolbar
 } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Table from './../../../../components/Table';
@@ -16,7 +17,6 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
-import Loading from './../../../../components/Loading';
 import { tokens } from '@equinor/eds-tokens';
 
 interface PreservedTag {
@@ -128,7 +128,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             );
                         })}
                     </Dropdown>
-
                     <Dropdown text="Add scope">
                         <NavLink to={`${path.url}/AddScope`}>
                             Add tags manually
@@ -174,31 +173,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     { title: 'Disc', field: 'disciplineCode' },
                     { title: 'Status', field: 'status' },
                 ]}
-
                 data={tags}
                 options={{
                     showTitle: false,
+                    draggable: false,
                     selection: true,
                     pageSize: 10,
                     pageSizeOptions: [10, 50, 100],
                     headerStyle: {
                         backgroundColor: '#f7f7f7'
                     },
-
-                    rowStyle: rowData => {
-                        return {
-                            color: rowData.firstUpcomingRequirement?.nextDueWeeks < 0 && tokens.colors.interactive.danger__text.rgba
-                        };
-                        return {};
-                    }
-
+                    rowStyle: (rowData): any => ({
+                        color: rowData.firstUpcomingRequirement?.nextDueWeeks < 0 && tokens.colors.interactive.danger__text.rgba,
+                        backgroundColor: rowData.tableData.checked && '#EAEAEA'
+                    }),
                 }}
                 components={{
-                    OverlayLoading: (): any => (
-                        <Loading title="Loading tags" />
+                    Toolbar: (data): any => (
+                        <TableToolbar>{data.selectedRows.length} tags selected</TableToolbar>
                     )
                 }}
-
                 isLoading={isLoading}
                 onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
-    margin: 50px 35px;
+    margin: var(--margin-module--top) var(--margin-module--right);
     display: flex;
     height: 100%;
     flex-direction: column;

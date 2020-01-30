@@ -240,7 +240,7 @@ class PreservationApiClient extends ApiClient {
 
         const settings: AxiosRequestConfig = {
             params: {
-                projectName: projectName,
+                projectName: projectName
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -258,6 +258,16 @@ class PreservationApiClient extends ApiClient {
      */
     async startPreservation(tags: number[]): Promise<void> {
         const endpoint = '/Tags/Preserved/StartPreservation';
+        const settings: AxiosRequestConfig = {};
+        await this.client.put(endpoint, tags, settings);
+    }
+
+    /**
+     * Set given tags to 'preserved'
+     * @param tags  List with tag IDs
+     */
+    async preserve(tags: number[]): Promise<void> {
+        const endpoint = '/Tags/Preserved/Preserve';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);
     }

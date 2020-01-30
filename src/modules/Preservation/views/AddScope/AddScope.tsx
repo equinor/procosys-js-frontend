@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Canceler } from 'axios';
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
+import TagDetails from './TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
+import { PropertiesContainer, TagProperties, SelectedTags, Divider } from './AddScope.style';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const AddScope = (): JSX.Element => {
@@ -77,6 +79,32 @@ const AddScope = (): JSX.Element => {
         setScopeTableData(result);
     };
 
+    const removeSelectedTag = (tagNo: string): void => {
+        const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
+        const tableDataIndex = scopeTableData.findIndex(tag => tag.tagNo === tagNo);
+        
+        if (selectedIndex > -1 && tableDataIndex > -1) {
+            // remove from selected tags
+            setSelectedTags(() => {
+                return [
+                    ...selectedTags.slice(0, selectedIndex),
+                    ...selectedTags.slice(selectedIndex + 1)
+                ];
+            });
+
+            // remove checked state from table data (needed to reflect change when navigating to "previous" step)
+            const newScopeTableData = [...scopeTableData];
+            const tagToUncheck = newScopeTableData[tableDataIndex];
+
+            if (tagToUncheck.tableData) {
+                tagToUncheck.tableData.checked = false;
+                setScopeTableData(newScopeTableData);
+            }
+
+            showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
+        }
+    };
+
     switch (step) {
         case 1:
             return <SelectTags
@@ -88,12 +116,22 @@ const AddScope = (): JSX.Element => {
                 isLoading={isLoading}
             />;
         case 2:
-            return <SetTagProperties
-                journeys={journeys}
-                requirementTypes={requirementTypes}
-                previousStep={goToPreviousStep}
-                nextStep={goToNextStep}
-            />;
+            return (
+                <PropertiesContainer>
+                    <TagProperties>
+                        <SetTagProperties 
+                            journeys={journeys}
+                            requirementTypes={requirementTypes}
+                            previousStep={goToPreviousStep} 
+                            nextStep={goToNextStep}
+                        />
+                    </TagProperties>
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
+                    </SelectedTags>
+                </PropertiesContainer>
+            );
     }
 
     return <h1>Unknown step</h1>;

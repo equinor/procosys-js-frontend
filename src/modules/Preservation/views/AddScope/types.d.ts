@@ -1,5 +1,7 @@
 export interface Tag {
     tagNo: string;
+    description: string;
+    mcPkgNo: string;
 }
 
 export interface TagRow {
@@ -9,6 +11,9 @@ export interface TagRow {
     commPkgNo: string;
     mcPkgNo: string;
     isPreserved: boolean;
+    tableData?: {
+        checked: boolean;
+    };
 }
 
 /**

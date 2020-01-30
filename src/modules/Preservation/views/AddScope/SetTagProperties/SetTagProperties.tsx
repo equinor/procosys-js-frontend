@@ -1,7 +1,8 @@
-import { ButtonContainer, ButtonContent, Container, FormFieldSpacer, InputContainer } from './SetTagProperties.style';
+import { ButtonContainer, ButtonContent, Container, FormFieldSpacer, InputContainer, Header } from './SetTagProperties.style';
 import { Journey, RequirementDefinition, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+import { usePreservationContext } from '../../../context/PreservationContext';
 
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import BatteryChargingFullOutlinedIcon from '@material-ui/icons/BatteryChargingFullOutlined';
@@ -43,6 +44,8 @@ const SetTagProperties = ({
     journeys = [],
     requirementTypes = [],
 }: SetTagPropertiesProps): JSX.Element => {
+    const { project } = usePreservationContext();
+
     const [journey, setJourney] = useState(-1);
     const [step, setStep] = useState<number>(-1);
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
@@ -221,104 +224,118 @@ const SetTagProperties = ({
     };
 
     if (journeys.length <= 0 || requirementTypes.length <= 0) {
-        return (<Container>
+        return (
             <div>
-                Missing data
+                <Header>
+                    <h1>Add preservation scope</h1>
+                    <div>{project.description}</div>
+                </Header>
+                <Container>
+                    <div>
+                        Missing data
+                    </div>
+                    <ButtonContainer>
+                        <Button onClick={previousStep} variant="outlined">
+                            Previous
+                        </Button>
+                    </ButtonContainer>
+                </Container>
             </div>
-            <ButtonContainer>
-                <Button onClick={previousStep} variant="outlined">
-                    Previous
-                </Button>
-            </ButtonContainer>
-        </Container>);
+        );
     }
 
     return (
-        <Container>
-            <div>
-                <InputContainer>
-                    <SelectInput
-                        onChange={setJourneyFromForm}
-                        data={mappedJourneys}
-                        label={'Preservation journey for all selected tags'}
-                    >
-                        {(journey > -1 && journeys[journey].title) || 'Select journey'}
-                    </SelectInput>
-                </InputContainer>
-                <InputContainer>
-                    <SelectInput
-                        onChange={setStepFromForm}
-                        data={mappedSteps}
-                        disabled={mappedSteps.length <= 0}
-                        label={'Preservation step'}
-                    >
-                        {(step > -1 && journeys[journey].steps[step].mode.title) || 'Select step'}
-                    </SelectInput>
-                </InputContainer>
-                <InputContainer>
-                    <TextField
-                        id={'Remark'} ø
-                        style={{ maxWidth: '480px' }}
-                        label="Remark for whole preservation journey"
-                        inputRef={remarkInputRef}
-                        placeholder="Write Here"
-                        helpertext="For example: Check according to predecure 123, or check specifications from supplier"
-                    />
-                </InputContainer>
+        <div>
+            <Header>
+                <h1>Add preservation scope</h1>
+                <div>{project.description}</div>
+            </Header>
+            <Container>
+                <div>
+                    <InputContainer>
+                        <SelectInput
+                            onChange={setJourneyFromForm}
+                            data={mappedJourneys}
+                            label={'Preservation journey for all selected tags'}
+                        >
+                            {(journey > -1 && journeys[journey].title) || 'Select journey'}
+                        </SelectInput>
+                    </InputContainer>
+                    <InputContainer>
+                        <SelectInput
+                            onChange={setStepFromForm}
+                            data={mappedSteps}
+                            disabled={mappedSteps.length <= 0}
+                            label={'Preservation step'}
+                        >
+                            {(step > -1 && journeys[journey].steps[step].mode.title) || 'Select step'}
+                        </SelectInput>
+                    </InputContainer>
+                    <InputContainer>
+                        <TextField
+                            id={'Remark'} ø
+                            style={{ maxWidth: '480px' }}
+                            label="Remark for whole preservation journey"
+                            inputRef={remarkInputRef}
+                            placeholder="Write Here"
+                            helpertext="For example: Check according to predecure 123, or check specifications from supplier"
+                        />
+                    </InputContainer>
 
-                <h2>Requirements for all selected tags</h2>
+                    <h2>Requirements for all selected tags</h2>
 
-                {requirements.map((requirement, index) => {
-                    const requirementForValue = getRequirementForValue(requirement.requirementValue);
-                    return (
-                        <React.Fragment key={`requirementInput_${index}`}>
-                            <InputContainer key={`req_${index}`}>
-                                <SelectInput
-                                    onChange={(value): void => setRequirement(value, index)}
-                                    data={mappedRequirements}
-                                    label={'Requirement'}
-                                >
-                                    {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
-                                </SelectInput>
-                                <FormFieldSpacer>
+                    {requirements.map((requirement, index) => {
+                        const requirementForValue = getRequirementForValue(requirement.requirementValue);
+                        return (
+                            <React.Fragment key={`requirementInput_${index}`}>
+                                <InputContainer key={`req_${index}`}>
                                     <SelectInput
-                                        onChange={(value): void => setInterval(value, index)}
-                                        data={mappedIntervals}
-                                        disabled={!requirement.requirementValue}
-                                        label={'Interval'}
+                                        onChange={(value): void => setRequirement(value, index)}
+                                        data={mappedRequirements}
+                                        label={'Requirement'}
                                     >
-                                        {mappedIntervals.find(el => el.value === requirement.interval)?.text || 'Select'}
+                                        {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
                                     </SelectInput>
-                                </FormFieldSpacer>
-                                <FormFieldSpacer>
-                                    <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
-                                        <DeleteOutlinedIcon />
-                                    </Button>
-                                </FormFieldSpacer>
-                            </InputContainer>
-                        </React.Fragment>
-                    );
-                })}
-                <Button variant='ghost' onClick={addRequirementInput}>
-                    <ButtonContent>
-                        <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
-                    </ButtonContent>
+                                    <FormFieldSpacer>
+                                        <SelectInput
+                                            onChange={(value): void => setInterval(value, index)}
+                                            data={mappedIntervals}
+                                            disabled={!requirement.requirementValue}
+                                            label={'Interval'}
+                                        >
+                                            {mappedIntervals.find(el => el.value === requirement.interval)?.text || 'Select'}
+                                        </SelectInput>
+                                    </FormFieldSpacer>
+                                    <FormFieldSpacer>
+                                        <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
+                                            <DeleteOutlinedIcon />
+                                        </Button>
+                                    </FormFieldSpacer>
+                                </InputContainer>
+                            </React.Fragment>
+                        );
+                    })}
+                    <Button variant='ghost' onClick={addRequirementInput}>
+                        <ButtonContent>
+                            <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
+                        </ButtonContent>
 
-                </Button>
-            </div>
-            <ButtonContainer>
-                <Button onClick={previousStep} variant="outlined">
-                    Previous
-                </Button>
-                <Button
-                    onClick={nextStep}
-                    color="primary"
-                    disabled={!formIsValid}
-                >
-                    Add to scope
-                </Button>
-            </ButtonContainer>
-        </Container>
+                    </Button>
+                </div>
+                <ButtonContainer>
+                    <Button onClick={previousStep} variant="outlined">
+                        Previous
+                    </Button>
+                    <Button
+                        onClick={nextStep}
+                        color="primary"
+                        disabled={!formIsValid}
+                    >
+                        Add to scope
+                    </Button>
+                </ButtonContainer>
+            </Container>
+        </div>
     );
 };
 

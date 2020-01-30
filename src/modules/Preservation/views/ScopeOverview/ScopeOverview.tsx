@@ -18,6 +18,7 @@ import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 
 interface PreservedTag {
     id: number;
@@ -45,7 +46,7 @@ interface PreservedTag {
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
-
+    const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
     const [tags, setTags] = useState<PreservedTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -80,10 +81,27 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const startPreservation = (): void => {
         apiClient.startPreservation(selectedTags.map(t => t.id)).then(
             () => {
+                setSelectedTags([]);
                 getTags().then(
                     () => {
                         showSnackbarNotification(
                             'Status was set to \'Active\' for selected tags.',
+                            5000
+                        );
+                    }
+                );
+            }
+        );
+    };
+
+    const preservedThisWeek = (): void => {
+        apiClient.preserve(selectedTags.map(t => t.id)).then(
+            () => {
+                setSelectedTags([]);
+                getTags().then(
+                    () => {
+                        showSnackbarNotification(
+                            'Selected tags have been preserved for this week.',
                             5000
                         );
                     }
@@ -105,6 +123,18 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setStartPreservationDisabled(
                 selectedTags.length === 0 ||
                 selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
+            );
+        }, [selectedTags]);
+
+    /**
+     * 'Preserved this week' button is set to disabled if no rows are selected or 
+     * if there are selected rows that are not raady to be preserved
+     */
+    useEffect(
+        () => {
+            setPreservedThisWeekDisabled(
+                selectedTags.length === 0 ||
+                selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
         }, [selectedTags]);
 
@@ -139,24 +169,33 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Dropdown>
                 </Header>
                 <IconBar>
+                    <Button
+                        onClick={(): void => {
+                            preservedThisWeek();
+                        }}
+                        disabled={preservedThisWeekDisabled}>Preserved this week
+                    </Button>
                     <IconButton
                         onClick={(): void => {
                             startPreservation();
                         }}
-                        disabled={startPreservationDisabled}
-                    >
+                        disabled={startPreservationDisabled}>
                         <PlayArrowOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled>
                         <CompareArrowsOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <CreateOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <DeleteOutlinedIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                        disabled={true}>
                         <PrintOutlinedIcon />
                     </IconButton>
                 </IconBar>

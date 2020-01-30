@@ -5,11 +5,13 @@ import { Canceler } from 'axios';
 import SelectTags from './SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
+import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 const AddScope = (): JSX.Element => {
 
     const { apiClient, project } = usePreservationContext();
+    const history = useHistory();
 
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -63,6 +65,7 @@ const AddScope = (): JSX.Element => {
     const submitForm = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
             await apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
+            history.push({ pathname: '.' });
         } catch (error) {
             console.error(error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);

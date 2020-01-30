@@ -18,6 +18,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import Loading from './../../../../components/Loading';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 
 interface PreservedTag {
     id: number;
@@ -45,6 +46,8 @@ interface PreservedTag {
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
+    const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
+
 
     const [tags, setTags] = useState<PreservedTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
@@ -92,6 +95,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         );
     };
 
+    const preservedThisWeekHandler = (): void => {
+        apiClient.preserve(selectedTags.map(t => t.id)).then(
+            () => {
+                getTags().then(
+                    () => {
+                        showSnackbarNotification(
+                            'Selected tags has been preserved for this week.',
+                            5000
+                        );
+                    }
+                );
+            }
+        );
+
+    };
+
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
         setSelectedTags(selectedTags);
     };
@@ -107,6 +126,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
             );
         }, [selectedTags]);
+
+    /**
+     * Start Preservation button is set to disabled if no rows are selected or 
+     * if there are selected rows with other status than NotStarted
+     */
+    useEffect(
+        () => {
+            setPreservedThisWeekDisabled(
+                selectedTags.length === 0 ||
+                selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
+            );
+        }, [selectedTags]);
+
 
     return (
         <Container>
@@ -140,6 +172,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Dropdown>
                 </Header>
                 <IconBar>
+                    <Button onClick={(): void => { preservedThisWeekHandler(); }} disabled={preservedThisWeekDisabled}>Preserved this week</Button>
+
                     <IconButton
                         onClick={(): void => {
                             startPreservation();
@@ -203,7 +237,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}
             />
-        </Container>
+        </Container >
     );
 };
 

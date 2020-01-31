@@ -1,11 +1,12 @@
 import {
+    DropdownItem,
     IconContainer,
     LogoContainer,
     MenuContainer,
     MenuItem,
     Nav,
     PlantSelector,
-    SubNav,
+    SubNav
 } from './style';
 import { NavLink, useParams } from 'react-router-dom';
 import React, { useMemo } from 'react';
@@ -59,15 +60,14 @@ const Header: React.FC = (): JSX.Element => {
                     <Dropdown text={plant.title}>
                         {plants.map((plantItem, index) => {
                             return (
-                                <a
+                                <DropdownItem
                                     key={index}
-                                    href="#"
                                     onClick={(event): void =>
                                         changePlant(event, index)
                                     }
                                 >
                                     {plantItem.text}
-                                </a>
+                                </DropdownItem>
                             );
                         })}
                     </Dropdown>
@@ -239,9 +239,9 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                     <MenuItem>
                         <Dropdown Icon={<AccountCircleOutlinedIcon />} openLeft>
-                            <a href="#" title="Logout" onClick={logout}>
+                            <DropdownItem title="Logout" onClick={logout}>
                                 Logout
-                            </a>
+                            </DropdownItem>
                         </Dropdown>
                     </MenuItem>
                 </MenuContainer>

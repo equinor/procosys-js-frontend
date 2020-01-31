@@ -75,44 +75,45 @@ const Header: React.FC = (): JSX.Element => {
                 <MenuContainer>
                     <MenuItem>
                         <Dropdown text="New">
+
                             <a
                                 href={`/${params.plant}/Completion/NewCertificate`}
                             >
-                                Certificate
+                                <DropdownItem>Certificate</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Completion#CommPkg|?bf=1`}
                             >
-                                Commissioning Package
+                                <DropdownItem>Commissioning Package</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Documents/New`}>
-                                Document
+                                <DropdownItem>Document</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Hookup/New`}>
-                                Certificate
+                                <DropdownItem>Certificate</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Documents/NewNotification`}
                             >
-                                Notification
+                                <DropdownItem>Notification</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Preservation#PreservationTag|`}
                             >
-                                Preservation Area Tag
+                                <DropdownItem>Preservation Area Tag</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/PurchaseOrders#PurchaseOrder|`}
                             >
-                                Purchase Order
+                                <DropdownItem>Purchase Order</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Documents/NewQuery`}>
-                                Query
+                                <DropdownItem>Query</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/SWAP/New`}>
-                                Software Change Record
+                                <DropdownItem>Software Change Record</DropdownItem>
                             </a>
-                            <a href={`/${params.plant}/Completion#Tag|`}>Tag</a>
+                            <a href={`/${params.plant}/Completion#Tag|`}><DropdownItem>Tag</DropdownItem></a>
                         </Dropdown>
                     </MenuItem>
                     <MenuItem>
@@ -120,114 +121,114 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Action%20Log`}
                             >
-                                Action Log
+                                <DropdownItem>Action Log</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Certificates`}
                             >
-                                Certificate
+                                <DropdownItem>Certificate</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Check%20Lists`}
                             >
-                                Check lists
+                                <DropdownItem>Check lists</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Commissioning%20Packages`}
                             >
-                                Commissioning Packages
+                                <DropdownItem>Commissioning Packages</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Documents`}
                             >
-                                Documents
+                                <DropdownItem>Documents</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Formular%20Types`}
                             >
-                                Formular Types
+                                <DropdownItem>Formular Types</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Hookup%20items`}
                             >
-                                Hookup Types
+                                <DropdownItem>Hookup Types</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}
                             >
-                                Libraries
+                                <DropdownItem>Libraries</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Manufacturer%2FModel`}
                             >
-                                Manufacturer/Model
+                                <DropdownItem>Manufacturer/Model</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=MC%20Packages`}
                             >
-                                MC Packages
+                                <DropdownItem>MC Packages</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Notifications`}
                             >
-                                Notifications
+                                <DropdownItem>Notifications</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Operation`}
                             >
-                                Operation
+                                <DropdownItem>Operation</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Preservation%20Tags`}
                             >
-                                Preservation Tags
+                                <DropdownItem>Preservation Tags</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Projects`}
                             >
-                                Projects
+                                <DropdownItem>Projects</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Punch%20List%20Items`}
                             >
-                                Punch List Items
+                                <DropdownItem>Punch List Items</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Purchase%20Orders`}
                             >
-                                Purchase Orders
+                                <DropdownItem>Purchase Orders</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Query`}
                             >
-                                Query
+                                <DropdownItem>Query</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Software%20Change%20Records`}
                             >
-                                Software Change Records
+                                <DropdownItem>Software Change Records</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Tag%20Functions`}
                             >
-                                Tag Functions
+                                <DropdownItem>Tag Functions</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Search?searchType=Tags`}>
-                                Tags
+                                <DropdownItem>Tags</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Work%20Orders`}
                             >
-                                Work Orders
+                                <DropdownItem>Work Orders</DropdownItem>
                             </a>
                             <hr />
                             <a href={`/${params.plant}/PersonalSearchSettings`}>
-                                My Saved Settings
+                                <DropdownItem>My Saved Settings</DropdownItem>
                             </a>
                         </Dropdown>
                     </MenuItem>
                     <MenuItem>
-                        <a href={`/${params.plant}/Reports`}>Reports</a>
+                        <a href={`/${params.plant}/Reports`}><DropdownItem>Reports</DropdownItem></a>
                     </MenuItem>
                 </MenuContainer>
                 <MenuContainer>

@@ -14,7 +14,6 @@ import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Dropdown from '../../../../components/Dropdown';
 import IconButton from '@material-ui/core/IconButton';
-import Loading from './../../../../components/Loading';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import Table from './../../../../components/Table';
@@ -155,7 +154,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         changeProject(event, index)
                                     }
                                 >
-                                    {projectItem.description}
+                                    <div>{projectItem.description}</div>
+                                    <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
                                 </a>
                             );
                         })}

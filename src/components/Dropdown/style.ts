@@ -21,6 +21,9 @@ export const Container = styled.div<ContainerProps>`
         `}
         z-index: 100;
     }
+    :hover {
+        cursor: pointer;
+    }
 `;
 
 export const DropdownIcon = styled.div`
@@ -43,6 +46,7 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     align-items: center;
     padding: 6px;
     width: 100%;
+    cursor: pointer;
     ${(props): any => props.isOpen && css`
         background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
         /* :focus & {
@@ -52,8 +56,8 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
 `;
 
 export const DropdownItem = styled.li`
-    padding: 24px 16px;
     border: 0;
     text-align:left;
     font-weight: normal;
+    cursor: pointer;
 `;

@@ -49,7 +49,7 @@ export const PlantSelector = styled.div`
 `;
 
 export const DropdownItem = styled.div`
-    padding: 16px 26px;
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba}
     }

@@ -3,7 +3,7 @@ import React from 'react';
 
 import SelectTags from '../SelectTags';
 
-jest.mock('../../../context/PreservationContext', () => ({
+jest.mock('../../../../context/PreservationContext', () => ({
     usePreservationContext: jest.fn(() => {
         return {
             project: {

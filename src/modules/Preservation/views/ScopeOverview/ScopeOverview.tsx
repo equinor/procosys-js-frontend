@@ -72,7 +72,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         (async (): Promise<void> => {
             getTags();
         })();
-    }, []);
+    }, [project]);
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();

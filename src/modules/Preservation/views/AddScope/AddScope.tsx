@@ -66,7 +66,9 @@ const AddScope = (): JSX.Element => {
 
     const submitForm = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
-            await apiClient.preserveTags(selectedTags.map(t => t.tagNo), stepId, requirements, project.name, remark);
+            const listOfTagNo = selectedTags.map(t => t.tagNo);
+            await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
+            showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
             console.error(error.messsage, error.data);

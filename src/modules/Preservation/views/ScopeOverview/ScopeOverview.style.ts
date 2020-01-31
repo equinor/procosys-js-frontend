@@ -21,7 +21,7 @@ export const Header = styled.header`
         margin-right: calc(var(--grid-unit) * 2);
     }
 
-    div {
+    > div {
         margin-right: calc(var(--grid-unit) * 2);
     }
 
@@ -40,4 +40,11 @@ export const TableToolbar = styled.div`
     margin-top: calc(var(--grid-unit) * 2);
     margin-bottom: var(--grid-unit);
     color: ${tokens.colors.text.static_icons__secondary.rgba};
+`;
+
+export const DropdownItem = styled.div`
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba}
+    }
 `;

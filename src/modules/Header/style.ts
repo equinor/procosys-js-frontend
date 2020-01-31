@@ -48,6 +48,13 @@ export const PlantSelector = styled.div`
     font-weight: 500;
 `;
 
+export const DropdownItem = styled.div`
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba}
+    }
+`;
+
 export const MenuContainer = styled.div`
     display: flex;
     justify-content: center;

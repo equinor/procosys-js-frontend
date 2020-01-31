@@ -43,7 +43,7 @@ const Select: React.FC<DropdownProps> = ({
                 aria-expanded={isOpen}
                 aria-haspopup={true}
             >
-                {text || 'Select'}
+                {text}
 
                 <DropdownIcon>{Icon}</DropdownIcon>
             </DropdownButton>

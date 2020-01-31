@@ -1,5 +1,6 @@
 import {
     Container,
+    DropdownItem,
     Header,
     HeaderContainer,
     IconBar,
@@ -147,8 +148,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <Dropdown text={project.description}>
                         {availableProjects.map((projectItem, index) => {
                             return (
-                                <a
-                                    href="#"
+                                <DropdownItem
                                     key={index}
                                     onClick={(event): void =>
                                         changeProject(event, index)
@@ -156,18 +156,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 >
                                     <div>{projectItem.description}</div>
                                     <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
-                                </a>
+                                </DropdownItem>
                             );
                         })}
                     </Dropdown>
                     <Dropdown text="Add scope">
                         <Link to={'/AddScope'}>
-                            Add tags manually
+                            <DropdownItem>
+                                Add tags manually
+                            </DropdownItem>
                         </Link>
                         <Link to={`${path.url}`}>
-                            Generate scope by Tag Function
+                            <DropdownItem>
+                                Generate scope by Tag Function
+                            </DropdownItem>
                         </Link>
-                        <Link to={`${path.url}`}>Create area tag</Link>
+                        <Link to={`${path.url}`}>
+                            <DropdownItem>
+                                Create area tag
+                            </DropdownItem>
+                        </Link>
                     </Dropdown>
                 </Header>
                 <IconBar>

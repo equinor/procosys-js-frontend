@@ -113,4 +113,35 @@ describe('<Dropdown />', () => {
         fireEvent.keyUp(input);
         expect(filter).toBeCalledWith('Item 1');
     });
+
+    it('Resets onFilter when closing dropdown', () => {
+
+        const filter = jest.fn();
+        const { getByText, getByPlaceholderText } = renderWithTheme(
+            <Dropdown text='Heading' onFilter={filter}>
+                {items}
+            </Dropdown>
+        );
+
+        getByText('Heading').click();
+        const input = getByPlaceholderText('Filter');
+        input.value = 'Item 1';
+        fireEvent.keyUp(input);
+        getByText('Item 1').click();
+        expect(filter).toBeCalledWith('');
+    });
+
+    it('Renders with autofocus on filter input', () => {
+
+        const filter = jest.fn();
+        const { getByText, getByPlaceholderText } = renderWithTheme(
+            <Dropdown text='Heading' onFilter={filter}>
+                {items}
+            </Dropdown>
+        );
+
+        getByText('Heading').click();
+        const input = getByPlaceholderText('Filter');
+        expect(input).toBe(document.activeElement);
+    });
 });

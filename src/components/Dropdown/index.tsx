@@ -1,4 +1,4 @@
-import { Container, DropdownButton, DropdownIcon, DropdownItem } from './style';
+import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer } from './style';
 import React, { useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -32,6 +32,9 @@ const Select: React.FC<DropdownProps> = ({
     }, containerRef);
 
     const toggleDropdown = (): void => {
+        if (isOpen && onFilter) {
+            onFilter('');
+        }
         setIsOpen(!isOpen);
     };
 
@@ -49,34 +52,37 @@ const Select: React.FC<DropdownProps> = ({
 
                 <DropdownIcon>{Icon}</DropdownIcon>
             </DropdownButton>
-            {isOpen && children && React.Children.count(children) > 0 && !disabled && (
+            {isOpen && (
                 <ul
                     onKeyDown={(e): void => {
-                        e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
+                        e.keyCode === KEYCODE_ESCAPE && toggleDropdown();
                     }}
                 >
                     {onFilter && (
-                        <DropdownItem>
-                            <input type="text" onKeyUp={(e): void => onFilter(e.currentTarget.value)} placeholder="Filter" />
-                        </DropdownItem>
+                        <FilterContainer>
+                            <input autoFocus type="text" onKeyUp={(e): void => onFilter(e.currentTarget.value)} placeholder="Filter" />
+                        </FilterContainer>
                     )}
-                    {React.Children.map(children, (item, index) => {
-                        return (
-                            <DropdownItem
-                                key={index}
-                                role="option"
-                                onClick={toggleDropdown}
-                                tabIndex={0}
-                            >
-                                {item}
-                            </DropdownItem>
-                        );
-                    })}
-                </ul>
-            )}
-            {isOpen && (!children || React.Children.count(children) <= 0) && !disabled && (
-                <ul>
-                    <li data-value={-1}>No items available</li>
+                    {children && React.Children.count(children) > 0 && (
+                        React.Children.map(children, (item, index) => {
+                            return (
+                                <DropdownItem
+                                    key={index}
+                                    role="option"
+                                    onClick={toggleDropdown}
+                                    tabIndex={0}
+                                >
+                                    {item}
+                                </DropdownItem>
+                            );
+                        })
+                    )}
+                    {(!children || React.Children.count(children) <= 0) && (
+                        <ul>
+                            <li data-value={-1}>No items available</li>
+                        </ul>
+                    )}
+
                 </ul>
             )}
         </Container>

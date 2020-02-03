@@ -9,7 +9,7 @@ import {
     SubNav
 } from './style';
 import { NavLink, useParams } from 'react-router-dom';
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import AppsOutlinedIcon from '@material-ui/icons/AppsOutlined';
@@ -30,18 +30,32 @@ const Header: React.FC = (): JSX.Element => {
     const { auth } = useProcosysContext();
     const { plant, setCurrentPlant } = useCurrentPlant();
     const params = useParams<any>();
-
-    const plants = useMemo<PlantItem[]>(() => {
+    const [filterForPlants, setFilterForPlants] = useState<string>('');
+    const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map(plant => ({
             text: plant.title,
             value: plant.id,
         }));
-    }, [user.plants]);
+    });
+    const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
+
+
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
-        setCurrentPlant(plants[plantIndex].value as string);
+        setCurrentPlant(filteredPlants[plantIndex].value as string);
     };
+
+
+    useEffect(() => {
+        console.log('Recalculating plants: ', filterForPlants);
+
+        if (filterForPlants.length <= 0) {
+            setFilteredPlants(allPlants);
+            return;
+        }
+        setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
+    }, [filterForPlants]);
 
     const logout = (): void => {
         auth.logout();
@@ -61,8 +75,8 @@ const Header: React.FC = (): JSX.Element => {
                     </a>
                 </LogoContainer>
                 <PlantSelector>
-                    <Dropdown text={plant.title}>
-                        {plants.map((plantItem, index) => {
+                    <Dropdown text={plant.title} onFilter={setFilterForPlants}>
+                        {filteredPlants.map((plantItem, index) => {
                             return (
                                 <DropdownItem
                                     key={index}

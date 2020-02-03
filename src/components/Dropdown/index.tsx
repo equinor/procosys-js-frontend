@@ -10,6 +10,7 @@ type DropdownProps = {
     children?: React.ReactNode;
     Icon?: JSX.Element;
     openLeft?: boolean;
+    onFilter?: (input: string) => void;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -20,6 +21,7 @@ const Select: React.FC<DropdownProps> = ({
     Icon = <KeyboardArrowDownIcon />,
     children,
     openLeft,
+    onFilter,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +55,11 @@ const Select: React.FC<DropdownProps> = ({
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
+                    {onFilter && (
+                        <DropdownItem>
+                            <input type="text" onKeyUp={(e): void => onFilter(e.currentTarget.value)} placeholder="Filter" />
+                        </DropdownItem>
+                    )}
                     {React.Children.map(children, (item, index) => {
                         return (
                             <DropdownItem

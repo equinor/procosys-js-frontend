@@ -48,8 +48,6 @@ const Header: React.FC = (): JSX.Element => {
 
 
     useEffect(() => {
-        console.log('Recalculating plants: ', filterForPlants);
-
         if (filterForPlants.length <= 0) {
             setFilteredPlants(allPlants);
             return;

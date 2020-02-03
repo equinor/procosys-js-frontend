@@ -7,7 +7,7 @@ import { useClickOutsideNotifier } from './../../hooks';
 type DropdownProps = {
     disabled?: boolean;
     text?: string;
-    children?: JSX.Element[] | JSX.Element;
+    children?: React.ReactNode;
     Icon?: JSX.Element;
     openLeft?: boolean;
 };
@@ -47,13 +47,13 @@ const Select: React.FC<DropdownProps> = ({
 
                 <DropdownIcon>{Icon}</DropdownIcon>
             </DropdownButton>
-            {isOpen && children && children.length > 0 && !disabled && (
+            {isOpen && children && React.Children.count(children) > 0 && !disabled && (
                 <ul
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
-                    {children.map((item, index) => {
+                    {React.Children.map(children, (item, index) => {
                         return (
                             <DropdownItem
                                 key={index}
@@ -67,7 +67,7 @@ const Select: React.FC<DropdownProps> = ({
                     })}
                 </ul>
             )}
-            {isOpen && (!children || children.length <= 0) && !disabled && (
+            {isOpen && (!children || React.Children.count(children) <= 0) && !disabled && (
                 <ul>
                     <li data-value={-1}>No items available</li>
                 </ul>

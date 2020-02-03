@@ -54,7 +54,11 @@ const Header: React.FC = (): JSX.Element => {
                     <AppsOutlinedIcon />
                 </IconContainer>
                 <LogoContainer>
-                    <span>ProCoSys</span>
+                    <a
+                        href={`/${params.plant}/`}
+                    >
+                        ProCoSys
+                    </a>
                 </LogoContainer>
                 <PlantSelector>
                     <Dropdown text={plant.title}>

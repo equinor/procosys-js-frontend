@@ -33,9 +33,10 @@ export const LogoContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    span {
+    a {
         padding-right: 16px;
         border-right: 1px solid #E6E6E6;
+        text-decoration: none;
     }
 `;
 

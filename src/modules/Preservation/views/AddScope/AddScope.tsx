@@ -46,6 +46,16 @@ const AddScope = (): JSX.Element => {
         };
     }, []);
 
+    /**
+     * Prevent step 2 from showing if user decides to remove all selected tags when in step 2.
+     */
+    useEffect(() => {
+        if (selectedTags.length <= 0 && step === 2) {
+            setStep(1);
+        }
+
+    }, [selectedTags]);
+
     const goToNextStep = (): void => {
         setStep(currentStep => {
             if (currentStep >= 2) {

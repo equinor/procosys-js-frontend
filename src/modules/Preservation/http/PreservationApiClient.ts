@@ -112,11 +112,11 @@ interface ErrorResponse {
 
 class PreservationApiError extends Error {
 
-    data: ErrorResponse;
+    data: ErrorResponse | null;
 
-    constructor(message: string, apiResponse: ErrorResponse) {
+    constructor(message: string, apiResponse?: ErrorResponse) {
         super(message);
-        this.data = apiResponse;
+        this.data = apiResponse || null;
         this.name = 'PreservationApiError';
     }
 }
@@ -221,6 +221,9 @@ class PreservationApiClient extends ApiClient {
                 remark
             });
         } catch (error) {
+            if (error.response.status == 500) {
+                throw new PreservationApiError(error.response.data);
+            }
             const response = error.response.data as ErrorResponse;
             const errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
             throw new PreservationApiError(errorMessage, response);

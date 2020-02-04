@@ -3,9 +3,9 @@ import { Journey, Requirement, RequirementType, Tag, TagRow } from './types';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
-import SelectTags from './SelectTags';
+import SelectTags from './SelectTags/SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
-import TagDetails from './TagDetails';
+import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';

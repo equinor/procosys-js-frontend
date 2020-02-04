@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Tag } from './types';
+import { Tag } from '../types';
 import { Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';

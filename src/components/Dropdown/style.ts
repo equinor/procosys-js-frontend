@@ -61,3 +61,17 @@ export const DropdownItem = styled.li`
     font-weight: normal;
     cursor: pointer;
 `;
+
+export const FilterContainer = styled.li`
+    overflow-x: hidden;
+    input {
+        width: 100%;
+        padding: calc(var(--grid-unit)*2);
+        border: none;
+        border-bottom: 1px solid #EFEFEF;
+        &:focus {
+            outline: none;
+        }
+    }
+
+`;

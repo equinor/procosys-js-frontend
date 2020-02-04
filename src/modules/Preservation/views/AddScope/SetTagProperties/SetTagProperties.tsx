@@ -1,4 +1,4 @@
-import { ButtonContainer, ButtonContent, Container, FormFieldSpacer, Header, InputContainer } from './SetTagProperties.style';
+import { ButtonContainer, ButtonContent, CenterContent, Container, FormFieldSpacer, Header, InputContainer } from './SetTagProperties.style';
 import { Journey, Requirement, RequirementDefinition, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -14,13 +14,14 @@ import N2Icon from '../../../../../assets/icons/N2';
 import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
 import PressureIcon from '../../../../../assets/icons/Pressure';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
+import Spinner from '../../../../../components/Spinner';
 import { TextField } from '@equinor/eds-core-react';
 import ThermostatIcon from '../../../../../assets/icons/Thermostat';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../context/PreservationContext';
 
 type SetTagPropertiesProps = {
-    submitForm: (stepId: number, requirements: Requirement[], remark: string | null) => void;
+    submitForm: (stepId: number, requirements: Requirement[], remark: string | null) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
@@ -63,6 +64,8 @@ const SetTagProperties = ({
             };
         });
     });
+
+    const [isLoading, setIsLoading] = useState(false);
 
     /**
      * Form validation
@@ -156,7 +159,8 @@ const SetTagProperties = ({
         setMappedRequirements(mapped);
     }, [requirementTypes]);
 
-    const submit = (): void => {
+    const submit = async (): Promise<void> => {
+        setIsLoading(true);
         const remarkValue = remarkInputRef.current?.value || null;
         const requirementsMappedForApi: Requirement[] = [];
         requirements.forEach((req) => {
@@ -168,9 +172,9 @@ const SetTagProperties = ({
             }
         });
         if (step && requirementsMappedForApi.length > 0) {
-            submitForm(step.id, requirementsMappedForApi, remarkValue);
+            await submitForm(step.id, requirementsMappedForApi, remarkValue);
         }
-
+        setIsLoading(false);
     };
 
 
@@ -339,15 +343,20 @@ const SetTagProperties = ({
                     </Button>
                 </div>
                 <ButtonContainer>
-                    <Button onClick={previousStep} variant="outlined">
+                    <Button onClick={previousStep} variant="outlined" disabled={isLoading}>
                         Previous
                     </Button>
                     <Button
                         onClick={submit}
                         color="primary"
-                        disabled={!formIsValid}
+                        disabled={(!formIsValid || isLoading)}
                     >
-                        Add to scope
+                        {isLoading && (
+                            <CenterContent>
+                                <Spinner /> Add to Scope
+                            </CenterContent>
+                        )}
+                        {!isLoading && ('Add to scope')}
                     </Button>
                 </ButtonContainer>
             </Container>

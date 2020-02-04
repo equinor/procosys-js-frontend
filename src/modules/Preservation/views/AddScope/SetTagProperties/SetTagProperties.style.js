@@ -4,7 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 export const Header = styled.header`
     display: flex;
     align-items: baseline;
-    
+
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
     };
@@ -24,6 +24,8 @@ export const Container = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
     button:last-of-type {
         margin-left: calc(var(--grid-unit) * 2);
     }
@@ -43,4 +45,9 @@ export const ButtonContent = styled.span`
     svg {
         margin-right: var(--grid-unit);
     }
+`;
+
+export const CenterContent = styled.span`
+    display: flex;
+    align-items: center;
 `;

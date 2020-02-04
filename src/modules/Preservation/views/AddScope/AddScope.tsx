@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Canceler } from 'axios';
 import SelectTags from './SelectTags/SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
+import Spinner from '../../../../components/Spinner';
 import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 import { useHistory } from 'react-router-dom';
@@ -81,9 +82,11 @@ const AddScope = (): JSX.Element => {
             showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
-            console.error(error.messsage, error.data);
+            console.error('Tag preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        return Promise.resolve();
+
 
     };
 
@@ -141,6 +144,9 @@ const AddScope = (): JSX.Element => {
                 isLoading={isLoading}
             />;
         case 2:
+            if (isLoading) {
+                return <Spinner large />;
+            }
             return (
                 <PropertiesContainer>
                     <TagProperties>

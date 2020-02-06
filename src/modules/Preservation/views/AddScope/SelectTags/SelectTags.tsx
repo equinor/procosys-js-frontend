@@ -36,13 +36,24 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
     const rowSelectionChanged = (selectedRows: TagRow[]): void => {
-        props.setSelectedTags(selectedRows.map(row => {
-            return { 
-                tagNo: row.tagNo,
-                description: row.description,
-                mcPkgNo: row.mcPkgNo
-            }; 
-        }));        
+        // exclude any preserved tags (material-table bug)
+        const tagsToSelect = selectedRows
+            .filter(row => !row.isPreserved)
+            .map(row => {
+                return { 
+                    tagNo: row.tagNo,
+                    description: row.description,
+                    mcPkgNo: row.mcPkgNo
+                }; 
+            });
+
+        props.setSelectedTags(tagsToSelect); 
+    };
+
+    const getTableToolbar = (selectedRows: TagRow[]): JSX.Element => {
+        // exclude any preserved tags from the count
+        const selectedCount = selectedRows.filter(row => !row.isPreserved).length;
+        return <Toolbar>{selectedCount} tags selected</Toolbar>;
     };
 
     return (
@@ -85,13 +96,14 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         },
                         selection: true,
                         selectionProps: (data: TagRow): any => ({
+                            // Disable and hide selection checkbox for preserved tags.
+                            // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
+                            // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
                             disabled: data.isPreserved,
-                            // Bug: 'Select all' will also select disabled checkboxes: https://github.com/mbrn/material-table/issues/686
-                            // Disabled checkbox should be hidden, but that would also hide the 'select all' problem
-                            // style: { display: rowData.isPreserved && 'none' }
+                            style: { display: data.isPreserved && 'none' }
                         }),
                         rowStyle: (data): any => ({
-                            backgroundColor: data.tableData.checked && '#EAEAEA'
+                            backgroundColor: (data.tableData.checked && !data.isPreserved) && '#EAEAEA'
                         })
                     }} 
                     style={{
@@ -100,14 +112,12 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     onSelectionChange={rowSelectionChanged}
                     isLoading={props.isLoading}
                     components={{
-                        OverlayLoading: (): any => (
+                        OverlayLoading: (): JSX.Element => (
                             <LoadingContainer>
                                 <Loading title="Loading tags" />
                             </LoadingContainer>                            
                         ),
-                        Toolbar: (data): any => (
-                            <Toolbar>{data.selectedRows.length} tags selected</Toolbar>
-                        )
+                        Toolbar: (data): JSX.Element => getTableToolbar(data.selectedRows)
                     }}
                 />
             </Tags>

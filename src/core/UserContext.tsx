@@ -12,14 +12,10 @@ type Plant = {
     title: string;
 }
 
-type Permission = string;
-
 export type User = {
     name: string;
-    permissions: Array<Permission>;
     plants: Array<Plant>;
     setName(name: string): void;
-    setPermissions(permissions: Array<Permission>): void;
     setPlants(plants: Array<Plant>): void;
 }
 
@@ -37,7 +33,6 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
         return (account && account.fullname) || '';
     });
     const [loading, setLoading] = useState(true);
-    const [permissions, setPermissions] = useState<User['permissions']>([]);
     const [plants, setPlants] = useState<User['plants']>([]);
     const [errorEncountered, setErrorEncountered] = useState(false);
     let plantRequestCanceler: Canceler;
@@ -72,7 +67,7 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
 
     return (
         <UserContext.Provider value={{
-            name, permissions, plants, setName, setPermissions, setPlants
+            name, plants, setName, setPlants
         }}>
             {children}
         </UserContext.Provider>

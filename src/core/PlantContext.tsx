@@ -8,6 +8,7 @@ import { useCurrentUser } from './UserContext';
 import { useParams } from 'react-router-dom';
 import { useProcosysContext } from './ProcosysContext';
 import useRouter from '../hooks/useRouter';
+import { Canceler } from '../http/HttpClient';
 
 type PlantContextDetails = {
     id: string;
@@ -19,6 +20,7 @@ const PlantContext = React.createContext<PlantContextProps>({} as PlantContextPr
 type PlantContextProps = {
     plant: PlantContextDetails;
     setCurrentPlant: (plantId: string) => void;
+    permissions: string[];
 }
 
 class InvalidParameterException extends Error {}
@@ -30,6 +32,7 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
     const {procosysApiClient} = useProcosysContext();
     const {history, location} = useRouter();
     const {plant: plantInPath} = useParams();
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     if (!plantInPath || plantInPath === '') {
         return <ErrorComponent title='Missing plant in path' />;
@@ -61,6 +64,12 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
 
     useEffect(() => {
         procosysApiClient.setCurrentPlant(currentPlant.id);
+        let requestCanceler: Canceler;
+        (async (): Promise<void> => {
+            const permissions = await procosysApiClient.getPermissionsForCurrentUser((e) => requestCanceler = e);
+            setPermissions(permissions);
+        })();
+        return (): void => requestCanceler && requestCanceler();
     },[currentPlant]);
 
     useEffect(() => {
@@ -73,7 +82,7 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
 
     return (
         <PlantContext.Provider value={{
-            plant: currentPlant, setCurrentPlant
+            plant: currentPlant, setCurrentPlant, permissions
         }}>
             {children}
         </PlantContext.Provider>

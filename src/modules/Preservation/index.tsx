@@ -5,6 +5,7 @@ import { Container } from './style';
 import { PreservationContextProvider } from './context/PreservationContext';
 import React from 'react';
 import ScopeOverview from './views/ScopeOverview/ScopeOverview';
+import withAccessControl from '../../core/security/withAccessControl';
 
 const Preservation = (): JSX.Element => {
 
@@ -36,4 +37,4 @@ const Preservation = (): JSX.Element => {
     );
 };
 
-export default Preservation;
+export default withAccessControl(Preservation,['PRESERVATION/READ']);

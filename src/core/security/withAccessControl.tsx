@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import {useCurrentPlant} from '../PlantContext';
 import styled from 'styled-components';
 import Error from '../../components/Error';
@@ -12,7 +12,7 @@ const CenterContainer = styled.div`
     margin-top: 1rem;
 `;
 
-const withAccessControl = (WrappedComponent: () => any, requiredPermissions: string[] = [] ): any => (props: any): any => {
+const withAccessControl = (WrappedComponent: () => JSX.Element, requiredPermissions: string[] = [] ): React.ComponentType<any> => (props: any): ReactElement => {
 
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
 

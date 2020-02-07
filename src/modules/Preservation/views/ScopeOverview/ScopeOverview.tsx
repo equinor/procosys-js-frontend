@@ -4,7 +4,8 @@ import {
     Header,
     HeaderContainer,
     IconBar,
-    TableToolbar
+    TableToolbar,
+    TagLink
 } from './ScopeOverview.style';
 import { Link, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
@@ -21,6 +22,7 @@ import Table from './../../../../components/Table';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
+import TagFlyout from './TagFlyout/TagFlyout';
 
 interface PreservedTag {
     id: number;
@@ -52,6 +54,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [tags, setTags] = useState<PreservedTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
+    const [flyoutTagNo, setFlyoutTagNo] = useState<string>();
 
     const path = useRouteMatch();
 
@@ -212,7 +216,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </HeaderContainer>
             <Table
                 columns={[
-                    { title: 'Tag nr', field: 'tagNo' },
+                    { 
+                        title: 'Tag nr', 
+                        field: 'tagNo',
+                        render: (tag: PreservedTag): any => 
+                            <TagLink 
+                                onClick={(): void => {
+                                    setFlyoutTagNo(tag.tagNo);
+                                    setDisplayFlyout(true);
+                                }}
+                            >
+                                {tag.tagNo}
+                            </TagLink>                                                
+                    },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
                     { title: 'Due', field: 'firstUpcomingRequirement.nextDueWeeks' },
@@ -245,6 +261,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 isLoading={isLoading}
                 onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}
+            />
+            <TagFlyout 
+                displayFlyout={displayFlyout} 
+                setDisplayFlyout={setDisplayFlyout}
+                tagNo={flyoutTagNo}
             />
         </Container>
     );

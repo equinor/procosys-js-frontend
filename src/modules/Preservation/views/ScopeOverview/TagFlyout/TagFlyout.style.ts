@@ -23,7 +23,8 @@ export const Flyout = styled.div`
     height: 100%;
     background: ${tokens.colors.ui.background__default.rgba};
 
-    /* transition: width 0.5s; */
+    opacity: 0;
+    transition: opacity 0.5s;
 `;
 
 export const FlyoutHeader = styled.div`

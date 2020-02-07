@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from 'react';
+import React, { MouseEvent, useState, useRef, useEffect } from 'react';
 
 import { Container, Flyout, FlyoutHeader, FlyoutTabs, StatusLabel, HeaderActions } from './TagFlyout.style';
 import Preservation from './Preservation/Preservation';
@@ -17,6 +17,16 @@ const TagFlyout = ({
     tagNo
 }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
+    const flyoutRef = useRef<HTMLDivElement>(null);
+
+    // fade-in effect
+    useEffect((): void => {
+        setTimeout((): void => {
+            if (flyoutRef.current) {
+                flyoutRef.current.style.opacity = '1';
+            }
+        }, 1);
+    }, [displayFlyout]);
 
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
@@ -27,7 +37,7 @@ const TagFlyout = ({
             case 'attachments':
                 return <div></div>;
             case 'history':
-                return <div></div>;                                                  
+                return <div></div>;
             default:
                 return <div>Unknown</div>;
         }
@@ -36,7 +46,7 @@ const TagFlyout = ({
     if (displayFlyout) {
         return (
             <Container onMouseDown={(): void => setDisplayFlyout(false)}>
-                <Flyout onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
+                <Flyout ref={flyoutRef} onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
                     <FlyoutHeader>
                         <h1>{tagNo}</h1>
                         <StatusLabel>

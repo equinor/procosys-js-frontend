@@ -27,6 +27,8 @@ export const Flyout = styled.div`
 `;
 
 export const FlyoutHeader = styled.div`
+    display: flex;
+    align-items: center;
     padding: calc(var(--grid-unit) * 4) calc(var(--grid-unit) * 2);
 
     h1 {
@@ -34,6 +36,31 @@ export const FlyoutHeader = styled.div`
         line-height: calc(var(--grid-unit) * 5);
         color: ${tokens.colors.interactive.primary__resting.rgba};
         text-decoration: underline;
+    }
+`;
+
+export const StatusLabel = styled.div`
+    margin-left: calc(var(--grid-unit) * 3);
+    padding: var(--grid-unit);
+    border-radius: calc(var(--grid-unit) * 2);
+    font-size: calc(var(--grid-unit) * 1.5);
+
+    /* todo: conditional formatting */
+    background: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+    span {
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+    }
+`;
+
+export const HeaderActions = styled.div`
+    margin-left: auto;
+
+    svg {
+        margin-top: 5px;
+    }
+
+    svg path {
+        color: ${tokens.colors.interactive.primary__resting.rgba};
     }
 `;
 

@@ -1,7 +1,9 @@
 import React, { MouseEvent, useState } from 'react';
 
-import { Container, Flyout, FlyoutHeader, FlyoutTabs } from './TagFlyout.style';
+import { Container, Flyout, FlyoutHeader, FlyoutTabs, StatusLabel, HeaderActions } from './TagFlyout.style';
 import Preservation from './Preservation/Preservation';
+import CloseIcon from '@material-ui/icons/Close';
+import { Button } from '@equinor/eds-core-react';
 
 interface TagFlyoutProps {
     displayFlyout: boolean;
@@ -37,6 +39,14 @@ const TagFlyout = ({
                 <Flyout onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
                     <FlyoutHeader>
                         <h1>{tagNo}</h1>
+                        <StatusLabel>
+                            <span style={{marginLeft: '8px', marginRight: '8px'}}>Status</span>
+                        </StatusLabel>
+                        <HeaderActions>
+                            <Button variant='ghost' title='Close' onClick={(): void => setDisplayFlyout(false)}>
+                                <CloseIcon />
+                            </Button>                            
+                        </HeaderActions>                        
                     </FlyoutHeader>
                     <FlyoutTabs>
                         <a 

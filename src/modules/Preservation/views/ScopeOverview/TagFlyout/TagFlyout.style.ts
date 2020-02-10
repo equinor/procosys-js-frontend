@@ -44,12 +44,12 @@ export const StatusLabel = styled.div`
     margin-left: calc(var(--grid-unit) * 3);
     padding: var(--grid-unit);
     border-radius: calc(var(--grid-unit) * 2);
-    font-size: calc(var(--grid-unit) * 1.5);
 
     /* todo: conditional formatting */
     background: ${tokens.colors.interactive.primary__selected_highlight.rgba};
     span {
         color: ${tokens.colors.interactive.primary__resting.rgba};
+        font-size: calc(var(--grid-unit) * 1.5);
     }
 `;
 

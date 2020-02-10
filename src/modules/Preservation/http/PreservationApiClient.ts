@@ -48,6 +48,21 @@ export type TagSearchResponse = {
     isPreserved: boolean;
 }
 
+export interface TagDetailsResponse {
+    id: number;
+    tagNo: string;
+    description: string;
+    status: string;
+    journeyTitle: string;
+    mode: string;
+    responsibleName: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    areaCode: string;
+    nextDueDateString: string;
+}
+
 export interface JourneyResponse {
     id: number;
     title: string;
@@ -137,6 +152,21 @@ function DelayData(data: any, fail = false): Promise<any> {
             setTimeout(() => resolve(data), 3000);
         }
     });
+}
+
+function getPreservationApiError(error: any): PreservationApiError {
+    if (error.response.status == 500) {
+        return new PreservationApiError(error.response.data);
+    }
+
+    const response = error.response.data as ErrorResponse;
+    let errorMessage = `${error.response.status} (${error.response.statusText})`;
+
+    if (error.response.data) {
+        errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
+    }
+
+    return new PreservationApiError(errorMessage, response);
 }
 
 /**
@@ -306,6 +336,25 @@ class PreservationApiClient extends ApiClient {
             settings
         );
         return result.data;
+    }
+
+    async getTagDetails(projectName: string, tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagDetailsResponse> {
+        const endpoint = '/Tags/Details';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                tagNo: tagNo,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagDetailsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**

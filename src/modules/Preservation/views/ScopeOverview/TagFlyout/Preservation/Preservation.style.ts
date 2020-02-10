@@ -13,7 +13,7 @@ export const TagDetailsContainer = styled.div`
     width: 100%;
 `;
 
-export const TagDetails = styled.div`
+export const Details = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -34,12 +34,16 @@ export const GridFirstRow = styled.div`
     display: grid;
     grid-template-columns: auto auto auto;
     grid-template-rows: auto auto;
-    grid-gap: var(--grid-unit);
+    grid-row-gap: var(--grid-unit);
+    grid-column-gap: calc(var(--grid-unit) * 3);
+    float: left;
 `;
 
 export const GridSecondRow = styled.div`
     display: grid;
     grid-template-columns: auto auto auto auto;
     grid-template-rows: auto auto;
-    grid-gap: var(--grid-unit);
+    grid-row-gap: var(--grid-unit);
+    grid-column-gap: calc(var(--grid-unit) * 3);
+    float: left;
 `;

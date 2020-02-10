@@ -25,24 +25,24 @@ const Preservation = ({
                     </div>
                     <div style={{marginTop: '16px'}}>
                         <GridFirstRow>
-                            <span style={{gridColumnStart: '1', gridRowStart: '1'}}>Journey</span>
-                            <span style={{gridColumnStart: '2', gridRowStart: '1'}}>Mode</span>
-                            <span style={{gridColumnStart: '3', gridRowStart: '1'}}>Resp.</span>
-                            <span style={{gridColumnStart: '1', gridRowStart: '2'}}>{details.journeyTitle}</span>
-                            <span style={{gridColumnStart: '2', gridRowStart: '2'}}>{details.mode}</span>
-                            <span style={{gridColumnStart: '3', gridRowStart: '2'}}>{details.responsibleName}</span>
+                            <span style={{gridColumn: '1', gridRow: '1'}}>Journey</span>
+                            <span style={{gridColumn: '2', gridRow: '1'}}>Mode</span>
+                            <span style={{gridColumn: '3', gridRow: '1'}}>Resp.</span>
+                            <span style={{gridColumn: '1', gridRow: '2'}}>{details.journeyTitle}</span>
+                            <span style={{gridColumn: '2', gridRow: '2'}}>{details.mode}</span>
+                            <span style={{gridColumn: '3', gridRow: '2'}}>{details.responsibleName}</span>
                         </GridFirstRow>
                     </div>
                     <div style={{marginTop: '16px'}}>
                         <GridSecondRow>
-                            <span style={{gridColumnStart: '1', gridRowStart: '1'}}>Comm pkg</span>
-                            <span style={{gridColumnStart: '2', gridRowStart: '1'}}>MC pkg</span>
-                            <span style={{gridColumnStart: '3', gridRowStart: '1'}}>PO</span>
-                            <span style={{gridColumnStart: '4', gridRowStart: '1'}}>Area</span>
-                            <span style={{gridColumnStart: '1', gridRowStart: '2'}}>{details.commPkgNo}</span>
-                            <span style={{gridColumnStart: '2', gridRowStart: '2'}}>{details.mcPkgNo}</span>
-                            <span style={{gridColumnStart: '3', gridRowStart: '2'}}>{details.purchaseOrderNo}</span>
-                            <span style={{gridColumnStart: '4', gridRowStart: '2'}}>{details.areaCode}</span>
+                            <span style={{gridColumn: '1', gridRow: '1'}}>Comm pkg</span>
+                            <span style={{gridColumn: '2', gridRow: '1'}}>MC pkg</span>
+                            <span style={{gridColumn: '3', gridRow: '1'}}>PO</span>
+                            <span style={{gridColumn: '4', gridRow: '1'}}>Area</span>
+                            <span style={{gridColumn: '1', gridRow: '2'}}>{details.commPkgNo}</span>
+                            <span style={{gridColumn: '2', gridRow: '2'}}>{details.mcPkgNo}</span>
+                            <span style={{gridColumn: '3', gridRow: '2'}}>{details.purchaseOrderNo}</span>
+                            <span style={{gridColumn: '4', gridRow: '2'}}>{details.areaCode}</span>
                         </GridSecondRow>
                     </div>               
                 </Details>                

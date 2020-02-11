@@ -255,7 +255,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     },
                     rowStyle: (rowData): any => ({
                         color: rowData.firstUpcomingRequirement?.nextDueWeeks < 0 && tokens.colors.interactive.danger__text.rgba,
-                        backgroundColor: rowData.tableData.checked && '#EAEAEA'
+                        backgroundColor: rowData.tableData.checked && '#e6faec'
                     }),
                 }}
                 components={{

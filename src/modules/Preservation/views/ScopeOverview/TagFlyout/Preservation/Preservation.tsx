@@ -19,7 +19,7 @@ const Preservation = ({
         <Container>
             <TagDetailsContainer>
                 <Details>
-                    <div style={{fontWeight: 500, marginRight: '16px'}}>{details.description}</div>
+                    <div style={{fontWeight: 500}}>{details.description}</div>
                     <div style={{marginTop: '16px'}}>
                         <GridFirstRow>
                             <span style={{gridColumn: '1', gridRow: '1'}}>Journey</span>

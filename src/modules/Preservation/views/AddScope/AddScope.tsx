@@ -5,13 +5,15 @@ import React, { useEffect, useState } from 'react';
 import { Canceler } from 'axios';
 import SelectTags from './SelectTags/SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
+import CreateAreaTag from './CreateAreaTag/CreateAreaTag';
 import Spinner from '../../../../components/Spinner';
 import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 
-const AddScope = (): JSX.Element => {
+
+const AddScope = (props: any): JSX.Element => {
 
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
@@ -135,14 +137,24 @@ const AddScope = (): JSX.Element => {
 
     switch (step) {
         case 1:
-            return <SelectTags
-                nextStep={goToNextStep}
-                setSelectedTags={setSelectedTags}
-                searchTags={searchTags}
-                selectedTags={selectedTags}
-                scopeTableData={scopeTableData}
-                isLoading={isLoading}
-            />;
+            if (props.match.params.method === 'selectTags') {
+                return <SelectTags
+                    nextStep={goToNextStep}
+                    setSelectedTags={setSelectedTags}
+                    searchTags={searchTags}
+                    selectedTags={selectedTags}
+                    scopeTableData={scopeTableData}
+                    isLoading={isLoading}
+                />;
+            } else if (props.match.params.method === 'createAreaTag') {
+
+                return <CreateAreaTag
+                    nextStep={goToNextStep}
+                    setSelectedTags={setSelectedTags}
+                />;
+
+            }
+            break;
         case 2:
             if (isLoading) {
                 return <Spinner large />;

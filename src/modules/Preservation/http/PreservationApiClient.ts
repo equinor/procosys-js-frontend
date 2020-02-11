@@ -97,6 +97,16 @@ export interface RequirementTypeResponse {
     }];
 }
 
+export interface DisciplineResponse {
+    code: string;
+    description: string;
+}
+
+export interface AreaResponse {
+    code: string;
+    description: string;
+}
+
 interface PreserveTagRequirement {
     requirementDefinitionId: number;
     intervalWeeks: number;
@@ -325,6 +335,43 @@ class PreservationApiClient extends ApiClient {
         const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
         return result.data;
     }
+
+    /**
+     * Get disciplines
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getDisciplines(setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
+
+        //const endpoint = '/Disciplines';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        //const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+        //return result.data;
+
+        const dummy: DisciplineResponse[] = [{ code: 'dis1', description: 'Descripton1' }, { code: 'dis2', description: 'Description' }];
+
+        return dummy;
+    }
+
+    /**
+     * Get areas
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getAreas(setRequestCanceller?: RequestCanceler): Promise<AreaResponse[]> {
+
+        //const endpoint = '/Areas';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        //const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+        //return result.data;
+        const dummy: AreaResponse[] = [{ code: 'area1', description: 'AreaDescription1' }, { code: 'area2', description: 'AreaDescription2' }];
+
+        return dummy;
+
+    }
+
 }
 
 

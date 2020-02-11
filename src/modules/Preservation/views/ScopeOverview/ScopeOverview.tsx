@@ -161,7 +161,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         })}
                     </Dropdown>
                     <Dropdown text="Add scope">
-                        <Link to={'/AddScope'}>
+                        <Link to={'/AddScope/selectTags'}>
                             <DropdownItem>
                                 Add tags manually
                             </DropdownItem>
@@ -171,7 +171,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Generate scope by Tag Function
                             </DropdownItem>
                         </Link>
-                        <Link to={`${path.url}`}>
+                        <Link to={'/AddScope/createAreaTag'}>
                             <DropdownItem>
                                 Create area tag
                             </DropdownItem>

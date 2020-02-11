@@ -10,16 +10,12 @@ import { showSnackbarNotification } from './../../../../../core/services/Notific
 import { TagDetails } from './types';
 
 interface TagFlyoutProps {
-    displayFlyout: boolean;
     setDisplayFlyout: (displayFlyout: boolean) => void;
-    tagNo: string;
-    tagId: number;
+    tagId: number | null;
 }
 
 const TagFlyout = ({
-    displayFlyout,
     setDisplayFlyout,
-    tagNo,
     tagId
 }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
@@ -35,12 +31,12 @@ const TagFlyout = ({
                 flyoutRef.current.style.opacity = '1';
             }
         }, 1);
-    }, [displayFlyout]);
+    }, [flyoutRef]);
 
-    const getTagDetails = async (): Promise<void> => {
+    const getTagDetails = async (id: number): Promise<void> => {
         try {            
             setIsLoading(true);
-            const tagDetails = await apiClient.getPreservedTagDetails(tagId);
+            const tagDetails = await apiClient.getPreservedTagDetails(id);
             setTagDetails(tagDetails);
         }
         catch (error) {
@@ -53,10 +49,10 @@ const TagFlyout = ({
     };
 
     useEffect(() => {
-        if (displayFlyout) {
-            getTagDetails();
-        }        
-    }, [tagNo]);
+        if (tagId !== null) {
+            getTagDetails(tagId);
+        }
+    }, [flyoutRef]);
 
     const getTabContent = (): JSX.Element => {
         if (isLoading) {
@@ -79,52 +75,52 @@ const TagFlyout = ({
         }
     };
 
-    if (displayFlyout) {
-        return (
-            <Container onMouseDown={(): void => setDisplayFlyout(false)}>
-                <Flyout ref={flyoutRef} onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
-                    <FlyoutHeader>
-                        <h1>{tagNo}</h1>
-                        <StatusLabel status={tagDetails?.status}>
-                            <span style={{marginLeft: '8px', marginRight: '8px'}}>{tagDetails?.status}</span>
-                        </StatusLabel>
-                        <HeaderActions>
-                            <Button variant='ghost' title='Close' onClick={(): void => setDisplayFlyout(false)}>
-                                <CloseIcon />
-                            </Button>                            
-                        </HeaderActions>                        
-                    </FlyoutHeader>
-                    <FlyoutTabs>
-                        <a 
-                            className={activeTab === 'preservation' ? 'active': 'preservation'} 
-                            onClick={(): void => setActiveTab('preservation')}>
-                                Preservation
-                        </a>
-                        <a 
-                            className={activeTab === 'actions' ? 'active': 'actions'}
-                            onClick={(): void => setActiveTab('actions')}>
-                                Actions
-                        </a>
-                        <a 
-                            className={activeTab === 'attachments' ? 'active': 'attachments'}
-                            onClick={(): void => setActiveTab('attachments')}>
-                                Attachments
-                        </a>
-                        <a 
-                            className={activeTab === 'history' ? 'active': 'history'}
-                            onClick={(): void => setActiveTab('history')}>
-                                History
-                        </a>
-                    </FlyoutTabs>
-                    {
-                        getTabContent()
-                    }
-                </Flyout>
-            </Container>
-        );
-    } else {
-        return <div />;
-    }        
+    return (
+        <Container onMouseDown={(): void => setDisplayFlyout(false)}>
+            <Flyout ref={flyoutRef} onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
+                <FlyoutHeader>
+                    <h1>
+                        {tagDetails && tagDetails.tagNo}
+                    </h1>
+                    <StatusLabel status={tagDetails && tagDetails.status}>
+                        <span style={{marginLeft: '8px', marginRight: '8px'}}>
+                            {tagDetails && tagDetails.status}
+                        </span>
+                    </StatusLabel>
+                    <HeaderActions>
+                        <Button variant='ghost' title='Close' onClick={(): void => setDisplayFlyout(false)}>
+                            <CloseIcon />
+                        </Button>                            
+                    </HeaderActions>                        
+                </FlyoutHeader>
+                <FlyoutTabs>
+                    <a 
+                        className={activeTab === 'preservation' ? 'active': 'preservation'} 
+                        onClick={(): void => setActiveTab('preservation')}>
+                            Preservation
+                    </a>
+                    <a 
+                        className={activeTab === 'actions' ? 'active': 'actions'}
+                        onClick={(): void => setActiveTab('actions')}>
+                            Actions
+                    </a>
+                    <a 
+                        className={activeTab === 'attachments' ? 'active': 'attachments'}
+                        onClick={(): void => setActiveTab('attachments')}>
+                            Attachments
+                    </a>
+                    <a 
+                        className={activeTab === 'history' ? 'active': 'history'}
+                        onClick={(): void => setActiveTab('history')}>
+                            History
+                    </a>
+                </FlyoutTabs>
+                {
+                    getTabContent()
+                }
+            </Flyout>
+        </Container>
+    );   
 };
 
 export default TagFlyout;

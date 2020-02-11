@@ -55,8 +55,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
-    const [flyoutTagNo, setFlyoutTagNo] = useState<string>('');
-    const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
+    const [flyoutTagId, setFlyoutTagId] = useState<number | null>(null);
 
     const path = useRouteMatch();
 
@@ -149,7 +148,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return (
             <TagLink 
                 onClick={(): void => {
-                    setFlyoutTagNo(tag.tagNo);
                     setFlyoutTagId(tag.id);
                     setDisplayFlyout(true);
                 }}
@@ -157,6 +155,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 {tag.tagNo}
             </TagLink> 
         );
+    };
+
+    const getTagFlyout = (): JSX.Element | null => {
+        if (displayFlyout) {
+            return (
+                <TagFlyout 
+                    setDisplayFlyout={setDisplayFlyout}
+                    tagId={flyoutTagId}
+                />
+            );
+        }
+
+        return null;
     };
 
     return (
@@ -234,7 +245,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     { 
                         title: 'Tag nr', 
                         field: 'tagNo',
-                        render: (tag: PreservedTag): JSX.Element => getTagNoColumn(tag)                                              
+                        render: getTagNoColumn                                             
                     },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
@@ -269,12 +280,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 onSelectionChange={onSelectionHandler}
                 style={{ boxShadow: 'none' }}
             />
-            <TagFlyout 
-                displayFlyout={displayFlyout} 
-                setDisplayFlyout={setDisplayFlyout}
-                tagNo={flyoutTagNo}
-                tagId={flyoutTagId}
-            />
+            {
+                getTagFlyout()
+            }
         </Container>
     );
 };

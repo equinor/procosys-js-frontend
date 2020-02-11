@@ -144,6 +144,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             );
         }, [selectedTags]);
 
+    const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
+        return (
+            <TagLink 
+                onClick={(): void => {
+                    setFlyoutTagNo(tag.tagNo);
+                    setDisplayFlyout(true);
+                }}
+            >
+                {tag.tagNo}
+            </TagLink> 
+        );
+    };
+
     return (
         <Container>
             <HeaderContainer>
@@ -219,15 +232,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     { 
                         title: 'Tag nr', 
                         field: 'tagNo',
-                        render: (tag: PreservedTag): any => 
-                            <TagLink 
-                                onClick={(): void => {
-                                    setFlyoutTagNo(tag.tagNo);
-                                    setDisplayFlyout(true);
-                                }}
-                            >
-                                {tag.tagNo}
-                            </TagLink>                                                
+                        render: (tag: PreservedTag): JSX.Element => getTagNoColumn(tag)                                              
                     },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },

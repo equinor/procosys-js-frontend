@@ -4,7 +4,8 @@ import {
     Header,
     HeaderContainer,
     IconBar,
-    TableToolbar
+    TableToolbar,
+    TagStatusLabel
 } from './ScopeOverview.style';
 import { Link, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
@@ -212,7 +213,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </HeaderContainer>
             <Table
                 columns={[
-                    { title: 'Tag nr', field: 'tagNo' },
+                    { 
+                        title: 'Tag nr', 
+                        field: 'tagNo',
+                        render: (tag: PreservedTag): any =>
+                            <div>
+                                {tag.tagNo}
+                                <TagStatusLabel show={true}>new</TagStatusLabel>
+                            </div>
+                    },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
                     { title: 'Due', field: 'firstUpcomingRequirement.nextDueWeeks' },

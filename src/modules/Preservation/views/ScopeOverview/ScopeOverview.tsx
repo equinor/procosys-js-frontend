@@ -56,6 +56,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [flyoutTagNo, setFlyoutTagNo] = useState<string>('');
+    const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
 
     const path = useRouteMatch();
 
@@ -149,6 +150,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             <TagLink 
                 onClick={(): void => {
                     setFlyoutTagNo(tag.tagNo);
+                    setFlyoutTagId(tag.id);
                     setDisplayFlyout(true);
                 }}
             >
@@ -271,6 +273,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 displayFlyout={displayFlyout} 
                 setDisplayFlyout={setDisplayFlyout}
                 tagNo={flyoutTagNo}
+                tagId={flyoutTagId}
             />
         </Container>
     );

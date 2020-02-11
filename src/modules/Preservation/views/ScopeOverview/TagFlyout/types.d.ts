@@ -10,5 +10,4 @@ export interface TagDetails {
     mcPkgNo: string;
     purchaseOrderNo: string;
     areaCode: string;
-    nextDueDateString: string;
 }

@@ -5,7 +5,7 @@ import Preservation from './Preservation/Preservation';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button } from '@equinor/eds-core-react';
 import Spinner from '../../../../../components/Spinner';
-// import { usePreservationContext } from '../../../context/PreservationContext';
+import { usePreservationContext } from '../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import { TagDetails } from './types';
 
@@ -13,18 +13,20 @@ interface TagFlyoutProps {
     displayFlyout: boolean;
     setDisplayFlyout: (displayFlyout: boolean) => void;
     tagNo: string;
+    tagId: number;
 }
 
 const TagFlyout = ({
     displayFlyout,
     setDisplayFlyout,
-    tagNo
+    tagNo,
+    tagId
 }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
     const [isLoading, setIsLoading] = useState<boolean>();
     const [tagDetails, setTagDetails] = useState<TagDetails>();
     const flyoutRef = useRef<HTMLDivElement>(null);
-    // const { apiClient, project } = usePreservationContext();
+    const { apiClient } = usePreservationContext();
 
     // fade-in effect
     useEffect((): void => {
@@ -38,23 +40,7 @@ const TagFlyout = ({
     const getTagDetails = async (): Promise<void> => {
         try {            
             setIsLoading(true);
-            // const tagDetails = await apiClient.getTagDetails(project.name, tagNo);
-
-            const tagDetails = {
-                id: 1,
-                tagNo: '12345-6789-1235',
-                description: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
-                status: 'Active',
-                journeyTitle: 'Production in Korea - Stord - And then back again',
-                mode: 'Commissioning and Preservation',
-                responsibleName: 'AIGPH',
-                commPkgNo: '2002-M01',
-                mcPkgNo: '2002-E001',
-                purchaseOrderNo: 'A12345',
-                areaCode: 'D360',
-                nextDueDateString: '2019w23'
-            };
-
+            const tagDetails = await apiClient.getPreservedTagDetails(tagId);
             setTagDetails(tagDetails);
         }
         catch (error) {
@@ -99,7 +85,7 @@ const TagFlyout = ({
                 <Flyout ref={flyoutRef} onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
                     <FlyoutHeader>
                         <h1>{tagNo}</h1>
-                        <StatusLabel>
+                        <StatusLabel status={tagDetails?.status}>
                             <span style={{marginLeft: '8px', marginRight: '8px'}}>{tagDetails?.status}</span>
                         </StatusLabel>
                         <HeaderActions>

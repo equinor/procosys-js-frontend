@@ -48,7 +48,7 @@ export type TagSearchResponse = {
     isPreserved: boolean;
 }
 
-export interface TagDetailsResponse {
+export interface PreservedTagDetailsResponse {
     id: number;
     tagNo: string;
     description: string;
@@ -60,7 +60,6 @@ export interface TagDetailsResponse {
     mcPkgNo: string;
     purchaseOrderNo: string;
     areaCode: string;
-    nextDueDateString: string;
 }
 
 export interface JourneyResponse {
@@ -338,18 +337,13 @@ class PreservationApiClient extends ApiClient {
         return result.data;
     }
 
-    async getTagDetails(projectName: string, tagNo: string, setRequestCanceller?: RequestCanceler): Promise<TagDetailsResponse> {
-        const endpoint = '/Tags/Details';
-        const settings: AxiosRequestConfig = {
-            params: {
-                projectName: projectName,
-                tagNo: tagNo,
-            },
-        };
+    async getPreservedTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagDetailsResponse> {
+        const endpoint = `/Tags/Preserved/${tagId}`;
+        const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<TagDetailsResponse>(endpoint, settings);
+            const result = await this.client.get<PreservedTagDetailsResponse>(endpoint, settings);
             return result.data;
         }
         catch (error) {

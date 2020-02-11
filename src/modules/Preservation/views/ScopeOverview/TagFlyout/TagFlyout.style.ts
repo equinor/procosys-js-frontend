@@ -40,13 +40,16 @@ export const FlyoutHeader = styled.div`
     }
 `;
 
-export const StatusLabel = styled.div`
+export const StatusLabel = styled.div<{ status?: string }>`
     margin-left: calc(var(--grid-unit) * 3);
     padding: var(--grid-unit);
     border-radius: calc(var(--grid-unit) * 2);
 
-    /* todo: conditional formatting */
-    background: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+    /* todo: conditional formatting when "overdue" */
+    background: ${(props): any => props.status === 'Active'
+        ? tokens.colors.interactive.primary__selected_highlight.rgba
+        : tokens.colors.ui.background__light.rgba}; 
+
     span {
         color: ${tokens.colors.interactive.primary__resting.rgba};
         font-size: calc(var(--grid-unit) * 1.5);

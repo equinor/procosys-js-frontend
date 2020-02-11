@@ -60,6 +60,14 @@ class ProCoSysClient extends ApiClient {
         }, (error) => Promise.reject(error));
     }
 
+    async getPermissionsForCurrentUser(setRequestCanceller?: RequestCanceler): Promise<string[]> {
+        const endpoint = '/permissions';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get<string[]>(endpoint, settings);
+        return result.data;
+    }
+
     /**
      * Get all available plants for the currently logged in user
      *

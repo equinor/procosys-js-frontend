@@ -47,7 +47,7 @@ const TagFlyout = ({
     const getTabContent = (): JSX.Element => {
         if (isLoading) {
             return (
-                <div style={{margin: '40px auto'}}><Spinner medium /></div>
+                <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>
             );
         }
 
@@ -72,7 +72,7 @@ const TagFlyout = ({
                     {tagDetails ? tagDetails.tagNo : '-'}
                 </h1>
                 <StatusLabel status={tagDetails && tagDetails.status}>
-                    <span style={{marginLeft: '8px', marginRight: '8px'}}>
+                    <span style={{marginLeft: 'var(--grid-unit)', marginRight: 'var(--grid-unit)'}}>
                         {tagDetails && tagDetails.status}
                     </span>
                 </StatusLabel>

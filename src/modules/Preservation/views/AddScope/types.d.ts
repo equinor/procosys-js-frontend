@@ -82,3 +82,16 @@ export interface RequirementField {
     unit: string | null;
     showPrevious: boolean;
 }
+
+/**
+ * Area tag
+ */
+export interface Discipline {
+    code: string;
+    description: string;
+}
+
+export interface Area {
+    code: string;
+    description: string;
+}

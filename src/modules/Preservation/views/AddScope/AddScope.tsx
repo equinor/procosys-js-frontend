@@ -1,5 +1,5 @@
 import { Divider, PropertiesContainer, SelectedTags, TagProperties } from './AddScope.style';
-import { Journey, Requirement, RequirementType, Tag, TagRow } from './types';
+import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area } from './types';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -11,7 +11,7 @@ import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
-
+import { SelectItem } from '../../../../components/Select';
 
 const AddScope = (props: any): JSX.Element => {
 
@@ -24,6 +24,14 @@ const AddScope = (props: any): JSX.Element => {
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [disciplines, setDisciplines] = useState<Discipline[]>([]);
+    const [areas, setAreas] = useState<Area[]>([]);
+    const [areaType, setAreaType] = useState<SelectItem | undefined>();
+    const [discipline, setDiscipline] = useState<Discipline | undefined>();
+    const [area, setArea] = useState<Area | undefined>();
+    const [description, setDescription] = useState<string | undefined>();
+    const [freetext, setFreetext] = useState<string | undefined>();
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -42,6 +50,32 @@ const AddScope = (props: any): JSX.Element => {
         (async (): Promise<void> => {
             const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
             setRequirementTypes(response.data);
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+    /** Get disciplines from api */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+            setDisciplines(data);
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+    /** Get areas from api */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            const data = await apiClient.getAreas((cancel: Canceler) => requestCancellor = cancel);
+            setAreas(data);
         })();
 
         return (): void => {
@@ -77,19 +111,26 @@ const AddScope = (props: any): JSX.Element => {
         });
     };
 
-    const submitForm = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
+    const submitFormTags = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
-            const listOfTagNo = selectedTags.map(t => t.tagNo);
-            await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
-            showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
-            history.push('/');
+            if (areaType) {
+                //Preserver a new area tag
+                const tagNo = selectedTags[0].tagNo;
+                await apiClient.preserveNewAreaTag(tagNo, areaType?.value, discipline?.code, area?.code, freetext, stepId, requirements, project.name, remark);
+                showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
+                history.push('/');
+            } else {
+                //Preserve a list of tags
+                const listOfTagNo = selectedTags.map(t => t.tagNo);
+                await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
+                showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
+                history.push('/');
+            }
         } catch (error) {
             console.error('Tag preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return Promise.resolve();
-
-
     };
 
     const searchTags = async (tagNo: string | null): Promise<void> => {
@@ -147,12 +188,22 @@ const AddScope = (props: any): JSX.Element => {
                     isLoading={isLoading}
                 />;
             } else if (props.match.params.method === 'createAreaTag') {
-
                 return <CreateAreaTag
                     nextStep={goToNextStep}
                     setSelectedTags={setSelectedTags}
+                    disciplines={disciplines}
+                    areas={areas}
+                    areaType={areaType}
+                    setAreaType={setAreaType}
+                    discipline={discipline}
+                    setDiscipline={setDiscipline}
+                    area={area}
+                    setArea={setArea}
+                    freetext={freetext}
+                    setFreetext={setFreetext}
+                    description={description}
+                    setDescription={setDescription}
                 />;
-
             }
             break;
         case 2:
@@ -166,7 +217,7 @@ const AddScope = (props: any): JSX.Element => {
                             journeys={journeys}
                             requirementTypes={requirementTypes}
                             previousStep={goToPreviousStep}
-                            submitForm={submitForm}
+                            submitForm={submitFormTags}
                         />
                     </TagProperties>
                     <Divider />

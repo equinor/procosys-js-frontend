@@ -200,7 +200,8 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     *
+     * Add a set of tags to preservation scope.
+     * 
      * @param listOfTagNo List of Tag Numbers
      * @param stepId Step ID
      * @param requirements List of Requirements
@@ -225,6 +226,60 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.post(endpoint, {
                 tagNos: listOfTagNo,
+                projectName: projectName,
+                stepId: stepId,
+                requirements,
+                remark
+            });
+        } catch (error) {
+            if (error.response.status == 500) {
+                throw new PreservationApiError(error.response.data);
+            }
+            const response = error.response.data as ErrorResponse;
+            const errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
+            throw new PreservationApiError(errorMessage, response);
+        }
+
+    }
+
+    /**
+     * Create a new area tag and add it to preservation scope. 
+     * 
+    * @param tagNo List of Tag Numbers
+    * @param diciplineCode Dicipline code
+    * @param areaCode Area code
+    * @param tagNoFreetext  TagNo freetext
+    * @param stepId Step ID
+    * @param requirements List of Requirements
+    * @param projectName Name of affected project
+    * @param remark Optional: Remark for all tags
+    * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+    *
+    * @returns Promise<void>
+    * @throws PreservationApiError
+    */
+    async preserveNewAreaTag(
+        tagNo: string,
+        areaType: string,
+        disciplineCode: string | undefined,
+        areaCode: string | undefined,
+        freetext: string | undefined,
+        stepId: number,
+        requirements: PreserveTagRequirement[],
+        projectName: string,
+        remark?: string | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = '/Tags/Preserved/AreaTag';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                tagNo: tagNo,
+                areaType: areaType,
+                disciplineCode: disciplineCode,
+                areaCode: areaCode,
+                tagNoFreetext: freetext,
                 projectName: projectName,
                 stepId: stepId,
                 requirements,

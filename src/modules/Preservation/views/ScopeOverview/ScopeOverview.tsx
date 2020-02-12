@@ -1,27 +1,20 @@
-import {
-    Container,
-    DropdownItem,
-    Header,
-    HeaderContainer,
-    IconBar,
-    TableToolbar,
-    TagLink
-} from './ScopeOverview.style';
-import { Link, useRouteMatch } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Button } from '@equinor/eds-core-react';
 import CompareArrowsOutlinedIcon from '@material-ui/icons/CompareArrowsOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import Dropdown from '../../../../components/Dropdown';
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
-import Table from './../../../../components/Table';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, TableToolbar, TagLink } from './ScopeOverview.style';
+import Dropdown from '../../../../components/Dropdown';
+import Flyout from './../../../../components/Flyout';
+import Table from './../../../../components/Table';
 import TagFlyout from './TagFlyout/TagFlyout';
 
 interface PreservedTag {
@@ -119,6 +112,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
         setSelectedTags(selectedTags);
     };
+    
+    const closeFlyout = (): void => {
+        setDisplayFlyout(false);
+    };
 
     /**
      * Start Preservation button is set to disabled if no rows are selected or
@@ -155,19 +152,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 {tag.tagNo}
             </TagLink> 
         );
-    };
-
-    const getTagFlyout = (): JSX.Element | null => {
-        if (displayFlyout) {
-            return (
-                <TagFlyout 
-                    setDisplayFlyout={setDisplayFlyout}
-                    tagId={flyoutTagId}
-                />
-            );
-        }
-
-        return null;
     };
 
     return (
@@ -281,7 +265,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 style={{ boxShadow: 'none' }}
             />
             {
-                getTagFlyout()
+                displayFlyout && (
+                    <Flyout
+                        close={closeFlyout}>
+                        <TagFlyout 
+                            close={closeFlyout}
+                            tagId={flyoutTagId}
+                        />
+                    </Flyout>
+                )
             }
         </Container>
     );

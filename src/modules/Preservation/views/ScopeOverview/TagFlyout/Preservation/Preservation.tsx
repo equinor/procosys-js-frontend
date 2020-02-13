@@ -4,6 +4,7 @@ import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, R
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails } from './../types';
 import PreservationIcon from '../../../PreservationIcon';
+import Checkbox from './../../../../../../components/Checkbox';
 
 const testData = [
     {
@@ -18,6 +19,11 @@ const testData = [
                 id: 10,
                 label: 'Jump up, jump up, and get down!',
                 fieldType: 'Info'
+            },
+            {
+                id: 11,
+                label: 'Look behind you, a three headed monkey!',
+                fieldType: 'CheckBox'
             }
         ]
     },
@@ -52,9 +58,11 @@ const Preservation = ({
 }: PreservationProps): JSX.Element => {
 
     const getRequirementField = (fieldType: string, label: string): JSX.Element => {
-        switch (fieldType) {
-            case 'Info':
+        switch (fieldType.toLowerCase()) {
+            case 'info':
                 return <Typography variant='body_long'>{label}</Typography>;
+            case 'checkbox':
+                return <Checkbox text={label} textVariant='body_long' />;
             default:
                 return <div>Unknown field type</div>;
         }

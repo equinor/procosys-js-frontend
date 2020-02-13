@@ -64,4 +64,4 @@ export const GridSecondRow = styled.div`
     grid-template-rows: auto auto;
     grid-column-gap: calc(var(--grid-unit) * 3);
     float: left;
-`; 
+`;

@@ -41,11 +41,11 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     //Build tagNo
     let newTagNo = '';
     if (props.areaType && props.discipline && props.description) {
-        newTagNo = props.areaType.value + '-' + props.discipline.code;
+        newTagNo = `${props.areaType.value}-${props.discipline.code}`;
         if (props.areaType.value === '#PRE' && props.area) {
-            newTagNo = newTagNo + '-' + props.area.code;
+            newTagNo = `${newTagNo}-${props.area.code}`;
         }
-        props.freetext ? newTagNo = newTagNo + '-' + props.freetext : null;
+        props.freetext ? newTagNo = `${newTagNo}-${props.freetext}` : null;
     }
 
     /** Set initial values */
@@ -124,14 +124,14 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                         </SelectInput>
                     </FormFieldSpacer>
                     <FormFieldSpacer>
-                        <SelectInput
-                            onChange={setAreaForm}
-                            data={mappedAreas}
-                            label={'Area'}
-                            hidden={props.areaType === undefined || props.areaType.value !== '#PRE'}
-                        >
-                            {(props.area != undefined && props.area.description) || 'Type to select'}
-                        </SelectInput>
+                        {(props.areaType !== undefined && props.areaType.value === '#PRE') &&
+                            <SelectInput
+                                onChange={setAreaForm}
+                                data={mappedAreas}
+                                label={'Area'}
+                            >
+                                {(props.area != undefined && props.area.description) || 'Type to select'}
+                            </SelectInput>}
                     </FormFieldSpacer>
                     <Next>
                         <Button onClick={nextStep} disabled={newTagNo === ''}>Next</Button>

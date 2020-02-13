@@ -18,6 +18,12 @@ const AddScope = (props: any): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
 
+    enum AddScopeMethod {
+        AddTagsManually,
+        CreateAreaTag,
+        Unknown
+    }
+
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
@@ -28,10 +34,10 @@ const AddScope = (props: any): JSX.Element => {
     const [disciplines, setDisciplines] = useState<Discipline[]>([]);
     const [areas, setAreas] = useState<Area[]>([]);
     const [areaType, setAreaType] = useState<SelectItem | undefined>();
-    const [discipline, setDiscipline] = useState<Discipline | undefined>();
-    const [area, setArea] = useState<Area | undefined>();
-    const [description, setDescription] = useState<string | undefined>();
-    const [freetext, setFreetext] = useState<string | undefined>();
+    const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
+    const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
+    const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
+    const [areaTagFreetext, setAreaTagFreetext] = useState<string | undefined>();
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -111,21 +117,25 @@ const AddScope = (props: any): JSX.Element => {
         });
     };
 
-    const submitFormTags = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
+    const submitAddTagsManually = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
-            if (areaType) {
-                //Preserver a new area tag
-                const tagNo = selectedTags[0].tagNo;
-                await apiClient.preserveNewAreaTag(tagNo, areaType?.value, discipline?.code, area?.code, freetext, stepId, requirements, project.name, remark);
-                showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
-                history.push('/');
-            } else {
-                //Preserve a list of tags
-                const listOfTagNo = selectedTags.map(t => t.tagNo);
-                await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
-                showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
-                history.push('/');
-            }
+            const listOfTagNo = selectedTags.map(t => t.tagNo);
+            await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
+            showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
+            history.push('/');
+        } catch (error) {
+            console.error('Tag preservation failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        return Promise.resolve();
+    };
+
+    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
+        try {
+            const tagNo = selectedTags[0].tagNo;
+            await apiClient.preserveNewAreaTag(tagNo, areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagFreetext, stepId, requirements, project.name, remark);
+            showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
+            history.push('/');
         } catch (error) {
             console.error('Tag preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -176,9 +186,22 @@ const AddScope = (props: any): JSX.Element => {
         }
     };
 
+    const getAddScopeMethod = (): AddScopeMethod => {
+        switch (props.match.params.method) {
+            case 'selectTags':
+                return AddScopeMethod.AddTagsManually;
+            case 'createAreaTag':
+                return AddScopeMethod.CreateAreaTag;
+            default:
+                return AddScopeMethod.Unknown;
+        }
+    };
+
+    const addScopeMethod = getAddScopeMethod();
+
     switch (step) {
         case 1:
-            if (props.match.params.method === 'selectTags') {
+            if (addScopeMethod === AddScopeMethod.AddTagsManually) {
                 return <SelectTags
                     nextStep={goToNextStep}
                     setSelectedTags={setSelectedTags}
@@ -187,7 +210,7 @@ const AddScope = (props: any): JSX.Element => {
                     scopeTableData={scopeTableData}
                     isLoading={isLoading}
                 />;
-            } else if (props.match.params.method === 'createAreaTag') {
+            } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
                 return <CreateAreaTag
                     nextStep={goToNextStep}
                     setSelectedTags={setSelectedTags}
@@ -195,14 +218,14 @@ const AddScope = (props: any): JSX.Element => {
                     areas={areas}
                     areaType={areaType}
                     setAreaType={setAreaType}
-                    discipline={discipline}
-                    setDiscipline={setDiscipline}
-                    area={area}
-                    setArea={setArea}
-                    freetext={freetext}
-                    setFreetext={setFreetext}
-                    description={description}
-                    setDescription={setDescription}
+                    discipline={areaTagDiscipline}
+                    setDiscipline={setAreaTagDiscipline}
+                    area={areaTagArea}
+                    setArea={setAreaTagArea}
+                    freetext={areaTagFreetext}
+                    setFreetext={setAreaTagFreetext}
+                    description={areaTagDescription}
+                    setDescription={setAreaTagDescription}
                 />;
             }
             break;
@@ -217,7 +240,7 @@ const AddScope = (props: any): JSX.Element => {
                             journeys={journeys}
                             requirementTypes={requirementTypes}
                             previousStep={goToPreviousStep}
-                            submitForm={submitFormTags}
+                            submitForm={addScopeMethod === AddScopeMethod.AddTagsManually ? submitAddTagsManually : submitCreateAreaTag}
                         />
                     </TagProperties>
                     <Divider />

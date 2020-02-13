@@ -16,7 +16,6 @@ export type SelectItem = {
 type SelectProps = {
     data: SelectItem[];
     disabled?: boolean;
-    hidden?: boolean;
     onChange?: (newValue: any) => void;
     openLeft?: boolean;
     children: ReactNode;
@@ -28,7 +27,6 @@ const KEYCODE_ESCAPE = 27;
 
 const Select = ({
     disabled = false,
-    hidden = false,
     data = [],
     onChange = (): void => {
         /*eslint-disable-line no-empty */
@@ -105,15 +103,12 @@ const Select = ({
         });
     };
 
-    if (hidden) return (<></>);
-
     return (
         <Container ref={containerRef} openLeft={openLeft || false}>
             {label}
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}
-                hidden={hidden}
                 role="listbox"
                 isOpen={isOpen}
                 aria-expanded={isOpen}

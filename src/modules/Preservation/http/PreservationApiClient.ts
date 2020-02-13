@@ -397,16 +397,11 @@ class PreservationApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getDisciplines(setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
-
-        //const endpoint = '/Disciplines';
+        const endpoint = '/Disciplines';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        //const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
-        //return result.data;
-
-        const dummy: DisciplineResponse[] = [{ code: 'dis1', description: 'Descripton1' }, { code: 'dis2', description: 'Description' }];
-
-        return dummy;
+        const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+        return result.data;
     }
 
     /**
@@ -415,19 +410,12 @@ class PreservationApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getAreas(setRequestCanceller?: RequestCanceler): Promise<AreaResponse[]> {
-
-        //const endpoint = '/Areas';
+        const endpoint = '/AreaCodes';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        //const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
-        //return result.data;
-        const dummy: AreaResponse[] = [{ code: 'area1', description: 'AreaDescription1' }, { code: 'area2', description: 'AreaDescription2' }];
-
-        return dummy;
-
+        const result = await this.client.get<AreaResponse[]>(endpoint, settings);
+        return result.data;
     }
-
 }
-
 
 export default PreservationApiClient;

@@ -5,7 +5,7 @@ import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
 
-export interface PreservedTagResponse {
+interface PreservedTagResponse {
     id: number;
     tagNo: string;
     description: string;
@@ -29,17 +29,7 @@ export interface PreservedTagResponse {
     };
 }
 
-export type Journey = {
-    id: number;
-    text: string;
-};
-
-export type Step = {
-    id: number;
-    text: string;
-};
-
-export type TagSearchResponse = {
+type TagSearchResponse = {
     tagNo: string;
     description: string;
     purchaseOrderNumber: string;
@@ -48,7 +38,7 @@ export type TagSearchResponse = {
     isPreserved: boolean;
 }
 
-export interface PreservedTagDetailsResponse {
+interface PreservedTagDetailsResponse {
     id: number;
     tagNo: string;
     description: string;
@@ -62,7 +52,7 @@ export interface PreservedTagDetailsResponse {
     areaCode: string;
 }
 
-export interface JourneyResponse {
+interface JourneyResponse {
     id: number;
     title: string;
     isVoided: boolean;
@@ -82,7 +72,7 @@ export interface JourneyResponse {
     ];
 }
 
-export interface RequirementTypeResponse {
+interface RequirementTypeResponse {
     resultType: string;
     errors: string[];
     data: [{
@@ -109,6 +99,27 @@ export interface RequirementTypeResponse {
             needsUserInput: boolean;
         }];
     }];
+}
+
+interface PreservedTagRequirementsResponse {
+    id: number;
+    requirementTypeCode: string;
+    requirementTypeTitle: string;
+    requirementDefinitionTitle: string;
+    nextDueTimeUtc: Date;
+    nextDueAsYearAndWeek: string;
+    readyToBePreserved: boolean;
+    fields: [
+        {
+            id: number;
+            label: string;
+            fieldType: string;
+            unit: string;
+            showPrevious: boolean;
+            currentValue: string;
+            previousValue: string;
+        }
+    ];
 }
 
 interface PreserveTagRequirement {
@@ -344,6 +355,20 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<PreservedTagDetailsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async getPreservedTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagRequirementsResponse[]> {
+        const endpoint = `/Tags/Preserved/${tagId}/Requirements`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<PreservedTagRequirementsResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {

@@ -11,3 +11,24 @@ export interface TagDetails {
     purchaseOrderNo: string;
     areaCode: string;
 }
+
+export interface TagRequirement {
+    id: number;
+    requirementTypeCode: string;
+    requirementTypeTitle: string;
+    requirementDefinitionTitle: string;
+    nextDueTimeUtc: Date;
+    nextDueAsYearAndWeek: string;
+    readyToBePreserved: boolean;
+    fields: TagRequirementField[];
+}
+
+export interface TagRequirementField {
+    id: number;
+    label: string;
+    fieldType: string;
+    unit: string;
+    showPrevious: boolean;
+    currentValue: string;
+    previousValue: string;
+}

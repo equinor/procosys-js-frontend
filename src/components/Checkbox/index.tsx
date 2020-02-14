@@ -1,32 +1,20 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-import { Typography } from '@equinor/eds-core-react';
 import { Container, Checkmark } from './style';
 
 interface CheckboxProps {
-    text?: string;
-    textVariant?: string;
+    children?: ReactNode;
+    checked?: boolean;
 }
 
 const Checkbox = ({
-    text,
-    textVariant
+    children,
+    checked = false
 }: CheckboxProps): JSX.Element => {
-
-    const getTextElement = (): JSX.Element | null => {
-        if (text && textVariant) {
-            return <Typography variant={textVariant}>{text}</Typography>;
-        } else if (text) {
-            return <span>{text}</span>;
-        } 
-
-        return null;
-    };
-
     return (
         <Container>
-            { getTextElement() }
-            <input type="checkbox" />
+            { children }
+            <input type="checkbox" defaultChecked={checked} />
             <Checkmark className="checkmark" />
         </Container>
     );

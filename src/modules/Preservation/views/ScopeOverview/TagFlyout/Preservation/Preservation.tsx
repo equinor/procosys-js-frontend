@@ -2,105 +2,97 @@ import React from 'react';
 
 import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer, RequirementContainer, RequirementSection, Field } from './Preservation.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { TagDetails } from './../types';
+import { TagDetails, TagRequirement, TagRequirementField } from './../types';
 import PreservationIcon from '../../../PreservationIcon';
 import Checkbox from './../../../../../../components/Checkbox';
-
-const testData = [
-    {
-        id: 1,
-        requirementTitle: 'Jump around',
-        definitionTitle: 'Jump around',
-        code: 'rotation',
-        interval: '4 weeks',
-        next: '2020w16',
-        fields: [
-            {
-                id: 10,
-                label: 'Jump up, jump up, and get down!',
-                fieldType: 'Info'
-            },
-            {
-                id: 11,
-                label: 'Look behind you, a three headed monkey!',
-                fieldType: 'CheckBox'
-            }
-        ]
-    },
-    {
-        id: 2,
-        requirementTitle: 'Please do the needful',
-        definitionTitle: 'Bang with hammer',
-        code: 'ir test',
-        interval: '4 weeks',
-        next: '2020w34',
-        fields: [
-            {
-                id: 20,
-                label: 'Bang hard 50 times',
-                fieldType: 'Info'
-            },
-            {
-                id: 30,
-                label: 'Turn inside-out',
-                fieldType: 'Info'
-            }
-        ]        
-    }       
-];
+import Spinner from '../../../../../../components/Spinner';
 
 interface PreservationProps {
     details: TagDetails | undefined;
+    requirements: TagRequirement[] | undefined;
 }
 
 const Preservation = ({
-    details
+    details,
+    requirements
 }: PreservationProps): JSX.Element => {
 
-    const getRequirementField = (fieldType: string, label: string): JSX.Element => {
-        switch (fieldType.toLowerCase()) {
+    const getRequirementField = (field: TagRequirementField): JSX.Element => {
+        switch (field.fieldType.toLowerCase()) {
             case 'info':
-                return <Typography variant='body_long'>{label}</Typography>;
+                return <Typography variant='body_long'>{field.label}</Typography>;
             case 'checkbox':
-                return <Checkbox text={label} textVariant='body_long' />;
+                return (
+                    <Checkbox>
+                        <Typography variant='body_long'>{field.label}</Typography>
+                    </Checkbox>
+                );
+            case 'number':
+                return (
+                    <div style={{display: 'flex', alignItems: 'flex-end'}}>
+                        <div style={{maxWidth: '20%'}}>
+                            <TextField
+                                id={`field${field.id}`}
+                                label={field.label}
+                                meta={`(${field.unit})`}
+                            />
+                        </div>
+                        {
+                            field.showPrevious &&
+                            <div style={{maxWidth: '20%', marginLeft: 'calc(var(--grid-unit) * 3)'}}>
+                                <TextField
+                                    id={`fieldPrevious${field.id}`}
+                                    label='Previous value'
+                                    meta={`(${field.unit})`}
+                                    disabled
+                                />
+                            </div>                            
+                        }
+                    </div>
+                );
             default:
                 return <div>Unknown field type</div>;
         }
     };
 
     const getRequirements = (): JSX.Element => {
+        if (requirements === undefined) {
+            return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
+        }
+
         return (
             <div>
                 {
-                    testData.map(data => {
+                    // eslint-disable-next-line react/prop-types
+                    requirements.map(requirement => {
                         return (
-                            <RequirementContainer key={data.id}>
+                            <RequirementContainer key={requirement.id}>
                                 <RequirementSection>
                                     <div style={{display: 'flex', alignItems: 'center'}}>
                                         <Typography variant='h4'>
-                                            {data.requirementTitle}
+                                            {requirement.requirementTypeTitle}
                                         </Typography>
                                         <div style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>
-                                            <PreservationIcon variant={data.code} />
+                                            <PreservationIcon variant={requirement.requirementTypeCode} />
                                         </div>
                                     </div>
                                     <Typography variant='h6'>
-                                        {data.definitionTitle}
+                                        {requirement.requirementDefinitionTitle}
                                     </Typography>                                    
                                     <div style={{display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)'}}>
                                         <Typography variant='caption'>Interval</Typography>
-                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{data.interval}</Typography>
+                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{'TODO: field'}</Typography>
                                         <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>Next</Typography>
-                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{data.next}</Typography>
+                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{requirement.nextDueAsYearAndWeek}</Typography>
                                     </div>
                                 </RequirementSection>
                                 <RequirementSection>
                                     {
-                                        data.fields.map(field => {
+                                        requirement.fields.map(field => {
                                             return (
                                                 <Field key={field.id}>
                                                     {
-                                                        getRequirementField(field.fieldType, field.label)
+                                                        getRequirementField(field)
                                                     }
                                                 </Field>
                                             );
@@ -109,7 +101,7 @@ const Preservation = ({
                                 </RequirementSection>
                                 <RequirementSection>
                                     <TextField 
-                                        id={`requirementComment${data.id}`}
+                                        id={`requirementComment${requirement.id}`}
                                         label='Comment for this preservation period (optional)'
                                         placeholder='Write here'
                                     />

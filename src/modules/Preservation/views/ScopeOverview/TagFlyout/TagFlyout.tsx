@@ -7,7 +7,7 @@ import { Button } from '@equinor/eds-core-react';
 import Spinner from '../../../../../components/Spinner';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
-import { TagDetails } from './types';
+import { TagDetails, TagRequirement } from './types';
 
 interface TagFlyoutProps {
     close: () => void;
@@ -21,6 +21,7 @@ const TagFlyout = ({
     const [activeTab, setActiveTab] = useState<string>('preservation');
     const [isLoading, setIsLoading] = useState<boolean>();
     const [tagDetails, setTagDetails] = useState<TagDetails>();
+    const [tagRequirements, setTagRequirements] = useState<TagRequirement[]>();
     const { apiClient } = usePreservationContext();
 
     const getTagDetails = async (id: number): Promise<void> => {
@@ -38,11 +39,28 @@ const TagFlyout = ({
         }
     };
 
+    const getTagRequirements = async (id: number): Promise<void> => {
+        try {            
+            const tagRequirements = await apiClient.getPreservedTagRequirements(id);
+            setTagRequirements(tagRequirements);
+        }
+        catch (error) {
+            console.error(`Get TagRequirements failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
+
     useEffect(() => {
         if (tagId !== null) {
             getTagDetails(tagId);
         }
     }, [tagId]);
+
+    useEffect(() => {
+        if (tagId !== null) {
+            getTagRequirements(tagId);
+        }
+    }, [tagId]);    
 
     const getTabContent = (): JSX.Element => {
         if (isLoading) {
@@ -53,7 +71,7 @@ const TagFlyout = ({
 
         switch (activeTab) {
             case 'preservation':
-                return <Preservation details={tagDetails} />;
+                return <Preservation details={tagDetails} requirements={tagRequirements} />;
             case 'actions':
                 return <div></div>;
             case 'attachments':

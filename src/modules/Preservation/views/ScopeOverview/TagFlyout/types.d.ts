@@ -14,6 +14,8 @@ export interface TagDetails {
 
 export interface TagRequirement {
     id: number;
+    intervalWeeks: number;
+    nextDueWeeks: number;
     requirementTypeCode: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;

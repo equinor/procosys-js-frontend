@@ -81,7 +81,7 @@ const Preservation = ({
                                     </Typography>                                    
                                     <div style={{display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)'}}>
                                         <Typography variant='caption'>Interval</Typography>
-                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{'TODO: field'}</Typography>
+                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{requirement.intervalWeeks}</Typography>
                                         <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>Next</Typography>
                                         <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{requirement.nextDueAsYearAndWeek}</Typography>
                                     </div>

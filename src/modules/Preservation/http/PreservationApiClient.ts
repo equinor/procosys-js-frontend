@@ -103,6 +103,8 @@ interface RequirementTypeResponse {
 
 interface PreservedTagRequirementsResponse {
     id: number;
+    intervalWeeks: number;
+    nextDueWeeks: number;
     requirementTypeCode: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;

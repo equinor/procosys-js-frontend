@@ -22,8 +22,8 @@ type CreateAreaTagProps = {
     setDiscipline: (discipline: Discipline | undefined) => void;
     area: Area | undefined;
     setArea: (area: Area | undefined) => void;
-    freetext: string | undefined;
-    setFreetext: (freetext: string | undefined) => void;
+    suffix: string | undefined;
+    setSuffix: (suffix: string | undefined) => void;
     description: string | undefined;
     setDescription: (description: string | undefined) => void;
 }
@@ -34,7 +34,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>([]);
     const [mappedAreas, setMappedAreas] = useState<SelectItem[]>([]);
 
-    const freetextInputRef = useRef<HTMLInputElement>(null);
+    const suffixInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
 
     //Build tagNo
@@ -44,12 +44,12 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         if (props.areaType.value === '#PRE' && props.area) {
             newTagNo = `${newTagNo}-${props.area.code}`;
         }
-        props.freetext ? newTagNo = `${newTagNo}-${props.freetext}` : null;
+        props.suffix ? newTagNo = `${newTagNo}-${props.suffix}` : null;
     }
 
     /** Set initial values */
     useEffect(() => {
-        freetextInputRef.current && props.freetext ? freetextInputRef.current.value = props.freetext : null;
+        suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
         descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
     }, []);
 
@@ -139,13 +139,13 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             </Container >
             <InputContainer>
                 <TextField
-                    id={'Freetext'}
+                    id={'Suffix'}
                     style={{ maxWidth: '200px' }}
-                    label="Freetext for area tag (space not allowed)"
-                    inputRef={freetextInputRef}
+                    label="Tag number suffix (space not allowed)"
+                    inputRef={suffixInputRef}
                     placeholder="Write Here"
-                    helpertext="Free text part of the tagno."
-                    onChange={(e: any): void => props.setFreetext(e.target.value)}
+                    helpertext="Text added to the end of the tagno."
+                    onChange={(e: any): void => props.setSuffix(e.target.value)}
                 />
             </InputContainer>
             <InputContainer>

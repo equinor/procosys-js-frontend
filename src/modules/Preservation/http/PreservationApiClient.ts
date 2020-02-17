@@ -288,7 +288,6 @@ class PreservationApiClient extends ApiClient {
     * @throws PreservationApiError
     */
     async preserveNewAreaTag(
-        tagNo: string,
         areaType: string,
         disciplineCode: string | undefined,
         areaCode: string | undefined,
@@ -299,12 +298,11 @@ class PreservationApiClient extends ApiClient {
         remark?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
 
-        const endpoint = '/Tags/Preserved/AreaTag';
+        const endpoint = '/Tags/Area';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             await this.client.post(endpoint, {
-                tagNo: tagNo,
                 areaType: areaType,
                 disciplineCode: disciplineCode,
                 areaCode: areaCode,

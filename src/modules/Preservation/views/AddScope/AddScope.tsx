@@ -37,7 +37,7 @@ const AddScope = (props: any): JSX.Element => {
     const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
     const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
-    const [areaTagFreetext, setAreaTagFreetext] = useState<string | undefined>();
+    const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -133,7 +133,7 @@ const AddScope = (props: any): JSX.Element => {
     const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
         try {
             const tagNo = selectedTags[0].tagNo;
-            await apiClient.preserveNewAreaTag(tagNo, areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagFreetext, stepId, requirements, project.name, remark);
+            await apiClient.preserveNewAreaTag(areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, stepId, requirements, project.name, remark);
             showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
@@ -222,8 +222,8 @@ const AddScope = (props: any): JSX.Element => {
                     setDiscipline={setAreaTagDiscipline}
                     area={areaTagArea}
                     setArea={setAreaTagArea}
-                    freetext={areaTagFreetext}
-                    setFreetext={setAreaTagFreetext}
+                    suffix={areaTagSuffix}
+                    setSuffix={setAreaTagSuffix}
                     description={areaTagDescription}
                     setDescription={setAreaTagDescription}
                 />;

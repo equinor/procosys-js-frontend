@@ -365,7 +365,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     async getPreservedTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagRequirementsResponse[]> {
-        const endpoint = `/Tags/Preserved/${tagId}/Requirements`;
+        const endpoint = `/Tags/${tagId}/Requirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 

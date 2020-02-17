@@ -295,11 +295,11 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Set given tags to 'preserved'
+     * Set given tags to 'preserved' (bulk preserve)
      * @param tags  List with tag IDs
      */
     async preserve(tags: number[]): Promise<void> {
-        const endpoint = '/Tags/Preserve';
+        const endpoint = '/Tags/BulkPreserve';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);
     }

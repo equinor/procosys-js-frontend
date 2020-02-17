@@ -7,7 +7,7 @@ import { usePreservationContext } from '../../../context/PreservationContext';
 import { Tag, Discipline, Area } from '../types';
 
 
-const areaTypes: SelectItem[] = [
+export const areaTypes: SelectItem[] = [
     { text: 'Normal', value: '#PRE' },
     { text: 'Site', value: '#SITE' }];
 
@@ -15,7 +15,6 @@ type CreateAreaTagProps = {
     nextStep: () => void;
     setSelectedTags: (tags: Tag[]) => void;
     disciplines: Discipline[];
-
     areas: Area[];
     areaType: SelectItem | undefined;
     setAreaType: (areaType: SelectItem | undefined) => void;
@@ -111,7 +110,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             data={areaTypes}
                             label={'Area type'}
                         >
-                            {(props.areaType != undefined && props.areaType.text) || 'Select'}
+                            {(props.areaType != undefined && props.areaType.text) || 'Select area type'}
                         </SelectInput>
                     </FormFieldSpacer>
                     <FormFieldSpacer>
@@ -120,7 +119,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             data={mappedDisciplines}
                             label={'Discipline'}
                         >
-                            {(props.discipline != undefined && props.discipline.description) || 'Select'}
+                            {(props.discipline != undefined && props.discipline.description) || 'Select discipline'}
                         </SelectInput>
                     </FormFieldSpacer>
                     <FormFieldSpacer>
@@ -130,7 +129,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 data={mappedAreas}
                                 label={'Area'}
                             >
-                                {(props.area != undefined && props.area.description) || 'Type to select'}
+                                {(props.area != undefined && props.area.description) || 'Select area'}
                             </SelectInput>}
                     </FormFieldSpacer>
                     <Next>

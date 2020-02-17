@@ -237,7 +237,7 @@ class PreservationApiClient extends ApiClient {
         projectName: string,
         remark?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = '/Tags/Preserved';
+        const endpoint = '/Tags/Standard';
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -268,7 +268,7 @@ class PreservationApiClient extends ApiClient {
     async getPreservedTags(projectName: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse[]> {
-        const endpoint = '/Tags/Preserved';
+        const endpoint = '/Tags';
 
         const settings: AxiosRequestConfig = {
             params: {
@@ -289,7 +289,7 @@ class PreservationApiClient extends ApiClient {
      * @param tags  List with tag IDs
      */
     async startPreservation(tags: number[]): Promise<void> {
-        const endpoint = '/Tags/Preserved/StartPreservation';
+        const endpoint = '/Tags/StartPreservation';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);
     }
@@ -299,7 +299,7 @@ class PreservationApiClient extends ApiClient {
      * @param tags  List with tag IDs
      */
     async preserve(tags: number[]): Promise<void> {
-        const endpoint = '/Tags/Preserved/Preserve';
+        const endpoint = '/Tags/Preserve';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);
     }
@@ -338,7 +338,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     async getPreservedTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagDetailsResponse> {
-        const endpoint = `/Tags/Preserved/${tagId}`;
+        const endpoint = `/Tags/${tagId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 

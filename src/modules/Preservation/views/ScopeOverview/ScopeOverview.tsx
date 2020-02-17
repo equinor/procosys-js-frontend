@@ -144,6 +144,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
             <TagLink 
+                isOverdue={tag.firstUpcomingRequirement && tag.firstUpcomingRequirement.nextDueWeeks < 0}
                 onClick={(): void => {
                     setFlyoutTagId(tag.id);
                     setDisplayFlyout(true);

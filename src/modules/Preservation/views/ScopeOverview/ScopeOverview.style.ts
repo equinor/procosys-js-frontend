@@ -48,3 +48,9 @@ export const DropdownItem = styled.div`
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
 `;
+
+export const TagLink = styled.span`
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+    text-decoration: underline;
+    cursor: pointer;
+`;

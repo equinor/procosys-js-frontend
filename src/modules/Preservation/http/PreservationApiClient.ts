@@ -48,6 +48,20 @@ export type TagSearchResponse = {
     isPreserved: boolean;
 }
 
+export interface PreservedTagDetailsResponse {
+    id: number;
+    tagNo: string;
+    description: string;
+    status: string;
+    journeyTitle: string;
+    mode: string;
+    responsibleName: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    areaCode: string;
+}
+
 export interface JourneyResponse {
     id: number;
     title: string;
@@ -149,6 +163,21 @@ function DelayData(data: any, fail = false): Promise<any> {
     });
 }
 
+function getPreservationApiError(error: any): PreservationApiError {
+    if (error.response.status == 500) {
+        return new PreservationApiError(error.response.data);
+    }
+
+    const response = error.response.data as ErrorResponse;
+    let errorMessage = `${error.response.status} (${error.response.statusText})`;
+
+    if (error.response.data) {
+        errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
+    }
+
+    return new PreservationApiError(errorMessage, response);
+}
+
 /**
  * API for interacting with data in ProCoSys.
  */
@@ -219,7 +248,7 @@ class PreservationApiClient extends ApiClient {
         projectName: string,
         remark?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = '/Tags/Preserved';
+        const endpoint = '/Tags/Standard';
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -304,7 +333,7 @@ class PreservationApiClient extends ApiClient {
     async getPreservedTags(projectName: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse[]> {
-        const endpoint = '/Tags/Preserved';
+        const endpoint = '/Tags';
 
         const settings: AxiosRequestConfig = {
             params: {
@@ -325,17 +354,17 @@ class PreservationApiClient extends ApiClient {
      * @param tags  List with tag IDs
      */
     async startPreservation(tags: number[]): Promise<void> {
-        const endpoint = '/Tags/Preserved/StartPreservation';
+        const endpoint = '/Tags/StartPreservation';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);
     }
 
     /**
-     * Set given tags to 'preserved'
+     * Set given tags to 'preserved' (bulk preserve)
      * @param tags  List with tag IDs
      */
     async preserve(tags: number[]): Promise<void> {
-        const endpoint = '/Tags/Preserved/Preserve';
+        const endpoint = '/Tags/BulkPreserve';
         const settings: AxiosRequestConfig = {};
         await this.client.put(endpoint, tags, settings);
     }
@@ -371,6 +400,20 @@ class PreservationApiClient extends ApiClient {
             settings
         );
         return result.data;
+    }
+
+    async getPreservedTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagDetailsResponse> {
+        const endpoint = `/Tags/${tagId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<PreservedTagDetailsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**

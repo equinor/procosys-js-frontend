@@ -27,7 +27,7 @@ const TagFlyout = ({
     const getTagDetails = async (id: number): Promise<void> => {
         try {            
             setIsLoading(true);
-            const tagDetails = await apiClient.getPreservedTagDetails(id);
+            const tagDetails = await apiClient.getTagDetails(id);
             setTagDetails(tagDetails);
         }
         catch (error) {
@@ -41,7 +41,7 @@ const TagFlyout = ({
 
     const getTagRequirements = async (id: number): Promise<void> => {
         try {            
-            const tagRequirements = await apiClient.getPreservedTagRequirements(id);
+            const tagRequirements = await apiClient.getTagRequirements(id);
             setTagRequirements(tagRequirements);
         }
         catch (error) {

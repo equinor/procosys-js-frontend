@@ -38,7 +38,7 @@ type TagSearchResponse = {
     isPreserved: boolean;
 }
 
-interface PreservedTagDetailsResponse {
+interface TagDetailsResponse {
     id: number;
     tagNo: string;
     description: string;
@@ -101,7 +101,7 @@ interface RequirementTypeResponse {
     }];
 }
 
-interface PreservedTagRequirementsResponse {
+interface TagRequirementsResponse {
     id: number;
     intervalWeeks: number;
     nextDueWeeks: number;
@@ -116,10 +116,20 @@ interface PreservedTagRequirementsResponse {
             id: number;
             label: string;
             fieldType: string;
-            unit: string;
+            unit: string | null;
             showPrevious: boolean;
-            currentValue: string;
-            previousValue: string;
+            currentValue:
+            {
+                isChecked: boolean;
+                isNA: boolean;
+                value: number | null;
+            };
+            previousValue:
+            {
+                isChecked: boolean;
+                isNA: boolean;
+                value: number | null;
+            };
         }
     ];
 }
@@ -350,13 +360,13 @@ class PreservationApiClient extends ApiClient {
         return result.data;
     }
 
-    async getPreservedTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagDetailsResponse> {
+    async getTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<TagDetailsResponse> {
         const endpoint = `/Tags/${tagId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<PreservedTagDetailsResponse>(endpoint, settings);
+            const result = await this.client.get<TagDetailsResponse>(endpoint, settings);
             return result.data;
         }
         catch (error) {
@@ -364,13 +374,13 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async getPreservedTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagRequirementsResponse[]> {
+    async getTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<PreservedTagRequirementsResponse[]>(endpoint, settings);
+            const result = await this.client.get<TagRequirementsResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {

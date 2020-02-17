@@ -29,8 +29,19 @@ export interface TagRequirementField {
     id: number;
     label: string;
     fieldType: string;
-    unit: string;
+    unit: string | null;
     showPrevious: boolean;
-    currentValue: string;
-    previousValue: string;
+    currentValue?:
+    {
+        isChecked: boolean;         // applicable for fieldType = CheckBox
+        isNA: boolean;              // applicable for fieldType = Number
+        value: number | null;       // applicable for fieldType = Number
+    };
+    // previousValue applicable for fieldType = Number
+    previousValue?:
+    {
+        isChecked: boolean;
+        isNA: boolean;
+        value: number | null;
+    };
 }

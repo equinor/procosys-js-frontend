@@ -17,39 +17,61 @@ const Preservation = ({
     requirements
 }: PreservationProps): JSX.Element => {
 
+    const getNumberField = (field: TagRequirementField): JSX.Element => {
+        let currentValue: string | number | null = '';
+        if (field.currentValue) {
+            currentValue = field.currentValue.isNA ? 'N/A' : field.currentValue.value;
+        }
+
+        let previousValue: string | number | null = '';
+        if (field.previousValue) {
+            previousValue = field.previousValue.isNA ? 'N/A' : field.previousValue.value;
+        }
+
+        return (
+            <div style={{display: 'flex', alignItems: 'flex-end'}}>
+                <div style={{maxWidth: '25%'}}>
+                    <TextField
+                        id={`field${field.id}`}
+                        label={field.label}
+                        meta={`(${field.unit})`}
+                        defaultValue={currentValue}
+                    />
+                </div>
+                {
+                    field.showPrevious &&
+                    <div style={{maxWidth: '25%', marginLeft: 'calc(var(--grid-unit) * 3)'}}>
+                        <TextField
+                            id={`fieldPrevious${field.id}`}
+                            label='Previous value'
+                            meta={`(${field.unit})`}
+                            defaultValue={previousValue}
+                            disabled
+                        />
+                    </div>                            
+                }
+            </div>
+        );
+    };
+
+    const getCheckboxField = (field: TagRequirementField): JSX.Element => {
+        const isChecked = field.currentValue && field.currentValue.isChecked;
+
+        return (
+            <Checkbox checked={isChecked}>
+                <Typography variant='body_long'>{field.label}</Typography>
+            </Checkbox>
+        );
+    };
+
     const getRequirementField = (field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
             case 'info':
                 return <Typography variant='body_long'>{field.label}</Typography>;
             case 'checkbox':
-                return (
-                    <Checkbox>
-                        <Typography variant='body_long'>{field.label}</Typography>
-                    </Checkbox>
-                );
+                return getCheckboxField(field);
             case 'number':
-                return (
-                    <div style={{display: 'flex', alignItems: 'flex-end'}}>
-                        <div style={{maxWidth: '20%'}}>
-                            <TextField
-                                id={`field${field.id}`}
-                                label={field.label}
-                                meta={`(${field.unit})`}
-                            />
-                        </div>
-                        {
-                            field.showPrevious &&
-                            <div style={{maxWidth: '20%', marginLeft: 'calc(var(--grid-unit) * 3)'}}>
-                                <TextField
-                                    id={`fieldPrevious${field.id}`}
-                                    label='Previous value'
-                                    meta={`(${field.unit})`}
-                                    disabled
-                                />
-                            </div>                            
-                        }
-                    </div>
-                );
+                return getNumberField(field);
             default:
                 return <div>Unknown field type</div>;
         }

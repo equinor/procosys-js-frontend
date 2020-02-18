@@ -10,18 +10,15 @@ export const TagDetailsContainer = styled.div`
     display: flex;
     background: ${tokens.colors.ui.background__light.rgba};
     border-bottom: 1px solid ${tokens.colors.ui.background__medium.rgba};
-    width: 100%;
 `;
 
 export const Details = styled.div`
     display: flex;
     flex-direction: column;
-    width: 100%;
     padding: calc(var(--grid-unit) * 2);
 `;
 
 export const RequirementContainer = styled.div`
-    width: 100%;
     border-bottom: 1px solid ${tokens.colors.ui.background__medium.rgba};
     padding: 
         calc(var(--grid-unit) * 4) 
@@ -33,7 +30,6 @@ export const RequirementContainer = styled.div`
 export const RequirementSection = styled.div`
     display: flex;
     flex-direction: column;
-    width: 95%;
     margin-bottom: calc(var(--grid-unit) * 2);
 `;
 
@@ -42,12 +38,8 @@ export const Field = styled.div`
 `;
 
 export const RemarkContainer = styled.div`
-    width: 100%;
     padding: calc(var(--grid-unit) * 2);
     border-bottom: 1px solid ${tokens.colors.ui.background__medium.rgba};
-    input {
-        width: 95%;
-    }
 `;
 
 export const GridFirstRow = styled.div`

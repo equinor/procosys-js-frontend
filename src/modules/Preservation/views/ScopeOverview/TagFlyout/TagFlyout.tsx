@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Container, Header, Tabs, StatusLabel, HeaderActions } from './TagFlyout.style';
-import Preservation from './Preservation/Preservation';
+import PreservationTab from './PreservationTab/PreservationTab';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button } from '@equinor/eds-core-react';
 import Spinner from '../../../../../components/Spinner';
@@ -71,7 +71,7 @@ const TagFlyout = ({
 
         switch (activeTab) {
             case 'preservation':
-                return <Preservation details={tagDetails} requirements={tagRequirements} />;
+                return <PreservationTab details={tagDetails} requirements={tagRequirements} />;
             case 'actions':
                 return <div></div>;
             case 'attachments':

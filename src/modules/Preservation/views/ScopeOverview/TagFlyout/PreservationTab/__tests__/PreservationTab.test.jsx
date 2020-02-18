@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import Preservation from '../Preservation';
+import PreservationTab from '../PreservationTab';
 
 const tagDetails = {
     id: 1,
@@ -112,10 +112,10 @@ const tagRequirements = [
     }
 ];
 
-describe('Module: <Preservation />', () => {
+describe('Module: <PreservationTab />', () => {
 
     it('Should render tag details', () => {
-        const { getByText } = render(<Preservation details={tagDetails} />);
+        const { getByText } = render(<PreservationTab details={tagDetails} />);
 
         expect(getByText('tag-description')).toBeInTheDocument();
         expect(getByText('journey-title')).toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('Module: <Preservation />', () => {
     });
 
     it('Should render requirement header info', () => {
-        const { getByText } = render(<Preservation details={tagDetails} requirements={tagRequirements} />);
+        const { getByText } = render(<PreservationTab details={tagDetails} requirements={tagRequirements} />);
 
         expect(getByText('requirement-type-title')).toBeInTheDocument();
         expect(getByText('requirement-definition-title')).toBeInTheDocument();
@@ -138,7 +138,7 @@ describe('Module: <Preservation />', () => {
     });
 
     it('Should render requirement with info, checkbox and number field types', () => {
-        const { container, getByText, getAllByText } = render(<Preservation details={tagDetails} requirements={tagRequirements} />);
+        const { container, getByText, getAllByText } = render(<PreservationTab details={tagDetails} requirements={tagRequirements} />);
 
         // Info fields
         expect(getByText('info-label-1')).toBeInTheDocument();

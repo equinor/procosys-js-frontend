@@ -1,21 +1,21 @@
 import React from 'react';
 
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer, RequirementContainer, RequirementSection, Field, NextInfo } from './Preservation.style';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer, RequirementContainer, RequirementSection, Field, NextInfo } from './PreservationTab.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementField } from './../types';
 import PreservationIcon from '../../../PreservationIcon';
 import Checkbox from './../../../../../../components/Checkbox';
 import Spinner from '../../../../../../components/Spinner';
 
-interface PreservationProps {
+interface PreservationTabProps {
     details: TagDetails | undefined;
     requirements: TagRequirement[] | undefined;
 }
 
-const Preservation = ({
+const PreservationTab = ({
     details,
     requirements
-}: PreservationProps): JSX.Element => {
+}: PreservationTabProps): JSX.Element => {
 
     const getNumberField = (field: TagRequirementField): JSX.Element => {
         let currentValue: string | number | null = '';
@@ -197,4 +197,4 @@ const Preservation = ({
     );
 };
 
-export default Preservation; 
+export default PreservationTab; 

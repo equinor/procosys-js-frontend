@@ -7,10 +7,6 @@ export const Container = styled.label`
     position: relative;
     padding-left: calc(var(--grid-unit) * 4);
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 
     /* Hide the browser's default checkbox */
     input {

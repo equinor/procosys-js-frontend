@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -64,4 +64,10 @@ export const GridSecondRow = styled.div`
     grid-template-rows: auto auto;
     grid-column-gap: calc(var(--grid-unit) * 3);
     float: left;
+`;
+
+export const NextInfo = styled.span<{ isOverdue: boolean }>`
+    ${(props): any => props.isOverdue && css`
+        color: ${tokens.colors.interactive.danger__text.rgba};
+    `}
 `;

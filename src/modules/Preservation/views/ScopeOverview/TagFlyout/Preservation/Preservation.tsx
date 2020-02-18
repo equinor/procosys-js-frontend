@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer, RequirementContainer, RequirementSection, Field } from './Preservation.style';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer, RequirementContainer, RequirementSection, Field, NextInfo } from './Preservation.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementField } from './../types';
 import PreservationIcon from '../../../PreservationIcon';
@@ -87,6 +87,8 @@ const Preservation = ({
                 {
                     // eslint-disable-next-line react/prop-types
                     requirements.map(requirement => {
+                        const isOverdue = requirement.nextDueWeeks < 0;
+
                         return (
                             <RequirementContainer key={requirement.id}>
                                 <RequirementSection>
@@ -103,9 +105,19 @@ const Preservation = ({
                                     </Typography>                                    
                                     <div style={{display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)'}}>
                                         <Typography variant='caption'>Interval</Typography>
-                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{requirement.intervalWeeks}</Typography>
-                                        <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>Next</Typography>
-                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{requirement.nextDueAsYearAndWeek}</Typography>
+                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{`${requirement.intervalWeeks} weeks`}</Typography>
+                                        <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 4)'}}>Next</Typography>
+                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>
+                                            <NextInfo isOverdue={isOverdue}>
+                                                {requirement.nextDueAsYearAndWeek}
+                                            </NextInfo>
+                                        </Typography>
+                                        <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 4)'}}>Due</Typography>
+                                        <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>
+                                            <NextInfo isOverdue={isOverdue}>
+                                                {requirement.nextDueWeeks}
+                                            </NextInfo>
+                                        </Typography>
                                     </div>
                                 </RequirementSection>
                                 <RequirementSection>

@@ -1,7 +1,7 @@
 export interface Tag {
     tagNo: string;
     description: string;
-    mcPkgNo: string;
+    mcPkgNo?: string;
 }
 
 export interface TagRow {
@@ -81,4 +81,17 @@ export interface RequirementField {
     fieldType: string;
     unit: string | null;
     showPrevious: boolean;
+}
+
+/**
+ * Area tag
+ */
+export interface Discipline {
+    code: string;
+    description: string;
+}
+
+export interface Area {
+    code: string;
+    description: string;
 }

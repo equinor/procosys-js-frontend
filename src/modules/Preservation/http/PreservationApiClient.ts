@@ -5,7 +5,7 @@ import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
 
-export interface PreservedTagResponse {
+interface PreservedTagResponse {
     id: number;
     tagNo: string;
     description: string;
@@ -30,17 +30,7 @@ export interface PreservedTagResponse {
     };
 }
 
-export type Journey = {
-    id: number;
-    text: string;
-};
-
-export type Step = {
-    id: number;
-    text: string;
-};
-
-export type TagSearchResponse = {
+type TagSearchResponse = {
     tagNo: string;
     description: string;
     purchaseOrderNumber: string;
@@ -49,7 +39,7 @@ export type TagSearchResponse = {
     isPreserved: boolean;
 }
 
-export interface PreservedTagDetailsResponse {
+interface TagDetailsResponse {
     id: number;
     tagNo: string;
     description: string;
@@ -63,7 +53,7 @@ export interface PreservedTagDetailsResponse {
     areaCode: string;
 }
 
-export interface JourneyResponse {
+interface JourneyResponse {
     id: number;
     title: string;
     isVoided: boolean;
@@ -83,7 +73,7 @@ export interface JourneyResponse {
     ];
 }
 
-export interface RequirementTypeResponse {
+interface RequirementTypeResponse {
     resultType: string;
     errors: string[];
     data: [{
@@ -110,6 +100,39 @@ export interface RequirementTypeResponse {
             needsUserInput: boolean;
         }];
     }];
+}
+
+interface TagRequirementsResponse {
+    id: number;
+    intervalWeeks: number;
+    nextDueWeeks: number;
+    requirementTypeCode: string;
+    requirementTypeTitle: string;
+    requirementDefinitionTitle: string;
+    nextDueTimeUtc: Date;
+    nextDueAsYearAndWeek: string;
+    readyToBePreserved: boolean;
+    fields: [
+        {
+            id: number;
+            label: string;
+            fieldType: string;
+            unit: string | null;
+            showPrevious: boolean;
+            currentValue:
+            {
+                isChecked: boolean;
+                isNA: boolean;
+                value: number | null;
+            };
+            previousValue:
+            {
+                isChecked: boolean;
+                isNA: boolean;
+                value: number | null;
+            };
+        }
+    ];
 }
 
 interface PreserveTagRequirement {
@@ -349,13 +372,27 @@ class PreservationApiClient extends ApiClient {
         return result.data;
     }
 
-    async getPreservedTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagDetailsResponse> {
+    async getTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<TagDetailsResponse> {
         const endpoint = `/Tags/${tagId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<PreservedTagDetailsResponse>(endpoint, settings);
+            const result = await this.client.get<TagDetailsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async getTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
+        const endpoint = `/Tags/${tagId}/Requirements`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagRequirementsResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {

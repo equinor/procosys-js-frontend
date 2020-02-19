@@ -49,8 +49,11 @@ export const DropdownItem = styled.div`
     }
 `;
 
-export const TagLink = styled.span`
-    color: ${tokens.colors.interactive.primary__resting.rgba};
+export const TagLink = styled.span<{ isOverdue: boolean }>`
+    color: ${(props): string => props.isOverdue
+        ? tokens.colors.interactive.danger__text.rgba
+        : tokens.colors.interactive.primary__resting.rgba};
+
     text-decoration: underline;
     cursor: pointer;
 `;

@@ -16,7 +16,7 @@ const Preservation = (): JSX.Element => {
                 <Router basename={url}>
                     <Switch>
                         <Route
-                            path={'/AddScope'}
+                            path={'/AddScope/:method'}
                             exact
                             component={AddScope}
                         />
@@ -37,4 +37,4 @@ const Preservation = (): JSX.Element => {
     );
 };
 
-export default withAccessControl(Preservation,['PRESERVATION/READ']);
+export default withAccessControl(Preservation, ['PRESERVATION/READ']);

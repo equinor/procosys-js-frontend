@@ -11,3 +11,37 @@ export interface TagDetails {
     purchaseOrderNo: string;
     areaCode: string;
 }
+
+export interface TagRequirement {
+    id: number;
+    intervalWeeks: number;
+    nextDueWeeks: number;
+    requirementTypeCode: string;
+    requirementTypeTitle: string;
+    requirementDefinitionTitle: string;
+    nextDueTimeUtc: Date;
+    nextDueAsYearAndWeek: string;
+    readyToBePreserved: boolean;
+    fields: TagRequirementField[];
+}
+
+export interface TagRequirementField {
+    id: number;
+    label: string;
+    fieldType: string;
+    unit: string | null;
+    showPrevious: boolean;
+    currentValue?:
+    {
+        isChecked: boolean;         // applicable for fieldType = CheckBox
+        isNA: boolean;              // applicable for fieldType = Number
+        value: number | null;       // applicable for fieldType = Number
+    };
+    // previousValue applicable for fieldType = Number
+    previousValue?:
+    {
+        isChecked: boolean;
+        isNA: boolean;
+        value: number | null;
+    };
+}

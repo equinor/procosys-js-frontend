@@ -34,9 +34,6 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    const [disciplines, setDisciplines] = useState<Discipline[]>([]);
-    const [areas, setAreas] = useState<Area[]>([]);
     const [areaType, setAreaType] = useState<SelectItem | undefined>();
     const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
     const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
@@ -68,42 +65,6 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
                 setRequirementTypes(response.data);
             } catch (error) {
                 console.error('Get Requirement Types failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
-            }
-        })();
-
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
-    }, []);
-
-    /** Get disciplines from api */
-    useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            try {
-                const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
-                setDisciplines(data);
-            } catch (error) {
-                console.error('Get Disciplines failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
-            }
-        })();
-
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
-    }, []);
-
-    /** Get areas from api */
-    useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            try {
-                const data = await apiClient.getAreas((cancel: Canceler) => requestCancellor = cancel);
-                setAreas(data);
-            } catch (error) {
-                console.error('Get Areas failed: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -241,8 +202,6 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
                 return <CreateAreaTag
                     nextStep={goToNextStep}
                     setSelectedTags={setSelectedTags}
-                    disciplines={disciplines}
-                    areas={areas}
                     areaType={areaType}
                     setAreaType={setAreaType}
                     discipline={areaTagDiscipline}

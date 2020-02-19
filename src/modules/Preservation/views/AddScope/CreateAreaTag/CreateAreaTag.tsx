@@ -5,6 +5,8 @@ import { Button } from '@equinor/eds-core-react';
 import { TextField } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { Tag, Discipline, Area } from '../types';
+import { Canceler } from 'axios';
+import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 
 
 export const areaTypes: SelectItem[] = [
@@ -19,8 +21,6 @@ type CreateAreaTagProps = {
     setArea: (area?: Area) => void;
     setDescription: (description?: string) => void;
     setSuffix: (suffix: string) => void;
-    disciplines: Discipline[];
-    areas: Area[];
     areaType?: SelectItem;
     discipline?: Discipline;
     area?: Area;
@@ -29,19 +29,56 @@ type CreateAreaTagProps = {
 }
 
 const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
-    const { project } = usePreservationContext();
+    const { apiClient, project } = usePreservationContext();
 
     const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>([]);
     const [mappedAreas, setMappedAreas] = useState<SelectItem[]>([]);
-
     const suffixInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
+    const [disciplines, setDisciplines] = useState<Discipline[]>([]);
+    const [areas, setAreas] = useState<Area[]>([]);
+
+    /** Get disciplines from api */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            try {
+                const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+                setDisciplines(data);
+            } catch (error) {
+                console.error('Get Disciplines failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+    /** Get areas from api */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            try {
+                const data = await apiClient.getAreas((cancel: Canceler) => requestCancellor = cancel);
+                setAreas(data);
+            } catch (error) {
+                console.error('Get Areas failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
 
     //Build tagNo
     let newTagNo = '';
     if (props.areaType && props.discipline && props.description) {
         newTagNo = `${props.areaType.value}-${props.discipline.code}`;
-        if (props.areaType.value === '#PRE' && props.area) {
+        if (props.areaType.value === 'PreArea' && props.area) {
             newTagNo = `${newTagNo}-${props.area.code}`;
         }
         props.suffix ? newTagNo = `${newTagNo}-${props.suffix}` : null;
@@ -55,36 +92,36 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
     /** Map disciplines into select elements */
     useEffect(() => {
-        const mapped = props.disciplines.map((itm: Discipline) => {
+        const mapped = disciplines.map((itm: Discipline) => {
             return {
                 text: itm.description,
                 value: itm.code
             };
         });
         setMappedDisciplines(mapped);
-    }, [props.disciplines]);
+    }, [disciplines]);
 
     /** Map areas into select elements */
     useEffect(() => {
-        const mapped = props.areas.map((itm: Area) => {
+        const mapped = areas.map((itm: Area) => {
             return {
                 text: itm.description,
                 value: itm.code
             };
         });
         setMappedAreas(mapped);
-    }, [props.areas]);
+    }, [areas]);
 
     const setAreaTypeForm = (value: string): void => {
         props.setAreaType(areaTypes.find((p: SelectItem) => p.value === value));
     };
 
     const setDisciplineForm = (value: string): void => {
-        props.setDiscipline(props.disciplines.find((p: Discipline) => p.code === value));
+        props.setDiscipline(disciplines.find((p: Discipline) => p.code === value));
     };
 
     const setAreaForm = (value: string): void => {
-        props.setArea(props.areas.find((p: Area) => p.code === value));
+        props.setArea(areas.find((p: Area) => p.code === value));
     };
 
     const nextStep = (): void => {
@@ -123,7 +160,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                         </SelectInput>
                     </FormFieldSpacer>
                     <FormFieldSpacer>
-                        {(props.areaType !== undefined && props.areaType.value === '#PRE') &&
+                        {(props.areaType !== undefined && props.areaType.value === 'PreArea') &&
                             <SelectInput
                                 onChange={setAreaForm}
                                 data={mappedAreas}

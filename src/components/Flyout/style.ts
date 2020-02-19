@@ -19,6 +19,8 @@ export const FlyoutContainer = styled.div`
     top: 0;
     width: 30%;
     height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     opacity: 0;
     transition: opacity 0.5s;

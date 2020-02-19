@@ -36,7 +36,7 @@ interface PreservedTag {
     responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
-    isTransferable: boolean;
+    readyToBeTransferred: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
         nextDueWeeks: number;
@@ -84,48 +84,41 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject(availableProjects[index].id);
     };
 
-    const startPreservation = (): void => {
+    const startPreservation = async (): Promise<void> => {
         try {
-            apiClient.startPreservation(selectedTags.map(t => t.id)).then(
-                () => {
-                    setSelectedTags([]);
-                    getTags().then(
-                        () => {
-                            showSnackbarNotification(
-                                'Status was set to \'Active\' for selected tags.',
-                                5000
-                            );
-                        }
-                    );
-                }
-            );
+            await apiClient.startPreservation(selectedTags.map(t => t.id));
+            setSelectedTags([]);
+            getTags().then(() => {
+                showSnackbarNotification('Status was set to \'Active\' for selected tags.', 5000);
+            });
         } catch (error) {
             console.error('Start preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        return Promise.resolve();
     };
 
-    const transfer = (): void => {
-        apiClient.transfer(selectedTags.map(t => t.id)).then(
-            () => {
-                setSelectedTags([]);
-                getTags().then(
-                    () => {
-                        showSnackbarNotification(
-                            `${selectedTags.length} tags has been transferd successfully.`,
-                            5000
-                        );
-                    }
-                );
-            }
-        );
+    const transfer = async (): Promise<void> => {
+        setIsLoading(true);
+        try {
+            await apiClient.transfer(selectedTags.map(t => t.id));
+            setSelectedTags([]);
+            getTags().then(() => {
+                showSnackbarNotification(`${selectedTags.length} tags has been transferd successfully.`, 5000);
+            });
+        } catch (error) {
+            console.error('Transfer failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        setIsLoading(false);
+        return Promise.resolve();
     };
 
     const transferDialog = (): void => {
         //Verify that all selected tags can be transfered
         let numTagsNotTransferable = 0;
         selectedTags.forEach(tag => {
-            if (tag.isTransferable === false) {
+            if (tag.readyToBeTransferred === false) {
                 numTagsNotTransferable++;
             }
         });
@@ -136,25 +129,18 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
-    const preservedThisWeek = (): void => {
+    const preservedThisWeek = async (): Promise<void> => {
         try {
-            apiClient.preserve(selectedTags.map(t => t.id)).then(
-                () => {
-                    setSelectedTags([]);
-                    getTags().then(
-                        () => {
-                            showSnackbarNotification(
-                                'Selected tags have been preserved for this week.',
-                                5000
-                            );
-                        }
-                    );
-                }
-            );
+            await apiClient.preserve(selectedTags.map(t => t.id));
+            setSelectedTags([]);
+            getTags().then(() => {
+                showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
+            });
         } catch (error) {
             console.error('Preserve failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        return Promise.resolve();
     };
 
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {

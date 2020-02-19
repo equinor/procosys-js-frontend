@@ -56,10 +56,11 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
 };
 
 /**
- * Displays a snackbar notification at the bottom of the page, left aligned.
- * Only the last snackbar notification will show.
- *
+ * Displays a popup modal box in the center of the page.
  * @param message Message to display
+ * @param cancelText  Text on cancel button. 
+ * @param confirmText   Text on confirm button. 
+ * @param confirmFunction  Function that will be called when clicking on confirm button. 
  */
 export const showModalDialog = (
     message: string,

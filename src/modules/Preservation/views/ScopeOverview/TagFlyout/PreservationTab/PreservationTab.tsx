@@ -31,6 +31,12 @@ const PreservationTab = ({
         }
     };
 
+    const isReadOnly = (): boolean => {
+        return tagDetails 
+            ? tagDetails.status.toLowerCase() !== 'active' 
+            : false;
+    };
+
     useEffect(() => {
         if (tagId !== null) {
             getTagRequirements(tagId);
@@ -73,7 +79,7 @@ const PreservationTab = ({
             <RemarkContainer>
                 <TextField id='remark' label='Remark' disabled />
             </RemarkContainer>
-            <Requirements requirements={tagRequirements} />
+            <Requirements requirements={tagRequirements} readonly={isReadOnly()} />
         </Container>
     );
 };

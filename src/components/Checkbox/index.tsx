@@ -5,17 +5,19 @@ import { Container, Checkmark } from './style';
 interface CheckboxProps {
     children?: ReactNode;
     checked?: boolean;
+    disabled?: boolean;
 }
 
 const Checkbox = ({
     children,
-    checked = false
+    checked = false,
+    disabled = false
 }: CheckboxProps): JSX.Element => {
     return (
-        <Container>
+        <Container disabled={disabled}>
             { children }
-            <input type="checkbox" defaultChecked={checked} />
-            <Checkmark className="checkmark" />
+            <input type="checkbox" defaultChecked={checked} disabled={disabled} />
+            <Checkmark className="checkmark" disabled={disabled} />
         </Container>
     );
 };

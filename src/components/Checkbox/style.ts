@@ -1,12 +1,17 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.label`
+interface CheckboxStyleProps {
+    disabled: boolean;
+}
+
+export const Container = styled.label<CheckboxStyleProps>`
     /* The container */
     display: block;
     position: relative;
     padding-left: calc(var(--grid-unit) * 4);
-    cursor: pointer;
+    
+    cursor: ${(props): string => props.disabled ? 'not-allowed' : 'pointer'};
 
     /* Hide the browser's default checkbox */
     input {
@@ -18,9 +23,11 @@ export const Container = styled.label`
     }
 
     /* On mouse-over, add a background color */
-    :hover input ~ .checkmark {
-        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-    }
+    ${(props): any => !props.disabled && css`
+        :hover input ~ .checkmark {
+            background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+        }
+    `}
 
     /* When the checkbox is checked, add a fill background */
     input:checked ~ .checkmark {
@@ -46,7 +53,7 @@ export const Container = styled.label`
     }
 `;
 
-export const Checkmark = styled.span`
+export const Checkmark = styled.span<CheckboxStyleProps>`
     /* Create a custom checkbox */
     position: absolute;
     top: 0;
@@ -55,7 +62,10 @@ export const Checkmark = styled.span`
     width: calc(var(--grid-unit) * 2);
     background-color: ${tokens.colors.ui.background__default.rgba};
     border-radius: 3px;
-    border: solid 2px ${tokens.colors.interactive.primary__resting.rgba};
+
+    border: solid 2px ${(props): string => props.disabled
+        ? tokens.colors.interactive.disabled__fill.rgba
+        : tokens.colors.interactive.primary__resting.rgba};
 
     /* Create the checkmark/indicator (hidden when not checked) */
     :after {

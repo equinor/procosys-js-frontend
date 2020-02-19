@@ -9,10 +9,12 @@ import { Container, Section, Field, NextInfo } from './Requirements.style';
 
 interface RequirementProps {
     requirements: TagRequirement[] | undefined;
+    readonly: boolean;
 }
 
 const Requirements = ({
-    requirements
+    requirements,
+    readonly
 }: RequirementProps): JSX.Element => {
 
     const getNumberField = (field: TagRequirementField): JSX.Element => {
@@ -34,6 +36,7 @@ const Requirements = ({
                         label={field.label}
                         meta={`(${field.unit})`}
                         defaultValue={currentValue}
+                        disabled={readonly}
                     />
                 </div>
                 {
@@ -56,7 +59,7 @@ const Requirements = ({
         const isChecked = field.currentValue && field.currentValue.isChecked;
 
         return (
-            <Checkbox checked={isChecked}>
+            <Checkbox checked={isChecked} disabled={readonly}>
                 <Typography variant='body_long'>{field.label}</Typography>
             </Checkbox>
         );
@@ -134,6 +137,7 @@ const Requirements = ({
                                     id={`requirementComment${requirement.id}`}
                                     label='Comment for this preservation period (optional)'
                                     placeholder='Write here'
+                                    disabled={readonly}
                                 />
                             </Section>
                             <Section>

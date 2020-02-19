@@ -16,6 +16,7 @@ import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import Table from './../../../../components/Table';
 import TagFlyout from './TagFlyout/TagFlyout';
+import { showModalDialog } from '../../../../core/services/ModalDialogService';
 
 interface PreservedTag {
     id: number;
@@ -35,6 +36,7 @@ interface PreservedTag {
     responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
+    isTransferable: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
         nextDueWeeks: number;
@@ -93,6 +95,37 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         );
     };
 
+    const transfer = (): void => {
+        apiClient.transfer(selectedTags.map(t => t.id)).then(
+            () => {
+                setSelectedTags([]);
+                getTags().then(
+                    () => {
+                        showSnackbarNotification(
+                            `${selectedTags.length} tags has been transferd successfully.`,
+                            5000
+                        );
+                    }
+                );
+            }
+        );
+    };
+
+    const transferDialog = (): void => {
+        //Verify that all selected tags can be transfered
+        let numTagsNotTransferable = 0;
+        selectedTags.forEach(tag => {
+            if (tag.isTransferable === false) {
+                numTagsNotTransferable++;
+            }
+        });
+        if (numTagsNotTransferable == 0) {
+            showModalDialog(`${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`, 'Back to list', 'Transfer', transfer);
+        } else {
+            showModalDialog(`${numTagsNotTransferable} tag(s) are not transferable.`, 'Back to list');
+        }
+    };
+
     const preservedThisWeek = (): void => {
         apiClient.preserve(selectedTags.map(t => t.id)).then(
             () => {
@@ -112,7 +145,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
         setSelectedTags(selectedTags);
     };
-    
+
     const closeFlyout = (): void => {
         setDisplayFlyout(false);
     };
@@ -143,14 +176,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <TagLink 
+            <TagLink
                 onClick={(): void => {
                     setFlyoutTagId(tag.id);
                     setDisplayFlyout(true);
                 }}
             >
                 {tag.tagNo}
-            </TagLink> 
+            </TagLink>
         );
     };
 
@@ -207,7 +240,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <PlayArrowOutlinedIcon />
                     </IconButton>
                     <IconButton
-                        disabled>
+                        onClick={(): void => {
+                            transferDialog();
+                        }}
+                        disabled={selectedTags.length < 1}>
                         <CompareArrowsOutlinedIcon />
                     </IconButton>
                     <IconButton
@@ -226,10 +262,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </HeaderContainer>
             <Table
                 columns={[
-                    { 
-                        title: 'Tag nr', 
+                    {
+                        title: 'Tag nr',
                         field: 'tagNo',
-                        render: getTagNoColumn                                             
+                        render: getTagNoColumn
                     },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
@@ -268,7 +304,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 displayFlyout && (
                     <Flyout
                         close={closeFlyout}>
-                        <TagFlyout 
+                        <TagFlyout
                             close={closeFlyout}
                             tagId={flyoutTagId}
                         />

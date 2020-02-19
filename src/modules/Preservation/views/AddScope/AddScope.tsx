@@ -13,7 +13,11 @@ import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 
-const AddScope = (props: any): JSX.Element => {
+type AddScopeProps = {
+    match: any;
+};
+
+const AddScope = (props: AddScopeProps): JSX.Element => {
 
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
@@ -42,8 +46,13 @@ const AddScope = (props: any): JSX.Element => {
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            const data = await apiClient.getJourneys((cancel: Canceler) => requestCancellor = cancel);
-            setJourneys(data);
+            try {
+                const data = await apiClient.getJourneys((cancel: Canceler) => requestCancellor = cancel);
+                setJourneys(data);
+            } catch (error) {
+                console.error('Get Journeys failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
         })();
 
         return (): void => {
@@ -54,8 +63,13 @@ const AddScope = (props: any): JSX.Element => {
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
-            setRequirementTypes(response.data);
+            try {
+                const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
+                setRequirementTypes(response.data);
+            } catch (error) {
+                console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
         })();
 
         return (): void => {
@@ -67,8 +81,13 @@ const AddScope = (props: any): JSX.Element => {
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
-            setDisciplines(data);
+            try {
+                const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+                setDisciplines(data);
+            } catch (error) {
+                console.error('Get Disciplines failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
         })();
 
         return (): void => {
@@ -80,8 +99,13 @@ const AddScope = (props: any): JSX.Element => {
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            const data = await apiClient.getAreas((cancel: Canceler) => requestCancellor = cancel);
-            setAreas(data);
+            try {
+                const data = await apiClient.getAreas((cancel: Canceler) => requestCancellor = cancel);
+                setAreas(data);
+            } catch (error) {
+                console.error('Get Areas failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
         })();
 
         return (): void => {
@@ -117,7 +141,7 @@ const AddScope = (props: any): JSX.Element => {
         });
     };
 
-    const submitAddTagsManually = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
+    const submitAddTagsManually = async (stepId: number, requirements: Requirement[], remark?: string): Promise<void> => {
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
             await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
@@ -130,10 +154,10 @@ const AddScope = (props: any): JSX.Element => {
         return Promise.resolve();
     };
 
-    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark: string | null): Promise<void> => {
+    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], description?: string, remark?: string): Promise<void> => {
         try {
             const tagNo = selectedTags[0].tagNo;
-            await apiClient.preserveNewAreaTag(areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, stepId, requirements, project.name, remark);
+            await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, description, remark);
             showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
@@ -145,19 +169,22 @@ const AddScope = (props: any): JSX.Element => {
 
     const searchTags = async (tagNo: string | null): Promise<void> => {
         setIsLoading(true);
-        let result: TagRow[] = [];
+        try {
+            let result: TagRow[] = [];
+            if (tagNo && tagNo.length > 0) {
+                result = await apiClient.getTagsForAddPreservationScope(project.name, tagNo);
 
-        if (tagNo && tagNo.length > 0) {
-            result = await apiClient.getTagsForAddPreservationScope(project.name, tagNo);
-
-            if (result.length === 0) {
-                showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
+                if (result.length === 0) {
+                    showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
+                }
             }
+            setSelectedTags([]);
+            setScopeTableData(result);
+        } catch (error) {
+            console.error('Search tags failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
         }
-
         setIsLoading(false);
-        setSelectedTags([]);
-        setScopeTableData(result);
     };
 
     const removeSelectedTag = (tagNo: string): void => {

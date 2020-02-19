@@ -61,8 +61,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const getTags = async (): Promise<void> => {
         setIsLoading(true);
-        const tags = await apiClient.getPreservedTags(project.name);
-        setTags(tags);
+        try {
+            const tags = await apiClient.getPreservedTags(project.name);
+            setTags(tags);
+        } catch (error) {
+            console.error('Get tags failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
         setIsLoading(false);
     };
 
@@ -78,41 +83,51 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const startPreservation = (): void => {
-        apiClient.startPreservation(selectedTags.map(t => t.id)).then(
-            () => {
-                setSelectedTags([]);
-                getTags().then(
-                    () => {
-                        showSnackbarNotification(
-                            'Status was set to \'Active\' for selected tags.',
-                            5000
-                        );
-                    }
-                );
-            }
-        );
+        try {
+            apiClient.startPreservation(selectedTags.map(t => t.id)).then(
+                () => {
+                    setSelectedTags([]);
+                    getTags().then(
+                        () => {
+                            showSnackbarNotification(
+                                'Status was set to \'Active\' for selected tags.',
+                                5000
+                            );
+                        }
+                    );
+                }
+            );
+        } catch (error) {
+            console.error('Start preservation failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
     };
 
     const preservedThisWeek = (): void => {
-        apiClient.preserve(selectedTags.map(t => t.id)).then(
-            () => {
-                setSelectedTags([]);
-                getTags().then(
-                    () => {
-                        showSnackbarNotification(
-                            'Selected tags have been preserved for this week.',
-                            5000
-                        );
-                    }
-                );
-            }
-        );
+        try {
+            apiClient.preserve(selectedTags.map(t => t.id)).then(
+                () => {
+                    setSelectedTags([]);
+                    getTags().then(
+                        () => {
+                            showSnackbarNotification(
+                                'Selected tags have been preserved for this week.',
+                                5000
+                            );
+                        }
+                    );
+                }
+            );
+        } catch (error) {
+            console.error('Preserve failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
     };
 
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
         setSelectedTags(selectedTags);
     };
-    
+
     const closeFlyout = (): void => {
         setDisplayFlyout(false);
     };
@@ -143,14 +158,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <TagLink 
+            <TagLink
                 onClick={(): void => {
                     setFlyoutTagId(tag.id);
                     setDisplayFlyout(true);
                 }}
             >
                 {tag.tagNo}
-            </TagLink> 
+            </TagLink>
         );
     };
 
@@ -226,10 +241,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </HeaderContainer>
             <Table
                 columns={[
-                    { 
-                        title: 'Tag nr', 
+                    {
+                        title: 'Tag nr',
                         field: 'tagNo',
-                        render: getTagNoColumn                                             
+                        render: getTagNoColumn
                     },
                     { title: 'Description', field: 'description' },
                     { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
@@ -268,7 +283,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 displayFlyout && (
                     <Flyout
                         close={closeFlyout}>
-                        <TagFlyout 
+                        <TagFlyout
                             close={closeFlyout}
                             tagId={flyoutTagId}
                         />

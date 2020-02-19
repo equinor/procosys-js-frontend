@@ -261,14 +261,8 @@ class PreservationApiClient extends ApiClient {
                 remark
             });
         } catch (error) {
-            if (error.response.status == 500) {
-                throw new PreservationApiError(error.response.data);
-            }
-            const response = error.response.data as ErrorResponse;
-            const errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
-            throw new PreservationApiError(errorMessage, response);
+            throw getPreservationApiError(error);
         }
-
     }
 
     /**
@@ -277,10 +271,11 @@ class PreservationApiClient extends ApiClient {
     * @param tagNo List of Tag Numbers
     * @param diciplineCode Dicipline code
     * @param areaCode Area code
-    * @param tagNoFreetext  TagNo freetext
+    * @param tagNoSuffix  TagNo suffix
     * @param stepId Step ID
     * @param requirements List of Requirements
     * @param projectName Name of affected project
+    * @param description Description of new tag
     * @param remark Optional: Remark for all tags
     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
     *
@@ -288,14 +283,15 @@ class PreservationApiClient extends ApiClient {
     * @throws PreservationApiError
     */
     async preserveNewAreaTag(
-        areaType: string,
-        disciplineCode: string | undefined,
-        areaCode: string | undefined,
-        freetext: string | undefined,
+        areaTagType: string,
         stepId: number,
         requirements: PreserveTagRequirement[],
         projectName: string,
-        remark?: string | null,
+        disciplineCode?: string,
+        areaCode?: string,
+        suffix?: string,
+        description?: string,
+        remark?: string,
         setRequestCanceller?: RequestCanceler): Promise<void> {
 
         const endpoint = '/Tags/Area';
@@ -303,24 +299,19 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             await this.client.post(endpoint, {
-                areaType: areaType,
+                projectName: projectName,
+                areaTagType: areaTagType,
                 disciplineCode: disciplineCode,
                 areaCode: areaCode,
-                tagNoFreetext: freetext,
-                projectName: projectName,
+                tagNoSuffix: suffix,
                 stepId: stepId,
                 requirements,
+                description,
                 remark
             });
         } catch (error) {
-            if (error.response.status == 500) {
-                throw new PreservationApiError(error.response.data);
-            }
-            const response = error.response.data as ErrorResponse;
-            const errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
-            throw new PreservationApiError(errorMessage, response);
+            throw getPreservationApiError(error);
         }
-
     }
 
     /**
@@ -340,11 +331,16 @@ class PreservationApiClient extends ApiClient {
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
-        const result = await this.client.get<PreservedTagResponse[]>(
-            endpoint,
-            settings
-        );
-        return result.data;
+        try {
+            const result = await this.client.get<PreservedTagResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**
@@ -354,7 +350,12 @@ class PreservationApiClient extends ApiClient {
     async startPreservation(tags: number[]): Promise<void> {
         const endpoint = '/Tags/StartPreservation';
         const settings: AxiosRequestConfig = {};
-        await this.client.put(endpoint, tags, settings);
+        try {
+            await this.client.put(endpoint, tags, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**
@@ -364,7 +365,12 @@ class PreservationApiClient extends ApiClient {
     async preserve(tags: number[]): Promise<void> {
         const endpoint = '/Tags/BulkPreserve';
         const settings: AxiosRequestConfig = {};
-        await this.client.put(endpoint, tags, settings);
+        try {
+            await this.client.put(endpoint, tags, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**
@@ -376,8 +382,13 @@ class PreservationApiClient extends ApiClient {
         const endpoint = '/Journeys';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<JourneyResponse[]>(endpoint, settings);
-        return result.data;
+        try {
+            const result = await this.client.get<JourneyResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     async getTagsForAddPreservationScope(
@@ -393,11 +404,17 @@ class PreservationApiClient extends ApiClient {
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<TagSearchResponse[]>(
-            endpoint,
-            settings
-        );
-        return result.data;
+
+        try {
+            const result = await this.client.get<TagSearchResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     async getPreservedTagDetails(tagId: number, setRequestCanceller?: RequestCanceler): Promise<PreservedTagDetailsResponse> {
@@ -428,8 +445,14 @@ class PreservationApiClient extends ApiClient {
             }
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
-        return result.data;
+
+        try {
+            const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**
@@ -441,8 +464,14 @@ class PreservationApiClient extends ApiClient {
         const endpoint = '/Disciplines';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
-        return result.data;
+
+        try {
+            const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**
@@ -451,12 +480,19 @@ class PreservationApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getAreas(setRequestCanceller?: RequestCanceler): Promise<AreaResponse[]> {
-        const endpoint = '/AreaCodes';
+        const endpoint = '/Areas';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        const result = await this.client.get<AreaResponse[]>(endpoint, settings);
-        return result.data;
+
+        try {
+            const result = await this.client.get<AreaResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
+
 }
 
 export default PreservationApiClient;

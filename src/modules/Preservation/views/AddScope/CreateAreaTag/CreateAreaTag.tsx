@@ -8,24 +8,24 @@ import { Tag, Discipline, Area } from '../types';
 
 
 export const areaTypes: SelectItem[] = [
-    { text: 'Normal', value: '#PRE' },
-    { text: 'Site', value: '#SITE' }];
+    { text: 'Normal', value: 'PreArea' },
+    { text: 'Site', value: 'SiteArea' }];
 
 type CreateAreaTagProps = {
     nextStep: () => void;
     setSelectedTags: (tags: Tag[]) => void;
+    setAreaType: (areaType?: SelectItem) => void;
+    setDiscipline: (discipline?: Discipline) => void;
+    setArea: (area?: Area) => void;
+    setDescription: (description?: string) => void;
+    setSuffix: (suffix: string) => void;
     disciplines: Discipline[];
     areas: Area[];
-    areaType: SelectItem | undefined;
-    setAreaType: (areaType: SelectItem | undefined) => void;
-    discipline: Discipline | undefined;
-    setDiscipline: (discipline: Discipline | undefined) => void;
-    area: Area | undefined;
-    setArea: (area: Area | undefined) => void;
-    suffix: string | undefined;
-    setSuffix: (suffix: string | undefined) => void;
-    description: string | undefined;
-    setDescription: (description: string | undefined) => void;
+    areaType?: SelectItem;
+    discipline?: Discipline;
+    area?: Area;
+    suffix?: string;
+    description?: string;
 }
 
 const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {

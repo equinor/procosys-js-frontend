@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
-import { TagDetails, TagRequirement } from './../types';
+import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
 import Spinner from '../../../../../../components/Spinner';
 import { usePreservationContext } from '../../../../context/PreservationContext';
@@ -27,6 +27,27 @@ const PreservationTab = ({
         }
         catch (error) {
             console.error(`Get TagRequirements failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
+
+    const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
+        try {
+            setTagRequirements(undefined);
+            values.tagId = tagId;
+
+            apiClient.recordTagRequirementValues(values)
+                .then(() => {
+                    if (tagId !== null) {
+                        getTagRequirements(tagId);
+                    }
+
+                    // TODO: Snackbar message inside flyout
+                });
+        }
+        catch (error) {
+            // TODO: error is not properly thrown... (bad request)
+            console.error(`Record TagRequirement values failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000);
         }
     };
@@ -79,7 +100,11 @@ const PreservationTab = ({
             <RemarkContainer>
                 <TextField id='remark' label='Remark' disabled />
             </RemarkContainer>
-            <Requirements requirements={tagRequirements} readonly={isReadOnly()} />
+            <Requirements 
+                requirements={tagRequirements} 
+                readonly={isReadOnly()} 
+                recordTagRequirementValues={recordTagRequirementValues} 
+            />
         </Container>
     );
 };

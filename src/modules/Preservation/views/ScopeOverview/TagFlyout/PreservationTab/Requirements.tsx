@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { TagRequirement, TagRequirementField } from './../types';
+import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
 import Checkbox from './../../../../../../components/Checkbox';
 import PreservationIcon from '../../../PreservationIcon';
 import Spinner from '../../../../../../components/Spinner';
@@ -10,6 +10,7 @@ import { Container, Section, Field, NextInfo } from './Requirements.style';
 interface RequirementProps {
     requirements: TagRequirement[] | undefined;
     readonly: boolean;
+    recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
 }
 
 interface FieldValue {
@@ -25,10 +26,11 @@ interface RequirementValues {
 
 const Requirements = ({
     requirements,
-    readonly
+    readonly,
+    recordTagRequirementValues
 }: RequirementProps): JSX.Element => {
 
-    const [requirementValues, setRequirementValues] = useState<RequirementValues[]>([]);
+    const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
 
     const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -47,6 +49,7 @@ const Requirements = ({
             }
         } else {
             newRequirementValues.push({
+                tagId: null,
                 requirementId: requirementId,
                 comment: null,
                 fieldValues: [
@@ -69,6 +72,7 @@ const Requirements = ({
             requirement.comment = comment;
         } else {
             newRequirementValues.push({
+                tagId: null,
                 requirementId: requirementId,
                 comment: comment,
                 fieldValues: []
@@ -78,7 +82,7 @@ const Requirements = ({
         setRequirementValues(newRequirementValues);
     };    
 
-    const recordRequirementValues = (requirementId: number): void => {
+    const saveRequirement = (requirementId: number): void => {
         const requirement = requirementValues.find(req => req.requirementId == requirementId);
 
         if (!requirement) {
@@ -86,7 +90,7 @@ const Requirements = ({
             return;
         }
 
-        console.log('TODO: save', requirement);
+        recordTagRequirementValues(requirement);
     };
 
     const isSaveButtonEnabled = (requirementId: number): boolean => {
@@ -94,8 +98,7 @@ const Requirements = ({
             return false;
         }
 
-        const requirementHasValue = requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
-        return requirementHasValue;
+        return requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
     };
 
     const getNumberField = (requirementId: number, field: TagRequirementField): JSX.Element => {
@@ -237,7 +240,7 @@ const Requirements = ({
                                 <div style={{display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end'}}>
                                     <Button 
                                         disabled={!isSaveButtonEnabled(requirement.id)} 
-                                        onClick={(): void => recordRequirementValues(requirement.id)}
+                                        onClick={(): void => saveRequirement(requirement.id)}
                                     >
                                         Save
                                     </Button>

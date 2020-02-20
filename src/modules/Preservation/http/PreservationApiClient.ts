@@ -149,6 +149,18 @@ interface PreserveTagRequirement {
     intervalWeeks: number;
 }
 
+interface TagRequirementRecordValues {
+    tagId: number | null;
+    requirementId: number;
+    comment: string | null;
+    fieldValues: RecordFieldValue[];
+}
+
+interface RecordFieldValue {
+    fieldId: number;
+    value: string;
+}
+
 interface ErrorResponse {
     ErrorCount: number;
     Errors: {
@@ -464,6 +476,25 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async recordTagRequirementValues(recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${recordValues.tagId}/Requirement/${recordValues.requirementId}/RecordValues`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.post(
+                endpoint,
+                {
+                    fieldValues: recordValues.fieldValues,
+                    comment: recordValues.comment
+                },
+                settings
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

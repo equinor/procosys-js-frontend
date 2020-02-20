@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagRequirement, TagRequirementField } from './../types';
@@ -12,12 +12,93 @@ interface RequirementProps {
     readonly: boolean;
 }
 
+interface FieldValue {
+    fieldId: number;
+    value: string;
+}
+
+interface RequirementValues {
+    requirementId: number;
+    comment: string | null;
+    fieldValues: FieldValue[];
+}
+
 const Requirements = ({
     requirements,
     readonly
 }: RequirementProps): JSX.Element => {
 
-    const getNumberField = (field: TagRequirementField): JSX.Element => {
+    const [requirementValues, setRequirementValues] = useState<RequirementValues[]>([]);
+
+    const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
+        const newRequirementValues = [...requirementValues];
+        const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
+
+        if (requirement) {
+            const fieldIndex =  requirement.fieldValues.findIndex(field => field.fieldId == fieldId);
+
+            if (fieldIndex > -1) {
+                requirement.fieldValues[fieldIndex].value = value;
+            } else {
+                requirement.fieldValues.push({
+                    fieldId: fieldId,
+                    value: value
+                });
+            }
+        } else {
+            newRequirementValues.push({
+                requirementId: requirementId,
+                comment: null,
+                fieldValues: [
+                    {
+                        fieldId: fieldId,
+                        value: value
+                    }
+                ]
+            });
+        }
+
+        setRequirementValues(newRequirementValues);
+    };
+
+    const setComment = (requirementId: number, comment: string): void => {
+        const newRequirementValues = [...requirementValues];
+        const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
+
+        if (requirement) {
+            requirement.comment = comment;
+        } else {
+            newRequirementValues.push({
+                requirementId: requirementId,
+                comment: comment,
+                fieldValues: []
+            });
+        }
+
+        setRequirementValues(newRequirementValues);
+    };    
+
+    const recordRequirementValues = (requirementId: number): void => {
+        const requirement = requirementValues.find(req => req.requirementId == requirementId);
+
+        if (!requirement) {
+            console.error(`No values to record found for requirementId ${requirementId}`);
+            return;
+        }
+
+        console.log('TODO: save', requirement);
+    };
+
+    const isSaveButtonEnabled = (requirementId: number): boolean => {
+        if (readonly) {
+            return false;
+        }
+
+        const requirementHasValue = requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
+        return requirementHasValue;
+    };
+
+    const getNumberField = (requirementId: number, field: TagRequirementField): JSX.Element => {
         let currentValue: string | number | null = '';
         if (field.currentValue) {
             currentValue = field.currentValue.isNA ? 'N/A' : field.currentValue.value;
@@ -37,6 +118,9 @@ const Requirements = ({
                         meta={`(${field.unit})`}
                         defaultValue={currentValue}
                         disabled={readonly}
+                        onChange={(event: React.FormEvent<HTMLInputElement>): void => {
+                            setFieldValue(requirementId, field.id, event.currentTarget.value);
+                        }}
                     />
                 </div>
                 {
@@ -55,24 +139,30 @@ const Requirements = ({
         );
     };
 
-    const getCheckboxField = (field: TagRequirementField): JSX.Element => {
+    const getCheckboxField = (requirementId: number, field: TagRequirementField): JSX.Element => {
         const isChecked = field.currentValue && field.currentValue.isChecked;
 
         return (
-            <Checkbox checked={isChecked} disabled={readonly}>
+            <Checkbox 
+                checked={isChecked} 
+                disabled={readonly}
+                onChange={(event: React.FormEvent<HTMLInputElement>): void => {
+                    setFieldValue(requirementId, field.id, event.currentTarget.checked.toString());
+                }}
+            >
                 <Typography variant='body_long'>{field.label}</Typography>
             </Checkbox>
         );
     };
 
-    const getRequirementField = (field: TagRequirementField): JSX.Element => {
+    const getRequirementField = (requirementId: number, field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
             case 'info':
                 return <Typography variant='body_long'>{field.label}</Typography>;
             case 'checkbox':
-                return getCheckboxField(field);
+                return getCheckboxField(requirementId, field);
             case 'number':
-                return getNumberField(field);
+                return getNumberField(requirementId, field);
             default:
                 return <div>Unknown field type</div>;
         }
@@ -125,7 +215,7 @@ const Requirements = ({
                                         return (
                                             <Field key={field.id}>
                                                 {
-                                                    getRequirementField(field)
+                                                    getRequirementField(requirement.id, field)
                                                 }
                                             </Field>
                                         );
@@ -138,12 +228,25 @@ const Requirements = ({
                                     label='Comment for this preservation period (optional)'
                                     placeholder='Write here'
                                     disabled={readonly}
+                                    onChange={(event: React.FormEvent<HTMLInputElement>): void => {
+                                        setComment(requirement.id, event.currentTarget.value);
+                                    }}
                                 />
                             </Section>
                             <Section>
                                 <div style={{display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end'}}>
-                                    <Button disabled>Save</Button>
-                                    <Button disabled style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>Preserved this week</Button>
+                                    <Button 
+                                        disabled={!isSaveButtonEnabled(requirement.id)} 
+                                        onClick={(): void => recordRequirementValues(requirement.id)}
+                                    >
+                                        Save
+                                    </Button>
+                                    <Button 
+                                        disabled 
+                                        style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}
+                                    >
+                                        Preserved this week
+                                    </Button>
                                 </div>
                             </Section>
                         </Container>

@@ -9,11 +9,14 @@ document.body.appendChild(snackbarContainer);
 
 interface NotificationProps {
     message?: string;
+    displayRight: boolean;
 }
 
 const Notification = (props: NotificationProps): JSX.Element => {
     return (
-        <StyledSnackbarNotification>{props.message}</StyledSnackbarNotification>
+        <StyledSnackbarNotification displayRight={props.displayRight}>
+            {props.message}
+        </StyledSnackbarNotification>
     );
 };
 
@@ -26,10 +29,11 @@ const Notification = (props: NotificationProps): JSX.Element => {
  */
 export const showSnackbarNotification = (
     message: string,
-    duration: number
+    duration: number,
+    displayRight = false
 ): any => {
     clearTimeout(lastTimeoutId);
-    render(<Notification message={message} />, snackbarContainer);
+    render(<Notification message={message} displayRight={displayRight} />, snackbarContainer);
 
     lastTimeoutId = setTimeout(() => {
         render(<></>, snackbarContainer);

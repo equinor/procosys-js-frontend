@@ -142,6 +142,7 @@ interface TagRequirementsResponse {
             };
         }
     ];
+    comment: string;
 }
 
 interface PreserveTagRequirement {

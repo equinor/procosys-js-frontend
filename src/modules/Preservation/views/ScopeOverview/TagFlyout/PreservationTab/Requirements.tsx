@@ -13,17 +13,6 @@ interface RequirementProps {
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
 }
 
-interface FieldValue {
-    fieldId: number;
-    value: string;
-}
-
-interface RequirementValues {
-    requirementId: number;
-    comment: string | null;
-    fieldValues: FieldValue[];
-}
-
 const Requirements = ({
     requirements,
     readonly,
@@ -49,7 +38,7 @@ const Requirements = ({
             }
         } else {
             newRequirementValues.push({
-                tagId: null,
+                tagId: null, // will be provided by PreservationTab
                 requirementId: requirementId,
                 comment: null,
                 fieldValues: [
@@ -72,7 +61,7 @@ const Requirements = ({
             requirement.comment = comment;
         } else {
             newRequirementValues.push({
-                tagId: null,
+                tagId: null, // will be provided by PreservationTab
                 requirementId: requirementId,
                 comment: comment,
                 fieldValues: []
@@ -89,6 +78,9 @@ const Requirements = ({
             console.error(`No values to record found for requirementId ${requirementId}`);
             return;
         }
+
+        // reset values before save (prepare for subsequent edits)
+        setRequirementValues([]);
 
         recordTagRequirementValues(requirement);
     };
@@ -231,6 +223,7 @@ const Requirements = ({
                                     label='Comment for this preservation period (optional)'
                                     placeholder='Write here'
                                     disabled={readonly}
+                                    defaultValue={requirement.comment}
                                     onChange={(event: React.FormEvent<HTMLInputElement>): void => {
                                         setComment(requirement.id, event.currentTarget.value);
                                     }}

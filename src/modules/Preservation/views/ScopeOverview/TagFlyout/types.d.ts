@@ -23,6 +23,7 @@ export interface TagRequirement {
     nextDueAsYearAndWeek: string;
     readyToBePreserved: boolean;
     fields: TagRequirementField[];
+    comment: string;
 }
 
 export interface TagRequirementField {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, Header, Tabs, StatusLabel, HeaderActions } from './TagFlyout.style';
+import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon } from './TagFlyout.style';
 import PreservationTab from './PreservationTab/PreservationTab';
 import CloseIcon from '@material-ui/icons/Close';
-import { Button } from '@equinor/eds-core-react';
+import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
+import { Button, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import { TagDetails } from './types';
@@ -53,8 +54,27 @@ const TagFlyout = ({
         }
     };
 
+    const showHeaderNotification = (): boolean => {
+        if (tagDetails) {
+            return tagDetails.status.toLowerCase() === 'notstarted';
+        }
+
+        return false;
+    };
+
     return (
         <Container style={{display: 'flex', flexDirection: 'column'}}>
+            {
+                showHeaderNotification() &&
+                <HeaderNotification>
+                    <NotificationIcon>
+                        <NotificationsOutlinedIcon />
+                    </NotificationIcon>
+                    <Typography variant='body_long' style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>
+                        This tag is not being preserved yet. Click start preservation to enable writing preservation records.
+                    </Typography>                
+                </HeaderNotification>
+            }
             <Header>
                 <h1>
                     {tagDetails ? tagDetails.tagNo : '-'}

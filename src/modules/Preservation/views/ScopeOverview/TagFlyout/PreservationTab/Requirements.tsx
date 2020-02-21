@@ -26,7 +26,7 @@ const Requirements = ({
         const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
 
         if (requirement) {
-            const fieldIndex =  requirement.fieldValues.findIndex(field => field.fieldId == fieldId);
+            const fieldIndex = requirement.fieldValues.findIndex(field => field.fieldId == fieldId);
 
             if (fieldIndex > -1) {
                 requirement.fieldValues[fieldIndex].value = value;
@@ -91,6 +91,19 @@ const Requirements = ({
         }
 
         return requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
+    };
+
+    const isPreserveButtonEnabled = (requirementId: number, isReadyToBePreserved: boolean): boolean => {
+        if (readonly) {
+            return false;
+        }
+
+        // has unsaved changes
+        if (requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1) {
+            return false;
+        }
+
+        return isReadyToBePreserved;
     };
 
     const getNumberField = (requirementId: number, field: TagRequirementField): JSX.Element => {
@@ -238,7 +251,8 @@ const Requirements = ({
                                         Save
                                     </Button>
                                     <Button 
-                                        disabled 
+                                        disabled={!isPreserveButtonEnabled(requirement.id, requirement.readyToBePreserved)}
+                                        onClick={(): void => console.log('TODO: PBI #71519')}
                                         style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}
                                     >
                                         Preserved this week

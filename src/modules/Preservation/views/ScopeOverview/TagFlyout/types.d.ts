@@ -48,7 +48,6 @@ export interface TagRequirementField {
 }
 
 export interface TagRequirementRecordValues {
-    tagId: number | null;
     requirementId: number;
     comment: string | null;
     fieldValues: RecordFieldValue[];

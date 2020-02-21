@@ -38,7 +38,6 @@ const Requirements = ({
             }
         } else {
             newRequirementValues.push({
-                tagId: null, // will be provided by PreservationTab
                 requirementId: requirementId,
                 comment: null,
                 fieldValues: [
@@ -61,7 +60,6 @@ const Requirements = ({
             requirement.comment = comment;
         } else {
             newRequirementValues.push({
-                tagId: null, // will be provided by PreservationTab
                 requirementId: requirementId,
                 comment: comment,
                 fieldValues: []

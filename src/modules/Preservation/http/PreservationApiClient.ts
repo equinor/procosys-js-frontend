@@ -151,7 +151,6 @@ interface PreserveTagRequirement {
 }
 
 interface TagRequirementRecordValues {
-    tagId: number | null;
     requirementId: number;
     comment: string | null;
     fieldValues: RecordFieldValue[];
@@ -481,8 +480,8 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async recordTagRequirementValues(recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/Tags/${recordValues.tagId}/Requirement/${recordValues.requirementId}/RecordValues`;
+    async recordTagRequirementValues(tagId: number | null, recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Requirement/${recordValues.requirementId}/RecordValues`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 

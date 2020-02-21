@@ -27,8 +27,8 @@ export const HeaderNotification = styled.div`
 `;
 
 export const NotificationIcon = styled.div`
-    border-radius: 100px;
-    padding: 8px 10px;
+    border-radius: 50%;
+    padding: var(--grid-unit) calc(var(--grid-unit) + 2px);
     background: ${tokens.colors.infographic.primary__energy_red_13.rgba};
 
     svg path {

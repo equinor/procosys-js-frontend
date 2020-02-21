@@ -34,9 +34,8 @@ const PreservationTab = ({
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
         try {
             setTagRequirements(undefined); // trigger the spinner
-            values.tagId = tagId; // provide tagId
 
-            await apiClient.recordTagRequirementValues(values);  
+            await apiClient.recordTagRequirementValues(tagId, values);  
             
             // TODO: notification inside Flyout..
             showSnackbarNotification('Requirement values saved', 4000);

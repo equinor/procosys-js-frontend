@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Modal, ModalContent, ButtonContainer } from './style';
+import { ModalContainer, ModalContent, ButtonContainer } from './style';
 import { Button } from '@equinor/eds-core-react';
 
 
@@ -33,7 +33,7 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
     };
 
     return (
-        <Modal id='Modal'>
+        <ModalContainer id='Modal'>
             <ModalContent>
                 {props.message}
                 {props.confirmText &&
@@ -51,7 +51,7 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
                     </ButtonContainer>)
                 }
             </ModalContent>
-        </Modal >
+        </ModalContainer >
     );
 };
 

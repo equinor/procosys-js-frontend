@@ -116,12 +116,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const transferDialog = (): void => {
         //Verify that all selected tags can be transfered
-        let numTagsNotTransferable = 0;
-        selectedTags.forEach(tag => {
-            if (tag.readyToBeTransferred === false) {
-                numTagsNotTransferable++;
-            }
-        });
+        const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
         if (numTagsNotTransferable == 0) {
             showModalDialog(`${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`, 'Back to list', 'Transfer', transfer);
         } else {

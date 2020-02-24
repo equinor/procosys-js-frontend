@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Modal = styled.div`
+export const ModalContainer = styled.div`
     display: block;
     position: fixed;
     padding-top: 50px;

@@ -15,7 +15,6 @@ export const Section = styled.div`
     display: flex;
     flex-direction: column;
     padding-top: calc(var(--grid-unit) * 2);
-    font-weight: normal;
 `;
 
 export const GridRow = styled.div`

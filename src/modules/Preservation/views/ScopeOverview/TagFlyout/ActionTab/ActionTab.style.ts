@@ -17,13 +17,8 @@ export const ActionContainer = styled.div`
     font-size: calc(var(--grid-unit) * 2);
     line-height: calc(var(--grid-unit) * 2);
 
-    button:hover {
-        background: ${tokens.colors.interactive.primary__hover_alt.rgba};
-    }
-
     svg {
-        padding-left: calc(var(--grid-unit) * 2);
-        padding-right: calc(var(--grid-unit) * 2);
+        margin-top: 5px;
     }
 
     svg path {
@@ -34,14 +29,15 @@ export const ActionContainer = styled.div`
 export const Collapse = styled.div`
     display: flex;
     border-bottom: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    align-items: center;
 
 `;
 
 export const CollapseInfo = styled.div<{ isExpanded: boolean }>`
     flex-grow: 1;
-    padding-top: calc(var(--grid-unit) * 1 + 4px);
+    padding-top: calc(var(--grid-unit) + 4px);
     padding-right: calc(var(--grid-unit) * 2);
-    padding-bottom: calc(var(--grid-unit) * 1 + 4px);
+    padding-bottom: calc(var(--grid-unit) + 4px);
     padding-left: calc(var(--grid-unit) * 2);    
     white-space: nowrap;
     text-overflow: ellipsis;

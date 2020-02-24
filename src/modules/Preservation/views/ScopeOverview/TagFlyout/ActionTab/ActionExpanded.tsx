@@ -64,19 +64,19 @@ const ActionExpanded = ({
         <Container>
             <Section>
                 <Typography variant='caption'>Due date</Typography>
-                <Typography variant="body_short">{getFormattedDate(actionDetails?.dueTimeUtc)}</Typography>
+                <Typography variant="body_short">{getFormattedDate(actionDetails && actionDetails.dueTimeUtc)}</Typography>
             </Section>
             <Section>
                 <GridRow>
                     <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
                     <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
-                    <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>{getFormattedDate(actionDetails?.createdAt)} </Typography>
-                    <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>{actionDetails?.createdBy?.firstName} {actionDetails?.createdBy?.lastName}</Typography>
+                    <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>{getFormattedDate(actionDetails && actionDetails.createdAt)} </Typography>
+                    <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>{actionDetails && actionDetails.createdBy.firstName} {actionDetails && actionDetails.createdBy.lastName}</Typography>
                 </GridRow>
             </Section>
             <Section>
                 <Typography variant='caption'>Description</Typography>
-                <Typography variant="body_short">{actionDetails?.description}</Typography>
+                <Typography variant="body_short">{actionDetails && actionDetails.description}</Typography>
             </Section>
             <Section>
                 <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>

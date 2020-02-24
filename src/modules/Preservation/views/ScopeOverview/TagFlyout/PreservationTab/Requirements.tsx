@@ -152,8 +152,8 @@ const Requirements = ({
             <Checkbox 
                 checked={isChecked} 
                 disabled={readonly}
-                onChange={(event: React.FormEvent<HTMLInputElement>): void => {
-                    setFieldValue(requirementId, field.id, event.currentTarget.checked.toString());
+                onChange={(checked: boolean): void => {
+                    setFieldValue(requirementId, field.id, checked.toString());
                 }}
             >
                 <Typography variant='body_long'>{field.label}</Typography>

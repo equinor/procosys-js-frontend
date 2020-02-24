@@ -480,7 +480,7 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async recordTagRequirementValues(tagId: number | null, recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async recordTagRequirementValues(tagId: number, recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Tags/${tagId}/Requirement/${recordValues.requirementId}/RecordValues`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);

@@ -32,18 +32,18 @@ const PreservationTab = ({
     };
 
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
-        try {
-            setTagRequirements(undefined); // trigger the spinner
-
-            await apiClient.recordTagRequirementValues(tagId, values);            
-            showSnackbarNotification('Requirement values saved', 4000, true);
-        }
-        catch (error) {
-            console.error(`Record TagRequirement values failed: ${error.message}`);
-            showSnackbarNotification(error.message, 6000, true);
-        }
-        finally {
-            if (tagId !== null) {
+        if (tagId !== null) {
+            try {
+                setTagRequirements(undefined); // trigger the spinner
+    
+                await apiClient.recordTagRequirementValues(tagId, values);            
+                showSnackbarNotification('Requirement values saved', 4000, true);
+            }
+            catch (error) {
+                console.error(`Record TagRequirement values failed: ${error.message}`);
+                showSnackbarNotification(error.message, 6000, true);
+            }
+            finally {
                 getTagRequirements(tagId);
             }
         }

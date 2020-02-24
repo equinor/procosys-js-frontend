@@ -23,6 +23,7 @@ interface PreservedTagResponse {
     responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
+    readyToBeTransferred: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
         nextDueWeeks: number;
@@ -392,6 +393,20 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(endpoint, tags, settings);
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Transfer  given tags
+     * @param tags  List with tag IDs
+     */
+    async transfer(tags: number[]): Promise<void> {
+        const endpoint = '/Tags/Transfer';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, tags, settings);
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

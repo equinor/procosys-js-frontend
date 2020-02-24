@@ -29,7 +29,7 @@ const Notification = (props: NotificationProps): JSX.Element => {
  */
 export const showSnackbarNotification = (
     message: string,
-    duration: number,
+    duration = 5000,
     displayRight = false
 ): any => {
     clearTimeout(lastTimeoutId);

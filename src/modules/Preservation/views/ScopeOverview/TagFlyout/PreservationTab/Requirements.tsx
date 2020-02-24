@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
-import Checkbox from './../../../../../../components/Checkbox';
+import RequirementNumberField from './RequirementNumberField';
+import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../PreservationIcon';
 import Spinner from '../../../../../../components/Spinner';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
@@ -104,71 +105,28 @@ const Requirements = ({
         return isReadyToBePreserved;
     };
 
-    const getNumberField = (requirementId: number, field: TagRequirementField): JSX.Element => {
-        let currentValue: string | number | null = '';
-        if (field.currentValue) {
-            currentValue = field.currentValue.isNA ? 'N/A' : field.currentValue.value;
-        }
-
-        let previousValue: string | number | null = '';
-        if (field.previousValue) {
-            previousValue = field.previousValue.isNA ? 'N/A' : field.previousValue.value;
-        }
-
-        return (
-            <div style={{display: 'flex', alignItems: 'flex-end'}}>
-                <div style={{maxWidth: '25%'}}>
-                    <TextField
-                        id={`field${field.id}`}
-                        label={field.label}
-                        meta={`(${field.unit})`}
-                        defaultValue={currentValue}
-                        disabled={readonly}
-                        onChange={(event: React.FormEvent<HTMLInputElement>): void => {
-                            setFieldValue(requirementId, field.id, event.currentTarget.value);
-                        }}
-                    />
-                </div>
-                {
-                    field.showPrevious &&
-                    <div style={{maxWidth: '25%', marginLeft: 'calc(var(--grid-unit) * 3)'}}>
-                        <TextField
-                            id={`fieldPrevious${field.id}`}
-                            label='Previous value'
-                            meta={`(${field.unit})`}
-                            defaultValue={previousValue}
-                            disabled
-                        />
-                    </div>                            
-                }
-            </div>
-        );
-    };
-
-    const getCheckboxField = (requirementId: number, field: TagRequirementField): JSX.Element => {
-        const isChecked = field.currentValue && field.currentValue.isChecked;
-
-        return (
-            <Checkbox 
-                checked={isChecked} 
-                disabled={readonly}
-                onChange={(checked: boolean): void => {
-                    setFieldValue(requirementId, field.id, checked.toString());
-                }}
-            >
-                <Typography variant='body_long'>{field.label}</Typography>
-            </Checkbox>
-        );
-    };
-
     const getRequirementField = (requirementId: number, field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
             case 'info':
                 return <Typography variant='body_long'>{field.label}</Typography>;
             case 'checkbox':
-                return getCheckboxField(requirementId, field);
+                return (
+                    <RequirementCheckboxField 
+                        requirementId={requirementId} 
+                        field={field} 
+                        readonly={readonly} 
+                        setFieldValue={setFieldValue} 
+                    />
+                );
             case 'number':
-                return getNumberField(requirementId, field);
+                return (
+                    <RequirementNumberField 
+                        requirementId={requirementId} 
+                        field={field} 
+                        readonly={readonly} 
+                        setFieldValue={setFieldValue} 
+                    />
+                );
             default:
                 return <div>Unknown field type</div>;
         }

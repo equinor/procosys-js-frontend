@@ -23,6 +23,7 @@ export interface TagRequirement {
     nextDueAsYearAndWeek: string;
     readyToBePreserved: boolean;
     fields: TagRequirementField[];
+    comment: string;
 }
 
 export interface TagRequirementField {
@@ -44,4 +45,15 @@ export interface TagRequirementField {
         isNA: boolean;
         value: number | null;
     };
+}
+
+export interface TagRequirementRecordValues {
+    requirementId: number;
+    comment: string | null;
+    fieldValues: RecordFieldValue[];
+}
+
+interface RecordFieldValue {
+    fieldId: number;
+    value: string;
 }

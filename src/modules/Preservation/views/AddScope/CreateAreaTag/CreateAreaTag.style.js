@@ -60,3 +60,11 @@ export const CenterContent = styled.span`
     display: flex;
     align-items: center;
 `;
+
+export const DropdownItem = styled.div`
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba}
+    }
+`;
+

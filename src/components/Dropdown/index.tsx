@@ -11,6 +11,8 @@ type DropdownProps = {
     Icon?: JSX.Element;
     openLeft?: boolean;
     onFilter?: (input: string) => void;
+    label?: string;
+    variant?: string;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -22,6 +24,8 @@ const Select: React.FC<DropdownProps> = ({
     children,
     openLeft,
     onFilter,
+    label,
+    variant,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -40,6 +44,7 @@ const Select: React.FC<DropdownProps> = ({
 
     return (
         <Container ref={containerRef} openLeft={openLeft || false}>
+            {label}
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}
@@ -47,6 +52,7 @@ const Select: React.FC<DropdownProps> = ({
                 isOpen={isOpen}
                 aria-expanded={isOpen}
                 aria-haspopup={true}
+                variant={variant}
             >
                 {text}
 

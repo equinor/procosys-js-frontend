@@ -32,6 +32,7 @@ export const Header = styled.header`
 
 export const IconBar = styled.div`
     display: flex;
+    align-items: center;
 `;
 
 export const TableToolbar = styled.div`

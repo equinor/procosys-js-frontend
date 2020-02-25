@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
@@ -12,15 +12,24 @@ interface RequirementProps {
     requirements: TagRequirement[] | undefined;
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
+    updateRequirements: number;
 }
 
 const Requirements = ({
     requirements,
     readonly,
-    recordTagRequirementValues
+    recordTagRequirementValues,
+    updateRequirements
 }: RequirementProps): JSX.Element => {
 
     const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
+
+    useEffect((): void => {
+        // reset values when "header" actions are executed
+        if (updateRequirements > 0) {
+            setRequirementValues([]);
+        }
+    }, [updateRequirements]);
 
     const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];

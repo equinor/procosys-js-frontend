@@ -11,11 +11,15 @@ import { showSnackbarNotification } from './../../../../../../core/services/Noti
 interface PreservationTabProps {
     tagId: number | null;
     tagDetails: TagDetails | undefined;
+    getTagDetails: () => void;
+    updateRequirements: number;
 }
 
 const PreservationTab = ({
     tagId,
-    tagDetails
+    tagDetails,
+    getTagDetails,
+    updateRequirements
 }: PreservationTabProps): JSX.Element => {
     const [tagRequirements, setTagRequirements] = useState<TagRequirement[]>();
     const { apiClient } = usePreservationContext();
@@ -27,7 +31,7 @@ const PreservationTab = ({
         }
         catch (error) {
             console.error(`Get TagRequirements failed: ${error.message}`);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message, 5000, true);
         }
     };
 
@@ -44,7 +48,8 @@ const PreservationTab = ({
                 showSnackbarNotification(error.message, 6000, true);
             }
             finally {
-                getTagRequirements(tagId);
+                getTagDetails();
+                getTagRequirements(tagId);                
             }
         }
     };
@@ -57,9 +62,14 @@ const PreservationTab = ({
 
     useEffect(() => {
         if (tagId !== null) {
+            // re-render requirements when "header" actions are executed
+            if (updateRequirements > 0) {
+                setTagRequirements(undefined);
+            }
+
             getTagRequirements(tagId);
         }
-    }, [tagId]);    
+    }, [tagId, updateRequirements]);    
 
     if (tagDetails === undefined) {
         return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
@@ -101,6 +111,7 @@ const PreservationTab = ({
                 requirements={tagRequirements} 
                 readonly={isReadOnly()} 
                 recordTagRequirementValues={recordTagRequirementValues} 
+                updateRequirements={updateRequirements}
             />
         </Container>
     );

@@ -9,7 +9,11 @@ export const Container = styled.div`
 export const Header = styled.div`
     display: flex;
     align-items: center;
-    padding: calc(var(--grid-unit) * 4) calc(var(--grid-unit) * 2);
+    padding: 
+        calc(var(--grid-unit) * 4) 
+        calc(var(--grid-unit) * 2)
+        var(--grid-unit)
+        calc(var(--grid-unit) * 2);
 
     h1 {
         font-size: calc(var(--grid-unit) * 3);
@@ -37,7 +41,8 @@ export const NotificationIcon = styled.div`
 `;
 
 export const StatusLabel = styled.div<{ status?: string }>`
-    margin-left: calc(var(--grid-unit) * 3);
+    margin-left: calc(var(--grid-unit) * 2);
+    margin-right: auto;
     padding: var(--grid-unit);
     border-radius: calc(var(--grid-unit) * 2);
 
@@ -53,7 +58,13 @@ export const StatusLabel = styled.div<{ status?: string }>`
 `;
 
 export const HeaderActions = styled.div`
+    display: flex;
+    align-items: center;
     margin-left: auto;
+
+    button {
+        margin-left: var(--grid-unit);
+    }
 
     svg {
         margin-top: 5px;

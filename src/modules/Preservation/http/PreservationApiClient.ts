@@ -51,6 +51,7 @@ interface TagDetailsResponse {
     mcPkgNo: string;
     purchaseOrderNo: string;
     areaCode: string;
+    readyToBePreserved: boolean;
 }
 
 interface JourneyResponse {
@@ -403,6 +404,17 @@ class PreservationApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.put(endpoint, tags, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async preserveSingleTag(tagId: number): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Preserve`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, null, settings);
         }
         catch (error) {
             throw getPreservationApiError(error);

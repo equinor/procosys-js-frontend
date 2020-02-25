@@ -10,6 +10,7 @@ export interface TagDetails {
     mcPkgNo: string;
     purchaseOrderNo: string;
     areaCode: string;
+    readyToBePreserved: boolean;
 }
 
 export interface TagRequirement {

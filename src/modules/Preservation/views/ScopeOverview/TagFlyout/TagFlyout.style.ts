@@ -40,7 +40,7 @@ export const NotificationIcon = styled.div`
     }
 `;
 
-export const StatusLabel = styled.div<{ status?: string }>`
+export const StatusLabel = styled.div<{ status?: string | null }>`
     margin-left: calc(var(--grid-unit) * 2);
     margin-right: auto;
     padding: var(--grid-unit);

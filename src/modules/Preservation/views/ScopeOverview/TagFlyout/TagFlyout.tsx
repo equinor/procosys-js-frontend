@@ -12,7 +12,7 @@ import Spinner from '../../../../../components/Spinner';
 
 interface TagFlyoutProps {
     close: () => void;
-    tagId: number | null;
+    tagId: number;
 }
 
 const TagFlyout = ({
@@ -20,40 +20,18 @@ const TagFlyout = ({
     tagId
 }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
-    const [tagDetails, setTagDetails] = useState<TagDetails>();
-    const [isLoadingPreserveTag, setIsLoadingPreserveTag] = useState<boolean>(false);
-    const [updateRequirements, setUpdateRequirements] = useState<number>(0);
+    const [tagDetails, setTagDetails] = useState<TagDetails | null>(null);
+    const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
 
     const getTagDetails = async (): Promise<void> => {
-        if (tagId !== null) {
-            try {
-                const tagDetails = await apiClient.getTagDetails(tagId);
-                setTagDetails(tagDetails);
-            }
-            catch (error) {
-                console.error(`Get TagDetails failed: ${error.message}`);
-                showSnackbarNotification(error.message, 5000, true);
-            }
+        try {
+            const tagDetails = await apiClient.getTagDetails(tagId);
+            setTagDetails(tagDetails);
         }
-    };
-
-    const preserveTag = async (): Promise<void> => {
-        if (tagId !== null) {
-            try {
-                setIsLoadingPreserveTag(true);
-                await apiClient.preserveSingleTag(tagId);
-                showSnackbarNotification('Tag has been preserved for this week.', 5000, true);
-            }
-            catch (error) {
-                console.error(`Preserve tag failed: ${error.message}`);
-                showSnackbarNotification(error.message, 5000, true);
-            }
-            finally {
-                setIsLoadingPreserveTag(false);
-                setUpdateRequirements(updateRequirements + 1);
-                getTagDetails();
-            }
+        catch (error) {
+            console.error(`Get TagDetails failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
         }
     };
 
@@ -61,15 +39,26 @@ const TagFlyout = ({
         getTagDetails();
     }, [tagId]);
 
+    const preserveTag = async (): Promise<void> => {
+        try {
+            setIsPreservingTag(true);
+            await apiClient.preserveSingleTag(tagId);
+            showSnackbarNotification('Tag has been preserved for this week.', 5000, true);
+        }
+        catch (error) {
+            console.error(`Preserve tag failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            setIsPreservingTag(false);
+            getTagDetails();
+        }
+    };
+
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
             case 'preservation':
-                return <PreservationTab 
-                    tagId={tagId} 
-                    tagDetails={tagDetails} 
-                    getTagDetails={getTagDetails} 
-                    updateRequirements={updateRequirements} 
-                />;
+                return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} />;
             case 'actions':
                 return <div></div>;
             case 'attachments':
@@ -90,7 +79,7 @@ const TagFlyout = ({
     };
 
     const isPreserveTagButtonEnabled = (): boolean => {
-        if (!tagDetails || isLoadingPreserveTag) {
+        if (!tagDetails || isPreservingTag) {
             return false;
         }
 
@@ -119,12 +108,12 @@ const TagFlyout = ({
                         disabled={!isPreserveTagButtonEnabled()}
                         onClick={preserveTag}
                     >
-                        {isLoadingPreserveTag && (
+                        {isPreservingTag && (
                             <span style={{display: 'flex', alignItems: 'center'}}>
                                 <span style={{marginBottom: '4px'}}><Spinner /></span> Preserved this week
                             </span>
                         )}
-                        {!isLoadingPreserveTag && ('Preserved this week')}
+                        {!isPreservingTag && ('Preserved this week')}
                     </Button>                    
                     <Button variant='ghost' title='Close' onClick={close}>
                         <CloseIcon />
@@ -132,7 +121,7 @@ const TagFlyout = ({
                 </HeaderActions>                        
             </Header>
             <StatusLabel status={tagDetails && tagDetails.status}>
-                <span style={{marginLeft: 'var(--grid-unit)', marginRight: 'var(--grid-unit)'}}>
+                <span style={{margin: '0 var(--grid-unit)'}}>
                     {tagDetails && tagDetails.status}
                 </span>
             </StatusLabel>            

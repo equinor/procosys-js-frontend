@@ -9,27 +9,23 @@ import Spinner from '../../../../../../components/Spinner';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
 
 interface RequirementProps {
-    requirements: TagRequirement[] | undefined;
+    requirements: TagRequirement[] | null;
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
-    updateRequirements: number;
 }
 
 const Requirements = ({
     requirements,
     readonly,
-    recordTagRequirementValues,
-    updateRequirements
+    recordTagRequirementValues
 }: RequirementProps): JSX.Element => {
 
     const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
 
     useEffect((): void => {
-        // reset values when "header" actions are executed
-        if (updateRequirements > 0) {
-            setRequirementValues([]);
-        }
-    }, [updateRequirements]);
+        // reset values when requirements are updated
+        setRequirementValues([]);
+    }, [requirements]);
 
     const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -87,9 +83,6 @@ const Requirements = ({
             return;
         }
 
-        // reset values before save (prepare for subsequent edits)
-        setRequirementValues([]);
-
         recordTagRequirementValues(requirement);
     };
 
@@ -141,7 +134,7 @@ const Requirements = ({
         }
     };
 
-    if (requirements === undefined) {
+    if (requirements === null) {
         return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
     }
 

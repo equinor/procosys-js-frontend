@@ -9,38 +9,41 @@ import { usePreservationContext } from '../../../../context/PreservationContext'
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 
 interface PreservationTabProps {
-    tagId: number | null;
-    tagDetails: TagDetails | undefined;
-    getTagDetails: () => void;
-    updateRequirements: number;
+    tagDetails: TagDetails | null;
+    refreshTagDetails: () => void;
 }
 
 const PreservationTab = ({
-    tagId,
     tagDetails,
-    getTagDetails,
-    updateRequirements
+    refreshTagDetails
 }: PreservationTabProps): JSX.Element => {
-    const [tagRequirements, setTagRequirements] = useState<TagRequirement[]>();
+    const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const { apiClient } = usePreservationContext();
 
-    const getTagRequirements = async (id: number): Promise<void> => {
-        try {            
-            const tagRequirements = await apiClient.getTagRequirements(id);
-            setTagRequirements(tagRequirements);
-        }
-        catch (error) {
-            console.error(`Get TagRequirements failed: ${error.message}`);
-            showSnackbarNotification(error.message, 5000, true);
+    const getTagRequirements = async (): Promise<void> => {
+        if (tagDetails) {
+            try {            
+                const tagRequirements = await apiClient.getTagRequirements(tagDetails.id);
+                setTagRequirements(tagRequirements);
+            }
+            catch (error) {
+                console.error(`Get TagRequirements failed: ${error.message}`);
+                showSnackbarNotification(error.message, 5000, true);
+            }
         }
     };
 
+    useEffect(() => {
+        setTagRequirements(null); // force full refresh
+        getTagRequirements();
+    }, [tagDetails]);    
+
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
-        if (tagId !== null) {
+        if (tagDetails) {
             try {
-                setTagRequirements(undefined); // trigger the spinner
-    
-                await apiClient.recordTagRequirementValues(tagId, values);            
+                setTagRequirements(null); // trigger the spinner
+        
+                await apiClient.recordTagRequirementValues(tagDetails.id, values);            
                 showSnackbarNotification('Requirement values saved', 4000, true);
             }
             catch (error) {
@@ -48,30 +51,20 @@ const PreservationTab = ({
                 showSnackbarNotification(error.message, 6000, true);
             }
             finally {
-                getTagDetails();
-                getTagRequirements(tagId);                
+                refreshTagDetails(); // will also trigger refresh of requirements           
             }
         }
     };
 
     const isReadOnly = (): boolean => {
-        return tagDetails 
-            ? tagDetails.status.toLowerCase() !== 'active' 
-            : false;
+        if (tagDetails) {
+            tagDetails.status.toLowerCase() !== 'active';
+        }
+
+        return false;
     };
 
-    useEffect(() => {
-        if (tagId !== null) {
-            // re-render requirements when "header" actions are executed
-            if (updateRequirements > 0) {
-                setTagRequirements(undefined);
-            }
-
-            getTagRequirements(tagId);
-        }
-    }, [tagId, updateRequirements]);    
-
-    if (tagDetails === undefined) {
+    if (tagDetails === null) {
         return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
     }
 
@@ -111,7 +104,6 @@ const PreservationTab = ({
                 requirements={tagRequirements} 
                 readonly={isReadOnly()} 
                 recordTagRequirementValues={recordTagRequirementValues} 
-                updateRequirements={updateRequirements}
             />
         </Container>
     );

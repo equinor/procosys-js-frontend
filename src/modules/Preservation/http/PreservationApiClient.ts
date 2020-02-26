@@ -395,6 +395,17 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async startPreservationForTag(tagId: number): Promise<void> {
+        const endpoint = `/Tags/${tagId}/StartPreservation`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, null, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Set given tags to 'preserved' (bulk preserve)
      * @param tags  List with tag IDs

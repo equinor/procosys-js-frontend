@@ -43,7 +43,7 @@ const TagFlyout = ({
         try {
             setIsPreservingTag(true);
             await apiClient.preserveSingleTag(tagId);
-            showSnackbarNotification('Tag has been preserved for this week.', 5000, true);
+            showSnackbarNotification('This tag has been preserved.', 5000, true);
         }
         catch (error) {
             console.error(`Preserve tag failed: ${error.message}`);

@@ -421,6 +421,17 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async preserveSingleRequirement(tagId: number, requirementId: number): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Requirement/${requirementId}/Preserve`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.post(endpoint, null, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Transfer  given tags
      * @param tags  List with tag IDs

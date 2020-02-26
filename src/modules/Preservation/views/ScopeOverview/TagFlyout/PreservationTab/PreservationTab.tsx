@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
-import { TagDetails, TagRequirement } from './../types';
+import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
 import Spinner from '../../../../../../components/Spinner';
 import { usePreservationContext } from '../../../../context/PreservationContext';
@@ -29,6 +29,30 @@ const PreservationTab = ({
             console.error(`Get TagRequirements failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000);
         }
+    };
+
+    const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
+        if (tagId !== null) {
+            try {
+                setTagRequirements(undefined); // trigger the spinner
+    
+                await apiClient.recordTagRequirementValues(tagId, values);            
+                showSnackbarNotification('Requirement values saved', 4000, true);
+            }
+            catch (error) {
+                console.error(`Record TagRequirement values failed: ${error.message}`);
+                showSnackbarNotification(error.message, 6000, true);
+            }
+            finally {
+                getTagRequirements(tagId);
+            }
+        }
+    };
+
+    const isReadOnly = (): boolean => {
+        return tagDetails 
+            ? tagDetails.status.toLowerCase() !== 'active' 
+            : false;
     };
 
     useEffect(() => {
@@ -73,7 +97,11 @@ const PreservationTab = ({
             <RemarkContainer>
                 <TextField id='remark' label='Remark' disabled />
             </RemarkContainer>
-            <Requirements requirements={tagRequirements} />
+            <Requirements 
+                requirements={tagRequirements} 
+                readonly={isReadOnly()} 
+                recordTagRequirementValues={recordTagRequirementValues} 
+            />
         </Container>
     );
 };

@@ -16,6 +16,7 @@ import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import Table from './../../../../components/Table';
 import TagFlyout from './TagFlyout/TagFlyout';
+import { showModalDialog } from '../../../../core/services/ModalDialogService';
 
 interface PreservedTag {
     id: number;
@@ -35,6 +36,7 @@ interface PreservedTag {
     responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
+    readyToBeTransferred: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
         nextDueWeeks: number;
@@ -82,46 +84,58 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject(availableProjects[index].id);
     };
 
-    const startPreservation = (): void => {
+    const startPreservation = async (): Promise<void> => {
         try {
-            apiClient.startPreservation(selectedTags.map(t => t.id)).then(
-                () => {
-                    setSelectedTags([]);
-                    getTags().then(
-                        () => {
-                            showSnackbarNotification(
-                                'Status was set to \'Active\' for selected tags.',
-                                5000
-                            );
-                        }
-                    );
-                }
-            );
+            await apiClient.startPreservation(selectedTags.map(t => t.id));
+            setSelectedTags([]);
+            getTags().then(() => {
+                showSnackbarNotification('Status was set to \'Active\' for selected tags.', 5000);
+            });
         } catch (error) {
             console.error('Start preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        return Promise.resolve();
     };
 
-    const preservedThisWeek = (): void => {
+    const transfer = async (): Promise<void> => {
+        setIsLoading(true);
         try {
-            apiClient.preserve(selectedTags.map(t => t.id)).then(
-                () => {
-                    setSelectedTags([]);
-                    getTags().then(
-                        () => {
-                            showSnackbarNotification(
-                                'Selected tags have been preserved for this week.',
-                                5000
-                            );
-                        }
-                    );
-                }
-            );
+            await apiClient.transfer(selectedTags.map(t => t.id));
+            setSelectedTags([]);
+            getTags().then(() => {
+                showSnackbarNotification(`${selectedTags.length} tags has been transferd successfully.`, 5000);
+            });
+        } catch (error) {
+            console.error('Transfer failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        setIsLoading(false);
+        return Promise.resolve();
+    };
+
+    const transferDialog = (): void => {
+        //Verify that all selected tags can be transfered
+        const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
+        if (numTagsNotTransferable == 0) {
+            showModalDialog(`${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`, 'Back to list', 'Transfer', transfer);
+        } else {
+            showModalDialog(`${numTagsNotTransferable} tag(s) are not transferable.`, 'Back to list');
+        }
+    };
+
+    const preservedThisWeek = async (): Promise<void> => {
+        try {
+            await apiClient.preserve(selectedTags.map(t => t.id));
+            setSelectedTags([]);
+            getTags().then(() => {
+                showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
+            });
         } catch (error) {
             console.error('Preserve failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        return Promise.resolve();
     };
 
     const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
@@ -225,7 +239,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <PlayArrowOutlinedIcon />
                     </IconButton>
                     <IconButton
-                        disabled>
+                        onClick={(): void => {
+                            transferDialog();
+                        }}
+                        disabled={selectedTags.length < 1}>
                         <CompareArrowsOutlinedIcon />
                     </IconButton>
                     <IconButton

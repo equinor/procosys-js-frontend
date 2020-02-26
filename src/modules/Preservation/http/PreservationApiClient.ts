@@ -23,6 +23,7 @@ interface PreservedTagResponse {
     responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
+    readyToBeTransferred: boolean;
     firstUpcomingRequirement: {
         nextDueAsYearAndWeek: string;
         nextDueWeeks: number;
@@ -142,11 +143,23 @@ interface TagRequirementsResponse {
             };
         }
     ];
+    comment: string;
 }
 
 interface PreserveTagRequirement {
     requirementDefinitionId: number;
     intervalWeeks: number;
+}
+
+interface TagRequirementRecordValues {
+    requirementId: number;
+    comment: string | null;
+    fieldValues: RecordFieldValue[];
+}
+
+interface RecordFieldValue {
+    fieldId: number;
+    value: string;
 }
 
 interface ErrorResponse {
@@ -397,6 +410,20 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Transfer  given tags
+     * @param tags  List with tag IDs
+     */
+    async transfer(tags: number[]): Promise<void> {
+        const endpoint = '/Tags/Transfer';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, tags, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Get all journeys
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
@@ -464,6 +491,25 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async recordTagRequirementValues(tagId: number, recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Requirement/${recordValues.requirementId}/RecordValues`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.post(
+                endpoint,
+                {
+                    fieldValues: recordValues.fieldValues,
+                    comment: recordValues.comment
+                },
+                settings
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

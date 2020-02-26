@@ -19,6 +19,23 @@ export const Header = styled.div`
     }
 `;
 
+export const HeaderNotification = styled.div`
+    display: flex;
+    align-items: center;
+    padding: calc(var(--grid-unit) * 2);
+    border-bottom: 2px solid ${tokens.colors.infographic.primary__energy_red_13.rgba};
+`;
+
+export const NotificationIcon = styled.div`
+    border-radius: 50%;
+    padding: var(--grid-unit) calc(var(--grid-unit) + 2px);
+    background: ${tokens.colors.infographic.primary__energy_red_13.rgba};
+
+    svg path {
+        color: ${tokens.colors.interactive.danger__resting.rgba}
+    }
+`;
+
 export const StatusLabel = styled.div<{ status?: string }>`
     margin-left: calc(var(--grid-unit) * 3);
     padding: var(--grid-unit);

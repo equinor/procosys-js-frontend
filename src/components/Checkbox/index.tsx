@@ -4,18 +4,32 @@ import { Container, Checkmark } from './style';
 
 interface CheckboxProps {
     children?: ReactNode;
+    onChange?: (checked: boolean) => void;
     checked?: boolean;
+    disabled?: boolean;
 }
 
 const Checkbox = ({
     children,
-    checked = false
+    onChange,
+    checked = false,
+    disabled = false
 }: CheckboxProps): JSX.Element => {
+
+    const handleOnChange = (event: React.FormEvent<HTMLInputElement>): void => {
+        onChange && onChange(event.currentTarget.checked);
+    };
+
     return (
-        <Container>
+        <Container disabled={disabled}>
             { children }
-            <input type="checkbox" defaultChecked={checked} />
-            <Checkmark className="checkmark" />
+            <input 
+                type="checkbox" 
+                defaultChecked={checked} 
+                disabled={disabled} 
+                onChange={handleOnChange} 
+            />
+            <Checkmark className="checkmark" disabled={disabled} />
         </Container>
     );
 };

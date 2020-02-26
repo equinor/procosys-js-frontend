@@ -84,7 +84,7 @@ export interface RequirementField {
 }
 
 /**
- * Area tag
+ * Interfaces for area tag
  */
 export interface Discipline {
     code: string;

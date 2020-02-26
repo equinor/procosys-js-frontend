@@ -146,6 +146,33 @@ interface TagRequirementsResponse {
     comment: string;
 }
 
+interface ActionResponse {
+    id: number;
+    title: string;
+    dueTimeUtc: Date;
+    isClosed: boolean;
+}
+
+interface ActionDetailsResponse {
+    id: number;
+    title: string;
+    description: string;
+    dueTimeUtc: Date;
+    isClosed: boolean;
+    createdAt: Date;
+    closedAtUtc: Date;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
+    closedBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
+}
+
 interface PreserveTagRequirement {
     requirementDefinitionId: number;
     intervalWeeks: number;
@@ -180,7 +207,6 @@ class PreservationApiError extends Error {
         this.name = 'PreservationApiError';
     }
 }
-
 
 /**
  * Wraps the data return in a promise and delays the response.
@@ -576,6 +602,53 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Get actions
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getActions(tagId: number, setRequestCanceller?: RequestCanceler): Promise<ActionResponse[]> {
+        const endpoint = `/Tags/${tagId}/Actions`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                tagId: tagId,
+            }
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ActionResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get action details 
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getActionDetails(tagId: number, actionId: number, setRequestCanceller?: RequestCanceler): Promise<ActionDetailsResponse> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                tagId: tagId,
+                actionId: actionId,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ActionDetailsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 }
 
 export default PreservationApiClient;

@@ -57,8 +57,13 @@ const TagFlyout = ({
 
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
-            case 'preservation':
+            case 'preservation': {
+                if (tagDetails === null) {
+                    return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
+                }
+
                 return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} />;
+            }
             case 'actions':
                 return <div></div>;
             case 'attachments':

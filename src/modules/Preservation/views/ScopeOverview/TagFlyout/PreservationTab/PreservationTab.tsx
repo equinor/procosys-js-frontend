@@ -4,12 +4,12 @@ import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, R
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
-import Spinner from '../../../../../../components/Spinner';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
+import Spinner from '../../../../../../components/Spinner';
 
 interface PreservationTabProps {
-    tagDetails: TagDetails | null;
+    tagDetails: TagDetails;
     refreshTagDetails: () => void;
 }
 
@@ -21,15 +21,13 @@ const PreservationTab = ({
     const { apiClient } = usePreservationContext();
 
     const getTagRequirements = async (): Promise<void> => {
-        if (tagDetails) {
-            try {            
-                const tagRequirements = await apiClient.getTagRequirements(tagDetails.id);
-                setTagRequirements(tagRequirements);
-            }
-            catch (error) {
-                console.error(`Get TagRequirements failed: ${error.message}`);
-                showSnackbarNotification(error.message, 5000, true);
-            }
+        try {            
+            const tagRequirements = await apiClient.getTagRequirements(tagDetails.id);
+            setTagRequirements(tagRequirements);
+        }
+        catch (error) {
+            console.error(`Get TagRequirements failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
         }
     };
 
@@ -39,54 +37,55 @@ const PreservationTab = ({
     }, [tagDetails]);    
 
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
-        if (tagDetails) {
-            try {
-                setTagRequirements(null); // trigger the spinner
+        try {
+            setTagRequirements(null); // trigger the spinner
         
-                await apiClient.recordTagRequirementValues(tagDetails.id, values);            
-                showSnackbarNotification('Requirement values saved', 5000, true);
-            }
-            catch (error) {
-                console.error(`Record TagRequirement values failed: ${error.message}`);
-                showSnackbarNotification(error.message, 5000, true);
-            }
-            finally {
-                // refresh tag details and requirements
-                refreshTagDetails();           
-            }
+            await apiClient.recordTagRequirementValues(tagDetails.id, values);            
+            showSnackbarNotification('Requirement values saved', 5000, true);
+        }
+        catch (error) {
+            console.error(`Record TagRequirement values failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            // refresh tag details and requirements
+            refreshTagDetails();         
         }
     };
 
     const preserveRequirement = async (requirementId: number): Promise<void> => {
-        if (tagDetails) {
-            try {
-                setTagRequirements(null); // trigger the spinner
+        try {
+            setTagRequirements(null); // trigger the spinner
 
-                await apiClient.preserveSingleRequirement(tagDetails.id, requirementId);
-                showSnackbarNotification('The requirement has been preserved.', 5000, true);
-            }
-            catch (error) {
-                console.error(`Preserve requirement failed: ${error.message}`);
-                showSnackbarNotification(error.message, 5000, true);
-            }
-            finally {
-                // refresh tag details and requirements
-                refreshTagDetails();
-            }
+            await apiClient.preserveSingleRequirement(tagDetails.id, requirementId);
+            showSnackbarNotification('The requirement has been preserved.', 5000, true);
+        }
+        catch (error) {
+            console.error(`Preserve requirement failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            // refresh tag details and requirements
+            refreshTagDetails();
         }
     };
 
-    const isReadOnly = (): boolean => {
-        if (tagDetails) {
-            tagDetails.status.toLowerCase() !== 'active';
+    const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active';
+
+    const getRequirementsSection = (): JSX.Element => {
+        if (tagRequirements === null) {
+            return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
         }
 
-        return false;
+        return (
+            <Requirements 
+                requirements={tagRequirements} 
+                readonly={isReadOnly()} 
+                recordTagRequirementValues={recordTagRequirementValues} 
+                preserveRequirement={preserveRequirement}
+            />
+        );
     };
-
-    if (tagDetails === null) {
-        return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
-    }
 
     return (
         <Container>
@@ -120,12 +119,9 @@ const PreservationTab = ({
             <RemarkContainer>
                 <TextField id='remark' label='Remark' disabled />
             </RemarkContainer>
-            <Requirements 
-                requirements={tagRequirements} 
-                readonly={isReadOnly()} 
-                recordTagRequirementValues={recordTagRequirementValues} 
-                preserveRequirement={preserveRequirement}
-            />
+            {
+                getRequirementsSection()
+            }
         </Container>
     );
 };

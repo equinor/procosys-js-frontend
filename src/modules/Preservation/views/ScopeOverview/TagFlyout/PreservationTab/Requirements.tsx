@@ -5,11 +5,10 @@ import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from 
 import RequirementNumberField from './RequirementNumberField';
 import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../PreservationIcon';
-import Spinner from '../../../../../../components/Spinner';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
 
 interface RequirementProps {
-    requirements: TagRequirement[] | null;
+    requirements: TagRequirement[];
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
     preserveRequirement: (requirementId: number) => void;
@@ -135,10 +134,6 @@ const Requirements = ({
                 return <div>Unknown field type</div>;
         }
     };
-
-    if (requirements === null) {
-        return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
-    }
 
     return (
         <div>

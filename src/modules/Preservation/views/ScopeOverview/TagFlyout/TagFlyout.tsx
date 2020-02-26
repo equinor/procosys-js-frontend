@@ -71,7 +71,7 @@ const TagFlyout = ({
             showSnackbarNotification('Status was set to \'Active\' for this tag.', 5000, true);
         }
         catch (error) {
-            console.error(`Preserve tag failed: ${error.message}`);
+            console.error(`Start preservation for Tag failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
         finally {

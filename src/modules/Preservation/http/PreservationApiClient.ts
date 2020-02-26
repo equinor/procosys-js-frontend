@@ -51,6 +51,7 @@ interface TagDetailsResponse {
     mcPkgNo: string;
     purchaseOrderNo: string;
     areaCode: string;
+    readyToBePreserved: boolean;
 }
 
 interface JourneyResponse {
@@ -420,6 +421,17 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async startPreservationForTag(tagId: number): Promise<void> {
+        const endpoint = `/Tags/${tagId}/StartPreservation`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, null, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Set given tags to 'preserved' (bulk preserve)
      * @param tags  List with tag IDs
@@ -429,6 +441,28 @@ class PreservationApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.put(endpoint, tags, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async preserveSingleTag(tagId: number): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Preserve`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, null, settings);
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async preserveSingleRequirement(tagId: number, requirementId: number): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Requirement/${requirementId}/Preserve`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.post(endpoint, null, settings);
         }
         catch (error) {
             throw getPreservationApiError(error);

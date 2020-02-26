@@ -50,7 +50,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
-    const [flyoutTagId, setFlyoutTagId] = useState<number | null>(null);
+    const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
 
     const path = useRouteMatch();
 

@@ -1,26 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
 import RequirementNumberField from './RequirementNumberField';
 import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../PreservationIcon';
-import Spinner from '../../../../../../components/Spinner';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
 
 interface RequirementProps {
-    requirements: TagRequirement[] | undefined;
+    requirements: TagRequirement[];
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
+    preserveRequirement: (requirementId: number) => void;
 }
 
 const Requirements = ({
     requirements,
     readonly,
-    recordTagRequirementValues
+    recordTagRequirementValues,
+    preserveRequirement
 }: RequirementProps): JSX.Element => {
 
     const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
+
+    useEffect((): void => {
+        // reset values when requirements are updated
+        setRequirementValues([]);
+    }, [requirements]);
 
     const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -78,9 +84,6 @@ const Requirements = ({
             return;
         }
 
-        // reset values before save (prepare for subsequent edits)
-        setRequirementValues([]);
-
         recordTagRequirementValues(requirement);
     };
 
@@ -131,10 +134,6 @@ const Requirements = ({
                 return <div>Unknown field type</div>;
         }
     };
-
-    if (requirements === undefined) {
-        return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
-    }
 
     return (
         <div>
@@ -208,7 +207,7 @@ const Requirements = ({
                                     </Button>
                                     <Button 
                                         disabled={!isPreserveButtonEnabled(requirement.id, requirement.readyToBePreserved)}
-                                        onClick={(): void => console.log('TODO: PBI #71519')}
+                                        onClick={(): void => preserveRequirement(requirement.id)}
                                         style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}
                                     >
                                         Preserved this week

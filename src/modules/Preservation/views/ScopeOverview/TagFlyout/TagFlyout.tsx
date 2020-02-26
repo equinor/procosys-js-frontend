@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon } from './TagFlyout.style';
 import PreservationTab from './PreservationTab/PreservationTab';
+import ActionTab from './ActionTab/ActionTab';
 import CloseIcon from '@material-ui/icons/Close';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 import { Button, Typography } from '@equinor/eds-core-react';
@@ -65,7 +66,7 @@ const TagFlyout = ({
                 return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} />;
             }
             case 'actions':
-                return <div></div>;
+                return <ActionTab tagId={tagId} />;
             case 'attachments':
                 return <div></div>;
             case 'history':
@@ -99,9 +100,9 @@ const TagFlyout = ({
                     <NotificationIcon>
                         <NotificationsOutlinedIcon />
                     </NotificationIcon>
-                    <Typography variant='body_long' style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>
+                    <Typography variant='body_long' style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
                         This tag is not being preserved yet. Click start preservation to enable writing preservation records.
-                    </Typography>                
+                    </Typography>
                 </HeaderNotification>
             }
             <Header>
@@ -122,8 +123,8 @@ const TagFlyout = ({
                     </Button>                    
                     <Button variant='ghost' title='Close' onClick={close}>
                         <CloseIcon />
-                    </Button>                            
-                </HeaderActions>                        
+                    </Button>
+                </HeaderActions>
             </Header>
             <StatusLabel status={tagDetails && tagDetails.status}>
                 <span style={{margin: '0 var(--grid-unit)'}}>
@@ -131,32 +132,32 @@ const TagFlyout = ({
                 </span>
             </StatusLabel>            
             <Tabs>
-                <a 
-                    className={activeTab === 'preservation' ? 'active': 'preservation'} 
+                <a
+                    className={activeTab === 'preservation' ? 'active' : 'preservation'}
                     onClick={(): void => setActiveTab('preservation')}>
-                            Preservation
+                    Preservation
                 </a>
-                <a 
-                    className={activeTab === 'actions' ? 'active': 'actions'}
+                <a
+                    className={activeTab === 'actions' ? 'active' : 'actions'}
                     onClick={(): void => setActiveTab('actions')}>
-                            Actions
+                    Actions
                 </a>
-                <a 
-                    className={activeTab === 'attachments' ? 'active': 'attachments'}
+                <a
+                    className={activeTab === 'attachments' ? 'active' : 'attachments'}
                     onClick={(): void => setActiveTab('attachments')}>
-                            Attachments
+                    Attachments
                 </a>
-                <a 
-                    className={activeTab === 'history' ? 'active': 'history'}
+                <a
+                    className={activeTab === 'history' ? 'active' : 'history'}
                     onClick={(): void => setActiveTab('history')}>
-                            History
+                    History
                 </a>
             </Tabs>
             {
                 getTabContent()
             }
         </Container>
-    );   
+    );
 };
 
 export default TagFlyout;

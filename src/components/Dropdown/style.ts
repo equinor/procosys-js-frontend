@@ -36,6 +36,7 @@ export const DropdownIcon = styled.div`
 
 interface DropdownButtonProps {
     readonly isOpen: boolean;
+    variant?: string;
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
@@ -47,12 +48,18 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     cursor: pointer;
+
     ${(props): any => props.isOpen && css`
         background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
         /* :focus & {
             outline: none;
         } */
     `}
+    ${(props): any => props.variant === 'form' && css`
+        background-color: ${tokens.colors.ui.background__light.rgba};
+        border-bottom: 1px solid black;
+    `}
+
 `;
 
 export const DropdownItem = styled.li`

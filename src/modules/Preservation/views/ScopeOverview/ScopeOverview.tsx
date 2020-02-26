@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Button } from '@equinor/eds-core-react';
-import CompareArrowsOutlinedIcon from '@material-ui/icons/CompareArrowsOutlined';
+import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import IconButton from '@material-ui/core/IconButton';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
@@ -231,32 +230,40 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }}
                         disabled={preservedThisWeekDisabled}>Preserved this week
                     </Button>
-                    <IconButton
+                    <div style={{ display: 'flex', paddingLeft: '50px' }}></div>
+                    <Button
+                        variant='ghost'
+                        title='Start preservation for selected tag(s)'
                         onClick={(): void => {
                             startPreservation();
                         }}
                         disabled={startPreservationDisabled}>
                         <PlayArrowOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                    </Button>
+                    <Button
+                        variant='ghost'
+                        title="Transfer selected tag(s)"
                         onClick={(): void => {
                             transferDialog();
                         }}
                         disabled={selectedTags.length < 1}>
-                        <CompareArrowsOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                        <FastForwardOutlinedIcon />
+                    </Button>
+                    <Button
+                        variant='ghost'
                         disabled={true}>
                         <CreateOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                    </Button>
+                    <Button
+                        variant='ghost'
                         disabled={true}>
                         <DeleteOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                    </Button>
+                    <Button
+                        variant='ghost'
                         disabled={true}>
                         <PrintOutlinedIcon />
-                    </IconButton>
+                    </Button>
                 </IconBar>
             </HeaderContainer>
             <Table
@@ -310,7 +317,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Flyout>
                 )
             }
-        </Container>
+        </Container >
     );
 };
 

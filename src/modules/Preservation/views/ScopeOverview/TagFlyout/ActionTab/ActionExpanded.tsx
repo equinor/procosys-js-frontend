@@ -80,7 +80,7 @@ const ActionExpanded = ({
             </Section>
             <Section>
                 <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>
-                    <Button onClick={(): void => close()}>Close</Button>
+                    <Button title='close' onClick={(): void => close()}>Close</Button>
                 </div>
             </Section>
         </Container >

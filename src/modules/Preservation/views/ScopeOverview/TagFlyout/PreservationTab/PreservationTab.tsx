@@ -4,12 +4,12 @@ import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, R
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
-import Spinner from '../../../../../../components/Spinner';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
+import Spinner from '../../../../../../components/Spinner';
 
 interface PreservationTabProps {
-    tagDetails: TagDetails | null;
+    tagDetails: TagDetails;
     refreshTagDetails: () => void;
 }
 
@@ -21,15 +21,13 @@ const PreservationTab = ({
     const { apiClient } = usePreservationContext();
 
     const getTagRequirements = async (): Promise<void> => {
-        if (tagDetails) {
-            try {            
-                const tagRequirements = await apiClient.getTagRequirements(tagDetails.id);
-                setTagRequirements(tagRequirements);
-            }
-            catch (error) {
-                console.error(`Get TagRequirements failed: ${error.message}`);
-                showSnackbarNotification(error.message, 5000, true);
-            }
+        try {            
+            const tagRequirements = await apiClient.getTagRequirements(tagDetails.id);
+            setTagRequirements(tagRequirements);
+        }
+        catch (error) {
+            console.error(`Get TagRequirements failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
         }
     };
 
@@ -39,34 +37,36 @@ const PreservationTab = ({
     }, [tagDetails]);    
 
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
-        if (tagDetails) {
-            try {
-                setTagRequirements(null); // trigger the spinner
+        try {
+            setTagRequirements(null); // trigger the spinner
         
-                await apiClient.recordTagRequirementValues(tagDetails.id, values);            
-                showSnackbarNotification('Requirement values saved', 4000, true);
-            }
-            catch (error) {
-                console.error(`Record TagRequirement values failed: ${error.message}`);
-                showSnackbarNotification(error.message, 6000, true);
-            }
-            finally {
-                refreshTagDetails(); // will also trigger refresh of requirements           
-            }
+            await apiClient.recordTagRequirementValues(tagDetails.id, values);            
+            showSnackbarNotification('Requirement values saved', 4000, true);
+        }
+        catch (error) {
+            console.error(`Record TagRequirement values failed: ${error.message}`);
+            showSnackbarNotification(error.message, 6000, true);
+        }
+        finally {
+            refreshTagDetails(); // will also trigger refresh of requirements           
         }
     };
 
-    const isReadOnly = (): boolean => {
-        if (tagDetails) {
-            tagDetails.status.toLowerCase() !== 'active';
+    const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active';
+
+    const getRequirementsSection = (): JSX.Element => {
+        if (tagRequirements === null) {
+            return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
         }
 
-        return false;
+        return (
+            <Requirements 
+                requirements={tagRequirements} 
+                readonly={isReadOnly()} 
+                recordTagRequirementValues={recordTagRequirementValues} 
+            />
+        );
     };
-
-    if (tagDetails === null) {
-        return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
-    }
 
     return (
         <Container>
@@ -100,11 +100,9 @@ const PreservationTab = ({
             <RemarkContainer>
                 <TextField id='remark' label='Remark' disabled />
             </RemarkContainer>
-            <Requirements 
-                requirements={tagRequirements} 
-                readonly={isReadOnly()} 
-                recordTagRequirementValues={recordTagRequirementValues} 
-            />
+            {
+                getRequirementsSection()
+            }
         </Container>
     );
 };

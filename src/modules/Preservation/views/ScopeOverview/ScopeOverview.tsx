@@ -230,7 +230,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }}
                         disabled={preservedThisWeekDisabled}>Preserved this week
                     </Button>
-                    <div style={{ display: 'flex', paddingLeft: '50px' }}></div>
+                    <div style={{ display: 'flex', paddingLeft: 'calc(var(--grid-unit) * 8)' }}></div>
                     <Button
                         variant='ghost'
                         title='Start preservation for selected tag(s)'

@@ -82,7 +82,6 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             setFilteredAreas(allAreas);
             return;
         }
-        //allAreas.forEach(element => console.log("her erjeg: ", element));
         setFilteredAreas(allAreas.filter(p => p.text?.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
     }, [filterForAreas, allAreas]);
 

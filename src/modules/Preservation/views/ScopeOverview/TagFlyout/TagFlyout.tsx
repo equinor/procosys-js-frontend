@@ -88,7 +88,7 @@ const TagFlyout = ({
         return tagDetails.readyToBePreserved;
     };
 
-    const getTagStatus = (): PreservationStatus => {
+    const getTagPreservationStatus = (): PreservationStatus => {
         if (tagDetails)
         {
             switch (tagDetails.status.toLowerCase()) {
@@ -104,8 +104,8 @@ const TagFlyout = ({
         return PreservationStatus.Unknown;
     };
 
-    const preservationIsNotStarted = (): boolean => getTagStatus() === PreservationStatus.NotStarted;
-    const preservationIsStarted = (): boolean => getTagStatus() === PreservationStatus.Active;
+    const preservationIsNotStarted = (): boolean => getTagPreservationStatus() === PreservationStatus.NotStarted;
+    const preservationIsStarted = (): boolean => getTagPreservationStatus() === PreservationStatus.Active;
 
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {

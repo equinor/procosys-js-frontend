@@ -22,8 +22,8 @@ const PreservationTab = ({
 
     const getTagRequirements = async (): Promise<void> => {
         try {            
-            const tagRequirements = await apiClient.getTagRequirements(tagDetails.id);
-            setTagRequirements(tagRequirements);
+            const requirements = await apiClient.getTagRequirements(tagDetails.id);
+            setTagRequirements(requirements);
         }
         catch (error) {
             console.error(`Get TagRequirements failed: ${error.message}`);

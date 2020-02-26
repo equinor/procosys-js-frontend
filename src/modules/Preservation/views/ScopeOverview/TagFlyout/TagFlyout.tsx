@@ -26,8 +26,8 @@ const TagFlyout = ({
 
     const getTagDetails = async (): Promise<void> => {
         try {
-            const tagDetails = await apiClient.getTagDetails(tagId);
-            setTagDetails(tagDetails);
+            const details = await apiClient.getTagDetails(tagId);
+            setTagDetails(details);
         }
         catch (error) {
             console.error(`Get TagDetails failed: ${error.message}`);

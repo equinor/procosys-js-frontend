@@ -41,14 +41,32 @@ const PreservationTab = ({
             setTagRequirements(null); // trigger the spinner
         
             await apiClient.recordTagRequirementValues(tagDetails.id, values);            
-            showSnackbarNotification('Requirement values saved', 4000, true);
+            showSnackbarNotification('Requirement values saved', 5000, true);
         }
         catch (error) {
             console.error(`Record TagRequirement values failed: ${error.message}`);
-            showSnackbarNotification(error.message, 6000, true);
+            showSnackbarNotification(error.message, 5000, true);
         }
         finally {
-            refreshTagDetails(); // will also trigger refresh of requirements           
+            // refresh tag details and requirements
+            refreshTagDetails();         
+        }
+    };
+
+    const preserveRequirement = async (requirementId: number): Promise<void> => {
+        try {
+            setTagRequirements(null); // trigger the spinner
+
+            await apiClient.preserveSingleRequirement(tagDetails.id, requirementId);
+            showSnackbarNotification('The requirement has been preserved.', 5000, true);
+        }
+        catch (error) {
+            console.error(`Preserve requirement failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            // refresh tag details and requirements
+            refreshTagDetails();
         }
     };
 
@@ -64,6 +82,7 @@ const PreservationTab = ({
                 requirements={tagRequirements} 
                 readonly={isReadOnly()} 
                 recordTagRequirementValues={recordTagRequirementValues} 
+                preserveRequirement={preserveRequirement}
             />
         );
     };

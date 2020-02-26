@@ -11,12 +11,14 @@ interface RequirementProps {
     requirements: TagRequirement[];
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
+    preserveRequirement: (requirementId: number) => void;
 }
 
 const Requirements = ({
     requirements,
     readonly,
-    recordTagRequirementValues
+    recordTagRequirementValues,
+    preserveRequirement
 }: RequirementProps): JSX.Element => {
 
     const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
@@ -205,7 +207,7 @@ const Requirements = ({
                                     </Button>
                                     <Button 
                                         disabled={!isPreserveButtonEnabled(requirement.id, requirement.readyToBePreserved)}
-                                        onClick={(): void => console.log('TODO: PBI #71519')}
+                                        onClick={(): void => preserveRequirement(requirement.id)}
                                         style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}
                                     >
                                         Preserved this week

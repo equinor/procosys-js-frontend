@@ -12,10 +12,10 @@ import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
 
 enum PreservationStatus {
-    NotStarted,
-    Active,
-    Completed,
-    Unknown
+    NotStarted = 'NotStarted',
+    Active = 'Active',
+    Completed = 'Completed',
+    Unknown = 'Unknown'
 }
 
 interface TagFlyoutProps {
@@ -88,24 +88,8 @@ const TagFlyout = ({
         return tagDetails.readyToBePreserved;
     };
 
-    const getTagPreservationStatus = (): PreservationStatus => {
-        if (tagDetails)
-        {
-            switch (tagDetails.status.toLowerCase()) {
-                case 'notstarted':
-                    return PreservationStatus.NotStarted;
-                case 'active':
-                    return PreservationStatus.Active;
-                case 'completed':
-                    return PreservationStatus.Completed;                
-            }
-        }
-
-        return PreservationStatus.Unknown;
-    };
-
-    const preservationIsNotStarted = (): boolean => getTagPreservationStatus() === PreservationStatus.NotStarted;
-    const preservationIsStarted = (): boolean => getTagPreservationStatus() === PreservationStatus.Active;
+    const preservationIsNotStarted = tagDetails ? tagDetails.status === PreservationStatus.NotStarted : false;
+    const preservationIsStarted = tagDetails ? tagDetails.status === PreservationStatus.Active : false;
 
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
@@ -130,7 +114,7 @@ const TagFlyout = ({
     return (
         <Container>
             {
-                preservationIsNotStarted() &&
+                preservationIsNotStarted &&
                 <HeaderNotification>
                     <NotificationIcon>
                         <NotificationsOutlinedIcon />
@@ -145,7 +129,7 @@ const TagFlyout = ({
                     {tagDetails ? tagDetails.tagNo : '-'}
                 </h1>
                 <HeaderActions>
-                    {preservationIsStarted() &&
+                    {preservationIsStarted &&
                         <Button 
                             disabled={!isPreserveTagButtonEnabled()}
                             onClick={preserveTag}
@@ -157,7 +141,7 @@ const TagFlyout = ({
                             )}
                             {!isPreservingTag && ('Preserved this week')}
                         </Button>}
-                    {preservationIsNotStarted() &&
+                    {preservationIsNotStarted &&
                         <Button 
                             variant='ghost' 
                             title='Start preservation' 

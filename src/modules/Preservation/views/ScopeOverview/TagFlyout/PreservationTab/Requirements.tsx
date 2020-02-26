@@ -1,75 +1,132 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { TagRequirement, TagRequirementField } from './../types';
-import Checkbox from './../../../../../../components/Checkbox';
+import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
+import RequirementNumberField from './RequirementNumberField';
+import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../PreservationIcon';
 import Spinner from '../../../../../../components/Spinner';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
 
 interface RequirementProps {
     requirements: TagRequirement[] | undefined;
+    readonly: boolean;
+    recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
 }
 
 const Requirements = ({
-    requirements
+    requirements,
+    readonly,
+    recordTagRequirementValues
 }: RequirementProps): JSX.Element => {
 
-    const getNumberField = (field: TagRequirementField): JSX.Element => {
-        let currentValue: string | number | null = '';
-        if (field.currentValue) {
-            currentValue = field.currentValue.isNA ? 'N/A' : field.currentValue.value;
+    const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
+
+    const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
+        const newRequirementValues = [...requirementValues];
+        const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
+
+        if (requirement) {
+            const fieldIndex = requirement.fieldValues.findIndex(field => field.fieldId == fieldId);
+
+            if (fieldIndex > -1) {
+                requirement.fieldValues[fieldIndex].value = value;
+            } else {
+                requirement.fieldValues.push({
+                    fieldId: fieldId,
+                    value: value
+                });
+            }
+        } else {
+            newRequirementValues.push({
+                requirementId: requirementId,
+                comment: null,
+                fieldValues: [
+                    {
+                        fieldId: fieldId,
+                        value: value
+                    }
+                ]
+            });
         }
 
-        let previousValue: string | number | null = '';
-        if (field.previousValue) {
-            previousValue = field.previousValue.isNA ? 'N/A' : field.previousValue.value;
+        setRequirementValues(newRequirementValues);
+    };
+
+    const setComment = (requirementId: number, comment: string): void => {
+        const newRequirementValues = [...requirementValues];
+        const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
+
+        if (requirement) {
+            requirement.comment = comment;
+        } else {
+            newRequirementValues.push({
+                requirementId: requirementId,
+                comment: comment,
+                fieldValues: []
+            });
         }
 
-        return (
-            <div style={{display: 'flex', alignItems: 'flex-end'}}>
-                <div style={{maxWidth: '25%'}}>
-                    <TextField
-                        id={`field${field.id}`}
-                        label={field.label}
-                        meta={`(${field.unit})`}
-                        defaultValue={currentValue}
-                    />
-                </div>
-                {
-                    field.showPrevious &&
-                    <div style={{maxWidth: '25%', marginLeft: 'calc(var(--grid-unit) * 3)'}}>
-                        <TextField
-                            id={`fieldPrevious${field.id}`}
-                            label='Previous value'
-                            meta={`(${field.unit})`}
-                            defaultValue={previousValue}
-                            disabled
-                        />
-                    </div>                            
-                }
-            </div>
-        );
+        setRequirementValues(newRequirementValues);
+    };    
+
+    const saveRequirement = (requirementId: number): void => {
+        const requirement = requirementValues.find(req => req.requirementId == requirementId);
+
+        if (!requirement) {
+            console.error(`No values to record found for requirementId ${requirementId}`);
+            return;
+        }
+
+        // reset values before save (prepare for subsequent edits)
+        setRequirementValues([]);
+
+        recordTagRequirementValues(requirement);
     };
 
-    const getCheckboxField = (field: TagRequirementField): JSX.Element => {
-        const isChecked = field.currentValue && field.currentValue.isChecked;
+    const isSaveButtonEnabled = (requirementId: number): boolean => {
+        if (readonly) {
+            return false;
+        }
 
-        return (
-            <Checkbox checked={isChecked}>
-                <Typography variant='body_long'>{field.label}</Typography>
-            </Checkbox>
-        );
+        return requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
     };
 
-    const getRequirementField = (field: TagRequirementField): JSX.Element => {
+    const isPreserveButtonEnabled = (requirementId: number, isReadyToBePreserved: boolean): boolean => {
+        if (readonly) {
+            return false;
+        }
+
+        // has unsaved changes
+        if (requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1) {
+            return false;
+        }
+
+        return isReadyToBePreserved;
+    };
+
+    const getRequirementField = (requirementId: number, field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
             case 'info':
                 return <Typography variant='body_long'>{field.label}</Typography>;
             case 'checkbox':
-                return getCheckboxField(field);
+                return (
+                    <RequirementCheckboxField 
+                        requirementId={requirementId} 
+                        field={field} 
+                        readonly={readonly} 
+                        setFieldValue={setFieldValue} 
+                    />
+                );
             case 'number':
-                return getNumberField(field);
+                return (
+                    <RequirementNumberField 
+                        requirementId={requirementId} 
+                        field={field} 
+                        readonly={readonly} 
+                        setFieldValue={setFieldValue} 
+                    />
+                );
             default:
                 return <div>Unknown field type</div>;
         }
@@ -122,7 +179,7 @@ const Requirements = ({
                                         return (
                                             <Field key={field.id}>
                                                 {
-                                                    getRequirementField(field)
+                                                    getRequirementField(requirement.id, field)
                                                 }
                                             </Field>
                                         );
@@ -134,12 +191,28 @@ const Requirements = ({
                                     id={`requirementComment${requirement.id}`}
                                     label='Comment for this preservation period (optional)'
                                     placeholder='Write here'
+                                    disabled={readonly}
+                                    defaultValue={requirement.comment}
+                                    onChange={(event: React.FormEvent<HTMLInputElement>): void => {
+                                        setComment(requirement.id, event.currentTarget.value);
+                                    }}
                                 />
                             </Section>
                             <Section>
                                 <div style={{display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end'}}>
-                                    <Button disabled>Save</Button>
-                                    <Button disabled style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>Preserved this week</Button>
+                                    <Button 
+                                        disabled={!isSaveButtonEnabled(requirement.id)} 
+                                        onClick={(): void => saveRequirement(requirement.id)}
+                                    >
+                                        Save
+                                    </Button>
+                                    <Button 
+                                        disabled={!isPreserveButtonEnabled(requirement.id, requirement.readyToBePreserved)}
+                                        onClick={(): void => console.log('TODO: PBI #71519')}
+                                        style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}
+                                    >
+                                        Preserved this week
+                                    </Button>
                                 </div>
                             </Section>
                         </Container>

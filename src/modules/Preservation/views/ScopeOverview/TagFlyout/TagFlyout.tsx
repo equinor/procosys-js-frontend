@@ -4,12 +4,20 @@ import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification
 import PreservationTab from './PreservationTab/PreservationTab';
 import ActionTab from './ActionTab/ActionTab';
 import CloseIcon from '@material-ui/icons/Close';
+import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 import { Button, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
+
+enum PreservationStatus {
+    NotStarted = 'NotStarted',
+    Active = 'Active',
+    Completed = 'Completed',
+    Unknown = 'Unknown'
+}
 
 interface TagFlyoutProps {
     close: () => void;
@@ -23,6 +31,7 @@ const TagFlyout = ({
     const [activeTab, setActiveTab] = useState<string>('preservation');
     const [tagDetails, setTagDetails] = useState<TagDetails | null>(null);
     const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
+    const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
 
     const getTagDetails = async (): Promise<void> => {
@@ -56,6 +65,33 @@ const TagFlyout = ({
         }
     };
 
+    const startPreservation = async (): Promise<void> => {
+        try {
+            setIsStartingPreservation(true);
+            await apiClient.startPreservationForTag(tagId);
+            showSnackbarNotification('Status was set to \'Active\' for this tag.', 5000, true);
+        }
+        catch (error) {
+            console.error(`Start preservation for Tag failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            setIsStartingPreservation(false);
+            getTagDetails();
+        }
+    };
+
+    const isPreserveTagButtonEnabled = (): boolean => {
+        if (!tagDetails || isPreservingTag) {
+            return false;
+        }
+
+        return tagDetails.readyToBePreserved;
+    };
+
+    const preservationIsNotStarted = tagDetails ? tagDetails.status === PreservationStatus.NotStarted : false;
+    const preservationIsStarted = tagDetails ? tagDetails.status === PreservationStatus.Active : false;
+
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
             case 'preservation': {
@@ -76,26 +112,10 @@ const TagFlyout = ({
         }
     };
 
-    const showHeaderNotification = (): boolean => {
-        if (tagDetails) {
-            return tagDetails.status.toLowerCase() === 'notstarted';
-        }
-
-        return false;
-    };
-
-    const isPreserveTagButtonEnabled = (): boolean => {
-        if (!tagDetails || isPreservingTag) {
-            return false;
-        }
-
-        return tagDetails.readyToBePreserved;
-    };
-
     return (
         <Container>
             {
-                showHeaderNotification() &&
+                preservationIsNotStarted &&
                 <HeaderNotification>
                     <NotificationIcon>
                         <NotificationsOutlinedIcon />
@@ -110,17 +130,27 @@ const TagFlyout = ({
                     {tagDetails ? tagDetails.tagNo : '-'}
                 </h1>
                 <HeaderActions>
-                    <Button 
-                        disabled={!isPreserveTagButtonEnabled()}
-                        onClick={preserveTag}
-                    >
-                        {isPreservingTag && (
-                            <span style={{display: 'flex', alignItems: 'center'}}>
-                                <span style={{marginBottom: '4px'}}><Spinner /></span> Preserved this week
-                            </span>
-                        )}
-                        {!isPreservingTag && ('Preserved this week')}
-                    </Button>                    
+                    {preservationIsStarted &&
+                        <Button 
+                            disabled={!isPreserveTagButtonEnabled()}
+                            onClick={preserveTag}
+                        >
+                            {isPreservingTag && (
+                                <span style={{display: 'flex', alignItems: 'center'}}>
+                                    <span style={{marginBottom: '4px'}}><Spinner /></span> Preserved this week
+                                </span>
+                            )}
+                            {!isPreservingTag && ('Preserved this week')}
+                        </Button>}
+                    {preservationIsNotStarted &&
+                        <Button 
+                            variant='ghost' 
+                            title='Start preservation' 
+                            disabled={isStartingPreservation}
+                            onClick={startPreservation}
+                        >
+                            <PlayArrowOutlinedIcon />
+                        </Button>}      
                     <Button variant='ghost' title='Close' onClick={close}>
                         <CloseIcon />
                     </Button>

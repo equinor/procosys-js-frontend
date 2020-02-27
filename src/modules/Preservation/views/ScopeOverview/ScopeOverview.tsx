@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Button } from '@equinor/eds-core-react';
-import CompareArrowsOutlinedIcon from '@material-ui/icons/CompareArrowsOutlined';
+import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import IconButton from '@material-ui/core/IconButton';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, TableToolbar, TagLink } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, TableToolbar, TagLink, StyledButton } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import Table from './../../../../components/Table';
@@ -259,32 +258,39 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }}
                         disabled={preservedThisWeekDisabled}>Preserved this week
                     </Button>
-                    <IconButton
+                    <StyledButton
+                        variant='ghost'
+                        title='Start preservation for selected tag(s)'
                         onClick={(): void => {
                             startPreservation();
                         }}
                         disabled={startPreservationDisabled}>
                         <PlayArrowOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                    </StyledButton>
+                    <StyledButton
+                        variant='ghost'
+                        title="Transfer selected tag(s)"
                         onClick={(): void => {
                             transferDialog();
                         }}
                         disabled={selectedTags.length < 1}>
-                        <CompareArrowsOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                        <FastForwardOutlinedIcon />
+                    </StyledButton>
+                    <StyledButton
+                        variant='ghost'
                         disabled={true}>
                         <CreateOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                    </StyledButton>
+                    <StyledButton
+                        variant='ghost'
                         disabled={true}>
                         <DeleteOutlinedIcon />
-                    </IconButton>
-                    <IconButton
+                    </StyledButton>
+                    <StyledButton
+                        variant='ghost'
                         disabled={true}>
                         <PrintOutlinedIcon />
-                    </IconButton>
+                    </StyledButton>
                 </IconBar>
             </HeaderContainer>
             <Table
@@ -334,7 +340,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Flyout>
                 )
             }
-        </Container>
+        </Container >
     );
 };
 

@@ -36,20 +36,12 @@ export const IconBar = styled.div`
     display: flex;
     align-items: center;
 
-    xbutton:first-of-type {
+    button:first-of-type {
         margin-right: calc(var(--grid-unit) * 8);
     }
 
     button {
         margin-left: var(--grid-unit);
-    }
-
-    svg {
-        margin-top: 5px;
-    }
-
-    svg path {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
     }
 `;
 

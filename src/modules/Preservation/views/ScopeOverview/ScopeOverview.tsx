@@ -19,28 +19,35 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 
 interface PreservedTag {
-    id: number;
-    tagNo: string;
-    description: string;
-    mode: string;
     areaCode: string;
     calloffNo: string;
     commPkgNo: string;
+    description: string;
     disciplineCode: string;
-    isAreaTag: boolean;
+    id: number;
     isVoided: boolean;
     mcPkgNo: string;
+    mode: string;
     purchaseOrderNo: string;
-    status: string;
-    tagFunctionCode: string;
-    responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
     readyToBeTransferred: boolean;
-    firstUpcomingRequirement: {
-        nextDueAsYearAndWeek: string;
-        nextDueWeeks: number;
-    };
+    requirements: Requirement[];
+    status: string;
+    responsibleCode: string;
+    tagFunctionCode: string;
+    tagNo: string;
+    tagType: string;
+}
+
+interface Requirement {
+    id: number;
+    requirementDefinitionId: number;
+    nextDueTimeUtc: Date;
+    nextDueAsYearAndWeek: string;
+    nextDueWeeks: number;
+    readyToBePreserved: boolean;
+    readyToBeBulkPreserved: boolean;
 }
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -170,12 +177,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             );
         }, [selectedTags]);
 
-    const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
-        const isOverdue = tag.firstUpcomingRequirement && tag.firstUpcomingRequirement.nextDueWeeks < 0;
+    const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
+        if (!tag.requirements || tag.requirements.length === 0) {
+            return null;
+        }
 
+        return tag.requirements[0];        
+    };
+
+    const isOverdue = (tag: PreservedTag): boolean => {
+        const requirement = getFirstUpcomingRequirement(tag);
+        return requirement ? requirement.nextDueWeeks < 0 : false;
+    };
+
+    const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
             <TagLink
-                isOverdue={isOverdue}
+                isOverdue={isOverdue(tag)}
                 onClick={(): void => {
                     setFlyoutTagId(tag.id);
                     setDisplayFlyout(true);
@@ -184,6 +202,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 {tag.tagNo}
             </TagLink>
         );
+    };
+
+    const getNextColumn = (tag: PreservedTag): string | null => {
+        const requirement = getFirstUpcomingRequirement(tag);
+        return requirement ? requirement.nextDueAsYearAndWeek : null;
+    };
+
+    const getDueColumn = (tag: PreservedTag): number | null => {
+        const requirement = getFirstUpcomingRequirement(tag);
+        return requirement ? requirement.nextDueWeeks : null;
     };
 
     return (
@@ -261,14 +289,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </HeaderContainer>
             <Table
                 columns={[
-                    {
-                        title: 'Tag nr',
-                        field: 'tagNo',
-                        render: getTagNoColumn
-                    },
+                    { title: 'Tag nr', render: getTagNoColumn },
                     { title: 'Description', field: 'description' },
-                    { title: 'Next', field: 'firstUpcomingRequirement.nextDueAsYearAndWeek' },
-                    { title: 'Due', field: 'firstUpcomingRequirement.nextDueWeeks' },
+                    { title: 'Next', render: getNextColumn },
+                    { title: 'Due', render: getDueColumn },
                     { title: 'PO nr', field: 'purchaseOrderNo' },
                     { title: 'Area', field: 'areaCode' },
                     { title: 'Resp', field: 'responsibleCode' },
@@ -286,7 +310,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         backgroundColor: '#f7f7f7'
                     },
                     rowStyle: (rowData): any => ({
-                        color: rowData.firstUpcomingRequirement?.nextDueWeeks < 0 && tokens.colors.interactive.danger__text.rgba,
+                        color: isOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
                         backgroundColor: rowData.tableData.checked && '#e6faec'
                     }),
                 }}

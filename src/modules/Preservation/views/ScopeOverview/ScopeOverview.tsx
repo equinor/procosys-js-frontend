@@ -10,7 +10,7 @@ import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, TableToolbar, TagLink } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, TableToolbar, TagLink, StyledButton } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import Table from './../../../../components/Table';
@@ -230,7 +230,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }}
                         disabled={preservedThisWeekDisabled}>Preserved this week
                     </Button>
-                    <Button
+                    <StyledButton
                         variant='ghost'
                         title='Start preservation for selected tag(s)'
                         onClick={(): void => {
@@ -238,8 +238,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }}
                         disabled={startPreservationDisabled}>
                         <PlayArrowOutlinedIcon />
-                    </Button>
-                    <Button
+                    </StyledButton>
+                    <StyledButton
                         variant='ghost'
                         title="Transfer selected tag(s)"
                         onClick={(): void => {
@@ -247,22 +247,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }}
                         disabled={selectedTags.length < 1}>
                         <FastForwardOutlinedIcon />
-                    </Button>
-                    <Button
+                    </StyledButton>
+                    <StyledButton
                         variant='ghost'
                         disabled={true}>
                         <CreateOutlinedIcon />
-                    </Button>
-                    <Button
+                    </StyledButton>
+                    <StyledButton
                         variant='ghost'
                         disabled={true}>
                         <DeleteOutlinedIcon />
-                    </Button>
-                    <Button
+                    </StyledButton>
+                    <StyledButton
                         variant='ghost'
                         disabled={true}>
                         <PrintOutlinedIcon />
-                    </Button>
+                    </StyledButton>
                 </IconBar>
             </HeaderContainer>
             <Table

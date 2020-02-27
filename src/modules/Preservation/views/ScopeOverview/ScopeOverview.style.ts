@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -32,10 +33,10 @@ export const Header = styled.header`
 `;
 
 export const IconBar = styled.div`
-display: flex;
+    display: flex;
     align-items: center;
 
-    button:first-of-type {
+    xbutton:first-of-type {
         margin-right: calc(var(--grid-unit) * 8);
     }
 
@@ -52,6 +53,15 @@ display: flex;
     }
 `;
 
+export const StyledButton = styled(Button)`
+    svg {
+        margin-top: 5px;
+    }
+
+    svg path {
+        color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
+    }
+`;
 
 export const TableToolbar = styled.div`
     font-size: calc(var(--grid-unit) * 2);

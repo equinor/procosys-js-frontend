@@ -6,28 +6,35 @@ import { RequestCanceler } from '../../../http/HttpClient';
 const Settings = require('../../../../settings.json');
 
 interface PreservedTagResponse {
-    id: number;
-    tagNo: string;
-    description: string;
-    mode: string;
     areaCode: string;
     calloffNo: string;
     commPkgNo: string;
+    description: string;
     disciplineCode: string;
-    isAreaTag: boolean;
+    id: number;
     isVoided: boolean;
     mcPkgNo: string;
+    mode: string;
     purchaseOrderNo: string;
-    status: string;
-    tagFunctionCode: string;
-    responsibleCode: string;
     remark: string;
     readyToBePreserved: boolean;
     readyToBeTransferred: boolean;
-    firstUpcomingRequirement: {
-        nextDueAsYearAndWeek: string;
-        nextDueWeeks: number;
-    };
+    requirements: [
+        {
+            id: number;
+            requirementDefinitionId: number;
+            nextDueTimeUtc: Date;
+            nextDueAsYearAndWeek: string;
+            nextDueWeeks: number;
+            readyToBePreserved: boolean;
+            readyToBeBulkPreserved: boolean;
+        }
+    ];
+    status: string;
+    responsibleCode: string;
+    tagFunctionCode: string;
+    tagNo: string;
+    tagType: string;
 }
 
 type TagSearchResponse = {

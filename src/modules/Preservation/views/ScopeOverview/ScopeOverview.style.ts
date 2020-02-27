@@ -10,6 +10,7 @@ export const HeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
     flex-direction: row;
+    margin-bottom: var(--grid-unit);
 `;
 
 export const Header = styled.header`
@@ -31,9 +32,26 @@ export const Header = styled.header`
 `;
 
 export const IconBar = styled.div`
-    display: flex;
+display: flex;
     align-items: center;
+
+    button:first-of-type {
+        margin-right: calc(var(--grid-unit) * 8);
+    }
+
+    button {
+        margin-left: var(--grid-unit);
+    }
+
+    svg {
+        margin-top: 5px;
+    }
+
+    svg path {
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+    }
 `;
+
 
 export const TableToolbar = styled.div`
     font-size: calc(var(--grid-unit) * 2);

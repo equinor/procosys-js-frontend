@@ -1,5 +1,5 @@
 import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem } from './style';
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useRef, useState, useEffect } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -17,7 +17,6 @@ type SelectProps = {
     data: SelectItem[];
     disabled?: boolean;
     onChange?: (newValue: any) => void;
-    openLeft?: boolean;
     children: ReactNode;
     label?: string;
 };
@@ -31,12 +30,12 @@ const Select = ({
     onChange = (): void => {
         /*eslint-disable-line no-empty */
     },
-    openLeft,
     children,
     label,
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const listRef = useRef<HTMLUListElement>(null);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -50,6 +49,23 @@ const Select = ({
         onChange(value);
         setIsOpen(false);
     };
+
+    /**
+     * Open dropdown to the left:
+     * When there is not enough space on the right-hand side of the viewport, relative to the dropdown.
+     * Calculates using: (window width - dropdown position) < (dropdown size + margin)
+     */
+    useEffect(() => {
+        if (isOpen && listRef.current) {
+            const listWidth = listRef.current.offsetWidth;
+            const listLeftPosition = listRef.current.offsetLeft;
+            const windowWidth = window.innerWidth;                
+
+            if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
+                listRef.current.style.right = '2px';                    
+            }
+        }
+    }, [isOpen]);    
 
     const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
 
@@ -104,7 +120,7 @@ const Select = ({
     };
 
     return (
-        <Container ref={containerRef} openLeft={openLeft || false}>
+        <Container ref={containerRef}>
             {label}
             <DropdownButton
                 onClick={toggleDropdown}
@@ -121,7 +137,7 @@ const Select = ({
                 </DropdownIcon>
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
-                <ul
+                <ul ref={listRef}
                     className='container'
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);

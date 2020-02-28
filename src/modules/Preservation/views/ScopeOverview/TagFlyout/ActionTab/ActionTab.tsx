@@ -15,7 +15,7 @@ import { Button } from '@equinor/eds-core-react';
 interface Action {
     id: number;
     title: string;
-    dueTimeUtc: Date;
+    dueTimeUtc: Date | null;
     isClosed: boolean;
 }
 
@@ -63,7 +63,7 @@ const ActionTab = ({
         return (
             <ActionContainer key={action.id}>
                 <Collapse>
-                    <Button title="Expand" variant='ghost' onClick={(): void => toggleDetails(action.id)}>
+                    <Button variant='ghost' onClick={(): void => toggleDetails(action.id)}>
                         {
                             isExpanded
                                 ? <KeyboardArrowUpIcon />

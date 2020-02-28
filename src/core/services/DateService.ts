@@ -1,10 +1,10 @@
 
 /**
- * Return formatted date (dd.mm.yyyy). Empty string is returned if date is undefined.
+ * Return formatted date (dd.mm.yyyy). Empty string is returned if date is null.
  * @param date 
  */
-export const getFormattedDate = (date?: Date): string => {
-    if (date === undefined) {
+export const getFormattedDate = (date: Date | null): string => {
+    if (date === null) {
         return '';
     }
     const newDate = new Date(date);
@@ -15,11 +15,11 @@ export const getFormattedDate = (date?: Date): string => {
 };
 
 /**
- * Return formatted date and time (dd.mm.yyyy hh:mi). Empty string is returned if date is undefined.
+ * Return formatted date and time (dd.mm.yyyy hh:mi). Empty string is returned if date is null.
  * @param date 
  */
-export const getFormattedDateAndTime = (date?: Date): string => {
-    if (date === undefined) {
+export const getFormattedDateAndTime = (date: Date | null): string => {
+    if (date === null) {
         return '';
     }
     const newDate = new Date(date);

@@ -19,7 +19,7 @@ export const Section = styled.div`
 
 export const GridRow = styled.div`
     display: grid;
-    grid-template-columns: calc(var(--grid-unit) * 10) auto auto auto;
+    grid-template-columns: auto auto;
     grid-template-rows: auto auto;
     grid-column-gap: calc(var(--grid-unit) * 3);
     float: left;

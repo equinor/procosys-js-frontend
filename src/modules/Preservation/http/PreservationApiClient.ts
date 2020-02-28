@@ -157,7 +157,7 @@ interface TagRequirementsResponse {
 interface ActionResponse {
     id: number;
     title: string;
-    dueTimeUtc: Date;
+    dueTimeUtc: Date | null;
     isClosed: boolean;
 }
 
@@ -165,10 +165,10 @@ interface ActionDetailsResponse {
     id: number;
     title: string;
     description: string;
-    dueTimeUtc: Date;
+    dueTimeUtc: Date | null;
     isClosed: boolean;
-    createdAt: Date;
-    closedAtUtc: Date;
+    createdAtUtc: Date;
+    closedAtUtc: Date | null;
     createdBy: {
         id: number;
         firstName: string;

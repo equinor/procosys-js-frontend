@@ -10,10 +10,10 @@ interface ActionDetails {
     id: number;
     title: string;
     description: string;
-    dueTimeUtc: Date;
+    dueTimeUtc: Date | null;
     isClosed: boolean;
-    createdAt: Date;
-    closedAtUtc: Date;
+    createdAtUtc: Date;
+    closedAtUtc: Date | null;
     createdBy: {
         id: number;
         firstName: string;
@@ -30,7 +30,6 @@ interface ActionDetailsProps {
     tagId: number | null;
     actionId: number;
     close: () => void;
-
 }
 
 const ActionExpanded = ({
@@ -39,7 +38,7 @@ const ActionExpanded = ({
     close
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
-    const [actionDetails, setActionDetails] = useState<ActionDetails>();
+    const [actionDetails, setActionDetails] = useState<ActionDetails | null>(null);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -51,7 +50,7 @@ const ActionExpanded = ({
                 }
             } catch (error) {
                 console.error('Get Journeys failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message, 5000, true);
             }
         })();
 
@@ -60,19 +59,57 @@ const ActionExpanded = ({
         };
     }, []);
 
+    const getDateField = (date: Date | null): string => {
+        if (date === null) {
+            return '-';
+        }
+
+        return getFormattedDate(date);
+    };
+
     return (
         <Container>
+            {
+                actionDetails && !actionDetails.isClosed && (
+                    <Section>  
+                        <Typography variant='caption'>Due date</Typography>
+                        <Typography variant="body_short">
+                            {getDateField(actionDetails && actionDetails.dueTimeUtc)}
+                        </Typography>                    
+                    </Section>
+                )
+            }
+            {
+                actionDetails && actionDetails.isClosed && (
+                    <Section>
+                        <div>
+                            <GridRow>
+                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
+                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                                    {getDateField(actionDetails && actionDetails.closedAtUtc)}
+                                </Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                                    {actionDetails && actionDetails.closedBy.firstName} {actionDetails && actionDetails.closedBy.lastName}
+                                </Typography>
+                            </GridRow>
+                        </div>
+                    </Section>
+                )
+            }            
             <Section>
-                <Typography variant='caption'>Due date</Typography>
-                <Typography variant="body_short">{getFormattedDate(actionDetails && actionDetails.dueTimeUtc)}</Typography>
-            </Section>
-            <Section>
-                <GridRow>
-                    <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
-                    <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
-                    <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>{getFormattedDate(actionDetails && actionDetails.createdAt)} </Typography>
-                    <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>{actionDetails && actionDetails.createdBy.firstName} {actionDetails && actionDetails.createdBy.lastName}</Typography>
-                </GridRow>
+                <div>
+                    <GridRow>
+                        <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
+                        <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
+                        <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                            {getDateField(actionDetails && actionDetails.createdAtUtc)}
+                        </Typography>
+                        <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                            {actionDetails && actionDetails.createdBy.firstName} {actionDetails && actionDetails.createdBy.lastName}
+                        </Typography>
+                    </GridRow>
+                </div>
             </Section>
             <Section>
                 <Typography variant='caption'>Description</Typography>
@@ -80,10 +117,10 @@ const ActionExpanded = ({
             </Section>
             <Section>
                 <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>
-                    <Button title='Close' onClick={(): void => close()}>Close</Button>
+                    <Button onClick={(): void => close()}>Close action</Button>
                 </div>
             </Section>
-        </Container >
+        </Container>
     );
 };
 

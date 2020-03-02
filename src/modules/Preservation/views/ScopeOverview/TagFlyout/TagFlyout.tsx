@@ -170,7 +170,7 @@ const TagFlyout = ({
                 <a
                     className={activeTab === 'actions' ? 'active' : 'actions'}
                     onClick={(): void => setActiveTab('actions')}>
-                    Actions
+                    Preservation actions
                 </a>
                 <a
                     className={activeTab === 'attachments' ? 'active' : 'attachments'}

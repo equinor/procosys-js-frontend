@@ -20,13 +20,15 @@ enum PreservationStatus {
 }
 
 interface TagFlyoutProps {
-    close: () => void;
     tagId: number;
+    close: () => void;
+    setDirty: () => void;
 }
 
 const TagFlyout = ({
+    tagId,
     close,
-    tagId
+    setDirty
 }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
     const [tagDetails, setTagDetails] = useState<TagDetails | null>(null);
@@ -53,6 +55,8 @@ const TagFlyout = ({
         try {
             setIsPreservingTag(true);
             await apiClient.preserveSingleTag(tagId);
+
+            setDirty();
             showSnackbarNotification('This tag has been preserved.', 5000, true);
         }
         catch (error) {
@@ -69,6 +73,8 @@ const TagFlyout = ({
         try {
             setIsStartingPreservation(true);
             await apiClient.startPreservationForTag(tagId);
+
+            setDirty();
             showSnackbarNotification('Status was set to \'Active\' for this tag.', 5000, true);
         }
         catch (error) {
@@ -99,7 +105,7 @@ const TagFlyout = ({
                     return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
                 }
 
-                return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} />;
+                return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} setDirty={setDirty} />;
             }
             case 'actions':
                 return <ActionTab tagId={tagId} />;

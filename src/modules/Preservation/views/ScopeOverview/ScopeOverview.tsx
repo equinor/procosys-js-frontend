@@ -57,6 +57,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
+    const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
 
     const path = useRouteMatch();
 
@@ -150,6 +151,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const closeFlyout = (): void => {
         setDisplayFlyout(false);
+
+        // refresh scope list when flyout has updated a tag
+        if (scopeIsDirty) {
+            getTags();
+            setScopeIsDirty(false);
+        }
     };
 
     /**
@@ -334,8 +341,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <Flyout
                         close={closeFlyout}>
                         <TagFlyout
-                            close={closeFlyout}
                             tagId={flyoutTagId}
+                            close={closeFlyout}
+                            setDirty={(): void => setScopeIsDirty(true)}
                         />
                     </Flyout>
                 )

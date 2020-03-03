@@ -11,11 +11,13 @@ import Spinner from '../../../../../../components/Spinner';
 interface PreservationTabProps {
     tagDetails: TagDetails;
     refreshTagDetails: () => void;
+    setDirty: () => void;
 }
 
 const PreservationTab = ({
     tagDetails,
-    refreshTagDetails
+    refreshTagDetails,
+    setDirty
 }: PreservationTabProps): JSX.Element => {
     const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const { apiClient } = usePreservationContext();
@@ -56,8 +58,9 @@ const PreservationTab = ({
     const preserveRequirement = async (requirementId: number): Promise<void> => {
         try {
             setTagRequirements(null); // trigger the spinner
-
             await apiClient.preserveSingleRequirement(tagDetails.id, requirementId);
+
+            setDirty();
             showSnackbarNotification('The requirement has been preserved.', 5000, true);
         }
         catch (error) {

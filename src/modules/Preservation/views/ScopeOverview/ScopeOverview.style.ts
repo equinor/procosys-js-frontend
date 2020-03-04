@@ -55,41 +55,9 @@ export const StyledButton = styled(Button)`
     }
 `;
 
-export const TableToolbar = styled.div`
-    font-size: calc(var(--grid-unit) * 2);
-    line-height: calc(var(--grid-unit) * 3);
-    margin-top: calc(var(--grid-unit) * 2);
-    margin-bottom: var(--grid-unit);
-    color: ${tokens.colors.text.static_icons__secondary.rgba};
-`;
-
 export const DropdownItem = styled.div`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
-`;
-
-export const TagStatusLabel = styled.span<{ show: boolean }>`
-    float: right;
-    margin-left: calc(var(--grid-unit) * 2);
-    margin-bottom: -2px;
-    padding: calc(var(--grid-unit) / 2) var(--grid-unit);
-    border-radius: calc(var(--grid-unit) * 2);
-    background: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-    font-size: calc(var(--grid-unit) * 1.5);
-    color: ${tokens.colors.interactive.primary__resting.rgba};  
-
-    display: ${(props): any => props.show ? 'inline-block' : 'none'};
-
-    /* TODO: determine whether a prop to control display is needed */
-`;
-
-export const TagLink = styled.span<{ isOverdue: boolean }>`
-    color: ${(props): string => props.isOverdue
-        ? tokens.colors.interactive.danger__text.rgba
-        : tokens.colors.interactive.primary__resting.rgba};
-
-    text-decoration: underline;
-    cursor: pointer;
 `;

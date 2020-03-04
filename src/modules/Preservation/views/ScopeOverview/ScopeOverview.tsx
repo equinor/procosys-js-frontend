@@ -8,46 +8,14 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
-import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, TableToolbar, TagLink, StyledButton } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
-import Table from './../../../../components/Table';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
-
-interface PreservedTag {
-    areaCode: string;
-    calloffNo: string;
-    commPkgNo: string;
-    description: string;
-    disciplineCode: string;
-    id: number;
-    isVoided: boolean;
-    mcPkgNo: string;
-    mode: string;
-    purchaseOrderNo: string;
-    remark: string;
-    readyToBePreserved: boolean;
-    readyToBeTransferred: boolean;
-    requirements: Requirement[];
-    status: string;
-    responsibleCode: string;
-    tagFunctionCode: string;
-    tagNo: string;
-    tagType: string;
-}
-
-interface Requirement {
-    id: number;
-    requirementDefinitionId: number;
-    nextDueTimeUtc: Date;
-    nextDueAsYearAndWeek: string;
-    nextDueWeeks: number;
-    readyToBePreserved: boolean;
-    readyToBeBulkPreserved: boolean;
-}
+import { PreservedTag } from './types';
+import ScopeTable from './ScopeTable';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
@@ -145,8 +113,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const onSelectionHandler = (selectedTags: PreservedTag[]): void => {
-        setSelectedTags(selectedTags);
+    const openFlyout = (tag: PreservedTag): void => {
+        setFlyoutTagId(tag.id);
+        setDisplayFlyout(true);
     };
 
     const closeFlyout = (): void => {
@@ -182,43 +151,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
         }, [selectedTags]);
-
-    const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
-        if (!tag.requirements || tag.requirements.length === 0) {
-            return null;
-        }
-
-        return tag.requirements[0];        
-    };
-
-    const isOverdue = (tag: PreservedTag): boolean => {
-        const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueWeeks < 0 : false;
-    };
-
-    const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
-        return (
-            <TagLink
-                isOverdue={isOverdue(tag)}
-                onClick={(): void => {
-                    setFlyoutTagId(tag.id);
-                    setDisplayFlyout(true);
-                }}
-            >
-                {tag.tagNo}
-            </TagLink>
-        );
-    };
-
-    const getNextColumn = (tag: PreservedTag): string | null => {
-        const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueAsYearAndWeek : null;
-    };
-
-    const getDueColumn = (tag: PreservedTag): number | null => {
-        const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueWeeks : null;
-    };
 
     return (
         <Container>
@@ -300,41 +232,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </StyledButton>
                 </IconBar>
             </HeaderContainer>
-            <Table
-                columns={[
-                    { title: 'Tag nr', render: getTagNoColumn },
-                    { title: 'Description', field: 'description' },
-                    { title: 'Next', render: getNextColumn },
-                    { title: 'Due', render: getDueColumn },
-                    { title: 'PO nr', field: 'purchaseOrderNo' },
-                    { title: 'Area', field: 'areaCode' },
-                    { title: 'Resp', field: 'responsibleCode' },
-                    { title: 'Disc', field: 'disciplineCode' },
-                    { title: 'Status', field: 'status' },
-                ]}
-                data={tags}
-                options={{
-                    showTitle: false,
-                    draggable: false,
-                    selection: true,
-                    pageSize: 10,
-                    pageSizeOptions: [10, 50, 100],
-                    headerStyle: {
-                        backgroundColor: '#f7f7f7'
-                    },
-                    rowStyle: (rowData): any => ({
-                        color: isOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
-                        backgroundColor: rowData.tableData.checked && '#e6faec'
-                    }),
-                }}
-                components={{
-                    Toolbar: (data): any => (
-                        <TableToolbar>{data.selectedRows.length} tags selected</TableToolbar>
-                    )
-                }}
-                isLoading={isLoading}
-                onSelectionChange={onSelectionHandler}
-                style={{ boxShadow: 'none' }}
+            <ScopeTable 
+                tags={tags} 
+                isLoading={isLoading} 
+                setSelectedTags={setSelectedTags} 
+                showTagDetails={openFlyout} 
             />
             {
                 displayFlyout && (

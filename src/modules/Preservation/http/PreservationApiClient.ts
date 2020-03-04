@@ -12,6 +12,7 @@ interface PreservedTagResponse {
     description: string;
     disciplineCode: string;
     id: number;
+    isNew: boolean;
     isVoided: boolean;
     mcPkgNo: string;
     mode: string;

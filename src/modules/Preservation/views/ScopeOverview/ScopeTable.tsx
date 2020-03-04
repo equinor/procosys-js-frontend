@@ -84,11 +84,11 @@ const ScopeTable = ({
                 pageSize: 10,
                 pageSizeOptions: [10, 50, 100],
                 headerStyle: {
-                    backgroundColor: '#f7f7f7'
+                    backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
                 },
                 rowStyle: (rowData): any => ({
                     color: isOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
-                    backgroundColor: rowData.tableData.checked && '#e6faec'
+                    backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
                 }),
             }}
             components={{

@@ -2,11 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-type ContainerProps = {
-    openLeft?: boolean;
-}
-
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div`
     display: inline-block;
     ul {
         position: absolute;
@@ -16,9 +12,6 @@ export const Container = styled.div<ContainerProps>`
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
         overflow-y: scroll;
-        ${(props): any => props.openLeft && css`
-            right: 0px;
-        `}
         z-index: 100;
     }
     :hover {
@@ -36,6 +29,7 @@ export const DropdownIcon = styled.div`
 
 interface DropdownButtonProps {
     readonly isOpen: boolean;
+    variant?: string;
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
@@ -47,12 +41,18 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     cursor: pointer;
+
     ${(props): any => props.isOpen && css`
         background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
         /* :focus & {
             outline: none;
         } */
     `}
+    ${(props): any => props.variant === 'form' && css`
+        background-color: ${tokens.colors.ui.background__light.rgba};
+        border-bottom: 1px solid black;
+    `}
+
 `;
 
 export const DropdownItem = styled.li`

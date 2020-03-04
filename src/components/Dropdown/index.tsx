@@ -1,5 +1,5 @@
 import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer } from './style';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
@@ -9,8 +9,9 @@ type DropdownProps = {
     text?: string;
     children?: React.ReactNode;
     Icon?: JSX.Element;
-    openLeft?: boolean;
     onFilter?: (input: string) => void;
+    label?: string;
+    variant?: string;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -20,11 +21,13 @@ const Select: React.FC<DropdownProps> = ({
     text = '',
     Icon = <KeyboardArrowDownIcon />,
     children,
-    openLeft,
     onFilter,
+    label,
+    variant,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const listRef = useRef<HTMLUListElement>(null);
     children = children ? React.Children.toArray(children) : [];
 
     useClickOutsideNotifier(() => {
@@ -38,8 +41,26 @@ const Select: React.FC<DropdownProps> = ({
         setIsOpen(!isOpen);
     };
 
+    /**
+     * Open dropdown to the left:
+     * When there is not enough space on the right-hand side of the viewport, relative to the dropdown.
+     * Calculates using: (window width - dropdown position) < (dropdown size + margin)
+     */
+    useEffect(() => {
+        if (isOpen && listRef.current) {
+            const listWidth = listRef.current.offsetWidth;
+            const listLeftPosition = listRef.current.offsetLeft;
+            const windowWidth = window.innerWidth;                
+
+            if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
+                listRef.current.style.right = '2px';                    
+            }
+        }
+    }, [isOpen]);
+
     return (
-        <Container ref={containerRef} openLeft={openLeft || false}>
+        <Container ref={containerRef}>
+            {label}
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}
@@ -47,13 +68,14 @@ const Select: React.FC<DropdownProps> = ({
                 isOpen={isOpen}
                 aria-expanded={isOpen}
                 aria-haspopup={true}
+                variant={variant}
             >
                 {text}
 
                 <DropdownIcon>{Icon}</DropdownIcon>
             </DropdownButton>
             {isOpen && (
-                <ul
+                <ul ref={listRef}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && toggleDropdown();
                     }}

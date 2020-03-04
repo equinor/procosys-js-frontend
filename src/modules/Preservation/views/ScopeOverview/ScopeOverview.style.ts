@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -10,6 +11,7 @@ export const HeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
     flex-direction: row;
+    margin-bottom: var(--grid-unit);
 `;
 
 export const Header = styled.header`
@@ -32,6 +34,25 @@ export const Header = styled.header`
 
 export const IconBar = styled.div`
     display: flex;
+    align-items: center;
+
+    button:first-of-type {
+        margin-right: calc(var(--grid-unit) * 8);
+    }
+
+    button {
+        margin-left: var(--grid-unit);
+    }
+`;
+
+export const StyledButton = styled(Button)`
+    svg {
+        margin-top: 5px;
+    }
+
+    svg path {
+        color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
+    }
 `;
 
 export const TableToolbar = styled.div`
@@ -62,4 +83,13 @@ export const TagStatusLabel = styled.span<{ show: boolean }>`
     display: ${(props): any => props.show ? 'inline-block' : 'none'};
 
     /* TODO: determine whether a prop to control display is needed */
+`;
+
+export const TagLink = styled.span<{ isOverdue: boolean }>`
+    color: ${(props): string => props.isOverdue
+        ? tokens.colors.interactive.danger__text.rgba
+        : tokens.colors.interactive.primary__resting.rgba};
+
+    text-decoration: underline;
+    cursor: pointer;
 `;

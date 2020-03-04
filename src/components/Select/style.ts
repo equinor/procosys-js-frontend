@@ -2,20 +2,11 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-type ContainerProps = {
-    openLeft?: boolean;
-};
-
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div`
     ul {
         position: absolute;
         background-color: transparent;
         border-radius: 4px;
-        ${(props): any =>
-        props.openLeft &&
-        css`
-                right: 0px;
-            `}
         z-index: 100;
 
         li div {

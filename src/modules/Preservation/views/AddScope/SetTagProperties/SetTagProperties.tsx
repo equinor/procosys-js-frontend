@@ -4,24 +4,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
-import BatteryChargingFullOutlinedIcon from '@material-ui/icons/BatteryChargingFullOutlined';
-import BearingIcon from '../../../../../assets/icons/Bearing';
-import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
 import { Button } from '@equinor/eds-core-react';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import FlashOnOutlinedIcon from '@material-ui/icons/FlashOnOutlined';
-import N2Icon from '../../../../../assets/icons/N2';
-import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
-import PressureIcon from '../../../../../assets/icons/Pressure';
-import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import Spinner from '../../../../../components/Spinner';
 import { TextField } from '@equinor/eds-core-react';
-import ThermostatIcon from '../../../../../assets/icons/Thermostat';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import PreservationIcon from '../../PreservationIcon';
 
 type SetTagPropertiesProps = {
-    submitForm: (stepId: number, requirements: Requirement[], remark: string | null) => Promise<void>;
+    submitForm: (stepId: number, requirements: Requirement[], description?: string, remark?: string) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
@@ -111,31 +103,6 @@ const SetTagProperties = ({
         }
     }, [journey]);
 
-    const getIconForRequirement = (code: string): JSX.Element | null => {
-        switch (code.toLowerCase()) {
-            case 'rotation':
-                return <RotateRightIcon />;
-            case 'ir test':
-                return <FlashOnOutlinedIcon />;
-            case 'oil level':
-                return <PressureIcon />;
-            case 'heating':
-                return <ThermostatIcon />;
-            case 'powered':
-                return <PowerOutlinedIcon />;
-            case 'vci':
-                return <BuildOutlinedIcon />;
-            case 'nitrogen':
-                return <N2Icon />;
-            case 'grease':
-                return <BearingIcon />;
-            case 'charging':
-                return <BatteryChargingFullOutlinedIcon />;
-            default:
-                return null;
-        }
-    };
-
     /**
      * Map Requirements into menu elements
      */
@@ -146,7 +113,7 @@ const SetTagProperties = ({
                 mapped.push({
                     text: itm.title,
                     value: itm.id,
-                    icon: getIconForRequirement(itm.code),
+                    icon: <PreservationIcon variant={itm.code} />,
                     children: itm.requirementDefinitions.map((reqDef) => {
                         return {
                             text: reqDef.title,
@@ -161,7 +128,7 @@ const SetTagProperties = ({
 
     const submit = async (): Promise<void> => {
         setIsLoading(true);
-        const remarkValue = remarkInputRef.current?.value || null;
+        const remarkValue = remarkInputRef.current?.value;
         const requirementsMappedForApi: Requirement[] = [];
         requirements.forEach((req) => {
             if (req.intervalWeeks != null && req.requirementDefinitionId != null) {

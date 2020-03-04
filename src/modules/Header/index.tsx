@@ -255,7 +255,7 @@ const Header: React.FC = (): JSX.Element => {
                         <LockOutlinedIcon />
                     </MenuItem>
                     <MenuItem>
-                        <Dropdown Icon={<AccountCircleOutlinedIcon />} openLeft>
+                        <Dropdown Icon={<AccountCircleOutlinedIcon />}>
                             <DropdownItem title="Logout" onClick={logout}>
                                 Logout
                             </DropdownItem>

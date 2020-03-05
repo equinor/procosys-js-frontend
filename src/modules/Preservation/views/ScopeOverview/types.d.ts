@@ -23,10 +23,9 @@ export interface PreservedTag {
 
 export interface Requirement {
     id: number;
-    requirementDefinitionId: number;
+    requirementTypeCode: string;
     nextDueTimeUtc: Date;
     nextDueAsYearAndWeek: string;
     nextDueWeeks: number;
     readyToBePreserved: boolean;
-    readyToBeBulkPreserved: boolean;
 }

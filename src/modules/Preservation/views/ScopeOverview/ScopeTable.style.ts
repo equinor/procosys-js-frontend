@@ -27,7 +27,6 @@ export const TagLink = styled.span<{ isOverdue: boolean }>`
 interface RequirementIconProps {
     isDue: boolean;
     isReadyToBePreserved: boolean;
-    key: number;
 }
 
 const getRequirementIconColor = (props: RequirementIconProps): string => {
@@ -46,6 +45,7 @@ export const RequirementsContainer = styled.div`
     display: flex;
 
     span {
+        /* avoid expanding the table row height */
         margin-bottom: -10px;
     }
 

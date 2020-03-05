@@ -24,17 +24,10 @@ export const TagLink = styled.span<{ isOverdue: boolean }>`
     cursor: pointer;
 `;
 
-export const RequirementsContainer = styled.div`
-    display: flex;
-
-    span:nth-of-type(n + 2) {
-        margin-left: var(--grid-unit);
-    }
-`;
-
 interface RequirementIconProps {
     isDue: boolean;
     isReadyToBePreserved: boolean;
+    key: number;
 }
 
 const getRequirementIconColor = (props: RequirementIconProps): string => {
@@ -49,11 +42,19 @@ const getRequirementIconColor = (props: RequirementIconProps): string => {
     return tokens.colors.text.static_icons__tertiary.rgba;
 };
 
-export const RequirementIcon = styled.span<RequirementIconProps>`
-    svg {
-        margin-top: 5px;
+export const RequirementsContainer = styled.div`
+    display: flex;
+
+    span {
+        margin-bottom: -10px;
     }
 
+    span:nth-of-type(n + 2) {
+        margin-left: var(--grid-unit);
+    }
+`;
+
+export const RequirementIcon = styled.span<RequirementIconProps>`
     svg path {
         fill: ${(props): string => getRequirementIconColor(props)};
     }

@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { render } from 'react-dom';
-import { ModalContainer, ModalContent, ButtonContainer } from './style';
+import { Scrim, DialogContainer, Title, Divider, Content, ButtonContainer } from './style';
 import { Button } from '@equinor/eds-core-react';
-
 
 const modalDialogContainer = document.createElement('div');
 modalDialogContainer.setAttribute('id', 'model-dialog-container');
 document.body.appendChild(modalDialogContainer);
 
 interface ModalDialogProps {
-    message: string;
+    title?: string;
+    content?: ReactNode;
+    width?: number;
     cancelText?: string;
     confirmText?: string;
     confirmCallback: () => void;
@@ -26,16 +27,20 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
         render(<></>, modalDialogContainer);
     };
 
-    window.onclick = (e: any): void => {
-        if (e.target.id === 'Modal') {
-            cancel();
-        }
-    };
+    const width = props.width ? props.width : 300; //default width; 
 
     return (
-        <ModalContainer id='Modal'>
-            <ModalContent>
-                {props.message}
+        <Scrim>
+            <DialogContainer width={width}>
+                {props.title &&
+                    <Title>{props.title}</Title>
+                }
+                {props.title &&
+                    <Divider />
+                }
+                {props.content &&
+                    <Content>{props.content}</Content>
+                }
                 {props.confirmText &&
                     <ButtonContainer>
                         <Button title='Confirm' onClick={confirm}>
@@ -50,23 +55,28 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
                         </Button>
                     </ButtonContainer>)
                 }
-            </ModalContent>
-        </ModalContainer >
+            </DialogContainer>
+        </Scrim >
     );
 };
 
 /**
  * Displays a popup modal box in the center of the page.
- * @param message Message to display
+ * @param title Title to display
+ * @param content Content to display (react node)
+ * @param width Width of the dialog box, in pixels. 
  * @param cancelText  Text on cancel button. 
  * @param confirmText   Text on confirm button. 
  * @param confirmFunction  Function that will be called when clicking on confirm button. 
  */
 export const showModalDialog = (
-    message: string,
+    title: string,
+    content?: ReactNode,
+    width?: number,
     cancelText?: string,
     confirmText?: string,
     confirmCallback?: any,
 ): any => {
-    render(<ModalDialog message={message} cancelText={cancelText} confirmText={confirmText} confirmCallback={confirmCallback} />, modalDialogContainer);
+    render(<ModalDialog title={title} content={content} width={width} cancelText={cancelText} confirmText={confirmText} confirmCallback={confirmCallback} />, modalDialogContainer);
 };
+

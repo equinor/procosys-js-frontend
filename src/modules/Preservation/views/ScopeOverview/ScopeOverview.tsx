@@ -124,9 +124,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         //Verify that all selected tags can be transfered
         const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
         if (numTagsNotTransferable == 0) {
-            showModalDialog(`${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`, 'Back to list', 'Transfer', transfer);
+            showModalDialog(
+                `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
+                null,
+                600,
+                'Back to list',
+                'Transfer',
+                transfer);
         } else {
-            showModalDialog(`${numTagsNotTransferable} tag(s) are not transferable.`, 'Back to list');
+            showModalDialog(
+                `${numTagsNotTransferable} tag(s) are not transferable.`, null, 300, 'Back to list');
         }
     };
 
@@ -181,7 +188,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             return null;
         }
 
-        return tag.requirements[0];        
+        return tag.requirements[0];
     };
 
     const isOverdue = (tag: PreservedTag): boolean => {

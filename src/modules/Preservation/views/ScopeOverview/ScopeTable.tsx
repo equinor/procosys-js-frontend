@@ -4,7 +4,8 @@ import Table from './../../../../components/Table';
 import { PreservedTag, Requirement } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
-import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
+import { Toolbar, TagLink, TagStatusLabel, RequirementsContainer, RequirementIcon } from './ScopeTable.style';
+import PreservationIcon from './../PreservationIcon';
 
 interface ScopeTableProps {
     tags: PreservedTag[];
@@ -28,15 +29,18 @@ const ScopeTable = ({
         return tag.requirements[0];        
     };
 
-    const isOverdue = (tag: PreservedTag): boolean => {
+    const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;
+    const isRequirementDue = (requirement: Requirement): boolean => requirement.nextDueWeeks === 0;
+
+    const isTagOverdue = (tag: PreservedTag): boolean => {
         const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueWeeks < 0 : false;
+        return requirement ? isRequirementOverdue(requirement) : false;
     };
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
             <TagLink
-                isOverdue={isOverdue(tag)}
+                isOverdue={isTagOverdue(tag)}
                 onClick={(): void => showTagDetails(tag)}
             >
                 {tag.tagNo}
@@ -63,6 +67,26 @@ const ScopeTable = ({
         return requirement ? requirement.nextDueWeeks : null;
     };
 
+    const getRequirementColumn = (tag: PreservedTag): JSX.Element => {
+        return (
+            <RequirementsContainer>
+                {
+                    tag.requirements.map(req => {
+                        return (
+                            <RequirementIcon 
+                                key={req.id} 
+                                isDue={isRequirementDue(req) || isRequirementOverdue(req)} 
+                                isReadyToBePreserved={req.readyToBePreserved}
+                            >
+                                <PreservationIcon variant={req.requirementTypeCode} />
+                            </RequirementIcon>
+                        );                         
+                    })
+                }
+            </RequirementsContainer>
+        );
+    };
+
     return (
         <Table
             columns={[
@@ -75,6 +99,7 @@ const ScopeTable = ({
                 { title: 'Resp', field: 'responsibleCode' },
                 { title: 'Disc', field: 'disciplineCode' },
                 { title: 'Status', field: 'status' },
+                { title: 'Req type', render: getRequirementColumn}
             ]}
             data={tags}
             options={{
@@ -87,7 +112,7 @@ const ScopeTable = ({
                     backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
                 },
                 rowStyle: (rowData): any => ({
-                    color: isOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
+                    color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
                     backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
                 }),
             }}

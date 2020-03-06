@@ -23,12 +23,11 @@ interface PreservedTagResponse {
     requirements: [
         {
             id: number;
-            requirementDefinitionId: number;
+            requirementTypeCode: string;
             nextDueTimeUtc: Date;
             nextDueAsYearAndWeek: string;
             nextDueWeeks: number;
             readyToBePreserved: boolean;
-            readyToBeBulkPreserved: boolean;
         }
     ];
     status: string;

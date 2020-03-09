@@ -96,13 +96,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             showModalDialog(
                 `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
                 null,
-                600,
+                '600px',
                 'Back to list',
+                null,
                 'Transfer',
                 transfer);
         } else {
             showModalDialog(
-                `${numTagsNotTransferable} tag(s) are not transferable.`, null, 300, 'Back to list');
+                `${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list');
         }
     };
 
@@ -241,6 +242,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </HeaderContainer>
             <ScopeTable
                 tags={tags}
+
                 isLoading={isLoading}
                 setSelectedTags={setSelectedTags}
                 showTagDetails={openFlyout}

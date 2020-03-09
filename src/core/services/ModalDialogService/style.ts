@@ -13,14 +13,13 @@ export const Scrim = styled.div`
     z-index:100; 
 `;
 
-export const DialogContainer = styled.div<{ width: number }>`
+export const DialogContainer = styled.div<{ width: string }>`
     ${(props): any => `
         display: block;
-        width: ${props.width}px;
-        background-color: white;
-        box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2), 0px 1px 18px rgba(0, 0, 0, 0.12),
-        0px 6px 10px rgba(0, 0, 0, 0.14);
-        border-radius: 4px;
+        width: ${props.width};
+        background-color: ${tokens.colors.ui.background__default.rgba};       
+        box-shadow: ${tokens.elevation.above_scrim}; 
+        border-radius: ${tokens.shape.corners.borderRadius}; 
        `}
 `;
 
@@ -31,7 +30,7 @@ export const Title = styled.div`
 `;
 
 export const Divider = styled.div`
-    border-top: 1px solid #DCDCDC;
+    border-top: 1px solid ${tokens.colors.interactive.disabled__border.rgba};      
     box-sizing: border-box;
     margin-top: var(--grid-unit);
     padding-bottom: var(--grid-unit);

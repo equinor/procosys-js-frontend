@@ -10,24 +10,30 @@ document.body.appendChild(modalDialogContainer);
 interface ModalDialogProps {
     title?: string;
     content?: ReactNode;
-    width?: number;
-    cancelText?: string;
-    confirmText?: string;
-    confirmCallback: () => void;
+    width?: string;
+    buttonOneText?: string;
+    buttonOneCallback: () => void;
+    buttonTwoText?: string;
+    buttonTwoCallback: () => void;
 }
 
 const ModalDialog = (props: ModalDialogProps): JSX.Element => {
 
-    const cancel = (): void => {
+    const buttonOneHandler = (): void => {
         render(<></>, modalDialogContainer);
+        if (props.buttonOneCallback != null) {
+            props.buttonOneCallback();
+        }
     };
 
-    const confirm = (): void => {
-        props.confirmCallback();
+    const buttonTwoHandler = (): void => {
         render(<></>, modalDialogContainer);
+        if (props.buttonTwoCallback != null) {
+            props.buttonTwoCallback();
+        }
     };
 
-    const width = props.width ? props.width : 300; //default width; 
+    const width = props.width ? props.width : '300px'; //default width; 
 
     return (
         <Scrim>
@@ -41,19 +47,19 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
                 {props.content &&
                     <Content>{props.content}</Content>
                 }
-                {props.confirmText &&
-                    <ButtonContainer>
-                        <Button title='Confirm' onClick={confirm}>
-                            {props.confirmText}
-                        </Button>
-                    </ButtonContainer>
-                }
-                {props.cancelText &&
+                {props.buttonTwoText &&
                     (<ButtonContainer>
-                        <Button title='Close' variant="outlined" onClick={cancel}>
-                            {props.cancelText}
+                        <Button variant="outlined" onClick={buttonTwoHandler}>
+                            {props.buttonTwoText}
                         </Button>
                     </ButtonContainer>)
+                }
+                {props.buttonOneText &&
+                    <ButtonContainer>
+                        <Button onClick={buttonOneHandler}>
+                            {props.buttonOneText}
+                        </Button>
+                    </ButtonContainer>
                 }
             </DialogContainer>
         </Scrim >
@@ -65,18 +71,20 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
  * @param title Title to display
  * @param content Content to display (react node)
  * @param width Width of the dialog box, in pixels. 
- * @param cancelText  Text on cancel button. 
- * @param confirmText   Text on confirm button. 
- * @param confirmFunction  Function that will be called when clicking on confirm button. 
+ * @param buttonOneText  Text on the first button. 
+ * @param buttonOneCallback  Callback function that will be called when clicking on the first button. 
+ * @param buttonTwoText   Text on the second button. 
+ * @param buttonTwoCallback  Callback function that will be called when clicking on the second button. 
  */
 export const showModalDialog = (
     title: string,
     content?: ReactNode,
-    width?: number,
-    cancelText?: string,
-    confirmText?: string,
-    confirmCallback?: any,
+    width?: string,
+    buttonOneText?: string,
+    buttonOneCallback?: any,
+    buttonTwoText?: string,
+    buttonTwoCallback?: any,
 ): any => {
-    render(<ModalDialog title={title} content={content} width={width} cancelText={cancelText} confirmText={confirmText} confirmCallback={confirmCallback} />, modalDialogContainer);
+    render(<ModalDialog title={title} content={content} width={width} buttonOneText={buttonOneText} buttonOneCallback={buttonOneCallback} buttonTwoText={buttonTwoText} buttonTwoCallback={buttonTwoCallback} />, modalDialogContainer);
 };
 

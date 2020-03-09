@@ -9,6 +9,7 @@ import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
 import PressureIcon from '../../../assets/icons/Pressure';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import ThermostatIcon from '../../../assets/icons/Thermostat';
+import AreaIcon from '../../../assets/icons/Area';
 
 interface IconProps {
     variant: string;
@@ -36,6 +37,8 @@ const PreservationIcon = ({
             return <BearingIcon />;
         case 'charging':
             return <BatteryChargingFullOutlinedIcon />;
+        case 'area':
+            return <AreaIcon />;
         default:
             return null;
     }

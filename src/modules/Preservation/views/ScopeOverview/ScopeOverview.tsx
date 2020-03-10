@@ -16,6 +16,7 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag } from './types';
 import ScopeTable from './ScopeTable';
+import TransferDialog from './TransferDialog';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
@@ -91,20 +92,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const transferDialog = (): void => {
         //Verify that all selected tags can be transfered
-        const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
-        if (numTagsNotTransferable == 0) {
-            showModalDialog(
-                `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
-                null,
-                '600px',
-                'Back to list',
-                null,
-                'Transfer',
-                transfer);
-        } else {
-            showModalDialog(
-                `${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list');
-        }
+        // const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
+        // if (numTagsNotTransferable == 0) {
+        showModalDialog(
+            `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
+            <TransferDialog selectedTags={selectedTags} />,
+            '800px',
+            'Back to list',
+            null,
+            'Transfer',
+            transfer);
+        // } else {
+        //     showModalDialog(
+        //`${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list');
+        // }
     };
 
     const preservedThisWeek = async (): Promise<void> => {

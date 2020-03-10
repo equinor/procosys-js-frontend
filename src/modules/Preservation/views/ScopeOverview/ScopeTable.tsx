@@ -14,28 +14,49 @@ interface ScopeTableProps {
     showTagDetails: (tag: PreservedTag) => void;
 }
 
+const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;
+
+const isRequirementDue = (requirement: Requirement): boolean => requirement.nextDueWeeks === 0;
+
+const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
+    if (!tag.requirements || tag.requirements.length === 0) {
+        return null;
+    }
+
+    return tag.requirements[0];
+};
+
+export const isTagOverdue = (tag: PreservedTag): boolean => {
+    const requirement = getFirstUpcomingRequirement(tag);
+    return requirement ? isRequirementOverdue(requirement) : false;
+};
+
+export const getRequirementColumn = (tag: PreservedTag): JSX.Element => {
+    return (
+        <RequirementsContainer>
+            {
+                tag.requirements.map(req => {
+                    return (
+                        <RequirementIcon
+                            key={req.id}
+                            isDue={isRequirementDue(req) || isRequirementOverdue(req)}
+                            isReadyToBePreserved={req.readyToBePreserved}
+                        >
+                            <PreservationIcon variant={req.requirementTypeCode} />
+                        </RequirementIcon>
+                    );
+                })
+            }
+        </RequirementsContainer>
+    );
+};
+
 const ScopeTable = ({
     tags,
     isLoading,
     setSelectedTags,
     showTagDetails
 }: ScopeTableProps): JSX.Element => {
-
-    const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
-        if (!tag.requirements || tag.requirements.length === 0) {
-            return null;
-        }
-
-        return tag.requirements[0];        
-    };
-
-    const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;
-    const isRequirementDue = (requirement: Requirement): boolean => requirement.nextDueWeeks === 0;
-
-    const isTagOverdue = (tag: PreservedTag): boolean => {
-        const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? isRequirementOverdue(requirement) : false;
-    };
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
@@ -50,7 +71,7 @@ const ScopeTable = ({
 
     const getDescriptionColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <div style={{display: 'flex', alignItems: 'center', color: 'inherit'}}>
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 {tag.description}
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -67,25 +88,6 @@ const ScopeTable = ({
         return requirement ? requirement.nextDueWeeks : null;
     };
 
-    const getRequirementColumn = (tag: PreservedTag): JSX.Element => {
-        return (
-            <RequirementsContainer>
-                {
-                    tag.requirements.map(req => {
-                        return (
-                            <RequirementIcon 
-                                key={req.id} 
-                                isDue={isRequirementDue(req) || isRequirementOverdue(req)} 
-                                isReadyToBePreserved={req.readyToBePreserved}
-                            >
-                                <PreservationIcon variant={req.requirementTypeCode} />
-                            </RequirementIcon>
-                        );                         
-                    })
-                }
-            </RequirementsContainer>
-        );
-    };
 
     return (
         <Table
@@ -99,7 +101,7 @@ const ScopeTable = ({
                 { title: 'Resp', field: 'responsibleCode' },
                 { title: 'Disc', field: 'disciplineCode' },
                 { title: 'Status', field: 'status' },
-                { title: 'Req type', render: getRequirementColumn}
+                { title: 'Req type', render: getRequirementColumn }
             ]}
             data={tags}
             options={{

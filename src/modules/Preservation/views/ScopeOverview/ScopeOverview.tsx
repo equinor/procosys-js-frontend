@@ -91,21 +91,21 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
-        //Verify that all selected tags can be transfered
-        // const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
-        // if (numTagsNotTransferable == 0) {
+
+        const transferableTags: PreservedTag[] = selectedTags.filter(tag => tag.readyToBeTransferred);
+        const nonTransferableTags: PreservedTag[] = selectedTags.filter(tag => !tag.readyToBeTransferred);
+
+        const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
+        const transferFunc = transferableTags.length > 0 ? transfer : null;
+
         showModalDialog(
-            `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
-            <TransferDialog selectedTags={selectedTags} />,
-            '800px',
+            'Transferring',
+            <TransferDialog transferableTags={transferableTags} nonTransferableTags={nonTransferableTags} />,
+            '1000px',
             'Back to list',
             null,
-            'Transfer',
-            transfer);
-        // } else {
-        //     showModalDialog(
-        //`${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list');
-        // }
+            transferButton,
+            transferFunc);
     };
 
     const preservedThisWeek = async (): Promise<void> => {

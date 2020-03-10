@@ -16,6 +16,8 @@ export const Scrim = styled.div`
 export const DialogContainer = styled.div<{ width: string }>`
     ${(props): any => `
         display: block;
+        max-height: 90%;
+        overflow: scroll;
         width: ${props.width};
         background-color: ${tokens.colors.ui.background__default.rgba};       
         box-shadow: ${tokens.elevation.above_scrim}; 
@@ -43,7 +45,12 @@ export const Content = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
-    float: right;
+    display:flex;
+    justify-content: flex-end;
     padding-bottom: calc(var(--grid-unit) * 2);
     padding-right: calc(var(--grid-unit) * 2);
+`;
+
+export const ButtonSpacer = styled.div`
+    margin-right: calc(var(--grid-unit) * 2);
 `;

@@ -96,14 +96,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             showModalDialog(
                 `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
                 null,
-                '600px',
+                '800px',
                 'Back to list',
                 null,
                 'Transfer',
                 transfer);
         } else {
             showModalDialog(
-                `${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list');
+                `${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list', null, null, null);
         }
     };
 

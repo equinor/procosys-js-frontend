@@ -1,11 +1,12 @@
 import React from 'react';
 
 import Table from './../../../../components/Table';
-import { PreservedTag, Requirement } from './types';
+import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
-import { Toolbar, TagLink, TagStatusLabel, RequirementsContainer, RequirementIcon } from './ScopeTable.style';
-import PreservationIcon from './../PreservationIcon';
+import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
+import RequirementIcons from './RequirementIcons';
+import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
 
 interface ScopeTableProps {
     tags: PreservedTag[];
@@ -13,43 +14,6 @@ interface ScopeTableProps {
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
 }
-
-const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;
-
-const isRequirementDue = (requirement: Requirement): boolean => requirement.nextDueWeeks === 0;
-
-const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
-    if (!tag.requirements || tag.requirements.length === 0) {
-        return null;
-    }
-
-    return tag.requirements[0];
-};
-
-export const isTagOverdue = (tag: PreservedTag): boolean => {
-    const requirement = getFirstUpcomingRequirement(tag);
-    return requirement ? isRequirementOverdue(requirement) : false;
-};
-
-export const getRequirementColumn = (tag: PreservedTag): JSX.Element => {
-    return (
-        <RequirementsContainer>
-            {
-                tag.requirements.map(req => {
-                    return (
-                        <RequirementIcon
-                            key={req.id}
-                            isDue={isRequirementDue(req) || isRequirementOverdue(req)}
-                            isReadyToBePreserved={req.readyToBePreserved}
-                        >
-                            <PreservationIcon variant={req.requirementTypeCode} />
-                        </RequirementIcon>
-                    );
-                })
-            }
-        </RequirementsContainer>
-    );
-};
 
 const ScopeTable = ({
     tags,
@@ -88,6 +52,11 @@ const ScopeTable = ({
         return requirement ? requirement.nextDueWeeks : null;
     };
 
+    const getRequirementColumn = (tag: PreservedTag): JSX.Element => {
+        return (
+            <RequirementIcons tag={tag} />
+        );
+    };
 
     return (
         <Table

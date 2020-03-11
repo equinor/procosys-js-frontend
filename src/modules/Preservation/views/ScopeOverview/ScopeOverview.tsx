@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
@@ -14,9 +13,22 @@ import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
-import { PreservedTag } from './types';
+import { PreservedTag, Requirement } from './types';
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
+
+export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
+    if (!tag.requirements || tag.requirements.length === 0) {
+        return null;
+    }
+
+    return tag.requirements[0];
+};
+
+export const isTagOverdue = (tag: PreservedTag): boolean => {
+    const requirement = getFirstUpcomingRequirement(tag);
+    return requirement ? requirement.nextDueWeeks < 0 : false;
+};
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);

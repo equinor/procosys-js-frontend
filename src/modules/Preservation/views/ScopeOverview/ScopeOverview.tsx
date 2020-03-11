@@ -91,9 +91,18 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
+        const transferableTags: PreservedTag[] = [];
+        const nonTransferableTags: PreservedTag[] = [];
 
-        const transferableTags: PreservedTag[] = selectedTags.filter(tag => tag.readyToBeTransferred);
-        const nonTransferableTags: PreservedTag[] = selectedTags.filter(tag => !tag.readyToBeTransferred);
+        //Tag-objects must be cloned to avoid issues with data in scope table 
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = JSON.parse(JSON.stringify(tag));
+            if (tag.readyToBeTransferred) {
+                transferableTags.push(newTag);
+            } else {
+                nonTransferableTags.push(newTag);
+            }
+        });
 
         const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
         const transferFunc = transferableTags.length > 0 ? transfer : null;

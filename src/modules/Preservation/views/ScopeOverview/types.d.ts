@@ -18,7 +18,7 @@ export interface PreservedTag {
     responsibleCode: string;
     tagFunctionCode: string;
     tagNo: string;
-    tagType: string;
+    tagType?: string;
 }
 
 export interface Requirement {

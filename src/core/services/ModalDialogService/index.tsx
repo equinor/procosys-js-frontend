@@ -1,72 +1,90 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { render } from 'react-dom';
-import { ModalContainer, ModalContent, ButtonContainer } from './style';
+import { Scrim, DialogContainer, Title, Divider, Content, ButtonContainer, ButtonSpacer } from './style';
 import { Button } from '@equinor/eds-core-react';
-
 
 const modalDialogContainer = document.createElement('div');
 modalDialogContainer.setAttribute('id', 'model-dialog-container');
 document.body.appendChild(modalDialogContainer);
 
 interface ModalDialogProps {
-    message: string;
-    cancelText?: string;
-    confirmText?: string;
-    confirmCallback: () => void;
+    title: string | null;
+    content: ReactNode | null;
+    width: string | null;
+    buttonOneText: string;
+    buttonOneCallback: (() => void) | null;
+    buttonTwoText: string | null;
+    buttonTwoCallback: (() => void) | null;
 }
 
 const ModalDialog = (props: ModalDialogProps): JSX.Element => {
 
-    const cancel = (): void => {
+    const buttonOneHandler = (): void => {
         render(<></>, modalDialogContainer);
-    };
-
-    const confirm = (): void => {
-        props.confirmCallback();
-        render(<></>, modalDialogContainer);
-    };
-
-    window.onclick = (e: any): void => {
-        if (e.target.id === 'Modal') {
-            cancel();
+        if (props.buttonOneCallback) {
+            props.buttonOneCallback();
         }
     };
 
+    const buttonTwoHandler = (): void => {
+        render(<></>, modalDialogContainer);
+        if (props.buttonTwoCallback) {
+            props.buttonTwoCallback();
+        }
+    };
+
+    const width = props.width ? props.width : '300px'; //default width; 
+
     return (
-        <ModalContainer id='Modal'>
-            <ModalContent>
-                {props.message}
-                {props.confirmText &&
-                    <ButtonContainer>
-                        <Button title='Confirm' onClick={confirm}>
-                            {props.confirmText}
-                        </Button>
-                    </ButtonContainer>
+        <Scrim>
+            <DialogContainer width={width}>
+                {props.title &&
+                    <Title>{props.title}</Title>
                 }
-                {props.cancelText &&
-                    (<ButtonContainer>
-                        <Button title='Close' variant="outlined" onClick={cancel}>
-                            {props.cancelText}
-                        </Button>
-                    </ButtonContainer>)
+                {props.title &&
+                    <Divider />
                 }
-            </ModalContent>
-        </ModalContainer >
+                {props.content &&
+                    <Content>{props.content}</Content>
+                }
+                <ButtonContainer>
+                    {props.buttonOneText &&
+                        <Button onClick={buttonOneHandler}>
+                            {props.buttonOneText}
+                        </Button>
+
+                    }
+                    <ButtonSpacer />
+                    {props.buttonTwoText &&
+                        <Button variant="outlined" onClick={buttonTwoHandler}>
+                            {props.buttonTwoText}
+                        </Button>
+                    }
+                </ButtonContainer>
+            </DialogContainer>
+        </Scrim>
     );
 };
 
 /**
  * Displays a popup modal box in the center of the page.
- * @param message Message to display
- * @param cancelText  Text on cancel button. 
- * @param confirmText   Text on confirm button. 
- * @param confirmFunction  Function that will be called when clicking on confirm button. 
+ * @param title Title to display
+ * @param content Content to display (react node)
+ * @param width Width of the dialog box, in pixels. If null, default value is used.  
+ * @param buttonOneText  Text on the first button. There must always be one button (to be able to close the dialog box)
+ * @param buttonOneCallback  Callback function that will be called when clicking on the first button. If null, the button will act as a close-button.
+ * @param buttonTwoText   Text on the second button.
+ * @param buttonTwoCallback  Callback function that will be called when clicking on the second button. If null, the button will act as a close-button.
  */
 export const showModalDialog = (
-    message: string,
-    cancelText?: string,
-    confirmText?: string,
-    confirmCallback?: any,
+    title: string | null,
+    content: ReactNode | null,
+    width: string | null,
+    buttonOneText: string,
+    buttonOneCallback: (() => void) | null,
+    buttonTwoText: string | null,
+    buttonTwoCallback: (() => void) | null,
 ): any => {
-    render(<ModalDialog message={message} cancelText={cancelText} confirmText={confirmText} confirmCallback={confirmCallback} />, modalDialogContainer);
+    render(<ModalDialog title={title} content={content} width={width} buttonOneText={buttonOneText} buttonOneCallback={buttonOneCallback} buttonTwoText={buttonTwoText} buttonTwoCallback={buttonTwoCallback} />, modalDialogContainer);
 };
+

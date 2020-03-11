@@ -93,9 +93,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         //Verify that all selected tags can be transfered
         const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
         if (numTagsNotTransferable == 0) {
-            showModalDialog(`${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`, 'Back to list', 'Transfer', transfer);
+            showModalDialog(
+                `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
+                null,
+                '800px',
+                'Back to list',
+                null,
+                'Transfer',
+                transfer);
         } else {
-            showModalDialog(`${numTagsNotTransferable} tag(s) are not transferable.`, 'Back to list');
+            showModalDialog(
+                `${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list', null, null, null);
         }
     };
 
@@ -232,11 +240,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </StyledButton>
                 </IconBar>
             </HeaderContainer>
-            <ScopeTable 
-                tags={tags} 
-                isLoading={isLoading} 
-                setSelectedTags={setSelectedTags} 
-                showTagDetails={openFlyout} 
+            <ScopeTable
+                tags={tags}
+
+                isLoading={isLoading}
+                setSelectedTags={setSelectedTags}
+                showTagDetails={openFlyout}
             />
             {
                 displayFlyout && (

@@ -4,7 +4,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import Table from './../../../../components/Table';
 import RequirementIcons from './RequirementIcons';
-import { Toolbar } from './ScopeTable.style';
+import { Toolbar } from './TransferDialog.style';
 import { isTagOverdue } from './ScopeOverview';
 
 interface TransferDialogProps {

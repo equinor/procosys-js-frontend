@@ -108,7 +108,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         //Tag-objects must be cloned to avoid issues with data in scope table 
         selectedTags.map((tag) => {
-            const newTag: PreservedTag = JSON.parse(JSON.stringify(tag));
+            const newTag: PreservedTag = { ...tag };
             if (tag.readyToBeTransferred) {
                 transferableTags.push(newTag);
             } else {

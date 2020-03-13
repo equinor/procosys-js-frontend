@@ -39,8 +39,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const getTags = async (): Promise<void> => {
         setIsLoading(true);
         try {
-            const tags = await apiClient.getPreservedTags(project.name);
-            setTags(tags);
+            const response = await apiClient.getPreservedTags(project.name);
+            setTags(response.tags);
         } catch (error) {
             console.error('Get tags failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);

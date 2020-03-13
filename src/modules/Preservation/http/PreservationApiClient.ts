@@ -6,35 +6,40 @@ import { RequestCanceler } from '../../../http/HttpClient';
 const Settings = require('../../../../settings.json');
 
 interface PreservedTagResponse {
-    areaCode: string;
-    calloffNo: string;
-    commPkgNo: string;
-    description: string;
-    disciplineCode: string;
-    id: number;
-    isNew: boolean;
-    isVoided: boolean;
-    mcPkgNo: string;
-    mode: string;
-    purchaseOrderNo: string;
-    remark: string;
-    readyToBePreserved: boolean;
-    readyToBeTransferred: boolean;
-    requirements: [
-        {
-            id: number;
-            requirementTypeCode: string;
-            nextDueTimeUtc: Date;
-            nextDueAsYearAndWeek: string;
-            nextDueWeeks: number;
-            readyToBePreserved: boolean;
-        }
-    ];
-    status: string;
-    responsibleCode: string;
-    tagFunctionCode: string;
-    tagNo: string;
-    tagType: string;
+    maxAvailable: number;
+    tags: [{
+        areaCode: string;
+        calloffNo: string;
+        commPkgNo: string;
+        description: string;
+        disciplineCode: string;
+        id: number;
+        isNew: boolean;
+        isVoided: boolean;
+        mcPkgNo: string;
+        mode: string;
+        nextMode: string;
+        nextResponsibleCode: string;
+        purchaseOrderNo: string;
+        readyToBePreserved: boolean;
+        readyToBeStarted: boolean;
+        readyToBeTransferred: boolean;
+        requirements: [
+            {
+                id: number;
+                requirementTypeCode: string;
+                nextDueTimeUtc: Date;
+                nextDueAsYearAndWeek: string;
+                nextDueWeeks: number;
+                readyToBePreserved: boolean;
+            }
+        ];
+        status: string;
+        responsibleCode: string;
+        tagFunctionCode: string;
+        tagNo: string;
+        tagType: string;
+    }];
 }
 
 type TagSearchResponse = {
@@ -391,18 +396,22 @@ class PreservationApiClient extends ApiClient {
      */
     async getPreservedTags(projectName: string,
         setRequestCanceller?: RequestCanceler
-    ): Promise<PreservedTagResponse[]> {
+    ): Promise<PreservedTagResponse> {
         const endpoint = '/Tags';
 
         const settings: AxiosRequestConfig = {
             params: {
-                projectName: projectName
+                projectName: projectName,
+                page: 0, //temporary
+                size: 10000,   //temporary
+                property: 'Due',  //temporary
+                direction: 'Asc'
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<PreservedTagResponse[]>(
+            const result = await this.client.get<PreservedTagResponse>(
                 endpoint,
                 settings
             );

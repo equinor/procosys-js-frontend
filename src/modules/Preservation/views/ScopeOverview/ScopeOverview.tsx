@@ -16,6 +16,7 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag } from './types';
 import ScopeTable from './ScopeTable';
+import TreeView from './../../../../components/TreeView';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
@@ -159,6 +160,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
         }, [selectedTags]);
+
+    const foo = true;
+    if (foo) {
+        return <TreeView></TreeView>;
+    }
 
     return (
         <Container>

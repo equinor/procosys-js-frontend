@@ -1,3 +1,7 @@
+export interface PreservedTags {
+    maxAvailable: number;
+    tags: PreservedTag[];
+}
 export interface PreservedTag {
     areaCode: string;
     calloffNo: string;
@@ -9,9 +13,11 @@ export interface PreservedTag {
     isVoided: boolean;
     mcPkgNo: string;
     mode: string;
+    nextMode: string;
+    nextResponsibleCode: string;
     purchaseOrderNo: string;
-    remark: string;
     readyToBePreserved: boolean;
+    readyToBeStarted: boolean;
     readyToBeTransferred: boolean;
     requirements: Requirement[];
     status: string;

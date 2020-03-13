@@ -13,7 +13,7 @@ import { usePreservationContext } from '../../../context/PreservationContext';
 import PreservationIcon from '../../PreservationIcon';
 
 type SetTagPropertiesProps = {
-    submitForm: (stepId: number, requirements: Requirement[], description?: string, remark?: string) => Promise<void>;
+    submitForm: (stepId: number, requirements: Requirement[], remark?: string) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];

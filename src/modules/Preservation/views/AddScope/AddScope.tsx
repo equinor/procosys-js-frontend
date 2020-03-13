@@ -115,10 +115,10 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         return Promise.resolve();
     };
 
-    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], description?: string, remark?: string): Promise<void> => {
+    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark?: string): Promise<void> => {
         try {
             const tagNo = selectedTags[0].tagNo;
-            await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, description, remark);
+            await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark);
             showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {

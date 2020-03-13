@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
@@ -14,8 +13,22 @@ import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
-import { PreservedTag } from './types';
+import { PreservedTag, Requirement } from './types';
 import ScopeTable from './ScopeTable';
+import TransferDialog from './TransferDialog';
+
+export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
+    if (!tag.requirements || tag.requirements.length === 0) {
+        return null;
+    }
+
+    return tag.requirements[0];
+};
+
+export const isTagOverdue = (tag: PreservedTag): boolean => {
+    const requirement = getFirstUpcomingRequirement(tag);
+    return requirement ? requirement.nextDueWeeks < 0 : false;
+};
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
@@ -90,21 +103,30 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
-        //Verify that all selected tags can be transfered
-        const numTagsNotTransferable = selectedTags.filter((tag) => !tag.readyToBeTransferred).length;
-        if (numTagsNotTransferable == 0) {
-            showModalDialog(
-                `${selectedTags.length} selected tags. Please confirm to transfer all selected tags, or go back to list.`,
-                null,
-                '800px',
-                'Back to list',
-                null,
-                'Transfer',
-                transfer);
-        } else {
-            showModalDialog(
-                `${numTagsNotTransferable} tag(s) are not transferable.`, null, '300px', 'Back to list', null, null, null);
-        }
+        const transferableTags: PreservedTag[] = [];
+        const nonTransferableTags: PreservedTag[] = [];
+
+        //Tag-objects must be cloned to avoid issues with data in scope table 
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeTransferred) {
+                transferableTags.push(newTag);
+            } else {
+                nonTransferableTags.push(newTag);
+            }
+        });
+
+        const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
+        const transferFunc = transferableTags.length > 0 ? transfer : null;
+
+        showModalDialog(
+            'Transferring',
+            <TransferDialog transferableTags={transferableTags} nonTransferableTags={nonTransferableTags} />,
+            '1000px',
+            'Back to list',
+            null,
+            transferButton,
+            transferFunc);
     };
 
     const preservedThisWeek = async (): Promise<void> => {

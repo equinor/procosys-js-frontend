@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { render } from 'react-dom';
 import { Scrim, DialogContainer, Title, Divider, Content, ButtonContainer, ButtonSpacer } from './style';
 import { Button } from '@equinor/eds-core-react';
+import { Typography } from '@equinor/eds-core-react';
 
 const modalDialogContainer = document.createElement('div');
 modalDialogContainer.setAttribute('id', 'model-dialog-container');
@@ -39,7 +40,9 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
         <Scrim>
             <DialogContainer width={width}>
                 {props.title &&
-                    <Title>{props.title}</Title>
+                    <Title>
+                        <Typography variant='h6'>{props.title}</Typography>
+                    </Title>
                 }
                 {props.title &&
                     <Divider />
@@ -56,7 +59,7 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
                     }
                     <ButtonSpacer />
                     {props.buttonTwoText &&
-                        <Button variant="outlined" onClick={buttonTwoHandler}>
+                        <Button onClick={buttonTwoHandler}>
                             {props.buttonTwoText}
                         </Button>
                     }

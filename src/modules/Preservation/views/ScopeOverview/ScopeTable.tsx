@@ -1,11 +1,12 @@
 import React from 'react';
 
 import Table from './../../../../components/Table';
-import { PreservedTag, Requirement } from './types';
+import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
-import { Toolbar, TagLink, TagStatusLabel, RequirementsContainer, RequirementIcon } from './ScopeTable.style';
-import PreservationIcon from './../PreservationIcon';
+import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
+import RequirementIcons from './RequirementIcons';
+import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
 
 interface ScopeTableProps {
     tags: PreservedTag[];
@@ -21,22 +22,6 @@ const ScopeTable = ({
     showTagDetails
 }: ScopeTableProps): JSX.Element => {
 
-    const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
-        if (!tag.requirements || tag.requirements.length === 0) {
-            return null;
-        }
-
-        return tag.requirements[0];        
-    };
-
-    const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;
-    const isRequirementDue = (requirement: Requirement): boolean => requirement.nextDueWeeks === 0;
-
-    const isTagOverdue = (tag: PreservedTag): boolean => {
-        const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? isRequirementOverdue(requirement) : false;
-    };
-
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
             <TagLink
@@ -50,7 +35,7 @@ const ScopeTable = ({
 
     const getDescriptionColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <div style={{display: 'flex', alignItems: 'center', color: 'inherit'}}>
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 {tag.description}
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -69,21 +54,7 @@ const ScopeTable = ({
 
     const getRequirementColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <RequirementsContainer>
-                {
-                    tag.requirements.map(req => {
-                        return (
-                            <RequirementIcon 
-                                key={req.id} 
-                                isDue={isRequirementDue(req) || isRequirementOverdue(req)} 
-                                isReadyToBePreserved={req.readyToBePreserved}
-                            >
-                                <PreservationIcon variant={req.requirementTypeCode} />
-                            </RequirementIcon>
-                        );                         
-                    })
-                }
-            </RequirementsContainer>
+            <RequirementIcons tag={tag} />
         );
     };
 
@@ -99,7 +70,7 @@ const ScopeTable = ({
                 { title: 'Resp', field: 'responsibleCode' },
                 { title: 'Disc', field: 'disciplineCode' },
                 { title: 'Status', field: 'status' },
-                { title: 'Req type', render: getRequirementColumn}
+                { title: 'Req type', render: getRequirementColumn }
             ]}
             data={tags}
             options={{

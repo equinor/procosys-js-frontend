@@ -88,7 +88,7 @@ const TreeView = ({
             // use already loaded children
             children = node.children;
         } else {
-            // load children
+            // load children (TODO: need async handling)
             children = node.getChildren();
 
             // set parent relation for all children

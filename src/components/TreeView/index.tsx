@@ -4,21 +4,35 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
 
+/**
+ * @param id Unique node identifier across all nodes (number or string).
+ * @param name Node display name.
+ * @param hasChildren Indicates node has children and can be expanded.
+ * @param getChildren Function to load children.
+ * @param onClick Function to load details view.
+ * @param parentId Internal: reference to parent node (handled by component).
+ * @param isExpanded Internal: indicates node is currently expanded (handled by component).
+ * @param children Internal: reference to child nodes (handled by component).
+ */
 export interface NodeData {
     id: number | string;
-    parentId: number | string | null;
     name: string;
-    isExpanded: boolean;
     hasChildren: boolean;
     getChildren: (() => NodeData[]) | null;
-    children: NodeData[] | null;
     onClick: (() => void) | null;
+    parentId: number | string | null;
+    isExpanded: boolean;
+    children: NodeData[] | null;
 }
 
 interface TreeViewProps {
     rootNodes: NodeData[];
 }
 
+/**
+ * @param rootNodes List of NodeData containing the root nodes of the tree. 
+ * @see NodeData
+ */
 const TreeView = ({
     rootNodes
 }: TreeViewProps): JSX.Element => {

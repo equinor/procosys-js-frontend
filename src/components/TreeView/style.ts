@@ -56,8 +56,16 @@ export const NodeName = styled.div<NodeNameProps>`
     margin-left: ${(props): string => !props.hasChildren ? 'calc(var(--grid-unit) * 6.5)' : '0'};
 `;
 
-export const NodeLink = styled.span`
+interface NodeLinkProps {
+    isExpanded: boolean;
+}
+
+export const NodeLink = styled.span<NodeLinkProps>`
     cursor: pointer;
+
+    ${(props): any => props.isExpanded && css`
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+    `}
 
     :hover {
         color: ${tokens.colors.interactive.primary__resting.rgba};

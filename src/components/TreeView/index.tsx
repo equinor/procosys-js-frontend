@@ -141,9 +141,11 @@ const TreeView = ({
                 isExpanded={node.isExpanded}>
                 {
                     hasOnClickEvent && (
-                        <NodeLink onClick={(): void => {
-                            node.onClick && node.onClick();
-                        }}>
+                        <NodeLink
+                            isExpanded={node.isExpanded} 
+                            onClick={(): void => {
+                                node.onClick && node.onClick();
+                            }}>
                             {node.name}
                         </NodeLink>
                     )

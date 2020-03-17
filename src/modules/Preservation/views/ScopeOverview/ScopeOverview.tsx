@@ -16,7 +16,6 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag } from './types';
 import ScopeTable from './ScopeTable';
-import TreeView, { NodeData } from './../../../../components/TreeView';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
@@ -160,84 +159,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
         }, [selectedTags]);
-
-    const SubNodes100: NodeData[] = [
-        {
-            id: 100,
-            parentId: 1,
-            name: 'SubNode 100',
-            nodeType: 'NodeType_1',
-            hasChildren: false,
-            isExpanded: false,
-            getChildren: null
-        },
-        {
-            id: 101,
-            parentId: 1,
-            name: 'SubNode 101',
-            nodeType: 'NodeType_1',
-            hasChildren: false,
-            isExpanded: false,
-            getChildren: null
-        },
-        {
-            id: 102,
-            parentId: 1,
-            name: 'SubNode 102',
-            nodeType: 'NodeType_1',
-            hasChildren: false,
-            isExpanded: false,
-            getChildren: null
-        }
-    ];
-    
-    const SubNodes300: NodeData[] = [
-        {
-            id: 300,
-            parentId: 3,
-            name: 'SubNode 300',
-            nodeType: 'NodeType_3',
-            hasChildren: false,
-            isExpanded: false,
-            getChildren: null
-        }
-    ];
-    
-    const nodes: NodeData[] = [
-        {
-            id: 1,
-            parentId: null,
-            name: 'Node 1',
-            nodeType: 'NodeType_1',
-            hasChildren: true,
-            isExpanded: false,
-            getChildren: (): NodeData[] => SubNodes100
-        },
-        {
-            id: 2,
-            parentId: null,
-            name: 'Node 2',
-            nodeType: 'NodeType_2',
-            hasChildren: false,
-            isExpanded: false,
-            getChildren: null
-        },
-        {
-            id: 3,
-            parentId: null,
-            name: 'Node 3',
-            nodeType: 'NodeType_3',
-            hasChildren: true,
-            isExpanded: false,
-            getChildren: (): NodeData[] => SubNodes300
-        }
-    ];
-
-
-    const foo = true;
-    if (foo) {
-        return <TreeView rootNodes={nodes}></TreeView>; 
-    }
 
     return (
         <Container>

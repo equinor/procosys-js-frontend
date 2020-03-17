@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName } from './style';
-// import Spinner from './../Spinner';
+import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
 
 export interface NodeData {
-    id: number;
-    parentId: number | null;
+    id: number | string;
+    parentId: number | string | null;
     name: string;
-    nodeType: string;
-    hasChildren: boolean;
     isExpanded: boolean;
+    hasChildren: boolean;
     getChildren: (() => NodeData[]) | null;
     children: NodeData[] | null;
+    onClick: (() => void) | null;
 }
 
 interface TreeViewProps {
@@ -40,7 +39,7 @@ const TreeView = ({
 
         // get number of child nodes to remove
         treeData.forEach(node => {
-            let nodeParentId: number | null = node.parentId;
+            let nodeParentId: number | string | null = node.parentId;
 
             while (nodeParentId !== null) {
 
@@ -98,6 +97,7 @@ const TreeView = ({
         let indentMultiplier = 0;
         let parentId = node.parentId;
 
+        // add indentation based on number of parents up the tree
         while (parentId !== null) {
             const parent = treeData.find(node => node.id === parentId);
 
@@ -117,15 +117,41 @@ const TreeView = ({
             return null;
         }
 
+        const isExpanded = node.isExpanded;
+
         return (
             <ExpandCollapseIcon 
+                isExpanded={isExpanded}
                 onClick={(): void => {
-                    node.isExpanded ? collapseNode(node) : expandNode(node);
+                    isExpanded ? collapseNode(node) : expandNode(node);
                 }}
             >
-                { node.isExpanded && <KeyboardArrowDownIcon /> }
-                { !node.isExpanded && <KeyboardArrowRightIcon /> }
+                { isExpanded && <KeyboardArrowDownIcon /> }
+                { !isExpanded && <KeyboardArrowRightIcon /> }
             </ExpandCollapseIcon>  
+        );
+    };
+
+    const getNodeLink = (node: NodeData): JSX.Element => {
+        const hasOnClickEvent = node.onClick;
+
+        return (
+            <NodeName 
+                hasChildren={node.hasChildren} 
+                isExpanded={node.isExpanded}>
+                {
+                    hasOnClickEvent && (
+                        <NodeLink onClick={(): void => {
+                            node.onClick && node.onClick();
+                        }}>
+                            {node.name}
+                        </NodeLink>
+                    )
+                }
+                {
+                    !hasOnClickEvent && node.name
+                }
+            </NodeName>
         );
     };
 
@@ -134,12 +160,8 @@ const TreeView = ({
 
         return (
             <NodeContainer key={node.id} indentMultiplier={indent}>
-                {
-                    getExpandCollapseIcon(node)
-                }
-                <NodeName hasChildren={node.hasChildren}>
-                    {node.name}
-                </NodeName>
+                { getExpandCollapseIcon(node) }
+                { getNodeLink(node) }
             </NodeContainer>
         );
     };

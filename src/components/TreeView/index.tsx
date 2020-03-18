@@ -44,14 +44,13 @@ const TreeView = ({
         let childCount = 0;
 
         // get number of child nodes to remove
-        treeData.forEach(node => {
-            let nodeParentId: number | string | null | undefined = node.parentId;
+        treeData.forEach(treeNode => {
+            let nodeParentId: number | string | null | undefined = treeNode.parentId;
 
             while (nodeParentId) {
-
                 // check whether the child exists under node being collapsed
                 if (nodeParentId === collapsingNodeId) {
-                    node.isExpanded = false;
+                    treeNode.isExpanded = false;
                     childCount++;
                 }
 
@@ -61,6 +60,7 @@ const TreeView = ({
             }
         });
 
+        // remove children after parent
         const newTreeData = [...treeData];
         newTreeData.splice(collapsingNodeIndex + 1, childCount);
 

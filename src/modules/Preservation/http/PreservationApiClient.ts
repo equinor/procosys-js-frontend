@@ -398,8 +398,8 @@ class PreservationApiClient extends ApiClient {
         projectName: string,
         page: number,
         size: number,
-        sortProperty: string,
-        sortDirection: string,
+        sortProperty: string | null,
+        sortDirection: string | null,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse> {
         const endpoint = '/Tags';

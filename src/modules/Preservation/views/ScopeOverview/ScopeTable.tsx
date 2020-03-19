@@ -8,8 +8,8 @@ import RequirementIcons from './RequirementIcons';
 import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
 
 interface ScopeTableProps {
-    getTags: (page: number, pageSize: number) => Promise<PreservedTags | null>;
-    isLoading: boolean;
+    getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | null>;
+    //isLoading: boolean;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
     setRefreshScopeListCallback: (callback: () => void) => void;
@@ -17,7 +17,7 @@ interface ScopeTableProps {
 
 const ScopeTable = ({
     getTags,
-    isLoading,
+    //isLoading,
     setSelectedTags,
     showTagDetails,
     setRefreshScopeListCallback,
@@ -69,6 +69,19 @@ const ScopeTable = ({
         );
     };
 
+    const sortFieldMap: { [key: string]: string } = {
+        'Tag nr': 'TagNo',
+        'Description': 'Description',
+        'Due': 'Due',
+        'Next': 'Due',
+        'PO nr': 'PO',
+        'Resp': 'Responsible',
+        'Status': 'Status',
+        'Area': 'Area',
+        'Disc': 'Discipline',
+        'Mode': 'Mode'
+    };
+
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
@@ -76,7 +89,8 @@ const ScopeTable = ({
                 { title: 'Tag nr', render: getTagNoColumn },
                 { title: 'Description', render: getDescriptionColumn },
                 { title: 'Next', render: getNextColumn },
-                { title: 'Due', render: getDueColumn },
+                { title: 'Due', render: getDueColumn, defaultSort: 'asc' },
+                { title: 'Mode', field: 'mode' },
                 { title: 'PO nr', field: 'purchaseOrderNo' },
                 { title: 'Area', field: 'areaCode' },
                 { title: 'Resp', field: 'responsibleCode' },
@@ -86,12 +100,16 @@ const ScopeTable = ({
             ]}
             data={(query: any): any =>
                 new Promise((resolve) => {
-                    getTags(query.page, query.pageSize).then((result) => {
-                        resolve({
-                            data: result?.tags,
-                            page: query.page,
-                            totalCount: result?.maxAvailable
-                        });
+                    const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title] : null;
+                    const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
+
+                    getTags(query.page, query.pageSize, orderByField, orderDirection).then((result) => {
+                        result ?
+                            resolve({
+                                data: result.tags,
+                                page: query.page,
+                                totalCount: result.maxAvailable
+                            }) : null;
                     });
                 })
             }
@@ -117,7 +135,7 @@ const ScopeTable = ({
                     </Toolbar>
                 )
             }}
-            isLoading={isLoading}
+            //isLoading={isLoading}
             onSelectionChange={setSelectedTags}
             style={{ boxShadow: 'none' }}
         />

@@ -35,7 +35,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
     const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
@@ -55,12 +55,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeList = callback;
     };
 
-    const getTags = async (page: number, pageSize: number): Promise<PreservedTags | null> => {
-        setIsLoading(true);
+    const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags | null> => {
         try {
-            return await apiClient.getPreservedTags(project.name, page, pageSize, 'Due', 'Asc').then(
+            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection).then(
                 (response) => {
-                    setIsLoading(false);
                     return response;
                 }
             );
@@ -266,7 +264,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
             <ScopeTable
                 getTags={getTags}
-                isLoading={isLoading}
+                //isLoading={isLoading}
                 setSelectedTags={setSelectedTags}
                 showTagDetails={openFlyout}
                 setRefreshScopeListCallback={setRefreshScopeListCallback}

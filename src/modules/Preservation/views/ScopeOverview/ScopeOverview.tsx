@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
@@ -13,7 +14,7 @@ import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
-import { PreservedTag, Requirement } from './types';
+import { PreservedTag, Requirement, PreservedTags } from './types';
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
 
@@ -33,7 +34,6 @@ export const isTagOverdue = (tag: PreservedTag): boolean => {
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
     const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
-    const [tags, setTags] = useState<PreservedTag[]>([]);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
@@ -49,23 +49,27 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         apiClient,
     } = usePreservationContext();
 
-    const getTags = async (): Promise<void> => {
+    let refreshScopeList: () => void;
+
+    const setRefreshScopeListCallback = (callback: () => void): void => {
+        refreshScopeList = callback;
+    };
+
+    const getTags = async (page: number, pageSize: number): Promise<PreservedTags | null> => {
         setIsLoading(true);
         try {
-            const response = await apiClient.getPreservedTags(project.name);
-            setTags(response.tags);
+            return await apiClient.getPreservedTags(project.name, page, pageSize, 'Due', 'Asc').then(
+                (response) => {
+                    setIsLoading(false);
+                    return response;
+                }
+            );
         } catch (error) {
             console.error('Get tags failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
-        setIsLoading(false);
+        return null;
     };
-
-    useEffect(() => {
-        (async (): Promise<void> => {
-            getTags();
-        })();
-    }, [project]);
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
@@ -75,10 +79,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const startPreservation = async (): Promise<void> => {
         try {
             await apiClient.startPreservation(selectedTags.map(t => t.id));
+            refreshScopeList();
             setSelectedTags([]);
-            getTags().then(() => {
-                showSnackbarNotification('Status was set to \'Active\' for selected tags.', 5000);
-            });
         } catch (error) {
             console.error('Start preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -87,18 +89,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transfer = async (): Promise<void> => {
-        setIsLoading(true);
         try {
             await apiClient.transfer(selectedTags.map(t => t.id));
+            refreshScopeList();
             setSelectedTags([]);
-            getTags().then(() => {
-                showSnackbarNotification(`${selectedTags.length} tags has been transferd successfully.`, 5000);
-            });
         } catch (error) {
             console.error('Transfer failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
-        setIsLoading(false);
         return Promise.resolve();
     };
 
@@ -132,10 +130,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const preservedThisWeek = async (): Promise<void> => {
         try {
             await apiClient.preserve(selectedTags.map(t => t.id));
+            refreshScopeList();
             setSelectedTags([]);
-            getTags().then(() => {
-                showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
-            });
         } catch (error) {
             console.error('Preserve failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -153,7 +149,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         // refresh scope list when flyout has updated a tag
         if (scopeIsDirty) {
-            getTags();
+            refreshScopeList();
             setScopeIsDirty(false);
         }
     };
@@ -168,7 +164,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.length === 0 ||
                 selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
             );
-        }, [selectedTags]);
+        }, [selectedTags]
+    );
 
     /**
      * 'Preserved this week' button is set to disabled if no rows are selected or
@@ -180,7 +177,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 selectedTags.length === 0 ||
                 selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
-        }, [selectedTags]);
+        }, [selectedTags]
+    );
 
     return (
         <Container>
@@ -262,12 +260,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </StyledButton>
                 </IconBar>
             </HeaderContainer>
-            <ScopeTable
-                tags={tags}
 
+            <ScopeTable
+                getTags={getTags}
                 isLoading={isLoading}
                 setSelectedTags={setSelectedTags}
                 showTagDetails={openFlyout}
+                setRefreshScopeListCallback={setRefreshScopeListCallback}
             />
             {
                 displayFlyout && (

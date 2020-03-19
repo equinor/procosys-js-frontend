@@ -1,7 +1,6 @@
 import React from 'react';
-
 import Table from './../../../../components/Table';
-import { PreservedTag } from './types';
+import { PreservedTag, PreservedTags } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
 import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
@@ -9,18 +8,30 @@ import RequirementIcons from './RequirementIcons';
 import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
 
 interface ScopeTableProps {
-    tags: PreservedTag[];
+    getTags: (page: number, pageSize: number) => Promise<PreservedTags | null>;
     isLoading: boolean;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
+    setRefreshScopeListCallback: (callback: () => void) => void;
 }
 
 const ScopeTable = ({
-    tags,
+    getTags,
     isLoading,
     setSelectedTags,
-    showTagDetails
+    showTagDetails,
+    setRefreshScopeListCallback,
+
 }: ScopeTableProps): JSX.Element => {
+
+    const ref = React.createRef();
+
+    const refreshScopeList = (): void => {
+        const referanse: any = ref.current;
+        referanse?.onQueryChange();
+    };
+
+    setRefreshScopeListCallback(refreshScopeList);
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
@@ -60,6 +71,7 @@ const ScopeTable = ({
 
     return (
         <Table
+            tableRef={ref} //reference will be used by parent, to trigger rendering
             columns={[
                 { title: 'Tag nr', render: getTagNoColumn },
                 { title: 'Description', render: getDescriptionColumn },
@@ -72,12 +84,23 @@ const ScopeTable = ({
                 { title: 'Status', field: 'status' },
                 { title: 'Req type', render: getRequirementColumn }
             ]}
-            data={tags}
+            data={(query: any): any =>
+                new Promise((resolve) => {
+                    getTags(query.page, query.pageSize).then((result) => {
+                        resolve({
+                            data: result?.tags,
+                            page: query.page,
+                            totalCount: result?.maxAvailable
+                        });
+                    });
+                })
+            }
             options={{
                 showTitle: false,
                 draggable: false,
                 selection: true,
                 pageSize: 10,
+                emptyRowsWhenPaging: false,
                 pageSizeOptions: [10, 50, 100],
                 headerStyle: {
                     backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba

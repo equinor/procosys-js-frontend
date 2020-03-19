@@ -81,6 +81,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             await apiClient.startPreservation(selectedTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
+            showSnackbarNotification('Status was set to \'Active\' for selected tags.', 5000);
         } catch (error) {
             console.error('Start preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -93,6 +94,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             await apiClient.transfer(selectedTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
+            showSnackbarNotification(`${selectedTags.length} tags has been transferd successfully.`, 5000);
         } catch (error) {
             console.error('Transfer failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -132,6 +134,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             await apiClient.preserve(selectedTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
+            showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
         } catch (error) {
             console.error('Preserve failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);

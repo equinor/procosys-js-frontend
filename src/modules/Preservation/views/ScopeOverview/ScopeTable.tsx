@@ -26,12 +26,11 @@ const ScopeTable = ({
 
     const ref = React.createRef();
 
-    const refreshScopeList = (): void => {
-        const referanse: any = ref.current;
-        referanse?.onQueryChange();
-    };
-
-    setRefreshScopeListCallback(refreshScopeList);
+    setRefreshScopeListCallback(() => {
+        if (ref.current) {
+            (ref as any).onQueryChange();
+        }
+    });
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
@@ -117,7 +116,7 @@ const ScopeTable = ({
                 showTitle: false,
                 draggable: false,
                 selection: true,
-                pageSize: 10,
+                pageSize: 50,
                 emptyRowsWhenPaging: false,
                 pageSizeOptions: [10, 50, 100],
                 headerStyle: {

@@ -13,6 +13,8 @@ interface ScopeTableProps {
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
     setRefreshScopeListCallback: (callback: () => void) => void;
+    pageSize: number;
+    setPageSize: (pageSize: number) => void;
 }
 
 const ScopeTable = ({
@@ -21,7 +23,8 @@ const ScopeTable = ({
     setSelectedTags,
     showTagDetails,
     setRefreshScopeListCallback,
-
+    pageSize,
+    setPageSize
 }: ScopeTableProps): JSX.Element => {
 
     const ref = React.createRef();
@@ -81,6 +84,8 @@ const ScopeTable = ({
         'Mode': 'Mode'
     };
 
+
+
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
@@ -116,7 +121,7 @@ const ScopeTable = ({
                 showTitle: false,
                 draggable: false,
                 selection: true,
-                pageSize: 50,
+                pageSize: pageSize,
                 emptyRowsWhenPaging: false,
                 pageSizeOptions: [10, 50, 100],
                 headerStyle: {
@@ -137,6 +142,7 @@ const ScopeTable = ({
             //isLoading={isLoading}
             onSelectionChange={setSelectedTags}
             style={{ boxShadow: 'none' }}
+            onChangeRowsPerPage={setPageSize}
         />
     );
 };

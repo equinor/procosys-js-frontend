@@ -39,6 +39,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
+    const [pageSize, setPageSize] = useState<number>(50);
 
     const path = useRouteMatch();
 
@@ -268,6 +269,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 setSelectedTags={setSelectedTags}
                 showTagDetails={openFlyout}
                 setRefreshScopeListCallback={setRefreshScopeListCallback}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
             />
             {
                 displayFlyout && (

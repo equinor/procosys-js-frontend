@@ -1,7 +1,6 @@
 import React from 'react';
-
 import Table from './../../../../components/Table';
-import { PreservedTag } from './types';
+import { PreservedTag, PreservedTags } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
 import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
@@ -9,18 +8,32 @@ import RequirementIcons from './RequirementIcons';
 import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
 
 interface ScopeTableProps {
-    tags: PreservedTag[];
-    isLoading: boolean;
+    getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | null>;
+    //isLoading: boolean;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
+    setRefreshScopeListCallback: (callback: () => void) => void;
+    pageSize: number;
+    setPageSize: (pageSize: number) => void;
 }
 
 const ScopeTable = ({
-    tags,
-    isLoading,
+    getTags,
+    //isLoading,
     setSelectedTags,
-    showTagDetails
+    showTagDetails,
+    setRefreshScopeListCallback,
+    pageSize,
+    setPageSize
 }: ScopeTableProps): JSX.Element => {
+
+    const ref = React.createRef();
+
+    setRefreshScopeListCallback(() => {
+        if (ref.current) {
+            (ref as any).onQueryChange();
+        }
+    });
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
@@ -58,13 +71,30 @@ const ScopeTable = ({
         );
     };
 
+    const sortFieldMap: { [key: string]: string } = {
+        'Tag nr': 'TagNo',
+        'Description': 'Description',
+        'Due': 'Due',
+        'Next': 'Due',
+        'PO nr': 'PO',
+        'Resp': 'Responsible',
+        'Status': 'Status',
+        'Area': 'Area',
+        'Disc': 'Discipline',
+        'Mode': 'Mode'
+    };
+
+
+
     return (
         <Table
+            tableRef={ref} //reference will be used by parent, to trigger rendering
             columns={[
                 { title: 'Tag nr', render: getTagNoColumn },
                 { title: 'Description', render: getDescriptionColumn },
                 { title: 'Next', render: getNextColumn },
-                { title: 'Due', render: getDueColumn },
+                { title: 'Due', render: getDueColumn, defaultSort: 'asc' },
+                { title: 'Mode', field: 'mode' },
                 { title: 'PO nr', field: 'purchaseOrderNo' },
                 { title: 'Area', field: 'areaCode' },
                 { title: 'Resp', field: 'responsibleCode' },
@@ -72,12 +102,27 @@ const ScopeTable = ({
                 { title: 'Status', field: 'status' },
                 { title: 'Req type', render: getRequirementColumn }
             ]}
-            data={tags}
+            data={(query: any): any =>
+                new Promise((resolve) => {
+                    const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title] : null;
+                    const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
+
+                    getTags(query.page, query.pageSize, orderByField, orderDirection).then((result) => {
+                        result ?
+                            resolve({
+                                data: result.tags,
+                                page: query.page,
+                                totalCount: result.maxAvailable
+                            }) : null;
+                    });
+                })
+            }
             options={{
                 showTitle: false,
                 draggable: false,
                 selection: true,
-                pageSize: 10,
+                pageSize: pageSize,
+                emptyRowsWhenPaging: false,
                 pageSizeOptions: [10, 50, 100],
                 headerStyle: {
                     backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
@@ -94,9 +139,10 @@ const ScopeTable = ({
                     </Toolbar>
                 )
             }}
-            isLoading={isLoading}
+            //isLoading={isLoading}
             onSelectionChange={setSelectedTags}
             style={{ boxShadow: 'none' }}
+            onChangeRowsPerPage={setPageSize}
         />
     );
 };

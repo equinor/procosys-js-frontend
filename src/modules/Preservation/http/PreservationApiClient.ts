@@ -394,7 +394,12 @@ class PreservationApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getPreservedTags(projectName: string,
+    async getPreservedTags(
+        projectName: string,
+        page: number,
+        size: number,
+        sortProperty: string | null,
+        sortDirection: string | null,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse> {
         const endpoint = '/Tags';
@@ -402,10 +407,10 @@ class PreservationApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
-                page: 0, //temporary
-                size: 10000,   //temporary
-                property: 'Due',  //temporary
-                direction: 'Asc'
+                page: page,
+                size: size,
+                property: sortProperty,
+                direction: sortDirection,
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

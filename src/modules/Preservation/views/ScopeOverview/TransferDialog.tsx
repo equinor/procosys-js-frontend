@@ -43,11 +43,12 @@ const TransferTable = ({
         data={tags}
         options={{
             search: false,
-            pageSize: numTags > 5 ? 5 : numTags,
+            pageSize: 5,
             pageSizeOptions: [5, 10, 50, 100],
             showTitle: false,
             draggable: false,
             selection: false,
+            emptyRowsWhenPaging: false,
             headerStyle: {
                 backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
             },

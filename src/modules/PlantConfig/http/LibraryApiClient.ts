@@ -5,12 +5,15 @@ import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
 
-
 interface ModeResponse {
     id: number;
     title: string;
 }
 
+interface PresJourneyResponse {
+    id: number;
+    title: string;
+}
 
 interface ErrorResponse {
     ErrorCount: number;
@@ -20,21 +23,20 @@ interface ErrorResponse {
     }[];
 }
 
-
-class PreservationApiError extends Error {
+class LibraryApiError extends Error {
 
     data: ErrorResponse | null;
 
     constructor(message: string, apiResponse?: ErrorResponse) {
         super(message);
         this.data = apiResponse || null;
-        this.name = 'PreservationApiError';
+        this.name = 'LibraryApiError';
     }
 }
 
-function getPlantConfigApiError(error: any): PreservationApiError {
+function getLibraryApiError(error: any): LibraryApiError {
     if (error.response.status == 500) {
-        return new PreservationApiError(error.response.data);
+        return new LibraryApiError(error.response.data);
     }
 
     const response = error.response.data as ErrorResponse;
@@ -44,19 +46,19 @@ function getPlantConfigApiError(error: any): PreservationApiError {
         errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
     }
 
-    return new PreservationApiError(errorMessage, response);
+    return new LibraryApiError(errorMessage, response);
 }
 
 
 /**
  * API for interacting with data in ProCoSys.
  */
-class PlantConfigApiClient extends ApiClient {
+class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.preservationApi.scope.join(' '),
-            Settings.externalResources.preservationApi.url
+            Settings.externalResources.libraryApi.scope.join(' '),
+            Settings.externalResources.libraryApi.url
         );
         this.client.interceptors.request.use(
             config => {
@@ -70,22 +72,20 @@ class PlantConfigApiClient extends ApiClient {
     }
 
     /**
-     * Holds a reference to an internal callbackID used to set the plantId on requests.
-     */
+    * Holds a reference to an internal callbackID used to set the plantId on requests.
+    */
     private plantIdInterceptorId: number | null = null;
 
     /**
- * Sets the current context for relevant api requests
- *
- * @param plantId Plant ID
- */
+    * Sets the current context for relevant api requests
+    *
+    * @param plantId Plant ID
+    */
     setCurrentPlant(plantId: string): void {
-        console.log('Setting current plant for preservation: ', plantId);
         if (this.plantIdInterceptorId) {
             this.client.interceptors.request.eject(this.plantIdInterceptorId);
             this.plantIdInterceptorId = null;
         }
-        // const plant = plantId.replace('PCS$', '');
         this.plantIdInterceptorId = this.client.interceptors.request.use(
             config => {
                 config.headers = {
@@ -100,17 +100,15 @@ class PlantConfigApiClient extends ApiClient {
 
 
     /**
- * Get modes
- *
- * @param setRequestCanceller Returns a function that can be called to cancel the request
- */
-    async getModes(setRequestCanceller?: RequestCanceler
-    ): Promise<ModeResponse[]> {
-        const endpoint = '/Tags';
+    * Get modes
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getModes(setRequestCanceller?: RequestCanceler): Promise<ModeResponse[]> {
+        const endpoint = '/Modes';
 
         const settings: AxiosRequestConfig = {
-            params: {
-            },
+            params: {}
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -122,9 +120,34 @@ class PlantConfigApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw getPlantConfigApiError(error);
+            throw getLibraryApiError(error);
+        }
+    }
+
+    /**
+    * Get Preservation Journeys
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getPresJourneys(setRequestCanceller?: RequestCanceler): Promise<PresJourneyResponse[]> {
+        const endpoint = '/Journeys';
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<PresJourneyResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getLibraryApiError(error);
         }
     }
 }
 
-export default PlantConfigApiClient;
+export default LibraryApiClient;

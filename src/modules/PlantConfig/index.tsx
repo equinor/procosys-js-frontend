@@ -4,9 +4,7 @@ import React from 'react';
 import { PlantConfigContextProvider } from './context/PlantConfigContext';
 import withAccessControl from '../../core/security/withAccessControl';
 import { Container } from './style';
-import Library from './views/Library';
-import Main from './views/Main/Main';
-
+import Library from './views/Library/Library';
 
 const Preservation = (): JSX.Element => {
 
@@ -19,14 +17,13 @@ const Preservation = (): JSX.Element => {
                     <BrowserRouter basename={url}>
                         <Switch>
                             <Route
-                                path={'/Library/'}
-
+                                path={'/Library/:path/:libraryType/:libraryItem'}
                                 component={Library}
                             />
                             <Route
                                 path={'/'}
                                 exact
-                                component={Main}
+                                component={Library}  //TODO: WILL LATER BE ROUTED TO MAIN
                             />
                             <Route
                                 component={(): JSX.Element =>
@@ -37,7 +34,6 @@ const Preservation = (): JSX.Element => {
                     </BrowserRouter>
                 </Container>
             </PlantConfigContextProvider>
-
 
         </div>
     );

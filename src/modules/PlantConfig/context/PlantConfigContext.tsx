@@ -1,34 +1,29 @@
 import React, { useEffect, useMemo } from 'react';
-
-//import { Canceler } from '../../../http/HttpClient';
-//import Loading from '../../../components/Loading';
-import PlantConfigApiClient from '../http/PlantConfigApiClient';
+import PlantConfigApiClient from '../http/LibraryApiClient';
 import propTypes from 'prop-types';
 import { useCurrentPlant } from '../../../core/PlantContext';
-//import { useProcosysContext } from '../../../core/ProcosysContext';
-
+import { useProcosysContext } from '../../../core/ProcosysContext';
+import LibraryApiClient from '../http/LibraryApiClient';
 
 const PlantConfigContext = React.createContext<PlantConfigContextProps>({} as PlantConfigContextProps);
-type PlantConfigContextProps = {
-    apiClient: PlantConfigApiClient;
-}
 
+type PlantConfigContextProps = {
+    libraryApiClient: PlantConfigApiClient;
+}
 
 export const PlantConfigContextProvider: React.FC = ({ children }): JSX.Element => {
 
-    //const { procosysApiClient, auth } = useProcosysContext();
+    const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
-    const plantConfigApiClient = useMemo(() => new PlantConfigApiClient(auth), [auth]);
-
-    //let requestCanceler: Canceler;
+    const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
     useEffect(() => {
-        plantConfigApiClient.setCurrentPlant(plant.id);
+        libraryApiClient.setCurrentPlant(plant.id);
     }, [plant]);
 
     return (
         <PlantConfigContext.Provider value={{
-            apiClient: plantConfigApiClient
+            libraryApiClient: libraryApiClient
         }}>
             {children}
         </PlantConfigContext.Provider>

@@ -31,7 +31,10 @@
     ],
     "overrides": [
         {
-            "files": ["**/*.ts", "**/*.tsx"],
+            "files": [
+                "**/*.ts",
+                "**/*.tsx"
+            ],
             "extends": [
                 "plugin:@typescript-eslint/eslint-recommended",
                 "plugin:@typescript-eslint/recommended"
@@ -40,6 +43,7 @@
                 "@typescript-eslint"
             ],
             "rules": {
+                "require-atomic-updates": "off",
                 "@typescript-eslint/explicit-function-return-type": "warn",
                 "@typescript-eslint/no-explicit-any": "off",
                 "@typescript-eslint/no-var-requires": "off",
@@ -52,7 +56,9 @@
         "indent": [
             "error",
             4,
-            {"SwitchCase": 1}
+            {
+                "SwitchCase": 1
+            }
         ],
         "linebreak-style": [
             "error",
@@ -69,7 +75,15 @@
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
         "react/react-in-jsx-scope": "error",
-        "react/jsx-filename-extension": ["error", { "extensions": [".tsx", ".jsx"] }],
+        "react/jsx-filename-extension": [
+            "error",
+            {
+                "extensions": [
+                    ".tsx",
+                    ".jsx"
+                ]
+            }
+        ],
         "react/display-name": "off"
     }
 }

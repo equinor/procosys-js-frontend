@@ -279,7 +279,12 @@ const Header: React.FC = (): JSX.Element => {
                 <a href={`/${params.plant}/Documents`}>Document</a>
                 <a href={`/${params.plant}/Notification`}>Notification</a>
                 <a href={`/${params.plant}/Hookup`}>Hookup</a>
-                <a href={`/${params.plant}/PlantConfig`}>Plant Configuration</a>
+                <NavLink
+                    activeClassName={'active'}
+                    to={`/${params.plant}/PlantConfig`}
+                >
+                    Plant Configuration
+                </NavLink>
             </SubNav>
         </div>
     );

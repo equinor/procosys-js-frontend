@@ -12,11 +12,6 @@ type LibraryTreeviewProps = {
 
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 
-    interface Mode {
-        id: number;
-        title: string;
-    }
-
     const {
         libraryApiClient
     } = usePlantConfigContext();

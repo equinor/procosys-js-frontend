@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import Table from './../../../../components/Table';
 import { PreservedTag, PreservedTags } from './types';
 import { tokens } from '@equinor/eds-tokens';
@@ -27,11 +27,11 @@ const ScopeTable = ({
     setPageSize
 }: ScopeTableProps): JSX.Element => {
 
-    const ref = React.createRef();
+    const ref: RefObject<any> = React.createRef();
 
     setRefreshScopeListCallback(() => {
         if (ref.current) {
-            (ref as any).onQueryChange();
+            ref.current.onQueryChange();
         }
     });
 

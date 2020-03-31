@@ -57,8 +57,8 @@ class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.libraryApi.scope.join(' '),
-            Settings.externalResources.libraryApi.url
+            Settings.externalResources.preservationApi.scope.join(' '),
+            Settings.externalResources.preservationApi.url
         );
         this.client.interceptors.request.use(
             config => {

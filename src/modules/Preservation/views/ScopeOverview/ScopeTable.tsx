@@ -31,7 +31,7 @@ const ScopeTable = ({
 
     setRefreshScopeListCallback(() => {
         if (ref.current) {
-            (ref as any).onQueryChange();
+            (ref as any).current.onQueryChange();
         }
     });
 

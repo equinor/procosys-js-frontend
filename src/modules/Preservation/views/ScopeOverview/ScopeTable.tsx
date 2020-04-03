@@ -123,7 +123,7 @@ const ScopeTable = ({
                 selection: true,
                 pageSize: pageSize,
                 emptyRowsWhenPaging: false,
-                pageSizeOptions: [10, 50, 100],
+                pageSizeOptions: [10, 50, 100, 500, 1000],
                 headerStyle: {
                     backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
                 },

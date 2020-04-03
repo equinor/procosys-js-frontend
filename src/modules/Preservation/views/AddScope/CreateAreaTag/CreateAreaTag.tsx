@@ -112,7 +112,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             newTagNo = '#SITE';
         }
         newTagNo = `${newTagNo}-${props.discipline.code}`;
-        if (props.areaType.value === 'PreArea' && props.area) {
+        if (props.area) {
             newTagNo = `${newTagNo}-${props.area.code}`;
         }
         props.suffix ? newTagNo = `${newTagNo}-${props.suffix}` : null;

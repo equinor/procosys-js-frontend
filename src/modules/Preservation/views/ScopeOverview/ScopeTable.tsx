@@ -100,7 +100,7 @@ const ScopeTable = ({
                 { title: 'Resp', field: 'responsibleCode' },
                 { title: 'Disc', field: 'disciplineCode' },
                 { title: 'Status', field: 'status' },
-                { title: 'Req type', render: getRequirementColumn }
+                { title: 'Req type', render: getRequirementColumn, sorting: false }
             ]}
             data={(query: any): any =>
                 new Promise((resolve) => {

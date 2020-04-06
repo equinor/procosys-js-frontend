@@ -88,8 +88,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const transferableTags: PreservedTag[] = [];
-    const nonTransferableTags: PreservedTag[] = [];
+    let transferableTags: PreservedTag[];
+    let nonTransferableTags: PreservedTag[];
 
     const transfer = async (): Promise<void> => {
         try {
@@ -106,6 +106,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const transferDialog = (): void => {
         //Tag-objects must be cloned to avoid issues with data in scope table 
+        transferableTags = [];
+        nonTransferableTags = [];
+
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
             if (tag.readyToBeTransferred) {

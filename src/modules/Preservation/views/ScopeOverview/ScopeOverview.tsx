@@ -88,12 +88,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
+    let transferableTags: PreservedTag[];
+    let nonTransferableTags: PreservedTag[];
+
     const transfer = async (): Promise<void> => {
         try {
-            await apiClient.transfer(selectedTags.map(t => t.id));
+            await apiClient.transfer(transferableTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
-            showSnackbarNotification(`${selectedTags.length} tags has been transferd successfully.`, 5000);
+            showSnackbarNotification(`${transferableTags.length} tags have been successfully transferred.`, 5000);
         } catch (error) {
             console.error('Transfer failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -102,10 +105,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
-        const transferableTags: PreservedTag[] = [];
-        const nonTransferableTags: PreservedTag[] = [];
-
         //Tag-objects must be cloned to avoid issues with data in scope table
+        transferableTags = [];
+        nonTransferableTags = [];
+
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
             if (tag.readyToBeTransferred) {

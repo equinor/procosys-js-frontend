@@ -100,7 +100,7 @@ const ScopeTable = ({
                 { title: 'Resp', field: 'responsibleCode' },
                 { title: 'Disc', field: 'disciplineCode' },
                 { title: 'Status', field: 'status' },
-                { title: 'Req type', render: getRequirementColumn }
+                { title: 'Req type', render: getRequirementColumn, sorting: false }
             ]}
             data={(query: any): any =>
                 new Promise((resolve) => {
@@ -123,7 +123,7 @@ const ScopeTable = ({
                 selection: true,
                 pageSize: pageSize,
                 emptyRowsWhenPaging: false,
-                pageSizeOptions: [10, 50, 100],
+                pageSizeOptions: [10, 50, 100, 500, 1000],
                 headerStyle: {
                     backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
                 },

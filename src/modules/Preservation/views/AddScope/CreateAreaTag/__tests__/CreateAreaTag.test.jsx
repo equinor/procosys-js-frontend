@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../../../../../assets/theme';
 
-const disciplines = [
+const mockDisciplines = [
     {
         code: 'disc code 1',
         description: 'disc desr 1',
@@ -15,7 +15,7 @@ const disciplines = [
     },
 ];
 
-const areas = [
+const mockAreas = [
     {
         code: 'area code 1',
         description: 'area desr 1',
@@ -33,8 +33,8 @@ const renderWithTheme = Component => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-jest.mock('../../../../context/PreservationContext', () => ({
-    usePreservationContext: jest.fn(() => {
+jest.mock('../../../../context/PreservationContext',() => ({
+    usePreservationContext: () => {
         return {
             project: {
                 id: 1,
@@ -42,17 +42,17 @@ jest.mock('../../../../context/PreservationContext', () => ({
                 description: 'project'
             },
             apiClient: {
-                getAreas: Promise.resolve(areas),
-                getDisciplines: Promise.resolve(disciplines)
+                getAreas: () => Promise.resolve(mockAreas),
+                getDisciplines: () => Promise.resolve(mockDisciplines)
             }
         };
-    })
+    }
 }));
 
 describe('Module: <CreateAreaProperties />', () => {
 
     it('Next button should be disabled intially.', () => {
-        const { getByText, queryByText } = renderWithTheme(<CreateAreaTag areaType={undefined} disciplines={disciplines} areas={areas}/>);
+        const { getByText, queryByText } = renderWithTheme(<CreateAreaTag areaType={undefined} disciplines={mockDisciplines} areas={mockAreas}/>);
         expect(getByText('Next')).toHaveProperty('disabled', true);
         expect(queryByText('Area')).toBeNull();
     });
@@ -61,8 +61,8 @@ describe('Module: <CreateAreaProperties />', () => {
         let testAreaType;
         const { getByText, queryByText, rerender } = renderWithTheme(
             <CreateAreaTag
-                disciplines={disciplines}
-                areas={areas}
+                disciplines={mockDisciplines}
+                areas={mockAreas}
                 areaType={testAreaType}
                 setAreaType={jest.fn((areaType) => {
                     testAreaType = areaType;
@@ -79,8 +79,8 @@ describe('Module: <CreateAreaProperties />', () => {
         getByText(areaTypeSite.text).click();
         //Rerender to set props
         rerender(<CreateAreaTag
-            disciplines={disciplines}
-            areas={areas}
+            disciplines={mockDisciplines}
+            areas={mockAreas}
             areaType={areaTypeSite}
             setAreaType={jest.fn((areaType) => {
                 testAreaType = areaType;
@@ -96,8 +96,8 @@ describe('Module: <CreateAreaProperties />', () => {
         getByText(areaTypeNormal.text).click();
         //Rerender to set props
         rerender(<CreateAreaTag
-            disciplines={disciplines}
-            areas={areas}
+            disciplines={mockDisciplines}
+            areas={mockAreas}
             areaType={areaTypeNormal}
             setAreaType={jest.fn((areaType) => {
                 testAreaType = areaType;

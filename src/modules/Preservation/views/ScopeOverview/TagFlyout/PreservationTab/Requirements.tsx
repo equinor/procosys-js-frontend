@@ -6,6 +6,7 @@ import RequirementNumberField from './RequirementNumberField';
 import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../PreservationIcon';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
+import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 
 interface RequirementProps {
     requirements: TagRequirement[];
@@ -33,10 +34,9 @@ const Requirements = ({
         const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
 
         // determine whether field value is "N/A" or an actual numeric 
-        // TODO: should show error and return if numberFieldValue ends up being "NaN"
         value = value.trim().toLowerCase();
         const numberFieldIsNA = value === 'na' || value === 'n/a';
-        const numberFieldValue = numberFieldIsNA ? null : Number(value);
+        const numberFieldValue = numberFieldIsNA ? null : Number(value); // invalid numbers become "NaN" (validated at save)
 
         if (requirement) {
             const fieldIndex = requirement.numberValues.findIndex(field => field.fieldId == fieldId);
@@ -124,6 +124,21 @@ const Requirements = ({
 
         if (!requirement) {
             console.error(`No values to record found for requirementId ${requirementId}`);
+            return;
+        }
+
+        // validate number fields
+        let numbersAreValid = true;
+        if (requirement.numberValues) {
+            requirement.numberValues.forEach(number => {
+                if (!number.isNA && number.value !== null && isNaN(number.value)) {
+                    numbersAreValid = false;
+                }
+            });
+        }
+
+        if (!numbersAreValid) {
+            showSnackbarNotification('Invalid number value.', 5000, true);
             return;
         }
 

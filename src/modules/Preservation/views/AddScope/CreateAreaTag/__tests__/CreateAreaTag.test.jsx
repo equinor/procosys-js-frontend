@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from '../../../../../../assets/theme';
 
 const disciplines = [
-    { 
+    {
         code: 'disc code 1',
         description: 'disc desr 1',
     },
@@ -16,7 +16,7 @@ const disciplines = [
 ];
 
 const areas = [
-    { 
+    {
         code: 'area code 1',
         description: 'area desr 1',
     },
@@ -40,6 +40,10 @@ jest.mock('../../../../context/PreservationContext', () => ({
                 id: 1,
                 name: 'test',
                 description: 'project'
+            },
+            apiClient: {
+                getAreas: Promise.resolve(areas),
+                getDisciplines: Promise.resolve(disciplines)
             }
         };
     })
@@ -56,50 +60,50 @@ describe('Module: <CreateAreaProperties />', () => {
     it('Area dropdown should only be visible when area type is \'normal\'', () => {
         let testAreaType;
         const { getByText, queryByText, rerender } = renderWithTheme(
-            <CreateAreaTag 
-                disciplines={disciplines} 
+            <CreateAreaTag
+                disciplines={disciplines}
                 areas={areas}
                 areaType={testAreaType}
                 setAreaType={jest.fn((areaType) => {
                     testAreaType = areaType;
-                })}       
+                })}
             />);
 
         expect(queryByText('Area')).toBeNull();
-        
+
         //Select Site as area type
         const areaTypeSelect = getByText('Select area type');
         areaTypeSelect.click();
         expect(getByText(areaTypeNormal.text)).toBeInTheDocument();
-        expect(getByText(areaTypeSite.text)).toBeInTheDocument();      
+        expect(getByText(areaTypeSite.text)).toBeInTheDocument();
         getByText(areaTypeSite.text).click();
         //Rerender to set props
-        rerender(<CreateAreaTag 
-            disciplines={disciplines} 
+        rerender(<CreateAreaTag
+            disciplines={disciplines}
             areas={areas}
-            areaType={areaTypeSite}      
+            areaType={areaTypeSite}
             setAreaType={jest.fn((areaType) => {
                 testAreaType = areaType;
-            })}       
-        />);    
-            
+            })}
+        />);
+
         expect(getByText(areaTypeSite.text)).toBeInTheDocument();
-        
+
         expect(queryByText('Area')).toBeNull();
 
         //Change to area type normal
         getByText(areaTypeSite.text).click();
         getByText(areaTypeNormal.text).click();
         //Rerender to set props
-        rerender(<CreateAreaTag 
-            disciplines={disciplines} 
+        rerender(<CreateAreaTag
+            disciplines={disciplines}
             areas={areas}
-            areaType={areaTypeNormal}      
+            areaType={areaTypeNormal}
             setAreaType={jest.fn((areaType) => {
                 testAreaType = areaType;
-            })}       
-        />);    
+            })}
+        />);
         expect(queryByText('Area')).toBeInTheDocument();
-    }); 
+    });
 });
 

@@ -8,7 +8,7 @@ interface RequirementCheckboxFieldProps {
     requirementId: number;
     field: TagRequirementField;
     readonly: boolean;
-    setFieldValue: (requirementId: number, fieldId: number, value: string) => void;
+    setFieldValue: (requirementId: number, fieldId: number, isChecked: boolean) => void;
 }
 
 const RequirementCheckBoxField = ({
@@ -25,7 +25,7 @@ const RequirementCheckBoxField = ({
             checked={isChecked} 
             disabled={readonly}
             onChange={(checked: boolean): void => {
-                setFieldValue(requirementId, field.id, checked.toString());
+                setFieldValue(requirementId, field.id, checked);
             }}
         >
             <Typography variant='body_long'>{field.label}</Typography>

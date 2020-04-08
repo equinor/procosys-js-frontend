@@ -28,36 +28,78 @@ const Requirements = ({
         setRequirementValues([]);
     }, [requirements]);
 
-    const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
+    const setNumberFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];
         const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
 
+        // determine whether field value is "N/A" or an actual numeric 
+        // TODO: should show error and return if numberFieldValue ends up being "NaN"
+        value = value.trim().toLowerCase();
+        const numberFieldIsNA = value === 'na' || value === 'n/a';
+        const numberFieldValue = numberFieldIsNA ? null : Number(value);
+
         if (requirement) {
-            const fieldIndex = requirement.fieldValues.findIndex(field => field.fieldId == fieldId);
+            const fieldIndex = requirement.numberValues.findIndex(field => field.fieldId == fieldId);
 
             if (fieldIndex > -1) {
-                requirement.fieldValues[fieldIndex].value = value;
+                requirement.numberValues[fieldIndex].value = numberFieldValue;
+                requirement.numberValues[fieldIndex].isNA = numberFieldIsNA;
             } else {
-                requirement.fieldValues.push({
+                requirement.numberValues.push({
                     fieldId: fieldId,
-                    value: value
+                    value: numberFieldValue,
+                    isNA: numberFieldIsNA
                 });
             }
         } else {
             newRequirementValues.push({
                 requirementId: requirementId,
                 comment: null,
-                fieldValues: [
+                numberValues: [
                     {
                         fieldId: fieldId,
-                        value: value
+                        value: numberFieldValue,
+                        isNA: numberFieldIsNA
                     }
-                ]
+                ],
+                checkBoxValues: []
             });
         }
 
         setRequirementValues(newRequirementValues);
     };
+
+    const setCheckBoxFieldValue = (requirementId: number, fieldId: number, isChecked: boolean): void => {
+        const newRequirementValues = [...requirementValues];
+        const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
+
+        if (requirement) {
+            const fieldIndex = requirement.checkBoxValues.findIndex(field => field.fieldId == fieldId);
+
+            if (fieldIndex > -1) {
+                requirement.checkBoxValues[fieldIndex].isChecked = isChecked;
+            } else {
+                requirement.checkBoxValues.push({
+                    fieldId: fieldId,
+                    isChecked: isChecked
+                });
+            }
+        } else {
+            newRequirementValues.push({
+                requirementId: requirementId,
+                comment: null,
+                checkBoxValues: [
+                    {
+                        fieldId: fieldId,
+                        isChecked: isChecked
+                    }
+                ],
+                numberValues: []
+            });
+        }
+
+        setRequirementValues(newRequirementValues);
+    };    
 
     const setComment = (requirementId: number, comment: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -69,7 +111,8 @@ const Requirements = ({
             newRequirementValues.push({
                 requirementId: requirementId,
                 comment: comment,
-                fieldValues: []
+                numberValues: [],
+                checkBoxValues: []
             });
         }
 
@@ -118,7 +161,7 @@ const Requirements = ({
                         requirementId={requirementId} 
                         field={field} 
                         readonly={readonly} 
-                        setFieldValue={setFieldValue} 
+                        setFieldValue={setCheckBoxFieldValue} 
                     />
                 );
             case 'number':
@@ -127,7 +170,7 @@ const Requirements = ({
                         requirementId={requirementId} 
                         field={field} 
                         readonly={readonly} 
-                        setFieldValue={setFieldValue} 
+                        setFieldValue={setNumberFieldValue} 
                     />
                 );
             default:

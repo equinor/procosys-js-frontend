@@ -49,7 +49,7 @@ jest.mock('../../../../context/PreservationContext',() => ({
     }
 }));
 
-describe('Module: <CreateAreaProperties />', () => {
+describe('Module: <CreateAreaTag />', () => {
 
     it('Next button should be disabled intially.', () => {
         const { getByText, queryByText } = renderWithTheme(<CreateAreaTag areaType={undefined} disciplines={mockDisciplines} areas={mockAreas}/>);

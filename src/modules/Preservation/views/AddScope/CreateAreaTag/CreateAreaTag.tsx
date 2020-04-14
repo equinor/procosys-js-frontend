@@ -8,7 +8,8 @@ import { Tag, Discipline, Area } from '../types';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
-export const areaTypes: SelectItem[] = [
+
+const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
     { text: 'Site', value: 'SiteArea' }];
 
@@ -91,6 +92,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         (async (): Promise<void> => {
             try {
                 const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+
                 setDisciplines(data);
             } catch (error) {
                 console.error('Get Disciplines failed: ', error.messsage, error.data);

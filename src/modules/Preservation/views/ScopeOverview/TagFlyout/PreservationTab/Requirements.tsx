@@ -176,7 +176,7 @@ const Requirements = ({
                         requirementId={requirementId} 
                         field={field} 
                         readonly={readonly} 
-                        onFieldChanged={setCheckBoxFieldValue} 
+                        onFieldChange={setCheckBoxFieldValue} 
                     />
                 );
             case 'number':
@@ -185,7 +185,7 @@ const Requirements = ({
                         requirementId={requirementId} 
                         field={field} 
                         readonly={readonly} 
-                        onFieldChanged={setNumberFieldValue} 
+                        onFieldChange={setNumberFieldValue} 
                     />
                 );
             default:

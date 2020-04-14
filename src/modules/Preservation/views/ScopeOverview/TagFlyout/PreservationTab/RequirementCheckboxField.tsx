@@ -8,14 +8,14 @@ interface RequirementCheckboxFieldProps {
     requirementId: number;
     field: TagRequirementField;
     readonly: boolean;
-    onFieldChanged: (requirementId: number, fieldId: number, isChecked: boolean) => void;
+    onFieldChange: (requirementId: number, fieldId: number, isChecked: boolean) => void;
 }
 
 const RequirementCheckBoxField = ({
     requirementId,
     field,
     readonly,
-    onFieldChanged
+    onFieldChange
 }: RequirementCheckboxFieldProps): JSX.Element => {
 
     const isChecked = field.currentValue && field.currentValue.isChecked;
@@ -25,7 +25,7 @@ const RequirementCheckBoxField = ({
             checked={isChecked} 
             disabled={readonly}
             onChange={(checked: boolean): void => {
-                onFieldChanged(requirementId, field.id, checked);
+                onFieldChange(requirementId, field.id, checked);
             }}
         >
             <Typography variant='body_long'>{field.label}</Typography>

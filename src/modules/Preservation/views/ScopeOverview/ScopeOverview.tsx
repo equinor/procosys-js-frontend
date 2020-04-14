@@ -105,7 +105,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
-        //Tag-objects must be cloned to avoid issues with data in scope table 
+        //Tag-objects must be cloned to avoid issues with data in scope table
         transferableTags = [];
         nonTransferableTags = [];
 
@@ -237,7 +237,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             startPreservation();
                         }}
                         disabled={startPreservationDisabled}>
-                        <PlayArrowOutlinedIcon />
+                        <PlayArrowOutlinedIcon fontSize='small'/>
+                        Start
                     </StyledButton>
                     <StyledButton
                         variant='ghost'
@@ -246,22 +247,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             transferDialog();
                         }}
                         disabled={selectedTags.length < 1}>
-                        <FastForwardOutlinedIcon />
+                        <FastForwardOutlinedIcon fontSize='small'/>
+                        Transfer
                     </StyledButton>
                     <StyledButton
                         variant='ghost'
                         disabled={true}>
-                        <CreateOutlinedIcon />
+                        <CreateOutlinedIcon fontSize='small'/>
                     </StyledButton>
                     <StyledButton
                         variant='ghost'
                         disabled={true}>
-                        <DeleteOutlinedIcon />
+                        <DeleteOutlinedIcon fontSize='small'/>
                     </StyledButton>
                     <StyledButton
                         variant='ghost'
                         disabled={true}>
-                        <PrintOutlinedIcon />
+                        <PrintOutlinedIcon fontSize='small'/>
                     </StyledButton>
                 </IconBar>
             </HeaderContainer>

@@ -46,8 +46,13 @@ export const IconBar = styled.div`
 `;
 
 export const StyledButton = styled(Button)`
+    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     svg {
-        margin-top: 5px;
+        margin-right: 8px;
     }
 
     svg path {

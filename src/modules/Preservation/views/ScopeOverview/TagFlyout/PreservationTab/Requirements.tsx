@@ -36,7 +36,7 @@ const Requirements = ({
         // determine whether field value is "N/A" or an actual numeric 
         value = value.trim().toLowerCase();
         const numberFieldIsNA = value === 'na' || value === 'n/a';
-        const numberFieldValue = numberFieldIsNA ? null : Number(value); // invalid numbers become "NaN" (validated at save)
+        const numberFieldValue = numberFieldIsNA || value === '' ? null : Number(value); // invalid numbers become "NaN" (validated at save)
 
         if (requirement) {
             const fieldIndex = requirement.numberValues.findIndex(field => field.fieldId == fieldId);

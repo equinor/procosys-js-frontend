@@ -7,14 +7,14 @@ interface RequirementNumberFieldProps {
     requirementId: number;
     field: TagRequirementField;
     readonly: boolean;
-    setFieldValue: (requirementId: number, fieldId: number, value: string) => void;
+    onFieldChanged: (requirementId: number, fieldId: number, value: string) => void;
 }
 
 const RequirementNumberField = ({
     requirementId,
     field,
     readonly,
-    setFieldValue
+    onFieldChanged
 }: RequirementNumberFieldProps): JSX.Element => {
 
     let currentValue: string | number | null = '';
@@ -37,7 +37,7 @@ const RequirementNumberField = ({
                     defaultValue={currentValue}
                     disabled={readonly}
                     onChange={(event: React.FormEvent<HTMLInputElement>): void => {
-                        setFieldValue(requirementId, field.id, event.currentTarget.value);
+                        onFieldChanged(requirementId, field.id, event.currentTarget.value);
                     }}
                 />
             </div>

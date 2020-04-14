@@ -8,6 +8,9 @@ import { Tag, Discipline, Area } from '../types';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
+import CheckIcon from '@material-ui/icons/Check';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { Tooltip } from '@material-ui/core';
 export const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
     { text: 'Site', value: 'SiteArea' }];
@@ -43,6 +46,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [filterForAreas, setFilterForAreas] = useState<string>('');
     const [allAreas, setAllAreas] = useState<AreaItem[]>([]);
     const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas);
+
+    const [requiredFieldsFilled, setRequiredFieldsFilled] = useState<boolean>(false);
+    const [tagNoValid, setTagNoValid] = useState<boolean>(true);
 
     /** Load areas */
     useEffect(() => {
@@ -152,6 +158,33 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
+    const checkTagNo = async (areaType: string, area: string, discipline: string, suffix: string): Promise<void> => {
+        try {
+            const response = await apiClient.checkAreaTagNo(
+                project.name,
+                areaType,
+                discipline,
+                area,
+                suffix);
+            setTagNoValid(!response.exists);
+            setRequiredFieldsFilled(true);
+        } catch (error) {
+            console.error('Get tag nos failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
+
+    useEffect(() => {
+        if (props.suffix && /\s/.test(props.suffix)) {
+            setTagNoValid(false);
+            setRequiredFieldsFilled(true);
+        } else if (props.area && props.discipline && props.areaType && props.suffix) {
+            checkTagNo(props.areaType.value, props.area.code, props.discipline.code, props.suffix);
+        } else {
+            setRequiredFieldsFilled(false);
+        }
+    }, [props.discipline, props.area, props.areaType, props.suffix]);
+
     return (
         <div>
             <Header>
@@ -204,29 +237,44 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     </Next>
                 </InputContainer>
             </Container >
-            <InputContainer>
-                <TextField
-                    id={'Suffix'}
-                    style={{ maxWidth: '200px' }}
-                    label="Tag number suffix (space not allowed)"
-                    inputRef={suffixInputRef}
-                    placeholder="Write Here"
-                    helpertext="Text added to the end of the tagno."
-                    onChange={(e: any): void => props.setSuffix(e.target.value)}
-                />
-            </InputContainer>
-            <InputContainer>
-                <TextField
-                    id={'Description'}
-                    style={{ maxWidth: '350px' }}
-                    label="Description"
-                    inputRef={descriptionInputRef}
-                    multiline={true}
-                    placeholder="Write Here"
-                    helpertext="Description of the area tag."
-                    onChange={(e: any): void => props.setDescription(e.target.value)}
-                />
-            </InputContainer>
+            <Container >
+                <InputContainer>
+                    <FormFieldSpacer>
+                        <TextField
+                            id={'Suffix'}
+                            style={{ maxWidth: '200px' }}
+                            label="Tag number suffix (space not allowed)"
+                            inputRef={suffixInputRef}
+                            placeholder="Write Here"
+                            helpertext="Text added to the end of the tagno."
+                            onChange={(e: any): void => props.setSuffix(e.target.value)}
+                        />
+                    </FormFieldSpacer>
+                    <FormFieldSpacer style={requiredFieldsFilled ? {} : {display: 'none'}}>
+                        {
+                            tagNoValid
+                                ? <CheckIcon id='tagNoValidIcon' />
+                                : <Tooltip title='Tag number is already in use or is not a valid format.'>
+                                    <ErrorOutlineIcon id='tagNoInValidIcon' />
+                                </Tooltip>
+                        }
+                    </FormFieldSpacer>
+                </InputContainer>
+            </Container >
+            <Container >
+                <InputContainer>
+                    <TextField
+                        id={'Description'}
+                        style={{ maxWidth: '350px' }}
+                        label="Description"
+                        inputRef={descriptionInputRef}
+                        multiline={true}
+                        placeholder="Write Here"
+                        helpertext="Description of the area tag."
+                        onChange={(e: any): void => props.setDescription(e.target.value)}
+                    />
+                </InputContainer>
+            </Container >
         </div >
     );
 };

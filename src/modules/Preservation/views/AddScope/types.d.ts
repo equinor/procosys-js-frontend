@@ -95,3 +95,8 @@ export interface Area {
     code: string;
     description: string;
 }
+
+export interface CheckAreaTagNo {
+    tagNo: string;
+    exists: boolean;
+}

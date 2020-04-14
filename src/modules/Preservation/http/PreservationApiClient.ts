@@ -115,6 +115,11 @@ interface RequirementTypeResponse {
     }];
 }
 
+interface CheckAreaTagNoResponse {
+    tagNo: string;
+    exists: boolean;
+}
+
 export interface DisciplineResponse {
     code: string;
     description: string;
@@ -420,6 +425,34 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 settings
             );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async checkAreaTagNo(
+        projectName: string,
+        areaTagType: string,
+        disciplineCode: string,
+        areaCode: string,
+        tagNoSuffix: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<CheckAreaTagNoResponse> {
+        const endpoint = '/Tags/CheckAreaTagNo';
+        const settings: AxiosRequestConfig = {
+            params: {
+                ProjectName: projectName,
+                AreaTagType: areaTagType,
+                DisciplineCode: disciplineCode,
+                AreaCode: areaCode,
+                TagNoSuffix: tagNoSuffix,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<CheckAreaTagNoResponse>(endpoint, settings);
             return result.data;
         }
         catch (error) {

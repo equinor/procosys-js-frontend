@@ -4,6 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 export const Header = styled.header`
     display: flex;
     align-items: baseline;
+    margin-bottom: calc(var(--grid-unit) * 2);
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
@@ -13,15 +14,29 @@ export const Header = styled.header`
 export const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
-    margin-top: calc(var(--grid-unit) * 3);
 `;
 
-
 export const InputContainer = styled.div`
-    margin:  calc(var(--grid-unit) * 2) 0px;
+    margin: calc(var(--grid-unit) * 2) 0px;
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    #tagNoValidIcon {
+        padding-top: 15px;
+
+        path {
+            fill: ${tokens.colors.interactive.primary__resting.rgba};
+        }
+    }
+
+    #tagNoInValidIcon {
+        padding-top: 15px;
+
+        path {
+            fill: ${tokens.colors.interactive.danger__text.rgba};
+        }
+    }
 `;
 
 export const Next = styled.div`
@@ -67,4 +82,3 @@ export const DropdownItem = styled.div`
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
 `;
-

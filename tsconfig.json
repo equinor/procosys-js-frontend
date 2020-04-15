@@ -4,6 +4,11 @@
         "esModuleInterop": true,
         "target": "es5",
         "allowJs": true,
+        /* Files in the directory specified using the "outDir" compiler option are excluded as
+        *  long as "exclude" property is not specified.
+        *  _Required_ when using allowJs
+        */
+        "outDir": "build/",
         "module": "esnext",
         "moduleResolution": "node",
         "strict": true,
@@ -16,5 +21,5 @@
         "node_modules",
         "public",
         "build"
-    ]
+    ],
 }

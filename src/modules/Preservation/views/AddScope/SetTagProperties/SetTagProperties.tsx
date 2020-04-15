@@ -43,6 +43,7 @@ const SetTagProperties = ({
     const [step, setStep] = useState<Step>();
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
     const remarkInputRef = useRef<HTMLInputElement>(null);
+    const storageAreaInputRef = useRef<HTMLInputElement>(null);
     const [formIsValid, setFormIsValid] = useState(false);
 
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
@@ -262,12 +263,22 @@ const SetTagProperties = ({
                     </InputContainer>
                     <InputContainer>
                         <TextField
-                            id={'Remark'} ø
+                            id={'Remark'}
                             style={{ maxWidth: '480px' }}
                             label="Remark for whole preservation journey"
                             inputRef={remarkInputRef}
                             placeholder="Write Here"
                             helpertext="For example: Check according to predecure 123, or check specifications from supplier"
+                        />
+                    </InputContainer>
+                    <InputContainer>
+                        <TextField
+                            id={'StorageArea'}
+                            style={{ maxWidth: '120px' }}
+                            label="Storage area"
+                            inputRef={storageAreaInputRef}
+                            placeholder="Write Here"
+                            helpertext="For example: AR123"
                         />
                     </InputContainer>
 

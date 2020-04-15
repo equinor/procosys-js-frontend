@@ -24,7 +24,7 @@ const ScopeTable = ({
     showTagDetails,
     setRefreshScopeListCallback,
     pageSize,
-    setPageSize
+    setPageSize,
 }: ScopeTableProps): JSX.Element => {
 
     const ref: RefObject<any> = React.createRef();
@@ -89,6 +89,7 @@ const ScopeTable = ({
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
+
             columns={[
                 { title: 'Tag nr', render: getTagNoColumn },
                 { title: 'Description', render: getDescriptionColumn },
@@ -118,6 +119,10 @@ const ScopeTable = ({
                 })
             }
             options={{
+                fixedColumns: {
+                    left: 1,
+                    right: 0
+                },
                 showTitle: false,
                 draggable: false,
                 selection: true,
@@ -131,6 +136,7 @@ const ScopeTable = ({
                     color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
                     backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
                 }),
+
             }}
             components={{
                 Toolbar: (data): any => (

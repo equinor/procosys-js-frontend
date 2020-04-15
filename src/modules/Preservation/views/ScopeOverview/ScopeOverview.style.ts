@@ -4,7 +4,12 @@ import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
+`;
+
+export const ContentContainer = styled.div`
+    display: flex;
     flex-direction: column;
+    width: 100%;
 `;
 
 export const HeaderContainer = styled.div`
@@ -66,3 +71,16 @@ export const DropdownItem = styled.div`
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
 `;
+
+export const FilterDivider = styled.div`
+    margin-top: calc(var(--margin-module--top) * -1);
+    margin-bottom: -1000px;
+    margin-right: calc(var(--grid-unit) * 2);
+    margin-left: calc(var(--grid-unit) * 4);
+    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
+`;
+
+export const FilterContainer = styled.div`
+    width: calc(var(--grid-unit) * 44);
+`;
+

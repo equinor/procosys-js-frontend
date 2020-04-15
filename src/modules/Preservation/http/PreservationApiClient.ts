@@ -2,6 +2,7 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
+import { TagListFilter } from '../views/ScopeOverview/types';
 
 const Settings = require('../../../../settings.json');
 
@@ -400,6 +401,7 @@ class PreservationApiClient extends ApiClient {
         size: number,
         sortProperty: string | null,
         sortDirection: string | null,
+        tagFilter: TagListFilter,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse> {
         const endpoint = '/Tags';
@@ -411,6 +413,7 @@ class PreservationApiClient extends ApiClient {
                 size: size,
                 property: sortProperty,
                 direction: sortDirection,
+                ...tagFilter,
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

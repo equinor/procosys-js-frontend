@@ -7655,7 +7655,7 @@ react-double-scrollbar@0.0.15:
   resolved "https://registry.yarnpkg.com/react-double-scrollbar/-/react-double-scrollbar-0.0.15.tgz#e915ab8cb3b959877075f49436debfdb04288fe4"
   integrity sha1-6RWrjLO5WYdwdfSUNt6/2wQoj+Q=
 
-react-hot-loader@*, react-hot-loader@^4.12.15:
+react-hot-loader@*, react-hot-loader@^4.12.20:
   version "4.12.20"
   resolved "https://registry.yarnpkg.com/react-hot-loader/-/react-hot-loader-4.12.20.tgz#c2c42362a7578e5c30357a5ff7afa680aa0bef8a"
   integrity sha512-lPlv1HVizi0lsi+UFACBJaydtRYILWkfHAC/lyCs6ZlAxlOZRQIfYHDqiGaRvL/GF7zyti+Qn9XpnDAUvdFA4A==

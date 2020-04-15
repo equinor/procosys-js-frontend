@@ -199,12 +199,19 @@ interface PreserveTagRequirement {
 interface TagRequirementRecordValues {
     requirementId: number;
     comment: string | null;
-    fieldValues: RecordFieldValue[];
+    numberValues: RecordNumberValue[];
+    checkBoxValues: RecordCheckBoxValue[];
 }
 
-interface RecordFieldValue {
+interface RecordNumberValue {
     fieldId: number;
-    value: string;
+    value: number | null;
+    isNA: boolean;
+}
+
+interface RecordCheckBoxValue {
+    fieldId: number;
+    isChecked: boolean;
 }
 
 interface ErrorResponse {
@@ -618,7 +625,8 @@ class PreservationApiClient extends ApiClient {
             await this.client.post(
                 endpoint,
                 {
-                    fieldValues: recordValues.fieldValues,
+                    numberValues: recordValues.numberValues,
+                    checkBoxValues: recordValues.checkBoxValues,
                     comment: recordValues.comment
                 },
                 settings

@@ -11,7 +11,8 @@ import Dropdown from '../../../../../components/Dropdown';
 import CheckIcon from '@material-ui/icons/Check';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { Tooltip } from '@material-ui/core';
-export const areaTypes: SelectItem[] = [
+
+const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
     { text: 'Site', value: 'SiteArea' }];
 
@@ -97,6 +98,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         (async (): Promise<void> => {
             try {
                 const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+
                 setDisciplines(data);
             } catch (error) {
                 console.error('Get Disciplines failed: ', error.messsage, error.data);

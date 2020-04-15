@@ -171,23 +171,22 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 area,
                 suffix);
             setTagNoValid(!response.exists);
-            setRequiredFieldsFilled(true);
-            setLoading(false);
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         setLoading(true);
-
         const checkTagNos = () => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValid(false);
-                setRequiredFieldsFilled(true);
                 setLoading(false);
             } else if (props.area && props.discipline && props.areaType && props.suffix) {
+                setRequiredFieldsFilled(true);
                 checkTagNo(props.areaType.value, props.area.code, props.discipline.code, props.suffix);
             } else {
                 setRequiredFieldsFilled(false);
@@ -261,6 +260,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     <FormFieldSpacer>
                         <TextField
                             id={'Suffix'}
+                            data-testid={'Suffix'}
                             style={{ maxWidth: '200px' }}
                             label="Tag number suffix (space not allowed)"
                             inputRef={suffixInputRef}
@@ -271,18 +271,17 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     </FormFieldSpacer>
                     {requiredFieldsFilled &&
                     <FormFieldSpacer
-                        id='tagNumberIcon'
                         className={tagNoValid ? 'valid' : 'invalid' }
                     >
-                        {loading ?
-                            <CenterContent>
+                        {loading &&
+                            (<CenterContent>
                                 <Spinner />
-                            </CenterContent>
-                            : tagNoValid
-                                ? <CheckIcon />
-                                : <Tooltip title='Tag number is already in use or is not a valid format.'>
-                                    <ErrorOutlineIcon />
-                                </Tooltip>
+                            </CenterContent>) }
+
+                        {tagNoValid ? <CheckIcon id='tagNumberIcon' className="valid" />
+                            : <Tooltip title='Tag number is already in use or is not a valid format.'>
+                                <ErrorOutlineIcon id='tagNumberIcon' className="invalid"   />
+                            </Tooltip>
                         }
                     </FormFieldSpacer>
                     }

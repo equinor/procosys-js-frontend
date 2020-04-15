@@ -6278,7 +6278,7 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-material-table@^1.54.2:
+material-table@^1.57.2:
   version "1.57.2"
   resolved "https://registry.yarnpkg.com/material-table/-/material-table-1.57.2.tgz#8854cb4d623b294138c83a0c7ff9f2900267c81f"
   integrity sha512-hiJdRTrqu8pyYwSxzmcG1TnR4KWG2gtXrFB3XL9h4ij3A68EOJmlss6VH/LXh3NLlUce1TteK6W7fGa7YcnKGg==
@@ -6549,7 +6549,7 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-msal@^1.1.3:
+msal@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/msal/-/msal-1.2.2.tgz#914b229df6d2c83c69d46a681aa95be7adf361b6"
   integrity sha512-HVQnomsTF2r8wV28M3W57I2Kcv28KQu9qnLGPzllxqw3VlC/74DVxHLconHTj1/S3Gn/9j1yaA2uEmIlre05qQ==

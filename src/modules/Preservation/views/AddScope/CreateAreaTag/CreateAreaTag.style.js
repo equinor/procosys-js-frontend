@@ -22,20 +22,16 @@ export const InputContainer = styled.div`
     flex-direction: row;
     align-items: center;
 
-    #tagNoValidIcon {
-        padding-top: 15px;
-
-        path {
-            fill: ${tokens.colors.interactive.primary__resting.rgba};
-        }
+    #tagNumberIcon svg {
+        margin-top: 15px;
     }
 
-    #tagNoInValidIcon {
-        padding-top: 15px;
+    .valid svg path {
+        fill: ${tokens.colors.interactive.primary__resting.rgba};
+    }
 
-        path {
-            fill: ${tokens.colors.interactive.danger__text.rgba};
-        }
+    .invalid svg path {
+        fill: ${tokens.colors.interactive.danger__text.rgba};
     }
 `;
 

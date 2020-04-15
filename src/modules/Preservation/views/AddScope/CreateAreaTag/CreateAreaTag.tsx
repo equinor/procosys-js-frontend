@@ -1,4 +1,4 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, CenterContent } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button } from '@equinor/eds-core-react';
@@ -11,6 +11,7 @@ import Dropdown from '../../../../../components/Dropdown';
 import CheckIcon from '@material-ui/icons/Check';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { Tooltip } from '@material-ui/core';
+import Spinner from '../../../../../components/Spinner';
 
 const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
@@ -50,6 +51,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
     const [requiredFieldsFilled, setRequiredFieldsFilled] = useState<boolean>(false);
     const [tagNoValid, setTagNoValid] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
     /** Load areas */
     useEffect(() => {
@@ -170,6 +172,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 suffix);
             setTagNoValid(!response.exists);
             setRequiredFieldsFilled(true);
+            setLoading(false);
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -177,14 +180,28 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     };
 
     useEffect(() => {
-        if (props.suffix && /\s/.test(props.suffix)) {
-            setTagNoValid(false);
-            setRequiredFieldsFilled(true);
-        } else if (props.area && props.discipline && props.areaType && props.suffix) {
-            checkTagNo(props.areaType.value, props.area.code, props.discipline.code, props.suffix);
-        } else {
-            setRequiredFieldsFilled(false);
-        }
+        setLoading(true);
+
+        const checkTagNos = () => {
+            if (props.suffix && /\s/.test(props.suffix)) {
+                setTagNoValid(false);
+                setRequiredFieldsFilled(true);
+                setLoading(false);
+            } else if (props.area && props.discipline && props.areaType && props.suffix) {
+                checkTagNo(props.areaType.value, props.area.code, props.discipline.code, props.suffix);
+            } else {
+                setRequiredFieldsFilled(false);
+                setLoading(false);
+            }
+        };
+
+        const timer = setTimeout(() => {
+            checkTagNos();
+        }, 200);
+
+        return () => {
+            clearTimeout(timer);
+        };
     }, [props.discipline, props.area, props.areaType, props.suffix]);
 
     return (
@@ -252,15 +269,23 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             onChange={(e: any): void => props.setSuffix(e.target.value)}
                         />
                     </FormFieldSpacer>
-                    <FormFieldSpacer style={requiredFieldsFilled ? {} : {display: 'none'}}>
-                        {
-                            tagNoValid
-                                ? <CheckIcon id='tagNoValidIcon' />
+                    {requiredFieldsFilled &&
+                    <FormFieldSpacer
+                        id='tagNumberIcon'
+                        className={tagNoValid ? 'valid' : 'invalid' }
+                    >
+                        {loading ?
+                            <CenterContent>
+                                <Spinner />
+                            </CenterContent>
+                            : tagNoValid
+                                ? <CheckIcon />
                                 : <Tooltip title='Tag number is already in use or is not a valid format.'>
-                                    <ErrorOutlineIcon id='tagNoInValidIcon' />
+                                    <ErrorOutlineIcon />
                                 </Tooltip>
                         }
                     </FormFieldSpacer>
+                    }
                 </InputContainer>
             </Container >
             <Container >

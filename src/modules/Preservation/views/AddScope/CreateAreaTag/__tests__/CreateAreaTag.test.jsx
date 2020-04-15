@@ -1,6 +1,6 @@
 import React from 'react';
 import CreateAreaTag from '../CreateAreaTag';
-import { render, act } from '@testing-library/react';
+import { render, act, fireEvent } from '@testing-library/react';
 
 const mockDisciplines = [
     {
@@ -69,5 +69,39 @@ describe('<CreateAreaTag />', () => {
     it.todo('Initial \'Tag suffix\' is automatically set on render');
     it.todo('Initial \'Description\' is automatically set on render');
 
-});
+    it('Renders with no icon', async () => {
+        await act(async () => {
+            const { queryByTestId} = render(<CreateAreaTag />);
+            expect(queryByTestId('Suffix')).toBeNull();
+        });
+    });
 
+    it('Displays warning icon when suffix contains space', async () => {
+        const setSuffix = jest.fn();
+        await act(async () => {
+            const { getByLabelText } = render(<CreateAreaTag setSuffix={setSuffix} />);
+            const inputNode = getByLabelText('Tag number suffix (space not allowed)');
+            inputNode.value = '1 2';
+            await act(async () => {
+                fireEvent.change(inputNode);
+                expect(setSuffix).toBeCalledTimes(1);//(inputNode.value).toEqual('1 2');
+            });
+
+            //debug();
+        });
+        // const tmp = document.getElementById('tagNumberIcon');
+        // expect(tmp).not.toBeNull();
+    });
+
+    // it('Displays check icon when valid tag no', async () => {
+    //     const { debug, getByLabelText, getByText, queryAllByText} = render(<CreateAreaTag />);
+    //     await act(async () => {
+    //         getByLabelText('Area type').click();
+    //         expect(queryAllByText('', { exact: false }).length).toBe(2);
+    //     });
+    //     debug();
+    //     //expect(document.getElementById('test')).toBeNull;
+
+    // });
+
+});

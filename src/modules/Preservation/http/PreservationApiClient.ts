@@ -2,7 +2,6 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
-import { TagListFilter } from '../views/ScopeOverview/types';
 
 const Settings = require('../../../../settings.json');
 
@@ -65,6 +64,14 @@ interface TagDetailsResponse {
     purchaseOrderNo: string;
     areaCode: string;
     readyToBePreserved: boolean;
+}
+
+interface TagListFilter {
+    tagNoStartsWith: string | null;
+    purchaseOrderNoStartsWith: string | null;
+    storageAreaStartsWith: string | null;
+    commPkgNoStartsWith: string | null;
+    mcPkgNoStartsWith: string | null;
 }
 
 interface JourneyResponse {

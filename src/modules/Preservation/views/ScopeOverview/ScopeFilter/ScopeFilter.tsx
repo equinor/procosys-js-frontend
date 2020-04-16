@@ -21,18 +21,18 @@ const ScopeFilter = ({
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
+    const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
     const KEYCODE_ENTER = 13;
 
     const triggerScopeListUpdate = (): void => {
-        const filter: TagListFilter = { ...tagListFilter };
-        setTagListFilter(filter);
+        setTagListFilter(localTagListFilter);
     };
 
     const resetFilter = (): void => {
-        const tagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null };
-        setTagListFilter(tagListFilter);
-        //todo: We should rerender to empty all fields. How?
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null };
+        setLocalTagListFilter(newTagListFilter);
+        setTagListFilter(newTagListFilter);
     };
 
     return (
@@ -65,9 +65,12 @@ const ScopeFilter = ({
                         <Section>
                             <TextField
                                 id="tagNoSearch"
+                                onChange={(e: any): void => {
+                                    setLocalTagListFilter({ ...localTagListFilter, tagNoStartsWith: e.target.value });
+                                }}
+                                value={localTagListFilter.tagNoStartsWith || ''}
                                 placeholder="Search tag number"
                                 onKeyDown={(e: any): void => {
-                                    tagListFilter.tagNoStartsWith = e.currentTarget.value;
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
                                 }}
                             />
@@ -76,8 +79,11 @@ const ScopeFilter = ({
                             <TextField
                                 id="poNoSearch"
                                 placeholder="Search purchase order number"
+                                onChange={(e: any): void => {
+                                    setLocalTagListFilter({ ...localTagListFilter, purchaseOrderNoStartsWith: e.target.value });
+                                }}
+                                value={localTagListFilter.purchaseOrderNoStartsWith || ''}
                                 onKeyDown={(e: any): void => {
-                                    tagListFilter.purchaseOrderNoStartsWith = e.currentTarget.value;
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
                                 }}
                             />
@@ -86,8 +92,11 @@ const ScopeFilter = ({
                             <TextField
                                 id="commPgkNoSearch"
                                 placeholder="Search comm. pkg. number"
+                                onChange={(e: any): void => {
+                                    setLocalTagListFilter({ ...localTagListFilter, commPkgNoStartsWith: e.target.value });
+                                }}
+                                value={localTagListFilter.commPkgNoStartsWith || ''}
                                 onKeyDown={(e: any): void => {
-                                    tagListFilter.commPkgNoStartsWith = e.currentTarget.value;
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
                                 }}
                             />
@@ -96,8 +105,11 @@ const ScopeFilter = ({
                             <TextField
                                 id="mcPgkNoSearch"
                                 placeholder="Search mc. pkg. number"
+                                onChange={(e: any): void => {
+                                    setLocalTagListFilter({ ...localTagListFilter, mcPkgNoStartsWith: e.target.value });
+                                }}
+                                value={localTagListFilter.mcPkgNoStartsWith || ''}
                                 onKeyDown={(e: any): void => {
-                                    tagListFilter.mcPkgNoStartsWith = e.currentTarget.value;
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
                                 }}
                             />
@@ -106,8 +118,11 @@ const ScopeFilter = ({
                             <TextField
                                 id="storageAreaSearch"
                                 placeholder="Search storage area"
+                                onChange={(e: any): void => {
+                                    setLocalTagListFilter({ ...localTagListFilter, storageAreaStartsWith: e.target.value });
+                                }}
+                                value={localTagListFilter.storageAreaStartsWith || ''}
                                 onKeyDown={(e: any): void => {
-                                    tagListFilter.storageAreaStartsWith = e.currentTarget.value;
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
                                 }}
                             />

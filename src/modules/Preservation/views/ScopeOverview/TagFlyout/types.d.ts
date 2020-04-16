@@ -51,10 +51,17 @@ export interface TagRequirementField {
 export interface TagRequirementRecordValues {
     requirementId: number;
     comment: string | null;
-    fieldValues: RecordFieldValue[];
+    numberValues: RecordNumberValue[];
+    checkBoxValues: RecordCheckBoxValue[];
 }
 
-interface RecordFieldValue {
+interface RecordNumberValue {
     fieldId: number;
-    value: string;
+    value: number | null;
+    isNA: boolean;
+}
+
+interface RecordCheckBoxValue {
+    fieldId: number;
+    isChecked: boolean;
 }

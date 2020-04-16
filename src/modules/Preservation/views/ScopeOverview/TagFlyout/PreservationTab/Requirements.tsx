@@ -6,6 +6,7 @@ import RequirementNumberField from './RequirementNumberField';
 import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../PreservationIcon';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
+import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 
 interface RequirementProps {
     requirements: TagRequirement[];
@@ -28,36 +29,77 @@ const Requirements = ({
         setRequirementValues([]);
     }, [requirements]);
 
-    const setFieldValue = (requirementId: number, fieldId: number, value: string): void => {
+    const setNumberFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];
         const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
 
+        // determine whether field value is "N/A" or an actual numeric 
+        value = value.trim().toLowerCase();
+        const numberFieldIsNA = value === 'na' || value === 'n/a';
+        const numberFieldValue = numberFieldIsNA || value === '' ? null : Number(value); // invalid numbers become "NaN" (validated at save)
+
         if (requirement) {
-            const fieldIndex = requirement.fieldValues.findIndex(field => field.fieldId == fieldId);
+            const fieldIndex = requirement.numberValues.findIndex(field => field.fieldId == fieldId);
 
             if (fieldIndex > -1) {
-                requirement.fieldValues[fieldIndex].value = value;
+                requirement.numberValues[fieldIndex].value = numberFieldValue;
+                requirement.numberValues[fieldIndex].isNA = numberFieldIsNA;
             } else {
-                requirement.fieldValues.push({
+                requirement.numberValues.push({
                     fieldId: fieldId,
-                    value: value
+                    value: numberFieldValue,
+                    isNA: numberFieldIsNA
                 });
             }
         } else {
             newRequirementValues.push({
                 requirementId: requirementId,
                 comment: null,
-                fieldValues: [
+                numberValues: [
                     {
                         fieldId: fieldId,
-                        value: value
+                        value: numberFieldValue,
+                        isNA: numberFieldIsNA
                     }
-                ]
+                ],
+                checkBoxValues: []
             });
         }
 
         setRequirementValues(newRequirementValues);
     };
+
+    const setCheckBoxFieldValue = (requirementId: number, fieldId: number, isChecked: boolean): void => {
+        const newRequirementValues = [...requirementValues];
+        const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
+
+        if (requirement) {
+            const fieldIndex = requirement.checkBoxValues.findIndex(field => field.fieldId == fieldId);
+
+            if (fieldIndex > -1) {
+                requirement.checkBoxValues[fieldIndex].isChecked = isChecked;
+            } else {
+                requirement.checkBoxValues.push({
+                    fieldId: fieldId,
+                    isChecked: isChecked
+                });
+            }
+        } else {
+            newRequirementValues.push({
+                requirementId: requirementId,
+                comment: null,
+                checkBoxValues: [
+                    {
+                        fieldId: fieldId,
+                        isChecked: isChecked
+                    }
+                ],
+                numberValues: []
+            });
+        }
+
+        setRequirementValues(newRequirementValues);
+    };    
 
     const setComment = (requirementId: number, comment: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -69,7 +111,8 @@ const Requirements = ({
             newRequirementValues.push({
                 requirementId: requirementId,
                 comment: comment,
-                fieldValues: []
+                numberValues: [],
+                checkBoxValues: []
             });
         }
 
@@ -81,6 +124,21 @@ const Requirements = ({
 
         if (!requirement) {
             console.error(`No values to record found for requirementId ${requirementId}`);
+            return;
+        }
+
+        // validate number fields
+        let numbersAreValid = true;
+        if (requirement.numberValues) {
+            requirement.numberValues.forEach(number => {
+                if (!number.isNA && number.value !== null && isNaN(number.value)) {
+                    numbersAreValid = false;
+                }
+            });
+        }
+
+        if (!numbersAreValid) {
+            showSnackbarNotification('Invalid number value.', 5000, true);
             return;
         }
 
@@ -118,7 +176,7 @@ const Requirements = ({
                         requirementId={requirementId} 
                         field={field} 
                         readonly={readonly} 
-                        setFieldValue={setFieldValue} 
+                        onFieldChange={setCheckBoxFieldValue} 
                     />
                 );
             case 'number':
@@ -127,7 +185,7 @@ const Requirements = ({
                         requirementId={requirementId} 
                         field={field} 
                         readonly={readonly} 
-                        setFieldValue={setFieldValue} 
+                        onFieldChange={setNumberFieldValue} 
                     />
                 );
             default:

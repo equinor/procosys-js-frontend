@@ -13,7 +13,7 @@ import { usePreservationContext } from '../../../context/PreservationContext';
 import PreservationIcon from '../../PreservationIcon';
 
 type SetTagPropertiesProps = {
-    submitForm: (stepId: number, requirements: Requirement[], remark?: string) => Promise<void>;
+    submitForm: (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
@@ -130,6 +130,7 @@ const SetTagProperties = ({
     const submit = async (): Promise<void> => {
         setIsLoading(true);
         const remarkValue = remarkInputRef.current?.value;
+        const storageAreaValue = storageAreaInputRef.current?.value;
         const requirementsMappedForApi: Requirement[] = [];
         requirements.forEach((req) => {
             if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
@@ -140,7 +141,7 @@ const SetTagProperties = ({
             }
         });
         if (step && requirementsMappedForApi.length > 0) {
-            await submitForm(step.id, requirementsMappedForApi, remarkValue);
+            await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
         }
         setIsLoading(false);
     };

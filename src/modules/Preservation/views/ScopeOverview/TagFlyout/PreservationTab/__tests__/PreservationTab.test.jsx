@@ -32,7 +32,7 @@ describe('<PreservationTab />', () => {
 
     it('Should render tag details', async () => {
         await act(async () => {
-            const { getByText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const { getByText, getByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
 
             expect(getByText('tag-description')).toBeInTheDocument();
             expect(getByText('journey-title')).toBeInTheDocument();
@@ -42,6 +42,8 @@ describe('<PreservationTab />', () => {
             expect(getByText('mcpkg-no')).toBeInTheDocument();
             expect(getByText('po-no')).toBeInTheDocument();
             expect(getByText('area-code')).toBeInTheDocument();
+            expect(getByLabelText('Remark')).toBeInTheDocument();
+            expect(getByLabelText('Storage area')).toBeInTheDocument();
         });
     });
 

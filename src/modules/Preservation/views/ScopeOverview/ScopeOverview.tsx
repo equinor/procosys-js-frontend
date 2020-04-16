@@ -317,14 +317,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </ContentContainer >
             {
                 displayFilter && (
-                    <FilterDivider />
-                )
-            }
-            {
-                displayFilter && (
-                    <FilterContainer>
-                        <ScopeFilter setDisplayFilter={setDisplayFilter} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
-                    </FilterContainer>
+                    <>
+                        <FilterDivider />
+                        <FilterContainer>
+                            <ScopeFilter setDisplayFilter={setDisplayFilter} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+                        </FilterContainer>
+                    </>
                 )
             }
         </Container >

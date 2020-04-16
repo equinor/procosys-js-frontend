@@ -61,7 +61,7 @@ const ScopeFilter = ({
             </Collapse>
             {
                 searchIsExpanded && (
-                    <div>
+                    <>
                         <Section>
                             <TextField
                                 id="tagNoSearch"
@@ -112,7 +112,7 @@ const ScopeFilter = ({
                                 }}
                             />
                         </Section>
-                    </div>
+                    </>
                 )
             }
 

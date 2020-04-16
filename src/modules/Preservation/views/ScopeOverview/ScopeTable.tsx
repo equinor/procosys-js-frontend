@@ -84,8 +84,6 @@ const ScopeTable = ({
         'Mode': 'Mode'
     };
 
-
-
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
@@ -119,10 +117,6 @@ const ScopeTable = ({
                 })
             }
             options={{
-                fixedColumns: {
-                    left: 1,
-                    right: 0
-                },
                 showTitle: false,
                 draggable: false,
                 selection: true,

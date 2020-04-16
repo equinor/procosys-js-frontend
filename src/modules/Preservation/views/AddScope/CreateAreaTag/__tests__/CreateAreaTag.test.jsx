@@ -24,6 +24,13 @@ const mockAreas = [
     },
 ];
 
+const mockTagNoValid = [
+    {
+        tagNo: 'testNo',
+        exists: false,
+    }
+];
+
 jest.mock('../../../../context/PreservationContext',() => ({
     usePreservationContext: () => {
         return {
@@ -34,7 +41,8 @@ jest.mock('../../../../context/PreservationContext',() => ({
             },
             apiClient: {
                 getAreas: () => Promise.resolve(mockAreas),
-                getDisciplines: () => Promise.resolve(mockDisciplines)
+                getDisciplines: () => Promise.resolve(mockDisciplines),
+                checkAreaTagNo: () => Promise.resolve(mockTagNoValid)
             }
         };
     }
@@ -70,57 +78,25 @@ describe('<CreateAreaTag />', () => {
     it.todo('Initial \'Description\' is automatically set on render');
 
     it('Displays no icon when properties are not set', async () => {
-
         await act(async () => {
             render(<CreateAreaTag />);
             expect(document.querySelector('#tagNumberIcon')).not.toBeInTheDocument();
         });
-
     });
 
-    it('Displays \'Valid\' Icon when properties are set', async () => {
+    it('Displays \'Valid\' icon when properties are set', async () => {
         await act(async () => {
-            const {debug} = render(<CreateAreaTag area={mockAreas[0]} discipline={mockDisciplines[0]} areaType={{ text: 'Normal', value: 'PreArea' }} suffix="12" />);
+            render(<CreateAreaTag area={mockAreas[0]} discipline={mockDisciplines[0]} areaType={{ text: 'Normal', value: 'PreArea' }} suffix="12" />);
             await waitForElement(() => document.querySelector('#tagNumberIcon'));
-            debug();
+            await waitForElement(() => document.querySelector('.valid'));
         });
-        //expect(document.querySelector('#tagNumberIcon')).toBeInTheDocument();
-
     });
 
-    // it('Renders with no icon', async () => {
-    //     await act(async () => {
-    //         const { queryByTestId} = render(<CreateAreaTag />);
-    //         expect(queryByTestId('Suffix')).toBeNull();
-    //     });
-    // });
-
-    // it('Displays warning icon when suffix contains space', async () => {
-    //     const setSuffix = jest.fn();
-    //     await act(async () => {
-    //         const { getByLabelText } = render(<CreateAreaTag setSuffix={setSuffix} />);
-    //         const inputNode = getByLabelText('Tag number suffix (space not allowed)');
-    //         inputNode.value = '1 2';
-    //         await act(async () => {
-    //             fireEvent.change(inputNode);
-    //             expect(setSuffix).toBeCalledTimes(1);//(inputNode.value).toEqual('1 2');
-    //         });
-
-    //         //debug();
-    //     });
-    //     // const tmp = document.getElementById('tagNumberIcon');
-    //     // expect(tmp).not.toBeNull();
-    // });
-
-    // it('Displays check icon when valid tag no', async () => {
-    //     const { debug, getByLabelText, getByText, queryAllByText} = render(<CreateAreaTag />);
-    //     await act(async () => {
-    //         getByLabelText('Area type').click();
-    //         expect(queryAllByText('', { exact: false }).length).toBe(2);
-    //     });
-    //     debug();
-    //     //expect(document.getElementById('test')).toBeNull;
-
-    // });
-
+    it('Displays \'Invalid\' icon when suffix contains space', async () => {
+        await act(async () => {
+            render(<CreateAreaTag suffix="1 2" />);
+            await waitForElement(() => document.querySelector('#tagNumberIcon'));
+            await waitForElement(() => document.querySelector('.invalid'));
+        });
+    });
 });

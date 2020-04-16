@@ -26,11 +26,11 @@ export const InputContainer = styled.div`
         margin-top: 15px;
     }
 
-    .valid svg path {
+    .valid path {
         fill: ${tokens.colors.interactive.primary__resting.rgba};
     }
 
-    .invalid svg path {
+    .invalid path {
         fill: ${tokens.colors.interactive.danger__text.rgba};
     }
 `;

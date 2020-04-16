@@ -49,9 +49,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [allAreas, setAllAreas] = useState<AreaItem[]>([]);
     const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas);
 
-    const [requiredFieldsFilled, setRequiredFieldsFilled] = useState<boolean>(false);
-    const [tagNoValid, setTagNoValid] = useState<boolean>(true);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [fieldsNeededToCheckTagNoSet, setFieldsNeededToCheckTagNoSet] = useState<boolean>(false);
+    const [tagNoValid, setTagNoValid] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     /** Load areas */
     useEffect(() => {
@@ -162,7 +162,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
-    const checkTagNo = async (areaType: string, area: string, discipline: string, suffix: string): Promise<void> => {
+    const checkTagNo = async (areaType: string, area: string, discipline: string, suffix: string): Promise<boolean> => {
         try {
             const response = await apiClient.checkAreaTagNo(
                 project.name,
@@ -170,28 +170,28 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 discipline,
                 area,
                 suffix);
-            setTagNoValid(!response.exists);
+            return !response.exists;
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
-        } finally {
-            setLoading(false);
+            return false;
         }
     };
 
     useEffect(() => {
         setLoading(true);
-        const checkTagNos = () => {
+        const checkTagNos = async () => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValid(false);
-                setLoading(false);
+                setFieldsNeededToCheckTagNoSet(true);
             } else if (props.area && props.discipline && props.areaType && props.suffix) {
-                setRequiredFieldsFilled(true);
-                checkTagNo(props.areaType.value, props.area.code, props.discipline.code, props.suffix);
+                const validTagNo = await checkTagNo(props.areaType.value, props.area.code, props.discipline.code, props.suffix);
+                setTagNoValid(validTagNo);
+                setFieldsNeededToCheckTagNoSet(true);
             } else {
-                setRequiredFieldsFilled(false);
-                setLoading(false);
+                setFieldsNeededToCheckTagNoSet(false);
             }
+            setLoading(false);
         };
 
         const timer = setTimeout(() => {
@@ -260,7 +260,6 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     <FormFieldSpacer>
                         <TextField
                             id={'Suffix'}
-                            data-testid={'Suffix'}
                             style={{ maxWidth: '200px' }}
                             label="Tag number suffix (space not allowed)"
                             inputRef={suffixInputRef}
@@ -269,19 +268,17 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             onChange={(e: any): void => props.setSuffix(e.target.value)}
                         />
                     </FormFieldSpacer>
-                    {requiredFieldsFilled &&
-                    <FormFieldSpacer
-                        className={tagNoValid ? 'valid' : 'invalid' }
-                    >
-                        {loading &&
+                    {fieldsNeededToCheckTagNoSet &&
+                    <FormFieldSpacer id='tagNumberIcon'>
+                        {loading ?
                             (<CenterContent>
                                 <Spinner />
-                            </CenterContent>) }
-
-                        {tagNoValid ? <CheckIcon id='tagNumberIcon' className="valid" />
-                            : <Tooltip title='Tag number is already in use or is not a valid format.'>
-                                <ErrorOutlineIcon id='tagNumberIcon' className="invalid"   />
-                            </Tooltip>
+                            </CenterContent>)
+                            : tagNoValid
+                                ? <CheckIcon className='valid' />
+                                : <Tooltip title='Tag number is already in use or is not a valid format.'>
+                                    <ErrorOutlineIcon className='invalid' />
+                                </Tooltip>
                         }
                     </FormFieldSpacer>
                     }

@@ -16,18 +16,14 @@ export const Header = styled.header`
 export const Collapse = styled.div<{ isExpanded: boolean }>`
     display: flex;
     margin-bottom: 6px;
-    padding-top: calc(var(--grid-unit) * 2);
+    padding-top: calc(var(--grid-unit) + 4px);
     padding-right: var(--grid-unit);
-    padding-bottom: calc(var(--grid-unit) - 4px);
+    padding-bottom: calc(var(--grid-unit) + 4px);
     padding-left: var(--grid-unit);    
     cursor: pointer;
-
-    svg {
-        margin-bottom: 4px;
-    }
-
+    align-items: center;
     ${ (props): any => props.isExpanded && css`
-        color:${tokens.colors.interactive.primary__resting.rgba};
+        color: ${tokens.colors.interactive.primary__resting.rgba};
         background:${tokens.colors.interactive.primary__selected_highlight.rgba};
     `}; 
 `;
@@ -38,6 +34,7 @@ export const CollapseInfo = styled.div`
 
 export const Section = styled.div`
     display: flex;
+    justify-content: flex-end;
     padding-bottom: calc(var(--grid-unit) * 2);
 `;
 

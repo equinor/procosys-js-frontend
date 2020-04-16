@@ -87,7 +87,6 @@ const ScopeTable = ({
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
-
             columns={[
                 { title: 'Tag nr', render: getTagNoColumn },
                 { title: 'Description', render: getDescriptionColumn },

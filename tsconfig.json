@@ -7,7 +7,17 @@
         "module": "esnext",
         "moduleResolution": "node",
         "strict": true,
-        "jsx": "react"
+        "jsx": "react",
+        "baseUrl": "./",
+        "paths": {
+            "@procosys/core/*": ["src/core/*"],
+            "@procosys/modules/*": ["src/modules/*"],
+            "@procosys/hooks/*": ["src/hooks/*"],
+            "@procosys/components/*": ["src/components/*"],
+            "@procosys/assets/*": ["src/assets/*"],
+            "@procosys/http/*": ["src/http/*"],
+            "@procosys/util/*": ["src/util/*"],
+        }
     },
     "include": [
         "src/**/*"

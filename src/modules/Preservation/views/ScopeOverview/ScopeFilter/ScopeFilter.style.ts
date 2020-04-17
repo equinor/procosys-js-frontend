@@ -16,10 +16,7 @@ export const Header = styled.header`
 export const Collapse = styled.div<{ isExpanded: boolean }>`
     display: flex;
     margin-bottom: 6px;
-    padding-top: calc(var(--grid-unit) + 4px);
-    padding-right: var(--grid-unit);
-    padding-bottom: calc(var(--grid-unit) + 4px);
-    padding-left: var(--grid-unit);    
+    padding: calc(var(--grid-unit) + 4px) var(--grid-unit);
     cursor: pointer;
     align-items: center;
     ${ (props): any => props.isExpanded && css`

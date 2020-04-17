@@ -36,7 +36,10 @@ const TransferTable = ({
         columns={[
             { title: 'Tag nr', field: 'tagNo' },
             { title: 'Description', field: 'description' },
-            { title: 'Resp', field: 'responsibleCode' },
+            { title: 'From Mode', field: 'mode' },
+            { title: 'From Resp', field: 'responsibleCode' },
+            { title: 'To Mode', field: 'nextMode' },
+            { title: 'To Resp', field: 'nextResponsibleCode' },
             { title: 'Status', field: 'status' },
             { title: 'Req type', render: getRequirementIcons }
         ]}

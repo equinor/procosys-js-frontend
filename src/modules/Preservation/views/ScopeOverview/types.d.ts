@@ -35,3 +35,11 @@ export interface Requirement {
     nextDueWeeks: number;
     readyToBePreserved: boolean;
 }
+
+export interface TagListFilter {
+    tagNoStartsWith: string | null;
+    purchaseOrderNoStartsWith: string | null;
+    storageAreaStartsWith: string | null;
+    commPkgNoStartsWith: string | null;
+    mcPkgNoStartsWith: string | null;
+}

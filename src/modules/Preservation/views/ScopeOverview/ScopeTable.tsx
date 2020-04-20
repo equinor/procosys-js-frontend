@@ -24,7 +24,7 @@ const ScopeTable = ({
     showTagDetails,
     setRefreshScopeListCallback,
     pageSize,
-    setPageSize
+    setPageSize,
 }: ScopeTableProps): JSX.Element => {
 
     const ref: RefObject<any> = React.createRef();
@@ -84,8 +84,6 @@ const ScopeTable = ({
         'Mode': 'Mode'
     };
 
-
-
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
@@ -131,6 +129,7 @@ const ScopeTable = ({
                     color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
                     backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
                 }),
+
             }}
             components={{
                 Toolbar: (data): any => (

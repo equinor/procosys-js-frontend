@@ -128,7 +128,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         showModalDialog(
             'Transferring',
             <TransferDialog transferableTags={transferableTags} nonTransferableTags={nonTransferableTags} />,
-            '1000px',
+            '80vw',
             'Back to list',
             null,
             transferButton,

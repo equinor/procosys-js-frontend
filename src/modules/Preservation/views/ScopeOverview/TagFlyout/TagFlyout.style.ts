@@ -66,10 +66,6 @@ export const HeaderActions = styled.div`
         margin-left: var(--grid-unit);
     }
 
-    svg {
-        margin-top: 5px;
-    }
-
     svg path {
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }

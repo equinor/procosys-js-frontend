@@ -217,6 +217,11 @@ interface RecordCheckBoxValue {
     isChecked: boolean;
 }
 
+interface JourneyFilterResponse {
+    id: number;
+    title: string;
+}
+
 interface ErrorResponse {
     ErrorCount: number;
     Errors: {
@@ -224,6 +229,8 @@ interface ErrorResponse {
         ErrorMessage: string;
     }[];
 }
+
+
 
 class PreservationApiError extends Error {
 
@@ -722,6 +729,32 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+        * Get journey filter values
+        *
+        * @param setRequestCanceller Returns a function that can be called to cancel the request
+        */
+    async getJourneyFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<JourneyFilterResponse[]> {
+        const endpoint = '/FilterValues/Journeys';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<JourneyFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 }
+
+
+
 
 export default PreservationApiClient;

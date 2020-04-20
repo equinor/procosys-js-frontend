@@ -6,6 +6,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { TagListFilter } from '../types';
 import { tokens } from '@equinor/eds-tokens';
+import JourneyFilter from './JourneyFilter';
 
 interface ScopeFilterProps {
     setDisplayFilter: (display: boolean) => void;
@@ -21,6 +22,11 @@ const ScopeFilter = ({
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
+    const [dueDateIsExpanded, setDueDateIsExpanded] = useState<boolean>(false);
+    const [modeIsExpanded, setModeIsExpanded] = useState<boolean>(false);
+    const [requirementsIsExpanded, setRequirementsIsExpanded] = useState<boolean>(false);
+    const [tagFunctionIsExpanded, setTagFunctionIsExpanded] = useState<boolean>(false);
+    const [disciplineIsExpanded, setDisciplineIsExpanded] = useState<boolean>(false);
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
     const KEYCODE_ENTER = 13;
@@ -30,7 +36,7 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: null };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -143,9 +149,104 @@ const ScopeFilter = ({
             </Collapse>
             {
                 statusIsExpanded && (
-                    <div>todo</div>
+                    <Section>
+                        todo
+                    </Section>
                 )
             }
+
+            <Collapse isExpanded={dueDateIsExpanded} onClick={(): void => setDueDateIsExpanded(!dueDateIsExpanded)}>
+                <CollapseInfo>
+                    Preservation Due Date
+                </CollapseInfo>
+                {
+                    dueDateIsExpanded
+                        ? <KeyboardArrowUpIcon />
+                        : <KeyboardArrowDownIcon />
+                }
+            </Collapse>
+            {
+                dueDateIsExpanded && (
+                    <Section>
+                        todo
+                    </Section>
+                )
+            }
+
+            <JourneyFilter tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+
+            <Collapse isExpanded={modeIsExpanded} onClick={(): void => setModeIsExpanded(!modeIsExpanded)}>
+                <CollapseInfo>
+                    Preservation Mode
+                </CollapseInfo>
+                {
+                    modeIsExpanded
+                        ? <KeyboardArrowUpIcon />
+                        : <KeyboardArrowDownIcon />
+                }
+            </Collapse>
+            {
+                modeIsExpanded && (
+                    <Section>
+                        todo
+                    </Section>
+                )
+            }
+
+            <Collapse isExpanded={requirementsIsExpanded} onClick={(): void => setRequirementsIsExpanded(!requirementsIsExpanded)}>
+                <CollapseInfo>
+                    Requirements
+                </CollapseInfo>
+                {
+                    requirementsIsExpanded
+                        ? <KeyboardArrowUpIcon />
+                        : <KeyboardArrowDownIcon />
+                }
+            </Collapse>
+            {
+                requirementsIsExpanded && (
+                    <Section>
+                        todo
+                    </Section>
+                )
+            }
+
+            <Collapse isExpanded={tagFunctionIsExpanded} onClick={(): void => setTagFunctionIsExpanded(!tagFunctionIsExpanded)}>
+                <CollapseInfo>
+                    Tag Function
+                </CollapseInfo>
+                {
+                    tagFunctionIsExpanded
+                        ? <KeyboardArrowUpIcon />
+                        : <KeyboardArrowDownIcon />
+                }
+            </Collapse>
+            {
+                tagFunctionIsExpanded && (
+                    <Section>
+                        todo
+                    </Section>
+                )
+            }
+
+            <Collapse isExpanded={disciplineIsExpanded} onClick={(): void => setDisciplineIsExpanded(!disciplineIsExpanded)}>
+                <CollapseInfo>
+                    Discipline
+                </CollapseInfo>
+                {
+                    disciplineIsExpanded
+                        ? <KeyboardArrowUpIcon />
+                        : <KeyboardArrowDownIcon />
+                }
+            </Collapse>
+            {
+                disciplineIsExpanded && (
+                    <Section>
+                        todo
+                    </Section>
+                )
+            }
+
 
         </Container >
     );

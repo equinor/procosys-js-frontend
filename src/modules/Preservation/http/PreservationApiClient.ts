@@ -66,6 +66,14 @@ interface TagDetailsResponse {
     readyToBePreserved: boolean;
 }
 
+interface TagListFilter {
+    tagNoStartsWith: string | null;
+    purchaseOrderNoStartsWith: string | null;
+    storageAreaStartsWith: string | null;
+    commPkgNoStartsWith: string | null;
+    mcPkgNoStartsWith: string | null;
+}
+
 interface JourneyResponse {
     id: number;
     title: string;
@@ -413,6 +421,7 @@ class PreservationApiClient extends ApiClient {
         size: number,
         sortProperty: string | null,
         sortDirection: string | null,
+        tagFilter: TagListFilter,
         setRequestCanceller?: RequestCanceler
     ): Promise<PreservedTagResponse> {
         const endpoint = '/Tags';
@@ -424,6 +433,7 @@ class PreservationApiClient extends ApiClient {
                 size: size,
                 property: sortProperty,
                 direction: sortDirection,
+                ...tagFilter,
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

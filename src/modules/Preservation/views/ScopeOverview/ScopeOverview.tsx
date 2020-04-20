@@ -6,17 +6,19 @@ import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
+import FilterListOutlinedIcon from '@material-ui/icons/FilterListOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
-import { PreservedTag, Requirement, PreservedTags } from './types';
+import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
+import ScopeFilter from './ScopeFilter/ScopeFilter';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -37,9 +39,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
+    const [displayFilter, setDisplayFilter] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null });
 
     const path = useRouteMatch();
 
@@ -58,7 +62,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags | null> => {
         try {
-            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection).then(
+            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter).then(
                 (response) => {
                     return response;
                 }
@@ -159,6 +163,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
+    const toggleFilter = (): void => {
+        setDisplayFilter(!displayFilter);
+    };
+
     /**
      * Start Preservation button is set to disabled if no rows are selected or
      * if there are selected rows with other status than NotStarted
@@ -185,108 +193,136 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }, [selectedTags]
     );
 
+    useEffect(
+        () => {
+            refreshScopeList();
+        }, [tagListFilter]
+    );
+
     return (
         <Container>
-            <HeaderContainer>
-                <Header>
-                    <h1>Preservation tags</h1>
-                    <Dropdown text={project.description}>
-                        {availableProjects.map((projectItem, index) => {
-                            return (
-                                <DropdownItem
-                                    key={index}
-                                    onClick={(event): void =>
-                                        changeProject(event, index)
-                                    }
-                                >
-                                    <div>{projectItem.description}</div>
-                                    <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+            <ContentContainer>
+                <HeaderContainer>
+                    <Header>
+                        <h1>Preservation tags</h1>
+                        <Dropdown text={project.description}>
+                            {availableProjects.map((projectItem, index) => {
+                                return (
+                                    <DropdownItem
+                                        key={index}
+                                        onClick={(event): void =>
+                                            changeProject(event, index)
+                                        }
+                                    >
+                                        <div>{projectItem.description}</div>
+                                        <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                                    </DropdownItem>
+                                );
+                            })}
+                        </Dropdown>
+                        <Dropdown text="Add scope">
+                            <Link to={'/AddScope/selectTags'}>
+                                <DropdownItem>
+                                    Add tags manually
                                 </DropdownItem>
-                            );
-                        })}
-                    </Dropdown>
-                    <Dropdown text="Add scope">
-                        <Link to={'/AddScope/selectTags'}>
-                            <DropdownItem>
-                                Add tags manually
-                            </DropdownItem>
-                        </Link>
-                        <Link to={`${path.url}`}>
-                            <DropdownItem>
-                                Generate scope by Tag Function
-                            </DropdownItem>
-                        </Link>
-                        <Link to={'/AddScope/createAreaTag'}>
-                            <DropdownItem>
-                                Create area tag
-                            </DropdownItem>
-                        </Link>
-                    </Dropdown>
-                </Header>
-                <IconBar>
-                    <Button
-                        onClick={(): void => {
-                            preservedThisWeek();
-                        }}
-                        disabled={preservedThisWeekDisabled}>Preserved this week
-                    </Button>
-                    <StyledButton
-                        variant='ghost'
-                        title='Start preservation for selected tag(s)'
-                        onClick={(): void => {
-                            startPreservation();
-                        }}
-                        disabled={startPreservationDisabled}>
-                        <PlayArrowOutlinedIcon fontSize='small'/>
+                            </Link>
+                            <Link to={`${path.url}`}>
+                                <DropdownItem>
+                                    Generate scope by Tag Function
+                                </DropdownItem>
+                            </Link>
+                            <Link to={'/AddScope/createAreaTag'}>
+                                <DropdownItem>
+                                    Create area tag
+                                </DropdownItem>
+                            </Link>
+                        </Dropdown>
+                    </Header>
+                    <IconBar>
+                        <Button
+                            onClick={(): void => {
+                                preservedThisWeek();
+                            }}
+                            disabled={preservedThisWeekDisabled}>Preserved this week
+                        </Button>
+                        <StyledButton
+                            variant='ghost'
+                            title='Start preservation for selected tag(s)'
+                            onClick={(): void => {
+                                startPreservation();
+                            }}
+                            disabled={startPreservationDisabled}>
+                            <PlayArrowOutlinedIcon fontSize='small' />
                         Start
-                    </StyledButton>
-                    <StyledButton
-                        variant='ghost'
-                        title="Transfer selected tag(s)"
-                        onClick={(): void => {
-                            transferDialog();
-                        }}
-                        disabled={selectedTags.length < 1}>
-                        <FastForwardOutlinedIcon fontSize='small'/>
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            title="Transfer selected tag(s)"
+                            onClick={(): void => {
+                                transferDialog();
+                            }}
+                            disabled={selectedTags.length < 1}>
+                            <FastForwardOutlinedIcon fontSize='small' />
                         Transfer
-                    </StyledButton>
-                    <StyledButton
-                        variant='ghost'
-                        disabled={true}>
-                        <CreateOutlinedIcon fontSize='small'/>
-                    </StyledButton>
-                    <StyledButton
-                        variant='ghost'
-                        disabled={true}>
-                        <DeleteOutlinedIcon fontSize='small'/>
-                    </StyledButton>
-                    <StyledButton
-                        variant='ghost'
-                        disabled={true}>
-                        <PrintOutlinedIcon fontSize='small'/>
-                    </StyledButton>
-                </IconBar>
-            </HeaderContainer>
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            disabled={true}>
+                            <CreateOutlinedIcon fontSize='small' />
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            disabled={true}>
+                            <DeleteOutlinedIcon fontSize='small' />
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            disabled={true}>
+                            <PrintOutlinedIcon fontSize='small' />
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            onClick={(): void => {
+                                toggleFilter();
+                            }}
+                        >
+                            <FilterListOutlinedIcon fontSize='small' />
+                        </StyledButton>
+                    </IconBar>
+                </HeaderContainer>
 
-            <ScopeTable
-                getTags={getTags}
-                //isLoading={isLoading}
-                setSelectedTags={setSelectedTags}
-                showTagDetails={openFlyout}
-                setRefreshScopeListCallback={setRefreshScopeListCallback}
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-            />
+                <ScopeTable
+                    getTags={getTags}
+                    //isLoading={isLoading}
+                    setSelectedTags={setSelectedTags}
+                    showTagDetails={openFlyout}
+                    setRefreshScopeListCallback={setRefreshScopeListCallback}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                />
+                {
+                    displayFlyout && (
+                        <Flyout
+                            close={closeFlyout}>
+                            <TagFlyout
+                                tagId={flyoutTagId}
+                                close={closeFlyout}
+                                setDirty={(): void => setScopeIsDirty(true)}
+                            />
+                        </Flyout>
+                    )
+                }
+
+
+            </ContentContainer >
             {
-                displayFlyout && (
-                    <Flyout
-                        close={closeFlyout}>
-                        <TagFlyout
-                            tagId={flyoutTagId}
-                            close={closeFlyout}
-                            setDirty={(): void => setScopeIsDirty(true)}
-                        />
-                    </Flyout>
+                displayFilter && (
+                    <>
+                        <FilterDivider />
+                        <FilterContainer>
+                            <ScopeFilter setDisplayFilter={setDisplayFilter} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+                        </FilterContainer>
+                    </>
                 )
             }
         </Container >

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon } from './TagFlyout.style';
+import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon, StyledButton } from './TagFlyout.style';
 import PreservationTab from './PreservationTab/PreservationTab';
 import ActionTab from './ActionTab/ActionTab';
 import CloseIcon from '@material-ui/icons/Close';
@@ -137,7 +137,7 @@ const TagFlyout = ({
                 </h1>
                 <HeaderActions>
                     {preservationIsStarted &&
-                        <Button 
+                        <StyledButton
                             disabled={!isPreserveTagButtonEnabled()}
                             onClick={preserveTag}
                         >
@@ -147,16 +147,16 @@ const TagFlyout = ({
                                 </span>
                             )}
                             {!isPreservingTag && ('Preserved this week')}
-                        </Button>}
+                        </StyledButton>}
                     {preservationIsNotStarted &&
-                        <Button 
-                            variant='ghost' 
-                            title='Start preservation' 
+                        <StyledButton
+                            variant='ghost'
+                            title='Start preservation'
                             disabled={isStartingPreservation}
                             onClick={startPreservation}
                         >
                             <PlayArrowOutlinedIcon />
-                        </Button>}      
+                        </StyledButton>}
                     <Button variant='ghost' title='Close' onClick={close}>
                         <CloseIcon />
                     </Button>
@@ -166,7 +166,7 @@ const TagFlyout = ({
                 <span style={{margin: '0 var(--grid-unit)'}}>
                     {tagDetails && tagDetails.status}
                 </span>
-            </StatusLabel>            
+            </StatusLabel>
             <Tabs>
                 <a
                     className={activeTab === 'preservation' ? 'active' : 'preservation'}

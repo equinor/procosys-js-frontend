@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer } from './PreservationTab.style';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, StyledTextField } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
@@ -207,10 +207,9 @@ const PreservationTab = ({
                     }
                 </TextFieldContainer>
                 <TextFieldContainer>
-                    <TextField
+                    <StyledTextField
                         id='storageArea'
                         label='Storage area'
-                        style={{ maxWidth: '30%'}}
                         defaultValue={tagDetails.storageArea}
                         inputRef={storageAreaInputRef}
                         disabled={!editingStorageArea}

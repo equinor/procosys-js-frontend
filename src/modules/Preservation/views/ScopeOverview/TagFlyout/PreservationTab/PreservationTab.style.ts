@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
-import { Button } from '@equinor/eds-core-react';
+import { Button, TextField } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -28,13 +28,14 @@ export const StyledButton = styled(Button)`
         background: ${tokens.colors.interactive.primary__hover_alt.rgba};
     }
 
-    /* svg {
-        margin-right: 8px;
-    } */
-
     svg path {
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
+`;
+
+export const StyledTextField = styled(TextField)`
+    margin-bottom: calc(var(--grid-unit) * 2);
+    width: 30%;
 `;
 
 export const Details = styled.div`
@@ -47,6 +48,7 @@ export const TagDetailsInputContainer = styled.div`
     display: flex;
     flex-direction: column;
     padding: calc(var(--grid-unit) * 2);
+    padding-bottom: 0px;
     border-bottom: 1px solid ${tokens.colors.ui.background__medium.rgba};
 `;
 

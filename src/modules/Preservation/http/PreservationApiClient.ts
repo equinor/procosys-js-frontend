@@ -441,13 +441,9 @@ class PreservationApiClient extends ApiClient {
         };
 
         const qs = require('qs');
-        settings.paramsSerializer = p => {
+        settings.paramsSerializer = (p): string => {
             return qs.stringify(p);
         };
-
-        //        if (tagFilter && tagFilter.journeyIds) {
-        //            settings.params = { ...settings.params, journeyIds: tagFilter.journeyIds };
-        //       }
 
         this.setupRequestCanceler(settings, setRequestCanceller);
 

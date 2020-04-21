@@ -72,6 +72,7 @@ interface TagListFilter {
     storageAreaStartsWith: string | null;
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
+    journeyIds: number[];
 }
 
 interface JourneyResponse {
@@ -435,8 +436,19 @@ class PreservationApiClient extends ApiClient {
                 property: sortProperty,
                 direction: sortDirection,
                 ...tagFilter,
+
             },
         };
+
+        const qs = require('qs');
+        settings.paramsSerializer = p => {
+            return qs.stringify(p);
+        };
+
+        //        if (tagFilter && tagFilter.journeyIds) {
+        //            settings.params = { ...settings.params, journeyIds: tagFilter.journeyIds };
+        //       }
+
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {

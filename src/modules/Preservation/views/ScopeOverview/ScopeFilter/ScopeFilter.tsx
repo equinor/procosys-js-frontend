@@ -27,6 +27,7 @@ const ScopeFilter = ({
     const [requirementsIsExpanded, setRequirementsIsExpanded] = useState<boolean>(false);
     const [tagFunctionIsExpanded, setTagFunctionIsExpanded] = useState<boolean>(false);
     const [disciplineIsExpanded, setDisciplineIsExpanded] = useState<boolean>(false);
+
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
     const KEYCODE_ENTER = 13;
@@ -36,7 +37,7 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: null };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [] };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };

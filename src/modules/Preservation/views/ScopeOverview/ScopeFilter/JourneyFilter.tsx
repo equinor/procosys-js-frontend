@@ -21,12 +21,11 @@ interface JourneyFilterProps {
 
 const JourneyFilter = ({
     tagListFilter,
-    setTagListFilter
+    setTagListFilter,
 }: JourneyFilterProps): JSX.Element => {
 
     const [journeyIsExpanded, setJourneyIsExpanded] = useState<boolean>(false);
     const [journeys, setJourneys] = useState<JourneyFilterValue[]>([]);
-    const [journeysChecked, setJourneysChecked] = useState<number[]>(tagListFilter.journeyIds || []);
 
     const {
         project,
@@ -38,11 +37,8 @@ const JourneyFilter = ({
         (async (): Promise<void> => {
             try {
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-                console.log('joruneyL: ', journeys);
                 setJourneys(journeys);
-
             } catch (error) {
-                console.error('Get journeys failed: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -53,23 +49,24 @@ const JourneyFilter = ({
     }, []);
 
     const updateFilter = (journeyId: number, checked: boolean): void => {
-        if (checked && journeysChecked.indexOf(journeyId) === -1) {
-            setJourneysChecked([...journeysChecked, journeyId]);
-        } else if (!checked && journeysChecked.indexOf(journeyId) !== -1) {
-            setJourneysChecked(journeysChecked.filter(item => item != journeyId));
+        const newTagListFilter: TagListFilter = { ...tagListFilter };
+        if (checked) {
+            newTagListFilter.journeyIds = [...tagListFilter.journeyIds, journeyId];
+        } else {
+            newTagListFilter.journeyIds = [...tagListFilter.journeyIds.filter(item => item != journeyId)];
         }
-        tagListFilter.journeyIds = journeysChecked;
-        setTagListFilter({ ...tagListFilter });
-        console.log('joruneys checked: ', journeysChecked);
-        console.log('tagList filter: ', tagListFilter.journeyIds);
+        setTagListFilter(newTagListFilter);
 
     };
 
-    const checkboxSection = (journey: JourneyFilterValue): JSX.Element => {
+    const createCheckbox = (journey: JourneyFilterValue): JSX.Element => {
         return (
-            <Section>
+            <Section key={journey.id}>
                 <Checkbox
-                    checked={journeysChecked.some(journeyId => journey.id === journeyId)}
+                    // eslint-disable-next-line react/prop-types
+                    checked={tagListFilter.journeyIds.some(journeyId => {
+                        return journey.id === journeyId;
+                    })}
                     onChange={(checked: boolean): void => {
                         updateFilter(journey.id, checked);
                     }}
@@ -78,7 +75,6 @@ const JourneyFilter = ({
                 </Checkbox>
             </Section>
         );
-
     };
 
     return (
@@ -97,7 +93,7 @@ const JourneyFilter = ({
                 journeyIsExpanded && (
                     <>
                         {
-                            journeys?.map(journey => checkboxSection(journey))
+                            journeys?.map(journey => createCheckbox(journey))
                         }
                     </>
                 )
@@ -105,5 +101,6 @@ const JourneyFilter = ({
         </>
     );
 };
+
 
 export default JourneyFilter;

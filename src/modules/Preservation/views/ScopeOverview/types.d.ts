@@ -43,4 +43,5 @@ export interface TagListFilter {
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
     journeyIds: number[];
+    modeIds: number[];
 }

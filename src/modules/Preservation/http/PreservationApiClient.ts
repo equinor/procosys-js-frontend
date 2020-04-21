@@ -73,6 +73,7 @@ interface TagListFilter {
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
     journeyIds: number[];
+    modeIds: number[];
 }
 
 interface JourneyResponse {
@@ -219,6 +220,10 @@ interface RecordCheckBoxValue {
 }
 
 interface JourneyFilterResponse {
+    id: number;
+    title: string;
+}
+interface ModeFilterResponse {
     id: number;
     title: string;
 }
@@ -754,6 +759,29 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<JourneyFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get modes filter values
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getModeFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<ModeFilterResponse[]> {
+        const endpoint = '/FilterValues/Modes';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ModeFilterResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {

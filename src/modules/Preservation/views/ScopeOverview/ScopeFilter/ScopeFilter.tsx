@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -6,13 +6,23 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { TagListFilter } from '../types';
 import { tokens } from '@equinor/eds-tokens';
-import JourneyFilter from './JourneyFilter';
+import CheckboxFilter from './CheckboxFilter';
+import { usePreservationContext } from '../../../context/PreservationContext';
+import { Canceler } from 'axios';
+import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 
 interface ScopeFilterProps {
     setDisplayFilter: (display: boolean) => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
 }
+
+export interface CheckboxFilterValue {
+    id: number;
+    title: string;
+}
+
+export type TagListFilterParamType = 'modeIds' | 'journeyIds';
 
 const ScopeFilter = ({
     setDisplayFilter,
@@ -23,21 +33,49 @@ const ScopeFilter = ({
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
     const [dueDateIsExpanded, setDueDateIsExpanded] = useState<boolean>(false);
-    const [modeIsExpanded, setModeIsExpanded] = useState<boolean>(false);
     const [requirementsIsExpanded, setRequirementsIsExpanded] = useState<boolean>(false);
     const [tagFunctionIsExpanded, setTagFunctionIsExpanded] = useState<boolean>(false);
     const [disciplineIsExpanded, setDisciplineIsExpanded] = useState<boolean>(false);
 
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
+    const [modes, setModes] = useState<CheckboxFilterValue[]>([]);
+    const [journeys, setJourneys] = useState<CheckboxFilterValue[]>([]);
+
     const KEYCODE_ENTER = 13;
+
+    const {
+        project,
+        apiClient,
+    } = usePreservationContext();
+
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            try {
+
+                const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                setJourneys(journeys);
+
+                const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                setModes(modes);
+
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
 
     const triggerScopeListUpdate = (): void => {
         setTagListFilter(localTagListFilter);
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [] };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [], modeIds: [] };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -174,25 +212,9 @@ const ScopeFilter = ({
                 )
             }
 
-            <JourneyFilter tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} checkedIds={tagListFilter.journeyIds} tagListFilterParam='journeyIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
-            <Collapse isExpanded={modeIsExpanded} onClick={(): void => setModeIsExpanded(!modeIsExpanded)}>
-                <CollapseInfo>
-                    Preservation Mode
-                </CollapseInfo>
-                {
-                    modeIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                modeIsExpanded && (
-                    <Section>
-                        todo
-                    </Section>
-                )
-            }
+            <CheckboxFilter title='Preserved Modes' filterValues={modes} checkedIds={tagListFilter.modeIds} tagListFilterParam='modeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
             <Collapse isExpanded={requirementsIsExpanded} onClick={(): void => setRequirementsIsExpanded(!requirementsIsExpanded)}>
                 <CollapseInfo>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -6,27 +6,24 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { TagListFilter } from '../types';
 import { tokens } from '@equinor/eds-tokens';
-import { RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
+import RadioGroupFilter from './RadioGroupFilter';
 
 interface ScopeFilterProps {
     setDisplayFilter: (display: boolean) => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
 }
-interface SelectableInput {
-    text: string;
-    value: string;
-}
-const PRESERVATION_STATUS: SelectableInput[] = [{
-    text: 'Not started',
+
+const PRESERVATION_STATUS = [{
+    title: 'Not started',
     value: 'NotStarted'
 },
 {
-    text: 'Active',
+    title: 'Active',
     value: 'Active'
 },
 {
-    text: 'Completed',
+    title: 'Completed',
     value: 'Completed'
 }];
 
@@ -36,10 +33,10 @@ const ScopeFilter = ({
     setTagListFilter,
 }: ScopeFilterProps): JSX.Element => {
 
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
-
-    const [viewStatusFilter, setViewStatusFilter] = useState<boolean>(false);
 
     const KEYCODE_ENTER = 13;
 
@@ -53,17 +50,17 @@ const ScopeFilter = ({
         setTagListFilter(newTagListFilter);
     };
 
-    const onStatusFilterChanged = (e: React.ChangeEvent<HTMLInputElement>, value: string): void => {
-        console.log('Value: ', value);
+    const onStatusFilterChanged = (value: string): void => {
         setLocalTagListFilter((old): TagListFilter => {return {...old, preservationStatus: value};});
     };
 
     useEffect((): void => {
-        triggerScopeListUpdate();
+        console.log('Triggering useEffect', containerRef.current);
+        containerRef.current && triggerScopeListUpdate();
     }, [localTagListFilter.preservationStatus]);
 
     return (
-        <Container>
+        <Container ref={containerRef}>
             <Header>
                 <h1>Filter</h1>
 
@@ -158,24 +155,7 @@ const ScopeFilter = ({
                 )
             }
 
-            <Collapse isExpanded={viewStatusFilter} onClick={(): void => setViewStatusFilter(!viewStatusFilter)}>
-                <CollapseInfo>
-                    Preservation Status
-                </CollapseInfo>
-                {
-                    viewStatusFilter
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                viewStatusFilter && (
-                    <RadioGroup aria-label="Preservation Status" name="preservationStatus" value={localTagListFilter.preservationStatus} onChange={onStatusFilterChanged}>
-                        {PRESERVATION_STATUS.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.text} control={<Radio />} />))}
-
-                    </RadioGroup>
-                )
-            }
+            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onStatusFilterChanged} value={tagListFilter.preservationStatus} />
 
         </Container >
     );

@@ -14,17 +14,27 @@ interface RadioGroupFilterProps {
     options: Option[];
     value: string | null;
     onChange: (value: string) => void;
+    label?: string;
 }
 
-const RadioGroupFilter = ({options, value, onChange}: RadioGroupFilterProps): JSX.Element => {
+const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilterProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
+    const [inputName] = useState(() => {
+        if (label) return label.toLowerCase().replace(' ', '_');
+        return `RadioGroup_${Date.now()}`;
+    });
+
+    const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, newValue: string): void => {
+        onChange(newValue);
+    };
+
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="PreservationStatusHeader">
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader">
                 <CollapseInfo>
-                    Preservation Status
+                    {label}
                 </CollapseInfo>
                 {
                     isExpanded
@@ -34,7 +44,7 @@ const RadioGroupFilter = ({options, value, onChange}: RadioGroupFilterProps): JS
             </Collapse>
             {
                 isExpanded && (
-                    <RadioGroup aria-label="Preservation Status" name="preservationStatus" value={value} onChange={(e, newValue): void => onChange(newValue)}>
+                    <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
                         {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} control={<Radio />} />))}
                     </RadioGroup>
                 )

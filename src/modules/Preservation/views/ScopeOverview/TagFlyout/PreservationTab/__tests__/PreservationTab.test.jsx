@@ -15,7 +15,9 @@ const tagDetails = {
     commPkgNo: 'commpkg-no',
     mcPkgNo: 'mcpkg-no',
     purchaseOrderNo: 'po-no',
-    areaCode: 'area-code'
+    areaCode: 'area-code',
+    remark: 'remark text',
+    storageArea: 'SA123'
 };
 
 jest.mock('../../../../../context/PreservationContext', () => ({
@@ -42,8 +44,14 @@ describe('<PreservationTab />', () => {
             expect(getByText('mcpkg-no')).toBeInTheDocument();
             expect(getByText('po-no')).toBeInTheDocument();
             expect(getByText('area-code')).toBeInTheDocument();
-            expect(getByLabelText('Remark')).toBeInTheDocument();
-            expect(getByLabelText('Storage area')).toBeInTheDocument();
+
+            const remark = getByLabelText('Remark');
+            expect(remark).toBeInTheDocument();
+            expect(remark.value).toEqual('remark text');
+
+            const storageArea = getByLabelText('Storage area');
+            expect(storageArea).toBeInTheDocument();
+            expect(storageArea.value).toEqual('SA123');
         });
     });
 

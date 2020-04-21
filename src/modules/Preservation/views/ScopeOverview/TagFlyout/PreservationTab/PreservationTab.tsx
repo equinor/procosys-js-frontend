@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer } from './PreservationTab.style';
+import React, { useState, useEffect, useRef } from 'react';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, StyledTextField } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 import Spinner from '../../../../../../components/Spinner';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
 
 interface PreservationTabProps {
     tagDetails: TagDetails;
@@ -22,8 +24,18 @@ const PreservationTab = ({
     const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const { apiClient } = usePreservationContext();
 
+    const [editingRemark, setEditingRemark] = useState<boolean>(false);
+    const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
+
+    const [remark, setRemark] = useState<string>(tagDetails.remark);
+    const remarkInputRef = useRef<HTMLInputElement>(null);
+    const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
+    const storageAreaInputRef = useRef<HTMLInputElement>(null);
+
+    const KEYCODE_ENTER = 13;
+
     const getTagRequirements = async (): Promise<void> => {
-        try {            
+        try {
             const requirements = await apiClient.getTagRequirements(tagDetails.id);
             setTagRequirements(requirements);
         }
@@ -36,13 +48,13 @@ const PreservationTab = ({
     useEffect(() => {
         setTagRequirements(null); // force full refresh
         getTagRequirements();
-    }, [tagDetails]);    
+    }, [tagDetails]);
 
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
         try {
-            setTagRequirements(null); // trigger the spinner        
-            await apiClient.recordTagRequirementValues(tagDetails.id, values);      
-            
+            setTagRequirements(null); // trigger the spinner
+            await apiClient.recordTagRequirementValues(tagDetails.id, values);
+
             setDirty();
             showSnackbarNotification('Requirement values saved', 5000, true);
         }
@@ -52,7 +64,7 @@ const PreservationTab = ({
         }
         finally {
             // refresh tag details and requirements
-            refreshTagDetails();         
+            refreshTagDetails();
         }
     };
 
@@ -82,13 +94,50 @@ const PreservationTab = ({
         }
 
         return (
-            <Requirements 
-                requirements={tagRequirements} 
-                readonly={isReadOnly()} 
-                recordTagRequirementValues={recordTagRequirementValues} 
+            <Requirements
+                requirements={tagRequirements}
+                readonly={isReadOnly()}
+                recordTagRequirementValues={recordTagRequirementValues}
                 preserveRequirement={preserveRequirement}
             />
         );
+    };
+
+    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
+        try {
+            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString);
+            //showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
+        } catch (error) {
+            console.error('Edit failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        return Promise.resolve();
+    };
+
+    const saveRemark = (): void => {
+        setRemark(remarkInputRef.current?.value ?? remark);
+        saveRemarkAndStorageArea(remarkInputRef.current?.value ?? remark, storageArea);
+        setEditingRemark(false);
+    };
+
+    const cancelEditRemark = (): void => {
+        if (remarkInputRef.current?.value) {
+            remarkInputRef.current.value = remark;
+        }
+        setEditingRemark(false);
+    };
+
+    const saveStorageArea = (): void => {
+        setStorageArea(storageAreaInputRef.current?.value ?? storageArea);
+        saveRemarkAndStorageArea(remark, storageAreaInputRef.current?.value ?? storageArea);
+        setEditingStorageArea(false);
+    };
+
+    const cancelEditStorageArea = (): void => {
+        if (storageAreaInputRef.current?.value) {
+            storageAreaInputRef.current.value = storageArea;
+        }
+        setEditingStorageArea(false);
     };
 
     return (
@@ -117,22 +166,81 @@ const PreservationTab = ({
                             <Typography variant='body_short' style={{gridColumn: '3', gridRow: '2'}}>{tagDetails.purchaseOrderNo}</Typography>
                             <Typography variant='body_short' style={{gridColumn: '4', gridRow: '2'}}>{tagDetails.areaCode}</Typography>
                         </GridSecondRow>
-                    </div>               
-                </Details>                
+                    </div>
+                </Details>
             </TagDetailsContainer>
             <TagDetailsInputContainer>
-                <TextField
-                    id='remark'
-                    label='Remark'
-                    style={{ marginBottom: 'calc(var(--grid-unit) * 2)' }}
-                    disabled
-                />
-                <TextField
-                    id='storageArea'
-                    label='Storage area'
-                    style={{ maxWidth: '30%'}}
-                    disabled
-                />
+                <TextFieldContainer>
+                    <TextField
+                        id='remark'
+                        label='Remark'
+                        style={{ marginBottom: 'calc(var(--grid-unit) * 2)' }}
+                        defaultValue={tagDetails.remark}
+                        inputRef={remarkInputRef}
+                        disabled={!editingRemark}
+                        onKeyDown={(e: any): void => {
+                            e.keyCode === KEYCODE_ENTER &&
+                                saveRemark();
+                        }}
+                    />
+                    { editingRemark ?
+                        <IconContainer>
+                            <StyledButton
+                                variant='ghost_icon'
+                                onClick={cancelEditRemark}>
+                                <ClearIcon fontSize='small'/>
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost_icon'
+                                onClick={saveRemark}>
+                                <CheckIcon fontSize='small'/>
+                            </StyledButton>
+                        </IconContainer>
+                        :
+                        <IconContainer>
+                            <StyledButton
+                                variant='ghost_icon'
+                                onClick={(): void => setEditingRemark(true)}>
+                                <EditOutlinedIcon fontSize='small'/>
+                            </StyledButton>
+                        </IconContainer>
+                    }
+                </TextFieldContainer>
+                <TextFieldContainer>
+                    <StyledTextField
+                        id='storageArea'
+                        label='Storage area'
+                        defaultValue={tagDetails.storageArea}
+                        inputRef={storageAreaInputRef}
+                        disabled={!editingStorageArea}
+                        onKeyDown={(e: any): void => {
+                            e.keyCode === KEYCODE_ENTER &&
+                                saveStorageArea();
+                        }}
+                    />
+                    { editingStorageArea ?
+                        <IconContainer>
+                            <StyledButton
+                                variant='ghost_icon'
+                                onClick={cancelEditStorageArea}>
+                                <ClearIcon fontSize='small'/>
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost_icon'
+                                onClick={saveStorageArea}>
+                                <CheckIcon fontSize='small'/>
+                            </StyledButton>
+                        </IconContainer>
+                        :
+                        <IconContainer>
+                            <StyledButton
+                                variant='ghost_icon'
+                                onClick={(): void => setEditingStorageArea(true)}>
+                                <EditOutlinedIcon fontSize='small'/>
+                            </StyledButton>
+                        </IconContainer>
+                    }
+                </TextFieldContainer>
             </TagDetailsInputContainer>
             {
                 getRequirementsSection()
@@ -141,4 +249,4 @@ const PreservationTab = ({
     );
 };
 
-export default PreservationTab; 
+export default PreservationTab;

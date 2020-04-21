@@ -6,7 +6,7 @@ import ActionTab from './ActionTab/ActionTab';
 import CloseIcon from '@material-ui/icons/Close';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import { Button, Typography } from '@equinor/eds-core-react';
+import { Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import { TagDetails } from './types';
@@ -157,9 +157,9 @@ const TagFlyout = ({
                         >
                             <PlayArrowOutlinedIcon />
                         </StyledButton>}
-                    <Button variant='ghost' title='Close' onClick={close}>
+                    <StyledButton variant='ghost' title='Close' onClick={close}>
                         <CloseIcon />
-                    </Button>
+                    </StyledButton>
                 </HeaderActions>
             </Header>
             <StatusLabel status={tagDetails && tagDetails.status}>

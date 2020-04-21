@@ -43,7 +43,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null });
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null });
 
     const path = useRouteMatch();
 

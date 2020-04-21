@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -27,13 +27,28 @@ const PRESERVATION_STATUS = [{
     value: 'Completed'
 }];
 
+const ACTION_STATUS = [{
+    title: 'All',
+    value: 'None'
+},
+{
+    title: 'Open',
+    value: 'HasOpen'
+},
+{
+    title: 'Closed',
+    value: 'HasClosed'
+},
+{
+    title: 'Overdue',
+    value: 'HasOverDue'
+}];
+
 const ScopeFilter = ({
     setDisplayFilter,
     tagListFilter,
     setTagListFilter,
 }: ScopeFilterProps): JSX.Element => {
-
-    const containerRef = useRef<HTMLDivElement | null>(null);
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
@@ -45,22 +60,24 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
 
-    const onStatusFilterChanged = (value: string): void => {
+    const onPreservationStatusFilterChanged = (value: string): void => {
         setLocalTagListFilter((old): TagListFilter => {return {...old, preservationStatus: value};});
+    };
+    const onActionStatusFilterChanged = (value: string): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, actionStatus: value};});
     };
 
     useEffect((): void => {
-        console.log('Triggering useEffect', containerRef.current);
-        containerRef.current && triggerScopeListUpdate();
-    }, [localTagListFilter.preservationStatus]);
+        triggerScopeListUpdate();
+    }, [localTagListFilter.preservationStatus, localTagListFilter.actionStatus]);
 
     return (
-        <Container ref={containerRef}>
+        <Container>
             <Header>
                 <h1>Filter</h1>
 
@@ -155,7 +172,8 @@ const ScopeFilter = ({
                 )
             }
 
-            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onStatusFilterChanged} value={tagListFilter.preservationStatus} />
+            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onPreservationStatusFilterChanged} value={tagListFilter.preservationStatus} label="Preservation status" />
+            <RadioGroupFilter options={ACTION_STATUS} onChange={onActionStatusFilterChanged} value={tagListFilter.actionStatus} label="Preservation actions" />
 
         </Container >
     );

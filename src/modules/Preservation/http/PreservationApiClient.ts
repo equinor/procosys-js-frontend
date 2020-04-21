@@ -72,8 +72,9 @@ interface TagListFilter {
     storageAreaStartsWith: string | null;
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
-    journeyIds: number[];
-    modeIds: number[];
+    journeyIds: string[];
+    modeIds: string[];
+    dueFilters: string[];
 }
 
 interface JourneyResponse {
@@ -220,11 +221,13 @@ interface RecordCheckBoxValue {
 }
 
 interface JourneyFilterResponse {
-    id: number;
+    id: string;
+    code: string;
     title: string;
 }
 interface ModeFilterResponse {
-    id: number;
+    id: string;
+    code: string;
     title: string;
 }
 
@@ -441,7 +444,6 @@ class PreservationApiClient extends ApiClient {
                 property: sortProperty,
                 direction: sortDirection,
                 ...tagFilter,
-
             },
         };
 

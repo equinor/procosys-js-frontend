@@ -18,11 +18,27 @@ interface ScopeFilterProps {
 }
 
 export interface CheckboxFilterValue {
-    id: number;
+    id: string;
     title: string;
 }
 
-export type TagListFilterParamType = 'modeIds' | 'journeyIds';
+const dueDates: CheckboxFilterValue[] =
+    [
+        {
+            id: 'OverDue',
+            title: 'Over Due',
+        },
+        {
+            id: 'ThisWeek',
+            title: 'This Week',
+        },
+        {
+            id: 'NextWeek',
+            title: 'Next Week',
+        }
+    ];
+
+export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters';
 
 const ScopeFilter = ({
     setDisplayFilter,
@@ -32,7 +48,6 @@ const ScopeFilter = ({
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
-    const [dueDateIsExpanded, setDueDateIsExpanded] = useState<boolean>(false);
     const [requirementsIsExpanded, setRequirementsIsExpanded] = useState<boolean>(false);
     const [tagFunctionIsExpanded, setTagFunctionIsExpanded] = useState<boolean>(false);
     const [disciplineIsExpanded, setDisciplineIsExpanded] = useState<boolean>(false);
@@ -55,6 +70,7 @@ const ScopeFilter = ({
             try {
 
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
+
                 setJourneys(journeys);
 
                 const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
@@ -70,12 +86,13 @@ const ScopeFilter = ({
         };
     }, []);
 
+
     const triggerScopeListUpdate = (): void => {
         setTagListFilter(localTagListFilter);
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [], modeIds: [] };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [], modeIds: [], dueFilters: [] };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -194,27 +211,12 @@ const ScopeFilter = ({
                 )
             }
 
-            <Collapse isExpanded={dueDateIsExpanded} onClick={(): void => setDueDateIsExpanded(!dueDateIsExpanded)}>
-                <CollapseInfo>
-                    Preservation Due Date
-                </CollapseInfo>
-                {
-                    dueDateIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                dueDateIsExpanded && (
-                    <Section>
-                        todo
-                    </Section>
-                )
-            }
+            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} checkedIds={tagListFilter.dueFilters} tagListFilterParam='dueFilters' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
             <CheckboxFilter title='Preserved Journeys' filterValues={journeys} checkedIds={tagListFilter.journeyIds} tagListFilterParam='journeyIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
             <CheckboxFilter title='Preserved Modes' filterValues={modes} checkedIds={tagListFilter.modeIds} tagListFilterParam='modeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+
 
             <Collapse isExpanded={requirementsIsExpanded} onClick={(): void => setRequirementsIsExpanded(!requirementsIsExpanded)}>
                 <CollapseInfo>

@@ -12,7 +12,7 @@ import { TagListFilter } from '../types';
 interface CheckboxFilterProps {
     title: string;
     filterValues: CheckboxFilterValue[];
-    checkedIds: number[];
+    checkedIds: string[];
     tagListFilterParam: TagListFilterParamType;
     tagListFilter: TagListFilter;
     setTagListFilter: any;
@@ -30,7 +30,7 @@ const CheckboxFilter = ({
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
 
-    const updateFilter = (id: number, checked: boolean): void => {
+    const updateFilter = (id: string, checked: boolean): void => {
         const newTagListFilter: TagListFilter = { ...tagListFilter };
         if (checked) {
             newTagListFilter[tagListFilterParam] = [...checkedIds, id];
@@ -40,6 +40,7 @@ const CheckboxFilter = ({
         setTagListFilter(newTagListFilter);
 
     };
+
 
     return (
         <>

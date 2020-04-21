@@ -7,12 +7,9 @@ import Checkbox from '../../../../../components/Checkbox';
 import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
 import { TagListFilter } from '../types';
 
-
-
 interface CheckboxFilterProps {
     title: string;
     filterValues: CheckboxFilterValue[];
-    checkedIds: string[];
     tagListFilterParam: TagListFilterParamType;
     tagListFilter: TagListFilter;
     setTagListFilter: any;
@@ -21,7 +18,6 @@ interface CheckboxFilterProps {
 const CheckboxFilter = ({
     title,
     filterValues,
-    checkedIds,
     tagListFilterParam,
     tagListFilter,
     setTagListFilter
@@ -29,6 +25,7 @@ const CheckboxFilter = ({
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
+    const checkedIds = tagListFilter[tagListFilterParam];
 
     const updateFilter = (id: string, checked: boolean): void => {
         const newTagListFilter: TagListFilter = { ...tagListFilter };
@@ -38,9 +35,7 @@ const CheckboxFilter = ({
             newTagListFilter[tagListFilterParam] = [...checkedIds.filter(item => item != id)];
         }
         setTagListFilter(newTagListFilter);
-
     };
-
 
     return (
         <>

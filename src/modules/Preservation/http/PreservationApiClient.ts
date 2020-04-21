@@ -222,14 +222,28 @@ interface RecordCheckBoxValue {
 
 interface JourneyFilterResponse {
     id: string;
-    code: string;
     title: string;
 }
+
 interface ModeFilterResponse {
     id: string;
-    code: string;
     title: string;
 }
+
+interface RequirementTypeFilterResponse {
+    id: string;
+    title: string;
+}
+
+interface TagFunctionFilterResponse {
+    code: string;
+}
+
+interface DisciplineFilterResponse {
+    code: string;
+    description: string;
+}
+
 
 interface ErrorResponse {
     ErrorCount: number;
@@ -238,8 +252,6 @@ interface ErrorResponse {
         ErrorMessage: string;
     }[];
 }
-
-
 
 class PreservationApiError extends Error {
 
@@ -790,6 +802,76 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+    * Get requirement type filter values
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getRequirementTypeFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeFilterResponse[]> {
+        const endpoint = '/FilterValues/RequirementTypes';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<RequirementTypeFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get tag function filter values
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getTagFunctionFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<TagFunctionFilterResponse[]> {
+        const endpoint = '/FilterValues/TagFunctions';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagFunctionFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get discipline filter values
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getDisciplineFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<DisciplineFilterResponse[]> {
+        const endpoint = '/FilterValues/Disciplines';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<DisciplineFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
 }
 
 

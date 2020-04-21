@@ -45,4 +45,7 @@ export interface TagListFilter {
     journeyIds: string[];
     modeIds: string[];
     dueFilters: string[];
+    requirementTypeIds: string[];
+    tagFunctionCodes: string[];
+    disciplineCodes: string[];
 }

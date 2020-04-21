@@ -38,7 +38,7 @@ const dueDates: CheckboxFilterValue[] =
         }
     ];
 
-export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters';
+export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters' | 'requirementTypeIds' | 'tagFunctionCodes' | 'disciplineCodes';
 
 const ScopeFilter = ({
     setDisplayFilter,
@@ -48,14 +48,14 @@ const ScopeFilter = ({
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
-    const [requirementsIsExpanded, setRequirementsIsExpanded] = useState<boolean>(false);
-    const [tagFunctionIsExpanded, setTagFunctionIsExpanded] = useState<boolean>(false);
-    const [disciplineIsExpanded, setDisciplineIsExpanded] = useState<boolean>(false);
 
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
     const [modes, setModes] = useState<CheckboxFilterValue[]>([]);
     const [journeys, setJourneys] = useState<CheckboxFilterValue[]>([]);
+    const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
+    const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
+    const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
 
     const KEYCODE_ENTER = 13;
 
@@ -68,13 +68,29 @@ const ScopeFilter = ({
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-
                 setJourneys(journeys);
 
                 const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setModes(modes);
+
+                const requirements = await apiClient.getRequirementTypeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                setRequirements(requirements);
+
+                const tagFunctionResp = await apiClient.getTagFunctionFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                const tagFunctions: CheckboxFilterValue[] = [];
+                tagFunctionResp.map((item) => {
+                    tagFunctions.push({ id: item.code, title: item.code });
+                });
+                setTagFunctions(tagFunctions);
+
+                const disciplineResp = await apiClient.getDisciplineFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                const disciplines: CheckboxFilterValue[] = [];
+                disciplineResp.map((item) => {
+                    disciplines.push({ id: item.code, title: item.description ? item.description : item.code });  //todo: how to handle description with null value 
+                });
+                setDisciplines(disciplines);
+
 
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
@@ -92,7 +108,7 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [], modeIds: [], dueFilters: [] };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -211,67 +227,17 @@ const ScopeFilter = ({
                 )
             }
 
-            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} checkedIds={tagListFilter.dueFilters} tagListFilterParam='dueFilters' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
-            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} checkedIds={tagListFilter.journeyIds} tagListFilterParam='journeyIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
-            <CheckboxFilter title='Preserved Modes' filterValues={modes} checkedIds={tagListFilter.modeIds} tagListFilterParam='modeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+            <CheckboxFilter title='Preserved Modes' filterValues={modes} tagListFilterParam='modeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
+            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
-            <Collapse isExpanded={requirementsIsExpanded} onClick={(): void => setRequirementsIsExpanded(!requirementsIsExpanded)}>
-                <CollapseInfo>
-                    Requirements
-                </CollapseInfo>
-                {
-                    requirementsIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                requirementsIsExpanded && (
-                    <Section>
-                        todo
-                    </Section>
-                )
-            }
+            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
-            <Collapse isExpanded={tagFunctionIsExpanded} onClick={(): void => setTagFunctionIsExpanded(!tagFunctionIsExpanded)}>
-                <CollapseInfo>
-                    Tag Function
-                </CollapseInfo>
-                {
-                    tagFunctionIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                tagFunctionIsExpanded && (
-                    <Section>
-                        todo
-                    </Section>
-                )
-            }
-
-            <Collapse isExpanded={disciplineIsExpanded} onClick={(): void => setDisciplineIsExpanded(!disciplineIsExpanded)}>
-                <CollapseInfo>
-                    Discipline
-                </CollapseInfo>
-                {
-                    disciplineIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                disciplineIsExpanded && (
-                    <Section>
-                        todo
-                    </Section>
-                )
-            }
-
+            <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
 
         </Container >
     );

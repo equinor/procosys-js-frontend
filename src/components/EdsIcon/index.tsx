@@ -17,11 +17,11 @@ type IconProps = {
 }
 
 const EdsIcon = ({
-    name = '',
-    title = '',
-    color = '',
-    rotation = 0,
-    size = 24
+    name,
+    title,
+    color,
+    rotation,
+    size
 }: IconProps): JSX.Element => {
 
     return (

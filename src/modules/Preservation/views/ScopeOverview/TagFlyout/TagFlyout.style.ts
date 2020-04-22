@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -9,8 +10,8 @@ export const Container = styled.div`
 export const Header = styled.div`
     display: flex;
     align-items: center;
-    padding: 
-        calc(var(--grid-unit) * 4) 
+    padding:
+        calc(var(--grid-unit) * 4)
         calc(var(--grid-unit) * 2)
         var(--grid-unit)
         calc(var(--grid-unit) * 2);
@@ -49,7 +50,7 @@ export const StatusLabel = styled.div<{ status?: string | null }>`
     /* todo: conditional formatting when "overdue" */
     background: ${(props): any => props.status === 'Active'
         ? tokens.colors.interactive.primary__selected_highlight.rgba
-        : tokens.colors.ui.background__light.rgba}; 
+        : tokens.colors.ui.background__light.rgba};
 
     span {
         color: ${tokens.colors.interactive.primary__resting.rgba};
@@ -64,10 +65,6 @@ export const HeaderActions = styled.div`
 
     button {
         margin-left: var(--grid-unit);
-    }
-
-    svg {
-        margin-top: 5px;
     }
 
     svg path {
@@ -91,4 +88,12 @@ export const Tabs = styled.nav`
             margin-bottom: -2px;
         }
     }
+`;
+
+export const StyledButton = styled(Button)`
+    svg {
+        height: 20px;
+        width: 20px;
+    }
+
 `;

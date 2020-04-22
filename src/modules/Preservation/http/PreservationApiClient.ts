@@ -72,6 +72,8 @@ interface TagListFilter {
     storageAreaStartsWith: string | null;
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
+    preservationStatus: string | null;
+    actionStatus: string | null;
 }
 
 interface JourneyResponse {

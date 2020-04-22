@@ -1,4 +1,4 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TestContainer } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -53,7 +53,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [icon, setIcon] = useState<JSX.Element | null>(null);
 
     const invalidTagNoMessage = 'An area tag with this tag number already exists. Please add Area or Tag number suffix to create a unique area tag number';
-    const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
+    const spacesInTagNoMessage = 'The suffix cannot containt spaces';
     const emptyMessage = '';
     const errorIcon = <EdsIcon name='error_filled' size={16} />;
 
@@ -222,7 +222,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 <h1>Create Area Tag</h1>
                 <div>{project.description}</div>
             </Header>
-            <TestContainer>
+            <TopContainer>
                 <Typography variant="caption">{tagNoMessageToUser}</Typography>
                 <Container>
                     <InputContainer>
@@ -248,6 +248,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             <Dropdown
                                 label={'Area'}
                                 variant='form'
+                                meta="Optional"
                                 text={(props.area && props.area?.description) || 'Type to select'}
                                 onFilter={setFilterForAreas}
                             >
@@ -270,17 +271,17 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                         </Next>
                     </InputContainer>
                 </Container >
-            </TestContainer>
+            </TopContainer>
             <InputContainer>
-                <TextField
+                <SuffixTextField
                     id={'Suffix'}
-                    style={{ maxWidth: '200px' }}
                     label="Tag number suffix"
                     inputRef={suffixInputRef}
                     placeholder="Write Here"
                     helperText="Spaces are not allowed"
                     helperIcon={icon}
                     variant={variant}
+                    meta="Optional"
                     onChange={checkSuffix}
                 />
             </InputContainer>

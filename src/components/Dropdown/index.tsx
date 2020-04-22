@@ -1,4 +1,4 @@
-import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer } from './style';
+import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer, MetaText, TopTextContainer } from './style';
 import React, { useRef, useState, useEffect } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -12,6 +12,7 @@ type DropdownProps = {
     onFilter?: (input: string) => void;
     label?: string;
     variant?: string;
+    meta?: string;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -24,6 +25,7 @@ const Select: React.FC<DropdownProps> = ({
     onFilter,
     label,
     variant,
+    meta
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -50,17 +52,20 @@ const Select: React.FC<DropdownProps> = ({
         if (isOpen && listRef.current) {
             const listWidth = listRef.current.offsetWidth;
             const listLeftPosition = listRef.current.offsetLeft;
-            const windowWidth = window.innerWidth;                
+            const windowWidth = window.innerWidth;
 
             if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
-                listRef.current.style.right = '2px';                    
+                listRef.current.style.right = '2px';
             }
         }
     }, [isOpen]);
 
     return (
         <Container ref={containerRef}>
-            {label}
+            <TopTextContainer>
+                <div>{label}</div>
+                <MetaText>{meta}</MetaText>
+            </TopTextContainer>
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}

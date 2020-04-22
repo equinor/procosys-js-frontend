@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { TextField } from '@equinor/eds-core-react';
 
 export const Header = styled.header`
     display: flex;
@@ -16,7 +17,7 @@ export const Container = styled.div`
 
 `;
 
-export const TestContainer = styled.div`
+export const TopContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: calc(var(--grid-unit));
@@ -33,6 +34,10 @@ export const InputContainer = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
+`;
+
+export const SuffixTextField = styled(TextField)`
+    max-width: 200px;
 `;
 
 export const Next = styled.div`

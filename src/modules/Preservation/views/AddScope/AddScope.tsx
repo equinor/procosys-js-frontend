@@ -102,10 +102,10 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         });
     };
 
-    const submitAddTagsManually = async (stepId: number, requirements: Requirement[], remark?: string): Promise<void> => {
+    const submitAddTagsManually = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
-            await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark);
+            await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
             showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
@@ -115,10 +115,10 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         return Promise.resolve();
     };
 
-    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark?: string): Promise<void> => {
+    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
         try {
             const tagNo = selectedTags[0].tagNo;
-            await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark);
+            await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
             showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {

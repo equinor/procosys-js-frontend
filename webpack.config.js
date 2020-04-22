@@ -50,7 +50,14 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
         alias: {
-            'react-dom': '@hot-loader/react-dom'
+            'react-dom': '@hot-loader/react-dom',
+            '@procosys/core': path.resolve(__dirname, 'src/core/'),
+            '@procosys/modules': path.resolve(__dirname, 'src/modules/'),
+            '@procosys/hooks': path.resolve(__dirname, 'src/hooks/'),
+            '@procosys/components': path.resolve(__dirname, 'src/components/'),
+            '@procosys/assets': path.resolve(__dirname, 'src/assets/'),
+            '@procosys/http': path.resolve(__dirname, 'src/http/'),
+            '@procosys/util': path.resolve(__dirname, 'src/util/'),
         }
     },
     output: {

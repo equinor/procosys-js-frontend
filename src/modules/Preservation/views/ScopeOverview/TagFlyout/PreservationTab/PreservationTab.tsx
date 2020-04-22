@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, RemarkContainer } from './PreservationTab.style';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
@@ -120,9 +120,20 @@ const PreservationTab = ({
                     </div>               
                 </Details>                
             </TagDetailsContainer>
-            <RemarkContainer>
-                <TextField id='remark' label='Remark' disabled />
-            </RemarkContainer>
+            <TagDetailsInputContainer>
+                <TextField
+                    id='remark'
+                    label='Remark'
+                    style={{ marginBottom: 'calc(var(--grid-unit) * 2)' }}
+                    disabled
+                />
+                <TextField
+                    id='storageArea'
+                    label='Storage area'
+                    style={{ maxWidth: '30%'}}
+                    disabled
+                />
+            </TagDetailsInputContainer>
             {
                 getRequirementsSection()
             }

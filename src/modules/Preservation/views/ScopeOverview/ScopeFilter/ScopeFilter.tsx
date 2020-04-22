@@ -10,6 +10,7 @@ import CheckboxFilter from './CheckboxFilter';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+import RadioGroupFilter from './RadioGroupFilter';
 
 interface ScopeFilterProps {
     setDisplayFilter: (display: boolean) => void;
@@ -21,6 +22,8 @@ export interface CheckboxFilterValue {
     id: string;
     title: string;
 }
+
+export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters' | 'requirementTypeIds' | 'tagFunctionCodes' | 'disciplineCodes';
 
 const dueDates: CheckboxFilterValue[] =
     [
@@ -38,7 +41,36 @@ const dueDates: CheckboxFilterValue[] =
         }
     ];
 
-export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters' | 'requirementTypeIds' | 'tagFunctionCodes' | 'disciplineCodes';
+
+const PRESERVATION_STATUS = [{
+    title: 'Not started',
+    value: 'NotStarted'
+},
+{
+    title: 'Active',
+    value: 'Active'
+},
+{
+    title: 'Completed',
+    value: 'Completed'
+}];
+
+const ACTION_STATUS = [{
+    title: 'All',
+    value: 'None'
+},
+{
+    title: 'Open',
+    value: 'HasOpen'
+},
+{
+    title: 'Closed',
+    value: 'HasClosed'
+},
+{
+    title: 'Overdue',
+    value: 'HasOverDue'
+}];
 
 const ScopeFilter = ({
     setDisplayFilter,
@@ -47,8 +79,6 @@ const ScopeFilter = ({
 }: ScopeFilterProps): JSX.Element => {
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
-    const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
-
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
     const [modes, setModes] = useState<CheckboxFilterValue[]>([]);
@@ -108,7 +138,7 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -123,9 +153,20 @@ const ScopeFilter = ({
         setLocalTagListFilter(newTagListFilter);
     };
 
+    const onPreservationStatusFilterChanged = (value: string): void => {
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, preservationStatus: value }; });
+    };
+
+    const onActionStatusFilterChanged = (value: string): void => {
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: value }; });
+    };
+
     useEffect((): void => {
         triggerScopeListUpdate();
-    }, [localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds, localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes]);
+    }, [
+        localTagListFilter.preservationStatus, localTagListFilter.actionStatus, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds,
+        localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes
+    ]);
 
     return (
         <Container>
@@ -223,23 +264,8 @@ const ScopeFilter = ({
                 )
             }
 
-            <Collapse isExpanded={statusIsExpanded} onClick={(): void => setStatusIsExpanded(!statusIsExpanded)}>
-                <CollapseInfo>
-                    Preservation Status
-                </CollapseInfo>
-                {
-                    statusIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                statusIsExpanded && (
-                    <Section>
-                        todo
-                    </Section>
-                )
-            }
+            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onPreservationStatusFilterChanged} value={tagListFilter.preservationStatus} label="Preservation status" />
+            <RadioGroupFilter options={ACTION_STATUS} onChange={onActionStatusFilterChanged} value={tagListFilter.actionStatus} label="Preservation actions" />
 
             <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.dueFilters} />
             <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} />

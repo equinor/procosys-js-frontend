@@ -18,7 +18,9 @@ export const Details = styled.div`
     padding: calc(var(--grid-unit) * 2);
 `;
 
-export const RemarkContainer = styled.div`
+export const TagDetailsInputContainer = styled.div`
+    display: flex;
+    flex-direction: column;
     padding: calc(var(--grid-unit) * 2);
     border-bottom: 1px solid ${tokens.colors.ui.background__medium.rgba};
 `;

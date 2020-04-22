@@ -75,6 +75,8 @@ interface TagListFilter {
     journeyIds: string[];
     modeIds: string[];
     dueFilters: string[];
+    preservationStatus: string | null;
+    actionStatus: string | null;
 }
 
 interface JourneyResponse {
@@ -348,12 +350,13 @@ class PreservationApiClient extends ApiClient {
 
     /**
      * Add a set of tags to preservation scope.
-     * 
+     *
      * @param listOfTagNo List of Tag Numbers
      * @param stepId Step ID
      * @param requirements List of Requirements
      * @param projectName Name of affected project
      * @param remark Optional: Remark for all tags
+     * @param storageArea Optional: Storage area for all tags
      * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
      *
      * @returns Promise<void>
@@ -365,6 +368,7 @@ class PreservationApiClient extends ApiClient {
         requirements: PreserveTagRequirement[],
         projectName: string,
         remark?: string | null,
+        storageArea?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = '/Tags/Standard';
 
@@ -376,7 +380,8 @@ class PreservationApiClient extends ApiClient {
                 projectName: projectName,
                 stepId: stepId,
                 requirements,
-                remark
+                remark,
+                storageArea
             });
         } catch (error) {
             throw getPreservationApiError(error);
@@ -384,8 +389,8 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Create a new area tag and add it to preservation scope. 
-     * 
+     * Create a new area tag and add it to preservation scope.
+     *
     * @param tagNo List of Tag Numbers
     * @param diciplineCode Dicipline code
     * @param areaCode Area code
@@ -395,6 +400,7 @@ class PreservationApiClient extends ApiClient {
     * @param projectName Name of affected project
     * @param description Description of new tag
     * @param remark Optional: Remark for all tags
+    * @param storageArea Optional: Storage area for all tags
     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
     *
     * @returns Promise<void>
@@ -410,6 +416,7 @@ class PreservationApiClient extends ApiClient {
         suffix?: string,
         description?: string,
         remark?: string,
+        storageArea?: string,
         setRequestCanceller?: RequestCanceler): Promise<void> {
 
         const endpoint = '/Tags/Area';
@@ -425,7 +432,8 @@ class PreservationApiClient extends ApiClient {
                 stepId: stepId,
                 requirements,
                 description,
-                remark
+                remark,
+                storageArea
             });
         } catch (error) {
             throw getPreservationApiError(error);
@@ -734,7 +742,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    * Get action details 
+    * Get action details
     *
     * @param setRequestCanceller Returns a function that can be called to cancel the request
     */

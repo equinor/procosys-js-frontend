@@ -192,11 +192,13 @@ const PreservationTab = ({
                     { editingRemark ?
                         <IconContainer>
                             <StyledButton
+                                data-testid="remarkClearIcon"
                                 variant='ghost_icon'
                                 onClick={cancelEditRemark}>
                                 <ClearIcon fontSize='small'/>
                             </StyledButton>
                             <StyledButton
+                                data-testid="remarkCheckIcon"
                                 variant='ghost_icon'
                                 onClick={saveRemark}>
                                 <CheckIcon fontSize='small'/>
@@ -205,6 +207,7 @@ const PreservationTab = ({
                         :
                         <IconContainer>
                             <StyledButton
+                                data-testid="remarkEditIcon"
                                 variant='ghost_icon'
                                 onClick={(): void => setEditingRemark(true)}>
                                 <EditOutlinedIcon fontSize='small'/>
@@ -227,11 +230,13 @@ const PreservationTab = ({
                     { editingStorageArea ?
                         <IconContainer>
                             <StyledButton
+                                data-testid="storageAreaClearIcon"
                                 variant='ghost_icon'
                                 onClick={cancelEditStorageArea}>
                                 <ClearIcon fontSize='small'/>
                             </StyledButton>
                             <StyledButton
+                                data-testid="storageAreaCheckIcon"
                                 variant='ghost_icon'
                                 onClick={saveStorageArea}>
                                 <CheckIcon fontSize='small'/>
@@ -240,6 +245,7 @@ const PreservationTab = ({
                         :
                         <IconContainer>
                             <StyledButton
+                                data-testid="storageAreaEditIcon"
                                 variant='ghost_icon'
                                 onClick={(): void => setEditingStorageArea(true)}>
                                 <EditOutlinedIcon fontSize='small'/>

@@ -63,7 +63,7 @@ describe('<PreservationTab />', () => {
         });
     });
 
-    it('Should have text fields disabled on render', async () => {
+    it('Should have remark and storage area text fields disabled on render', async () => {
         await act(async () => {
             const { getByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
 
@@ -75,25 +75,28 @@ describe('<PreservationTab />', () => {
         });
     });
 
-    it('Should have to edit icons', async () => {
+    it('Should have two edit icons on render', async () => {
         await act(async () => {
-            const { container } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
-            const editIcons = container.querySelectorAll('button[type="button"]');
-            expect(editIcons.length).toBe(2);
+            const { getByTestId } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+
+            expect(getByTestId('remarkEditIcon')).toBeInTheDocument();
+            expect(getByTestId('storageAreaEditIcon')).toBeInTheDocument();
         });
     });
 
     it('Should be able to edit text fields', async () => {
         await act(async () => {
-            const { container } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
-            const editIcons = container.querySelectorAll('button[type="button"]');
-            fireEvent.click(editIcons[0]);
-            await waitFor(() => expect(document.getElementById('remark').disabled).not.toBeTruthy());
-            fireEvent.click(editIcons[1]);
-            await waitFor(() => expect(document.getElementById('storageArea').disabled).not.toBeTruthy());
+            const { getByTestId } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
 
-            const saveOrCancelIcons = container.querySelectorAll('button[type="button"]');
-            expect(saveOrCancelIcons.length).toBe(4);
+            fireEvent.click(getByTestId('remarkEditIcon'));
+            await waitFor(() => expect(document.getElementById('remark').disabled).not.toBeTruthy());
+            expect(getByTestId('remarkClearIcon')).toBeInTheDocument();
+            expect(getByTestId('remarkCheckIcon')).toBeInTheDocument();
+
+            fireEvent.click(getByTestId('storageAreaEditIcon'));
+            await waitFor(() => expect(document.getElementById('storageArea').disabled).not.toBeTruthy());
+            expect(getByTestId('storageAreaClearIcon')).toBeInTheDocument();
+            expect(getByTestId('storageAreaCheckIcon')).toBeInTheDocument();
         });
     });
 

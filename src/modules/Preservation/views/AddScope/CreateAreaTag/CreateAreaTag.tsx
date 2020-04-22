@@ -7,7 +7,7 @@ import { Tag, Discipline, Area } from '../types';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
-//import ErrorIcon from '@material-ui/icons/Error';
+import EdsIcon from '../../../../../components/EdsIcon';
 
 const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
@@ -48,34 +48,14 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [tagNoMessageToUser, setTagNoMessageToUser] = useState<string>('');
     const [tagNoValid, setTagNoValid] = useState<boolean>(false);
 
-    const invalidTagNoMessage = 'An area tag with this tag number already exists. Please add Area or Tag number suffix to create a unique area tag number';
-    const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
-    const validTagNoMessage = ' ';
-
     const [variant, setVariant] = useState<string>('default');
 
-
-    const ICONS = {
-        ERROR: (
-            <svg viewBox="0 0 24 24" width="16px" height="16px">
-                <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm0-10v6h2V7h-2z"
-                ></path>
-            </svg>
-        ),
-        WARNING: (
-            <svg viewBox="0 0 24 24" width="16px" height="16px">
-                <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M23 21.5l-11-19-11 19h22zm-12-3v-2h2v2h-2zm0-4h2v-4h-2v4z"
-                ></path>
-            </svg>
-        )};
-
     const [icon, setIcon] = useState<JSX.Element | null>(null);
+
+    const invalidTagNoMessage = 'An area tag with this tag number already exists. Please add Area or Tag number suffix to create a unique area tag number';
+    const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
+    const emptyMessage = '';
+    const errorIcon = <EdsIcon name='error_filled' size='16' />;
 
     /** Load areas */
     useEffect(() => {
@@ -197,7 +177,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             return !response.exists;
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
             return false;
         }
     };
@@ -210,9 +190,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             else if (props.discipline && props.areaType) {
                 const validTagNo = await checkTagNo(props.areaType.value, props.area?.code ?? '', props.discipline.code, props.suffix ?? '');
                 setTagNoValid(validTagNo);
-                setTagNoMessageToUser(validTagNo ? validTagNoMessage : invalidTagNoMessage);
+                setTagNoMessageToUser(validTagNo ? emptyMessage : invalidTagNoMessage);
             } else {
-                setTagNoMessageToUser(validTagNoMessage);
+                setTagNoMessageToUser(emptyMessage);
             }
         };
 
@@ -225,11 +205,11 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         };
     }, [props.discipline, props.area, props.areaType, props.suffix]);
 
-    const checkSuffix = (e: any): void => {
+    const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
         props.setSuffix(e.target.value);
         if(e.target.value.includes(' ')) {
             setVariant('error');
-            setIcon(ICONS.ERROR);
+            setIcon(errorIcon);
         } else {
             setVariant('default');
             setIcon(null);
@@ -312,7 +292,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     inputRef={descriptionInputRef}
                     multiline={true}
                     placeholder="Write Here"
-                    onChange={(e: any): void => props.setDescription(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
                 />
             </InputContainer>
         </div >

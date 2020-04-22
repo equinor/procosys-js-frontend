@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import PreservationTab from '../PreservationTab';
@@ -60,6 +60,40 @@ describe('<PreservationTab />', () => {
             const { getByTitle } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
 
             expect(getByTitle('Loading')).toBeInTheDocument();
+        });
+    });
+
+    it('Should have text fields disabled on render', async () => {
+        await act(async () => {
+            const { getByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+
+            const remark = getByLabelText('Remark');
+            expect(remark).toBeDisabled();
+
+            const storageArea = getByLabelText('Storage area');
+            expect(storageArea).toBeDisabled();
+        });
+    });
+
+    it('Should have to edit icons', async () => {
+        await act(async () => {
+            const { container } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const editIcons = container.querySelectorAll('button[type="button"]');
+            expect(editIcons.length).toBe(2);
+        });
+    });
+
+    it('Should be able to edit text fields', async () => {
+        await act(async () => {
+            const { container } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const editIcons = container.querySelectorAll('button[type="button"]');
+            fireEvent.click(editIcons[0]);
+            await waitFor(() => expect(document.getElementById('remark').disabled).not.toBeTruthy());
+            fireEvent.click(editIcons[1]);
+            await waitFor(() => expect(document.getElementById('storageArea').disabled).not.toBeTruthy());
+
+            const saveOrCancelIcons = container.querySelectorAll('button[type="button"]');
+            expect(saveOrCancelIcons.length).toBe(4);
         });
     });
 

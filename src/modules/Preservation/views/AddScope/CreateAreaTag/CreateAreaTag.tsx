@@ -55,7 +55,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const invalidTagNoMessage = 'An area tag with this tag number already exists. Please add Area or Tag number suffix to create a unique area tag number';
     const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
     const emptyMessage = '';
-    const errorIcon = <EdsIcon name='error_filled' size='16' />;
+    const errorIcon = <EdsIcon name='error_filled' size={16} />;
 
     /** Load areas */
     useEffect(() => {
@@ -211,8 +211,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             setVariant('error');
             setIcon(errorIcon);
         } else {
-            setVariant('default');
             setIcon(null);
+            setVariant('default');
         }
     };
 

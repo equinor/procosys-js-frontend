@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -6,12 +6,43 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { TagListFilter } from '../types';
 import { tokens } from '@equinor/eds-tokens';
+import RadioGroupFilter from './RadioGroupFilter';
 
 interface ScopeFilterProps {
     setDisplayFilter: (display: boolean) => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
 }
+
+const PRESERVATION_STATUS = [{
+    title: 'Not started',
+    value: 'NotStarted'
+},
+{
+    title: 'Active',
+    value: 'Active'
+},
+{
+    title: 'Completed',
+    value: 'Completed'
+}];
+
+const ACTION_STATUS = [{
+    title: 'All',
+    value: 'None'
+},
+{
+    title: 'Open',
+    value: 'HasOpen'
+},
+{
+    title: 'Closed',
+    value: 'HasClosed'
+},
+{
+    title: 'Overdue',
+    value: 'HasOverDue'
+}];
 
 const ScopeFilter = ({
     setDisplayFilter,
@@ -20,7 +51,6 @@ const ScopeFilter = ({
 }: ScopeFilterProps): JSX.Element => {
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
-    const [statusIsExpanded, setStatusIsExpanded] = useState<boolean>(false);
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
     const KEYCODE_ENTER = 13;
@@ -30,10 +60,21 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null };
+        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
+
+    const onPreservationStatusFilterChanged = (value: string): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, preservationStatus: value};});
+    };
+    const onActionStatusFilterChanged = (value: string): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, actionStatus: value};});
+    };
+
+    useEffect((): void => {
+        triggerScopeListUpdate();
+    }, [localTagListFilter.preservationStatus, localTagListFilter.actionStatus]);
 
     return (
         <Container>
@@ -131,21 +172,8 @@ const ScopeFilter = ({
                 )
             }
 
-            <Collapse isExpanded={statusIsExpanded} onClick={(): void => setStatusIsExpanded(!statusIsExpanded)}>
-                <CollapseInfo>
-                    Preservation Status
-                </CollapseInfo>
-                {
-                    statusIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
-            </Collapse>
-            {
-                statusIsExpanded && (
-                    <div>todo</div>
-                )
-            }
+            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onPreservationStatusFilterChanged} value={tagListFilter.preservationStatus} label="Preservation status" />
+            <RadioGroupFilter options={ACTION_STATUS} onChange={onActionStatusFilterChanged} value={tagListFilter.actionStatus} label="Preservation actions" />
 
         </Container >
     );

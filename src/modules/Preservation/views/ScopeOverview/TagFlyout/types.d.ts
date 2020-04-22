@@ -11,6 +11,8 @@ export interface TagDetails {
     purchaseOrderNo: string;
     areaCode: string;
     readyToBePreserved: boolean;
+    remark: string;
+    storageArea: string;
 }
 
 export interface TagRequirement {

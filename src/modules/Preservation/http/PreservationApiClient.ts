@@ -69,6 +69,8 @@ interface TagDetailsResponse {
     purchaseOrderNo: string;
     areaCode: string;
     readyToBePreserved: boolean;
+    remark: string;
+    storageArea: string;
 }
 
 interface TagListFilter {
@@ -77,6 +79,8 @@ interface TagListFilter {
     storageAreaStartsWith: string | null;
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
+    preservationStatus: string | null;
+    actionStatus: string | null;
 }
 
 interface JourneyResponse {
@@ -321,6 +325,22 @@ class PreservationApiClient extends ApiClient {
             },
             error => Promise.reject(error)
         );
+    }
+
+    async setRemarkAndStorageArea(tagId: number, remark: string, storageArea: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(endpoint, {
+                remark,
+                storageArea
+            });
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
     }
 
     /**

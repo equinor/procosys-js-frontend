@@ -25,16 +25,15 @@ const CheckboxFilter = ({
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-    const checkedIds = tagListFilter[tagListFilterParam];
-
     const updateFilter = (id: string, checked: boolean): void => {
         const newTagListFilter: TagListFilter = { ...tagListFilter };
         if (checked) {
-            newTagListFilter[tagListFilterParam] = [...checkedIds, id];
+            newTagListFilter[tagListFilterParam] = [...tagListFilter[tagListFilterParam], id];
         } else {
-            newTagListFilter[tagListFilterParam] = [...checkedIds.filter(item => item != id)];
+            newTagListFilter[tagListFilterParam] = [...tagListFilter[tagListFilterParam].filter(item => item != id)];
         }
         setTagListFilter(newTagListFilter);
+
     };
 
     return (
@@ -56,7 +55,7 @@ const CheckboxFilter = ({
                             filterValues?.map(value => {
                                 return (<Section key={value.id}>
                                     <Checkbox
-                                        checked={checkedIds.some(elementId => {
+                                        checked={tagListFilter[tagListFilterParam].some(elementId => {
                                             return value.id === elementId;
                                         })}
                                         onChange={(checked: boolean): void => {

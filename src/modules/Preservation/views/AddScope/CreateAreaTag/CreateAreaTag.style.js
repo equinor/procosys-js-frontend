@@ -19,12 +19,13 @@ export const Container = styled.div`
 export const TestContainer = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: calc(var(--grid-unit) * 2);
+    margin-top: calc(var(--grid-unit));
     p {
+        display: block;
+        height: calc(var(--grid-unit) * 2);
         color: ${tokens.colors.interactive.danger__text.rgba};
     }
 `;
-
 
 export const InputContainer = styled.div`
     margin:  calc(var(--grid-unit) * 2) 0px;
@@ -32,7 +33,6 @@ export const InputContainer = styled.div`
     flex-direction: row;
     align-items: center;
 `;
-
 
 export const Next = styled.div`
     display: flex;

@@ -16,6 +16,10 @@ export const TagDetailsContainer = styled.div`
 export const TextFieldContainer = styled.div`
     display: flex;
     align-items: center;
+
+    #remark {
+        margin-bottom: calc(var(--grid-unit) * 2);
+    }
 `;
 
 export const StyledButton = styled(Button)`

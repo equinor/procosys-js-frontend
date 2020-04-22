@@ -106,35 +106,42 @@ const PreservationTab = ({
     const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
         try {
             await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString);
-            //showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
         } catch (error) {
             console.error('Edit failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         return Promise.resolve();
     };
 
     const saveRemark = (): void => {
-        setRemark(remarkInputRef.current?.value ?? remark);
-        saveRemarkAndStorageArea(remarkInputRef.current?.value ?? remark, storageArea);
+        if(remarkInputRef.current) {
+            setRemark(remarkInputRef.current.value);
+            saveRemarkAndStorageArea(remarkInputRef.current.value, storageArea);
+        } else {
+            showSnackbarNotification('Something went wrong. Remark was not updated.');
+        }
         setEditingRemark(false);
     };
 
     const cancelEditRemark = (): void => {
-        if (remarkInputRef.current?.value) {
+        if (remarkInputRef.current) {
             remarkInputRef.current.value = remark;
         }
         setEditingRemark(false);
     };
 
     const saveStorageArea = (): void => {
-        setStorageArea(storageAreaInputRef.current?.value ?? storageArea);
-        saveRemarkAndStorageArea(remark, storageAreaInputRef.current?.value ?? storageArea);
+        if(storageAreaInputRef.current) {
+            setStorageArea(storageAreaInputRef.current.value);
+            saveRemarkAndStorageArea(remark, storageAreaInputRef.current.value);
+        } else {
+            showSnackbarNotification('Something went wrong. Storage area was not updated.');
+        }
         setEditingStorageArea(false);
     };
 
     const cancelEditStorageArea = (): void => {
-        if (storageAreaInputRef.current?.value) {
+        if (storageAreaInputRef.current) {
             storageAreaInputRef.current.value = storageArea;
         }
         setEditingStorageArea(false);
@@ -174,11 +181,10 @@ const PreservationTab = ({
                     <TextField
                         id='remark'
                         label='Remark'
-                        style={{ marginBottom: 'calc(var(--grid-unit) * 2)' }}
                         defaultValue={tagDetails.remark}
                         inputRef={remarkInputRef}
                         disabled={!editingRemark}
-                        onKeyDown={(e: any): void => {
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
                             e.keyCode === KEYCODE_ENTER &&
                                 saveRemark();
                         }}
@@ -213,7 +219,7 @@ const PreservationTab = ({
                         defaultValue={tagDetails.storageArea}
                         inputRef={storageAreaInputRef}
                         disabled={!editingStorageArea}
-                        onKeyDown={(e: any): void => {
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
                             e.keyCode === KEYCODE_ENTER &&
                                 saveStorageArea();
                         }}

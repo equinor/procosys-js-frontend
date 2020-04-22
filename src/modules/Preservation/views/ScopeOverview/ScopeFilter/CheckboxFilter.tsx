@@ -11,8 +11,7 @@ interface CheckboxFilterProps {
     filterValues: CheckboxFilterValue[];
     itemsChecked: string[];
     tagListFilterParam: TagListFilterParamType;
-    onCheckboxFilterChange: any;
-
+    onCheckboxFilterChange: (tagListFilterParam: TagListFilterParamType, id: string, checked: boolean) => void;
 }
 
 const CheckboxFilter = ({
@@ -27,7 +26,7 @@ const CheckboxFilter = ({
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)}>
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="CheckboxHeader" >
                 <CollapseInfo>
                     {title}
                 </CollapseInfo>

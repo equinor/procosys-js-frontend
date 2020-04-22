@@ -51,6 +51,11 @@ type TagSearchResponse = {
     isPreserved: boolean;
 }
 
+interface CheckAreaTagNoResponse {
+    tagNo: string;
+    exists: boolean;
+}
+
 interface TagDetailsResponse {
     id: number;
     tagNo: string;
@@ -409,6 +414,36 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    async checkAreaTagNo(
+        projectName: string,
+        areaTagType: string,
+        disciplineCode: string,
+        areaCode: string,
+        tagNoSuffix: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<CheckAreaTagNoResponse> {
+        const endpoint = '/Tags/CheckAreaTagNo';
+        const settings: AxiosRequestConfig = {
+            params: {
+                ProjectName: projectName,
+                AreaTagType: areaTagType,
+                DisciplineCode: disciplineCode,
+                AreaCode: areaCode,
+                TagNoSuffix: tagNoSuffix,
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<CheckAreaTagNoResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
 
     /**
      * Get preserved tags for currently logged in user in current plant context

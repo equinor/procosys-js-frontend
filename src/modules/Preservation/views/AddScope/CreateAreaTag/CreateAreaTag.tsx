@@ -1,8 +1,7 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TestContainer } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import { Button } from '@equinor/eds-core-react';
-import { TextField } from '@equinor/eds-core-react';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { Tag, Discipline, Area } from '../types';
 import { Canceler } from 'axios';
@@ -44,6 +43,13 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [filterForAreas, setFilterForAreas] = useState<string>('');
     const [allAreas, setAllAreas] = useState<AreaItem[]>([]);
     const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas);
+
+    const [tagNoMessageToUser, setTagNoMessageToUser] = useState<string>(' ');
+    const [tagNoValid, setTagNoValid] = useState<boolean>(false);
+
+    const invalidTagNoMessage = 'An area tag with this tag number already exists. Please add Area or Tag number suffix to create a unique area tag number';
+    const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
+    const validTagNoMessage = ' ';
 
     /** Load areas */
     useEffect(() => {
@@ -154,58 +160,101 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
+    const checkTagNo = async (areaType: string, area: string, discipline: string, suffix: string): Promise<boolean> => {
+        try {
+            const response = await apiClient.checkAreaTagNo(
+                project.name,
+                areaType,
+                discipline,
+                area,
+                suffix);
+            return !response.exists;
+        } catch (error) {
+            console.error('Get tag nos failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+            return false;
+        }
+    };
+
+    useEffect(() => {
+        const checkTagNos = async () => {
+            if (props.suffix && /\s/.test(props.suffix)) {
+                setTagNoMessageToUser(spacesInTagNoMessage);
+            }
+            else if (props.discipline && props.areaType) {
+                const validTagNo = await checkTagNo(props.areaType.value, props.area?.code ?? '', props.discipline.code, props.suffix ?? '');
+                setTagNoValid(validTagNo);
+                setTagNoMessageToUser(validTagNo ? validTagNoMessage : invalidTagNoMessage);
+            } else {
+                setTagNoMessageToUser(validTagNoMessage);
+            }
+        };
+
+        const timer = setTimeout(() => {
+            checkTagNos();
+        }, 200);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [props.discipline, props.area, props.areaType, props.suffix]);
+
     return (
         <div>
             <Header>
                 <h1>Create Area Tag</h1>
                 <div>{project.description}</div>
             </Header>
-            <Container>
-                <InputContainer>
-                    <FormFieldSpacer>
-                        <SelectInput
-                            onChange={setAreaTypeForm}
-                            data={areaTypes}
-                            label={'Area type'}
-                        >
-                            {(props.areaType && props.areaType.text) || 'Select'}
-                        </SelectInput>
-                    </FormFieldSpacer>
-                    <FormFieldSpacer>
-                        <SelectInput
-                            onChange={setDisciplineForm}
-                            data={mappedDisciplines}
-                            label={'Discipline'}
-                        >
-                            {(props.discipline && props.discipline.description) || 'Select'}
-                        </SelectInput>
-                    </FormFieldSpacer>
-                    <FormFieldSpacer>
-                        <Dropdown
-                            label={'Area'}
-                            variant='form'
-                            text={(props.area && props.area?.description) || 'Type to select'}
-                            onFilter={setFilterForAreas}
-                        >
-                            {filteredAreas.map((areaItem, index) => {
-                                return (
-                                    <DropdownItem
-                                        key={index}
-                                        onClick={(event): void =>
-                                            changeArea(event, index)
-                                        }
-                                    >
-                                        {areaItem.text}
-                                    </DropdownItem>
-                                );
-                            })}
-                        </Dropdown>
-                    </FormFieldSpacer>
-                    <Next>
-                        <Button onClick={nextStep} disabled={newTagNo === ''}>Next</Button>
-                    </Next>
-                </InputContainer>
-            </Container >
+            <TestContainer>
+                <Typography variant="caption">{tagNoMessageToUser}</Typography>
+                <Container>
+                    <InputContainer>
+                        <FormFieldSpacer>
+                            <SelectInput
+                                onChange={setAreaTypeForm}
+                                data={areaTypes}
+                                label={'Area type'}
+                            >
+                                {(props.areaType && props.areaType.text) || 'Select'}
+                            </SelectInput>
+                        </FormFieldSpacer>
+                        <FormFieldSpacer>
+                            <SelectInput
+                                onChange={setDisciplineForm}
+                                data={mappedDisciplines}
+                                label={'Discipline'}
+                            >
+                                {(props.discipline && props.discipline.description) || 'Select'}
+                            </SelectInput>
+                        </FormFieldSpacer>
+                        <FormFieldSpacer>
+                            <Dropdown
+                                label={'Area'}
+                                variant='form'
+                                text={(props.area && props.area?.description) || 'Type to select'}
+                                onFilter={setFilterForAreas}
+                            >
+                                {filteredAreas.map((areaItem, index) => {
+                                    return (
+                                        <DropdownItem
+                                            key={index}
+                                            onClick={(event): void =>
+                                                changeArea(event, index)
+                                            }
+                                        >
+                                            {areaItem.text}
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>
+                        </FormFieldSpacer>
+                        <Next>
+                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid}>Next</Button>
+                            <Typography variant="caption" >The tag number is not unique</Typography>
+                        </Next>
+                    </InputContainer>
+                </Container >
+            </TestContainer>
             <InputContainer>
                 <TextField
                     id={'Suffix'}
@@ -213,7 +262,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     label="Tag number suffix (space not allowed)"
                     inputRef={suffixInputRef}
                     placeholder="Write Here"
-                    helpertext="Text added to the end of the tagno."
+                    helperText="Spaces are not allowed"
+                    variant={suffixInputRef.current?.value.includes(' ') ? 'error' : 'default' }
                     onChange={(e: any): void => props.setSuffix(e.target.value)}
                 />
             </InputContainer>
@@ -225,7 +275,6 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     inputRef={descriptionInputRef}
                     multiline={true}
                     placeholder="Write Here"
-                    helpertext="Description of the area tag."
                     onChange={(e: any): void => props.setDescription(e.target.value)}
                 />
             </InputContainer>

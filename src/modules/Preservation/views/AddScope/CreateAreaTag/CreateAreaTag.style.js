@@ -13,7 +13,16 @@ export const Header = styled.header`
 export const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
-    margin-top: calc(var(--grid-unit) * 3);
+
+`;
+
+export const TestContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: calc(var(--grid-unit) * 2);
+    p {
+        color: ${tokens.colors.interactive.danger__text.rgba};
+    }
 `;
 
 
@@ -24,12 +33,18 @@ export const InputContainer = styled.div`
     align-items: center;
 `;
 
+
 export const Next = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
     align-items: flex-end;
-    margin-right: calc(var(--grid-unit));
+    margin-right: var(--grid-unit);
+
+    p {
+        padding-top: var(--grid-unit);
+        color: ${tokens.colors.interactive.danger__text.rgba};
+    }
 `;
 
 export const ButtonContainer = styled.div`

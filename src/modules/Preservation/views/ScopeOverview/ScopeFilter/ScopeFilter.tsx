@@ -113,6 +113,20 @@ const ScopeFilter = ({
         setTagListFilter(newTagListFilter);
     };
 
+    const onCheckboxFilterChange = (tagListFilterParam: TagListFilterParamType, id: string, checked: boolean): void => {
+        const newTagListFilter: TagListFilter = { ...localTagListFilter };
+        if (checked) {
+            newTagListFilter[tagListFilterParam] = [...localTagListFilter[tagListFilterParam], id];
+        } else {
+            newTagListFilter[tagListFilterParam] = [...localTagListFilter[tagListFilterParam].filter(item => item != id)];
+        }
+        setLocalTagListFilter(newTagListFilter);
+    };
+
+    useEffect((): void => {
+        triggerScopeListUpdate();
+    }, [localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds, localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes]);
+
     return (
         <Container>
             <Header>
@@ -227,17 +241,12 @@ const ScopeFilter = ({
                 )
             }
 
-            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
-
-            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
-
-            <CheckboxFilter title='Preserved Modes' filterValues={modes} tagListFilterParam='modeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
-
-            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
-
-            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
-
-            <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.dueFilters} />
+            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} />
+            <CheckboxFilter title='Preserved Modes' filterValues={modes} tagListFilterParam='modeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.modeIds} />
+            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} />
+            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} />
+            <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} />
 
         </Container >
     );

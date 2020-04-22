@@ -5,36 +5,25 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Checkbox from '../../../../../components/Checkbox';
 import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
-import { TagListFilter } from '../types';
 
 interface CheckboxFilterProps {
     title: string;
     filterValues: CheckboxFilterValue[];
+    itemsChecked: string[];
     tagListFilterParam: TagListFilterParamType;
-    tagListFilter: TagListFilter;
-    setTagListFilter: any;
+    onCheckboxFilterChange: any;
+
 }
 
 const CheckboxFilter = ({
     title,
     filterValues,
     tagListFilterParam,
-    tagListFilter,
-    setTagListFilter
+    itemsChecked,
+    onCheckboxFilterChange,
 }: CheckboxFilterProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-
-    const updateFilter = (id: string, checked: boolean): void => {
-        const newTagListFilter: TagListFilter = { ...tagListFilter };
-        if (checked) {
-            newTagListFilter[tagListFilterParam] = [...tagListFilter[tagListFilterParam], id];
-        } else {
-            newTagListFilter[tagListFilterParam] = [...tagListFilter[tagListFilterParam].filter(item => item != id)];
-        }
-        setTagListFilter(newTagListFilter);
-
-    };
 
     return (
         <>
@@ -55,11 +44,11 @@ const CheckboxFilter = ({
                             filterValues?.map(value => {
                                 return (<Section key={value.id}>
                                     <Checkbox
-                                        checked={tagListFilter[tagListFilterParam].some(elementId => {
+                                        checked={itemsChecked.some(elementId => {
                                             return value.id === elementId;
                                         })}
                                         onChange={(checked: boolean): void => {
-                                            updateFilter(value.id, checked);
+                                            onCheckboxFilterChange(tagListFilterParam, value.id, checked);
                                         }}
                                     >
                                         <Typography variant='body_long'>{value.title}</Typography>

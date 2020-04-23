@@ -1,6 +1,6 @@
 import React from 'react';
 import CreateAreaTag from '../CreateAreaTag';
-import { render, act } from '@testing-library/react';
+import { render, act, waitFor } from '@testing-library/react';
 
 const mockDisciplines = [
     {
@@ -24,6 +24,13 @@ const mockAreas = [
     },
 ];
 
+const mockValidTagNo = [
+    {
+        tagNo: '100',
+        exists: false,
+    }
+];
+
 const spacesInTagNoMessage = 'The suffix cannot containt spaces';
 
 
@@ -37,7 +44,8 @@ jest.mock('../../../../context/PreservationContext',() => ({
             },
             apiClient: {
                 getAreas: () => Promise.resolve(mockAreas),
-                getDisciplines: () => Promise.resolve(mockDisciplines)
+                getDisciplines: () => Promise.resolve(mockDisciplines),
+                checkAreaTagNo: () => Promise.resolve(mockValidTagNo)
             }
         };
     }
@@ -69,7 +77,7 @@ describe('<CreateAreaTag />', () => {
     it('Displays error message when suffix contains space', async () => {
         await act(async () => {
             const { queryByText } = render(<CreateAreaTag suffix="1 2" />);
-            expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument();
+            await waitFor(() => expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument());
         });
     });
 
@@ -82,8 +90,9 @@ describe('<CreateAreaTag />', () => {
 
     it('\'Next\' button enabled when all mandatory fields are passed', async () => {
         await act(async () => {
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' description='description text' />);
-            expect(getByText('Next')).toHaveProperty('disabled', false);
+            /** For testing purposes this is considered a valid tagNo */
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' />);
+            await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
         });
     });
 

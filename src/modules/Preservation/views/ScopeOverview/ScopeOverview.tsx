@@ -34,7 +34,6 @@ export const isTagOverdue = (tag: PreservedTag): boolean => {
 };
 
 const ScopeOverview: React.FC = (): JSX.Element => {
-    const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
     const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
@@ -251,7 +250,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             onClick={(): void => {
                                 startPreservation();
                             }}
-                            disabled={startPreservationDisabled}>
+                            disabled={selectedTags.length < 1}>
                             <PlayArrowOutlinedIcon fontSize='small' />
                         Start
                         </StyledButton>

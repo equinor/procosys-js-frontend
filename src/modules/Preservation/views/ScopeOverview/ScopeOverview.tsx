@@ -18,6 +18,7 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
+import PreservedDialog from './PreservedDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -35,7 +36,6 @@ export const isTagOverdue = (tag: PreservedTag): boolean => {
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
-    const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
@@ -135,17 +135,47 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             transferFunc);
     };
 
+
+    let preservableTags: PreservedTag[];
+    let nonPreservableTags: PreservedTag[];
+
     const preservedThisWeek = async (): Promise<void> => {
         try {
-            await apiClient.preserve(selectedTags.map(t => t.id));
+            await apiClient.preserve(preservableTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
-            showSnackbarNotification('Selected tags have been preserved for this week.', 5000);
+            showSnackbarNotification('Selected tag(s) have been preserved for this week.');
         } catch (error) {
             console.error('Preserve failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         return Promise.resolve();
+    };
+
+    const preservedDialog = (): void => {
+        preservableTags = [];
+        nonPreservableTags = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBePreserved) {
+                preservableTags.push(newTag);
+            } else {
+                nonPreservableTags.push(newTag);
+            }
+        });
+
+        const preservedButton = preservableTags.length > 0 ? 'Preserved this week' : null;
+        const preservedFunc = preservableTags.length > 0 ? preservedThisWeek : null;
+
+        showModalDialog(
+            'Preserved This Week',
+            <PreservedDialog preservableTags={preservableTags} nonPreservableTags={nonPreservableTags} />,
+            '80vw',
+            'Back to list',
+            null,
+            preservedButton,
+            preservedFunc);
     };
 
     const openFlyout = (tag: PreservedTag): void => {
@@ -176,19 +206,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setStartPreservationDisabled(
                 selectedTags.length === 0 ||
                 selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
-            );
-        }, [selectedTags]
-    );
-
-    /**
-     * 'Preserved this week' button is set to disabled if no rows are selected or
-     * if there are selected rows that are not raady to be preserved
-     */
-    useEffect(
-        () => {
-            setPreservedThisWeekDisabled(
-                selectedTags.length === 0 ||
-                selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
             );
         }, [selectedTags]
     );
@@ -240,10 +257,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Header>
                     <IconBar>
                         <Button
-                            onClick={(): void => {
-                                preservedThisWeek();
-                            }}
-                            disabled={preservedThisWeekDisabled}>Preserved this week
+                            onClick={preservedDialog}
+                            disabled={selectedTags.length < 1}>Preserved this week
                         </Button>
                         <StyledButton
                             variant='ghost'

@@ -167,19 +167,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     /**
-     * Start Preservation button is set to disabled if no rows are selected or
-     * if there are selected rows with other status than NotStarted
-     */
-    useEffect(
-        () => {
-            setStartPreservationDisabled(
-                selectedTags.length === 0 ||
-                selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
-            );
-        }, [selectedTags]
-    );
-
-    /**
      * 'Preserved this week' button is set to disabled if no rows are selected or
      * if there are selected rows that are not raady to be preserved
      */

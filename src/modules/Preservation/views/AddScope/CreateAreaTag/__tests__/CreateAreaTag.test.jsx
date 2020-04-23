@@ -73,10 +73,17 @@ describe('<CreateAreaTag />', () => {
         });
     });
 
-    it('Enables \'Next\' button when mandatory fields are passed', async () => {
+    it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
         await act(async () => {
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' />);
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' suffix='12' />);
             expect(getByText('Next')).toHaveProperty('disabled', true);
+        });
+    });
+
+    it('\'Next\' button enabled when all mandatory fields are passed', async () => {
+        await act(async () => {
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' description='description text' />);
+            expect(getByText('Next')).toHaveProperty('disabled', false);
         });
     });
 

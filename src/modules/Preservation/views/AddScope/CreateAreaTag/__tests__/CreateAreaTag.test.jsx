@@ -24,6 +24,9 @@ const mockAreas = [
     },
 ];
 
+const spacesInTagNoMessage = 'The suffix cannot containt spaces';
+
+
 jest.mock('../../../../context/PreservationContext',() => ({
     usePreservationContext: () => {
         return {
@@ -60,6 +63,20 @@ describe('<CreateAreaTag />', () => {
             expect(queryByText('Discipline')).toBeInTheDocument();
             expect(queryByText(/Tag number/)).toBeInTheDocument();
             expect(queryByText('Description')).toBeInTheDocument();
+        });
+    });
+
+    it('Displays error message when suffix contains space', async () => {
+        await act(async () => {
+            const { queryByText } = render(<CreateAreaTag suffix="1 2" />);
+            expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument();
+        });
+    });
+
+    it('Enables \'Next\' button when mandatory fields are passed', async () => {
+        await act(async () => {
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' />);
+            expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });
 

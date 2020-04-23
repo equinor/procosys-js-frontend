@@ -9,6 +9,10 @@ import { showSnackbarNotification } from './../../../../../core/services/Notific
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 
+const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
+const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
+const errorIcon = <EdsIcon name='error_filled' size={16} />;
+
 const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
     { text: 'Site', value: 'SiteArea' }];
@@ -45,17 +49,10 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [allAreas, setAllAreas] = useState<AreaItem[]>([]);
     const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas);
 
-    const [tagNoMessageToUser, setTagNoMessageToUser] = useState<string>('');
+    const [tagNoValidationError, setTagNoValidationError] = useState<string | null>(null);
     const [tagNoValid, setTagNoValid] = useState<boolean>(false);
 
-    const [variant, setVariant] = useState<string>('default');
-
     const [icon, setIcon] = useState<JSX.Element | null>(null);
-
-    const invalidTagNoMessage = 'An area tag with this tag number already exists. Please add Area or Tag number suffix to create a unique area tag number';
-    const spacesInTagNoMessage = 'The suffix cannot containt spaces';
-    const emptyMessage = '';
-    const errorIcon = <EdsIcon name='error_filled' size={16} />;
 
     /** Load areas */
     useEffect(() => {
@@ -166,7 +163,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
-    const checkTagNo = async (areaType: string, area: string, discipline: string, suffix: string): Promise<boolean> => {
+    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<boolean> => {
         try {
             const response = await apiClient.checkAreaTagNo(
                 project.name,
@@ -185,14 +182,15 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     useEffect(() => {
         const checkTagNos = async () => {
             if (props.suffix && /\s/.test(props.suffix)) {
-                setTagNoMessageToUser(spacesInTagNoMessage);
+                setTagNoValidationError(spacesInTagNoMessage);
             }
             else if (props.discipline && props.areaType) {
-                const validTagNo = await checkTagNo(props.areaType.value, props.area?.code ?? '', props.discipline.code, props.suffix ?? '');
+                const areaCode = (props.area) ? props.area.code : null;
+                const validTagNo = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix ?? null);
                 setTagNoValid(validTagNo);
-                setTagNoMessageToUser(validTagNo ? emptyMessage : invalidTagNoMessage);
+                setTagNoValidationError(validTagNo ? null : invalidTagNoMessage);
             } else {
-                setTagNoMessageToUser(emptyMessage);
+                setTagNoValidationError(null);
             }
         };
 
@@ -208,11 +206,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
         props.setSuffix(e.target.value);
         if(e.target.value.includes(' ')) {
-            setVariant('error');
             setIcon(errorIcon);
         } else {
             setIcon(null);
-            setVariant('default');
         }
     };
 
@@ -223,7 +219,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 <div>{project.description}</div>
             </Header>
             <TopContainer>
-                <Typography variant="caption">{tagNoMessageToUser}</Typography>
+                <Typography variant="caption">{tagNoValidationError}</Typography>
                 <Container>
                     <InputContainer>
                         <FormFieldSpacer>
@@ -249,7 +245,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 label={'Area'}
                                 variant='form'
                                 meta="Optional"
-                                text={(props.area && props.area?.description) || 'Type to select'}
+                                text={(props.area && props.area.description) || 'Type to select'}
                                 onFilter={setFilterForAreas}
                             >
                                 {filteredAreas.map((areaItem, index) => {
@@ -280,7 +276,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     placeholder="Write Here"
                     helperText="Spaces are not allowed"
                     helperIcon={icon}
-                    variant={variant}
+                    variant={icon ? 'error': 'default' }
                     meta="Optional"
                     onChange={checkSuffix}
                 />

@@ -62,10 +62,12 @@ const Select: React.FC<DropdownProps> = ({
 
     return (
         <Container ref={containerRef}>
+            {(label || meta) &&
             <TopTextContainer>
                 <div>{label}</div>
                 <MetaText>{meta}</MetaText>
             </TopTextContainer>
+            }
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}

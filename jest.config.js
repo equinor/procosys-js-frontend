@@ -14,7 +14,7 @@ module.exports = {
     //     '^.+\\.tsx?$': 'ts-jest',
     // },
     transformIgnorePatterns: [
-        '<rootDir>/node_modules/(?!@equinor/eds-tokens).+(js|jsx)$',
+        '<rootDir>/node_modules/(?!(@equinor/eds-tokens|@equinor/eds-icons))',
     ],
     moduleDirectories: ['node_modules', '/src'],
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],

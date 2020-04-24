@@ -29,7 +29,7 @@ const dueDates: CheckboxFilterValue[] =
     [
         {
             id: 'OverDue',
-            title: 'Over Due',
+            title: 'Overdue',
         },
         {
             id: 'ThisWeek',
@@ -100,28 +100,39 @@ const ScopeFilter = ({
             try {
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(journeys);
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }
+            try {
 
                 const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setModes(modes);
-
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }
+            try {
                 const requirements = await apiClient.getRequirementTypeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setRequirements(requirements);
-
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }
+            try {
                 const tagFunctionResp = await apiClient.getTagFunctionFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 const tagFunctions: CheckboxFilterValue[] = [];
                 tagFunctionResp.map((item) => {
                     tagFunctions.push({ id: item.code, title: item.code });
                 });
                 setTagFunctions(tagFunctions);
-
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }
+            try {
                 const disciplineResp = await apiClient.getDisciplineFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 const disciplines: CheckboxFilterValue[] = [];
                 disciplineResp.map((item) => {
-                    disciplines.push({ id: item.code, title: item.description ? item.description : item.code });  //todo: how to handle description with null value 
+                    disciplines.push({ id: item.code, title: item.description ? item.description : item.code });
                 });
                 setDisciplines(disciplines);
-
-
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }

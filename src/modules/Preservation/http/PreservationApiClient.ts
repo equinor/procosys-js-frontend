@@ -439,8 +439,8 @@ class PreservationApiClient extends ApiClient {
         projectName: string,
         areaTagType: string,
         disciplineCode: string,
-        areaCode: string | null,
-        tagNoSuffix: string | null,
+        areaCode?: string | null,
+        tagNoSuffix?: string | null,
         setRequestCanceller?: RequestCanceler
     ): Promise<CheckAreaTagNoResponse> {
         const endpoint = '/Tags/CheckAreaTagNo';

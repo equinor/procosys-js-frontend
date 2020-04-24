@@ -18,7 +18,7 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
-import StartDialog from './StartDialog';
+import StartPreservationDialog from './StartPreservationDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -138,7 +138,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const startDialog = (): void => {
+    const startPreservationDialog = (): void => {
         startableTags = [];
         nonStartableTags = [];
         selectedTags.map((tag) => {
@@ -155,7 +155,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Start Preservation',
-            <StartDialog startableTags={startableTags} nonStartableTags={nonStartableTags} />,
+            <StartPreservationDialog startableTags={startableTags} nonStartableTags={nonStartableTags} />,
             '80vw',
             'Back to list',
             null,
@@ -263,7 +263,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <StyledButton
                             variant='ghost'
                             title='Start preservation for selected tag(s)'
-                            onClick={startDialog}
+                            onClick={startPreservationDialog}
                             disabled={selectedTags.length < 1}>
                             <PlayArrowOutlinedIcon fontSize='small' />
                         Start

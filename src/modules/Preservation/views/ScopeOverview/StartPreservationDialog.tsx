@@ -4,10 +4,10 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import Table from '../../../../components/Table';
 import RequirementIcons from './RequirementIcons';
-import { Toolbar } from './StartDialog.style';
+import { Toolbar } from './StartPreservationDialog.style';
 import { isTagOverdue } from './ScopeOverview';
 
-interface StartDialogProps {
+interface StartPreservationDialogProps {
     startableTags: PreservedTag[];
     nonStartableTags: PreservedTag[];
 }
@@ -71,10 +71,10 @@ const StartTable = ({
     />);
 };
 
-const StartDialog = ({
+const StartPreservationDialog = ({
     startableTags,
     nonStartableTags
-}: StartDialogProps): JSX.Element => {
+}: StartPreservationDialogProps): JSX.Element => {
 
     return (<div>
         {nonStartableTags.length > 0 && (
@@ -90,4 +90,4 @@ const StartDialog = ({
     );
 };
 
-export default StartDialog;
+export default StartPreservationDialog;

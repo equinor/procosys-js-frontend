@@ -120,6 +120,7 @@ const ScopeTable = ({
                 draggable: false,
                 selection: true,
                 pageSize: pageSize,
+                fixedColumns: {left: 1},
                 emptyRowsWhenPaging: false,
                 pageSizeOptions: [10, 50, 100, 500, 1000],
                 headerStyle: {

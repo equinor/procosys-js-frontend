@@ -1,6 +1,6 @@
 import React from 'react';
 import CreateAreaTag from '../CreateAreaTag';
-import { render, act } from '@testing-library/react';
+import { render, act, waitFor } from '@testing-library/react';
 
 const mockDisciplines = [
     {
@@ -24,6 +24,16 @@ const mockAreas = [
     },
 ];
 
+const mockValidTagNo = [
+    {
+        tagNo: '100',
+        exists: false,
+    }
+];
+
+const spacesInTagNoMessage = 'The suffix cannot containt spaces';
+
+
 jest.mock('../../../../context/PreservationContext',() => ({
     usePreservationContext: () => {
         return {
@@ -34,7 +44,8 @@ jest.mock('../../../../context/PreservationContext',() => ({
             },
             apiClient: {
                 getAreas: () => Promise.resolve(mockAreas),
-                getDisciplines: () => Promise.resolve(mockDisciplines)
+                getDisciplines: () => Promise.resolve(mockDisciplines),
+                checkAreaTagNo: () => Promise.resolve(mockValidTagNo)
             }
         };
     }
@@ -60,6 +71,28 @@ describe('<CreateAreaTag />', () => {
             expect(queryByText('Discipline')).toBeInTheDocument();
             expect(queryByText(/Tag number/)).toBeInTheDocument();
             expect(queryByText('Description')).toBeInTheDocument();
+        });
+    });
+
+    it('Displays error message when suffix contains space', async () => {
+        await act(async () => {
+            const { queryByText } = render(<CreateAreaTag suffix="1 2" />);
+            await waitFor(() => expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument());
+        });
+    });
+
+    it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
+        await act(async () => {
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' suffix='12' />);
+            expect(getByText('Next')).toHaveProperty('disabled', true);
+        });
+    });
+
+    it('\'Next\' button enabled when all mandatory fields are passed', async () => {
+        await act(async () => {
+            /** For testing purposes this is considered a valid tagNo */
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' />);
+            await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
         });
     });
 

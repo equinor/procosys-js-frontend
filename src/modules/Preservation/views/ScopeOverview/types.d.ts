@@ -42,6 +42,12 @@ export interface TagListFilter {
     storageAreaStartsWith: string | null;
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;
+    journeyIds: string[];
+    modeIds: string[];
+    dueFilters: string[];
+    requirementTypeIds: string[];
+    tagFunctionCodes: string[];
+    disciplineCodes: string[];
     preservationStatus: string | null;
     actionStatus: string | null;
 }

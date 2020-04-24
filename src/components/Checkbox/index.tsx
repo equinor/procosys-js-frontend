@@ -22,12 +22,12 @@ const Checkbox = ({
 
     return (
         <Container disabled={disabled}>
-            { children }
-            <input 
-                type="checkbox" 
-                defaultChecked={checked} 
-                disabled={disabled} 
-                onChange={handleOnChange} 
+            {children}
+            <input
+                type="checkbox"
+                checked={checked}
+                disabled={disabled}
+                onChange={handleOnChange}
             />
             <Checkmark className="checkmark" disabled={disabled} />
         </Container>

@@ -19,6 +19,7 @@ import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
 import PreservedDialog from './PreservedDialog';
+import StartPreservationDialog from './StartPreservationDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -35,7 +36,6 @@ export const isTagOverdue = (tag: PreservedTag): boolean => {
 };
 
 const ScopeOverview: React.FC = (): JSX.Element => {
-    const [startPreservationDisabled, setStartPreservationDisabled] = useState(true);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null });
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] });
 
     const path = useRouteMatch();
 
@@ -69,7 +69,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             );
         } catch (error) {
             console.error('Get tags failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         return null;
     };
@@ -77,19 +77,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
         setCurrentProject(availableProjects[index].id);
-    };
-
-    const startPreservation = async (): Promise<void> => {
-        try {
-            await apiClient.startPreservation(selectedTags.map(t => t.id));
-            refreshScopeList();
-            setSelectedTags([]);
-            showSnackbarNotification('Status was set to \'Active\' for selected tags.', 5000);
-        } catch (error) {
-            console.error('Start preservation failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
-        }
-        return Promise.resolve();
     };
 
     let transferableTags: PreservedTag[];
@@ -100,10 +87,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             await apiClient.transfer(transferableTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
-            showSnackbarNotification(`${transferableTags.length} tags have been successfully transferred.`, 5000);
+            showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
             console.error('Transfer failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         return Promise.resolve();
     };
@@ -135,6 +122,46 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             transferFunc);
     };
 
+    let startableTags: PreservedTag[];
+    let nonStartableTags: PreservedTag[];
+
+    const startPreservation = async (): Promise<void> => {
+        try {
+            await apiClient.startPreservation(startableTags.map(t => t.id));
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
+        } catch (error) {
+            console.error('Start preservation failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const startPreservationDialog = (): void => {
+        startableTags = [];
+        nonStartableTags = [];
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeStarted) {
+                startableTags.push(newTag);
+            } else {
+                nonStartableTags.push(newTag);
+            }
+        });
+
+        const startButton = startableTags.length > 0 ? 'Start Preservation' : null;
+        const startFunc = startableTags.length > 0 ? startPreservation : null;
+
+        showModalDialog(
+            'Start Preservation',
+            <StartPreservationDialog startableTags={startableTags} nonStartableTags={nonStartableTags} />,
+            '80vw',
+            'Back to list',
+            null,
+            startButton,
+            startFunc);
+    };
 
     let preservableTags: PreservedTag[];
     let nonPreservableTags: PreservedTag[];
@@ -197,19 +224,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
-    /**
-     * Start Preservation button is set to disabled if no rows are selected or
-     * if there are selected rows with other status than NotStarted
-     */
-    useEffect(
-        () => {
-            setStartPreservationDisabled(
-                selectedTags.length === 0 ||
-                selectedTags.findIndex((t) => t.status !== 'NotStarted') !== -1
-            );
-        }, [selectedTags]
-    );
-
     useEffect(
         () => {
             refreshScopeList();
@@ -263,19 +277,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <StyledButton
                             variant='ghost'
                             title='Start preservation for selected tag(s)'
-                            onClick={(): void => {
-                                startPreservation();
-                            }}
-                            disabled={startPreservationDisabled}>
+                            onClick={startPreservationDialog}
+                            disabled={selectedTags.length < 1}>
                             <PlayArrowOutlinedIcon fontSize='small' />
                         Start
                         </StyledButton>
                         <StyledButton
                             variant='ghost'
                             title="Transfer selected tag(s)"
-                            onClick={(): void => {
-                                transferDialog();
-                            }}
+                            onClick={transferDialog}
                             disabled={selectedTags.length < 1}>
                             <FastForwardOutlinedIcon fontSize='small' />
                         Transfer

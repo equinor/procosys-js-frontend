@@ -103,19 +103,21 @@ const ScopeFilter = ({
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }
-            try {
 
+            try {
                 const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setModes(modes);
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }
+
             try {
                 const requirements = await apiClient.getRequirementTypeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setRequirements(requirements);
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }
+
             try {
                 const tagFunctionResp = await apiClient.getTagFunctionFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 const tagFunctions: CheckboxFilterValue[] = [];
@@ -126,6 +128,7 @@ const ScopeFilter = ({
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }
+
             try {
                 const disciplineResp = await apiClient.getDisciplineFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 const disciplines: CheckboxFilterValue[] = [];

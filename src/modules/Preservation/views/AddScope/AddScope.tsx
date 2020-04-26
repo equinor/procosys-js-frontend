@@ -17,17 +17,16 @@ type AddScopeProps = {
     match: any;
 };
 
-const AddScope = (props: AddScopeProps): JSX.Element => {
+export enum AddScopeMethod {
+    AddTagsManually,
+    AddTagsAutoscope,
+    CreateAreaTag,
+    Unknown
+}
 
+const AddScope = (props: AddScopeProps): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
-
-    enum AddScopeMethod {
-        AddTagsManually,
-        CreateAreaTag,
-        Unknown
-    }
-
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
@@ -39,6 +38,46 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
     const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
+
+    const getAddScopeMethod = (): AddScopeMethod => {
+        switch (props.match.params.method) {
+            case 'selectTagsManual':
+                return AddScopeMethod.AddTagsManually;
+            case 'selectTagsAutoscope':
+                return AddScopeMethod.AddTagsAutoscope;
+            case 'createAreaTag':
+                return AddScopeMethod.CreateAreaTag;
+            default:
+                return AddScopeMethod.Unknown;
+        }
+    };
+
+    const getTagsForAutoscoping = async (): Promise<void> => {
+        setIsLoading(true);
+        try {
+            let result: TagRow[] = [];
+            result = await apiClient.getTagsByTagFunctionForAddPreservationScope(project.name);
+
+            if (result.length === 0) {
+                showSnackbarNotification('No tags for autoscoping was found.', 5000);
+            }
+            setSelectedTags([]);
+            setScopeTableData(result);
+        } catch (error) {
+            console.error('Search tags for autoscoping failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        setIsLoading(false);
+    };
+
+    /**
+     * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
+     */
+    useEffect(() => {
+        if (getAddScopeMethod() === AddScopeMethod.AddTagsAutoscope) {
+            getTagsForAutoscoping();
+        }
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -102,10 +141,24 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         });
     };
 
-    const submitAddTagsManually = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
+    const addScopeMethod = getAddScopeMethod();
+
+    const submit = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
-            await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
+
+            switch (addScopeMethod) {
+                case AddScopeMethod.AddTagsManually:
+                    await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
+                    break;
+                case AddScopeMethod.AddTagsAutoscope:
+                    await apiClient.preserveTagsAutoscope(listOfTagNo, stepId, project.name, remark, storageArea);
+                    break;
+                case AddScopeMethod.CreateAreaTag:
+                    await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    break;
+            }
+
             showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
@@ -115,18 +168,6 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         return Promise.resolve();
     };
 
-    const submitCreateAreaTag = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
-        try {
-            const tagNo = selectedTags[0].tagNo;
-            await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
-            showSnackbarNotification(`The area tag ${tagNo} was successfully added to scope`, 5000);
-            history.push('/');
-        } catch (error) {
-            console.error('Tag preservation failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
-        }
-        return Promise.resolve();
-    };
 
     const searchTags = async (tagNo: string | null): Promise<void> => {
         setIsLoading(true);
@@ -174,18 +215,7 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         }
     };
 
-    const getAddScopeMethod = (): AddScopeMethod => {
-        switch (props.match.params.method) {
-            case 'selectTags':
-                return AddScopeMethod.AddTagsManually;
-            case 'createAreaTag':
-                return AddScopeMethod.CreateAreaTag;
-            default:
-                return AddScopeMethod.Unknown;
-        }
-    };
 
-    const addScopeMethod = getAddScopeMethod();
 
     switch (step) {
         case 1:
@@ -197,6 +227,17 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
                     selectedTags={selectedTags}
                     scopeTableData={scopeTableData}
                     isLoading={isLoading}
+                    addScopeMethod={addScopeMethod}
+                />;
+            } else if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
+                return <SelectTags
+                    nextStep={goToNextStep}
+                    setSelectedTags={setSelectedTags}
+                    searchTags={searchTags}
+                    selectedTags={selectedTags}
+                    scopeTableData={scopeTableData}
+                    isLoading={isLoading}
+                    addScopeMethod={addScopeMethod}
                 />;
             } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
                 return <CreateAreaTag
@@ -226,7 +267,8 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
                             journeys={journeys}
                             requirementTypes={requirementTypes}
                             previousStep={goToPreviousStep}
-                            submitForm={addScopeMethod === AddScopeMethod.AddTagsManually ? submitAddTagsManually : submitCreateAreaTag}
+                            submitForm={submit}
+                            addScopeMethod={addScopeMethod}
                         />
                     </TagProperties>
                     <Divider />

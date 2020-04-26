@@ -7,6 +7,7 @@ import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingCont
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
+import { AddScopeMethod } from '../AddScope';
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -15,6 +16,7 @@ type SelectTagsProps = {
     searchTags: (tagNo: string | null) => void;
     nextStep: () => void;
     isLoading: boolean;
+    addScopeMethod: AddScopeMethod;
 }
 
 const KEYCODE_ENTER = 13;
@@ -24,8 +26,8 @@ const tableColumns = [
     { title: 'Description', field: 'description' },
     { title: 'PO no', field: 'purchaseOrderNumber' },
     { title: 'Comm pkg', field: 'commPkgNo' },
-    { 
-        title: 'Preserved', 
+    {
+        title: 'Preserved',
         field: 'isPreserved',
         render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />
     },
@@ -40,14 +42,14 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         const tagsToSelect = selectedRows
             .filter(row => !row.isPreserved)
             .map(row => {
-                return { 
+                return {
                     tagNo: row.tagNo,
                     description: row.description,
                     mcPkgNo: row.mcPkgNo
-                }; 
+                };
             });
 
-        props.setSelectedTags(tagsToSelect); 
+        props.setSelectedTags(tagsToSelect);
     };
 
     const getTableToolbar = (selectedRows: TagRow[]): JSX.Element => {
@@ -63,28 +65,32 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <div>{project.description}</div>
             </Header>
             <Actions>
-                <Search>
-                    <TextField 
-                        id="tagSearch"
-                        placeholder="Search by tag number" 
-                        helperText="Type the start of a tag number and press enter to load tags"
-                        onKeyDown={(e: any): void => {
-                            e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
-                        }}
-                        onInput={(e: any): void => {
-                            e.currentTarget.value.length === 0 && props.searchTags(null);
-                        }}
-                    />  
-                </Search> 
-                <Next>
+                {
+                    props.addScopeMethod === AddScopeMethod.AddTagsManually && (
+                        < Search >
+                            <TextField
+                                id="tagSearch"
+                                placeholder="Search by tag number"
+                                helperText="Type the start of a tag number and press enter to load tags"
+                                onKeyDown={(e: any): void => {
+                                    e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
+                                }}
+                                onInput={(e: any): void => {
+                                    e.currentTarget.value.length === 0 && props.searchTags(null);
+                                }}
+                            />
+                        </Search>
+                    )
+                }
+                < Next >
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
-                </Next>                            
+                </Next>
             </Actions>
             <Tags>
                 <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
-                <Table 
+                <Table
                     columns={tableColumns}
-                    data={props.scopeTableData} 
+                    data={props.scopeTableData}
                     options={{
                         showTitle: false,
                         search: false,
@@ -105,23 +111,23 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         rowStyle: (data): any => ({
                             backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
                         })
-                    }} 
+                    }}
                     style={{
-                        boxShadow: 'none' 
-                    }}                
+                        boxShadow: 'none'
+                    }}
                     onSelectionChange={rowSelectionChanged}
                     isLoading={props.isLoading}
                     components={{
                         OverlayLoading: (): JSX.Element => (
                             <LoadingContainer>
                                 <Loading title="Loading tags" />
-                            </LoadingContainer>                            
+                            </LoadingContainer>
                         ),
                         Toolbar: (data): JSX.Element => getTableToolbar(data.selectedRows)
                     }}
                 />
             </Tags>
-        </Container>
+        </Container >
     );
 };
 

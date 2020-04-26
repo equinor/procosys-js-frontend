@@ -11,12 +11,15 @@ import { TextField } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import PreservationIcon from '../../PreservationIcon';
+import { AddScopeMethod } from '../AddScope';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 type SetTagPropertiesProps = {
     submitForm: (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
+    addScopeMethod: AddScopeMethod;
 };
 
 interface RequirementFormInput {
@@ -36,6 +39,7 @@ const SetTagProperties = ({
     previousStep,
     journeys = [],
     requirementTypes = [],
+    addScopeMethod,
 }: SetTagPropertiesProps): JSX.Element => {
     const { project } = usePreservationContext();
 
@@ -64,14 +68,22 @@ const SetTagProperties = ({
      * Form validation
      */
     useEffect(() => {
-        if (journey > -1 && step && requirements.length > 0) {
-            const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
-                return req.intervalWeeks != null && req.requirementDefinitionId != null;
-            };
-            const requirementsIsValid = requirements.every(hasAllPropertiesSet);
+        if (journey > -1 && step) {
+            if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
+                //For autoscoping, the requiremnts will be added automatically based on tag function
+                setFormIsValid(true);
+                return;
+            }
 
-            setFormIsValid(requirementsIsValid);
-            return;
+            if (requirements.length > 0) {
+                const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
+                    return req.intervalWeeks != null && req.requirementDefinitionId != null;
+                };
+                const requirementsIsValid = requirements.every(hasAllPropertiesSet);
+
+                setFormIsValid(requirementsIsValid);
+                return;
+            }
         }
         setFormIsValid(false);
     }, [journey, step, requirements]);
@@ -131,21 +143,31 @@ const SetTagProperties = ({
         setIsLoading(true);
         const remarkValue = remarkInputRef.current?.value;
         const storageAreaValue = storageAreaInputRef.current?.value;
-        const requirementsMappedForApi: Requirement[] = [];
-        requirements.forEach((req) => {
-            if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
-                requirementsMappedForApi.push({
-                    requirementDefinitionId: req.requirementDefinitionId,
-                    intervalWeeks: req.intervalWeeks
+
+        if (step) {
+            if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
+                await submitForm(step.id, [], remarkValue, storageAreaValue);
+            } else {
+                const requirementsMappedForApi: Requirement[] = [];
+                requirements.forEach((req) => {
+                    if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
+                        requirementsMappedForApi.push({
+                            requirementDefinitionId: req.requirementDefinitionId,
+                            intervalWeeks: req.intervalWeeks
+                        });
+                    }
                 });
+                if (requirementsMappedForApi.length > 0) {
+                    await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
+                } else {
+                    showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
+                }
             }
-        });
-        if (step && requirementsMappedForApi.length > 0) {
-            await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
+        } else {
+            showSnackbarNotification('Error occured. Step is not provided.', 5000);
         }
         setIsLoading(false);
     };
-
 
     const setJourneyFromForm = (value: number): void => {
         setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
@@ -283,43 +305,49 @@ const SetTagProperties = ({
                         />
                     </InputContainer>
 
-                    <h2>Requirements for all selected tags</h2>
-                    {requirements.map((requirement, index) => {
-                        const requirementForValue = getRequirementForValue(requirement.requirementDefinitionId);
-                        return (
-                            <React.Fragment key={`requirementInput_${index}`}>
-                                <InputContainer key={`req_${index}`}>
-                                    <SelectInput
-                                        onChange={(value): void => setRequirement(value, index)}
-                                        data={mappedRequirements}
-                                        label={'Requirement'}
-                                    >
-                                        {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
-                                    </SelectInput>
-                                    <FormFieldSpacer>
-                                        <SelectInput
-                                            onChange={(value): void => setIntervalValue(value, index)}
-                                            data={mappedIntervals}
-                                            disabled={!requirement.requirementDefinitionId}
-                                            label={'Interval'}
-                                        >
-                                            {mappedIntervals.find(el => el.value === requirement.intervalWeeks)?.text || 'Select'}
-                                        </SelectInput>
-                                    </FormFieldSpacer>
-                                    <FormFieldSpacer>
-                                        <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
-                                            <DeleteOutlinedIcon />
-                                        </Button>
-                                    </FormFieldSpacer>
-                                </InputContainer>
-                            </React.Fragment>
-                        );
-                    })}
-                    <Button variant='ghost' onClick={addRequirementInput}>
-                        <ButtonContent>
-                            <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
-                        </ButtonContent>
-                    </Button>
+                    {
+                        addScopeMethod !== AddScopeMethod.AddTagsAutoscope && (
+                            <>
+                                <h2>Requirements for all selected tags</h2>
+                                {requirements.map((requirement, index) => {
+                                    const requirementForValue = getRequirementForValue(requirement.requirementDefinitionId);
+                                    return (
+                                        <React.Fragment key={`requirementInput_${index}`}>
+                                            <InputContainer key={`req_${index}`}>
+                                                <SelectInput
+                                                    onChange={(value): void => setRequirement(value, index)}
+                                                    data={mappedRequirements}
+                                                    label={'Requirement'}
+                                                >
+                                                    {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
+                                                </SelectInput>
+                                                <FormFieldSpacer>
+                                                    <SelectInput
+                                                        onChange={(value): void => setIntervalValue(value, index)}
+                                                        data={mappedIntervals}
+                                                        disabled={!requirement.requirementDefinitionId}
+                                                        label={'Interval'}
+                                                    >
+                                                        {mappedIntervals.find(el => el.value === requirement.intervalWeeks)?.text || 'Select'}
+                                                    </SelectInput>
+                                                </FormFieldSpacer>
+                                                <FormFieldSpacer>
+                                                    <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
+                                                        <DeleteOutlinedIcon />
+                                                    </Button>
+                                                </FormFieldSpacer>
+                                            </InputContainer>
+                                        </React.Fragment>
+                                    );
+                                })}
+                                <Button variant='ghost' onClick={addRequirementInput}>
+                                    <ButtonContent>
+                                        <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
+                                    </ButtonContent>
+                                </Button>
+                            </>
+                        )
+                    }
                 </div>
                 <ButtonContainer>
                     <Button onClick={previousStep} variant="outlined" disabled={isLoading}>

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
@@ -44,8 +44,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
     const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] });
-
-    const path = useRouteMatch();
 
     const {
         project,
@@ -221,14 +219,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             })}
                         </Dropdown>
                         <Dropdown text="Add scope">
-                            <Link to={'/AddScope/selectTags'}>
+                            <Link to={'/AddScope/selectTagsManual'}>
                                 <DropdownItem>
                                     Add tags manually
                                 </DropdownItem>
                             </Link>
-                            <Link to={`${path.url}`}>
+                            <Link to={'/AddScope/selectTagsAutoscope'}>
                                 <DropdownItem>
-                                    Generate scope by Tag Function
+                                    Autoscope by Tag Function
                                 </DropdownItem>
                             </Link>
                             <Link to={'/AddScope/createAreaTag'}>
@@ -312,7 +310,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         </Flyout>
                     )
                 }
-
 
             </ContentContainer >
             {

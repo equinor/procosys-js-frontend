@@ -48,6 +48,9 @@ type TagSearchResponse = {
     purchaseOrderNumber: string;
     commPkgNo: string;
     mcPkgNo: string;
+    registerCode: string;
+    tagFunctionCode: string;
+    mccrResponsibleCodes: string;
     isPreserved: boolean;
 }
 
@@ -412,6 +415,43 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Add a set of tags to preservation scope based on autoscoping.
+     *
+     * @param listOfTagNo List of Tag Numbers
+     * @param stepId Step ID
+     * @param projectName Name of affected project
+     * @param remark Optional: Remark for all tags
+     * @param storageArea Optional: Storage area for all tags
+     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+     *
+     * @returns Promise<void>
+     * @throws PreservationApiError
+     */
+    async preserveTagsAutoscope(
+        listOfTagNo: string[],
+        stepId: number,
+        projectName: string,
+        remark?: string | null,
+        storageArea?: string | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/Tags/AutoScope';
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                tagNos: listOfTagNo,
+                projectName: projectName,
+                stepId: stepId,
+                remark,
+                storageArea
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Create a new area tag and add it to preservation scope.
      *
     * @param tagNo List of Tag Numbers
@@ -491,8 +531,6 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
-
     /**
      * Get preserved tags for currently logged in user in current plant context
      *
@@ -538,6 +576,7 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
 
     /**
      * Start preservation for the given tags.
@@ -634,6 +673,9 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Get list of tags that can be added to preservation scope
+     */
     async getTagsForAddPreservationScope(
         projectName: string,
         tagNo: string,
@@ -644,6 +686,36 @@ class PreservationApiClient extends ApiClient {
             params: {
                 projectName: projectName,
                 startsWithTagNo: tagNo,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagSearchResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Get list of tags by tag function, that can be added to preservation scope.  
+     */
+    async getTagsByTagFunctionForAddPreservationScope(
+        projectName: string,
+        tagFunctionCode?: string,
+        registerCode?: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagSearchResponse[]> {
+        const endpoint = '/Tags/Search/ByTagFunctions';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

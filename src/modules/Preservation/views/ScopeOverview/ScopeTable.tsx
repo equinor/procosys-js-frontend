@@ -50,8 +50,8 @@ const ScopeTable = ({
 
     const getDescriptionColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
-                {tag.description}
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
+                <div style={{ display: 'block', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{tag.description}</div>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
         );
@@ -91,7 +91,7 @@ const ScopeTable = ({
             tableRef={ref} //reference will be used by parent, to trigger rendering
             columns={[
                 { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '150px'} },
-                { title: 'Description', render: getDescriptionColumn},
+                { title: 'Description', render: getDescriptionColumn, cellStyle: {maxWidth: '200px'}},
                 { title: 'Next', render: getNextColumn, width: '7%'  },
                 { title: 'Due', render: getDueColumn, defaultSort: 'asc', width: '5%' },
                 { title: 'Mode', field: 'mode', width: '10%' },

@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 
 import Loading from '../components/Loading';
 import { ThemeProvider } from 'styled-components';
-import { hot } from 'react-hot-loader';
 import theme from './../assets/theme';
 import { useProcosysContext } from '../core/ProcosysContext';
 
@@ -27,4 +26,4 @@ const App = (): JSX.Element => {
     );
 };
 
-export default hot(module)(App);
+export default App;

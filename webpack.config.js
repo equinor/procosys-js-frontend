@@ -28,6 +28,10 @@ module.exports = {
                 enforce: 'pre',
                 test: /\.js$/,
                 loader: 'source-map-loader',
+                exclude: [
+                    // these packages have problems with their sourcemaps
+                    path.resolve(__dirname, 'node_modules/react-double-scrollbar'),
+                  ],
             },
             {
                 test: /\.(scss|css)$/,
@@ -71,7 +75,6 @@ module.exports = {
     devServer: {
         //contentBase: path.join(__dirname, 'build/'),
         port: 3000,
-        hotOnly: true,
         /*HTML5 - Always route to index.html (React handles routing) */
         historyApiFallback: true
     },
@@ -82,7 +85,6 @@ module.exports = {
         }
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',

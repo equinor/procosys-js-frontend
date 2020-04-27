@@ -28,6 +28,10 @@ module.exports = {
                 enforce: 'pre',
                 test: /\.js$/,
                 loader: 'source-map-loader',
+                exclude: [
+                    // these packages have problems with their sourcemaps
+                    path.resolve(__dirname, 'node_modules/react-double-scrollbar'),
+                  ],
             },
             {
                 test: /\.(scss|css)$/,

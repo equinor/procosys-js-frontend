@@ -31,7 +31,6 @@ export const CollapseInfo = styled.div`
 
 export const Section = styled.div`
     display: flex;
-    justify-content: flex-end;
     padding-bottom: calc(var(--grid-unit) * 2);
 `;
 

@@ -24,14 +24,17 @@ const KEYCODE_ENTER = 13;
 const tableColumns = [
     { title: 'Tag no', field: 'tagNo' },
     { title: 'Description', field: 'description' },
+    { title: 'MC Pkg no', field: 'mcPkgNo' },
+    { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
     { title: 'PO no', field: 'purchaseOrderNumber' },
     { title: 'Comm pkg', field: 'commPkgNo' },
+    { title: 'Tag Function', field: 'tagFunctionCode' },
     {
         title: 'Preserved',
         field: 'isPreserved',
-        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />
+        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
+        filtering: false
     },
-    { title: 'MC pkg', field: 'mcPkgNo' }
 ];
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
@@ -93,6 +96,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     data={props.scopeTableData}
                     options={{
                         showTitle: false,
+                        filtering: true,
                         search: false,
                         draggable: false,
                         pageSize: 10,

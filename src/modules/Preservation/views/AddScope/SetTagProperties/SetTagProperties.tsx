@@ -1,4 +1,4 @@
-import { ButtonContainer, ButtonContent, CenterContent, Container, FormFieldSpacer, Header, InputContainer } from './SetTagProperties.style';
+import { ButtonContainer, ButtonContent, CenterContent, Container, FormFieldSpacer, Header, InputContainer, RequirementMessage } from './SetTagProperties.style';
 import { Journey, Requirement, RequirementDefinition, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -305,6 +305,11 @@ const SetTagProperties = ({
                         />
                     </InputContainer>
 
+                    {
+                        addScopeMethod === AddScopeMethod.AddTagsAutoscope && (
+                            <RequirementMessage>Requirements are automatically added for each Tag Function. Changes to requirements can be done after adding to scope.</RequirementMessage>
+                        )
+                    }
                     {
                         addScopeMethod !== AddScopeMethod.AddTagsAutoscope && (
                             <>

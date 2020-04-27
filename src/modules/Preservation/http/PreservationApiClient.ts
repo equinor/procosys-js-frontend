@@ -388,7 +388,7 @@ class PreservationApiClient extends ApiClient {
      * @returns Promise<void>
      * @throws PreservationApiError
      */
-    async preserveTags(
+    async addTagsToScope(
         listOfTagNo: string[],
         stepId: number,
         requirements: PreserveTagRequirement[],
@@ -427,7 +427,7 @@ class PreservationApiClient extends ApiClient {
      * @returns Promise<void>
      * @throws PreservationApiError
      */
-    async preserveTagsAutoscope(
+    async addTagsToScopeByAutoscoping(
         listOfTagNo: string[],
         stepId: number,
         projectName: string,
@@ -469,7 +469,7 @@ class PreservationApiClient extends ApiClient {
     * @returns Promise<void>
     * @throws PreservationApiError
     */
-    async preserveNewAreaTag(
+    async createNewAreaTagAndAddToScope(
         areaTagType: string,
         stepId: number,
         requirements: PreserveTagRequirement[],
@@ -576,7 +576,6 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
-
 
     /**
      * Start preservation for the given tags.
@@ -1006,8 +1005,5 @@ class PreservationApiClient extends ApiClient {
     }
 
 }
-
-
-
 
 export default PreservationApiClient;

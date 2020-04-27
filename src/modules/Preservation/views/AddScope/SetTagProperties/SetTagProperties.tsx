@@ -142,7 +142,10 @@ const SetTagProperties = ({
     const submit = async (): Promise<void> => {
         setIsLoading(true);
         const remarkValue = remarkInputRef.current?.value;
-        const storageAreaValue = storageAreaInputRef.current?.value;
+        let storageAreaValue;
+        if (storageAreaInputRef.current) {
+            storageAreaValue = storageAreaInputRef.current.value;
+        }
 
         if (step) {
             if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {

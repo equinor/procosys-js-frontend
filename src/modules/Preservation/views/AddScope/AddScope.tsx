@@ -9,13 +9,9 @@ import CreateAreaTag from './CreateAreaTag/CreateAreaTag';
 import Spinner from '../../../../components/Spinner';
 import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
-
-type AddScopeProps = {
-    match: any;
-};
 
 export enum AddScopeMethod {
     AddTagsManually,
@@ -24,7 +20,7 @@ export enum AddScopeMethod {
     Unknown
 }
 
-const AddScope = (props: AddScopeProps): JSX.Element => {
+const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
     const [step, setStep] = useState(1);
@@ -38,19 +34,10 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
     const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
+    const [addScopeMethod, setAddScopeMethod] = useState<AddScopeMethod>(AddScopeMethod.Unknown);
 
-    const getAddScopeMethod = (): AddScopeMethod => {
-        switch (props.match.params.method) {
-            case 'selectTagsManual':
-                return AddScopeMethod.AddTagsManually;
-            case 'selectTagsAutoscope':
-                return AddScopeMethod.AddTagsAutoscope;
-            case 'createAreaTag':
-                return AddScopeMethod.CreateAreaTag;
-            default:
-                return AddScopeMethod.Unknown;
-        }
-    };
+    const { method } = useParams();
+
 
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
@@ -71,14 +58,36 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
     };
 
     /**
+     * Set scope method 
+     */
+    useEffect(() => {
+        switch (method) {
+            case 'selectTagsManual':
+                setAddScopeMethod(AddScopeMethod.AddTagsManually);
+                break;
+            case 'selectTagsAutoscope':
+                setAddScopeMethod(AddScopeMethod.AddTagsAutoscope);
+                break;
+            case 'createAreaTag':
+                setAddScopeMethod(AddScopeMethod.CreateAreaTag);
+                break;
+            default:
+                setAddScopeMethod(AddScopeMethod.Unknown);
+        }
+    }, [method]);
+
+    /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
      */
     useEffect(() => {
-        if (getAddScopeMethod() === AddScopeMethod.AddTagsAutoscope) {
+        if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
             getTagsForAutoscoping();
         }
-    }, []);
+    }, [addScopeMethod]);
 
+    /**
+     * Get Journeys
+     */
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
@@ -96,22 +105,28 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         };
     }, []);
 
+    /**
+     * Get Requirement types
+     */
     useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            try {
-                const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
-                setRequirementTypes(response.data);
-            } catch (error) {
-                console.error('Get Requirement Types failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
-            }
-        })();
+        if (addScopeMethod !== AddScopeMethod.AddTagsAutoscope) {
 
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
-    }, []);
+            let requestCancellor: Canceler | null = null;
+            (async (): Promise<void> => {
+                try {
+                    const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
+                    setRequirementTypes(response.data);
+                } catch (error) {
+                    console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                    showSnackbarNotification(error.message, 5000);
+                }
+            })();
+
+            return (): void => {
+                requestCancellor && requestCancellor();
+            };
+        }
+    }, [addScopeMethod]);
 
     /**
      * Prevent step 2 from showing if user decides to remove all selected tags when in step 2.
@@ -141,7 +156,6 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
         });
     };
 
-    const addScopeMethod = getAddScopeMethod();
 
     const submit = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
         try {
@@ -149,13 +163,13 @@ const AddScope = (props: AddScopeProps): JSX.Element => {
 
             switch (addScopeMethod) {
                 case AddScopeMethod.AddTagsManually:
-                    await apiClient.preserveTags(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
+                    await apiClient.addTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
                     break;
                 case AddScopeMethod.AddTagsAutoscope:
-                    await apiClient.preserveTagsAutoscope(listOfTagNo, stepId, project.name, remark, storageArea);
+                    await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
                     break;
                 case AddScopeMethod.CreateAreaTag:
-                    await apiClient.preserveNewAreaTag(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
             }
 

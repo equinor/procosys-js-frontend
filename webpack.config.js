@@ -71,7 +71,6 @@ module.exports = {
     devServer: {
         //contentBase: path.join(__dirname, 'build/'),
         port: 3000,
-        hotOnly: true,
         /*HTML5 - Always route to index.html (React handles routing) */
         historyApiFallback: true
     },
@@ -82,7 +81,6 @@ module.exports = {
         }
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',

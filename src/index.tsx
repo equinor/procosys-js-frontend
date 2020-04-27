@@ -1,4 +1,6 @@
 import './assets/sass/procosys-styles.scss';
+import 'react-hot-loader';
+import { hot } from 'react-hot-loader/root';
 
 import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
 import React, { useRef } from 'react';
@@ -42,9 +44,10 @@ const start = async (): Promise<void> => {
     const element = document.createElement('div');
     element.setAttribute('id', 'app-container');
     document.body.appendChild(element);
+    const HotRoot = hot(Root);
 
     ReactDOM.render(
-        <Root />,
+        <HotRoot />,
         document.getElementById('app-container'));
 
 };

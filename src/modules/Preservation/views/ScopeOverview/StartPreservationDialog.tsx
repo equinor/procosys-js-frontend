@@ -12,7 +12,6 @@ interface StartPreservationDialogProps {
 }
 
 const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
-    console.log(tag);
     return (
         <RequirementIcons tag={tag} />
     );

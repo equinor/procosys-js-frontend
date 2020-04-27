@@ -3,7 +3,7 @@ import { PreservedTag } from './types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import Table from '../../../../components/Table';
-import { Toolbar } from './DialgTable.style';
+import { Toolbar } from './DialogTable.style';
 import { isTagOverdue } from './ScopeOverview';
 import { Column } from 'material-table';
 

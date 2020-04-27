@@ -35,6 +35,8 @@ export const isTagOverdue = (tag: PreservedTag): boolean => {
     return requirement ? requirement.nextDueWeeks < 0 : false;
 };
 
+const backToListButton = 'Back to list';
+
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
@@ -116,7 +118,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             'Transferring',
             <TransferDialog transferableTags={transferableTags} nonTransferableTags={nonTransferableTags} />,
             '80vw',
-            'Back to list',
+            backToListButton,
             null,
             transferButton,
             transferFunc);
@@ -157,7 +159,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             'Start Preservation',
             <StartPreservationDialog startableTags={startableTags} nonStartableTags={nonStartableTags} />,
             '80vw',
-            'Back to list',
+            backToListButton,
             null,
             startButton,
             startFunc);
@@ -199,7 +201,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             'Preserved This Week',
             <PreservedDialog preservableTags={preservableTags} nonPreservableTags={nonPreservableTags} />,
             '80vw',
-            'Back to list',
+            backToListButton,
             null,
             preservedButton,
             preservedFunc);
@@ -279,7 +281,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={selectedTags.length < 1}>
-                            <PlayArrowOutlinedIcon fontSize='small' />
+                            <PlayArrowOutlinedIcon className='iconNextToText' fontSize='small' />
                         Start
                         </StyledButton>
                         <StyledButton
@@ -287,7 +289,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={selectedTags.length < 1}>
-                            <FastForwardOutlinedIcon fontSize='small' />
+                            <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -318,6 +320,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
                 <ScopeTable
                     getTags={getTags}
+                    data-testId='scopeTable'
                     //isLoading={isLoading}
                     setSelectedTags={setSelectedTags}
                     showTagDetails={openFlyout}

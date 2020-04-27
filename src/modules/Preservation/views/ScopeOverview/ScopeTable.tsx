@@ -10,6 +10,7 @@ import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
 interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | null>;
     //isLoading: boolean;
+    isSmallScreen: boolean;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
     setRefreshScopeListCallback: (callback: () => void) => void;
@@ -19,6 +20,7 @@ interface ScopeTableProps {
 
 const ScopeTable = ({
     getTags,
+    isSmallScreen,
     //isLoading,
     setSelectedTags,
     showTagDetails,
@@ -88,16 +90,16 @@ const ScopeTable = ({
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
             columns={[
-                { title: 'Tag nr', render: getTagNoColumn },
-                { title: 'Description', render: getDescriptionColumn },
-                { title: 'Next', render: getNextColumn },
-                { title: 'Due', render: getDueColumn, defaultSort: 'asc' },
-                { title: 'Mode', field: 'mode' },
-                { title: 'PO nr', field: 'purchaseOrderNo' },
-                { title: 'Area', field: 'areaCode' },
-                { title: 'Resp', field: 'responsibleCode' },
-                { title: 'Disc', field: 'disciplineCode' },
-                { title: 'Status', field: 'status' },
+                { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '150px'} },
+                { title: 'Description', render: getDescriptionColumn},
+                { title: 'Next', render: getNextColumn, width: '7%'  },
+                { title: 'Due', render: getDueColumn, defaultSort: 'asc', width: '5%' },
+                { title: 'Mode', field: 'mode', width: '10%' },
+                { title: 'PO nr', field: 'purchaseOrderNo', width: '8%' },
+                { title: 'Area', field: 'areaCode', width: '7%'  },
+                { title: 'Resp', field: 'responsibleCode', width: '7%'  },
+                { title: 'Disc', field: 'disciplineCode', width: '5%'  },
+                { title: 'Status', field: 'status', width: '8%' },
                 { title: 'Req type', render: getRequirementColumn, sorting: false }
             ]}
             data={(query: any): any =>
@@ -119,12 +121,14 @@ const ScopeTable = ({
                 showTitle: false,
                 draggable: false,
                 selection: true,
+                padding: isSmallScreen ? 'dense' : 'default',
                 pageSize: pageSize,
-                fixedColumns: {left: 1},
                 emptyRowsWhenPaging: false,
                 pageSizeOptions: [10, 50, 100, 500, 1000],
                 headerStyle: {
-                    backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
+                    backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                    whiteSpace: 'nowrap',
+                    fontFamily: 'Equinor'
                 },
                 rowStyle: (rowData): any => ({
                     color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,

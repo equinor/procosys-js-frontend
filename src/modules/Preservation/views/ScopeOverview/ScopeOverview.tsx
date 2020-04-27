@@ -44,6 +44,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
     const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] });
+    const [projectText, setProjectText] = useState<string>();
+    const [smallScreen, setSmallScreen] = useState<boolean>(false);
 
     const path = useRouteMatch();
 
@@ -214,13 +216,28 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }, [tagListFilter]
     );
 
+    useEffect(() => {
+        const headerContainer = document.getElementById('headerContainer');
+        const iconBar = document.getElementById('iconBar');
+
+        if (iconBar && headerContainer && iconBar.clientWidth/window.innerWidth > 0.45) {
+            setSmallScreen(true);
+            setProjectText(project.name);
+            headerContainer.style.flexDirection = 'column';
+            iconBar.style.paddingTop = 'calc(var(--grid-unit) * 2)';
+        } else {
+            setSmallScreen(false);
+            setProjectText(project.description);
+        }
+    }, []);
+
     return (
         <Container>
             <ContentContainer>
-                <HeaderContainer>
+                <HeaderContainer id='headerContainer'>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown text={project.description}>
+                        <Dropdown text={projectText}>
                             {availableProjects.map((projectItem, index) => {
                                 return (
                                     <DropdownItem
@@ -253,7 +270,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </Link>
                         </Dropdown>
                     </Header>
-                    <IconBar>
+                    <IconBar id='iconBar'>
                         <Button
                             onClick={(): void => {
                                 preservedThisWeek();
@@ -304,6 +321,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
                 <ScopeTable
                     getTags={getTags}
+                    isSmallScreen={smallScreen}
                     //isLoading={isLoading}
                     setSelectedTags={setSelectedTags}
                     showTagDetails={openFlyout}

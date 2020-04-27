@@ -26,6 +26,7 @@ export const Header = styled.header`
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
+        white-space: nowrap;
     }
 
     > div {
@@ -34,6 +35,10 @@ export const Header = styled.header`
 
     a {
         text-decoration: none;
+    }
+
+    button {
+        white-space: nowrap;
     }
 `;
 

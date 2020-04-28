@@ -18,7 +18,7 @@ export const HeaderContainer = styled.div`
     justify-content: space-between;
     flex-wrap: wrap;
 
-    div {
+    > div {
         margin-bottom: var(--grid-unit);
     }
 `;
@@ -38,6 +38,14 @@ export const Header = styled.header`
 
     a {
         text-decoration: none;
+    }
+
+    button {
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+
+        path {
+            fill: ${tokens.colors.interactive.primary__resting.rgba};
+        }
     }
 `;
 

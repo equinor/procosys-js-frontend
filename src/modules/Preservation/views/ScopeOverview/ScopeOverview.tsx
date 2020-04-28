@@ -44,8 +44,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
     const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] });
-    const [projectText, setProjectText] = useState<string>();
-    const [smallScreen, setSmallScreen] = useState<boolean>(false);
 
     const path = useRouteMatch();
 
@@ -216,28 +214,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }, [tagListFilter]
     );
 
-    useEffect(() => {
-        const headerContainer = document.getElementById('headerContainer');
-        const iconBar = document.getElementById('iconBar');
-
-        if (iconBar && headerContainer && iconBar.clientWidth/window.innerWidth > 0.45) {
-            setSmallScreen(true);
-            setProjectText(project.name);
-            headerContainer.style.flexDirection = 'column';
-            iconBar.style.paddingTop = 'calc(var(--grid-unit) * 2)';
-        } else {
-            setSmallScreen(false);
-            setProjectText(project.description);
-        }
-    }, []);
-
     return (
         <Container>
-            <ContentContainer>
+            <ContentContainer id='contentContaier'>
                 <HeaderContainer id='headerContainer'>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown text={projectText}>
+                        <Dropdown text={project.description}>
                             {availableProjects.map((projectItem, index) => {
                                 return (
                                     <DropdownItem
@@ -321,7 +304,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
                 <ScopeTable
                     getTags={getTags}
-                    isSmallScreen={smallScreen}
                     //isLoading={isLoading}
                     setSelectedTags={setSelectedTags}
                     showTagDetails={openFlyout}
@@ -347,7 +329,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             {
                 displayFilter && (
                     <>
-                        <FilterDivider />
+                        <FilterDivider id='filterDivider' />
                         <FilterContainer>
                             <ScopeFilter setDisplayFilter={setDisplayFilter} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
                         </FilterContainer>

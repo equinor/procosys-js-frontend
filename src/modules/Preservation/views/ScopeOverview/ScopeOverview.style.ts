@@ -9,14 +9,18 @@ export const Container = styled.div`
 export const ContentContainer = styled.div`
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     width: 100%;
 `;
 
 export const HeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    flex-direction: row;
-    margin-bottom: var(--grid-unit);
+    flex-wrap: wrap;
+
+    div {
+        margin-bottom: var(--grid-unit);
+    }
 `;
 
 export const Header = styled.header`
@@ -26,7 +30,6 @@ export const Header = styled.header`
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
-        white-space: nowrap;
     }
 
     > div {
@@ -35,10 +38,6 @@ export const Header = styled.header`
 
     a {
         text-decoration: none;
-    }
-
-    button {
-        white-space: nowrap;
     }
 `;
 

@@ -20,11 +20,11 @@ variables:
    value: procosys/frontend
 
 stages:
-# common stage. Docker build, tag and push
-- stage: common
-  displayName: 'Common'
+# build_and_test stage. Yarn test, Docker build, tag and push
+- stage: build_and_test
+  displayName: 'Build & Test'
   variables:
-    envName: 'common'
+    envName: 'build_and_test'
     envRg: '${{ variables.envRgName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
@@ -48,7 +48,7 @@ stages:
 # Dev deploy stage
 - stage: dev
   displayName: 'Dev'
-  dependsOn: 'common'
+  dependsOn: 'build_and_test'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'

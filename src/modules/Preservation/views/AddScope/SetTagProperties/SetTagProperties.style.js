@@ -51,3 +51,8 @@ export const CenterContent = styled.span`
     display: flex;
     align-items: center;
 `;
+
+export const RequirementMessage = styled.div`
+    font-weight: bold;
+    margin-top: calc(var(--grid-unit)*6);
+`;

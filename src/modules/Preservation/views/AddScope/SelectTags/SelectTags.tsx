@@ -7,6 +7,7 @@ import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingCont
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
+import { AddScopeMethod } from '../AddScope';
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -15,6 +16,7 @@ type SelectTagsProps = {
     searchTags: (tagNo: string | null) => void;
     nextStep: () => void;
     isLoading: boolean;
+    addScopeMethod: AddScopeMethod;
 }
 
 const KEYCODE_ENTER = 13;
@@ -22,14 +24,17 @@ const KEYCODE_ENTER = 13;
 const tableColumns = [
     { title: 'Tag no', field: 'tagNo' },
     { title: 'Description', field: 'description' },
+    { title: 'MC Pkg no', field: 'mcPkgNo' },
+    { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
     { title: 'PO no', field: 'purchaseOrderNumber' },
     { title: 'Comm pkg', field: 'commPkgNo' },
+    { title: 'Tag Function', field: 'tagFunctionCode' },
     {
         title: 'Preserved',
         field: 'isPreserved',
-        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />
+        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
+        filtering: false
     },
-    { title: 'MC pkg', field: 'mcPkgNo' }
 ];
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
@@ -63,20 +68,24 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <div>{project.description}</div>
             </Header>
             <Actions>
-                <Search>
-                    <TextField
-                        id="tagSearch"
-                        placeholder="Search by tag number"
-                        helperText="Type the start of a tag number and press enter to load tags"
-                        onKeyDown={(e: any): void => {
-                            e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
-                        }}
-                        onInput={(e: any): void => {
-                            e.currentTarget.value.length === 0 && props.searchTags(null);
-                        }}
-                    />
-                </Search>
-                <Next>
+                {
+                    props.addScopeMethod === AddScopeMethod.AddTagsManually && (
+                        < Search >
+                            <TextField
+                                id="tagSearch"
+                                placeholder="Search by tag number"
+                                helperText="Type the start of a tag number and press enter to load tags"
+                                onKeyDown={(e: any): void => {
+                                    e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
+                                }}
+                                onInput={(e: any): void => {
+                                    e.currentTarget.value.length === 0 && props.searchTags(null);
+                                }}
+                            />
+                        </Search>
+                    )
+                }
+                < Next >
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </Next>
             </Actions>
@@ -87,6 +96,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     data={props.scopeTableData}
                     options={{
                         showTitle: false,
+                        filtering: true,
                         search: false,
                         draggable: false,
                         pageSize: 10,
@@ -122,7 +132,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     }}
                 />
             </Tags>
-        </Container>
+        </Container >
     );
 };
 

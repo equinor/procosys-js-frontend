@@ -16,6 +16,10 @@ export const TagStatusLabel = styled.span`
 `;
 
 export const TagLink = styled.span<{ isOverdue: boolean }>`
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: ${(props): string => props.isOverdue
         ? tokens.colors.interactive.danger__text.rgba
         : tokens.colors.interactive.primary__resting.rgba};

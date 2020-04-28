@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { tokens } from '@equinor/eds-tokens';
 import { Button, TextField } from '@equinor/eds-core-react';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from '../types';
@@ -93,7 +93,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         pageSizeOptions: [10, 50, 100],
                         padding: 'dense',
                         headerStyle: {
-                            backgroundColor: '#f7f7f7'
+                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                         },
                         selection: true,
                         selectionProps: (data: TagRow): any => ({

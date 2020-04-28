@@ -30,6 +30,7 @@ const DialogTable = ({
             search: false,
             pageSize: 5,
             pageSizeOptions: [5, 10, 50, 100],
+            padding: 'dense',
             showTitle: false,
             draggable: false,
             selection: false,

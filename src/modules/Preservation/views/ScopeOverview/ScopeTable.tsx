@@ -6,6 +6,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
 import RequirementIcons from './RequirementIcons';
 import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
+import { Tooltip } from '@material-ui/core';
 
 interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | null>;
@@ -37,21 +38,26 @@ const ScopeTable = ({
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <TagLink
-                isOverdue={isTagOverdue(tag)}
-                onClick={(): void => showTagDetails(tag)}
-            >
-                {tag.tagNo}
-            </TagLink>
+            <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100} >
+                <TagLink
+                    isOverdue={isTagOverdue(tag)}
+                    onClick={(): void => showTagDetails(tag)}
+                >
+                    {tag.tagNo}
+                </TagLink>
+            </Tooltip>
         );
     };
 
     const getDescriptionColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
-                <div style={{ display: 'block', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{tag.description}</div>
-                {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
-            </div>
+            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
+                    <div style={{ display: 'block', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{tag.description}</div>
+                    {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
+                </div>
+            </Tooltip>
+
         );
     };
 
@@ -88,7 +94,7 @@ const ScopeTable = ({
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
             columns={[
-                { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '150px'}},
+                { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '150px', maxWidth: '150px'}},
                 { title: 'Description', render: getDescriptionColumn, cellStyle: {maxWidth: '150px'}},
                 { title: 'Next', render: getNextColumn, width: '7%'  },
                 { title: 'Due', render: getDueColumn, defaultSort: 'asc', width: '5%' },

@@ -51,12 +51,11 @@ export const IconBar = styled.div`
 `;
 
 export const StyledButton = styled(Button)`
-    padding-top: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    svg {
+    .iconNextToText {
         margin-right: 8px;
     }
 

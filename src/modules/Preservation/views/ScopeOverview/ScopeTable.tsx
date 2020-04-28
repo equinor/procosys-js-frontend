@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React, { RefObject } from 'react';
 import Table from './../../../../components/Table';
 import { PreservedTag, PreservedTags } from './types';
@@ -96,14 +97,23 @@ const ScopeTable = ({
             columns={[
                 { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '150px', maxWidth: '150px'}},
                 { title: 'Description', render: getDescriptionColumn, cellStyle: {maxWidth: '150px'}},
+                // @ts-ignore Width is not a property of material-table
                 { title: 'Next', render: getNextColumn, width: '7%'  },
+                // @ts-ignore
                 { title: 'Due', render: getDueColumn, defaultSort: 'asc', width: '5%' },
+                // @ts-ignore
                 { title: 'Mode', field: 'mode', width: '10%' },
+                // @ts-ignore
                 { title: 'PO nr', field: 'purchaseOrderNo', width: '8%' },
+                // @ts-ignore
                 { title: 'Area', field: 'areaCode', width: '7%'  },
+                // @ts-ignore
                 { title: 'Resp', field: 'responsibleCode', width: '7%'  },
+                // @ts-ignore
                 { title: 'Disc', field: 'disciplineCode', width: '5%'  },
+                // @ts-ignore
                 { title: 'Status', field: 'status', width: '8%' },
+                // @ts-ignore
                 { title: 'Req type', render: getRequirementColumn, sorting: false, width: '10%' }
             ]}
             data={(query: any): any =>

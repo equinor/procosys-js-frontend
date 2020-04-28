@@ -106,15 +106,17 @@ describe('Module: <SetTagProperties />', () => {
 
     it('Should render no requirement by default', () => {
 
-        const { queryAllByText, getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} />);
+        const { queryAllByText, getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsManually' />);
+        expect(getByText('Requirements for all selected tags')).toBeInTheDocument();
         getByText('Add Requirement').click();
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(1);
+
     });
 
     it('Should render requirement input when clicking on button', () => {
 
-        const { queryAllByText, getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} />);
+        const { queryAllByText, getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsManually' />);
         getByText('Add Requirement').click();
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(1);
@@ -122,10 +124,20 @@ describe('Module: <SetTagProperties />', () => {
 
     it('Should remove requirement input when clicking on delete', () => {
 
-        const { getByText, getByTitle, queryAllByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} />);
+        const { getByText, getByTitle, queryAllByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsManually' />);
         getByText('Add Requirement').click();
         getByTitle('Delete').click();
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(0);
+    });
+
+    it('Should render a text instead of requirements, when add-scope-method is autoscope', () => {
+        const { getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsAutoscope'  />);
+        expect(getByText('Requirements are automatically added for each Tag Function. Changes to requirements can be done after adding to scope.')).toBeInTheDocument();
+    });
+
+    it('Should render requirements, when add-scope-method is create area tag', () => {
+        const { getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddScopeMethod.CreateAreaTag' />);
+        expect(getByText('Requirements for all selected tags')).toBeInTheDocument();
     });
 });

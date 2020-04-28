@@ -14,10 +14,10 @@ import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 
 export enum AddScopeMethod {
-    AddTagsManually,
-    AddTagsAutoscope,
-    CreateAreaTag,
-    Unknown
+    AddTagsManually = 'AddTagsManually',
+    AddTagsAutoscope = 'AddTagsAutoscope',
+    CreateAreaTag = 'CreateAreaTag',
+    Unknown = 'Unknown'
 }
 
 const AddScope = (): JSX.Element => {
@@ -37,7 +37,6 @@ const AddScope = (): JSX.Element => {
     const [addScopeMethod, setAddScopeMethod] = useState<AddScopeMethod>(AddScopeMethod.Unknown);
 
     const { method } = useParams();
-
 
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
@@ -156,7 +155,6 @@ const AddScope = (): JSX.Element => {
         });
     };
 
-
     const submit = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
@@ -228,8 +226,6 @@ const AddScope = (): JSX.Element => {
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
         }
     };
-
-
 
     switch (step) {
         case 1:

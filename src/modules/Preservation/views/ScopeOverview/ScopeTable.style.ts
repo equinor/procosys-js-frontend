@@ -27,3 +27,10 @@ export const TagLink = styled.span<{ isOverdue: boolean }>`
     text-decoration: underline;
     cursor: pointer;
 `;
+
+export const Container = styled.div`
+    input + svg {
+        width: 24px;
+        height: 24px;
+    }
+`;

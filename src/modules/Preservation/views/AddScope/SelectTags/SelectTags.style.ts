@@ -9,7 +9,7 @@ export const Container = styled.div`
 export const Header = styled.header`
     display: flex;
     align-items: baseline;
-    
+
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
     };
@@ -39,6 +39,11 @@ export const Next = styled.div`
 
 export const Tags = styled.div`
     margin-top: calc(var(--grid-unit) * 4);
+
+    input + svg {
+        width: 24px;
+        height: 24px;
+    }
 `;
 
 export const TagsHeader = styled.div`

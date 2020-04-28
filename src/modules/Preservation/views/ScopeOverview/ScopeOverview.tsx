@@ -18,6 +18,7 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
 import ScopeTable from './ScopeTable';
 import TransferDialog from './TransferDialog';
+import PreservedDialog from './PreservedDialog';
 import StartPreservationDialog from './StartPreservationDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 
@@ -34,8 +35,9 @@ export const isTagOverdue = (tag: PreservedTag): boolean => {
     return requirement ? requirement.nextDueWeeks < 0 : false;
 };
 
+const backToListButton = 'Back to list';
+
 const ScopeOverview: React.FC = (): JSX.Element => {
-    const [preservedThisWeekDisabled, setPreservedThisWeekDisabled] = useState(true);
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
@@ -116,7 +118,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             'Transferring',
             <TransferDialog transferableTags={transferableTags} nonTransferableTags={nonTransferableTags} />,
             '80vw',
-            'Back to list',
+            backToListButton,
             null,
             transferButton,
             transferFunc);
@@ -157,23 +159,52 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             'Start Preservation',
             <StartPreservationDialog startableTags={startableTags} nonStartableTags={nonStartableTags} />,
             '80vw',
-            'Back to list',
+            backToListButton,
             null,
             startButton,
             startFunc);
     };
 
+    let preservableTags: PreservedTag[];
+    let nonPreservableTags: PreservedTag[];
+
     const preservedThisWeek = async (): Promise<void> => {
         try {
-            await apiClient.preserve(selectedTags.map(t => t.id));
+            await apiClient.preserve(preservableTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
-            showSnackbarNotification('Selected tags have been preserved for this week.');
+            showSnackbarNotification('Selected tag(s) have been preserved for this week.');
         } catch (error) {
             console.error('Preserve failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
+    };
+
+    const preservedDialog = (): void => {
+        preservableTags = [];
+        nonPreservableTags = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBePreserved) {
+                preservableTags.push(newTag);
+            } else {
+                nonPreservableTags.push(newTag);
+            }
+        });
+
+        const preservedButton = preservableTags.length > 0 ? 'Preserved this week' : null;
+        const preservedFunc = preservableTags.length > 0 ? preservedThisWeek : null;
+
+        showModalDialog(
+            'Preserved This Week',
+            <PreservedDialog preservableTags={preservableTags} nonPreservableTags={nonPreservableTags} />,
+            '80vw',
+            backToListButton,
+            null,
+            preservedButton,
+            preservedFunc);
     };
 
     const openFlyout = (tag: PreservedTag): void => {
@@ -194,19 +225,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };
-
-    /**
-     * 'Preserved this week' button is set to disabled if no rows are selected or
-     * if there are selected rows that are not raady to be preserved
-     */
-    useEffect(
-        () => {
-            setPreservedThisWeekDisabled(
-                selectedTags.length === 0 ||
-                selectedTags.findIndex((t) => t.readyToBePreserved !== true) !== -1
-            );
-        }, [selectedTags]
-    );
 
     useEffect(
         () => {
@@ -255,17 +273,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </Header>
                     <IconBar id='iconBar'>
                         <Button
-                            onClick={(): void => {
-                                preservedThisWeek();
-                            }}
-                            disabled={preservedThisWeekDisabled}>Preserved this week
+                            onClick={preservedDialog}
+                            disabled={selectedTags.length < 1}>Preserved this week
                         </Button>
                         <StyledButton
                             variant='ghost'
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={selectedTags.length < 1}>
-                            <PlayArrowOutlinedIcon fontSize='small' />
+                            <PlayArrowOutlinedIcon className='iconNextToText' fontSize='small' />
                         Start
                         </StyledButton>
                         <StyledButton
@@ -273,7 +289,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={selectedTags.length < 1}>
-                            <FastForwardOutlinedIcon fontSize='small' />
+                            <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -304,6 +320,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
                 <ScopeTable
                     getTags={getTags}
+                    data-testId='scopeTable'
                     //isLoading={isLoading}
                     setSelectedTags={setSelectedTags}
                     showTagDetails={openFlyout}

@@ -31,7 +31,7 @@ const mockValidTagNo = [
     }
 ];
 
-const spacesInTagNoMessage = 'The suffix cannot containt spaces';
+const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
 
 
 jest.mock('../../../../context/PreservationContext',() => ({

@@ -232,8 +232,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     return (
         <Container>
-            <ContentContainer id='contentContaier'>
-                <HeaderContainer id='headerContainer'>
+            <ContentContainer>
+                <HeaderContainer>
                     <Header>
                         <h1>Preservation tags</h1>
                         <Dropdown text={project.description}>
@@ -269,7 +269,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </Link>
                         </Dropdown>
                     </Header>
-                    <IconBar id='iconBar'>
+                    <IconBar>
                         <Button
                             onClick={preservedDialog}
                             disabled={selectedTags.length < 1}>Preserved this week

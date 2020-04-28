@@ -10,6 +10,8 @@ export interface TagRow {
     purchaseOrderNumber: string;
     commPkgNo: string;
     mcPkgNo: string;
+    mccrResponsibleCodes: string;
+    tagFunctionCode: string;
     isPreserved: boolean;
     tableData?: {
         checked: boolean;

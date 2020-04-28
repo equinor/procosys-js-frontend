@@ -71,4 +71,25 @@ describe('Module: <SelectTags />', () => {
         expect(getByText('1 tags selected')).toBeInTheDocument();
         expect(selectedTags.length).toBe(1);
     });
+
+    it('Should render Tag info in table', () => {
+        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} />);
+
+        expect(getByText('tagno-test')).toBeInTheDocument();
+        expect(getByText('description-test')).toBeInTheDocument();
+        expect(getByText('pono-test')).toBeInTheDocument();
+        expect(getByText('commpkg-test')).toBeInTheDocument();
+        expect(getByText('mcpkgno-test')).toBeInTheDocument();
+    });
+
+    it('Should not render search field when add-scope-method is autoscope.', () => {
+        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsAutoscope' />);
+        expect(queryByText('Type the start of a tag number and press enter to load tags')).not.toBeInTheDocument();
+    });
+
+    it('Should render search field when add-scope-method is manually', () => {
+        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsManually' />);
+        expect(queryByText('Type the start of a tag number and press enter to load tags')).toBeInTheDocument();
+    });
+
 });

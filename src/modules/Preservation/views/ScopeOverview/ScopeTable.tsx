@@ -39,25 +39,26 @@ const ScopeTable = ({
 
     const getTagNoColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100} >
-                <TagLink
-                    isOverdue={isTagOverdue(tag)}
-                    onClick={(): void => showTagDetails(tag)}
-                >
-                    {tag.tagNo}
-                </TagLink>
-            </Tooltip>
+            <TagLink
+                isOverdue={isTagOverdue(tag)}
+                onClick={(): void => showTagDetails(tag)}
+            >
+                <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100} >
+                    <span>{tag.tagNo}</span>
+                </Tooltip>
+
+            </TagLink>
         );
     };
 
     const getDescriptionColumn = (tag: PreservedTag): JSX.Element => {
         return (
-            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
+                <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
                     <div style={{ display: 'block', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{tag.description}</div>
-                    {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
-                </div>
-            </Tooltip>
+                </Tooltip>
+                {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
+            </div>
 
         );
     };

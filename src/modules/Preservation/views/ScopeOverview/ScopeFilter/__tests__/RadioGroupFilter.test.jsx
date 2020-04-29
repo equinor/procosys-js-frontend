@@ -11,10 +11,18 @@ describe('<RadioGroupFilter />', () => {
         expect(getByLabelText(options[0].title)).toBeInTheDocument();
     });
 
-    it('Should render with default value selected', () => {
+    it('Should render with value selected', () => {
         const options = [{title: 'Hello', value: 'world'}];
 
         const {getByTestId, getByLabelText} = render(<RadioGroupFilter options={options} value={options[0].value} />);
+        getByTestId('RadioGroupHeader').click();
+        expect(getByLabelText(options[0].title)).toHaveAttribute('checked');
+    });
+
+    it('Should render with default option selected', () => {
+        const options = [{title: 'Hello', value: 'world', default: true}];
+
+        const {getByTestId, getByLabelText} = render(<RadioGroupFilter options={options} />);
         getByTestId('RadioGroupHeader').click();
         expect(getByLabelText(options[0].title)).toHaveAttribute('checked');
     });

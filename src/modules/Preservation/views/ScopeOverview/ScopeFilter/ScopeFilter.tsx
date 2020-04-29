@@ -43,6 +43,11 @@ const dueDates: CheckboxFilterValue[] =
 
 
 const PRESERVATION_STATUS = [{
+    title: 'All',
+    value: 'None',
+    default: true
+},
+{
     title: 'Not started',
     value: 'NotStarted'
 },
@@ -168,7 +173,8 @@ const ScopeFilter = ({
     };
 
     const onPreservationStatusFilterChanged = (value: string): void => {
-        setLocalTagListFilter((old): TagListFilter => { return { ...old, preservationStatus: value }; });
+        const filter = value === 'None' ? null : value;
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, preservationStatus: filter }; });
     };
 
     const onActionStatusFilterChanged = (value: string): void => {

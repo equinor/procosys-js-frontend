@@ -8,6 +8,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 interface Option {
     title: string;
     value: string;
+    default?: boolean;
 }
 
 interface RadioGroupFilterProps {
@@ -45,7 +46,7 @@ const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilte
             {
                 isExpanded && (
                     <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
-                        {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} control={<Radio />} />))}
+                        {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} checked={((!value && option.default) || option.value === value)} control={<Radio />} />))}
                     </RadioGroup>
                 )
             }

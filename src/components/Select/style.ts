@@ -101,12 +101,21 @@ export const CascadingItem = styled.ul`
 export const ItemContent = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 24px 16px;
+    padding: calc(var(--grid-unit) * 2);
     border: 0;
-    text-align: left;
     font-weight: normal;
     margin-left: var(--grid-unit);
     background-color: ${tokens.colors.ui.background__default.rgba};
 
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba};
+    }
+
+    svg:first-of-type {
+        padding-right: calc(var(--grid-unit) * 2);
+    }
+
+    .arrowIcon {
+        margin-left: auto;
+    }
 `;

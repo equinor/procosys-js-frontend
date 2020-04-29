@@ -110,7 +110,7 @@ const Select = ({
                 <ItemContent>
                     {itm.icon || null}
                     {itm.text}
-                    <KeyboardArrowRightIcon />
+                    <KeyboardArrowRightIcon className='arrowIcon'/>
                 </ItemContent>
                 <CascadingItem>
                     {createNodesForItems(itm.children)}

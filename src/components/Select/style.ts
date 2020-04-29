@@ -106,6 +106,7 @@ export const ItemContent = styled.div`
     font-weight: normal;
     margin-left: var(--grid-unit);
     background-color: ${tokens.colors.ui.background__default.rgba};
+    cursor: pointer;
 
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba};

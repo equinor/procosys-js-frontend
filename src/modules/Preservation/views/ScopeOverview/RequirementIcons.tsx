@@ -1,8 +1,8 @@
 import React from 'react';
-
 import { PreservedTag, Requirement } from './types';
 import { RequirementsContainer, RequirementIcon } from './RequirementIcons.style';
 import PreservationIcon from '../PreservationIcon';
+import {Tooltip } from '@material-ui/core';
 
 const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;
 
@@ -25,7 +25,9 @@ const RequirementIcons = ({
                             isDue={isRequirementDue(req) || isRequirementOverdue(req)}
                             isReadyToBePreserved={req.readyToBePreserved}
                         >
-                            <PreservationIcon variant={req.requirementTypeCode} />
+                            <Tooltip title={req.requirementTypeCode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                                <span><PreservationIcon variant={req.requirementTypeCode} /></span>
+                            </Tooltip>
                         </RequirementIcon>
                     );
                 })

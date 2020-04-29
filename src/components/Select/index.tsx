@@ -1,6 +1,5 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
-
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { useClickOutsideNotifier } from './../../hooks';
@@ -121,7 +120,7 @@ const Select = ({
 
     return (
         <Container ref={containerRef}>
-            {label}
+            <Label>{label}</Label>
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}

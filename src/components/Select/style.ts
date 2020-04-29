@@ -120,3 +120,7 @@ export const ItemContent = styled.div`
         margin-left: auto;
     }
 `;
+
+export const Label = styled.div`
+    font-size: 12px;
+`;

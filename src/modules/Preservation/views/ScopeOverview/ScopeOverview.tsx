@@ -345,7 +345,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <>
                         <FilterDivider />
                         <FilterContainer>
-                            <ScopeFilter setDisplayFilter={setDisplayFilter} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+                            <ScopeFilter onCloseRequest={(): void => setDisplayFilter(false)} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
                         </FilterContainer>
                     </>
                 )

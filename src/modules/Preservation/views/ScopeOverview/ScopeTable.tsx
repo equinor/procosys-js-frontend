@@ -43,10 +43,7 @@ const ScopeTable = ({
                 isOverdue={isTagOverdue(tag)}
                 onClick={(): void => showTagDetails(tag)}
             >
-                <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100} >
-                    <span>{tag.tagNo}</span>
-                </Tooltip>
-
+                <span>{tag.tagNo}</span>
             </TagLink>
         );
     };
@@ -97,16 +94,16 @@ const ScopeTable = ({
             <Table id='table'
                 tableRef={ref} //reference will be used by parent, to trigger rendering
                 columns={[
-                    { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '150px', maxWidth: '150px'}},
+                    { title: 'Tag nr', render: getTagNoColumn, cellStyle: {minWidth: '200px', maxWidth: '250px'}},
                     { title: 'Description', render: getDescriptionColumn, cellStyle: {maxWidth: '150px'}},
                     // @ts-ignore Width is not a property of material-table
-                    { title: 'Next', render: getNextColumn, width: '7%'  },
+                    { title: 'Next', render: getNextColumn, width: '7%'},
                     // @ts-ignore
-                    { title: 'Due', render: getDueColumn, defaultSort: 'asc', width: '5%' },
+                    { title: 'Due', render: getDueColumn, defaultSort: 'asc', width: '5%'},
                     // @ts-ignore
-                    { title: 'Mode', field: 'mode', width: '10%'},
+                    { title: 'Mode', field: 'mode', width: '8%'},
                     // @ts-ignore
-                    { title: 'PO nr', field: 'purchaseOrderNo', width: '8%'},
+                    { title: 'PO nr', field: 'purchaseOrderNo', width: '7%'},
                     // @ts-ignore
                     { title: 'Area', field: 'areaCode', width: '7%'},
                     // @ts-ignore
@@ -114,7 +111,7 @@ const ScopeTable = ({
                     // @ts-ignore
                     { title: 'Disc', field: 'disciplineCode', width: '5%'},
                     // @ts-ignore
-                    { title: 'Status', field: 'status', width: '8%'},
+                    { title: 'Status', field: 'status', width: '7%'},
                     // @ts-ignore
                     { title: 'Req type', render: getRequirementColumn, sorting: false, width: '10%'}
                 ]}

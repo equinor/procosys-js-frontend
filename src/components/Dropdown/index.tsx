@@ -107,7 +107,9 @@ const Select: React.FC<DropdownProps> = ({
                         })
                     )}
                     {(!children || React.Children.count(children) <= 0) && (
-                        <li data-value={-1}>No items found</li>
+                        <ul style={{boxShadow: 'none'}}>
+                            <li data-value={-1}>No items found</li>
+                        </ul>
                     )}
 
                 </ul>

@@ -65,7 +65,6 @@ export type SelectableItemProps = {
 export const SelectableItem = styled.li<SelectableItemProps>`
     position: relative;
     background-color: transparent;
-    margin-left: var(--grid-unit);
 
     :first-child {
         background-color: ${(props): any =>
@@ -107,6 +106,7 @@ export const ItemContent = styled.div`
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
     cursor: pointer;
+    margin-left: var(--grid-unit);
 
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba};

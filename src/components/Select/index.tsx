@@ -146,7 +146,9 @@ const Select = ({
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (
-                <li data-value={-1}>No items found</li>
+                <ul style={{boxShadow: 'none'}}>
+                    <li data-value={-1}>No items found</li>
+                </ul>
             )}
         </Container>
     );

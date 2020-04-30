@@ -219,7 +219,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 <div>{project.description}</div>
             </Header>
             <TopContainer>
-                <Typography variant="caption">{tagNoValidationError}</Typography>
+                {tagNoValidationError && (<Typography variant="caption">{tagNoValidationError}</Typography>)}
                 <Container>
                     <InputContainer>
                         <FormFieldSpacer>

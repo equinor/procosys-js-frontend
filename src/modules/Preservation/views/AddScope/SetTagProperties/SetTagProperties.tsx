@@ -2,17 +2,16 @@ import { ButtonContainer, ButtonContent, CenterContent, Container, FormFieldSpac
 import { Journey, Requirement, RequirementDefinition, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import { Button } from '@equinor/eds-core-react';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Spinner from '../../../../../components/Spinner';
-import { TextField } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import PreservationIcon from '../../PreservationIcon';
 import { AddScopeMethod } from '../AddScope';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { TextField } from '@equinor/eds-core-react';
 
 type SetTagPropertiesProps = {
     submitForm: (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string) => Promise<void>;
@@ -287,24 +286,24 @@ const SetTagProperties = ({
                             {(step && step.mode.title) || 'Select step'}
                         </SelectInput>
                     </InputContainer>
-                    <InputContainer>
+                    <InputContainer style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Remark'}
-                            style={{ maxWidth: '480px' }}
                             label="Remark for whole preservation journey"
                             inputRef={remarkInputRef}
                             placeholder="Write Here"
                             helpertext="For example: Check according to predecure 123, or check specifications from supplier"
+                            meta="Optional"
                         />
                     </InputContainer>
-                    <InputContainer>
+                    <InputContainer style={{ maxWidth: '150px' }}>
                         <TextField
                             id={'StorageArea'}
-                            style={{ maxWidth: '120px' }}
                             label="Storage area"
                             inputRef={storageAreaInputRef}
                             placeholder="Write Here"
                             helpertext="For example: AR123"
+                            meta="Optional"
                         />
                     </InputContainer>
 

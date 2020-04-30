@@ -1,4 +1,4 @@
-import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer, MetaText, TopTextContainer } from './style';
+import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer, TopTextContainer } from './style';
 import React, { useRef, useState, useEffect } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -65,7 +65,7 @@ const Select: React.FC<DropdownProps> = ({
             {(label || meta) &&
             <TopTextContainer>
                 <div>{label}</div>
-                <MetaText>{meta}</MetaText>
+                <div>{meta}</div>
             </TopTextContainer>
             }
             <DropdownButton
@@ -107,8 +107,8 @@ const Select: React.FC<DropdownProps> = ({
                         })
                     )}
                     {(!children || React.Children.count(children) <= 0) && (
-                        <ul>
-                            <li data-value={-1}>No items available</li>
+                        <ul style={{boxShadow: 'none'}}>
+                            <li data-value={-1}>No items found</li>
                         </ul>
                     )}
 

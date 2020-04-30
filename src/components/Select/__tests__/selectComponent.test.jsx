@@ -23,7 +23,7 @@ describe('<Select />', () => {
     it('Renders with no supplied select items', async () => {
         const { getByText } = renderWithTheme(<Select>Select</Select>);
         getByText('Select').click();
-        expect(getByText('No items available')).toBeInTheDocument();
+        expect(getByText('No items found')).toBeInTheDocument();
     });
 
     it('Should be disabled', () => {
@@ -32,7 +32,7 @@ describe('<Select />', () => {
         );
         getByText('Select').click();
 
-        expect(queryByText('No items available')).toBeNull();
+        expect(queryByText('No items found')).toBeNull();
     });
 
     it('Should contain all items given by options', () => {

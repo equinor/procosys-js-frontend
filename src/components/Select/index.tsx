@@ -1,6 +1,5 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
-
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { useClickOutsideNotifier } from './../../hooks';
@@ -59,13 +58,13 @@ const Select = ({
         if (isOpen && listRef.current) {
             const listWidth = listRef.current.offsetWidth;
             const listLeftPosition = listRef.current.offsetLeft;
-            const windowWidth = window.innerWidth;                
+            const windowWidth = window.innerWidth;
 
             if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
-                listRef.current.style.right = '2px';                    
+                listRef.current.style.right = '2px';
             }
         }
-    }, [isOpen]);    
+    }, [isOpen]);
 
     const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
 
@@ -110,7 +109,7 @@ const Select = ({
                 <ItemContent>
                     {itm.icon || null}
                     {itm.text}
-                    <KeyboardArrowRightIcon />
+                    <KeyboardArrowRightIcon className='arrowIcon'/>
                 </ItemContent>
                 <CascadingItem>
                     {createNodesForItems(itm.children)}
@@ -121,7 +120,7 @@ const Select = ({
 
     return (
         <Container ref={containerRef}>
-            {label}
+            <Label>{label}</Label>
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}
@@ -147,8 +146,8 @@ const Select = ({
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (
-                <ul>
-                    <li data-value={-1}>No items available</li>
+                <ul style={{boxShadow: 'none'}}>
+                    <li data-value={-1}>No items found</li>
                 </ul>
             )}
         </Container>

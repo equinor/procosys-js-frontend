@@ -94,9 +94,9 @@ jest.mock('../../../../context/PreservationContext', () => ({
 describe('Module: <SetTagProperties />', () => {
 
     it('Should render with input fields', () => {
-        const { getByLabelText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} />);
-        expect(getByLabelText('Remark for whole preservation journey')).toBeInTheDocument();
-        expect(getByLabelText('Storage area')).toBeInTheDocument();
+        render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} />);
+        expect(document.getElementById('Remark')).toBeInTheDocument();
+        expect(document.getElementById('StorageArea')).toBeInTheDocument();
     });
 
     it('Should render Add To Scope button disabled when form is invalid', () => {

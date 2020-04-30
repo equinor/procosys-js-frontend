@@ -1,4 +1,4 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -180,7 +180,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     };
 
     useEffect(() => {
-        const checkTagNos = async () => {
+        const checkTagNos = async (): Promise<void> => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValidationError(spacesInTagNoMessage);
             }
@@ -198,7 +198,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             checkTagNos();
         }, 200);
 
-        return () => {
+        return (): void => {
             clearTimeout(timer);
         };
     }, [props.discipline, props.area, props.areaType, props.suffix]);
@@ -219,7 +219,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 <div>{project.description}</div>
             </Header>
             <TopContainer>
-                <Typography variant="caption">{tagNoValidationError}</Typography>
+                <ErrorContainer>
+                    {tagNoValidationError && (<Typography variant="caption">{tagNoValidationError}</Typography>)}
+                </ErrorContainer>
                 <Container>
                     <InputContainer>
                         <FormFieldSpacer>

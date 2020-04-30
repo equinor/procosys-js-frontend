@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -13,7 +13,7 @@ import { showSnackbarNotification } from '../../../../../core/services/Notificat
 import RadioGroupFilter from './RadioGroupFilter';
 
 interface ScopeFilterProps {
-    setDisplayFilter: (display: boolean) => void;
+    onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
 }
@@ -78,7 +78,7 @@ const ACTION_STATUS = [{
 }];
 
 const ScopeFilter = ({
-    setDisplayFilter,
+    onCloseRequest,
     tagListFilter,
     setTagListFilter,
 }: ScopeFilterProps): JSX.Element => {
@@ -91,6 +91,7 @@ const ScopeFilter = ({
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
     const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
     const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
+    const isFirstRender = useRef<boolean>(true);
 
     const KEYCODE_ENTER = 13;
 
@@ -100,29 +101,48 @@ const ScopeFilter = ({
     } = usePreservationContext();
 
     useEffect(() => {
-        let requestCancellor: Canceler | null = null;
+        let requestCancellor: Canceler;
+
         (async (): Promise<void> => {
             try {
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(journeys);
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
-            }
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
 
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
             try {
                 const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setModes(modes);
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
-            }
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
 
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
             try {
                 const requirements = await apiClient.getRequirementTypeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setRequirements(requirements);
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
-            }
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
 
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
             try {
                 const tagFunctionResp = await apiClient.getTagFunctionFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 const tagFunctions: CheckboxFilterValue[] = [];
@@ -132,8 +152,13 @@ const ScopeFilter = ({
                 setTagFunctions(tagFunctions);
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
-            }
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
 
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
             try {
                 const disciplineResp = await apiClient.getDisciplineFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 const disciplines: CheckboxFilterValue[] = [];
@@ -182,18 +207,23 @@ const ScopeFilter = ({
     };
 
     useEffect((): void => {
+        if (isFirstRender.current) return;
         triggerScopeListUpdate();
     }, [
         localTagListFilter.preservationStatus, localTagListFilter.actionStatus, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds,
         localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes
     ]);
 
+    useEffect(() => {
+        isFirstRender.current = false;
+    },[]);
+
     return (
         <Container>
             <Header>
                 <h1>Filter</h1>
 
-                <Button variant='ghost' title='Close' onClick={(): void => { setDisplayFilter(false); }}>
+                <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                     <CloseIcon />
                 </Button>
             </Header>

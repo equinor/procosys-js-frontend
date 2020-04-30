@@ -89,3 +89,6 @@ export const DropdownItem = styled.div`
     }
 `;
 
+export const ErrorContainer = styled.div`
+    min-height: 1rem;
+`;

@@ -62,14 +62,11 @@ export const DropdownItem = styled.li`
     cursor: pointer;
 `;
 
-export const MetaText = styled.div`
-    font-size: 12px;
-`;
-
 export const TopTextContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    font-size: 12px;
 `;
 
 export const FilterContainer = styled.li`

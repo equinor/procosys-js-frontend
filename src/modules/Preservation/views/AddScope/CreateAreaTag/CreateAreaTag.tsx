@@ -180,7 +180,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     };
 
     useEffect(() => {
-        const checkTagNos = async () => {
+        const checkTagNos = async (): Promise<void> => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValidationError(spacesInTagNoMessage);
             }
@@ -198,7 +198,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             checkTagNos();
         }, 200);
 
-        return () => {
+        return (): void => {
             clearTimeout(timer);
         };
     }, [props.discipline, props.area, props.areaType, props.suffix]);

@@ -6,9 +6,10 @@ import { Typography } from '@equinor/eds-core-react';
 import { Toolbar, TagLink, TagStatusLabel } from './ScopeTable.style';
 import RequirementIcons from './RequirementIcons';
 import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
+import { QueryResult, Query } from 'material-table';
 
 interface ScopeTableProps {
-    getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | null>;
+    getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
     //isLoading: boolean;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
@@ -84,6 +85,17 @@ const ScopeTable = ({
         'Mode': 'Mode'
     };
 
+    const getTagsByQuery = async (query: Query<any>): Promise<QueryResult<any>> => {
+        const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
+        const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
+        const result = await getTags(query.page, query.pageSize, orderByField, orderDirection);
+        return {
+            data: result.tags,
+            page: query.page,
+            totalCount: result.maxAvailable
+        };
+    };
+
     return (
         <Table
             tableRef={ref} //reference will be used by parent, to trigger rendering
@@ -100,21 +112,7 @@ const ScopeTable = ({
                 { title: 'Status', field: 'status' },
                 { title: 'Req type', render: getRequirementColumn, sorting: false }
             ]}
-            data={(query: any): any =>
-                new Promise((resolve) => {
-                    const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title] : null;
-                    const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
-
-                    getTags(query.page, query.pageSize, orderByField, orderDirection).then((result) => {
-                        result ?
-                            resolve({
-                                data: result.tags,
-                                page: query.page,
-                                totalCount: result.maxAvailable
-                            }) : null;
-                    });
-                })
-            }
+            data={getTagsByQuery}
             options={{
                 showTitle: false,
                 draggable: false,

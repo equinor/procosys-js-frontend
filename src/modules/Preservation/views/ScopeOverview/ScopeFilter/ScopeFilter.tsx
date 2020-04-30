@@ -91,7 +91,7 @@ const ScopeFilter = ({
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
     const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
     const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
-    const containerRef = useRef<HTMLDivElement | null>(null);
+    const isFirstRender = useRef<boolean>(true);
 
     const KEYCODE_ENTER = 13;
 
@@ -207,15 +207,19 @@ const ScopeFilter = ({
     };
 
     useEffect((): void => {
-        console.log('ContainerRef: ', containerRef);
+        if (isFirstRender.current) return;
         triggerScopeListUpdate();
     }, [
         localTagListFilter.preservationStatus, localTagListFilter.actionStatus, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds,
         localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes
     ]);
 
+    useEffect(() => {
+        isFirstRender.current = false;
+    },[]);
+
     return (
-        <Container ref={containerRef}>
+        <Container>
             <Header>
                 <h1>Filter</h1>
 

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
@@ -60,7 +60,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeList = callback;
     };
 
-    const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags | null> => {
+    const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
         try {
             return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter).then(
                 (response) => {
@@ -71,7 +71,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             console.error('Get tags failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
         }
-        return null;
+        return {maxAvailable: 0, tags: []};
     };
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
@@ -224,12 +224,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
-    useEffect(
-        () => {
-            refreshScopeList();
-        }, [tagListFilter]
-    );
-
     return (
         <Container>
             <ContentContainer>
@@ -345,7 +339,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <>
                         <FilterDivider />
                         <FilterContainer>
-                            <ScopeFilter onCloseRequest={(): void => setDisplayFilter(false)} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+                            <ScopeFilter onCloseRequest={(): void => {
+                                setDisplayFilter(false);
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
                         </FilterContainer>
                     </>
                 )

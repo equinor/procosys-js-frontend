@@ -58,13 +58,13 @@ const Select = ({
         if (isOpen && listRef.current) {
             const listWidth = listRef.current.offsetWidth;
             const listLeftPosition = listRef.current.offsetLeft;
-            const windowWidth = window.innerWidth;                
+            const windowWidth = window.innerWidth;
 
             if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
-                listRef.current.style.right = '2px';                    
+                listRef.current.style.right = '2px';
             }
         }
-    }, [isOpen]);    
+    }, [isOpen]);
 
     const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
 
@@ -146,9 +146,7 @@ const Select = ({
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (
-                <ul>
-                    <li data-value={-1}>No items available</li>
-                </ul>
+                <li data-value={-1}>No items found</li>
             )}
         </Container>
     );

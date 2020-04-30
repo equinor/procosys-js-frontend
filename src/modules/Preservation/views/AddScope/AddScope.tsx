@@ -23,6 +23,7 @@ export enum AddScopeMethod {
 const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
+    const { method } = useParams();
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
@@ -34,9 +35,19 @@ const AddScope = (): JSX.Element => {
     const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
-    const [addScopeMethod, setAddScopeMethod] = useState<AddScopeMethod>(AddScopeMethod.Unknown);
+    const [addScopeMethod] = useState<AddScopeMethod>((): AddScopeMethod => {
+        switch (method) {
+            case 'selectTagsManual':
+                return (AddScopeMethod.AddTagsManually);
+            case 'selectTagsAutoscope':
+                return (AddScopeMethod.AddTagsAutoscope);
+            case 'createAreaTag':
+                return (AddScopeMethod.CreateAreaTag);
+            default:
+                return (AddScopeMethod.Unknown);
+        }
+    });
 
-    const { method } = useParams();
 
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
@@ -56,24 +67,7 @@ const AddScope = (): JSX.Element => {
         setIsLoading(false);
     };
 
-    /**
-     * Set scope method 
-     */
-    useEffect(() => {
-        switch (method) {
-            case 'selectTagsManual':
-                setAddScopeMethod(AddScopeMethod.AddTagsManually);
-                break;
-            case 'selectTagsAutoscope':
-                setAddScopeMethod(AddScopeMethod.AddTagsAutoscope);
-                break;
-            case 'createAreaTag':
-                setAddScopeMethod(AddScopeMethod.CreateAreaTag);
-                break;
-            default:
-                setAddScopeMethod(AddScopeMethod.Unknown);
-        }
-    }, [method]);
+
 
     /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
@@ -171,7 +165,7 @@ const AddScope = (): JSX.Element => {
                     break;
             }
 
-            showSnackbarNotification(`${listOfTagNo.length} tags successfully added to scope`, 5000);
+            showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
             console.error('Tag preservation failed: ', error.messsage, error.data);

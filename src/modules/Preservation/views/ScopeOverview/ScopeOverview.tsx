@@ -236,7 +236,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <HeaderContainer>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown text={project.description}>
+                        <Dropdown text={project.name}>
                             {availableProjects.map((projectItem, index) => {
                                 return (
                                     <DropdownItem

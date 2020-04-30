@@ -9,14 +9,18 @@ export const Container = styled.div`
 export const ContentContainer = styled.div`
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     width: 100%;
 `;
 
 export const HeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    flex-direction: row;
-    margin-bottom: var(--grid-unit);
+    flex-wrap: wrap;
+
+    > div {
+        margin-bottom: var(--grid-unit);
+    }
 `;
 
 export const Header = styled.header`
@@ -34,6 +38,14 @@ export const Header = styled.header`
 
     a {
         text-decoration: none;
+    }
+
+    button {
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+
+        path {
+            fill: ${tokens.colors.interactive.primary__resting.rgba};
+        }
     }
 `;
 

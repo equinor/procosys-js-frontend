@@ -238,7 +238,8 @@ const SetTagProperties = ({
         });
     };
 
-    if (journeys.length <= 0 || requirementTypes.length <= 0) {
+
+    if (journeys.length <= 0 || (addScopeMethod !== AddScopeMethod.AddTagsAutoscope && requirementTypes.length <= 0)) {
         return (
             <div>
                 <Header>

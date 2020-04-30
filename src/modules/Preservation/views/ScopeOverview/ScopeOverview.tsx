@@ -57,7 +57,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const refreshScopeListCallback = useRef<() => void>();
 
     const refreshScopeList = (): void => {
-        console.log('Refreshing', refreshScopeListCallback.current);
         refreshScopeListCallback.current && refreshScopeListCallback.current();
     };
 
@@ -68,7 +67,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     );
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
-        console.log('Setting callback');
         refreshScopeListCallback.current = callback;
     };
 

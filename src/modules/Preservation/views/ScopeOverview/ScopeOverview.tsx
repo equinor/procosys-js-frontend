@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
@@ -55,6 +55,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     } = usePreservationContext();
 
     let refreshScopeList: () => void;
+
+    useEffect(
+        () => {
+            refreshScopeList();
+        }, [tagListFilter]
+    );
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
         refreshScopeList = callback;

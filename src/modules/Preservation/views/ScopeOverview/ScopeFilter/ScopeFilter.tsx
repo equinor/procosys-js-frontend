@@ -44,7 +44,7 @@ const dueDates: CheckboxFilterValue[] =
 
 const PRESERVATION_STATUS = [{
     title: 'All',
-    value: 'None',
+    value: 'no-filter',
     default: true
 },
 {
@@ -61,6 +61,11 @@ const PRESERVATION_STATUS = [{
 }];
 
 const ACTION_STATUS = [{
+    title: 'All',
+    value: 'no-filter',
+    default: true
+},
+{
     title: 'None',
     value: 'None'
 },
@@ -198,12 +203,13 @@ const ScopeFilter = ({
     };
 
     const onPreservationStatusFilterChanged = (value: string): void => {
-        const filter = value === 'None' ? null : value;
+        const filter = value === 'no-filter' ? null : value;
         setLocalTagListFilter((old): TagListFilter => { return { ...old, preservationStatus: filter }; });
     };
 
     const onActionStatusFilterChanged = (value: string): void => {
-        setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: value }; });
+        const filter = value === 'no-filter' ? null : value;
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: filter }; });
     };
 
     useEffect((): void => {

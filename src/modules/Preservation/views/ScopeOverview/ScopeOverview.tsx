@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
@@ -54,7 +54,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         apiClient,
     } = usePreservationContext();
 
-    let refreshScopeList: () => void;
+    const refreshScopeListCallback = useRef<() => void>();
+
+    const refreshScopeList = (): void => {
+        refreshScopeListCallback.current && refreshScopeListCallback.current();
+    };
 
     useEffect(
         () => {
@@ -63,7 +67,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     );
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
-        refreshScopeList = callback;
+        refreshScopeListCallback.current = callback;
     };
 
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {

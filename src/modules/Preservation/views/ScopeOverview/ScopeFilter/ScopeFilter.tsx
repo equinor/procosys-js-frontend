@@ -61,24 +61,24 @@ const PRESERVATION_STATUS = [{
 }];
 
 const ACTION_STATUS = [{
-    title: 'All',
+    title: 'All actions',
     value: 'no-filter',
     default: true
 },
 {
-    title: 'None',
+    title: 'No actions',
     value: 'None'
 },
 {
-    title: 'Open',
+    title: 'Open actions',
     value: 'HasOpen'
 },
 {
-    title: 'Closed',
+    title: 'Closed actions',
     value: 'HasClosed'
 },
 {
-    title: 'Overdue',
+    title: 'Overdue actions',
     value: 'HasOverDue'
 }];
 

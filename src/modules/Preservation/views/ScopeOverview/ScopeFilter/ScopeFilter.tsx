@@ -61,7 +61,7 @@ const PRESERVATION_STATUS = [{
 }];
 
 const ACTION_STATUS = [{
-    title: 'All',
+    title: 'None',
     value: 'None'
 },
 {

@@ -249,6 +249,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 meta="Optional"
                                 text={(props.area && props.area.description) || 'Type to select'}
                                 onFilter={setFilterForAreas}
+                                clearable={true}
+                                defaultText={'Type to select'}
                             >
                                 {filteredAreas.map((areaItem, index) => {
                                     return (

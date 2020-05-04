@@ -19,7 +19,7 @@ export const Container = styled.div`
     }
 `;
 
-export const DropdownIcon = styled.div`
+export const IconContainer = styled.div`
     padding-left: 8px;
     display: flex;
     flex: 1;

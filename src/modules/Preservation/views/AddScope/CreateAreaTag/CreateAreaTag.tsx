@@ -28,12 +28,12 @@ type CreateAreaTagProps = {
     setSelectedTags: (tags: Tag[]) => void;
     setAreaType: (areaType?: SelectItem) => void;
     setDiscipline: (discipline?: Discipline) => void;
-    setArea: (area?: Area) => void;
+    setArea: (area?: Area | null) => void;
     setDescription: (description?: string) => void;
     setSuffix: (suffix: string) => void;
     areaType?: SelectItem;
     discipline?: Discipline;
-    area?: Area;
+    area?: Area | null;
     suffix?: string;
     description?: string;
 }
@@ -89,7 +89,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
     const clearArea = (e: React.MouseEvent): void => {
         e.stopPropagation();
-        props.setArea(undefined);
+        props.setArea(null);
     };
 
     /** Update list of areas based on filter */

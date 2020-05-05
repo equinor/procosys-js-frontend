@@ -475,7 +475,7 @@ class PreservationApiClient extends ApiClient {
         requirements: PreserveTagRequirement[],
         projectName: string,
         disciplineCode?: string,
-        areaCode?: string,
+        areaCode?: string | null,
         suffix?: string,
         description?: string,
         remark?: string,
@@ -702,7 +702,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Get list of tags by tag function, that can be added to preservation scope.  
+     * Get list of tags by tag function, that can be added to preservation scope.
      */
     async getTagsByTagFunctionForAddPreservationScope(
         projectName: string,

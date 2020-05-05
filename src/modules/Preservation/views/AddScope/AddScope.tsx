@@ -32,7 +32,7 @@ const AddScope = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState(false);
     const [areaType, setAreaType] = useState<SelectItem | undefined>();
     const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
-    const [areaTagArea, setAreaTagArea] = useState<Area | undefined>();
+    const [areaTagArea, setAreaTagArea] = useState<Area | null>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
     const [addScopeMethod] = useState<AddScopeMethod>((): AddScopeMethod => {

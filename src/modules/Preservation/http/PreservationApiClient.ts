@@ -478,7 +478,7 @@ class PreservationApiClient extends ApiClient {
         areaCode?: string,
         suffix?: string,
         description?: string,
-        remark?: string,
+        remark?: string | null,
         storageArea?: string,
         setRequestCanceller?: RequestCanceler): Promise<void> {
 
@@ -702,7 +702,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Get list of tags by tag function, that can be added to preservation scope.  
+     * Get list of tags by tag function, that can be added to preservation scope.
      */
     async getTagsByTagFunctionForAddPreservationScope(
         projectName: string,

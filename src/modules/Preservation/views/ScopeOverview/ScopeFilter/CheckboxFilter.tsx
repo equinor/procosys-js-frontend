@@ -16,7 +16,7 @@ interface CheckboxFilterProps {
 
 const CheckboxFilter = ({
     title,
-    filterValues,
+    filterValues = [],
     tagListFilterParam,
     itemsChecked,
     onCheckboxFilterChange,
@@ -40,7 +40,7 @@ const CheckboxFilter = ({
                 isExpanded && (
                     <>
                         {
-                            filterValues?.map(value => {
+                            filterValues.map(value => {
                                 return (<Section key={value.id}>
                                     <Checkbox
                                         checked={itemsChecked.some(elementId => {

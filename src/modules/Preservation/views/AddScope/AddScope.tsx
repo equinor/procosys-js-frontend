@@ -149,7 +149,7 @@ const AddScope = (): JSX.Element => {
         });
     };
 
-    const submit = async (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string): Promise<void> => {
+    const submit = async (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string): Promise<void> => {
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
 

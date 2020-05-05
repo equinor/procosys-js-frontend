@@ -92,7 +92,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             setFilteredAreas(allAreas);
             return;
         }
-        setFilteredAreas(allAreas.filter(p => p.text?.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
+        setFilteredAreas(allAreas.filter((p: AreaItem) => p.text.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
     }, [filterForAreas, allAreas]);
 
     /** Get disciplines from api */
@@ -186,7 +186,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             }
             else if (props.discipline && props.areaType) {
                 const areaCode = (props.area) ? props.area.code : null;
-                const validTagNo = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix ?? null);
+                const validTagNo = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix || null);
                 setTagNoValid(validTagNo);
                 setTagNoValidationError(validTagNo ? null : invalidTagNoMessage);
             } else {

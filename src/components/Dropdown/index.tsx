@@ -1,6 +1,6 @@
 import { Container, DropdownButton, IconContainer, DropdownItem, FilterContainer, TopTextContainer } from './style';
 import React, { useRef, useState, useEffect } from 'react';
-import EdsIcon from '../EdsIcon/index';
+import EdsIcon from '../EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 

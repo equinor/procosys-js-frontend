@@ -1,6 +1,5 @@
-import { Container, DropdownButton, DropdownIcon, DropdownItem, FilterContainer, TopTextContainer } from './style';
+import { Container, DropdownButton, IconContainer, DropdownItem, FilterContainer, TopTextContainer } from './style';
 import React, { useRef, useState, useEffect } from 'react';
-
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
@@ -79,7 +78,7 @@ const Select: React.FC<DropdownProps> = ({
             >
                 {text}
 
-                <DropdownIcon>{Icon}</DropdownIcon>
+                <IconContainer>{Icon}</IconContainer>
             </DropdownButton>
             {isOpen && (
                 <ul ref={listRef}

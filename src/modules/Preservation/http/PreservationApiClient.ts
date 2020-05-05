@@ -475,7 +475,7 @@ class PreservationApiClient extends ApiClient {
         requirements: PreserveTagRequirement[],
         projectName: string,
         disciplineCode?: string,
-        areaCode?: string,
+        areaCode?: string | null,
         suffix?: string,
         description?: string,
         remark?: string | null,

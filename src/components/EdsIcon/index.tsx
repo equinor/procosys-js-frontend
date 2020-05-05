@@ -1,10 +1,10 @@
 import React from 'react';
 import { Icon } from '@equinor/eds-core-react';
 // eslint-disable-next-line @typescript-eslint/camelcase
-import { error_filled, closed } from '@equinor/eds-icons';
+import { error_filled } from '@equinor/eds-icons';
 
 // eslint-disable-next-line @typescript-eslint/camelcase
-const icons = { error_filled, closed };
+const icons = { error_filled };
 
 Icon.add(icons);
 

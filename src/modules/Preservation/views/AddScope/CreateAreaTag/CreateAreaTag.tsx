@@ -218,10 +218,6 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         }
     };
 
-    useEffect(() => {
-        console.log(props.area);
-    }, [props.area]);
-
     return (
         <div>
             <Header>

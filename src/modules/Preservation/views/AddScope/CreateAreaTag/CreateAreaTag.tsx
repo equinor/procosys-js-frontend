@@ -8,6 +8,7 @@ import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -84,6 +85,11 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
             description: filteredAreas[areaIndex].text
         } as Area;
         props.setArea(newArea);
+    };
+
+    const clearArea = (e: React.MouseEvent): void => {
+        e.stopPropagation();
+        props.setArea(undefined);
     };
 
     /** Update list of areas based on filter */
@@ -212,6 +218,10 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         }
     };
 
+    useEffect(() => {
+        console.log(props.area);
+    }, [props.area]);
+
     return (
         <div>
             <Header>
@@ -247,10 +257,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 label={'Area'}
                                 variant='form'
                                 meta="Optional"
+                                Icon={(props.area && props.area.description) ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div> : <KeyboardArrowDownIcon />}
                                 text={(props.area && props.area.description) || 'Type to select'}
                                 onFilter={setFilterForAreas}
-                                clearable={true}
-                                defaultText={'Type to select'}
                             >
                                 {filteredAreas.map((areaItem, index) => {
                                     return (

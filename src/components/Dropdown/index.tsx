@@ -1,6 +1,5 @@
 import { Container, DropdownButton, IconContainer, DropdownItem, FilterContainer, TopTextContainer } from './style';
 import React, { useRef, useState, useEffect } from 'react';
-import EdsIcon from '../EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
@@ -13,12 +12,9 @@ type DropdownProps = {
     label?: string;
     variant?: string;
     meta?: string;
-    clearable?: boolean;
-    defaultText?: string;
 };
 
 const KEYCODE_ESCAPE = 27;
-const clearIcon = <EdsIcon name='close' />;
 
 const Select: React.FC<DropdownProps> = ({
     disabled = false,
@@ -28,16 +24,12 @@ const Select: React.FC<DropdownProps> = ({
     onFilter,
     label,
     variant,
-    meta,
-    clearable,
-    defaultText = ''
+    meta
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     children = children ? React.Children.toArray(children) : [];
-    const [cleared, setCleared] = useState<boolean>(false);
-    const [displayIcon, setDisplayIcon] = useState<JSX.Element>(Icon);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -48,20 +40,6 @@ const Select: React.FC<DropdownProps> = ({
             onFilter('');
         }
         setIsOpen(!isOpen);
-    };
-
-    const itemClicked = (): void => {
-        toggleDropdown();
-        if (clearable) {
-            setCleared(false);
-            setDisplayIcon(clearIcon);
-        }
-    };
-
-    const clear = (e: React.MouseEvent): void => {
-        e.stopPropagation();
-        setCleared(true);
-        setDisplayIcon(Icon);
     };
 
     /**
@@ -98,13 +76,9 @@ const Select: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
-                {cleared ? defaultText : text}
+                {text}
 
-                <IconContainer onClick={(e: React.MouseEvent): void => {
-                    if (displayIcon == clearIcon) {
-                        clear(e);
-                    }
-                }}>{displayIcon}</IconContainer>
+                <IconContainer>{Icon}</IconContainer>
             </DropdownButton>
             {isOpen && (
                 <ul ref={listRef}
@@ -123,7 +97,7 @@ const Select: React.FC<DropdownProps> = ({
                                 <DropdownItem
                                     key={index}
                                     role="option"
-                                    onClick={itemClicked}
+                                    onClick={toggleDropdown}
                                     tabIndex={0}
                                 >
                                     {item}

@@ -66,19 +66,19 @@ const ACTION_STATUS = [{
     default: true
 },
 {
-    title: 'No actions',
+    title: 'Without actions',
     value: 'None'
 },
 {
-    title: 'Open actions',
+    title: 'With open actions',
     value: 'HasOpen'
 },
 {
-    title: 'Closed actions',
+    title: 'With closed actions',
     value: 'HasClosed'
 },
 {
-    title: 'Overdue actions',
+    title: 'With overdue actions',
     value: 'HasOverDue'
 }];
 

@@ -253,7 +253,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 label={'Area'}
                                 variant='form'
                                 meta="Optional"
-                                Icon={(props.area && props.area.description) ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div> : <KeyboardArrowDownIcon />}
+                                Icon={(props.area && props.area.description)
+                                    ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div>
+                                    : <KeyboardArrowDownIcon />}
                                 text={(props.area && props.area.description) || 'Type to select'}
                                 onFilter={setFilterForAreas}
                             >

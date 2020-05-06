@@ -34,18 +34,18 @@ const TagDetails = ({
             <TagContainer key={tag.tagNo}>
                 <Collapse>
                     <IconButton size='small' onClick={(): void => toggleDetails(tag.tagNo)}>
-                        {                        
+                        {
                             isExpanded
                                 ? <KeyboardArrowUpIcon />
                                 : <KeyboardArrowDownIcon />
                         }
                     </IconButton>
                     <CollapseInfo>
-                        {tag.tagNo} - {tag.description}
+                        {tag.tagNo}
                     </CollapseInfo>
                     <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
                         <DeleteOutlineIcon />
-                    </IconButton>                        
+                    </IconButton>
                 </Collapse>
                 {
                     isExpanded && (

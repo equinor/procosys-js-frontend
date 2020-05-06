@@ -30,7 +30,7 @@ const TagDetails = ({
     };
 
     const createTagSection = (tag: Tag): JSX.Element => {
-        const isExpanded = tag.tagNo === expandedTagNo;
+        const isExpanded = tag.tagNo === expandedTagNo || creatingNewTag;
 
         return (
             <TagContainer key={tag.tagNo}>
@@ -58,10 +58,12 @@ const TagDetails = ({
                                 <ExpandHeader>Tag description</ExpandHeader>
                                 <div>{tag.description}</div>
                             </ExpandSection>
-                            <ExpandSection>
-                                <ExpandHeader>MC pkg</ExpandHeader>
-                                <div>{tag.mcPkgNo}</div>
-                            </ExpandSection>
+                            { !creatingNewTag &&
+                                <ExpandSection>
+                                    <ExpandHeader>MC pkg</ExpandHeader>
+                                    <div>{tag.mcPkgNo}</div>
+                                </ExpandSection>
+                            }
                         </Expand>
                     )
                 }
@@ -74,9 +76,11 @@ const TagDetails = ({
             <Header>
                 <h1>Selected {creatingNewTag ? 'tag' : 'tags'}</h1>
             </Header>
-            <div>
-                {selectedTags.length} tags selected
-            </div>
+            { !creatingNewTag &&
+                <div>
+                    {selectedTags.length} tag(s) selected
+                </div>
+            }
             <TagList>
                 {
                     selectedTags.map(tag => createTagSection(tag))

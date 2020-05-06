@@ -371,17 +371,18 @@ class PreservationApiClient extends ApiClient {
         );
     }
 
-    async setRemarkAndStorageArea(tagId: number, remark: string, storageArea: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async setRemarkAndStorageArea(tagId: number, remark: string, storageArea: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            await this.client.put(endpoint, {
+            const result = await this.client.put(endpoint, {
                 remark,
                 storageArea,
                 rowVersion
             });
+            return result.data;
         }
         catch (error) {
             throw getPreservationApiError(error);

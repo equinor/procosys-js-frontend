@@ -10,11 +10,13 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 interface TagDetailsProps {
     selectedTags: Tag[];
     removeTag: (tagNo: string) => void;
+    creatingNewTag?: boolean;
 }
 
 const TagDetails = ({
     selectedTags,
-    removeTag
+    removeTag,
+    creatingNewTag = false
 }: TagDetailsProps): JSX.Element => {
 
     const [expandedTagNo, setExpandedTagNo] = useState<string | null>();
@@ -68,7 +70,7 @@ const TagDetails = ({
     return (
         <div>
             <Header>
-                <h1>Selected tags</h1>
+                <h1>Selected {creatingNewTag ? 'tag' : 'tags'}</h1>
             </Header>
             <div>
                 {selectedTags.length} tags selected

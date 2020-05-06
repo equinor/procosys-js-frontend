@@ -312,7 +312,7 @@ const AddScope = (): JSX.Element => {
                     </TagProperties>
                     <Divider />
                     <SelectedTags>
-                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
+                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} creatingNewTag={addScopeMethod === AddScopeMethod.CreateAreaTag ? true : false}/>
                     </SelectedTags>
                 </Container>
             );

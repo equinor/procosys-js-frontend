@@ -138,6 +138,13 @@ interface RequirementTypeResponse {
     }];
 }
 
+interface ResponsibleEntity {
+    id: string;
+    code: string;
+    title: string;
+    rowVersion: string;
+}
+
 export interface DisciplineResponse {
     code: string;
     description: string;
@@ -668,6 +675,22 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async getResponsiblesFilterForProject(project: string, setRequestCanceller?: RequestCanceler): Promise<ResponsibleEntity[]> {
+        const endpoint = '/FilterValues/Responsibles';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: project
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<ResponsibleEntity[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

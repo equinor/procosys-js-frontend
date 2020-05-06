@@ -128,7 +128,7 @@ const ScopeFilter = ({
         (async (): Promise<void> => {
             try {
                 const response = await apiClient.getResponsiblesFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
-                setResponsibles(response.map(resp => {return {id: resp.id, title: resp.title};}));
+                setResponsibles(response.map(resp => {return {id: resp.id, title: resp.code};}));
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }})();

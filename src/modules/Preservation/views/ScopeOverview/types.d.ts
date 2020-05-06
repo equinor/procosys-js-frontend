@@ -50,4 +50,5 @@ export interface TagListFilter {
     disciplineCodes: string[];
     preservationStatus: string | null;
     actionStatus: string | null;
+    responsibleIds: string[] | null;
 }

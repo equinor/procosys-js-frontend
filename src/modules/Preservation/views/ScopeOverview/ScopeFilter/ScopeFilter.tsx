@@ -11,11 +11,18 @@ import { usePreservationContext } from '../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import RadioGroupFilter from './RadioGroupFilter';
+import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+}
+
+interface Responsible {
+    id: string;
+    code: string;
+    title: string;
 }
 
 export interface CheckboxFilterValue {
@@ -92,6 +99,7 @@ const ScopeFilter = ({
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
     const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
     const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
+    const [responsibles, setResponsibles] = useState<CheckboxFilterValue[]>([]);
     const isFirstRender = useRef<boolean>(true);
 
     const KEYCODE_ENTER = 13;
@@ -108,6 +116,19 @@ const ScopeFilter = ({
             try {
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(journeys);
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
+
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
+            try {
+                const response = await apiClient.getResponsiblesFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
+                setResponsibles(response.map(resp => {return {id: resp.id, title: resp.title};}));
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }})();
@@ -183,7 +204,22 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] };
+        const newTagListFilter: TagListFilter = {
+            tagNoStartsWith: null,
+            commPkgNoStartsWith: null,
+            mcPkgNoStartsWith: null,
+            purchaseOrderNoStartsWith: null,
+            storageAreaStartsWith: null,
+            preservationStatus: null,
+            actionStatus: null,
+            journeyIds: [],
+            modeIds: [],
+            dueFilters: [],
+            requirementTypeIds: [],
+            tagFunctionCodes: [],
+            disciplineCodes: [],
+            responsibleIds: []
+        };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -208,12 +244,16 @@ const ScopeFilter = ({
         setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: filter }; });
     };
 
+    const responsibleFilterUpdated = (values: {id: string; title: string}[]): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, responsibleIds: values.map(itm => itm.id)};});
+    };
+
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
     }, [
         localTagListFilter.preservationStatus, localTagListFilter.actionStatus, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds,
-        localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes
+        localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes, localTagListFilter.responsibleIds
     ]);
 
     useEffect(() => {
@@ -325,6 +365,7 @@ const ScopeFilter = ({
             <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} />
             <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} />
+            <MultiSelectFilter label="Responsibles" items={responsibles} onChange={responsibleFilterUpdated} />
 
         </Container >
     );

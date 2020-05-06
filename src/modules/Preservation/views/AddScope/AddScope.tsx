@@ -1,4 +1,4 @@
-import { Divider, PropertiesContainer, SelectedTags, TagProperties } from './AddScope.style';
+import { Divider, Container, SelectedTags, TagProperties } from './AddScope.style';
 import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area } from './types';
 import React, { useEffect, useState } from 'react';
 
@@ -174,6 +174,14 @@ const AddScope = (): JSX.Element => {
         return Promise.resolve();
     };
 
+    const checkStatus = (tagNo: string): boolean => {
+        const isTagSelected = selectedTags.findIndex(tag => tag.tagNo === tagNo);
+        if (isTagSelected > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
     const searchTags = async (tagNo: string | null): Promise<void> => {
         setIsLoading(true);
@@ -186,8 +194,20 @@ const AddScope = (): JSX.Element => {
                     showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
                 }
             }
-            setSelectedTags([]);
-            setScopeTableData(result);
+            const res = result.map( r => {
+                return {
+                    tagNo: r.tagNo,
+                    description: r.description,
+                    purchaseOrderNumber: r.purchaseOrderNumber,
+                    commPkgNo: r.commPkgNo,
+                    mcPkgNo: r.mcPkgNo,
+                    mccrResponsibleCodes: r.mccrResponsibleCodes,
+                    tagFunctionCode: r.tagFunctionCode,
+                    isPreserved: r.isPreserved,
+                    tableData: {checked: checkStatus(r.tagNo)}
+                } as TagRow;
+            });
+            setScopeTableData(res);
         } catch (error) {
             console.error('Search tags failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -198,8 +218,7 @@ const AddScope = (): JSX.Element => {
     const removeSelectedTag = (tagNo: string): void => {
         const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
         const tableDataIndex = scopeTableData.findIndex(tag => tag.tagNo === tagNo);
-
-        if (selectedIndex > -1 && tableDataIndex > -1) {
+        if (selectedIndex > -1) {
             // remove from selected tags
             setSelectedTags(() => {
                 return [
@@ -210,11 +229,12 @@ const AddScope = (): JSX.Element => {
 
             // remove checked state from table data (needed to reflect change when navigating to "previous" step)
             const newScopeTableData = [...scopeTableData];
-            const tagToUncheck = newScopeTableData[tableDataIndex];
-
-            if (tagToUncheck.tableData) {
-                tagToUncheck.tableData.checked = false;
-                setScopeTableData(newScopeTableData);
+            if (tableDataIndex > -1) {
+                const tagToUncheck = newScopeTableData[tableDataIndex];
+                if (tagToUncheck.tableData) {
+                    tagToUncheck.tableData.checked = false;
+                    setScopeTableData(newScopeTableData);
+                }
             }
 
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
@@ -224,15 +244,23 @@ const AddScope = (): JSX.Element => {
     switch (step) {
         case 1:
             if (addScopeMethod === AddScopeMethod.AddTagsManually) {
-                return <SelectTags
-                    nextStep={goToNextStep}
-                    setSelectedTags={setSelectedTags}
-                    searchTags={searchTags}
-                    selectedTags={selectedTags}
-                    scopeTableData={scopeTableData}
-                    isLoading={isLoading}
-                    addScopeMethod={addScopeMethod}
-                />;
+                return (<Container>
+                    <SelectTags
+                        nextStep={goToNextStep}
+                        setSelectedTags={setSelectedTags}
+                        searchTags={searchTags}
+                        selectedTags={selectedTags}
+                        scopeTableData={scopeTableData}
+                        isLoading={isLoading}
+                        addScopeMethod={addScopeMethod}
+                        removeTag={removeSelectedTag}
+                    />
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
+                    </SelectedTags>
+                </Container>)
+                ;
             } else if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
                 return <SelectTags
                     nextStep={goToNextStep}
@@ -242,6 +270,7 @@ const AddScope = (): JSX.Element => {
                     scopeTableData={scopeTableData}
                     isLoading={isLoading}
                     addScopeMethod={addScopeMethod}
+                    removeTag={removeSelectedTag}
                 />;
             } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
                 return <CreateAreaTag
@@ -265,7 +294,7 @@ const AddScope = (): JSX.Element => {
                 return <Spinner large />;
             }
             return (
-                <PropertiesContainer>
+                <Container>
                     <TagProperties>
                         <SetTagProperties
                             journeys={journeys}
@@ -279,7 +308,7 @@ const AddScope = (): JSX.Element => {
                     <SelectedTags>
                         <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
                     </SelectedTags>
-                </PropertiesContainer>
+                </Container>
             );
     }
 

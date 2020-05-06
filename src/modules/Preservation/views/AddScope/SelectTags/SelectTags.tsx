@@ -17,6 +17,7 @@ type SelectTagsProps = {
     nextStep: () => void;
     isLoading: boolean;
     addScopeMethod: AddScopeMethod;
+    removeTag: (tagNo: string) => void;
 }
 
 const KEYCODE_ENTER = 13;
@@ -40,19 +41,21 @@ const tableColumns = [
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
-    const rowSelectionChanged = (selectedRows: TagRow[]): void => {
+    const rowSelectionChanged = (rowData: TagRow[], row: TagRow): void => {
         // exclude any preserved tags (material-table bug)
-        const tagsToSelect = selectedRows
-            .filter(row => !row.isPreserved)
-            .map(row => {
-                return {
-                    tagNo: row.tagNo,
-                    description: row.description,
-                    mcPkgNo: row.mcPkgNo
-                };
-            });
-
-        props.setSelectedTags(tagsToSelect);
+        if (!row.isPreserved) {
+            const newSelectedTag = {
+                tagNo: row.tagNo,
+                description: row.description,
+                mcPkgNo: row.mcPkgNo
+            };
+            if (!rowData.includes(row)) {
+                props.removeTag(row.tagNo);
+            } else {
+                const updatedList = props.selectedTags.concat(newSelectedTag);
+                props.setSelectedTags(updatedList);
+            }
+        }
     };
 
     const getTableToolbar = (selectedRows: TagRow[]): JSX.Element => {
@@ -120,7 +123,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     style={{
                         boxShadow: 'none'
                     }}
-                    onSelectionChange={rowSelectionChanged}
+                    onSelectionChange={(rowData, row): void => {
+                        rowSelectionChanged(rowData, row);
+                    }}
                     isLoading={props.isLoading}
                     components={{
                         OverlayLoading: (): JSX.Element => (

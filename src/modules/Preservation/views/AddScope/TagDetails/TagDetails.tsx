@@ -19,7 +19,13 @@ const TagDetails = ({
     creatingNewTag = false
 }: TagDetailsProps): JSX.Element => {
 
-    const [expandedTagNo, setExpandedTagNo] = useState<string | null>();
+    const [expandedTagNo, setExpandedTagNo] = useState<string | null>(() => {
+        if (creatingNewTag) {
+            return selectedTags[0].tagNo;
+        } else {
+            return null;
+        }
+    });
 
     const toggleDetails = (tagNo: string): void => {
         if (tagNo === expandedTagNo) {
@@ -30,7 +36,7 @@ const TagDetails = ({
     };
 
     const createTagSection = (tag: Tag): JSX.Element => {
-        const isExpanded = tag.tagNo === expandedTagNo || creatingNewTag;
+        const isExpanded = tag.tagNo === expandedTagNo;
 
         return (
             <TagContainer key={tag.tagNo}>

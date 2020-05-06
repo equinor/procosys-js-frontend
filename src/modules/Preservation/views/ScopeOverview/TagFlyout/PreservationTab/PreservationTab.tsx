@@ -105,7 +105,7 @@ const PreservationTab = ({
 
     const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
         try {
-            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString);
+            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagDetails.rowVersion);
         } catch (error) {
             console.error('Edit failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);

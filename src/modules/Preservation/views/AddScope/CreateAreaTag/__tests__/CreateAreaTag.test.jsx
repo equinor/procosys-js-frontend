@@ -24,12 +24,10 @@ const mockAreas = [
     },
 ];
 
-const mockValidTagNo = [
-    {
-        tagNo: '100',
-        exists: false,
-    }
-];
+const mockValidTagNo = {
+    tagNo: '#PRE-E',
+    exists: false,
+};
 
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
 
@@ -93,6 +91,14 @@ describe('<CreateAreaTag />', () => {
             /** For testing purposes this is considered a valid tagNo */
             const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' />);
             await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+        });
+    });
+
+    it('Shows tag number when fields are passed', async () => {
+        await act(async () => {
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' />);
+            await waitFor(() => expect(getByText('description text')).toBeInTheDocument);
+            await waitFor(() => expect(getByText('#PRE-E')).toBeInTheDocument);
         });
     });
 

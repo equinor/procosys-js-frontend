@@ -45,9 +45,11 @@ const TagDetails = ({
                     <CollapseInfo>
                         {tag.tagNo}
                     </CollapseInfo>
-                    <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
-                        <DeleteOutlineIcon />
-                    </IconButton>
+                    { !creatingNewTag &&
+                        <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
+                            <DeleteOutlineIcon />
+                        </IconButton>
+                    }
                 </Collapse>
                 {
                     isExpanded && (

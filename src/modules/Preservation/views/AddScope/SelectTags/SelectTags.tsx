@@ -3,7 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Button, TextField } from '@equinor/eds-core-react';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from '../types';
-import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
+import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar, NoFilterContainer } from './SelectTags.style';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
@@ -70,10 +70,10 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <h1>Add preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            <Actions>
-                {
-                    props.addScopeMethod === AddScopeMethod.AddTagsManually && (
-                        < Search >
+            {
+                props.addScopeMethod === AddScopeMethod.AddTagsManually && (
+                    <Actions>
+                        <Search>
                             <TextField
                                 id="tagSearch"
                                 placeholder="Search by tag number"
@@ -86,14 +86,24 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                                 }}
                             />
                         </Search>
-                    )
-                }
-                < Next >
-                    <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
-                </Next>
-            </Actions>
+
+                        <Next>
+                            <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
+                        </Next>
+                    </Actions>
+                )
+            }
             <Tags>
-                <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+                <NoFilterContainer>
+                    <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+                    {
+                        props.addScopeMethod !== AddScopeMethod.AddTagsManually && (
+                            <Next>
+                                <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
+                            </Next>
+                        )
+                    }
+                </NoFilterContainer>
                 <Table
                     columns={tableColumns}
                     data={props.scopeTableData}

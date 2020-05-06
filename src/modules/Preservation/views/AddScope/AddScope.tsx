@@ -262,16 +262,22 @@ const AddScope = (): JSX.Element => {
                 </Container>)
                 ;
             } else if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
-                return <SelectTags
-                    nextStep={goToNextStep}
-                    setSelectedTags={setSelectedTags}
-                    searchTags={searchTags}
-                    selectedTags={selectedTags}
-                    scopeTableData={scopeTableData}
-                    isLoading={isLoading}
-                    addScopeMethod={addScopeMethod}
-                    removeTag={removeSelectedTag}
-                />;
+                return (<Container>
+                    <SelectTags
+                        nextStep={goToNextStep}
+                        setSelectedTags={setSelectedTags}
+                        searchTags={searchTags}
+                        selectedTags={selectedTags}
+                        scopeTableData={scopeTableData}
+                        isLoading={isLoading}
+                        addScopeMethod={addScopeMethod}
+                        removeTag={removeSelectedTag}
+                    />
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
+                    </SelectedTags>
+                </Container>);
             } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
                 return <CreateAreaTag
                     nextStep={goToNextStep}

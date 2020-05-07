@@ -21,6 +21,9 @@ import TransferDialog from './TransferDialog';
 import PreservedDialog from './PreservedDialog';
 import StartPreservationDialog from './StartPreservationDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
+import EdsIcon from '../../../../components/EdsIcon';
+import { tokens } from '@equinor/eds-tokens';
+import CompleteDialog from './CompleteDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -215,6 +218,48 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             preservedFunc);
     };
 
+    let completableTags: PreservedTag[];
+    let nonCompletableTags: PreservedTag[];
+
+    const complete = async (): Promise<void> => {
+        try {
+            await apiClient.complete(completableTags.map(t => t.id));
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been completed.');
+        } catch (error) {
+            console.error('Complete failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const completeDialog = (): void => {
+        completableTags = [];
+        nonCompletableTags = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeCompleted) {
+                completableTags.push(newTag);
+            } else {
+                nonCompletableTags.push(newTag);
+            }
+        });
+
+        const completeButton = completableTags.length > 0 ? 'Complete' : null;
+        const completeFunc = completableTags.length > 0 ? complete : null;
+
+        showModalDialog(
+            'Complete Preservation',
+            <CompleteDialog completableTags={completableTags} nonCompletableTags={nonCompletableTags} />,
+            '80vw',
+            backToListButton,
+            null,
+            completeButton,
+            completeFunc);
+    };
+
     const openFlyout = (tag: PreservedTag): void => {
         setFlyoutTagId(tag.id);
         setDisplayFlyout(true);
@@ -293,6 +338,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={selectedTags.length < 1}>
                             <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
                         Transfer
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            title="Complete selected tag(s)"
+                            onClick={completeDialog}
+                            disabled={selectedTags.length < 1}>
+                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 && tokens.colors.interactive.disabled__border.rgba} /></div>
+                        Complete
                         </StyledButton>
                         <StyledButton
                             variant='ghost'

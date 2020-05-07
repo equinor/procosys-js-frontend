@@ -656,6 +656,20 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Complete  given tags
+     * @param tags  List with tag IDs
+     */
+    async complete(tags: number[]): Promise<void> {
+        const endpoint = '/Tags/CompletePreservation';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, tags, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Get all journeys
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request

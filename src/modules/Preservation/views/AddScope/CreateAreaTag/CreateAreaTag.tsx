@@ -1,5 +1,4 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField,
-    ErrorContainer, Divider, MainContainer, CollapseInfo, TagContainer, TagList, Collapse, Expand, ExpandSection, ExpandHeader, SelectedTag } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer, Divider, MainContainer, CollapseInfo, TagContainer, TagList, Collapse, Expand, ExpandSection, ExpandHeader, SelectedTag } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -222,7 +221,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     }, [props.discipline, props.area, props.areaType, props.suffix]);
 
     const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        props.setSuffix(e.target.value);
+        props.setSuffix(e.target.value.toUpperCase());
         if(e.target.value.includes(' ')) {
             setIcon(errorIcon);
         } else {

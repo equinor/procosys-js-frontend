@@ -16,10 +16,6 @@ export const Container = styled.div`
     grid-template-columns: 1fr auto;
 `;
 
-export const MainContainer = styled.div`
-        width: 70%;
-`;
-
 export const TopContainer = styled.div`
     display: flex;
     flex-direction: column;

@@ -5,7 +5,7 @@ export const Container = styled.div`
     display: flex;
 `;
 
-export const TagProperties = styled.div`
+export const LargerComponent = styled.div`
     width: 70%;
 `;
 

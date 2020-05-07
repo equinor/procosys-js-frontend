@@ -1,4 +1,4 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer, MainContainer } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -235,7 +235,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     }, [props.description]);
 
     return (
-        <MainContainer>
+        <div>
             <Header>
                 <h1>Create Area Tag</h1>
                 <div>{project.description}</div>
@@ -319,7 +319,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
                 />
             </InputContainer>
-        </MainContainer>
+        </div>
     );
 };
 

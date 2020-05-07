@@ -1,4 +1,4 @@
-import { Divider, Container, SelectedTags, TagProperties } from './AddScope.style';
+import { Divider, Container, SelectedTags, LargerComponent } from './AddScope.style';
 import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area } from './types';
 import React, { useEffect, useState } from 'react';
 
@@ -277,21 +277,23 @@ const AddScope = (): JSX.Element => {
                 </Container>);
             } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
                 return (<Container>
-                    <CreateAreaTag
-                        nextStep={goToNextStep}
-                        setSelectedTags={setSelectedTags}
-                        areaType={areaType}
-                        setAreaType={setAreaType}
-                        discipline={areaTagDiscipline}
-                        setDiscipline={setAreaTagDiscipline}
-                        area={areaTagArea}
-                        setArea={setAreaTagArea}
-                        suffix={areaTagSuffix}
-                        setSuffix={setAreaTagSuffix}
-                        description={areaTagDescription}
-                        setDescription={setAreaTagDescription}
-                        selectedTags={selectedTags}
-                    />
+                    <LargerComponent>
+                        <CreateAreaTag
+                            nextStep={goToNextStep}
+                            setSelectedTags={setSelectedTags}
+                            areaType={areaType}
+                            setAreaType={setAreaType}
+                            discipline={areaTagDiscipline}
+                            setDiscipline={setAreaTagDiscipline}
+                            area={areaTagArea}
+                            setArea={setAreaTagArea}
+                            suffix={areaTagSuffix}
+                            setSuffix={setAreaTagSuffix}
+                            description={areaTagDescription}
+                            setDescription={setAreaTagDescription}
+                            selectedTags={selectedTags}
+                        />
+                    </LargerComponent>
                     <Divider />
                     <SelectedTags>
                         <TagDetails selectedTags={selectedTags} creatingNewTag={true} />
@@ -305,7 +307,7 @@ const AddScope = (): JSX.Element => {
             }
             return (
                 <Container>
-                    <TagProperties>
+                    <LargerComponent>
                         <SetTagProperties
                             journeys={journeys}
                             requirementTypes={requirementTypes}
@@ -313,7 +315,7 @@ const AddScope = (): JSX.Element => {
                             submitForm={submit}
                             addScopeMethod={addScopeMethod}
                         />
-                    </TagProperties>
+                    </LargerComponent>
                     <Divider />
                     <SelectedTags>
                         <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} creatingNewTag={addScopeMethod === AddScopeMethod.CreateAreaTag ? true : false}/>

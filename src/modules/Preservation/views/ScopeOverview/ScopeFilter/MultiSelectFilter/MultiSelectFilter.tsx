@@ -13,7 +13,9 @@ interface Item {
 
 type MultiSelectProps = {
     items: Item[];
-    label: string;
+    headerLabel: string;
+    inputLabel: string;
+    inputPlaceholder: string;
     onChange: (selectedItems: Item[]) => void;
 }
 
@@ -57,7 +59,7 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
         <>
             <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="MultiSelectHeader">
                 <CollapseInfo>
-                    {props.label}
+                    {props.headerLabel}
                 </CollapseInfo>
                 {
                     isExpanded
@@ -68,7 +70,7 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
             {
                 isExpanded && (
                     <FilterContainer>
-                        <Dropdown text="Select" onFilter={setFilter} label="Responsible">
+                        <Dropdown text={props.inputPlaceholder} onFilter={setFilter} label={props.inputLabel}>
                             {selectableItems}
                         </Dropdown>
                         <SelectedItemsContainer>

@@ -59,7 +59,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         requirementTypeIds: [],
         tagFunctionCodes: [],
         disciplineCodes: [],
-        responsibleIds: []
+        responsibleIds: [],
+        areaCodes: []
     });
 
     const {

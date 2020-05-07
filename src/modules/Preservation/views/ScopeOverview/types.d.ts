@@ -51,4 +51,5 @@ export interface TagListFilter {
     preservationStatus: string | null;
     actionStatus: string | null;
     responsibleIds: string[] | null;
+    areaCodes: string[] | null;
 }

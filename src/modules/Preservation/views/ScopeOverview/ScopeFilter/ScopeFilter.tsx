@@ -19,9 +19,8 @@ interface ScopeFilterProps {
     setTagListFilter: (filter: TagListFilter) => void;
 }
 
-interface Responsible {
+interface FilterInput {
     id: string;
-    code: string;
     title: string;
 }
 
@@ -32,7 +31,7 @@ export interface CheckboxFilterValue {
 
 export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters' | 'requirementTypeIds' | 'tagFunctionCodes' | 'disciplineCodes';
 
-const dueDates: CheckboxFilterValue[] =
+const dueDates: FilterInput[] =
     [
         {
             id: 'OverDue',
@@ -99,7 +98,8 @@ const ScopeFilter = ({
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
     const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
     const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
-    const [responsibles, setResponsibles] = useState<CheckboxFilterValue[]>([]);
+    const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
+    const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
 
     const KEYCODE_ENTER = 13;
@@ -129,6 +129,19 @@ const ScopeFilter = ({
             try {
                 const response = await apiClient.getResponsiblesFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
                 setResponsibles(response.map(resp => {return {id: resp.id, title: resp.code};}));
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
+
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
+            try {
+                const response = await apiClient.getAreaFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
+                setAreas(response.map(resp => {return {id: resp.code, title: resp.code};}));
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }})();
@@ -218,7 +231,8 @@ const ScopeFilter = ({
             requirementTypeIds: [],
             tagFunctionCodes: [],
             disciplineCodes: [],
-            responsibleIds: []
+            responsibleIds: [],
+            areaCodes: []
         };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
@@ -248,12 +262,15 @@ const ScopeFilter = ({
         setLocalTagListFilter((old): TagListFilter => {return {...old, responsibleIds: values.map(itm => itm.id)};});
     };
 
+    const areaFilterUpdated = (values: {id: string; title: string}[]): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, areaCodes: values.map(itm => itm.id)};});
+    };
+
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
     }, [
-        localTagListFilter.preservationStatus, localTagListFilter.actionStatus, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds,
-        localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes, localTagListFilter.responsibleIds
+        localTagListFilter
     ]);
 
     useEffect(() => {
@@ -365,7 +382,8 @@ const ScopeFilter = ({
             <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} />
             <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} />
-            <MultiSelectFilter label="Responsibles" items={responsibles} onChange={responsibleFilterUpdated} />
+            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" />
+            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" />
 
         </Container >
     );

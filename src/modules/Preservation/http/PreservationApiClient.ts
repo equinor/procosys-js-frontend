@@ -256,6 +256,11 @@ interface DisciplineFilterResponse {
     description: string;
 }
 
+interface AttachmentResponse {
+    id: number;
+    title: string;
+    fileName: string;
+}
 
 interface ErrorResponse {
     ErrorCount: number;
@@ -1004,6 +1009,65 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+    * Get tag attachments
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getTagAttachments(tagId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Tags/${tagId}/Attachments`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                tagId: tagId
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<AttachmentResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add file 
+     *
+     * @param listOfTagNo List of Tag Numbers
+     * @param stepId Step ID
+     * @param projectName Name of affected project
+     * @param remark Optional: Remark for all tags
+     * @param storageArea Optional: Storage area for all tags
+     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+     *
+     * @returns Promise<void>
+     * @throws PreservationApiError
+     */
+    async addAttachmentsToTag(
+        tagNo: number,
+        listFiles: FormData,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/todo';
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                tagNo: tagNo,
+
+
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
+
 }
+
+
 
 export default PreservationApiClient;

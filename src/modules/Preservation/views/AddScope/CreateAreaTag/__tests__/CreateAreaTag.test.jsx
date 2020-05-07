@@ -81,7 +81,7 @@ describe('<CreateAreaTag />', () => {
 
     it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
         await act(async () => {
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' suffix='12' />);
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' suffix='12'/>);
             expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });
@@ -89,7 +89,8 @@ describe('<CreateAreaTag />', () => {
     it('\'Next\' button enabled when all mandatory fields are passed', async () => {
         await act(async () => {
             /** For testing purposes this is considered a valid tagNo */
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' />);
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' setSelectedTags={propFunc} />);
             await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
         });
     });
@@ -101,4 +102,3 @@ describe('<CreateAreaTag />', () => {
     it.todo('Initial \'Description\' is automatically set on render');
 
 });
-

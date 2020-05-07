@@ -9,7 +9,7 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 interface TagDetailsProps {
     selectedTags: Tag[];
-    removeTag: (tagNo: string) => void;
+    removeTag?: (tagNo: string) => void;
     creatingNewTag?: boolean;
 }
 
@@ -56,7 +56,7 @@ const TagDetails = ({
                     <CollapseInfo>
                         {tag.tagNo}
                     </CollapseInfo>
-                    { !creatingNewTag &&
+                    { removeTag &&
                         <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
                             <DeleteOutlineIcon />
                         </IconButton>
@@ -87,11 +87,9 @@ const TagDetails = ({
             <Header>
                 <h1>Selected {creatingNewTag ? 'tag' : 'tags'}</h1>
             </Header>
-            { !creatingNewTag &&
-                <div>
-                    {selectedTags.length} tag(s) selected
-                </div>
-            }
+            <div>
+                {selectedTags.length} tag(s) selected
+            </div>
             <TagList>
                 {
                     selectedTags.map(tag => createTagSection(tag))

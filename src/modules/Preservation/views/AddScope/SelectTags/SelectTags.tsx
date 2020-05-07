@@ -61,8 +61,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 };
             });
         const rowsToAdd = allRows.filter(row => !props.selectedTags.some(tag => tag.tagNo === row.tagNo));
-        const updatedList = props.selectedTags.concat(rowsToAdd);
-        props.setSelectedTags(updatedList);
+        props.setSelectedTags([...props.selectedTags, ...rowsToAdd]);
     };
 
     const handleSingleTag = (row: TagRow): void => {
@@ -74,8 +73,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         if (row.tableData && !row.tableData.checked) {
             props.removeTag(row.tagNo);
         } else {
-            const updatedList = props.selectedTags.concat(tagToHandle);
-            props.setSelectedTags(updatedList);
+            props.setSelectedTags([...props.selectedTags, tagToHandle]);
         }
     };
 

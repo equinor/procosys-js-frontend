@@ -181,15 +181,6 @@ const AddScope = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const checkSelectedStatus = (tagNo: string): boolean => {
-        const isTagSelected = selectedTags.findIndex(tag => tag.tagNo === tagNo);
-        if (isTagSelected > -1) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-
     const searchTags = async (tagNo: string | null): Promise<void> => {
         setIsLoading(true);
         try {
@@ -201,7 +192,7 @@ const AddScope = (): JSX.Element => {
                     showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
                 }
             }
-            const res = result.map( r => {
+            const res = result.map((r): TagRow => {
                 return {
                     tagNo: r.tagNo,
                     description: r.description,
@@ -211,8 +202,8 @@ const AddScope = (): JSX.Element => {
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
                     tagFunctionCode: r.tagFunctionCode,
                     isPreserved: r.isPreserved,
-                    tableData: {checked: checkSelectedStatus(r.tagNo)}
-                } as TagRow;
+                    tableData: {checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1}
+                };
             });
             setScopeTableData(res);
         } catch (error) {
@@ -303,7 +294,7 @@ const AddScope = (): JSX.Element => {
                     />
                     <Divider />
                     <SelectedTags>
-                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} creatingNewTag={true} />
+                        <TagDetails selectedTags={selectedTags} creatingNewTag={true} />
                     </SelectedTags>
                 </Container>);
             }

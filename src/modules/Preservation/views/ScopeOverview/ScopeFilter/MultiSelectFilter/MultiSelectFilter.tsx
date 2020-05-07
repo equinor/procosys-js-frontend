@@ -3,7 +3,7 @@ import Dropdown from '@procosys/components/Dropdown';
 import { Collapse, CollapseInfo } from '../ScopeFilter.style';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import {SelectedItemsContainer, Item, SelectedItem} from './MultiSelectFilter.style';
+import {SelectedItemsContainer, Item, SelectedItem, FilterContainer} from './MultiSelectFilter.style';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 interface Item {
@@ -42,7 +42,11 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
 
     const selectableItems = props.items.map(itm => {
         if (filter && !itm.title.startsWith(filter)) return;
-        return <Item onClick={(): void => onSelect(itm)} key={itm.id}>{itm.title}</Item>;
+        const isSelected = selectedItems.findIndex(selectedItem => selectedItem.id === itm.id) > -1;
+        return (<Item onClick={(): void => onSelect(itm)} key={itm.id}>
+            {isSelected ? <EdsIcon name="checkbox" /> : <EdsIcon name="checkbox_outline" />}
+            {itm.title}
+        </Item>);
     });
 
     const selectedItemsComponents = selectedItems.map(e => {
@@ -63,14 +67,14 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
             </Collapse>
             {
                 isExpanded && (
-                    <>
-                        <Dropdown text="Select" onFilter={setFilter}>
+                    <FilterContainer>
+                        <Dropdown text="Select" onFilter={setFilter} label="Responsible">
                             {selectableItems}
                         </Dropdown>
                         <SelectedItemsContainer>
                             {selectedItemsComponents}
                         </SelectedItemsContainer>
-                    </>
+                    </FilterContainer>
                 )
             }
 

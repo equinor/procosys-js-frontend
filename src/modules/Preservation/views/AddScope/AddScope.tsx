@@ -67,7 +67,14 @@ const AddScope = (): JSX.Element => {
         setIsLoading(false);
     };
 
-
+    useEffect(() => {
+        if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
+            setSelectedTags([{
+                tagNo: 'type-discipline-area-suffix',
+                description: ''
+            }]);
+        }
+    }, []);
 
     /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
@@ -174,7 +181,7 @@ const AddScope = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const checkStatus = (tagNo: string): boolean => {
+    const checkSelectedStatus = (tagNo: string): boolean => {
         const isTagSelected = selectedTags.findIndex(tag => tag.tagNo === tagNo);
         if (isTagSelected > -1) {
             return true;
@@ -204,7 +211,7 @@ const AddScope = (): JSX.Element => {
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
                     tagFunctionCode: r.tagFunctionCode,
                     isPreserved: r.isPreserved,
-                    tableData: {checked: checkStatus(r.tagNo)}
+                    tableData: {checked: checkSelectedStatus(r.tagNo)}
                 } as TagRow;
             });
             setScopeTableData(res);
@@ -259,8 +266,7 @@ const AddScope = (): JSX.Element => {
                     <SelectedTags>
                         <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
                     </SelectedTags>
-                </Container>)
-                ;
+                </Container>);
             } else if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
                 return (<Container>
                     <SelectTags
@@ -279,20 +285,27 @@ const AddScope = (): JSX.Element => {
                     </SelectedTags>
                 </Container>);
             } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
-                return <CreateAreaTag
-                    nextStep={goToNextStep}
-                    setSelectedTags={setSelectedTags}
-                    areaType={areaType}
-                    setAreaType={setAreaType}
-                    discipline={areaTagDiscipline}
-                    setDiscipline={setAreaTagDiscipline}
-                    area={areaTagArea}
-                    setArea={setAreaTagArea}
-                    suffix={areaTagSuffix}
-                    setSuffix={setAreaTagSuffix}
-                    description={areaTagDescription}
-                    setDescription={setAreaTagDescription}
-                />;
+                return (<Container>
+                    <CreateAreaTag
+                        nextStep={goToNextStep}
+                        setSelectedTags={setSelectedTags}
+                        areaType={areaType}
+                        setAreaType={setAreaType}
+                        discipline={areaTagDiscipline}
+                        setDiscipline={setAreaTagDiscipline}
+                        area={areaTagArea}
+                        setArea={setAreaTagArea}
+                        suffix={areaTagSuffix}
+                        setSuffix={setAreaTagSuffix}
+                        description={areaTagDescription}
+                        setDescription={setAreaTagDescription}
+                        selectedTags={selectedTags}
+                    />
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} creatingNewTag={true} />
+                    </SelectedTags>
+                </Container>);
             }
             break;
         case 2:

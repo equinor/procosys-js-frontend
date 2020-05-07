@@ -1,16 +1,14 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer, Divider, MainContainer, CollapseInfo, TagContainer, TagList, Collapse, Expand, ExpandSection, ExpandHeader, SelectedTag } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer, MainContainer } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import { Tag, Discipline, Area } from '../types';
+import { Tag, Discipline, Area, CheckAreaTagNo } from '../types';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import IconButton from '@material-ui/core/IconButton';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -38,6 +36,7 @@ type CreateAreaTagProps = {
     area?: Area | null;
     suffix?: string;
     description?: string;
+    selectedTags?: Tag[];
 }
 
 const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
@@ -56,14 +55,6 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [tagNoValid, setTagNoValid] = useState<boolean>(false);
 
     const [icon, setIcon] = useState<JSX.Element | null>(null);
-    const [displayTagNo, setDisplayTagNo] = useState<string>(() => {
-        if(!props.description) {
-            return 'type-discipline-area-suffix';
-        } else {
-            return '';
-        }
-    });
-    const [expanded, setExpanded] = useState<boolean>(true);
 
     /** Load areas */
     useEffect(() => {
@@ -179,7 +170,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
-    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<boolean> => {
+    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<CheckAreaTagNo> => {
         try {
             const response = await apiClient.checkAreaTagNo(
                 project.name,
@@ -187,25 +178,30 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 discipline,
                 area,
                 suffix);
-            setDisplayTagNo(response.tagNo);
-            return !response.exists;
+
+            return response;
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
-            return false;
         }
+        return {tagNo: '', exists: true};
     };
 
     useEffect(() => {
         const checkTagNos = async (): Promise<void> => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValidationError(spacesInTagNoMessage);
+                setTagNoValid(false);
             }
             else if (props.discipline && props.areaType) {
                 const areaCode = (props.area) ? props.area.code : null;
-                const validTagNo = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix || null);
-                setTagNoValid(validTagNo);
-                setTagNoValidationError(validTagNo ? null : invalidTagNoMessage);
+                const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix || null);
+                props.setSelectedTags([{
+                    tagNo: response.tagNo,
+                    description: props.description || ''}
+                ]);
+                setTagNoValid(!response.exists);
+                setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else {
                 setTagNoValidationError(null);
             }
@@ -229,133 +225,100 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         }
     };
 
-    const toggleDetails = (): void => {
-        if(expanded) {
-            setExpanded(false);
-        } else {
-            setExpanded(true);
+    useEffect(() => {
+        if (props.selectedTags && props.selectedTags.length > 0) {
+            props.setSelectedTags([{
+                tagNo: props.selectedTags[0].tagNo,
+                description: props.description || ''}
+            ]);
         }
-    };
+    }, [props.description]);
 
     return (
         <MainContainer>
-            <div id='createAreaTag'>
-                <Header>
-                    <h1>Create Area Tag</h1>
-                    <div>{project.description}</div>
-                </Header>
-                <TopContainer>
-                    <ErrorContainer>
-                        {tagNoValidationError && (<Typography variant="caption">{tagNoValidationError}</Typography>)}
-                    </ErrorContainer>
-                    <Container>
-                        <InputContainer>
-                            <FormFieldSpacer>
-                                <SelectInput
-                                    onChange={setAreaTypeForm}
-                                    data={areaTypes}
-                                    label={'Area type'}
-                                >
-                                    {(props.areaType && props.areaType.text) || 'Select'}
-                                </SelectInput>
-                            </FormFieldSpacer>
-                            <FormFieldSpacer>
-                                <SelectInput
-                                    onChange={setDisciplineForm}
-                                    data={mappedDisciplines}
-                                    label={'Discipline'}
-                                >
-                                    {(props.discipline && props.discipline.description) || 'Select'}
-                                </SelectInput>
-                            </FormFieldSpacer>
-                            <FormFieldSpacer>
-                                <Dropdown
-                                    label={'Area'}
-                                    variant='form'
-                                    meta="Optional"
-                                    Icon={(props.area && props.area.description)
-                                        ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div>
-                                        : <KeyboardArrowDownIcon />}
-                                    text={(props.area && props.area.description) || 'Type to select'}
-                                    onFilter={setFilterForAreas}
-                                >
-                                    {filteredAreas.map((areaItem, index) => {
-                                        return (
-                                            <DropdownItem
-                                                key={index}
-                                                onClick={(event): void =>
-                                                    changeArea(event, index)
-                                                }
-                                            >
-                                                {areaItem.text}
-                                            </DropdownItem>
-                                        );
-                                    })}
-                                </Dropdown>
-                            </FormFieldSpacer>
-                            <Next>
-                                <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid}>Next</Button>
-                            </Next>
-                        </InputContainer>
-                    </Container >
-                </TopContainer>
-                <InputContainer>
-                    <SuffixTextField
-                        id={'Suffix'}
-                        label="Tag number suffix"
-                        inputRef={suffixInputRef}
-                        placeholder="Write Here"
-                        helperText="Spaces are not allowed"
-                        helperIcon={icon}
-                        variant={icon ? 'error': 'default' }
-                        meta="Optional"
-                        onChange={checkSuffix}
-                    />
-                </InputContainer>
-                <InputContainer>
-                    <TextField
-                        id={'Description'}
-                        style={{ maxWidth: '350px' }}
-                        label="Description"
-                        inputRef={descriptionInputRef}
-                        multiline={true}
-                        placeholder="Write Here"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
-                    />
-                </InputContainer>
-            </div>
-            <Divider />
-            <SelectedTag>
-                <Header>
-                    <h1>Selected tag</h1>
-                </Header>
-                <TagList>
-                    <TagContainer>
-                        <Collapse>
-                            <IconButton size='small' onClick={toggleDetails}>
-                                {
-                                    expanded
-                                        ? <KeyboardArrowUpIcon />
-                                        : <KeyboardArrowDownIcon />
-                                }
-                            </IconButton>
-                            <CollapseInfo>
-                                {displayTagNo}
-                            </CollapseInfo>
-                        </Collapse>
-                        {
-                            expanded && (
-                                <Expand>
-                                    <ExpandSection>
-                                        <ExpandHeader>Tag description</ExpandHeader>
-                                        <div>{props.description}</div>
-                                    </ExpandSection>
-                                </Expand>
-                            )
-                        }
-                    </TagContainer>
-                </TagList>
-            </SelectedTag>
+            <Header>
+                <h1>Create Area Tag</h1>
+                <div>{project.description}</div>
+            </Header>
+            <TopContainer>
+                <ErrorContainer>
+                    {tagNoValidationError && (<Typography variant="caption">{tagNoValidationError}</Typography>)}
+                </ErrorContainer>
+                <Container>
+                    <InputContainer>
+                        <FormFieldSpacer>
+                            <SelectInput
+                                onChange={setAreaTypeForm}
+                                data={areaTypes}
+                                label={'Area type'}
+                            >
+                                {(props.areaType && props.areaType.text) || 'Select'}
+                            </SelectInput>
+                        </FormFieldSpacer>
+                        <FormFieldSpacer>
+                            <SelectInput
+                                onChange={setDisciplineForm}
+                                data={mappedDisciplines}
+                                label={'Discipline'}
+                            >
+                                {(props.discipline && props.discipline.description) || 'Select'}
+                            </SelectInput>
+                        </FormFieldSpacer>
+                        <FormFieldSpacer>
+                            <Dropdown
+                                label={'Area'}
+                                variant='form'
+                                meta="Optional"
+                                Icon={(props.area && props.area.description)
+                                    ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div>
+                                    : <KeyboardArrowDownIcon />}
+                                text={(props.area && props.area.description) || 'Type to select'}
+                                onFilter={setFilterForAreas}
+                            >
+                                {filteredAreas.map((areaItem, index) => {
+                                    return (
+                                        <DropdownItem
+                                            key={index}
+                                            onClick={(event): void =>
+                                                changeArea(event, index)
+                                            }
+                                        >
+                                            {areaItem.text}
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>
+                        </FormFieldSpacer>
+                        <Next>
+                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid}>Next</Button>
+                        </Next>
+                    </InputContainer>
+                </Container >
+            </TopContainer>
+            <InputContainer>
+                <SuffixTextField
+                    id={'Suffix'}
+                    label="Tag number suffix"
+                    inputRef={suffixInputRef}
+                    placeholder="Write Here"
+                    helperText="Spaces are not allowed"
+                    helperIcon={icon}
+                    variant={icon ? 'error': 'default' }
+                    meta="Optional"
+                    onChange={checkSuffix}
+                />
+            </InputContainer>
+            <InputContainer>
+                <TextField
+                    id={'Description'}
+                    style={{ maxWidth: '350px' }}
+                    label="Description"
+                    inputRef={descriptionInputRef}
+                    multiline={true}
+                    placeholder="Write Here"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
+                />
+            </InputContainer>
         </MainContainer>
     );
 };

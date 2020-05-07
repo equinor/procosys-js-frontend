@@ -94,14 +94,6 @@ describe('<CreateAreaTag />', () => {
         });
     });
 
-    it('Shows tag number when fields are passed', async () => {
-        await act(async () => {
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' />);
-            await waitFor(() => expect(getByText('description text')).toBeInTheDocument);
-            await waitFor(() => expect(getByText('#PRE-E')).toBeInTheDocument);
-        });
-    });
-
     it.todo('Initial \'Area\' is automatically selected in dropdown');
     it.todo('Initial \'Area Type\' is automatically selected in dropdown');
     it.todo('Initial \'Discipline\' is automatically selected in dropdown');

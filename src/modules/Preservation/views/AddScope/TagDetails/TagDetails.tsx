@@ -19,19 +19,24 @@ const TagDetails = ({
     creatingNewTag = false
 }: TagDetailsProps): JSX.Element => {
 
-    const [expandedTagNo, setExpandedTagNo] = useState<string | null>(() => {
+    const [expandedTagNo, setExpandedTagNo] = useState<string | null>();
+    const [defaultExpanded, setDefaultExpanded] = useState<boolean>(() => {
         if (creatingNewTag) {
-            return selectedTags[0].tagNo;
+            return true;
         } else {
-            return null;
+            return false;
         }
     });
 
     const toggleDetails = (tagNo: string): void => {
-        if (tagNo === expandedTagNo) {
-            setExpandedTagNo(null);
+        if (creatingNewTag) {
+            setDefaultExpanded(defaultExpanded ? false : true);
         } else {
-            setExpandedTagNo(tagNo);
+            if (tagNo === expandedTagNo) {
+                setExpandedTagNo(null);
+            } else {
+                setExpandedTagNo(tagNo);
+            }
         }
     };
 
@@ -43,7 +48,7 @@ const TagDetails = ({
                 <Collapse>
                     <IconButton size='small' onClick={(): void => toggleDetails(tag.tagNo)}>
                         {
-                            isExpanded
+                            isExpanded || defaultExpanded
                                 ? <KeyboardArrowUpIcon />
                                 : <KeyboardArrowDownIcon />
                         }
@@ -58,7 +63,7 @@ const TagDetails = ({
                     }
                 </Collapse>
                 {
-                    isExpanded && (
+                    (isExpanded || defaultExpanded) && (
                         <Expand>
                             <ExpandSection>
                                 <ExpandHeader>Tag description</ExpandHeader>

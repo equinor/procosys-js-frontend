@@ -18,6 +18,11 @@ export interface TagRow {
     };
 }
 
+export interface CheckAreaTagNo {
+    tagNo: string;
+    exists: boolean;
+}
+
 /**
  * Journey
  */

@@ -33,19 +33,18 @@ export const FilterContainer = styled.div`
 `;
 
 export const SelectedItem = styled.span`
-display: flex;
-justify-content: center;
-padding: 4px 8px;
-margin-right: 5px;
-margin-bottom: 8px;
-border-radius: 1rem;
-font-size: 12px;
-cursor: pointer;
-line-height: 1.6em;
-color: ${tokens.colors.interactive.primary__resting.rgba};
-background-color: ${tokens.colors.interactive.primary__hover_alt.rgba};
-svg {
-    margin-right: 4px;
-}
-
+    display: flex;
+    justify-content: center;
+    padding: 4px 8px;
+    margin-right: 5px;
+    margin-bottom: 8px;
+    border-radius: 1rem;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 1.6em;
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+    background-color: ${tokens.colors.interactive.primary__hover_alt.rgba};
+    svg {
+        margin-right: 4px;
+    }
 `;

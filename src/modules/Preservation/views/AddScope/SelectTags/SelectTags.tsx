@@ -41,20 +41,53 @@ const tableColumns = [
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
+    const removeAllSelectedTagsInScope = (): void => {
+        const tagNos: string[] = [];
+        props.scopeTableData.forEach(l => {
+            tagNos.push(l.tagNo);
+        });
+        const newSelectedTags = props.selectedTags.filter(item => !tagNos.includes(item.tagNo));
+        props.setSelectedTags(newSelectedTags);
+    };
+
+    const addAllTagsInScope = (rowData: TagRow[]): void => {
+        const allRows = rowData
+            .filter(row => !row.isPreserved)
+            .map(row => {
+                return {
+                    tagNo: row.tagNo,
+                    description: row.description,
+                    mcPkgNo: row.mcPkgNo
+                };
+            });
+        const rowsToAdd = allRows.filter(row => !props.selectedTags.some(tag => tag.tagNo === row.tagNo));
+        const updatedList = props.selectedTags.concat(rowsToAdd);
+        props.setSelectedTags(updatedList);
+    };
+
+    const handleSingleTag = (row: TagRow): void => {
+        const tagToHandle = {
+            tagNo: row.tagNo,
+            description: row.description,
+            mcPkgNo: row.mcPkgNo
+        };
+        if (row.tableData && !row.tableData.checked) {
+            props.removeTag(row.tagNo);
+        } else {
+            const updatedList = props.selectedTags.concat(tagToHandle);
+            props.setSelectedTags(updatedList);
+        }
+    };
+
     const rowSelectionChanged = (rowData: TagRow[], row: TagRow): void => {
         // exclude any preserved tags (material-table bug)
-        if (!row.isPreserved) {
-            const newSelectedTag = {
-                tagNo: row.tagNo,
-                description: row.description,
-                mcPkgNo: row.mcPkgNo
-            };
-            if (!rowData.includes(row)) {
-                props.removeTag(row.tagNo);
-            } else {
-                const updatedList = props.selectedTags.concat(newSelectedTag);
-                props.setSelectedTags(updatedList);
-            }
+
+        if (rowData.length == 0 && props.scopeTableData.length > 0) {
+            removeAllSelectedTagsInScope();
+        } else if(rowData.length > 0 && rowData[0].tableData && !row) {
+            addAllTagsInScope(rowData);
+        } else if (rowData.length > 0 && !row.isPreserved) {
+            handleSingleTag(row);
         }
     };
 

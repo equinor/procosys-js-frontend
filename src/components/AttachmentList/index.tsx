@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
-
-
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { usePreservationContext } from '../../../../context/PreservationContext';
-import { Canceler } from 'axios';
-import Table from './../../../../../../components/Table';
-import { Container, AttachmentLink, AddFile, FormFieldSpacer } from './AttachmentTab.style';
+import Table from './../Table';
+import { Container, AttachmentLink, AddFile, FormFieldSpacer } from './style';
 import { Link } from 'react-router-dom';
 
 
@@ -18,34 +13,21 @@ interface Attachment {
     fileName: string;
 }
 
-interface AttachmentTabProps {
-    tagId: number | null;
+interface AttachmentListProps {
+    getAttachments: () => Attachment[];
+    addFile: (file: Attachment) => void;
+    deleteFile: (id: number) => void;
 }
 
-const AttachmentTab = ({
-    tagId
-}: AttachmentTabProps): JSX.Element => {
-    const { apiClient } = usePreservationContext();
+const AttachmentList = ({
+    getAttachments,
+    addFile,
+    deleteFile,
+}: AttachmentListProps): JSX.Element => {
     const [attachments, setAttachments] = useState<Attachment[]>([]);
 
     useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            try {
-                if (tagId != null) {
-                    const attachments = await apiClient.getTagAttachments(tagId, (cancel: Canceler) => requestCancellor = cancel);
-
-                    setAttachments(attachments);
-                }
-            } catch (error) {
-                console.error('Get attachments failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
-            }
-        })();
-
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
+        setAttachments(getAttachments());
     }, []);
 
 
@@ -61,22 +43,23 @@ const AttachmentTab = ({
 
     const deleteAttachment = (rowData: Attachment): void => {
         if (confirm(`You want to delete the file '${rowData.title}'`)) {
-            //todo delete
+            deleteFile(rowData.id);
         }
     };
 
     const handleSubmitFile = (e: any): void => {
         e.preventDefault();
+        addFile(e.target);
     };
 
     const addFileForm = (): JSX.Element => {
         return (
-            <form onSubmit={handleSubmitFile}>
+            <form>
                 <label htmlFor="addFile">
                     <AddCircleOutlinedIcon /> <FormFieldSpacer /> Add file
                 </label>
                 <input id="addFile" style={{ display: 'none' }} type='file' onChange={(e): void => {
-                    console.log(e);
+                    handleSubmitFile(e);
                 }}
                 />
             </form>
@@ -117,4 +100,4 @@ const AttachmentTab = ({
     );
 };
 
-export default AttachmentTab; 
+export default AttachmentList; 

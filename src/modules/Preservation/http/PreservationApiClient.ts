@@ -24,6 +24,7 @@ interface PreservedTagResponse {
         readyToBePreserved: boolean;
         readyToBeStarted: boolean;
         readyToBeTransferred: boolean;
+        readyToBeCompleted: boolean;
         requirements: [
             {
                 id: number;

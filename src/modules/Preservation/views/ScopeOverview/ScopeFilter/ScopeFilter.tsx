@@ -11,11 +11,17 @@ import { usePreservationContext } from '../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import RadioGroupFilter from './RadioGroupFilter';
+import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+}
+
+interface FilterInput {
+    id: string;
+    title: string;
 }
 
 export interface CheckboxFilterValue {
@@ -25,7 +31,7 @@ export interface CheckboxFilterValue {
 
 export type TagListFilterParamType = 'modeIds' | 'journeyIds' | 'dueFilters' | 'requirementTypeIds' | 'tagFunctionCodes' | 'disciplineCodes';
 
-const dueDates: CheckboxFilterValue[] =
+const dueDates: FilterInput[] =
     [
         {
             id: 'OverDue',
@@ -92,6 +98,8 @@ const ScopeFilter = ({
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
     const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
     const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
+    const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
+    const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
 
     const KEYCODE_ENTER = 13;
@@ -108,6 +116,32 @@ const ScopeFilter = ({
             try {
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(journeys);
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
+
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
+            try {
+                const response = await apiClient.getResponsiblesFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
+                setResponsibles(response.map(resp => {return {id: resp.id, title: resp.code};}));
+            } catch (error) {
+                showSnackbarNotification(error.message, 5000);
+            }})();
+        return (): void => requestCancellor && requestCancellor();
+    },[]);
+
+    useEffect(() => {
+        let requestCancellor: Canceler;
+
+        (async (): Promise<void> => {
+            try {
+                const response = await apiClient.getAreaFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
+                setAreas(response.map(resp => {return {id: resp.code, title: resp.code};}));
             } catch (error) {
                 showSnackbarNotification(error.message, 5000);
             }})();
@@ -183,7 +217,23 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = { tagNoStartsWith: null, commPkgNoStartsWith: null, mcPkgNoStartsWith: null, purchaseOrderNoStartsWith: null, storageAreaStartsWith: null, preservationStatus: null, actionStatus: null, journeyIds: [], modeIds: [], dueFilters: [], requirementTypeIds: [], tagFunctionCodes: [], disciplineCodes: [] };
+        const newTagListFilter: TagListFilter = {
+            tagNoStartsWith: null,
+            commPkgNoStartsWith: null,
+            mcPkgNoStartsWith: null,
+            purchaseOrderNoStartsWith: null,
+            storageAreaStartsWith: null,
+            preservationStatus: null,
+            actionStatus: null,
+            journeyIds: [],
+            modeIds: [],
+            dueFilters: [],
+            requirementTypeIds: [],
+            tagFunctionCodes: [],
+            disciplineCodes: [],
+            responsibleIds: [],
+            areaCodes: []
+        };
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -208,12 +258,19 @@ const ScopeFilter = ({
         setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: filter }; });
     };
 
+    const responsibleFilterUpdated = (values: {id: string; title: string}[]): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, responsibleIds: values.map(itm => itm.id)};});
+    };
+
+    const areaFilterUpdated = (values: {id: string; title: string}[]): void => {
+        setLocalTagListFilter((old): TagListFilter => {return {...old, areaCodes: values.map(itm => itm.id)};});
+    };
+
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
     }, [
-        localTagListFilter.preservationStatus, localTagListFilter.actionStatus, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.modeIds,
-        localTagListFilter.requirementTypeIds, localTagListFilter.disciplineCodes, localTagListFilter.tagFunctionCodes
+        localTagListFilter
     ]);
 
     useEffect(() => {
@@ -325,6 +382,8 @@ const ScopeFilter = ({
             <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} />
             <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} />
+            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" />
+            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" />
 
         </Container >
     );

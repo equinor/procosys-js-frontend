@@ -46,10 +46,10 @@ stages:
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # Dev deploy stage
-- stage: k8s
-  displayName: 'k8s-Dev'
+- stage: dev
+  displayName: 'Dev'
   dependsOn: 'build_and_test'
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'

@@ -46,28 +46,26 @@ stages:
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # Dev deploy stage
-- stage: dev
-  displayName: 'Dev'
+- stage: k8s
+  displayName: 'k8s-Dev'
   dependsOn: 'build_and_test'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
+    containerRegistry: '${{ variables.containerRegistryName }}'
 
   jobs:
-
-  - template: /templates/pipelines/webapprelease.yml@templates
+  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
     parameters:
+      deploymentName: 'deploy_to_k8s'
       dependsOn: ''
-      deploymentName: 'publish_container_to_webapp'
       serviceConnection: '${{ variables.serviceConnection }}'
-      webApp: '${{ variables.frontendWebAppName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
-      containerRegistry: '${{ variables.containerRegistry }}'
-      repository: ${{ variables.repositoryName }}
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
+      clusterName: 'aks-pcs-test'

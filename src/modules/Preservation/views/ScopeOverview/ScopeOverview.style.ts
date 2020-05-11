@@ -68,7 +68,8 @@ export const StyledButton = styled(Button)`
     justify-content: center;
 
     .iconNextToText {
-        margin-right: 8px;
+        margin-right: var(--grid-unit);
+        height: calc(var(--grid-unit) * 2);
     }
 
     svg path {

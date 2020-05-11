@@ -21,6 +21,9 @@ import TransferDialog from './TransferDialog';
 import PreservedDialog from './PreservedDialog';
 import StartPreservationDialog from './StartPreservationDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
+import EdsIcon from '../../../../components/EdsIcon';
+import { tokens } from '@equinor/eds-tokens';
+import CompleteDialog from './CompleteDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -231,6 +234,35 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             preservedFunc);
     };
 
+    const complete = async (): Promise<void> => {
+        try {
+            const tags = selectedTags.filter(tag => tag.readyToBeCompleted);
+            await apiClient.complete(tags.map(t => t.id));
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been completed.');
+        } catch (error) {
+            console.error('Complete failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const showCompleteDialog = (): void => {
+        const hasCompletableTags = selectedTags.some(tag => tag.readyToBePreserved);
+        const completeButton = hasCompletableTags ? 'Complete' : null;
+        const completeFunc = hasCompletableTags ? complete : null;
+
+        showModalDialog(
+            'Complete Preservation',
+            <CompleteDialog tags={selectedTags} />,
+            '80vw',
+            backToListButton,
+            null,
+            completeButton,
+            completeFunc);
+    };
+
     const openFlyout = (tag: PreservedTag): void => {
         setFlyoutTagId(tag.id);
         setDisplayFlyout(true);
@@ -309,6 +341,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={selectedTags.length < 1}>
                             <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
                         Transfer
+                        </StyledButton>
+                        <StyledButton
+                            variant='ghost'
+                            title="Complete selected tag(s)"
+                            onClick={showCompleteDialog}
+                            disabled={selectedTags.length < 1}>
+                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 && tokens.colors.interactive.disabled__border.rgba} /></div>
+                        Complete
                         </StyledButton>
                         <StyledButton
                             variant='ghost'

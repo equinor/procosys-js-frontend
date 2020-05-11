@@ -24,6 +24,7 @@ interface PreservedTagResponse {
         readyToBePreserved: boolean;
         readyToBeStarted: boolean;
         readyToBeTransferred: boolean;
+        readyToBeCompleted: boolean;
         requirements: [
             {
                 id: number;
@@ -672,6 +673,20 @@ class PreservationApiClient extends ApiClient {
      */
     async transfer(tags: number[]): Promise<void> {
         const endpoint = '/Tags/Transfer';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, tags, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Complete  given tags
+     * @param tags  List with tag IDs
+     */
+    async complete(tags: number[]): Promise<void> {
+        const endpoint = '/Tags/CompletePreservation';
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.put(endpoint, tags, settings);

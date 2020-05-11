@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Tag } from '../types';
 import { Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
@@ -9,34 +9,31 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 interface TagDetailsProps {
     selectedTags: Tag[];
-    removeTag?: (tagNo: string) => void;
-    creatingNewTag?: boolean;
+    removeTag?: ((tagNo: string) => void) | null;
+    collapsed?: boolean;
+    showMCPkg?: boolean;
 }
 
 const TagDetails = ({
     selectedTags,
     removeTag,
-    creatingNewTag = false
+    collapsed = true,
+    showMCPkg = true
 }: TagDetailsProps): JSX.Element => {
 
-    const [expandedTagNo, setExpandedTagNo] = useState<string | null>();
-    const [defaultExpanded, setDefaultExpanded] = useState<boolean>(() => {
-        if (creatingNewTag) {
-            return true;
-        } else {
-            return false;
+    const [expandedTagNo, setExpandedTagNo] = useState<string | null>(null);
+
+    useEffect((): void => {
+        if (!collapsed && selectedTags.length > 0) {
+            setExpandedTagNo(selectedTags[0].tagNo);
         }
-    });
+    }, [selectedTags]);
 
     const toggleDetails = (tagNo: string): void => {
-        if (creatingNewTag) {
-            setDefaultExpanded(defaultExpanded ? false : true);
+        if (tagNo === expandedTagNo) {
+            setExpandedTagNo(null);
         } else {
-            if (tagNo === expandedTagNo) {
-                setExpandedTagNo(null);
-            } else {
-                setExpandedTagNo(tagNo);
-            }
+            setExpandedTagNo(tagNo);
         }
     };
 
@@ -48,7 +45,7 @@ const TagDetails = ({
                 <Collapse>
                     <IconButton size='small' onClick={(): void => toggleDetails(tag.tagNo)}>
                         {
-                            isExpanded || defaultExpanded
+                            isExpanded
                                 ? <KeyboardArrowUpIcon />
                                 : <KeyboardArrowDownIcon />
                         }
@@ -63,13 +60,13 @@ const TagDetails = ({
                     }
                 </Collapse>
                 {
-                    (isExpanded || defaultExpanded) && (
+                    (isExpanded) && (
                         <Expand>
                             <ExpandSection>
                                 <ExpandHeader>Tag description</ExpandHeader>
                                 <div>{tag.description}</div>
                             </ExpandSection>
-                            { !creatingNewTag &&
+                            { showMCPkg &&
                                 <ExpandSection>
                                     <ExpandHeader>MC pkg</ExpandHeader>
                                     <div>{tag.mcPkgNo}</div>

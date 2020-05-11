@@ -298,7 +298,7 @@ const AddScope = (): JSX.Element => {
                     </LargerComponent>
                     <Divider />
                     <SelectedTags>
-                        <TagDetails selectedTags={selectedTags} creatingNewTag={true} />
+                        <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
                     </SelectedTags>
                 </Container>);
             }
@@ -320,7 +320,11 @@ const AddScope = (): JSX.Element => {
                     </LargerComponent>
                     <Divider />
                     <SelectedTags>
-                        <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} creatingNewTag={addScopeMethod === AddScopeMethod.CreateAreaTag ? true : false}/>
+                        <TagDetails
+                            selectedTags={selectedTags}
+                            removeTag={addScopeMethod != AddScopeMethod.CreateAreaTag && removeSelectedTag || null}
+                            showMCPkg={addScopeMethod != AddScopeMethod.CreateAreaTag}
+                            collapsed={addScopeMethod != AddScopeMethod.CreateAreaTag} />
                     </SelectedTags>
                 </Container>
             );

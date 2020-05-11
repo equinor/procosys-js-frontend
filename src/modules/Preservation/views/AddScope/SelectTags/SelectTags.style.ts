@@ -6,6 +6,11 @@ export const Container = styled.div`
     flex-direction: column;
 `;
 
+export const NoFilterContainer = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 export const Header = styled.header`
     display: flex;
     align-items: baseline;
@@ -48,7 +53,6 @@ export const Tags = styled.div`
 
 export const TagsHeader = styled.div`
     font-weight: bold;
-    margin-bottom: calc(var(--grid-unit));
 `;
 
 export const LoadingContainer = styled.div`

@@ -33,6 +33,7 @@ interface PreservedTagResponse {
                 nextDueAsYearAndWeek: string;
                 nextDueWeeks: number;
                 readyToBePreserved: boolean;
+                rowVersion: string;
             }
         ];
         status: string;
@@ -40,6 +41,7 @@ interface PreservedTagResponse {
         tagFunctionCode: string;
         tagNo: string;
         tagType: string;
+        rowVersion: string;
     }];
 }
 
@@ -75,6 +77,7 @@ interface TagDetailsResponse {
     readyToBePreserved: boolean;
     remark: string;
     storageArea: string;
+    rowVersion: string;
 }
 
 interface TagListFilter {
@@ -101,13 +104,16 @@ interface JourneyResponse {
             mode: {
                 id: number;
                 title: string;
+                rowVersion: string;
             };
             responsible: {
                 id: number;
                 name: string;
+                rowVersion: string;
             };
         }
     ];
+    rowVersion: string;
 }
 
 interface RequirementTypeResponse {
@@ -136,7 +142,19 @@ interface RequirementTypeResponse {
             }];
             needsUserInput: boolean;
         }];
+        rowVersion: string;
     }];
+}
+
+interface ResponsibleEntity {
+    id: string;
+    code: string;
+    title: string;
+}
+
+interface AreaFilterEntity {
+    code: string;
+    description: string;
 }
 
 export interface DisciplineResponse {
@@ -181,6 +199,7 @@ interface TagRequirementsResponse {
         }
     ];
     comment: string;
+    rowVersion: string;
 }
 
 interface ActionResponse {
@@ -188,6 +207,7 @@ interface ActionResponse {
     title: string;
     dueTimeUtc: Date | null;
     isClosed: boolean;
+    rowVersion: string;
 }
 
 interface ActionDetailsResponse {
@@ -208,6 +228,7 @@ interface ActionDetailsResponse {
         firstName: string;
         lastName: string;
     };
+    rowVersion: string;
 }
 
 interface PreserveTagRequirement {
@@ -298,6 +319,9 @@ function getPreservationApiError(error: any): PreservationApiError {
     if (error.response.status == 500) {
         return new PreservationApiError(error.response.data);
     }
+    if (error.response.status == 409) {
+        return new PreservationApiError('Data has been updated by another user. Please reload and start over!');
+    }
 
     const response = error.response.data as ErrorResponse;
     let errorMessage = `${error.response.status} (${error.response.statusText})`;
@@ -359,16 +383,18 @@ class PreservationApiClient extends ApiClient {
         );
     }
 
-    async setRemarkAndStorageArea(tagId: number, remark: string, storageArea: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async setRemarkAndStorageArea(tagId: number, remark: string, storageArea: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            await this.client.put(endpoint, {
+            const result = await this.client.put(endpoint, {
                 remark,
-                storageArea
+                storageArea,
+                rowVersion
             });
+            return result.data;
         }
         catch (error) {
             throw getPreservationApiError(error);
@@ -683,6 +709,50 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Get all responsibles, filtered by project
+     *
+     * @param project Project Name
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getResponsiblesFilterForProject(project: string, setRequestCanceller?: RequestCanceler): Promise<ResponsibleEntity[]> {
+        const endpoint = '/FilterValues/Responsibles';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: project
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<ResponsibleEntity[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Get all areas, filtered by project
+     *
+     * @param project Project Name
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getAreaFilterForProject(project: string, setRequestCanceller?: RequestCanceler): Promise<AreaFilterEntity[]> {
+        const endpoint = '/FilterValues/Areas';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: project
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<AreaFilterEntity[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

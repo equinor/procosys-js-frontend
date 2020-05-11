@@ -14,7 +14,6 @@ export const Header = styled.header`
 export const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
-
 `;
 
 export const TopContainer = styled.div`

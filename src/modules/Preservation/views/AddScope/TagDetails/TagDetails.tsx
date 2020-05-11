@@ -85,7 +85,7 @@ const TagDetails = ({
     return (
         <div>
             <Header>
-                <h1>Selected {creatingNewTag ? 'tag' : 'tags'}</h1>
+                <h1>Selected tag(s)</h1>
             </Header>
             <div>
                 {selectedTags.length} tag(s) selected

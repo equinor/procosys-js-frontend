@@ -1,6 +1,6 @@
 import { Divider, Container, SelectedTags, LargerComponent } from './AddScope.style';
 import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area } from './types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { Canceler } from 'axios';
 import SelectTags from './SelectTags/SelectTags';
@@ -24,18 +24,8 @@ const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
     const { method } = useParams();
-    const [step, setStep] = useState(1);
-    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-    const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
-    const [journeys, setJourneys] = useState<Journey[]>([]);
-    const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [areaType, setAreaType] = useState<SelectItem | undefined>();
-    const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
-    const [areaTagArea, setAreaTagArea] = useState<Area | null>();
-    const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
-    const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
-    const [addScopeMethod] = useState<AddScopeMethod>((): AddScopeMethod => {
+
+    const addScopeMethod = useMemo((): AddScopeMethod => {
         switch (method) {
             case 'selectTagsManual':
                 return (AddScopeMethod.AddTagsManually);
@@ -46,7 +36,28 @@ const AddScope = (): JSX.Element => {
             default:
                 return (AddScopeMethod.Unknown);
         }
+    }, [method]);
+
+    const [step, setStep] = useState(1);
+    const [selectedTags, setSelectedTags] = useState<Tag[]>((): Tag[] => {
+        if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
+            return [{
+                tagNo: 'type-discipline-area-suffix',
+                description: ''
+            }];
+        }
+        return [];
     });
+    const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
+    const [journeys, setJourneys] = useState<Journey[]>([]);
+    const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [areaType, setAreaType] = useState<SelectItem | undefined>();
+    const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
+    const [areaTagArea, setAreaTagArea] = useState<Area | null>();
+    const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
+    const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
+
 
 
     const getTagsForAutoscoping = async (): Promise<void> => {
@@ -66,15 +77,6 @@ const AddScope = (): JSX.Element => {
         }
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
-            setSelectedTags([{
-                tagNo: 'type-discipline-area-suffix',
-                description: ''
-            }]);
-        }
-    }, []);
 
     /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.

@@ -218,12 +218,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             preservedFunc);
     };
 
-    let completableTags: PreservedTag[];
-    let nonCompletableTags: PreservedTag[];
-
     const complete = async (): Promise<void> => {
         try {
-            await apiClient.complete(completableTags.map(t => t.id));
+            const tags = selectedTags.filter(tag => tag.readyToBeCompleted);
+            await apiClient.complete(tags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
@@ -234,25 +232,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const completeDialog = (): void => {
-        completableTags = [];
-        nonCompletableTags = [];
-
-        selectedTags.map((tag) => {
-            const newTag: PreservedTag = { ...tag };
-            if (tag.readyToBeCompleted) {
-                completableTags.push(newTag);
-            } else {
-                nonCompletableTags.push(newTag);
-            }
-        });
-
-        const completeButton = completableTags.length > 0 ? 'Complete' : null;
-        const completeFunc = completableTags.length > 0 ? complete : null;
+    const showCompleteDialog = (): void => {
+        const hasCompletableTags = selectedTags.some(tag => tag.readyToBePreserved);
+        const completeButton = hasCompletableTags ? 'Complete' : null;
+        const completeFunc = hasCompletableTags ? complete : null;
 
         showModalDialog(
             'Complete Preservation',
-            <CompleteDialog completableTags={completableTags} nonCompletableTags={nonCompletableTags} />,
+            <CompleteDialog tags={selectedTags} />,
             '80vw',
             backToListButton,
             null,
@@ -342,7 +329,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <StyledButton
                             variant='ghost'
                             title="Complete selected tag(s)"
-                            onClick={completeDialog}
+                            onClick={showCompleteDialog}
                             disabled={selectedTags.length < 1}>
                             <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 && tokens.colors.interactive.disabled__border.rgba} /></div>
                         Complete

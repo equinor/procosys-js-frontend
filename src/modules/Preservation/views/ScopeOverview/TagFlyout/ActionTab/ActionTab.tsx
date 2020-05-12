@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
-
 import ActionExpanded from './ActionExpanded';
-import { Collapse, CollapseInfo, ActionContainer, ActionList } from './ActionTab.style';
+import { Collapse, CollapseInfo, ActionContainer, ActionList, Container, AddActionContainer, IconSpacer, ButtonSpacer, StyledButton } from './ActionTab.style';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
-import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
+import EdsIcon from '../../../../../../components/EdsIcon';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
+import CreateOrEditAction from './CreateOrEditAction';
+import { isBefore, endOfTomorrow } from 'date-fns';
 
-interface Action {
+const attachIcon = <EdsIcon name='attach_file' size={16} />;
+const notificationIcon = <EdsIcon name='notifications' size={16} />;
+const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
+
+export interface ActionListItem {
     id: number;
     title: string;
     dueTimeUtc: Date | null;
@@ -20,7 +23,7 @@ interface Action {
 }
 
 interface ActionTabProps {
-    tagId: number | null;
+    tagId: number;
 }
 
 const ActionTab = ({
@@ -28,9 +31,10 @@ const ActionTab = ({
 }: ActionTabProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [expandedAction, setExpandedAction] = useState<number | null>();
-    const [actions, setActions] = useState<Action[]>([]);
+    const [actions, setActions] = useState<ActionListItem[]>([]);
+    const [showCreateAction, setShowCreateAction] = useState<boolean>(false);
 
-    useEffect(() => {
+    const getActionList = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
@@ -40,13 +44,18 @@ const ActionTab = ({
                 }
             } catch (error) {
                 console.error('Get actions failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message, 5000, true);
             }
         })();
 
         return (): void => {
             requestCancellor && requestCancellor();
         };
+    };
+
+
+    useEffect(() => {
+        getActionList();
     }, []);
 
     const toggleDetails = (action: number): void => {
@@ -57,8 +66,12 @@ const ActionTab = ({
         }
     };
 
-    const createTagSection = (action: Action): JSX.Element => {
+    const createTagSection = (action: ActionListItem): JSX.Element => {
         const isExpanded = action.id === expandedAction;
+
+        const updateTitle = (title: string): void => {
+            action.title = title;
+        };
 
         return (
             <ActionContainer key={action.id}>
@@ -73,16 +86,16 @@ const ActionTab = ({
                     <CollapseInfo isExpanded={isExpanded}>
                         {action.title}
                     </CollapseInfo>
-                    <Button title='Due' variant='ghost'>
-                        <NotificationsOutlinedIcon />
-                    </Button>
-                    <Button title='Attachment' variant='ghost'>
-                        <AttachFileOutlinedIcon />
-                    </Button>
+                    {action.dueTimeUtc && isBefore(new Date(action.dueTimeUtc), endOfTomorrow()) &&
+                        notificationIcon
+                    }
+                    <IconSpacer />
+                    {attachIcon}
+
                 </Collapse>
                 {
                     isExpanded && (
-                        <ActionExpanded tagId={tagId} actionId={action.id} close={(): void => toggleDetails(action.id)} />
+                        <ActionExpanded tagId={tagId} actionId={action.id} updateTitle={updateTitle} toggleDetails={(): void => { toggleDetails(action.id); }} />
                     )
                 }
             </ActionContainer>
@@ -90,14 +103,34 @@ const ActionTab = ({
     };
 
     return (
-        <div>
-            <ActionList>
-                {
-                    actions.map(action => createTagSection(action))
-                }
-            </ActionList>
-        </div>
+        <>
+            {showCreateAction &&
+                <CreateOrEditAction
+                    tagId={tagId}
+                    backToParentView={(): void => { setShowCreateAction(false); }}
+                    getActionList={getActionList}
+                />
+            }
+            {
+                !showCreateAction &&
+                <Container>
+                    <AddActionContainer>
+                        <StyledButton
+                            variant='ghost'
+                            onClick={(): void => setShowCreateAction(true)}>
+                            {addIcon} <ButtonSpacer /> Add action
+                        </StyledButton>
+                    </AddActionContainer>
+
+                    <ActionList>
+                        {
+                            actions.map(action => createTagSection(action))
+                        }
+                    </ActionList>
+                </Container >
+            }
+        </>
     );
 };
 
-export default ActionTab; 
+export default ActionTab;

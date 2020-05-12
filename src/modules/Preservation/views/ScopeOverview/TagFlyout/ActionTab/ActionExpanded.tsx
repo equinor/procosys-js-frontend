@@ -2,15 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { getFormattedDate } from '../../../../../../core/services/DateService';
-import { Container, Section, GridRow } from './ActionExpanded.style';
+import { Container, Section, GridRow, IconContainer, StyledButton } from './ActionExpanded.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
+import CreateOrEditAction from './CreateOrEditAction';
+import EdsIcon from '../../../../../../components/EdsIcon';
+import { useHistory } from 'react-router-dom';
+
+const editIcon = <EdsIcon name='edit' size={16} />;
 
 interface ActionDetails {
     id: number;
     title: string;
     description: string;
-    dueTimeUtc: Date | null;
+    dueTimeUtc: Date;
     isClosed: boolean;
     createdAtUtc: Date;
     closedAtUtc: Date | null;
@@ -19,6 +24,7 @@ interface ActionDetails {
         firstName: string;
         lastName: string;
     };
+    rowVersion: string;
     closedBy: {
         id: number;
         firstName: string;
@@ -27,18 +33,25 @@ interface ActionDetails {
 }
 
 interface ActionDetailsProps {
-    tagId: number | null;
+    tagId: number;
     actionId: number;
-    close: () => void;
+    updateTitle: (title: string) => void;
+    toggleDetails: () => void;
+    getActionList?: () => void;
 }
 
 const ActionExpanded = ({
     tagId,
     actionId,
-    close
+    updateTitle,
+    toggleDetails,
+    getActionList
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [actionDetails, setActionDetails] = useState<ActionDetails | null>(null);
+    const [showEditMode, setShowEditMode] = useState<boolean>(false);
+
+    const history = useHistory();
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -57,7 +70,29 @@ const ActionExpanded = ({
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, []);
+    }, [showEditMode]);
+
+    const closeAction = async (): Promise<void> => {
+        try {
+            if (actionDetails && actionDetails.rowVersion) {
+                await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
+                getActionList && getActionList();
+                toggleDetails();
+                //backToParentView();
+                showSnackbarNotification('Action is updated.', 5000, true);
+            } else {
+                showSnackbarNotification('Error occured. Action is not updated. Row version is missing.', 5000, true);
+            }
+            history.push('/');
+        } catch (error) {
+            console.error('Tag preservation failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+
+        return Promise.resolve();
+    };
+
+
 
     const getDateField = (date: Date | null): string => {
         if (date === null) {
@@ -68,59 +103,93 @@ const ActionExpanded = ({
     };
 
     return (
-        <Container>
+        <>
             {
-                actionDetails && !actionDetails.isClosed && (
-                    <Section>  
-                        <Typography variant='caption'>Due date</Typography>
-                        <Typography variant="body_short">
-                            {getDateField(actionDetails && actionDetails.dueTimeUtc)}
-                        </Typography>                    
-                    </Section>
+                showEditMode && actionDetails && (
+                    < CreateOrEditAction
+                        tagId={tagId}
+                        actionId={actionId}
+                        title={actionDetails.title}
+                        description={actionDetails.description}
+                        dueTimeUtc={actionDetails.dueTimeUtc}
+                        rowVersion={actionDetails.rowVersion}
+                        backToParentView={(): void => { setShowEditMode(false); }}
+                        updateTitle={updateTitle}
+                    />
                 )
             }
-            {
-                actionDetails && actionDetails.isClosed && (
-                    <Section>
-                        <div>
-                            <GridRow>
-                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
-                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                    {getDateField(actionDetails && actionDetails.closedAtUtc)}
-                                </Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                    {actionDetails && actionDetails.closedBy.firstName} {actionDetails && actionDetails.closedBy.lastName}
-                                </Typography>
-                            </GridRow>
+
+            <Container>
+                {!showEditMode && (
+                    <>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            {
+                                actionDetails && !actionDetails.isClosed && (
+                                    <Section>
+                                        <Typography variant='caption'>Due date</Typography>
+                                        <Typography variant="body_short">
+                                            {getDateField(actionDetails && actionDetails.dueTimeUtc)}
+                                        </Typography>
+                                    </Section>
+                                )
+                            }
+
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="editIcon"
+                                    variant='ghost'
+                                    onClick={(): void => setShowEditMode(true)}>
+                                    {editIcon}
+                                </StyledButton>
+                            </IconContainer>
                         </div>
-                    </Section>
-                )
-            }            
-            <Section>
-                <div>
-                    <GridRow>
-                        <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
-                        <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
-                        <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                            {getDateField(actionDetails && actionDetails.createdAtUtc)}
-                        </Typography>
-                        <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                            {actionDetails && actionDetails.createdBy.firstName} {actionDetails && actionDetails.createdBy.lastName}
-                        </Typography>
-                    </GridRow>
-                </div>
-            </Section>
-            <Section>
-                <Typography variant='caption'>Description</Typography>
-                <Typography variant="body_short">{actionDetails && actionDetails.description}</Typography>
-            </Section>
-            <Section>
-                <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>
-                    <Button onClick={(): void => close()}>Close action</Button>
-                </div>
-            </Section>
-        </Container>
+                        {
+                            actionDetails && actionDetails.isClosed && (
+                                <Section>
+                                    <div>
+                                        <GridRow>
+                                            <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
+                                            <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
+                                            <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                                                {getDateField(actionDetails && actionDetails.closedAtUtc)}
+                                            </Typography>
+                                            <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                                                {actionDetails && actionDetails.closedBy.firstName} {actionDetails && actionDetails.closedBy.lastName}
+                                            </Typography>
+                                        </GridRow>
+                                    </div>
+                                </Section>
+                            )
+                        }
+                        <Section>
+                            <div>
+                                <GridRow>
+                                    <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
+                                    <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
+                                    <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                                        {getDateField(actionDetails && actionDetails.createdAtUtc)}
+                                    </Typography>
+                                    <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                                        {actionDetails && actionDetails.createdBy.firstName} {actionDetails && actionDetails.createdBy.lastName}
+                                    </Typography>
+                                </GridRow>
+                            </div>
+                        </Section>
+                        <Section>
+                            <Typography variant='caption'>Description</Typography>
+                            <Typography variant="body_short">{actionDetails && actionDetails.description}</Typography>
+                        </Section>
+                        <Section>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button onClick={closeAction}>Close action</Button>
+                            </div>
+                        </Section>
+
+                    </>)
+                }
+
+            </Container >
+        </>
     );
 };
 

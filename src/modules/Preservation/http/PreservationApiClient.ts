@@ -187,13 +187,14 @@ interface ActionResponse {
     title: string;
     dueTimeUtc: Date | null;
     isClosed: boolean;
+    rowVersion: string;
 }
 
 interface ActionDetailsResponse {
     id: number;
     title: string;
     description: string;
-    dueTimeUtc: Date | null;
+    dueTimeUtc: Date;
     isClosed: boolean;
     createdAtUtc: Date;
     closedAtUtc: Date | null;
@@ -207,6 +208,7 @@ interface ActionDetailsResponse {
         firstName: string;
         lastName: string;
     };
+    rowVersion: string;
 }
 
 interface PreserveTagRequirement {
@@ -885,6 +887,78 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Create new action
+     */
+    async createNewAction(
+        tagId: number,
+        title: string,
+        description: string,
+        dueTimeUtc: Date | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                title: title,
+                description: description,
+                dueTimeUtc: dueTimeUtc,
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Update action
+    */
+    async updateAction(
+        tagId: number,
+        actionId: number,
+        title: string,
+        description: string,
+        dueTimeUtc: Date | null,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(endpoint, {
+                title: title,
+                description: description,
+                dueTimeUtc: dueTimeUtc,
+                rowVersion: rowVersion
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Close action
+    */
+    async closeAction(
+        tagId: number,
+        actionId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Action/${actionId}/Close`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(endpoint, {
+                rowVersion: rowVersion
+            });
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

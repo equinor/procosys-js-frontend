@@ -17,4 +17,4 @@ COPY --chown=nginx:nginx --from=build /app/build /usr/share/nginx/html
 COPY --chown=nginx:nginx .docker/nginx/ /etc/nginx/
 EXPOSE 5000
 USER nginx
-CMD ["nginx-debug", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-export const PropertiesContainer = styled.div`
+export const Container = styled.div`
     display: flex;
 `;
 
-export const TagProperties = styled.div`
+export const LargerComponent = styled.div`
     width: 70%;
 `;
 

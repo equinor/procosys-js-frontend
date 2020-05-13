@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Tag } from '../types';
 import { Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
@@ -9,15 +9,25 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
 interface TagDetailsProps {
     selectedTags: Tag[];
-    removeTag: (tagNo: string) => void;
+    removeTag?: ((tagNo: string) => void) | null;
+    collapsed?: boolean;
+    showMCPkg?: boolean;
 }
 
 const TagDetails = ({
     selectedTags,
-    removeTag
+    removeTag,
+    collapsed = true,
+    showMCPkg = true
 }: TagDetailsProps): JSX.Element => {
 
-    const [expandedTagNo, setExpandedTagNo] = useState<string | null>();
+    const [expandedTagNo, setExpandedTagNo] = useState<string | null>(null);
+
+    useEffect((): void => {
+        if (!collapsed && selectedTags.length > 0) {
+            setExpandedTagNo(selectedTags[0].tagNo);
+        }
+    }, [selectedTags]);
 
     const toggleDetails = (tagNo: string): void => {
         if (tagNo === expandedTagNo) {
@@ -34,30 +44,34 @@ const TagDetails = ({
             <TagContainer key={tag.tagNo}>
                 <Collapse>
                     <IconButton size='small' onClick={(): void => toggleDetails(tag.tagNo)}>
-                        {                        
+                        {
                             isExpanded
                                 ? <KeyboardArrowUpIcon />
                                 : <KeyboardArrowDownIcon />
                         }
                     </IconButton>
                     <CollapseInfo>
-                        {tag.tagNo} - {tag.description}
+                        {tag.tagNo}
                     </CollapseInfo>
-                    <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
-                        <DeleteOutlineIcon />
-                    </IconButton>                        
+                    { removeTag &&
+                        <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
+                            <DeleteOutlineIcon />
+                        </IconButton>
+                    }
                 </Collapse>
                 {
-                    isExpanded && (
+                    (isExpanded) && (
                         <Expand>
                             <ExpandSection>
                                 <ExpandHeader>Tag description</ExpandHeader>
                                 <div>{tag.description}</div>
                             </ExpandSection>
-                            <ExpandSection>
-                                <ExpandHeader>MC pkg</ExpandHeader>
-                                <div>{tag.mcPkgNo}</div>
-                            </ExpandSection>
+                            { showMCPkg &&
+                                <ExpandSection>
+                                    <ExpandHeader>MC pkg</ExpandHeader>
+                                    <div>{tag.mcPkgNo}</div>
+                                </ExpandSection>
+                            }
                         </Expand>
                     )
                 }
@@ -68,10 +82,10 @@ const TagDetails = ({
     return (
         <div>
             <Header>
-                <h1>Selected tags</h1>
+                <h1>Selected tag(s)</h1>
             </Header>
             <div>
-                {selectedTags.length} tags selected
+                {selectedTags.length} tag(s) selected
             </div>
             <TagList>
                 {

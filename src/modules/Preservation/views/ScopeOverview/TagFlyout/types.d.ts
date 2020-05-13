@@ -13,6 +13,7 @@ export interface TagDetails {
     readyToBePreserved: boolean;
     remark: string;
     storageArea: string;
+    rowVersion: string;
 }
 
 export interface TagRequirement {

@@ -28,6 +28,7 @@ const PreservationTab = ({
     const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
 
     const [remark, setRemark] = useState<string>(tagDetails.remark);
+    const tagRowVersionRef = useRef(tagDetails.rowVersion);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
@@ -105,7 +106,8 @@ const PreservationTab = ({
 
     const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
         try {
-            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString);
+            const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagRowVersionRef.current);
+            tagRowVersionRef.current = updatedRowVersion;
         } catch (error) {
             console.error('Edit failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);

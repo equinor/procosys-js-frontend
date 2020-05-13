@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import { Tag, Discipline, Area } from '../types';
+import { Tag, Discipline, Area, CheckAreaTagNo } from '../types';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
@@ -36,6 +36,7 @@ type CreateAreaTagProps = {
     area?: Area | null;
     suffix?: string;
     description?: string;
+    selectedTags?: Tag[];
 }
 
 const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
@@ -169,7 +170,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
-    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<boolean> => {
+    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<CheckAreaTagNo> => {
         try {
             const response = await apiClient.checkAreaTagNo(
                 project.name,
@@ -177,24 +178,30 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 discipline,
                 area,
                 suffix);
-            return !response.exists;
+
+            return response;
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
-            return false;
         }
+        return {tagNo: '', exists: true};
     };
 
     useEffect(() => {
         const checkTagNos = async (): Promise<void> => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValidationError(spacesInTagNoMessage);
+                setTagNoValid(false);
             }
             else if (props.discipline && props.areaType) {
                 const areaCode = (props.area) ? props.area.code : null;
-                const validTagNo = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix || null);
-                setTagNoValid(validTagNo);
-                setTagNoValidationError(validTagNo ? null : invalidTagNoMessage);
+                const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix || null);
+                props.setSelectedTags([{
+                    tagNo: response.tagNo,
+                    description: props.description || ''}
+                ]);
+                setTagNoValid(!response.exists);
+                setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else {
                 setTagNoValidationError(null);
             }
@@ -210,13 +217,22 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     }, [props.discipline, props.area, props.areaType, props.suffix]);
 
     const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        props.setSuffix(e.target.value);
+        props.setSuffix(e.target.value.toUpperCase());
         if(e.target.value.includes(' ')) {
             setIcon(errorIcon);
         } else {
             setIcon(null);
         }
     };
+
+    useEffect(() => {
+        if (props.selectedTags && props.selectedTags.length > 0) {
+            props.setSelectedTags([{
+                tagNo: props.selectedTags[0].tagNo,
+                description: props.description || ''}
+            ]);
+        }
+    }, [props.description]);
 
     return (
         <div>
@@ -303,7 +319,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
                 />
             </InputContainer>
-        </div >
+        </div>
     );
 };
 

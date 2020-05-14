@@ -110,7 +110,7 @@ const CreateOrEditAction = ({
                         onChange={(date: MaterialUiPickersDate): void => setNewDueTimeUtc(date)}
                         disablePast={false}
                         format='dd.MM.yyyy'
-                        variant='dialog'
+                        variant='inline'
                         inputVariant='outlined'
                         placeholder='dd.mm.yyyy'
                     />

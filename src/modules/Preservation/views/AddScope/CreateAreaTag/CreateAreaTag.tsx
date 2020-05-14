@@ -3,11 +3,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import { Tag, Discipline, Area } from '../types';
+import { Tag, Discipline, Area, CheckAreaTagNo } from '../types';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -27,14 +28,15 @@ type CreateAreaTagProps = {
     setSelectedTags: (tags: Tag[]) => void;
     setAreaType: (areaType?: SelectItem) => void;
     setDiscipline: (discipline?: Discipline) => void;
-    setArea: (area?: Area) => void;
+    setArea: (area?: Area | null) => void;
     setDescription: (description?: string) => void;
     setSuffix: (suffix: string) => void;
     areaType?: SelectItem;
     discipline?: Discipline;
-    area?: Area;
+    area?: Area | null;
     suffix?: string;
     description?: string;
+    selectedTags?: Tag[];
 }
 
 const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
@@ -86,13 +88,18 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.setArea(newArea);
     };
 
+    const clearArea = (e: React.MouseEvent): void => {
+        e.stopPropagation();
+        props.setArea(null);
+    };
+
     /** Update list of areas based on filter */
     useEffect(() => {
         if (filterForAreas.length <= 0) {
             setFilteredAreas(allAreas);
             return;
         }
-        setFilteredAreas(allAreas.filter(p => p.text?.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
+        setFilteredAreas(allAreas.filter((p: AreaItem) => p.text.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
     }, [filterForAreas, allAreas]);
 
     /** Get disciplines from api */
@@ -163,7 +170,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         props.nextStep();
     };
 
-    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<boolean> => {
+    const checkTagNo = async (areaType: string, discipline: string, area: string | null, suffix: string | null): Promise<CheckAreaTagNo> => {
         try {
             const response = await apiClient.checkAreaTagNo(
                 project.name,
@@ -171,24 +178,30 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 discipline,
                 area,
                 suffix);
-            return !response.exists;
+
+            return response;
         } catch (error) {
             console.error('Get tag nos failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
-            return false;
         }
+        return {tagNo: '', exists: true};
     };
 
     useEffect(() => {
         const checkTagNos = async (): Promise<void> => {
             if (props.suffix && /\s/.test(props.suffix)) {
                 setTagNoValidationError(spacesInTagNoMessage);
+                setTagNoValid(false);
             }
             else if (props.discipline && props.areaType) {
                 const areaCode = (props.area) ? props.area.code : null;
-                const validTagNo = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix ?? null);
-                setTagNoValid(validTagNo);
-                setTagNoValidationError(validTagNo ? null : invalidTagNoMessage);
+                const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, props.suffix || null);
+                props.setSelectedTags([{
+                    tagNo: response.tagNo,
+                    description: props.description || ''}
+                ]);
+                setTagNoValid(!response.exists);
+                setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else {
                 setTagNoValidationError(null);
             }
@@ -204,13 +217,22 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     }, [props.discipline, props.area, props.areaType, props.suffix]);
 
     const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        props.setSuffix(e.target.value);
+        props.setSuffix(e.target.value.toUpperCase());
         if(e.target.value.includes(' ')) {
             setIcon(errorIcon);
         } else {
             setIcon(null);
         }
     };
+
+    useEffect(() => {
+        if (props.selectedTags && props.selectedTags.length > 0) {
+            props.setSelectedTags([{
+                tagNo: props.selectedTags[0].tagNo,
+                description: props.description || ''}
+            ]);
+        }
+    }, [props.description]);
 
     return (
         <div>
@@ -247,6 +269,9 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 label={'Area'}
                                 variant='form'
                                 meta="Optional"
+                                Icon={(props.area && props.area.description)
+                                    ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div>
+                                    : <KeyboardArrowDownIcon />}
                                 text={(props.area && props.area.description) || 'Type to select'}
                                 onFilter={setFilterForAreas}
                             >
@@ -294,7 +319,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
                 />
             </InputContainer>
-        </div >
+        </div>
     );
 };
 

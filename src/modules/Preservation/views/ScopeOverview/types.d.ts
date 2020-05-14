@@ -19,6 +19,7 @@ export interface PreservedTag {
     readyToBePreserved: boolean;
     readyToBeStarted: boolean;
     readyToBeTransferred: boolean;
+    readyToBeCompleted: boolean;
     requirements: Requirement[];
     status: string;
     responsibleCode: string;
@@ -50,4 +51,6 @@ export interface TagListFilter {
     disciplineCodes: string[];
     preservationStatus: string | null;
     actionStatus: string | null;
+    responsibleIds: string[] | null;
+    areaCodes: string[] | null;
 }

@@ -14,7 +14,6 @@ export const Header = styled.header`
 export const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
-
 `;
 
 export const TopContainer = styled.div`
@@ -63,6 +62,10 @@ export const ButtonContainer = styled.div`
 
 export const FormFieldSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
+
+    #dropdownIcon {
+        height: calc(var(--grid-unit) * 3);
+    }
 `;
 
 export const ButtonContent = styled.span`

@@ -14,7 +14,7 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { TextField } from '@equinor/eds-core-react';
 
 type SetTagPropertiesProps = {
-    submitForm: (stepId: number, requirements: Requirement[], remark?: string, storageArea?: string) => Promise<void>;
+    submitForm: (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
@@ -140,7 +140,7 @@ const SetTagProperties = ({
 
     const submit = async (): Promise<void> => {
         setIsLoading(true);
-        const remarkValue = remarkInputRef.current?.value;
+        const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
         let storageAreaValue;
         if (storageAreaInputRef.current) {
             storageAreaValue = storageAreaInputRef.current.value;
@@ -236,6 +236,12 @@ const SetTagProperties = ({
             copy.splice(index, 1);
             return copy;
         });
+    };
+
+    const getDefaultInputText = (req: RequirementFormInput): string => {
+        const value = mappedIntervals.find(el => el.value === req.intervalWeeks);
+        if (!value) return 'Select';
+        return value.text;
     };
 
 
@@ -336,7 +342,7 @@ const SetTagProperties = ({
                                                         disabled={!requirement.requirementDefinitionId}
                                                         label={'Interval'}
                                                     >
-                                                        {mappedIntervals.find(el => el.value === requirement.intervalWeeks)?.text || 'Select'}
+                                                        {getDefaultInputText(requirement)}
                                                     </SelectInput>
                                                 </FormFieldSpacer>
                                                 <FormFieldSpacer>

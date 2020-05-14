@@ -13,7 +13,8 @@ const setDefaultProject = (project: ProjectDetails): void => {
 };
 
 const getDefaultProject = (): ProjectDetails | null => {
-    return localStorageCache.getCache(storageKeys.PROJECT)?.data;
+    const cache = localStorageCache.getCache(storageKeys.PROJECT);
+    return cache && cache.data || null;
 };
 
 export default {

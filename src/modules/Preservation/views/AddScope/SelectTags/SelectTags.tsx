@@ -3,7 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Button, TextField } from '@equinor/eds-core-react';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from '../types';
-import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
+import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar, NoFilterContainer } from './SelectTags.style';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
@@ -17,6 +17,7 @@ type SelectTagsProps = {
     nextStep: () => void;
     isLoading: boolean;
     addScopeMethod: AddScopeMethod;
+    removeTag: (tagNo: string) => void;
 }
 
 const KEYCODE_ENTER = 13;
@@ -40,9 +41,17 @@ const tableColumns = [
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
 
-    const rowSelectionChanged = (selectedRows: TagRow[]): void => {
-        // exclude any preserved tags (material-table bug)
-        const tagsToSelect = selectedRows
+    const removeAllSelectedTagsInScope = (): void => {
+        const tagNos: string[] = [];
+        props.scopeTableData.forEach(l => {
+            tagNos.push(l.tagNo);
+        });
+        const newSelectedTags = props.selectedTags.filter(item => !tagNos.includes(item.tagNo));
+        props.setSelectedTags(newSelectedTags);
+    };
+
+    const addAllTagsInScope = (rowData: TagRow[]): void => {
+        const allRows = rowData
             .filter(row => !row.isPreserved)
             .map(row => {
                 return {
@@ -51,8 +60,33 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     mcPkgNo: row.mcPkgNo
                 };
             });
+        const rowsToAdd = allRows.filter(row => !props.selectedTags.some(tag => tag.tagNo === row.tagNo));
+        props.setSelectedTags([...props.selectedTags, ...rowsToAdd]);
+    };
 
-        props.setSelectedTags(tagsToSelect);
+    const handleSingleTag = (row: TagRow): void => {
+        const tagToHandle = {
+            tagNo: row.tagNo,
+            description: row.description,
+            mcPkgNo: row.mcPkgNo
+        };
+        if (row.tableData && !row.tableData.checked) {
+            props.removeTag(row.tagNo);
+        } else {
+            props.setSelectedTags([...props.selectedTags, tagToHandle]);
+        }
+    };
+
+    const rowSelectionChanged = (rowData: TagRow[], row: TagRow): void => {
+        // exclude any preserved tags (material-table bug)
+
+        if (rowData.length == 0 && props.scopeTableData.length > 0) {
+            removeAllSelectedTagsInScope();
+        } else if(rowData.length > 0 && rowData[0].tableData && !row) {
+            addAllTagsInScope(rowData);
+        } else if (rowData.length > 0 && !row.isPreserved) {
+            handleSingleTag(row);
+        }
     };
 
     const getTableToolbar = (selectedRows: TagRow[]): JSX.Element => {
@@ -67,10 +101,10 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <h1>Add preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            <Actions>
-                {
-                    props.addScopeMethod === AddScopeMethod.AddTagsManually && (
-                        < Search >
+            {
+                props.addScopeMethod === AddScopeMethod.AddTagsManually && (
+                    <Actions>
+                        <Search>
                             <TextField
                                 id="tagSearch"
                                 placeholder="Search by tag number"
@@ -83,14 +117,24 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                                 }}
                             />
                         </Search>
-                    )
-                }
-                < Next >
-                    <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
-                </Next>
-            </Actions>
+
+                        <Next>
+                            <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
+                        </Next>
+                    </Actions>
+                )
+            }
             <Tags>
-                <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+                <NoFilterContainer>
+                    <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+                    {
+                        props.addScopeMethod !== AddScopeMethod.AddTagsManually && (
+                            <Next>
+                                <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
+                            </Next>
+                        )
+                    }
+                </NoFilterContainer>
                 <Table
                     columns={tableColumns}
                     data={props.scopeTableData}
@@ -120,7 +164,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     style={{
                         boxShadow: 'none'
                     }}
-                    onSelectionChange={rowSelectionChanged}
+                    onSelectionChange={(rowData, row): void => {
+                        rowSelectionChanged(rowData, row);
+                    }}
                     isLoading={props.isLoading}
                     components={{
                         OverlayLoading: (): JSX.Element => (

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "target": "es5",
+        "target": "ESNext",
         "allowJs": true,
         /* Files in the directory specified using the "outDir" compiler option are excluded as
         *  long as "exclude" property is not specified.

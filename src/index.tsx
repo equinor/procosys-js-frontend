@@ -41,7 +41,7 @@ const start = async (): Promise<void> => {
         );
     };
 
-    const element = document.createElement('div');
+    const element = document.getElementById('app-container') || document.createElement('div');
     element.setAttribute('id', 'app-container');
     document.body.appendChild(element);
     const HotRoot = hot(Root);

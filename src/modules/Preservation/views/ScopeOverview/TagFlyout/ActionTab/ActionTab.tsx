@@ -43,7 +43,7 @@ const ActionTab = ({
                     setActions(actions);
                 }
             } catch (error) {
-                console.error('Get actions failed: ', error.messsage, error.data);
+                console.error('Get action list failed: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();
@@ -53,7 +53,7 @@ const ActionTab = ({
         };
     };
 
-
+    /*Get the action list initially */
     useEffect(() => {
         getActionList();
     }, []);
@@ -66,27 +66,36 @@ const ActionTab = ({
         }
     };
 
-    const createTagSection = (action: ActionListItem): JSX.Element => {
+    const createActionSection = (action: ActionListItem): JSX.Element => {
         const isExpanded = action.id === expandedAction;
 
         const updateTitle = (title: string): void => {
             action.title = title;
         };
 
+        const showNotification = (): boolean => {
+            if (!action.isClosed &&
+                action.dueTimeUtc &&
+                isBefore(new Date(action.dueTimeUtc), endOfTomorrow())) {
+                return true;
+            }
+            return false;
+        };
+
         return (
-            <ActionContainer key={action.id}>
-                <Collapse>
-                    <Button variant='ghost' onClick={(): void => toggleDetails(action.id)}>
+            <ActionContainer isClosed={action.isClosed} key={action.id}>
+                <Collapse isClosed={action.isClosed}>
+                    <Button data-testid={`toggle-icon-${action.id}`} variant='ghost' onClick={(): void => toggleDetails(action.id)}>
                         {
                             isExpanded
                                 ? <KeyboardArrowUpIcon />
                                 : <KeyboardArrowDownIcon />
                         }
                     </Button>
-                    <CollapseInfo isExpanded={isExpanded}>
+                    <CollapseInfo isClosed={action.isClosed} isExpanded={isExpanded}>
                         {action.title}
                     </CollapseInfo>
-                    {action.dueTimeUtc && isBefore(new Date(action.dueTimeUtc), endOfTomorrow()) &&
+                    {showNotification() &&
                         notificationIcon
                     }
                     <IconSpacer />
@@ -98,7 +107,7 @@ const ActionTab = ({
                         <ActionExpanded tagId={tagId} actionId={action.id} updateTitle={updateTitle} toggleDetails={(): void => { toggleDetails(action.id); }} />
                     )
                 }
-            </ActionContainer>
+            </ActionContainer >
         );
     };
 
@@ -124,7 +133,7 @@ const ActionTab = ({
 
                     <ActionList>
                         {
-                            actions.map(action => createTagSection(action))
+                            actions.map(action => createActionSection(action))
                         }
                     </ActionList>
                 </Container >

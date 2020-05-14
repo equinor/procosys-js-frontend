@@ -7,7 +7,6 @@ import { Button, Typography } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
 import CreateOrEditAction from './CreateOrEditAction';
 import EdsIcon from '../../../../../../components/EdsIcon';
-import { useHistory } from 'react-router-dom';
 
 const editIcon = <EdsIcon name='edit' size={16} />;
 
@@ -51,8 +50,6 @@ const ActionExpanded = ({
     const [actionDetails, setActionDetails] = useState<ActionDetails | null>(null);
     const [showEditMode, setShowEditMode] = useState<boolean>(false);
 
-    const history = useHistory();
-
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
@@ -78,27 +75,22 @@ const ActionExpanded = ({
                 await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
                 getActionList && getActionList();
                 toggleDetails();
-                //backToParentView();
-                showSnackbarNotification('Action is updated.', 5000, true);
+                showSnackbarNotification('Action is closed.', 5000, true);
             } else {
-                showSnackbarNotification('Error occured. Action is not updated. Row version is missing.', 5000, true);
+                showSnackbarNotification('Error occured. Action is not closed. Row version is missing.', 5000, true);
             }
-            history.push('/');
         } catch (error) {
-            console.error('Tag preservation failed: ', error.messsage, error.data);
+            console.error('Closing action failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
 
         return Promise.resolve();
     };
 
-
-
     const getDateField = (date: Date | null): string => {
         if (date === null) {
             return '-';
         }
-
         return getFormattedDate(date);
     };
 
@@ -119,29 +111,28 @@ const ActionExpanded = ({
                 )
             }
 
-            <Container>
+            <Container isClosed={actionDetails ? actionDetails.isClosed : false}>
                 {!showEditMode && (
                     <>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Section>
+                                <Typography variant='caption'>Due date</Typography>
+                                <Typography variant="body_short">
+                                    {getDateField(actionDetails && actionDetails.dueTimeUtc)}
+                                </Typography>
+                            </Section>
                             {
                                 actionDetails && !actionDetails.isClosed && (
-                                    <Section>
-                                        <Typography variant='caption'>Due date</Typography>
-                                        <Typography variant="body_short">
-                                            {getDateField(actionDetails && actionDetails.dueTimeUtc)}
-                                        </Typography>
-                                    </Section>
+                                    <IconContainer>
+                                        <StyledButton
+                                            data-testid="editIcon"
+                                            variant='ghost'
+                                            onClick={(): void => setShowEditMode(true)}>
+                                            {editIcon}
+                                        </StyledButton>
+                                    </IconContainer>
                                 )
                             }
-
-                            <IconContainer>
-                                <StyledButton
-                                    data-testid="editIcon"
-                                    variant='ghost'
-                                    onClick={(): void => setShowEditMode(true)}>
-                                    {editIcon}
-                                </StyledButton>
-                            </IconContainer>
                         </div>
                         {
                             actionDetails && actionDetails.isClosed && (
@@ -179,11 +170,15 @@ const ActionExpanded = ({
                             <Typography variant='caption'>Description</Typography>
                             <Typography variant="body_short">{actionDetails && actionDetails.description}</Typography>
                         </Section>
-                        <Section>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button onClick={closeAction}>Close action</Button>
-                            </div>
-                        </Section>
+                        {
+                            actionDetails && !actionDetails.isClosed && (
+                                <Section>
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <Button onClick={closeAction}>Close action</Button>
+                                    </div>
+                                </Section>
+                            )
+                        }
 
                     </>)
                 }

@@ -3,7 +3,6 @@ import { showSnackbarNotification } from '../../../../../../core/services/Notifi
 import { Container, Header, InputContainer, ButtonContainer, ButtonSpacer } from './CreateOrEditAction.style';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { useHistory } from 'react-router-dom';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
@@ -31,8 +30,6 @@ const CreateOrEditAction = ({
     getActionList,
     updateTitle
 }: ActionTabProps): JSX.Element => {
-
-    const history = useHistory();
 
     const { apiClient } = usePreservationContext();
 
@@ -67,7 +64,6 @@ const CreateOrEditAction = ({
                 backToParentView();
                 showSnackbarNotification('New action is created.', 5000, true);
             }
-            history.push('/');
         } catch (error) {
             console.error('Tag preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000, true);

@@ -26,13 +26,22 @@ export const IconSpacer = styled.div`
 `;
 
 export const ActionList = styled.div`
-    margin: 0px calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2);
-    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    margin: 0px calc(var(--grid-unit) * 2) 0px calc(var(--grid-unit) * 2);
     border-top: solid 1px ${tokens.colors.ui.background__medium.rgba};
-    border-right: solid 1px ${tokens.colors.ui.background__medium.rgba};
 `;
 
-export const ActionContainer = styled.div`
+export const ActionContainer = styled.div<{ isClosed: boolean }>`
+
+    ${(props): any => props.isClosed && css`
+        border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
+        border-right: solid 1px ${tokens.colors.ui.background__medium.rgba};
+        `}; 
+
+    ${(props): any => !props.isClosed && css`
+        border-left: solid 1px  ${tokens.colors.interactive.primary__resting.rgba};
+        border-right: solid 1px ${tokens.colors.interactive.primary__resting.rgba};
+    `}; 
+
     font-weight: 500;
     font-size: calc(var(--grid-unit) * 2);
     line-height: calc(var(--grid-unit) * 2);
@@ -42,14 +51,22 @@ export const ActionContainer = styled.div`
     }
 `;
 
-export const Collapse = styled.div`
+export const Collapse = styled.div<{ isClosed: boolean }>`
     display: flex;
     padding-right: calc(var(--grid-unit) * 2);
-    border-bottom: solid 1px ${tokens.colors.ui.background__medium.rgba};
+
+    ${(props): any => props.isClosed && css`
+        border-bottom: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    `}; 
+
+    ${(props): any => !props.isClosed && css`
+        border-bottom: solid 1px ${tokens.colors.interactive.primary__resting.rgba};
+    `}; 
+
     align-items: center;
 `;
 
-export const CollapseInfo = styled.div<{ isExpanded: boolean }>`
+export const CollapseInfo = styled.div<{ isExpanded: boolean; isClosed: boolean }>`
     flex-grow: 1;
     padding-top: calc(var(--grid-unit) + 4px);
     padding-right: calc(var(--grid-unit) * 2);
@@ -59,7 +76,7 @@ export const CollapseInfo = styled.div<{ isExpanded: boolean }>`
     text-overflow: ellipsis;
     overflow: hidden;
 
-    ${(props): any => props.isExpanded && css`
+    ${(props): any => props.isExpanded && !props.isClosed && css`
         color:${tokens.colors.interactive.primary__resting.rgba};
     `}; 
 `;

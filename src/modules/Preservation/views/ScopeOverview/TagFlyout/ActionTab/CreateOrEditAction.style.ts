@@ -14,12 +14,11 @@ export const Container = styled.div`
     display:flex;
     flex-direction: column; 
     padding: calc(var(--grid-unit) * 2);
-
 `;
 
 export const InputContainer = styled.div`
     display: flex;
-    margin-bottom:  calc(var(--grid-unit) * 2);
+    margin-bottom: calc(var(--grid-unit) * 2);
     flex-direction: row;
     align-items: center;
 `;

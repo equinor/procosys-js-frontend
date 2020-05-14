@@ -13,7 +13,8 @@ type LibraryTreeviewProps = {
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 
     const {
-        libraryApiClient
+        libraryApiClient,
+        preservationApiClient
     } = usePlantConfigContext();
 
 
@@ -68,6 +69,33 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
+    const getRequirementTreeNodes = async (): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+        try {
+            const requirementTypes = await preservationApiClient.getRequirementTypes();
+            requirementTypes.data.forEach(requirementType => {
+                children.push(
+                    {
+                        id: `rt_${requirementType.id}`,
+                        name: requirementType.title,
+                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_TYPE, requirementType.id.toString()),
+                        getChildren: (): Promise<TreeViewNode[]> => Promise.resolve(requirementType.requirementDefinitions.map(requirementDefinition => {
+                            return {
+                                id: `rd_${requirementDefinition.id}`,
+                                name: requirementDefinition.title
+                            };
+                        }))
+
+                    });
+            });
+
+        } catch (error) {
+            console.error('Failed to fetch treenodes for Requirements: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        return children;
+    };
+
     const rootNodes: TreeViewNode[] = [
         {
             id: LibraryType.TAG_FUNCTION,
@@ -86,6 +114,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         {
             id: LibraryType.PRES_REQUIREMENT_TYPE,
             name: 'Pres. Requirement types',
+            getChildren: getRequirementTreeNodes
         },
         {
             id: LibraryType.PRES_REQUIREMENT_DEFINITION,

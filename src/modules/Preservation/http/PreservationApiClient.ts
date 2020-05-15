@@ -280,8 +280,8 @@ interface DisciplineFilterResponse {
 
 interface AttachmentResponse {
     id: number;
-    title: string;
     fileName: string;
+    rowVersion: string;
 }
 
 interface ErrorResponse {
@@ -1096,8 +1096,6 @@ class PreservationApiClient extends ApiClient {
 
     /**
     * Get tag attachments
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
     */
     async getTagAttachments(tagId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
         const endpoint = `/Tags/${tagId}/Attachments`;
@@ -1118,39 +1116,78 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add file 
-     *
-     * @param listOfTagNo List of Tag Numbers
-     * @param stepId Step ID
-     * @param projectName Name of affected project
-     * @param remark Optional: Remark for all tags
-     * @param storageArea Optional: Storage area for all tags
-     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
-     *
-     * @returns Promise<void>
-     * @throws PreservationApiError
+     * Add attachment to tag 
      */
-    async addAttachmentsToTag(
-        tagNo: number,
-        listFiles: FormData,
+    async addAttachmentToTag(
+        tagId: number,
+        file: File,
+        overwriteIfExists: boolean,
         setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = '/todo';
+        const endpoint = `/Tags/${tagId}/Attachments`;
 
+        const formData = new FormData();
+        formData.append('OverwriteIfExists', overwriteIfExists.toString());
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, formData, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    *  Delete attachment on a tag 
+    */
+    async deleteAttachmentOnTag(
+        tagId: number,
+        attachmentId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/Tags/${tagId}/Attachments/${attachmentId}`;
+        console.log('endpoint: ' + endpoint);
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
-            await this.client.post(endpoint, {
-                tagNo: tagNo,
-
-
-            });
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
         } catch (error) {
             throw getPreservationApiError(error);
         }
     }
 
 
+    /**
+    * Get download url for  tag attachment
+    */
+    async getDownloadUrlForTagAttachment(tagId: number, attachmentId: number, setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Tags/${tagId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
 
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 }
 
 

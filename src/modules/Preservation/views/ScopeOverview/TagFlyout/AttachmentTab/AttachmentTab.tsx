@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
-import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import Table from './../../../../../../components/Table';
 import { Container, AttachmentLink, AddFile, FormFieldSpacer } from './AttachmentTab.style';
 import Spinner from '@procosys/components/Spinner';
+import EdsIcon from '../../../../../../components/EdsIcon';
+import { tokens } from '@equinor/eds-tokens';
+
+const addIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='add_circle_filled' size={16} />;
+const deletIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
 interface Attachment {
     id: number;
@@ -125,22 +128,12 @@ const AttachmentTab = ({
 
     if (isLoading) {
         return (
-            <Container>
-                <Spinner large />
-            </Container>
+            <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
         );
     }
 
     return (
         <Container>
-            <AddFile>
-                <form>
-                    <label htmlFor="addFile">
-                        <AddCircleOutlinedIcon /> <FormFieldSpacer /> Add file
-                    </label>
-                    <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
-                </form>
-            </AddFile>
             <Table
                 columns={[
                     { render: getFilenameColumn },
@@ -155,15 +148,28 @@ const AttachmentTab = ({
                     search: false,
                     paging: false,
                     emptyRowsWhenPaging: false,
-                    actionsColumnIndex: -1
+                    actionsColumnIndex: -1,
                 }}
                 actions={[
                     {
-                        icon: (): JSX.Element => <DeleteOutlinedIcon />, //todo: Default icons is not working
+                        icon: (): JSX.Element => deletIcon,
                         tooltip: 'Delete attachment',
                         onClick: (event, rowData): void => deleteAttachment(rowData)
                     },
                 ]}
+                components={{
+                    Toolbar: (): any => (
+                        <AddFile>
+                            <form>
+                                <label htmlFor="addFile">
+                                    {addIcon} <FormFieldSpacer /> Add file
+                                </label>
+                                <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
+                            </form>
+                        </AddFile>
+                    )
+                }}
+
                 style={{ boxShadow: 'none' }}
             />
         </Container >

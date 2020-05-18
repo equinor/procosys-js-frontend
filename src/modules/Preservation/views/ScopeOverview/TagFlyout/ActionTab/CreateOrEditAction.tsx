@@ -12,7 +12,7 @@ interface ActionTabProps {
     actionId?: number;
     title?: string;
     description?: string;
-    dueTimeUtc?: Date;
+    dueTimeUtc?: Date | null;
     rowVersion?: string;
     backToParentView: () => void;
     getActionList?: () => void;

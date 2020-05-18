@@ -9,7 +9,6 @@ import { usePreservationContext } from '../../../../context/PreservationContext'
 import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
 import CreateOrEditAction from './CreateOrEditAction';
-import { isBefore, endOfTomorrow } from 'date-fns';
 
 const attachIcon = <EdsIcon name='attach_file' size={16} />;
 const notificationIcon = <EdsIcon name='notifications' size={16} />;
@@ -73,10 +72,20 @@ const ActionTab = ({
             action.title = title;
         };
 
+        const isDue = (): boolean => {
+            if (action.dueTimeUtc) {
+                const today = new Date().getTime();
+                const dueTime = (new Date(action.dueTimeUtc)).getTime();
+                return dueTime <= today;
+            } else {
+                return false;
+            }
+        };
+
         const showNotification = (): boolean => {
             if (!action.isClosed &&
                 action.dueTimeUtc &&
-                isBefore(new Date(action.dueTimeUtc), endOfTomorrow())) {
+                isDue()) {
                 return true;
             }
             return false;

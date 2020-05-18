@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -11,13 +12,16 @@ export const AddFile = styled.div`
     display: flex;    
     align-items: center;
     justify-content: flex-end;
-    padding-top: calc(var(--grid-unit) * 2);
-    padding-right: calc(var(--grid-unit) * 2);
-    
+    padding: calc(var(--grid-unit) * 2);
+    svg {
+        padding-bottom: 4px;
+    }
+   
     label {
         display:flex;
         align-items: center;
         cursor: pointer;
+        color:${tokens.colors.interactive.primary__resting.rgba};
     }    
 `;
 

@@ -1,76 +1,56 @@
-import React, { useState, useEffect } from 'react';
-
-import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import React from 'react';
 import Table from './../Table';
 import { Container, AttachmentLink, AddFile, FormFieldSpacer } from './style';
-import { Link } from 'react-router-dom';
+import EdsIcon from '../EdsIcon';
+import { tokens } from '@equinor/eds-tokens';
 
+const addIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='add_circle_filled' size={16} />;
+const deletIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
-interface Attachment {
+export interface Attachment {
     id: number;
-    title: string;
     fileName: string;
+    rowVersion: string;
 }
 
 interface AttachmentListProps {
-    getAttachments: () => Attachment[];
-    addFile: (file: Attachment) => void;
-    deleteFile: (id: number) => void;
+    attachments: Attachment[];
+    addAttachment: (file: File) => void;
+    deleteAttachment: (attachment: Attachment) => void;
+    downloadAttachment: (id: number) => void;
 }
 
 const AttachmentList = ({
-    getAttachments,
-    addFile,
-    deleteFile,
+    attachments,
+    addAttachment,
+    deleteAttachment,
+    downloadAttachment
 }: AttachmentListProps): JSX.Element => {
-    const [attachments, setAttachments] = useState<Attachment[]>([]);
-
-    useEffect(() => {
-        setAttachments(getAttachments());
-    }, []);
-
 
     const getFilenameColumn = (attachment: Attachment): JSX.Element => {
         return (
             <AttachmentLink>
-                <div>
-                    <span><Link to="c:/files/myfile.pdf" target="_blank" download>{attachment.fileName}</Link> </span>
+                <div onClick={(): void => { downloadAttachment(attachment.id); }}>
+                    {attachment.fileName}
                 </div>
-            </AttachmentLink>
+            </AttachmentLink >
         );
     };
 
-    const deleteAttachment = (rowData: Attachment): void => {
-        if (confirm(`You want to delete the file '${rowData.title}'`)) {
-            deleteFile(rowData.id);
+    const handleDelete = (attachment: Attachment): void => {
+        if (confirm(`You want to delete the file '${attachment.fileName}'`)) {
+            deleteAttachment(attachment);
         }
     };
 
     const handleSubmitFile = (e: any): void => {
         e.preventDefault();
-        addFile(e.target);
-    };
-
-    const addFileForm = (): JSX.Element => {
-        return (
-            <form>
-                <label htmlFor="addFile">
-                    <AddCircleOutlinedIcon /> <FormFieldSpacer /> Add file
-                </label>
-                <input id="addFile" style={{ display: 'none' }} type='file' onChange={(e): void => {
-                    handleSubmitFile(e);
-                }}
-                />
-            </form>
-        );
+        const file = e.target.files[0];
+        addAttachment(file);
     };
 
     return (
         <Container>
-            <AddFile>
-                {addFileForm()}
-            </AddFile>
             <Table
                 columns={[
                     { render: getFilenameColumn },
@@ -85,15 +65,28 @@ const AttachmentList = ({
                     search: false,
                     paging: false,
                     emptyRowsWhenPaging: false,
-                    actionsColumnIndex: -1
+                    actionsColumnIndex: -1,
                 }}
                 actions={[
                     {
-                        icon: (): JSX.Element => <DeleteOutlinedIcon />, //todo: Default icons is not working
+                        icon: (): JSX.Element => deletIcon,
                         tooltip: 'Delete attachment',
-                        onClick: (event, rowData): void => deleteAttachment(rowData)
+                        onClick: (event, rowData): void => handleDelete(rowData)
                     },
                 ]}
+                components={{
+                    Toolbar: (): any => (
+                        <AddFile>
+                            <form>
+                                <label htmlFor="addFile">
+                                    {addIcon} <FormFieldSpacer /> Add file
+                                </label>
+                                <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
+                            </form>
+                        </AddFile>
+                    )
+                }}
+
                 style={{ boxShadow: 'none' }}
             />
         </Container >

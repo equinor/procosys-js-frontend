@@ -2,28 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
-import Table from './../../../../../../components/Table';
-import { Container, AttachmentLink, AddFile, FormFieldSpacer } from './AttachmentTab.style';
 import Spinner from '@procosys/components/Spinner';
-import EdsIcon from '../../../../../../components/EdsIcon';
-import { tokens } from '@equinor/eds-tokens';
-
-const addIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='add_circle_filled' size={16} />;
-const deletIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
-
-interface Attachment {
-    id: number;
-    fileName: string;
-    rowVersion: string;
-}
+import AttachmentList, { Attachment } from '@procosys/components/AttachmentList';
 
 interface AttachmentTabProps {
-    tagId: number | null;
+    tagId: number;
 }
 
 const AttachmentTab = ({
     tagId
 }: AttachmentTabProps): JSX.Element => {
+
     const { apiClient } = usePreservationContext();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -49,7 +38,7 @@ const AttachmentTab = ({
         };
     };
 
-    const uploadFileAttachment = async (file: File): Promise<void> => {
+    const addAttachment = async (file: File): Promise<void> => {
 
         try {
             if (tagId != null) {
@@ -63,8 +52,6 @@ const AttachmentTab = ({
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);
-
-        return Promise.resolve();
     };
 
     const downloadAttachment = (attachmentId: number): void => {
@@ -73,6 +60,7 @@ const AttachmentTab = ({
                 try {
                     if (tagId != null) {
                         const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachmentId);
+                        console.log('URL: ' + url);
                         window.open(url, '_blank');
                         showSnackbarNotification('Attachment is downloaded.', 5000, true);
                     }
@@ -88,42 +76,23 @@ const AttachmentTab = ({
         getAttachments();
     }, []);
 
-
-    const getFilenameColumn = (attachment: Attachment): JSX.Element => {
-        return (
-            <AttachmentLink>
-                <div onClick={(): void => { downloadAttachment(attachment.id); }}>
-                    {attachment.fileName}
-                </div>
-            </AttachmentLink >
-        );
-    };
-
     const deleteAttachment = (attachment: Attachment): void => {
-        if (confirm(`You want to delete the file '${attachment.fileName}'`)) {
-            (
-                async (): Promise<void> => {
-                    try {
-                        if (tagId != null) {
-                            setIsLoading(true);
-                            await apiClient.deleteAttachmentOnTag(tagId, attachment.id, attachment.rowVersion);
-                            getAttachments();
-                            showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
-                        }
-                    } catch (error) {
-                        console.error('Not able to delete tag attachment: ', error.messsage, error.data);
-                        showSnackbarNotification(error.message, 5000, true);
+        (
+            async (): Promise<void> => {
+                try {
+                    if (tagId != null) {
+                        setIsLoading(true);
+                        await apiClient.deleteAttachmentOnTag(tagId, attachment.id, attachment.rowVersion);
+                        getAttachments();
+                        showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
                     }
-                    setIsLoading(false);
+                } catch (error) {
+                    console.error('Not able to delete tag attachment: ', error.messsage, error.data);
+                    showSnackbarNotification(error.message, 5000, true);
                 }
-            )();
-        }
-    };
-
-    const handleSubmitFile = (e: any): void => {
-        e.preventDefault();
-        const file = e.target.files[0];
-        uploadFileAttachment(file);
+                setIsLoading(false);
+            }
+        )();
     };
 
     if (isLoading) {
@@ -133,46 +102,12 @@ const AttachmentTab = ({
     }
 
     return (
-        <Container>
-            <Table
-                columns={[
-                    { render: getFilenameColumn },
-                ]}
-                data={attachments}
-                options={{
-                    showTitle: false,
-                    draggable: false,
-                    selection: false,
-                    header: false,
-                    padding: 'dense',
-                    search: false,
-                    paging: false,
-                    emptyRowsWhenPaging: false,
-                    actionsColumnIndex: -1,
-                }}
-                actions={[
-                    {
-                        icon: (): JSX.Element => deletIcon,
-                        tooltip: 'Delete attachment',
-                        onClick: (event, rowData): void => deleteAttachment(rowData)
-                    },
-                ]}
-                components={{
-                    Toolbar: (): any => (
-                        <AddFile>
-                            <form>
-                                <label htmlFor="addFile">
-                                    {addIcon} <FormFieldSpacer /> Add file
-                                </label>
-                                <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
-                            </form>
-                        </AddFile>
-                    )
-                }}
-
-                style={{ boxShadow: 'none' }}
-            />
-        </Container >
+        <AttachmentList
+            attachments={attachments}
+            addAttachment={addAttachment}
+            deleteAttachment={deleteAttachment}
+            downloadAttachment={downloadAttachment}
+        />
     );
 };
 

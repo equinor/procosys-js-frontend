@@ -1099,11 +1099,7 @@ class PreservationApiClient extends ApiClient {
     */
     async getTagAttachments(tagId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
         const endpoint = `/Tags/${tagId}/Attachments`;
-        const settings: AxiosRequestConfig = {
-            params: {
-                tagId: tagId
-            }
-        };
+        const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
@@ -1152,7 +1148,6 @@ class PreservationApiClient extends ApiClient {
         setRequestCanceller?: RequestCanceler): Promise<void> {
 
         const endpoint = `/Tags/${tagId}/Attachments/${attachmentId}`;
-        console.log('endpoint: ' + endpoint);
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {

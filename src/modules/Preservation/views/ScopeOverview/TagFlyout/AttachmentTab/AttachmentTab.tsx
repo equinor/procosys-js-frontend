@@ -38,6 +38,11 @@ const AttachmentTab = ({
         };
     };
 
+    // Get initial list of attachments 
+    useEffect(() => {
+        getAttachments();
+    }, []);
+
     const addAttachment = async (file: File): Promise<void> => {
 
         try {
@@ -60,7 +65,6 @@ const AttachmentTab = ({
                 try {
                     if (tagId != null) {
                         const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachmentId);
-                        console.log('URL: ' + url);
                         window.open(url, '_blank');
                         showSnackbarNotification('Attachment is downloaded.', 5000, true);
                     }
@@ -71,10 +75,6 @@ const AttachmentTab = ({
             }
         )();
     };
-
-    useEffect(() => {
-        getAttachments();
-    }, []);
 
     const deleteAttachment = (attachment: Attachment): void => {
         (

@@ -1033,7 +1033,7 @@ class PreservationApiClient extends ApiClient {
         actionId: number,
         rowVersion: string,
         setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/Tags/${tagId}/Action/${actionId}/Close`;
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Close`;
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);

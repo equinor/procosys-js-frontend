@@ -68,8 +68,6 @@ const CreateOrEditAction = ({
             console.error('Tag preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
-
-        return Promise.resolve();
     };
 
     return (
@@ -121,7 +119,7 @@ const CreateOrEditAction = ({
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={saveAction}>
+                <Button onClick={saveAction} disabled={!newTitle || !newDescription}>
                     Save
                 </Button>
             </ButtonContainer>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import ActionExpanded from './ActionExpanded';
-import { Collapse, CollapseInfo, ActionContainer, ActionList, Container, AddActionContainer, IconSpacer, ButtonSpacer, StyledButton } from './ActionTab.style';
+import { Collapse, CollapseInfo, ActionContainer, ActionList, Container, AddActionContainer, ButtonSpacer, StyledButton } from './ActionTab.style';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EdsIcon from '../../../../../../components/EdsIcon';
@@ -10,7 +10,7 @@ import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
 import CreateOrEditAction from './CreateOrEditAction';
 
-const attachIcon = <EdsIcon name='attach_file' size={16} />;
+//const attachIcon = <EdsIcon name='attach_file' size={16} />;
 const notificationIcon = <EdsIcon name='notifications' size={16} />;
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 
@@ -107,8 +107,8 @@ const ActionTab = ({
                     {showNotification() &&
                         notificationIcon
                     }
-                    <IconSpacer />
-                    {attachIcon}
+                    {/* todo: add attachment icon when flag is available <IconSpacer />
+                    {attachIcon} */}
 
                 </Collapse>
                 {

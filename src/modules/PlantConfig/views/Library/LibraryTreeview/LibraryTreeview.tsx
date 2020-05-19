@@ -13,7 +13,8 @@ type LibraryTreeviewProps = {
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 
     const {
-        libraryApiClient
+        libraryApiClient,
+        preservationApiClient
     } = usePlantConfigContext();
 
 
@@ -25,7 +26,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getModes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await libraryApiClient.getModes().then(
+            return await preservationApiClient.getModes().then(
                 (response) => {
                     if (response) {
                         response.forEach(mode => children.push(
@@ -48,7 +49,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getPresJourneys = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await libraryApiClient.getPresJourneys().then(
+            return await preservationApiClient.getJourneys().then(
                 (response) => {
                     if (response) {
                         response.forEach(journey => children.push(
@@ -68,10 +69,112 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
+    const getRequirementTreeNodes = async (): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+        try {
+            const requirementTypes = await preservationApiClient.getRequirementTypes();
+            requirementTypes.data.forEach(requirementType => {
+                children.push(
+                    {
+                        id: `rt_${requirementType.id}`,
+                        name: requirementType.title,
+                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_TYPE, requirementType.id.toString()),
+                        getChildren: (): Promise<TreeViewNode[]> => {
+                            const withInputNodes = requirementType.requirementDefinitions
+                                .filter((itm) => itm.needsUserInput)
+                                .map((itm) => {
+                                    return {
+                                        id: `field_withinput_${itm.id}`,
+                                        name: itm.title,
+                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString())
+                                    };
+                                });
+                            const withoutInput = requirementType.requirementDefinitions
+                                .filter((itm) => !itm.needsUserInput)
+                                .map((itm) => {
+                                    return {
+                                        id: `field_withoutinput_${itm.id}`,
+                                        name: itm.title,
+                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString())
+                                    };
+                                });
+                            const nodes: TreeViewNode[] = [];
+
+                            if (withInputNodes.length) {
+                                nodes.push({
+                                    id: `header_rt_${requirementType.id}_rd_withInput`,
+                                    name: 'With user required input',
+                                    getChildren: () => Promise.resolve(withInputNodes)
+                                });
+                            }
+                            if (withoutInput.length) {
+                                nodes.push({
+                                    id: `header_rt_${requirementType.id}_rd_withoutInput`,
+                                    name: 'Without user required input',
+                                    getChildren: () => Promise.resolve(withoutInput)
+                                });
+                            }
+                            return Promise.resolve(nodes);
+                        }
+
+                    });
+            });
+
+        } catch (error) {
+            console.error('Failed to fetch treenodes for Requirements: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        return children;
+    };
+
+
+    const getTagFunctionNodes = async (registerCode: string): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+
+        try {
+            const tagFunctions = await libraryApiClient.getTagFunctions(registerCode);
+            tagFunctions.map(tf => {
+                children.push({
+                    id: `tf_register_${tf.code}`,
+                    name: tf.code,
+                    onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, tf.code)
+                });
+            });
+        } catch (error) {
+            console.error('Failed to process Tag Function nodes', error.message, error.data);
+            showSnackbarNotification('Failed to process tag function nodes');
+        }
+
+        return children;
+    };
+
+    const getRegisterNodes = async (): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+
+        try {
+            const registers = await libraryApiClient.getRegisters();
+            registers.map(reg => {
+                children.push({
+                    id: `tf_register_${reg.code}`,
+                    name: reg.code,
+                    onClick: () => getTagFunctionNodes(reg.code)
+                });
+            });
+
+        } catch (error) {
+            console.error('Failed to process register nodes', error.message, error.data);
+            showSnackbarNotification('Failed to process register nodes');
+        }
+
+        return children;
+    };
+
+
     const rootNodes: TreeViewNode[] = [
         {
             id: LibraryType.TAG_FUNCTION,
             name: 'Tag Functions',
+            getChildren: getRegisterNodes
         },
         {
             id: LibraryType.MODE,
@@ -85,11 +188,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         },
         {
             id: LibraryType.PRES_REQUIREMENT_TYPE,
-            name: 'Pres. Requirement types',
-        },
-        {
-            id: LibraryType.PRES_REQUIREMENT_DEFINITION,
-            name: 'Pres. Requirement definitions',
+            name: 'Preservation requirements',
+            getChildren: getRequirementTreeNodes
         }
     ];
 

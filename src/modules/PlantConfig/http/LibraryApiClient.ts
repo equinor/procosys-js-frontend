@@ -2,26 +2,10 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
+import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
 
 const Settings = require('../../../../settings.json');
 
-interface ModeResponse {
-    id: number;
-    title: string;
-}
-
-interface PresJourneyResponse {
-    id: number;
-    title: string;
-}
-
-interface ErrorResponse {
-    ErrorCount: number;
-    Errors: {
-        PropertyName: string;
-        ErrorMessage: string;
-    }[];
-}
 
 class LibraryApiError extends Error {
 
@@ -57,8 +41,8 @@ class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.preservationApi.scope.join(' '),
-            Settings.externalResources.preservationApi.url
+            Settings.externalResources.libraryApi.scope.join(' '),
+            Settings.externalResources.libraryApi.url
         );
         this.client.interceptors.request.use(
             config => {
@@ -98,22 +82,19 @@ class LibraryApiClient extends ApiClient {
         );
     }
 
-
     /**
-    * Get modes
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
-    */
-    async getModes(setRequestCanceller?: RequestCanceler): Promise<ModeResponse[]> {
-        const endpoint = '/Modes';
+     * Get all registers from Library
+     *
+     * @param setRequestCanceller Request Canceler
+     */
+    async getRegisters(setRequestCanceller?: RequestCanceler): Promise<RegisterResponse[]> {
+        const endpoint = '/Registers';
 
-        const settings: AxiosRequestConfig = {
-            params: {}
-        };
+        const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<ModeResponse[]>(
+            const result = await this.client.get<RegisterResponse[]>(
                 endpoint,
                 settings
             );
@@ -125,20 +106,23 @@ class LibraryApiClient extends ApiClient {
     }
 
     /**
-    * Get Preservation Journeys
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
-    */
-    async getPresJourneys(setRequestCanceller?: RequestCanceler): Promise<PresJourneyResponse[]> {
-        const endpoint = '/Journeys';
+     * Get all tag functions from Library based on register code
+     *
+     * @param registerCode  Register to filter by
+     * @param setRequestCanceller Request Canceler
+     */
+    async getTagFunctions(registerCode: string, setRequestCanceller?: RequestCanceler): Promise<TagFunctionResponse[]> {
+        const endpoint = '/TagFunctions';
 
         const settings: AxiosRequestConfig = {
-            params: {}
+            params: {
+                registerCode: registerCode
+            }
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<PresJourneyResponse[]>(
+            const result = await this.client.get<TagFunctionResponse[]>(
                 endpoint,
                 settings
             );
@@ -148,6 +132,7 @@ class LibraryApiClient extends ApiClient {
             throw getLibraryApiError(error);
         }
     }
+
 }
 
 export default LibraryApiClient;

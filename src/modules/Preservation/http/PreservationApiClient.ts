@@ -62,6 +62,16 @@ interface CheckAreaTagNoResponse {
     exists: boolean;
 }
 
+interface ModeResponse {
+    id: number;
+    title: string;
+}
+
+interface PresJourneyResponse {
+    id: number;
+    title: string;
+}
+
 interface TagDetailsResponse {
     id: number;
     tagNo: string;
@@ -278,6 +288,11 @@ interface DisciplineFilterResponse {
     description: string;
 }
 
+interface AttachmentResponse {
+    id: number;
+    fileName: string;
+    rowVersion: string;
+}
 
 interface ErrorResponse {
     ErrorCount: number;
@@ -1154,6 +1169,121 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<DisciplineFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get tag attachments
+    */
+    async getTagAttachments(tagId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Tags/${tagId}/Attachments`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<AttachmentResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add attachment to tag 
+     */
+    async addAttachmentToTag(
+        tagId: number,
+        file: File,
+        overwriteIfExists: boolean,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Attachments`;
+
+        const formData = new FormData();
+        formData.append('OverwriteIfExists', overwriteIfExists.toString());
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, formData, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    *  Delete attachment on a tag 
+    */
+    async deleteAttachmentOnTag(
+        tagId: number,
+        attachmentId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/Tags/${tagId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
+    /**
+    * Get download url for  tag attachment
+    */
+    async getDownloadUrlForTagAttachment(tagId: number, attachmentId: number, setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Tags/${tagId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get modes
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getModes(setRequestCanceller?: RequestCanceler): Promise<ModeResponse[]> {
+        const endpoint = '/Modes';
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ModeResponse[]>(
+                endpoint,
+                settings
+            );
             return result.data;
         }
         catch (error) {

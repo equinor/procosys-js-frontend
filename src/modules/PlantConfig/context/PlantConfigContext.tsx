@@ -1,29 +1,34 @@
-import React, { useEffect, useMemo } from 'react';
-import PlantConfigApiClient from '../http/LibraryApiClient';
+import React, { useMemo } from 'react';
+import LibraryApiClient from '../http/LibraryApiClient';
 import propTypes from 'prop-types';
 import { useCurrentPlant } from '../../../core/PlantContext';
 import { useProcosysContext } from '../../../core/ProcosysContext';
-import LibraryApiClient from '../http/LibraryApiClient';
-
-const PlantConfigContext = React.createContext<PlantConfigContextProps>({} as PlantConfigContextProps);
+import PreservationApiClient from '@procosys/modules/Preservation/http/PreservationApiClient';
 
 type PlantConfigContextProps = {
-    libraryApiClient: PlantConfigApiClient;
+    libraryApiClient: LibraryApiClient;
+    preservationApiClient: PreservationApiClient;
 }
+
+const PlantConfigContext = React.createContext<PlantConfigContextProps>({} as PlantConfigContextProps);
 
 export const PlantConfigContextProvider: React.FC = ({ children }): JSX.Element => {
 
     const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
+    const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
 
-    useEffect(() => {
+    useMemo(() => {
         libraryApiClient.setCurrentPlant(plant.id);
+        preservationApiClient.setCurrentPlant(plant.id);
     }, [plant]);
+
 
     return (
         <PlantConfigContext.Provider value={{
-            libraryApiClient: libraryApiClient
+            libraryApiClient: libraryApiClient,
+            preservationApiClient: preservationApiClient
         }}>
             {children}
         </PlantConfigContext.Provider>

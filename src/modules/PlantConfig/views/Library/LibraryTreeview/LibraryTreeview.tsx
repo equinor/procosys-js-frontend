@@ -13,7 +13,8 @@ type LibraryTreeviewProps = {
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 
     const {
-        libraryApiClient
+        libraryApiClient,
+        preservationApiClient
     } = usePlantConfigContext();
 
 
@@ -68,6 +69,64 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
+    const getRequirementTreeNodes = async (): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+        try {
+            const requirementTypes = await preservationApiClient.getRequirementTypes();
+            requirementTypes.data.forEach(requirementType => {
+                children.push(
+                    {
+                        id: `rt_${requirementType.id}`,
+                        name: requirementType.title,
+                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_TYPE, requirementType.id.toString()),
+                        getChildren: (): Promise<TreeViewNode[]> => {
+                            const withInputNodes = requirementType.requirementDefinitions
+                                .filter((itm) => itm.needsUserInput)
+                                .map((itm) => {
+                                    return {
+                                        id: `field_withinput_${itm.id}`,
+                                        name: itm.title,
+                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString())
+                                    };
+                                });
+                            const withoutInput = requirementType.requirementDefinitions
+                                .filter((itm) => !itm.needsUserInput)
+                                .map((itm) => {
+                                    return {
+                                        id: `field_withoutinput_${itm.id}`,
+                                        name: itm.title,
+                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString())
+                                    };
+                                });
+                            const nodes: TreeViewNode[] = [];
+
+                            if (withInputNodes.length) {
+                                nodes.push({
+                                    id: `header_rt_${requirementType.id}_rd_withInput`,
+                                    name: 'With user required input',
+                                    getChildren: () => Promise.resolve(withInputNodes)
+                                });
+                            }
+                            if (withoutInput.length) {
+                                nodes.push({
+                                    id: `header_rt_${requirementType.id}_rd_withoutInput`,
+                                    name: 'Without user required input',
+                                    getChildren: () => Promise.resolve(withoutInput)
+                                });
+                            }
+                            return Promise.resolve(nodes);
+                        }
+
+                    });
+            });
+
+        } catch (error) {
+            console.error('Failed to fetch treenodes for Requirements: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        return children;
+    };
+
     const rootNodes: TreeViewNode[] = [
         {
             id: LibraryType.TAG_FUNCTION,
@@ -85,11 +144,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         },
         {
             id: LibraryType.PRES_REQUIREMENT_TYPE,
-            name: 'Pres. Requirement types',
-        },
-        {
-            id: LibraryType.PRES_REQUIREMENT_DEFINITION,
-            name: 'Pres. Requirement definitions',
+            name: 'Preservation requirements',
+            getChildren: getRequirementTreeNodes
         }
     ];
 

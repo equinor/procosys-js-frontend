@@ -26,7 +26,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getModes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await libraryApiClient.getModes().then(
+            return await preservationApiClient.getModes().then(
                 (response) => {
                     if (response) {
                         response.forEach(mode => children.push(
@@ -49,7 +49,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getPresJourneys = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await libraryApiClient.getPresJourneys().then(
+            return await preservationApiClient.getJourneys().then(
                 (response) => {
                     if (response) {
                         response.forEach(journey => children.push(
@@ -127,10 +127,54 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
+
+    const getTagFunctionNodes = async (registerCode: string): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+
+        try {
+            const tagFunctions = await libraryApiClient.getTagFunctions(registerCode);
+            tagFunctions.map(tf => {
+                children.push({
+                    id: `tf_register_${tf.code}`,
+                    name: tf.code,
+                    onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, tf.code)
+                });
+            });
+        } catch (error) {
+            console.error('Failed to process Tag Function nodes', error.message, error.data);
+            showSnackbarNotification('Failed to process tag function nodes');
+        }
+
+        return children;
+    };
+
+    const getRegisterNodes = async (): Promise<TreeViewNode[]> => {
+        const children: TreeViewNode[] = [];
+
+        try {
+            const registers = await libraryApiClient.getRegisters();
+            registers.map(reg => {
+                children.push({
+                    id: `tf_register_${reg.code}`,
+                    name: reg.code,
+                    onClick: () => getTagFunctionNodes(reg.code)
+                });
+            });
+
+        } catch (error) {
+            console.error('Failed to process register nodes', error.message, error.data);
+            showSnackbarNotification('Failed to process register nodes');
+        }
+
+        return children;
+    };
+
+
     const rootNodes: TreeViewNode[] = [
         {
             id: LibraryType.TAG_FUNCTION,
             name: 'Tag Functions',
+            getChildren: getRegisterNodes
         },
         {
             id: LibraryType.MODE,

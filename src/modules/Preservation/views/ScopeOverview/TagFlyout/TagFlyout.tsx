@@ -11,6 +11,7 @@ import { usePreservationContext } from '../../../context/PreservationContext';
 import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
+import AttachmentTab from './AttachmentTab/AttachmentTab';
 
 enum PreservationStatus {
     NotStarted = 'NotStarted',
@@ -99,18 +100,20 @@ const TagFlyout = ({
     const preservationIsStarted = tagDetails ? tagDetails.status === PreservationStatus.Active : false;
 
     const getTabContent = (): JSX.Element => {
+
         switch (activeTab) {
             case 'preservation': {
                 if (tagDetails === null) {
-                    return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
+                    return <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner medium /></div>;
                 }
 
                 return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} setDirty={setDirty} />;
             }
-            case 'actions':
+            case 'actions': {
                 return <ActionTab tagId={tagId} />;
+            }
             case 'attachments':
-                return <div></div>;
+                return <AttachmentTab tagId={tagId} />;
             case 'history':
                 return <div></div>;
             default:
@@ -142,8 +145,8 @@ const TagFlyout = ({
                             onClick={preserveTag}
                         >
                             {isPreservingTag && (
-                                <span style={{display: 'flex', alignItems: 'center'}}>
-                                    <span style={{marginBottom: '4px'}}><Spinner /></span> Preserved this week
+                                <span style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ marginBottom: '4px' }}><Spinner /></span> Preserved this week
                                 </span>
                             )}
                             {!isPreservingTag && ('Preserved this week')}
@@ -163,7 +166,7 @@ const TagFlyout = ({
                 </HeaderActions>
             </Header>
             <StatusLabel status={tagDetails && tagDetails.status}>
-                <span style={{margin: '0 var(--grid-unit)'}}>
+                <span style={{ margin: '0 var(--grid-unit)' }}>
                     {tagDetails && tagDetails.status}
                 </span>
             </StatusLabel>

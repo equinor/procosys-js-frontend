@@ -62,6 +62,16 @@ interface CheckAreaTagNoResponse {
     exists: boolean;
 }
 
+interface ModeResponse {
+    id: number;
+    title: string;
+}
+
+interface PresJourneyResponse {
+    id: number;
+    title: string;
+}
+
 interface TagDetailsResponse {
     id: number;
     tagNo: string;
@@ -1183,8 +1193,32 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+    * Get modes
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getModes(setRequestCanceller?: RequestCanceler): Promise<ModeResponse[]> {
+        const endpoint = '/Modes';
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ModeResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
 }
-
-
 
 export default PreservationApiClient;

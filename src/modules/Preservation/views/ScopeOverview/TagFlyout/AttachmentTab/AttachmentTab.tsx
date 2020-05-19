@@ -40,7 +40,10 @@ const AttachmentTab = ({
 
     // Get initial list of attachments 
     useEffect(() => {
-        getAttachments();
+        const requestCancellor = getAttachments();
+        return (): void => {
+            requestCancellor && requestCancellor;
+        };
     }, []);
 
     const addAttachment = async (file: File): Promise<void> => {
@@ -59,40 +62,32 @@ const AttachmentTab = ({
         setIsLoading(false);
     };
 
-    const downloadAttachment = (attachmentId: number): void => {
-        (
-            async (): Promise<void> => {
-                try {
-                    if (tagId != null) {
-                        const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachmentId);
-                        window.open(url, '_blank');
-                        showSnackbarNotification('Attachment is downloaded.', 5000, true);
-                    }
-                } catch (error) {
-                    console.error('Not able to get download url for tag attachment: ', error.messsage, error.data);
-                    showSnackbarNotification(error.message, 5000, true);
-                }
+    const downloadAttachment = async (attachmentId: number): Promise<void> => {
+        try {
+            if (tagId != null) {
+                const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachmentId);
+                window.open(url, '_blank');
+                showSnackbarNotification('Attachment is downloaded.', 5000, true);
             }
-        )();
+        } catch (error) {
+            console.error('Not able to get download url for tag attachment: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000, true);
+        }
     };
 
-    const deleteAttachment = (attachment: Attachment): void => {
-        (
-            async (): Promise<void> => {
-                try {
-                    if (tagId != null) {
-                        setIsLoading(true);
-                        await apiClient.deleteAttachmentOnTag(tagId, attachment.id, attachment.rowVersion);
-                        getAttachments();
-                        showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
-                    }
-                } catch (error) {
-                    console.error('Not able to delete tag attachment: ', error.messsage, error.data);
-                    showSnackbarNotification(error.message, 5000, true);
-                }
-                setIsLoading(false);
+    const deleteAttachment = async (attachment: Attachment): Promise<void> => {
+        try {
+            if (tagId != null) {
+                setIsLoading(true);
+                await apiClient.deleteAttachmentOnTag(tagId, attachment.id, attachment.rowVersion);
+                getAttachments();
+                showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
             }
-        )();
+        } catch (error) {
+            console.error('Not able to delete tag attachment: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        setIsLoading(false);
     };
 
     if (isLoading) {

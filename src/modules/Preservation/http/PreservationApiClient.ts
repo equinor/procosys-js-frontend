@@ -1062,6 +1062,103 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+    * Get action attachments   
+    */
+    async getActionAttachments(tagId: number, actionId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<AttachmentResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add attachment to action 
+     */
+    async addAttachmentToAction(
+        tagId: number,
+        actionId: number,
+        file: File,
+        overwriteIfExists: boolean,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
+
+        const formData = new FormData();
+        formData.append('OverwriteIfExists', overwriteIfExists.toString());
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, formData, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    *  Delete attachment on an action 
+    */
+    async deleteAttachmentOnAction(
+        tagId: number,
+        actionId: number,
+        attachmentId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get download url for actopm attachment
+    */
+    async getDownloadUrlForActionAttachment(
+        tagId: number,
+        actionId: number,
+        attachmentId: number,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
         * Get journey filter values
         *
         * @param setRequestCanceller Returns a function that can be called to cancel the request

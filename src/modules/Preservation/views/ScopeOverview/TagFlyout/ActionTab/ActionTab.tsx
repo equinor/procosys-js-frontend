@@ -33,6 +33,7 @@ const ActionTab = ({
     const [actions, setActions] = useState<ActionListItem[]>([]);
     const [showCreateAction, setShowCreateAction] = useState<boolean>(false);
 
+
     const getActionList = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
@@ -65,12 +66,9 @@ const ActionTab = ({
         }
     };
 
+
     const createActionSection = (action: ActionListItem): JSX.Element => {
         const isExpanded = action.id === expandedAction;
-
-        const updateTitle = (title: string): void => {
-            action.title = title;
-        };
 
         const isDue = (): boolean => {
             if (action.dueTimeUtc) {
@@ -113,7 +111,7 @@ const ActionTab = ({
                 </Collapse>
                 {
                     isExpanded && (
-                        <ActionExpanded tagId={tagId} actionId={action.id} updateTitle={updateTitle} toggleDetails={(): void => { toggleDetails(action.id); }} />
+                        <ActionExpanded tagId={tagId} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} />
                     )
                 }
             </ActionContainer >
@@ -125,8 +123,10 @@ const ActionTab = ({
             {showCreateAction &&
                 <CreateOrEditAction
                     tagId={tagId}
-                    backToParentView={(): void => { setShowCreateAction(false); }}
-                    getActionList={getActionList}
+                    backToParentView={(): void => {
+                        getActionList();
+                        setShowCreateAction(false);
+                    }}
                 />
             }
             {
@@ -145,6 +145,7 @@ const ActionTab = ({
                             actions.map(action => createActionSection(action))
                         }
                     </ActionList>
+
                 </Container >
             }
         </>

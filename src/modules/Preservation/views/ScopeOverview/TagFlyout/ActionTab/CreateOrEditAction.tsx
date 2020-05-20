@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
-import { Container, Header, InputContainer, ButtonContainer, ButtonSpacer } from './CreateOrEditAction.style';
+import { Container, Header, InputContainer, ButtonContainer, ButtonSpacer, AttachmentsContainer } from './CreateOrEditAction.style';
 import { usePreservationContext } from '../../../../context/PreservationContext';
-import { Button, TextField } from '@equinor/eds-core-react';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import ActionAttachments from './ActionAttachments';
 
 interface ActionTabProps {
     tagId: number;
@@ -15,8 +16,6 @@ interface ActionTabProps {
     dueTimeUtc?: Date | null;
     rowVersion?: string;
     backToParentView: () => void;
-    getActionList?: () => void;
-    updateTitle?: (title: string) => void;
 }
 
 const CreateOrEditAction = ({
@@ -27,8 +26,6 @@ const CreateOrEditAction = ({
     dueTimeUtc,
     rowVersion,
     backToParentView,
-    getActionList,
-    updateTitle
 }: ActionTabProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -52,7 +49,6 @@ const CreateOrEditAction = ({
             if (actionId) {
                 if (rowVersion) {
                     await apiClient.updateAction(tagId, actionId, newTitle, newDescription, newDueTimeUtc, rowVersion);
-                    updateTitle ? updateTitle(newTitle) : null;
                     backToParentView();
                     showSnackbarNotification('Action is updated.', 5000, true);
                 } else {
@@ -60,7 +56,6 @@ const CreateOrEditAction = ({
                 }
             } else {
                 await apiClient.createNewAction(tagId, newTitle, newDescription, newDueTimeUtc);
-                getActionList && getActionList(); //refresh action list  
                 backToParentView();
                 showSnackbarNotification('New action is created.', 5000, true);
             }
@@ -114,6 +109,19 @@ const CreateOrEditAction = ({
                     />
                 </MuiPickersUtilsProvider>
             </InputContainer>
+
+            {actionId &&
+                <AttachmentsContainer>
+                    <Typography variant='caption'>Attachments</Typography>
+
+                    <ActionAttachments
+                        tagId={tagId}
+                        actionId={actionId}
+                        enableActions={true}
+                    />
+                </AttachmentsContainer>
+            }
+
             <ButtonContainer>
                 <Button onClick={backToParentView}>
                     Cancel
@@ -124,7 +132,6 @@ const CreateOrEditAction = ({
                 </Button>
             </ButtonContainer>
         </Container>
-
     );
 };
 

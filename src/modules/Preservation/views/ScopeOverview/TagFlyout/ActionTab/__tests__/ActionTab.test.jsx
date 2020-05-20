@@ -1,7 +1,6 @@
 import { render, fireEvent} from '@testing-library/react';
 import React from 'react';
 import ActionTab from '../ActionTab';
-import { act } from 'react-dom/test-utils';
 
 const mockActionList = [
     {
@@ -33,6 +32,16 @@ const mockActionDetails = {
     rowVersion: '1'
 };
 
+const mockActionAttachments = [
+    {
+        id: '1',
+        fileName: 'aFileAttachment.png',
+        rowVersion: '1'
+    }    
+];
+
+
+
 jest.mock('../../../../../context/PreservationContext', () => ({
     
     usePreservationContext: jest.fn(() => {
@@ -45,6 +54,7 @@ jest.mock('../../../../../context/PreservationContext', () => ({
                 },
                 getActions: () => Promise.resolve(mockActionList),
                 getActionDetails: () => Promise.resolve(mockActionDetails),
+                getActionAttachments: () => Promise.resolve(mockActionAttachments),
             }
         };
     })
@@ -52,48 +62,29 @@ jest.mock('../../../../../context/PreservationContext', () => ({
 
 describe('<ActionTab />', () => {
 
-    let getByTestIdTemp = null;
-    let queryByTextTemp = null;
-
     it('Should render action list', async () => {
-        await act(async () => {
-            const {queryByText } = render(<ActionTab tagId={100}/>);
-            queryByTextTemp = queryByText;
-        });
-
-        await act(async () => {
-            expect(queryByTextTemp('Action 1')).toBeInTheDocument();
-            expect(queryByTextTemp('Action 2')).toBeInTheDocument();
-            expect(queryByTextTemp('Add action')).toBeInTheDocument();
-        });
+        const {findByText, queryByText } = render(<ActionTab tagId={100}/>);
+        await findByText('Action 1');
+        expect(queryByText('Action 1')).toBeInTheDocument();
+        expect(queryByText('Action 2')).toBeInTheDocument();
+        expect(queryByText('Add action')).toBeInTheDocument();
     });
     
     it('Should open and show action details when clicking the toggle-button.', async () => {
-        await act(async () => {
-            const {queryByText, getByTestId } = render(<ActionTab tagId={100}/>);
-            getByTestIdTemp = getByTestId;
-            queryByTextTemp = queryByText;
-        });
+        const {queryByText, findByTestId, findByText } = render(<ActionTab tagId={100}/>);
+        const clickableElement = await findByTestId('toggle-icon-1');
 
-        await act(async () => {
-            fireEvent.click(getByTestIdTemp('toggle-icon-1'));
-        });
+        fireEvent.click(clickableElement);
+        await findByText('01.05.2020');
 
-        await act(async () => {
-            expect(queryByTextTemp('01.05.2020')).toBeInTheDocument();
-            expect(queryByTextTemp('01.03.2020')).toBeInTheDocument();
-            expect(queryByTextTemp('Donald Duck')).toBeInTheDocument();
-            expect(queryByTextTemp('Description 1')).toBeInTheDocument();
-            expect(queryByTextTemp('Close action')).toBeInTheDocument();
-        });
+        expect(queryByText('01.05.2020')).toBeInTheDocument();
+        expect(queryByText('01.03.2020')).toBeInTheDocument();
+        expect(queryByText('Donald Duck')).toBeInTheDocument();
+        expect(queryByText('Description 1')).toBeInTheDocument();
+        expect(queryByText('aFileAttachment.png')).toBeInTheDocument();
+        expect(queryByText('Close action')).toBeInTheDocument();
 
-        await act(async () => {
-            fireEvent.click(getByTestIdTemp('toggle-icon-1'));
-        });
-
-        await act(async () => {
-            expect(queryByTextTemp('Description 1')).not.toBeInTheDocument();
-        });        
+        fireEvent.click(clickableElement);
+        expect(queryByText('Description 1')).not.toBeInTheDocument();
     });
-
 });

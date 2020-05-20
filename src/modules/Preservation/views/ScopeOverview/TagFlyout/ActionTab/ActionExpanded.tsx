@@ -8,6 +8,7 @@ import { Canceler } from 'axios';
 import CreateOrEditAction from './CreateOrEditAction';
 import EdsIcon from '../../../../../../components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
+import ActionAttachments from './ActionAttachments';
 
 const editIcon = <EdsIcon name='edit' size={16} />;
 
@@ -35,21 +36,20 @@ interface ActionDetails {
 interface ActionDetailsProps {
     tagId: number;
     actionId: number;
-    updateTitle: (title: string) => void;
     toggleDetails: () => void;
-    getActionList?: () => void;
+    getActionList: () => void;
 }
 
 const ActionExpanded = ({
     tagId,
     actionId,
-    updateTitle,
     toggleDetails,
     getActionList
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [actionDetails, setActionDetails] = useState<ActionDetails>();
     const [showEditMode, setShowEditMode] = useState<boolean>(false);
+
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -74,7 +74,7 @@ const ActionExpanded = ({
         try {
             if (actionDetails) {
                 await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
-                getActionList && getActionList();
+                getActionList();
                 toggleDetails();
                 showSnackbarNotification('Action is closed.', 5000, true);
             }
@@ -92,9 +92,10 @@ const ActionExpanded = ({
     };
 
     if (!actionDetails) {
-        //Show spinner when actionDetails is not loaded
         return (<Spinner />);
-    } else if (showEditMode) {
+    }
+
+    if (showEditMode) {
         return (
             < CreateOrEditAction
                 tagId={tagId}
@@ -103,82 +104,90 @@ const ActionExpanded = ({
                 description={actionDetails.description}
                 dueTimeUtc={actionDetails.dueTimeUtc}
                 rowVersion={actionDetails.rowVersion}
-                backToParentView={(): void => { setShowEditMode(false); }}
-                updateTitle={updateTitle}
+                backToParentView={(): void => { getActionList(); setShowEditMode(false); }}
             />
         );
-    } else {
-        return (
-            <Container isClosed={actionDetails.isClosed}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Section>
-                        <Typography variant='caption'>Due date</Typography>
-                        <Typography variant="body_short">
-                            {getDateField(actionDetails.dueTimeUtc)}
-                        </Typography>
-                    </Section>
-                    {
-                        !actionDetails.isClosed && (
-                            <IconContainer>
-                                <StyledButton
-                                    data-testid="editIcon"
-                                    variant='ghost'
-                                    onClick={(): void => setShowEditMode(true)}>
-                                    {editIcon}
-                                </StyledButton>
-                            </IconContainer>
-                        )
-                    }
-                </div>
-                {
-                    actionDetails.isClosed && (
-                        <Section>
-                            <div>
-                                <GridRow>
-                                    <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
-                                    <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
-                                    <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                        {getDateField(actionDetails.closedAtUtc)}
-                                    </Typography>
-                                    <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                        {actionDetails.closedBy.firstName} {actionDetails.closedBy.lastName}
-                                    </Typography>
-                                </GridRow>
-                            </div>
-                        </Section>
-                    )
-                }
+    }
+
+    return (
+        <Container isClosed={actionDetails.isClosed}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Section>
-                    <div>
-                        <GridRow>
-                            <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
-                            <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
-                            <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                {getDateField(actionDetails.createdAtUtc)}
-                            </Typography>
-                            <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                {actionDetails.createdBy.firstName} {actionDetails.createdBy.lastName}
-                            </Typography>
-                        </GridRow>
-                    </div>
-                </Section>
-                <Section>
-                    <Typography variant='caption'>Description</Typography>
-                    <Typography variant="body_short">{actionDetails.description}</Typography>
+                    <Typography variant='caption'>Due date</Typography>
+                    <Typography variant="body_short">
+                        {getDateField(actionDetails.dueTimeUtc)}
+                    </Typography>
                 </Section>
                 {
                     !actionDetails.isClosed && (
-                        <Section>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button onClick={closeAction}>Close action</Button>
-                            </div>
-                        </Section>
+                        <IconContainer>
+                            <StyledButton
+                                data-testid="editIcon"
+                                variant='ghost'
+                                onClick={(): void => setShowEditMode(true)}>
+                                {editIcon}
+                            </StyledButton>
+                        </IconContainer>
                     )
                 }
-            </Container >
-        );
-    }
-};
+            </div>
+            {
+                actionDetails.isClosed && (
+                    <Section>
+                        <div>
+                            <GridRow>
+                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
+                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                                    {getDateField(actionDetails.closedAtUtc)}
+                                </Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                                    {actionDetails.closedBy.firstName} {actionDetails.closedBy.lastName}
+                                </Typography>
+                            </GridRow>
+                        </div>
+                    </Section>
+                )
+            }
+            <Section>
+                <div>
+                    <GridRow>
+                        <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
+                        <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
+                        <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                            {getDateField(actionDetails.createdAtUtc)}
+                        </Typography>
+                        <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                            {actionDetails.createdBy.firstName} {actionDetails.createdBy.lastName}
+                        </Typography>
+                    </GridRow>
+                </div>
+            </Section>
+            <Section>
+                <Typography variant='caption'>Description</Typography>
+                <Typography variant="body_short">{actionDetails.description}</Typography>
+            </Section>
 
+            <Section>
+                <Typography variant='caption'>Attachments</Typography>
+                <ActionAttachments
+                    tagId={tagId}
+                    actionId={actionId}
+                    enableActions={false}
+                />
+            </Section>
+
+            {
+                !actionDetails.isClosed && (
+                    <Section>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button onClick={closeAction}>Close action</Button>
+                        </div>
+                    </Section>
+                )
+            }
+        </Container >
+    );
+};
 
 export default ActionExpanded; 

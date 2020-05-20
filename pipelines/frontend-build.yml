@@ -68,4 +68,4 @@ stages:
       envRg: 'pcs-hosting-rg'
       envGroup: '${{ variables.envGroupName }}'
       dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
-      clusterName: 'aks-pcs-test'
+      clusterName: 'pcs-aks-test'

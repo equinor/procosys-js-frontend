@@ -6,7 +6,6 @@ import { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_f
 // eslint-disable-next-line @typescript-eslint/camelcase
 const icons = { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash };
 
-
 Icon.add(icons);
 
 type IconProps = {

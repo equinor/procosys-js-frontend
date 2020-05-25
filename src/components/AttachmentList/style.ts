@@ -4,8 +4,6 @@ import { tokens } from '@equinor/eds-tokens';
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-    padding-left: calc(var(--grid-unit) * 2);
-    padding-right: calc(var(--grid-unit) * 2);
 `;
 
 export const AddFile = styled.div`

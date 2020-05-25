@@ -15,8 +15,8 @@ export interface Attachment {
 
 interface AttachmentListProps {
     attachments: Attachment[];
-    addAttachment: (file: File) => void;
-    deleteAttachment: (attachment: Attachment) => void;
+    addAttachment?: (file: File) => void;
+    deleteAttachment?: (attachment: Attachment) => void;
     downloadAttachment: (id: number) => void;
 }
 
@@ -24,7 +24,7 @@ const AttachmentList = ({
     attachments,
     addAttachment,
     deleteAttachment,
-    downloadAttachment
+    downloadAttachment,
 }: AttachmentListProps): JSX.Element => {
 
     const getFilenameColumn = (attachment: Attachment): JSX.Element => {
@@ -38,15 +38,19 @@ const AttachmentList = ({
     };
 
     const handleDelete = (attachment: Attachment): void => {
-        if (confirm(`You want to delete the file '${attachment.fileName}'`)) {
-            deleteAttachment(attachment);
+        if (deleteAttachment) {
+            if (confirm(`You want to delete the file '${attachment.fileName}'`)) {
+                deleteAttachment(attachment);
+            }
         }
     };
 
     const handleSubmitFile = (e: any): void => {
-        e.preventDefault();
-        const file = e.target.files[0];
-        addAttachment(file);
+        if (addAttachment) {
+            e.preventDefault();
+            const file = e.target.files[0];
+            addAttachment(file);
+        }
     };
 
     return (
@@ -69,7 +73,7 @@ const AttachmentList = ({
                 }}
                 actions={[
                     {
-                        icon: (): JSX.Element => deletIcon,
+                        icon: (): JSX.Element => deleteAttachment ? deletIcon : <>...</>,
                         tooltip: 'Delete attachment',
                         onClick: (event, rowData): void => handleDelete(rowData)
                     },
@@ -77,12 +81,14 @@ const AttachmentList = ({
                 components={{
                     Toolbar: (): any => (
                         <AddFile>
-                            <form>
-                                <label htmlFor="addFile">
-                                    {addIcon} <FormFieldSpacer /> Add file
-                                </label>
-                                <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
-                            </form>
+                            {addAttachment && (
+                                <form>
+                                    <label htmlFor="addFile">
+                                        {addIcon} <FormFieldSpacer /> Add file
+                                    </label>
+                                    <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
+                                </form>
+                            )}
                         </AddFile>
                     )
                 }}

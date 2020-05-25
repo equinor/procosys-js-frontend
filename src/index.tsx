@@ -1,5 +1,4 @@
 import './assets/sass/procosys-styles.scss';
-import { setConfig } from 'react-hot-loader';
 
 import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
 import React, { useRef } from 'react';
@@ -7,9 +6,6 @@ import React, { useRef } from 'react';
 import App from './app/index';
 import AuthService from './auth/AuthService';
 import { render } from '@hot-loader/react-dom';
-setConfig({
-    reloadHooks: false,
-});
 
 const start = async (): Promise<void> => {
     const authService = new AuthService();

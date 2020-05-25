@@ -1,13 +1,15 @@
 import './assets/sass/procosys-styles.scss';
-import 'react-hot-loader';
-import { hot } from 'react-hot-loader/root';
+import { setConfig } from 'react-hot-loader';
 
 import ProcosysContext, { createProcosysContext } from './core/ProcosysContext';
 import React, { useRef } from 'react';
 
 import App from './app/index';
 import AuthService from './auth/AuthService';
-import ReactDOM from 'react-dom';
+import { render } from '@hot-loader/react-dom';
+setConfig({
+    reloadHooks: false,
+});
 
 const start = async (): Promise<void> => {
     const authService = new AuthService();
@@ -44,10 +46,9 @@ const start = async (): Promise<void> => {
     const element = document.getElementById('app-container') || document.createElement('div');
     element.setAttribute('id', 'app-container');
     document.body.appendChild(element);
-    const HotRoot = hot(Root);
 
-    ReactDOM.render(
-        <HotRoot />,
+    render(
+        <Root />,
         document.getElementById('app-container'));
 
 };

@@ -4,9 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-    entry: {
-        procosys: './src/index.tsx',
-    },
+    entry: ['react-hot-loader/patch', './src/index.tsx'],
     mode: 'development',
     module: {
         rules: [

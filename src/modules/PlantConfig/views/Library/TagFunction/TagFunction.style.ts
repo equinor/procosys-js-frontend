@@ -33,6 +33,7 @@ export const Container = styled.div`
 export const InformationContainer = styled.div`
     display: inline-flex;
     margin: calc(var(--grid-unit)*2) 0px;
+    min-width: 390px;
     flex-direction: column;
     background-color: ${tokens.colors.ui.background__default.rgba};
     padding: calc(var(--grid-unit)*2) calc(var(--grid-unit)*4);

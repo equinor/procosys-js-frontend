@@ -137,7 +137,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 children.push({
                     id: `tf_register_${registerCode}_${tf.code}`,
                     name: tf.code,
-                    onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, tf.code)
+                    onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, `${registerCode}|${tf.code}`)
                 });
             });
         } catch (error) {

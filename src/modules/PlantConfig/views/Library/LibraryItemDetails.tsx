@@ -1,10 +1,11 @@
 import React from 'react';
 import TagFunction from './TagFunction/TagFunction';
 import { LibraryType } from './Library';
+import PreservationJourney from './PreservationJourney/PreservationJourney';
 
 type LibraryItemProps = {
     libraryType: string;
-    libraryItem: string;
+    libraryItem: string | null;
 };
 
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
@@ -15,7 +16,7 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
         case LibraryType.MODE:
             return <div>Mode id={props.libraryItem}</div>;
         case LibraryType.PRES_JOURNEY:
-            return <div>Journey id={props.libraryItem}</div>;
+            return <PreservationJourney journeyId={Number(props.libraryItem)} />;
         case LibraryType.PRES_REQUIREMENT_TYPE:
             return <div>req type</div>;
         case LibraryType.PRES_REQUIREMENT_DEFINITION:

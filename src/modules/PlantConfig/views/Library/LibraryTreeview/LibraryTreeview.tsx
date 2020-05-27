@@ -7,7 +7,7 @@ import { Container } from './LibraryTreeview.style';
 
 type LibraryTreeviewProps = {
     setSelectedLibraryType: (libraryType: string) => void;
-    setSelectedLibraryItem: (libraryItem: string) => void;
+    setSelectedLibraryItem: (libraryItem: string | null) => void;
 };
 
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
@@ -18,7 +18,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     } = usePlantConfigContext();
 
 
-    const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string): void => {
+    const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string | null): void => {
         props.setSelectedLibraryType(libraryType);
         props.setSelectedLibraryItem(libraryItem);
     };
@@ -46,7 +46,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
-    const getPresJourneys = async (): Promise<TreeViewNode[]> => {
+    const getPresJourneyTreeNodes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
             return await preservationApiClient.getJourneys().then(
@@ -56,7 +56,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                             {
                                 id: journey.id,
                                 name: journey.title,
-                                onClick: (): void => handleTreeviewClick(LibraryType.PRES_JOURNEY, journey.id.toString())
+                                onClick: (): void => handleTreeviewClick(LibraryType.PRES_JOURNEY, journey.id.toString()),
                             }));
                     }
                     return children;
@@ -184,7 +184,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         {
             id: LibraryType.PRES_JOURNEY,
             name: 'Preservation Journeys',
-            getChildren: getPresJourneys
+            getChildren: getPresJourneyTreeNodes,
+            onClick: (): void => { handleTreeviewClick(LibraryType.PRES_JOURNEY, null); }
         },
         {
             id: LibraryType.PRES_REQUIREMENT_TYPE,

@@ -17,14 +17,13 @@ export enum LibraryType {
 
 const Library = (): JSX.Element => {
 
-    const [selectedLibraryType, setSelectedLibraryType] = useState('');
-    const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
+    const [selectedLibraryType, setSelectedLibraryType] = useState<string | null>(null);
+    const [selectedLibraryItem, setSelectedLibraryItem] = useState<string | null>(null);
 
     const match = useRouteMatch();
     const params: any = match.params;
 
     useEffect(() => {
-
         setSelectedLibraryType(params.libraryType);
     }, []);
 
@@ -34,7 +33,7 @@ const Library = (): JSX.Element => {
 
             <Divider />
 
-            <LibraryItemDetails libraryType={selectedLibraryType} libraryItem={selectedLibraryItem} />
+            {selectedLibraryType && <LibraryItemDetails libraryType={selectedLibraryType} libraryItem={selectedLibraryItem} />}
         </Container>
     );
 };

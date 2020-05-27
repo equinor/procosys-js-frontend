@@ -109,7 +109,7 @@ const Select = ({
                 <ItemContent>
                     {itm.icon || null}
                     {itm.text}
-                    <KeyboardArrowRightIcon className='arrowIcon'/>
+                    <KeyboardArrowRightIcon className='arrowIcon' />
                 </ItemContent>
                 <CascadingItem>
                     {createNodesForItems(itm.children)}
@@ -146,7 +146,7 @@ const Select = ({
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (
-                <ul style={{boxShadow: 'none'}}>
+                <ul style={{ boxShadow: 'none' }}>
                     <li data-value={-1}>No items found</li>
                 </ul>
             )}

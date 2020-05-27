@@ -2,7 +2,7 @@ import React from 'react';
 
 
 type TagFunctionProps = {
-    tagFunctionId: string;
+    tagFunctionId: string | null;
 };
 
 

@@ -249,7 +249,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const showCompleteDialog = (): void => {
-        const hasCompletableTags = selectedTags.some(tag => tag.readyToBePreserved);
+        const hasCompletableTags = selectedTags.some(tag => tag.readyToBeCompleted);
         const completeButton = hasCompletableTags ? 'Complete' : null;
         const completeFunc = hasCompletableTags ? complete : null;
 

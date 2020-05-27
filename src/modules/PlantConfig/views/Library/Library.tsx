@@ -1,3 +1,4 @@
+import {hot} from 'react-hot-loader';
 import React, { useEffect, useState } from 'react';
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
@@ -39,4 +40,4 @@ const Library = (): JSX.Element => {
     );
 };
 
-export default Library;
+export default hot(module)(Library);

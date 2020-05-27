@@ -18,6 +18,13 @@ export type ProjectResponse = {
     parentDescription: string;
 }
 
+interface TagFunctionResponse {
+    id: number;
+    code: string;
+    description: string;
+    registerDescription: string;
+}
+
 /**
  * API for interacting with data in ProCoSys.
  */
@@ -93,6 +100,26 @@ class ProCoSysClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as ProjectResponse[];
+    }
+
+    /**
+     * Returns Tag function details
+     *
+     * @param tagFunctionCode Tag Function Code
+     * @param registerCode Register Code
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getTagFunction(tagFunctionCode: string, registerCode: string, setRequestCanceller?: RequestCanceler): Promise<TagFunctionResponse> {
+        const endpoint = '/Library/TagFunction';
+        const settings: AxiosRequestConfig = {
+            params: {
+                tagFunctionCode,
+                registerCode
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get(endpoint, settings);
+        return PascalCaseConverter.objectToCamelCase(result.data) as TagFunctionResponse;
     }
 }
 

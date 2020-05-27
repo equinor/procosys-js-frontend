@@ -74,7 +74,7 @@ const Select = ({
                     key={index}
                     tabIndex={0}
                 >
-                    <TitleContent className={index > 0 ? 'borderTop' : ''} >
+                    <TitleContent borderTop={index > 0} >
                         {itm.text}
                     </TitleContent>
                 </TitleItem>;

@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
+import AttachmentList, { Attachment } from '@procosys/components/AttachmentList';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
-import AttachmentList, { Attachment } from '@procosys/components/AttachmentList';
-import { Container } from './AttachmentTab.style';
+import { Container } from './ActionAttachment.style';
 
-
-interface AttachmentTabProps {
+interface ActionAttachmentsProps {
     tagId: number;
+    actionId: number;
+    enableActions: boolean;
 }
 
-const AttachmentTab = ({
-    tagId
-}: AttachmentTabProps): JSX.Element => {
+const ActionAttachments = ({
+    tagId,
+    actionId,
+    enableActions
+}: ActionAttachmentsProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -23,11 +26,9 @@ const AttachmentTab = ({
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                if (tagId != null) {
-                    setIsLoading(true);
-                    const attachments = await apiClient.getTagAttachments(tagId, (cancel: Canceler) => requestCancellor = cancel);
-                    setAttachments(attachments);
-                }
+                setIsLoading(true);
+                const attachments = await apiClient.getActionAttachments(tagId, actionId, (cancel: Canceler) => requestCancellor = cancel);
+                setAttachments(attachments);
             } catch (error) {
                 console.error('Get attachments failed: ', error.messsage, error.data, true);
                 showSnackbarNotification(error.message, 5000, true);
@@ -48,15 +49,24 @@ const AttachmentTab = ({
         };
     }, []);
 
-    const addAttachment = async (file: File): Promise<void> => {
 
+    const downloadAttachment = async (attachmentId: number): Promise<void> => {
         try {
-            if (tagId != null) {
-                setIsLoading(true);
-                await apiClient.addAttachmentToTag(tagId, file, false);
-                getAttachments();
-                showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag.`, 5000, true);
-            }
+            const url = await apiClient.getDownloadUrlForActionAttachment(tagId, actionId, attachmentId);
+            window.open(url, '_blank');
+            showSnackbarNotification('Attachment is downloaded.', 5000, true);
+        } catch (error) {
+            console.error('Not able to get download url for action attachment: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+    };
+
+    const addAttachment = async (file: File): Promise<void> => {
+        try {
+            setIsLoading(true);
+            await apiClient.addAttachmentToAction(tagId, actionId, file, false);
+            getAttachments();
+            showSnackbarNotification(`Attachment with filename '${file.name}' is added to action.`, 5000, true);
         } catch (error) {
             console.error('Upload file attachment failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000, true);
@@ -64,29 +74,15 @@ const AttachmentTab = ({
         setIsLoading(false);
     };
 
-    const downloadAttachment = async (attachmentId: number): Promise<void> => {
-        try {
-            if (tagId != null) {
-                const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachmentId);
-                window.open(url, '_blank');
-                showSnackbarNotification('Attachment is downloaded.', 5000, true);
-            }
-        } catch (error) {
-            console.error('Not able to get download url for tag attachment: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000, true);
-        }
-    };
 
     const deleteAttachment = async (attachment: Attachment): Promise<void> => {
         try {
-            if (tagId != null) {
-                setIsLoading(true);
-                await apiClient.deleteAttachmentOnTag(tagId, attachment.id, attachment.rowVersion);
-                getAttachments();
-                showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
-            }
+            setIsLoading(true);
+            await apiClient.deleteAttachmentOnAction(tagId, actionId, attachment.id, attachment.rowVersion);
+            getAttachments();
+            showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
         } catch (error) {
-            console.error('Not able to delete tag attachment: ', error.messsage, error.data);
+            console.error('Not able to delete action attachment: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);
@@ -102,12 +98,12 @@ const AttachmentTab = ({
         <Container>
             <AttachmentList
                 attachments={attachments}
-                addAttachment={addAttachment}
-                deleteAttachment={deleteAttachment}
+                addAttachment={enableActions ? addAttachment : undefined}
+                deleteAttachment={enableActions ? deleteAttachment : undefined}
                 downloadAttachment={downloadAttachment}
             />
         </Container>
     );
 };
 
-export default AttachmentTab; 
+export default ActionAttachments;

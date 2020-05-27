@@ -1,3 +1,4 @@
+import { hot } from 'react-hot-loader';
 import React, { useEffect, useState } from 'react';
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
@@ -17,8 +18,8 @@ export enum LibraryType {
 
 const Library = (): JSX.Element => {
 
-    const [selectedLibraryType, setSelectedLibraryType] = useState<string | null>(null);
-    const [selectedLibraryItem, setSelectedLibraryItem] = useState<string | null>(null);
+    const [selectedLibraryType, setSelectedLibraryType] = useState('');
+    const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
 
     const match = useRouteMatch();
     const params: any = match.params;
@@ -33,9 +34,10 @@ const Library = (): JSX.Element => {
 
             <Divider />
 
-            {selectedLibraryType && <LibraryItemDetails libraryType={selectedLibraryType} libraryItem={selectedLibraryItem} />}
+            <LibraryItemDetails libraryType={selectedLibraryType} libraryItem={selectedLibraryItem} />
+
         </Container>
     );
 };
 
-export default Library;
+export default hot(module)(Library);

@@ -346,7 +346,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
                             disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 && tokens.colors.interactive.disabled__border.rgba} /></div>
+                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
                         <StyledButton

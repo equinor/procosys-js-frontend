@@ -11,7 +11,7 @@
         "url": "git+https://github.com/equinor/procosys-js-frontend.git"
     },
     "scripts": {
-        "start": "webpack-dev-server --hot --inline",
+        "start": "webpack-dev-server --hot",
         "build": "webpack",
         "test": "jest",
         "test-watch": "jest --watch",
@@ -79,6 +79,7 @@
         "@equinor/eds-tokens": "^0.0.1-alpha.5",
         "@material-ui/core": "^4.8.3",
         "@material-ui/icons": "^4.5.1",
+        "@material-ui/pickers": "^3.2.10",
         "axios": "^0.19.2",
         "material-table": "^1.57.2",
         "msal": "^1.2.2",

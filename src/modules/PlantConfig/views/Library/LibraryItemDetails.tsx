@@ -5,14 +5,16 @@ import PreservationJourney from './PreservationJourney/PreservationJourney';
 
 type LibraryItemProps = {
     libraryType: string;
-    libraryItem: string | null;
+    libraryItem: string;
 };
 
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
 
     switch (props.libraryType) {
-        case LibraryType.TAG_FUNCTION:
-            return <TagFunction tagFunctionId={props.libraryItem} />;
+        case LibraryType.TAG_FUNCTION: {
+            const [registerCode, tagFunctionCode] = props.libraryItem.split('|');
+            return <TagFunction tagFunctionCode={tagFunctionCode} registerCode={registerCode} />;
+        }
         case LibraryType.MODE:
             return <div>Mode id={props.libraryItem}</div>;
         case LibraryType.PRES_JOURNEY:
@@ -27,4 +29,4 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
     }
 };
 
-export default LibraryItemDetails; 
+export default LibraryItemDetails;

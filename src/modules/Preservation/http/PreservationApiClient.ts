@@ -234,7 +234,7 @@ interface ActionDetailsResponse {
     id: number;
     title: string;
     description: string;
-    dueTimeUtc: Date | null;
+    dueTimeUtc: Date;
     isClosed: boolean;
     createdAtUtc: Date;
     closedAtUtc: Date | null;
@@ -682,7 +682,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     async preserveSingleRequirement(tagId: number, requirementId: number): Promise<void> {
-        const endpoint = `/Tags/${tagId}/Requirement/${requirementId}/Preserve`;
+        const endpoint = `/Tags/${tagId}/Requirements/${requirementId}/Preserve`;
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.post(endpoint, null, settings);
@@ -1043,7 +1043,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     async recordTagRequirementValues(tagId: number, recordValues: TagRequirementRecordValues, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/Tags/${tagId}/Requirement/${recordValues.requirementId}/RecordValues`;
+        const endpoint = `/Tags/${tagId}/Requirements/${recordValues.requirementId}/RecordValues`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -1165,6 +1165,175 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<ActionDetailsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Create new action
+     */
+    async createNewAction(
+        tagId: number,
+        title: string,
+        description: string,
+        dueTimeUtc: Date | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                title: title,
+                description: description,
+                dueTimeUtc: dueTimeUtc,
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Update action
+    */
+    async updateAction(
+        tagId: number,
+        actionId: number,
+        title: string,
+        description: string,
+        dueTimeUtc: Date | null,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(endpoint, {
+                title: title,
+                description: description,
+                dueTimeUtc: dueTimeUtc,
+                rowVersion: rowVersion
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Close action
+    */
+    async closeAction(
+        tagId: number,
+        actionId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Close`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(endpoint, {
+                rowVersion: rowVersion
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get action attachments   
+    */
+    async getActionAttachments(tagId: number, actionId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<AttachmentResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add attachment to action 
+     */
+    async addAttachmentToAction(
+        tagId: number,
+        actionId: number,
+        file: File,
+        overwriteIfExists: boolean,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
+
+        const formData = new FormData();
+        formData.append('OverwriteIfExists', overwriteIfExists.toString());
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, formData, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    *  Delete attachment on an action 
+    */
+    async deleteAttachmentOnAction(
+        tagId: number,
+        actionId: number,
+        attachmentId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get download url for actopm attachment
+    */
+    async getDownloadUrlForActionAttachment(
+        tagId: number,
+        actionId: number,
+        attachmentId: number,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+
+        const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
             return result.data;
         }
         catch (error) {

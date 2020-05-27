@@ -1,4 +1,4 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -10,6 +10,7 @@ export type SelectItem = {
     selected?: boolean;
     icon?: ReactNode;
     children?: SelectItem[];
+    title?: boolean;
 };
 
 type SelectProps = {
@@ -67,8 +68,17 @@ const Select = ({
     }, [isOpen]);
 
     const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
-
         return items.map((itm, index) => {
+            if(itm.title) {
+                return <TitleItem
+                    key={index}
+                    tabIndex={0}
+                >
+                    <TitleContent borderTop={index > 0} >
+                        {itm.text}
+                    </TitleContent>
+                </TitleItem>;
+            }
 
             if (!itm.children) {
                 return (<SelectableItem

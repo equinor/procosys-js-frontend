@@ -43,7 +43,7 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
     };
 
     const selectableItems = props.items.map(itm => {
-        if (filter && !itm.title.startsWith(filter)) return;
+        if (filter && !itm.title.toLowerCase().startsWith(filter.toLowerCase())) return;
         const isSelected = selectedItems.findIndex(selectedItem => selectedItem.id === itm.id) > -1;
         return (<Item onClick={(): void => onSelect(itm)} key={itm.id}>
             {isSelected ? <EdsIcon name="checkbox" /> : <EdsIcon name="checkbox_outline" />}

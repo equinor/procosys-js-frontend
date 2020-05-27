@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { getFormattedDate } from '../../../../../../core/services/DateService';
-import { Container, Section, GridRow } from './ActionExpanded.style';
+import { Container, Section, GridRow, IconContainer, StyledButton } from './ActionExpanded.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
+import CreateOrEditAction from './CreateOrEditAction';
+import EdsIcon from '../../../../../../components/EdsIcon';
+import Spinner from '@procosys/components/Spinner';
+import ActionAttachments from './ActionAttachments';
+
+const editIcon = <EdsIcon name='edit' size={16} />;
 
 interface ActionDetails {
     id: number;
@@ -19,6 +25,7 @@ interface ActionDetails {
         firstName: string;
         lastName: string;
     };
+    rowVersion: string;
     closedBy: {
         id: number;
         firstName: string;
@@ -27,18 +34,22 @@ interface ActionDetails {
 }
 
 interface ActionDetailsProps {
-    tagId: number | null;
+    tagId: number;
     actionId: number;
-    close: () => void;
+    toggleDetails: () => void;
+    getActionList: () => void;
 }
 
 const ActionExpanded = ({
     tagId,
     actionId,
-    close
+    toggleDetails,
+    getActionList
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
-    const [actionDetails, setActionDetails] = useState<ActionDetails | null>(null);
+    const [actionDetails, setActionDetails] = useState<ActionDetails>();
+    const [showEditMode, setShowEditMode] = useState<boolean>(false);
+
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -57,70 +68,125 @@ const ActionExpanded = ({
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, []);
+    }, [showEditMode]);
+
+    const closeAction = async (): Promise<void> => {
+        try {
+            if (actionDetails) {
+                await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
+                getActionList();
+                toggleDetails();
+                showSnackbarNotification('Action is closed.', 5000, true);
+            }
+        } catch (error) {
+            console.error('Closing action failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+    };
 
     const getDateField = (date: Date | null): string => {
         if (date === null) {
             return '-';
         }
-
         return getFormattedDate(date);
     };
 
+    if (!actionDetails) {
+        return (<Spinner />);
+    }
+
+    if (showEditMode) {
+        return (
+            < CreateOrEditAction
+                tagId={tagId}
+                actionId={actionId}
+                title={actionDetails.title}
+                description={actionDetails.description}
+                dueTimeUtc={actionDetails.dueTimeUtc}
+                rowVersion={actionDetails.rowVersion}
+                backToParentView={(): void => { getActionList(); setShowEditMode(false); }}
+            />
+        );
+    }
+
     return (
-        <Container>
+        <Container isClosed={actionDetails.isClosed}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Section>
+                    <Typography variant='caption'>Due date</Typography>
+                    <Typography variant="body_short">
+                        {getDateField(actionDetails.dueTimeUtc)}
+                    </Typography>
+                </Section>
+                {
+                    !actionDetails.isClosed && (
+                        <IconContainer>
+                            <StyledButton
+                                data-testid="editIcon"
+                                variant='ghost'
+                                onClick={(): void => setShowEditMode(true)}>
+                                {editIcon}
+                            </StyledButton>
+                        </IconContainer>
+                    )
+                }
+            </div>
             {
-                actionDetails && !actionDetails.isClosed && (
-                    <Section>  
-                        <Typography variant='caption'>Due date</Typography>
-                        <Typography variant="body_short">
-                            {getDateField(actionDetails && actionDetails.dueTimeUtc)}
-                        </Typography>                    
-                    </Section>
-                )
-            }
-            {
-                actionDetails && actionDetails.isClosed && (
+                actionDetails.isClosed && (
                     <Section>
                         <div>
                             <GridRow>
                                 <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
                                 <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
                                 <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                    {getDateField(actionDetails && actionDetails.closedAtUtc)}
+                                    {getDateField(actionDetails.closedAtUtc)}
                                 </Typography>
                                 <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                    {actionDetails && actionDetails.closedBy.firstName} {actionDetails && actionDetails.closedBy.lastName}
+                                    {actionDetails.closedBy.firstName} {actionDetails.closedBy.lastName}
                                 </Typography>
                             </GridRow>
                         </div>
                     </Section>
                 )
-            }            
+            }
             <Section>
                 <div>
                     <GridRow>
                         <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
                         <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
                         <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                            {getDateField(actionDetails && actionDetails.createdAtUtc)}
+                            {getDateField(actionDetails.createdAtUtc)}
                         </Typography>
                         <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                            {actionDetails && actionDetails.createdBy.firstName} {actionDetails && actionDetails.createdBy.lastName}
+                            {actionDetails.createdBy.firstName} {actionDetails.createdBy.lastName}
                         </Typography>
                     </GridRow>
                 </div>
             </Section>
             <Section>
                 <Typography variant='caption'>Description</Typography>
-                <Typography variant="body_short">{actionDetails && actionDetails.description}</Typography>
+                <Typography variant="body_short">{actionDetails.description}</Typography>
             </Section>
+
             <Section>
-                <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>
-                    <Button onClick={(): void => close()}>Close action</Button>
-                </div>
+                <Typography variant='caption'>Attachments</Typography>
+                <ActionAttachments
+                    tagId={tagId}
+                    actionId={actionId}
+                    enableActions={false}
+                />
             </Section>
-        </Container>
+
+            {
+                !actionDetails.isClosed && (
+                    <Section>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button onClick={closeAction}>Close action</Button>
+                        </div>
+                    </Section>
+                )
+            }
+        </Container >
     );
 };
 

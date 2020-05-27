@@ -9,7 +9,7 @@ import CreateAreaTag from './CreateAreaTag/CreateAreaTag';
 import Spinner from '../../../../components/Spinner';
 import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 
@@ -22,6 +22,7 @@ export enum AddScopeMethod {
 
 const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
+    const history = useHistory();
     const { method } = useParams();
 
     const addScopeMethod = useMemo((): AddScopeMethod => {
@@ -174,6 +175,7 @@ const AddScope = (): JSX.Element => {
             }
 
             showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
+            history.push('/');
         } catch (error) {
             console.error('Tag preservation failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -202,7 +204,7 @@ const AddScope = (): JSX.Element => {
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
                     tagFunctionCode: r.tagFunctionCode,
                     isPreserved: r.isPreserved,
-                    tableData: { checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1 }
+                    tableData: {checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1}
                 };
             });
             setScopeTableData(res);

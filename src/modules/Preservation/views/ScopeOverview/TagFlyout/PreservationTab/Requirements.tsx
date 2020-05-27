@@ -33,7 +33,7 @@ const Requirements = ({
         const newRequirementValues = [...requirementValues];
         const requirement = newRequirementValues.find(value => value.requirementId == requirementId);
 
-        // determine whether field value is "N/A" or an actual numeric 
+        // determine whether field value is "N/A" or an actual numeric
         value = value.trim().toLowerCase();
         const numberFieldIsNA = value === 'na' || value === 'n/a';
         const numberFieldValue = numberFieldIsNA || value === '' ? null : Number(value); // invalid numbers become "NaN" (validated at save)
@@ -99,7 +99,7 @@ const Requirements = ({
         }
 
         setRequirementValues(newRequirementValues);
-    };    
+    };
 
     const setComment = (requirementId: number, comment: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -117,7 +117,7 @@ const Requirements = ({
         }
 
         setRequirementValues(newRequirementValues);
-    };    
+    };
 
     const saveRequirement = (requirementId: number): void => {
         const requirement = requirementValues.find(req => req.requirementId == requirementId);
@@ -166,26 +166,41 @@ const Requirements = ({
         return isReadyToBePreserved;
     };
 
+    const checkValue = (requirementId: number, field: TagRequirementField): boolean | undefined => {
+        const requirement = requirementValues.find(value => value.requirementId == requirementId);
+        if (requirement && field.currentValue) {
+            const fieldIndex = requirement.checkBoxValues.findIndex(field => field.fieldId == field.fieldId);
+            if (requirement.checkBoxValues[fieldIndex].isChecked) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return field.currentValue && field.currentValue.isChecked;
+    };
+
     const getRequirementField = (requirementId: number, field: TagRequirementField): JSX.Element => {
+
         switch (field.fieldType.toLowerCase()) {
             case 'info':
                 return <Typography variant='body_long'>{field.label}</Typography>;
             case 'checkbox':
                 return (
-                    <RequirementCheckboxField 
-                        requirementId={requirementId} 
-                        field={field} 
-                        readonly={readonly} 
-                        onFieldChange={setCheckBoxFieldValue} 
+                    <RequirementCheckboxField
+                        requirementId={requirementId}
+                        field={field}
+                        readonly={readonly}
+                        isChecked={checkValue(requirementId, field)}
+                        onFieldChange={setCheckBoxFieldValue}
                     />
                 );
             case 'number':
                 return (
-                    <RequirementNumberField 
-                        requirementId={requirementId} 
-                        field={field} 
-                        readonly={readonly} 
-                        onFieldChange={setNumberFieldValue} 
+                    <RequirementNumberField
+                        requirementId={requirementId}
+                        field={field}
+                        readonly={readonly}
+                        onFieldChange={setNumberFieldValue}
                     />
                 );
             default:
@@ -212,7 +227,7 @@ const Requirements = ({
                                 </div>
                                 <Typography variant='h6'>
                                     {requirement.requirementDefinitionTitle}
-                                </Typography>                                    
+                                </Typography>
                                 <div style={{display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)'}}>
                                     <Typography variant='caption'>Interval</Typography>
                                     <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{`${requirement.intervalWeeks} weeks`}</Typography>
@@ -244,7 +259,7 @@ const Requirements = ({
                                 }
                             </Section>
                             <Section>
-                                <TextField 
+                                <TextField
                                     id={`requirementComment${requirement.id}`}
                                     label='Comment for this preservation period (optional)'
                                     placeholder='Write here'
@@ -257,13 +272,13 @@ const Requirements = ({
                             </Section>
                             <Section>
                                 <div style={{display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end'}}>
-                                    <Button 
-                                        disabled={!isSaveButtonEnabled(requirement.id)} 
+                                    <Button
+                                        disabled={!isSaveButtonEnabled(requirement.id)}
                                         onClick={(): void => saveRequirement(requirement.id)}
                                     >
                                         Save
                                     </Button>
-                                    <Button 
+                                    <Button
                                         disabled={!isPreserveButtonEnabled(requirement.id, requirement.readyToBePreserved)}
                                         onClick={(): void => preserveRequirement(requirement.id)}
                                         style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}

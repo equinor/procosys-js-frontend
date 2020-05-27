@@ -30,6 +30,13 @@ export const Container = styled.div`
     margin-top: calc(var(--margin-module--top) *-1);
 `;
 
+export const SpinnerContainer = styled.div`
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+`;
+
 export const InformationContainer = styled.div`
     display: inline-flex;
     margin: calc(var(--grid-unit)*2) 0px;

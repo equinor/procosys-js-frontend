@@ -1,7 +1,7 @@
 import {hot} from 'react-hot-loader';
 
 import React, {useState, useEffect} from 'react';
-import {DetailsSection, Container, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs} from './TagFunction.style';
+import {DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs} from './TagFunction.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
@@ -49,7 +49,11 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     }, [props]);
 
     if (!tagFunctionData) {
-        return <Spinner />;
+        return (
+            <SpinnerContainer>
+                <Spinner large />
+                <Typography variant="h3">Loading library data</Typography>
+            </SpinnerContainer>);
     }
     return (
 
@@ -71,25 +75,25 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
             </DetailsSection>
             <section>
                 <TabBar>
-                    <TabBarButton current>
-                        Completion
-                    </TabBarButton>
                     <TabBarButton disabled>
+                        Completion
+                    </TabBarButton >
+                    <TabBarButton current>
                         Preservation
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         DCCL
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         CPCL
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         Running logs
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         Document requirement
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         SPIR Requirement
                     </TabBarButton>
                     <TabBarFiller>

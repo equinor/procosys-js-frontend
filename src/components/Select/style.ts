@@ -78,6 +78,12 @@ export const SelectableItem = styled.li<SelectableItemProps>`
     }
 `;
 
+export const TitleItem = styled.li`
+    position: relative;
+    background-color: transparent;
+    font-size: 12px;
+`;
+
 SelectableItem.defaultProps = {
     selected: false,
 };
@@ -119,6 +125,23 @@ export const ItemContent = styled.div`
     .arrowIcon {
         margin-left: auto;
     }
+`;
+
+interface TitleContentProps {
+    readonly borderTop: boolean;
+}
+
+export const TitleContent = styled.div<TitleContentProps>`
+    display: flex;
+    align-items: center;
+    padding: var(--grid-unit) calc(var(--grid-unit) * 2);
+    border: 0;
+    font-weight: normal;
+    background-color: ${tokens.colors.ui.background__default.rgba};
+    margin-left: var(--grid-unit);
+    ${(props): any => props.borderTop && css`
+        border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
+    `}
 `;
 
 export const Label = styled.div`

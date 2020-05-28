@@ -8,7 +8,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Spinner from '../../../../../components/Spinner';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import PreservationIcon from '../../PreservationIcon';
+import PreservationIcon from '../../../../../components/PreservationIcon';
 import { AddScopeMethod } from '../AddScope';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { TextField } from '@equinor/eds-core-react';

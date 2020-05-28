@@ -117,10 +117,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         transferDialog({selectedTags, clearSelected, apiClient});
     };
 
+    let startableTags: PreservedTag[];
+    let nonStartableTags: PreservedTag[];
+
     const startPreservation = async (): Promise<void> => {
         try {
-            const tags = selectedTags.filter(tag => tag.readyToBeStarted);
-            await apiClient.startPreservation(tags.map(t => t.id));
+            await apiClient.startPreservation(startableTags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
@@ -130,9 +132,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
         return Promise.resolve();
     };
-
-    let startableTags: PreservedTag[];
-    let nonStartableTags: PreservedTag[];
 
     const startPreservationDialog = (): void => {
         startableTags = [];

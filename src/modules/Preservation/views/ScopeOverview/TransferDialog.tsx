@@ -5,10 +5,19 @@ import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { Column } from 'material-table';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+import { render } from 'react-dom';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import PreservationApiClient from '../../http/PreservationApiClient';
 
 interface TransferDialogProps {
-    transferableTags: PreservedTag[];
-    nonTransferableTags: PreservedTag[];
+    selectedTags: PreservedTag[];
+}
+
+interface NewProps {
+    selectedTags: PreservedTag[];
+    clearSelected: () => void;
+    apiClient: PreservationApiClient;
 }
 
 const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
@@ -28,11 +37,12 @@ const columns: Column<any>[] = [
     { title: 'Req type', render: getRequirementIcons }
 ];
 
-const TransferDialog = ({
-    transferableTags,
-    nonTransferableTags
+const TransferDialogBody = ({
+    selectedTags
 }: TransferDialogProps): JSX.Element => {
 
+    const transferableTags = selectedTags.filter(tag => tag.readyToBeTransferred);
+    const nonTransferableTags = selectedTags.filter(tag => !tag.readyToBeTransferred);
     return (<div>
         {nonTransferableTags.length > 0 && (
             <div>
@@ -47,4 +57,35 @@ const TransferDialog = ({
     );
 };
 
-export default TransferDialog;
+const transferDialog = ({selectedTags, clearSelected, apiClient}: NewProps): any => {
+
+    const hasTransferableTags = selectedTags.some(tag => tag.readyToBeTransferred);
+
+    const transfer = async (): Promise<void> => {
+        try {
+            const tags = selectedTags.filter(tag => tag.readyToBeTransferred);
+            await apiClient.transfer(tags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
+            clearSelected();
+            showSnackbarNotification(`${tags.length} tag(s) have been successfully transferred.`);
+        } catch (error) {
+            console.error('Transfer failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    render(showModalDialog(
+        'Transferring',
+        <TransferDialogBody selectedTags={selectedTags}  />,
+        '80vw',
+        'Back to list',
+        null,
+        hasTransferableTags ? 'Transfer' : null,
+        hasTransferableTags ? transfer : null
+    ), document.createElement('div'));
+};
+
+export default transferDialog;

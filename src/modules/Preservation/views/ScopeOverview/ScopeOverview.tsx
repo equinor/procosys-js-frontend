@@ -17,7 +17,7 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
 import ScopeTable from './ScopeTable';
-import TransferDialog from './TransferDialog';
+import transferDialog from './TransferDialog';
 import PreservedDialog from './PreservedDialog';
 import StartPreservationDialog from './StartPreservationDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
@@ -108,58 +108,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject(availableProjects[index].id);
     };
 
-    let transferableTags: PreservedTag[];
-    let nonTransferableTags: PreservedTag[];
-
-    const transfer = async (): Promise<void> => {
-        try {
-            await apiClient.transfer(transferableTags.map(t => ({
-                id: t.id,
-                rowVersion: t.rowVersion
-            })));
-            refreshScopeList();
-            setSelectedTags([]);
-            showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
-        } catch (error) {
-            console.error('Transfer failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message);
-        }
-        return Promise.resolve();
+    const clearSelected = (): void => {
+        refreshScopeList();
+        setSelectedTags([]);
     };
 
-    const transferDialog = (): void => {
-        //Tag-objects must be cloned to avoid issues with data in scope table
-        transferableTags = [];
-        nonTransferableTags = [];
-
-        selectedTags.map((tag) => {
-            const newTag: PreservedTag = { ...tag };
-            if (tag.readyToBeTransferred) {
-                transferableTags.push(newTag);
-            } else {
-                nonTransferableTags.push(newTag);
-            }
-        });
-
-        const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
-        const transferFunc = transferableTags.length > 0 ? transfer : null;
-
-        showModalDialog(
-            'Transferring',
-            <TransferDialog transferableTags={transferableTags} nonTransferableTags={nonTransferableTags} />,
-            '80vw',
-            backToListButton,
-            null,
-            transferButton,
-            transferFunc);
+    const showTransferDialog = (): void => {
+        transferDialog({selectedTags, clearSelected, apiClient});
     };
-
-    let startableTags: PreservedTag[];
-    let nonStartableTags: PreservedTag[];
 
     const startPreservation = async (): Promise<void> => {
         try {
-            await apiClient.startPreservation(startableTags.map(t => t.id));
+            const tags = selectedTags.filter(tag => tag.readyToBeStarted);
+            await apiClient.startPreservation(tags.map(t => t.id));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
@@ -169,6 +130,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
         return Promise.resolve();
     };
+
+    let startableTags: PreservedTag[];
+    let nonStartableTags: PreservedTag[];
 
     const startPreservationDialog = (): void => {
         startableTags = [];
@@ -356,7 +320,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <StyledButton
                             variant='ghost'
                             title="Transfer selected tag(s)"
-                            onClick={transferDialog}
+                            onClick={showTransferDialog}
                             disabled={selectedTags.length < 1}>
                             <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
                         Transfer

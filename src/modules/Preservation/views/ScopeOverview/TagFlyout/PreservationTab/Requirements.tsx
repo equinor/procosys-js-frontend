@@ -170,11 +170,7 @@ const Requirements = ({
         if (requirement && field.currentValue) {
             const fieldIndex = requirement.checkBoxValues.findIndex(f => f.fieldId == field.id);
             if (fieldIndex > -1){
-                if (requirement.checkBoxValues[fieldIndex].isChecked) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return requirement.checkBoxValues[fieldIndex].isChecked;
             }
         }
         return field.currentValue && field.currentValue.isChecked;

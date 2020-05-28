@@ -57,7 +57,10 @@ const TransferDialogBody = ({
     );
 };
 
-const transferDialog = ({selectedTags, clearSelected, apiClient}: NewProps): any => {
+const transferDialog = ({
+    selectedTags,
+    clearSelected,
+    apiClient}: NewProps): any => {
 
     const hasTransferableTags = selectedTags.some(tag => tag.readyToBeTransferred);
 
@@ -85,7 +88,7 @@ const transferDialog = ({selectedTags, clearSelected, apiClient}: NewProps): any
         null,
         hasTransferableTags ? 'Transfer' : null,
         hasTransferableTags ? transfer : null
-    ), document.createElement('div'));
+    ), null);
 };
 
 export default transferDialog;

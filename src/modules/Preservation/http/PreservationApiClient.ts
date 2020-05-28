@@ -57,6 +57,11 @@ type TagSearchResponse = {
     isPreserved: boolean;
 }
 
+type PreservedTag = {
+    id: number;
+    rowVersion: string;
+};
+
 interface CheckAreaTagNoResponse {
     tagNo: string;
     exists: boolean;
@@ -173,16 +178,6 @@ interface ResponsibleEntity {
 }
 
 interface AreaFilterEntity {
-    code: string;
-    description: string;
-}
-
-export interface DisciplineResponse {
-    code: string;
-    description: string;
-}
-
-export interface AreaResponse {
     code: string;
     description: string;
 }
@@ -696,7 +691,7 @@ class PreservationApiClient extends ApiClient {
      * Transfer  given tags
      * @param tags  List with tag IDs
      */
-    async transfer(tags: number[]): Promise<void> {
+    async transfer(tags: PreservedTag[]): Promise<void> {
         const endpoint = '/Tags/Transfer';
         const settings: AxiosRequestConfig = {};
         try {
@@ -706,11 +701,13 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+
+
     /**
      * Complete  given tags
      * @param tags  List with tag IDs
      */
-    async complete(tags: number[]): Promise<void> {
+    async complete(tags: PreservedTag[]): Promise<void> {
         const endpoint = '/Tags/CompletePreservation';
         const settings: AxiosRequestConfig = {};
         try {
@@ -1099,44 +1096,6 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Get disciplines
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getDisciplines(setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
-        const endpoint = '/Disciplines';
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
-            return result.data;
-        }
-        catch (error) {
-            throw getPreservationApiError(error);
-        }
-    }
-
-    /**
-     * Get areas
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getAreas(setRequestCanceller?: RequestCanceler): Promise<AreaResponse[]> {
-        const endpoint = '/Areas';
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<AreaResponse[]>(endpoint, settings);
-            return result.data;
-        }
-        catch (error) {
-            throw getPreservationApiError(error);
-        }
-    }
-
-    /**
      * Get actions
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
@@ -1257,7 +1216,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    * Get action attachments   
+    * Get action attachments
     */
     async getActionAttachments(tagId: number, actionId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
         const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
@@ -1275,7 +1234,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add attachment to action 
+     * Add attachment to action
      */
     async addAttachmentToAction(
         tagId: number,
@@ -1303,7 +1262,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    *  Delete attachment on an action 
+    *  Delete attachment on an action
     */
     async deleteAttachmentOnAction(
         tagId: number,
@@ -1486,7 +1445,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add attachment to tag 
+     * Add attachment to tag
      */
     async addAttachmentToTag(
         tagId: number,
@@ -1513,7 +1472,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    *  Delete attachment on a tag 
+    *  Delete attachment on a tag
     */
     async deleteAttachmentOnTag(
         tagId: number,

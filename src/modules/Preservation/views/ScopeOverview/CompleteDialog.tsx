@@ -7,7 +7,8 @@ import { Column } from 'material-table';
 import DialogTable from './DialogTable';
 
 interface CompleteDialogProps {
-    tags: PreservedTag[];
+    completableTags: PreservedTag[];
+    nonCompletableTags: PreservedTag[];
 }
 
 const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
@@ -24,21 +25,9 @@ const columns: Column<any>[] = [
 ];
 
 const CompleteDialog = ({
-    tags
+    completableTags,
+    nonCompletableTags
 }: CompleteDialogProps): JSX.Element => {
-
-    const completableTags: PreservedTag[] = [];
-    const nonCompletableTags: PreservedTag[] = [];
-
-    tags.forEach((tag) => {
-        if (tag.readyToBeCompleted) {
-            completableTags.push(tag);
-            return;
-        }
-        nonCompletableTags.push(tag);
-    });
-
-
     return (<div>
         {nonCompletableTags.length > 0 && (
             <div>

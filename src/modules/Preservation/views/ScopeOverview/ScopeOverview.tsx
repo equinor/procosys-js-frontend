@@ -112,7 +112,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const transfer = async (): Promise<void> => {
         try {
-            await apiClient.transfer(transferableTags.map(t => t.id));
+            await apiClient.transfer(transferableTags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
@@ -233,10 +236,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             preservedFunc);
     };
 
+    let completableTags: PreservedTag[] = [];
+    let nonCompletableTags: PreservedTag[] = [];
+
     const complete = async (): Promise<void> => {
         try {
             const tags = selectedTags.filter(tag => tag.readyToBeCompleted);
-            await apiClient.complete(tags.map(t => t.id));
+            await apiClient.complete(tags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
@@ -248,13 +257,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const showCompleteDialog = (): void => {
-        const hasCompletableTags = selectedTags.some(tag => tag.readyToBePreserved);
-        const completeButton = hasCompletableTags ? 'Complete' : null;
-        const completeFunc = hasCompletableTags ? complete : null;
+        completableTags = [];
+        nonCompletableTags = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeCompleted) {
+                completableTags.push(newTag);
+            } else {
+                nonCompletableTags.push(newTag);
+            }
+        });
+        const completeButton = completableTags.length > 0 ? 'Complete' : null;
+        const completeFunc = completableTags.length > 0 ? complete : null;
 
         showModalDialog(
             'Complete Preservation',
-            <CompleteDialog tags={selectedTags} />,
+            <CompleteDialog completableTags={completableTags} nonCompletableTags={nonCompletableTags} />,
             '80vw',
             backToListButton,
             null,

@@ -40,7 +40,7 @@ type CreateAreaTagProps = {
 }
 
 const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
-    const { apiClient, project } = usePreservationContext();
+    const { apiClient, libraryApiClient, project } = usePreservationContext();
 
     const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>([]);
     const suffixInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +61,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const response = await apiClient.getAreas((cancel: Canceler) => { requestCancellor = cancel; });
+                const response = await libraryApiClient.getAreas((cancel: Canceler) => { requestCancellor = cancel; });
                 const areas = response.map(area => ({
                     text: area.code + ' - ' + area.description,
                     value: area.code,
@@ -107,7 +107,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await apiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+                const data = await libraryApiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
 
                 setDisciplines(data);
             } catch (error) {

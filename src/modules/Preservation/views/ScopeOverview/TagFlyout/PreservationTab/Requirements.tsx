@@ -165,7 +165,7 @@ const Requirements = ({
         return isReadyToBePreserved;
     };
 
-    const checkValue = (requirementId: number, field: TagRequirementField): boolean | undefined => {
+    const getCheckboxValue = (requirementId: number, field: TagRequirementField): boolean | undefined => {
         const requirement = requirementValues.find(value => value.requirementId == requirementId);
         if (requirement && field.currentValue) {
             const fieldIndex = requirement.checkBoxValues.findIndex(f => f.fieldId == field.id);
@@ -187,7 +187,7 @@ const Requirements = ({
                         requirementId={requirementId}
                         field={field}
                         readonly={readonly}
-                        isChecked={checkValue(requirementId, field)}
+                        isChecked={getCheckboxValue(requirementId, field)}
                         onFieldChange={setCheckBoxFieldValue}
                     />
                 );

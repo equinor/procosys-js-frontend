@@ -172,16 +172,6 @@ interface AreaFilterEntity {
     description: string;
 }
 
-export interface DisciplineResponse {
-    code: string;
-    description: string;
-}
-
-export interface AreaResponse {
-    code: string;
-    description: string;
-}
-
 interface TagRequirementsResponse {
     id: number;
     intervalWeeks: number;
@@ -903,44 +893,6 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
-            return result.data;
-        }
-        catch (error) {
-            throw getPreservationApiError(error);
-        }
-    }
-
-    /**
-     * Get disciplines
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getDisciplines(setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
-        const endpoint = '/Disciplines';
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
-            return result.data;
-        }
-        catch (error) {
-            throw getPreservationApiError(error);
-        }
-    }
-
-    /**
-     * Get areas
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getAreas(setRequestCanceller?: RequestCanceler): Promise<AreaResponse[]> {
-        const endpoint = '/Areas';
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<AreaResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {

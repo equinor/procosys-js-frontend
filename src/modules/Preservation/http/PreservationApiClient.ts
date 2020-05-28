@@ -57,6 +57,11 @@ type TagSearchResponse = {
     isPreserved: boolean;
 }
 
+type PreservedTag = {
+    id: number;
+    rowVersion: string;
+};
+
 interface CheckAreaTagNoResponse {
     tagNo: string;
     exists: boolean;
@@ -686,7 +691,7 @@ class PreservationApiClient extends ApiClient {
      * Transfer  given tags
      * @param tags  List with tag IDs
      */
-    async transfer(tags: number[]): Promise<void> {
+    async transfer(tags: PreservedTag[]): Promise<void> {
         const endpoint = '/Tags/Transfer';
         const settings: AxiosRequestConfig = {};
         try {
@@ -696,11 +701,13 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+
+
     /**
      * Complete  given tags
      * @param tags  List with tag IDs
      */
-    async complete(tags: number[]): Promise<void> {
+    async complete(tags: PreservedTag[]): Promise<void> {
         const endpoint = '/Tags/CompletePreservation';
         const settings: AxiosRequestConfig = {};
         try {
@@ -1062,7 +1069,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    * Get action attachments   
+    * Get action attachments
     */
     async getActionAttachments(tagId: number, actionId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
         const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
@@ -1080,7 +1087,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add attachment to action 
+     * Add attachment to action
      */
     async addAttachmentToAction(
         tagId: number,
@@ -1108,7 +1115,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    *  Delete attachment on an action 
+    *  Delete attachment on an action
     */
     async deleteAttachmentOnAction(
         tagId: number,
@@ -1291,7 +1298,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add attachment to tag 
+     * Add attachment to tag
      */
     async addAttachmentToTag(
         tagId: number,
@@ -1318,7 +1325,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    *  Delete attachment on a tag 
+    *  Delete attachment on a tag
     */
     async deleteAttachmentOnTag(
         tagId: number,

@@ -49,7 +49,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getPresJourneyTreeNodes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await preservationApiClient.getJourneys().then(
+            return await preservationApiClient.getJourneys(true).then(
                 (response) => {
                     if (response) {
                         response.forEach(journey => children.push(

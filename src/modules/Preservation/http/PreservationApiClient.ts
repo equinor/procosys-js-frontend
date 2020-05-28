@@ -725,10 +725,15 @@ class PreservationApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getJourneys(setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+    async getJourneys(includeVoided: boolean, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
         const endpoint = '/Journeys';
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = {
+            params: {
+                includeVoided: includeVoided
+            }
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
+
         try {
             const result = await this.client.get<JourneyResponse[]>(endpoint, settings);
             return result.data;
@@ -749,7 +754,6 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             const result = await this.client.get<JourneyResponse>(endpoint, settings);
-            console.log('JOURNEY RESULT: ', result.data);
             return result.data;
         }
         catch (error) {
@@ -851,14 +855,18 @@ class PreservationApiClient extends ApiClient {
     /**
       * Void journey
       */
-    async voidJourney(journeyId: number, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async voidJourney(journeyId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Void`;
+
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
             await this.client.put(
                 endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
                 settings
             );
         } catch (error) {
@@ -869,7 +877,7 @@ class PreservationApiClient extends ApiClient {
     /**
       * Unvoid journey
       */
-    async unvoidJourney(journeyId: number, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async unvoidJourney(journeyId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Unvoid`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -877,6 +885,9 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(
                 endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
                 settings
             );
         } catch (error) {
@@ -892,7 +903,6 @@ class PreservationApiClient extends ApiClient {
         const endpoint = `/Journeys/${journeyId}/Steps/SwapSteps`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        console.log('Skal swape: ' + journeyId + '   ' + stepAId + '   ' + stepARowVersion + '   ' + stepBId + '   ' + stepBRowVersion);
         try {
             await this.client.put(
                 endpoint,

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, IconContainer } from './PreservationJourney.style';
-import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '../../../../../components/EdsIcon';
-import { TextField } from '@equinor/eds-core-react';
+import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
@@ -54,6 +53,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [newJourney, setNewJourney] = useState<Journey>(createNewJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
 
     const {
         preservationApiClient
@@ -155,14 +155,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
             }
-            showSnackbarNotification('New journey is saved.', 5000);
             getJourney(journeyId);
+            showSnackbarNotification('New journey is saved.', 5000);
         } catch (error) {
             console.error('Add journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
-
 
     const updateJourney = async (): Promise<void> => {
         try {
@@ -219,8 +218,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
 
         if (isSaved) {
-            showSnackbarNotification('Changes for journey is saved.', 5000);
             getJourney(newJourney.id);
+            showSnackbarNotification('Changes for journey is saved.', 5000);
         } else {
             showSnackbarNotification('No changes need to be saved.', 5000);
         }
@@ -232,15 +231,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         } else {
             saveUpdatedJourney();
         }
+        setIsDirty(false);
     };
 
+    const cancel = (): void => {
+        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
+            return;
+        }
+        setJourney(null);
+        setIsEditMode(false);
+    };
 
     const voidJourney = async (): Promise<void> => {
-        if (props.journeyId) {
+        if (journey) {
             setIsLoading(true);
             try {
-                await preservationApiClient.voidJourney(props.journeyId);
-                getJourney(props.journeyId);
+                await preservationApiClient.voidJourney(journey.id, journey.rowVersion);
+                getJourney(journey.id);
+                showSnackbarNotification('Journey is voided.', 5000);
             } catch (error) {
                 console.error('Error occured when trying to void journey: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
@@ -250,15 +258,18 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const unvoidJourney = async (): Promise<void> => {
-        setIsLoading(true);
-        try {
-            await preservationApiClient.unvoidJourney(props.journeyId);
-            getJourney(props.journeyId);
-        } catch (error) {
-            console.error('Error occured when trying to unvoid journey: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
+        if (journey) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.unvoidJourney(journey.id, journey.rowVersion);
+                getJourney(journey.id);
+                showSnackbarNotification('Journey is unvoided.', 5000);
+            } catch (error) {
+                console.error('Error occured when trying to unvoid journey: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     const initNewJourney = (): void => {
@@ -267,32 +278,35 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const setJourneyTitleValue = (value: string): void => {
-        if (newJourney) {
-            newJourney.title = value;
-            setNewJourney(cloneJourney(newJourney));
-        }
+        setIsDirty(true);
+        newJourney.title = value;
+        setNewJourney(cloneJourney(newJourney));
     };
 
     const setModeValue = (value: number, index: number): void => {
+        setIsDirty(true);
         newJourney.steps[index].mode.id = value;
         setNewJourney(cloneJourney(newJourney));
     };
 
     const setResponsibleValue = (value: string, index: number): void => {
-        if (newJourney && newJourney.steps) {
+        if (newJourney.steps) {
+            setIsDirty(true);
             newJourney.steps[index].responsible.code = value;
             setNewJourney(cloneJourney(newJourney));
         }
     };
 
     const setStepTitleValue = (value: string, index: number): void => {
-        if (newJourney && newJourney.steps) {
+        if (newJourney.steps) {
+            setIsDirty(true);
             newJourney.steps[index].title = value;
             setNewJourney(cloneJourney(newJourney));
         }
     };
 
     const addNewStep = (): void => {
+        setIsDirty(true);
         const newStep: Step = {
             id: -1,
             title: '',
@@ -365,27 +379,27 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     return (
         <Container>
+            {newJourney.isVoided &&
+                <Typography bold variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>Journey is voided</Typography>
+            }
             <ButtonContainer>
-                {props.journeyId && newJourney.isVoided &&
+                {newJourney.isVoided &&
                     <Button variant="outlined" onClick={unvoidJourney}>
                         Unvoid
                     </Button>
                 }
 
-                {props.journeyId && !newJourney.isVoided &&
+                {!newJourney.isVoided &&
                     <Button variant="outlined" onClick={voidJourney}>
                         Void
                     </Button>
                 }
-
                 <ButtonSpacer />
-
-
-                <Button variant="outlined" onClick={unvoidJourney} disabled={newJourney.isVoided}>
+                <Button variant="outlined" onClick={cancel} disabled={newJourney.isVoided}>
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided}>
+                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty}>
                     Save
                 </Button>
             </ButtonContainer>

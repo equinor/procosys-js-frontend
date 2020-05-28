@@ -94,7 +94,7 @@ const AddScope = (): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await apiClient.getJourneys((cancel: Canceler) => requestCancellor = cancel);
+                const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(data);
             } catch (error) {
                 console.error('Get Journeys failed: ', error.messsage, error.data);
@@ -204,7 +204,7 @@ const AddScope = (): JSX.Element => {
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
                     tagFunctionCode: r.tagFunctionCode,
                     isPreserved: r.isPreserved,
-                    tableData: {checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1}
+                    tableData: { checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1 }
                 };
             });
             setScopeTableData(res);

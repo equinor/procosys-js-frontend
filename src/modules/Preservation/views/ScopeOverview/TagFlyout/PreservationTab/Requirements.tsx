@@ -75,7 +75,6 @@ const Requirements = ({
 
         if (requirement) {
             const fieldIndex = requirement.checkBoxValues.findIndex(field => field.fieldId == fieldId);
-
             if (fieldIndex > -1) {
                 requirement.checkBoxValues[fieldIndex].isChecked = isChecked;
             } else {
@@ -169,11 +168,13 @@ const Requirements = ({
     const checkValue = (requirementId: number, field: TagRequirementField): boolean | undefined => {
         const requirement = requirementValues.find(value => value.requirementId == requirementId);
         if (requirement && field.currentValue) {
-            const fieldIndex = requirement.checkBoxValues.findIndex(field => field.fieldId == field.fieldId);
-            if (requirement.checkBoxValues[fieldIndex].isChecked) {
-                return true;
-            } else {
-                return false;
+            const fieldIndex = requirement.checkBoxValues.findIndex(f => f.fieldId == field.id);
+            if (fieldIndex > -1){
+                if (requirement.checkBoxValues[fieldIndex].isChecked) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         return field.currentValue && field.currentValue.isChecked;

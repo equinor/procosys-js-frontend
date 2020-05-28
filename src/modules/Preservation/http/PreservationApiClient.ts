@@ -749,6 +749,7 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             const result = await this.client.get<JourneyResponse>(endpoint, settings);
+            console.log('JOURNEY RESULT: ', result.data);
             return result.data;
         }
         catch (error) {
@@ -765,13 +766,14 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            return await this.client.post(
+            const result = await this.client.post(
                 endpoint,
                 {
                     title: title,
                 },
                 settings
             );
+            return result.data;
         } catch (error) {
             throw getPreservationApiError(error);
         }
@@ -890,7 +892,7 @@ class PreservationApiClient extends ApiClient {
         const endpoint = `/Journeys/${journeyId}/Steps/SwapSteps`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-
+        console.log('Skal swape: ' + journeyId + '   ' + stepAId + '   ' + stepARowVersion + '   ' + stepBId + '   ' + stepBRowVersion);
         try {
             await this.client.put(
                 endpoint,

@@ -1,5 +1,5 @@
 import ApiClient from '../../../http/ApiClient';
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 
@@ -177,6 +177,18 @@ export interface AreaResponse {
     description: string;
 }
 
+interface RequirementFormInput {
+    requirementDefinitionId: number;
+    intervalWeeks: number;
+}
+
+interface UpdateTagFunctionRequestData {
+    registerCode: string;
+    tagFunctionCode: string;
+    requirements: RequirementFormInput[];
+    rowVersion?: string;
+}
+
 interface TagRequirementsResponse {
     id: number;
     intervalWeeks: number;
@@ -283,6 +295,20 @@ interface TagFunctionFilterResponse {
     code: string;
 }
 
+interface TagFunctionResponse {
+    id: number;
+    code: string;
+    description: string;
+    registerCode: string;
+    isVoided: boolean;
+    requirements: {
+        id: number;
+        requirementDefinitionId: number;
+        intervalWeeks: number;
+    }[];
+    rowVersion: string;
+}
+
 interface DisciplineFilterResponse {
     code: string;
     description: string;
@@ -304,9 +330,9 @@ interface ErrorResponse {
 
 class PreservationApiError extends Error {
 
-    data: ErrorResponse | null;
+    data: AxiosResponse | null;
 
-    constructor(message: string, apiResponse?: ErrorResponse) {
+    constructor(message: string, apiResponse?: AxiosResponse) {
         super(message);
         this.data = apiResponse || null;
         this.name = 'PreservationApiError';
@@ -330,28 +356,36 @@ function DelayData(data: any, fail = false): Promise<any> {
     });
 }
 
-function getPreservationApiError(error: any): PreservationApiError {
+function getPreservationApiError(error: AxiosError): PreservationApiError {
+    if (!error || !error.response) {
+        console.error('An unknown API error occured, error: ', error);
+        return new PreservationApiError('Unknown error');
+    }
     if (error.response.status == 500) {
-        return new PreservationApiError(error.response.data);
+        return new PreservationApiError(error.response.data, error.response);
     }
     if (error.response.status == 409) {
-        return new PreservationApiError('Data has been updated by another user. Please reload and start over!');
+        return new PreservationApiError('Data has been updated by another user. Please reload and start over!', error.response);
+    }
+    try {
+        const apiErrorResponse = error.response.data as ErrorResponse;
+        let errorMessage = `${error.response.status} (${error.response.statusText})`;
+
+        if (error.response.data) {
+            errorMessage = apiErrorResponse.Errors.map(err => err.ErrorMessage).join(', ');
+        }
+        return new PreservationApiError(errorMessage, error.response);
+    } catch(err) {
+        return new PreservationApiError('Failed to parse errors', error.response);
     }
 
-    const response = error.response.data as ErrorResponse;
-    let errorMessage = `${error.response.status} (${error.response.statusText})`;
-
-    if (error.response.data) {
-        errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
-    }
-
-    return new PreservationApiError(errorMessage, response);
 }
 
 /**
  * API for interacting with data in ProCoSys.
  */
 class PreservationApiClient extends ApiClient {
+
     constructor(authService: IAuthService) {
         super(
             authService,
@@ -802,6 +836,48 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Get tag function details
+     *
+     * @param tagFunctionCode Tag Function Code
+     * @param registerCode Register Code
+     * @param setRequestCanceller Request Canceller
+     */
+    async getTagFunction(tagFunctionCode: string, registerCode: string, setRequestCanceller?: RequestCanceler): Promise<TagFunctionResponse> {
+        const endpoint = `/TagFunctions/${tagFunctionCode}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                registerCode: registerCode
+            }
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<TagFunctionResponse>(endpoint,settings);
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+
+    }
+
+
+    async updateTagFunction(tagFunctionCode: string, registerCode: string, requirements: RequirementFormInput[], rowVersion?: string): Promise<boolean> {
+        const endpoint = '/TagFunctions';
+        const data: UpdateTagFunctionRequestData = {
+            registerCode: registerCode,
+            tagFunctionCode: tagFunctionCode,
+            requirements: requirements,
+            rowVersion: rowVersion || ''
+        };
+        try {
+            await this.client.put(endpoint,data);
+            return true;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Get list of tags by tag function, that can be added to preservation scope.
      */
     async getTagsByTagFunctionForAddPreservationScope(
@@ -1062,7 +1138,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    * Get action attachments   
+    * Get action attachments
     */
     async getActionAttachments(tagId: number, actionId: number, setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
         const endpoint = `/Tags/${tagId}/Actions/${actionId}/Attachments`;
@@ -1080,7 +1156,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add attachment to action 
+     * Add attachment to action
      */
     async addAttachmentToAction(
         tagId: number,
@@ -1108,7 +1184,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    *  Delete attachment on an action 
+    *  Delete attachment on an action
     */
     async deleteAttachmentOnAction(
         tagId: number,
@@ -1291,7 +1367,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add attachment to tag 
+     * Add attachment to tag
      */
     async addAttachmentToTag(
         tagId: number,
@@ -1318,7 +1394,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-    *  Delete attachment on a tag 
+    *  Delete attachment on a tag
     */
     async deleteAttachmentOnTag(
         tagId: number,

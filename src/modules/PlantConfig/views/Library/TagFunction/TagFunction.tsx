@@ -7,6 +7,7 @@ import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import Spinner from '@procosys/components/Spinner';
+import PreservationTab from './tabs/PreservationTab';
 
 type TagFunctionProps = {
     tagFunctionCode: string;
@@ -31,7 +32,6 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
         (async (): Promise<void> => {
             try {
                 const data = await procosysApiClient.getTagFunction(props.tagFunctionCode, props.registerCode, (cancel: Canceler) => requestCancellor = cancel);
-
                 setTagFunctionData(data);
             } catch (error) {
                 console.error('Get tag function details failed: ', error.messsage, error.data);
@@ -100,7 +100,9 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                         {/* Just fills out the empty space */}
                     </TabBarFiller>
                 </TabBar>
-                <section>{props.registerCode}</section>
+                <section>
+                    <PreservationTab registerCode={props.registerCode} tagFunctionCode={props.tagFunctionCode} />
+                </section>
             </section>
 
         </Container>

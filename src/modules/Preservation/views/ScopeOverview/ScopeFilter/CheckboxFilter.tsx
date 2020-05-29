@@ -12,6 +12,7 @@ interface CheckboxFilterProps {
     itemsChecked: string[];
     tagListFilterParam: TagListFilterParamType;
     onCheckboxFilterChange: (tagListFilterParam: TagListFilterParamType, id: string, checked: boolean) => void;
+    icon: JSX.Element;
 }
 
 const CheckboxFilter = ({
@@ -20,14 +21,17 @@ const CheckboxFilter = ({
     tagListFilterParam,
     itemsChecked,
     onCheckboxFilterChange,
+    icon
 }: CheckboxFilterProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="CheckboxHeader" >
-                <CollapseInfo>
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="CheckboxHeader" filterActive={itemsChecked.length > 0} >
+                <CollapseInfo >
+                    {icon}
+                    {/* <EdsIcon name={icon} color={itemsChecked.length > 0 ? tokens.colors.interactive.primary__resting.rgba : tokens.colors.ui.background__medium.rgba } /> */}
                     {title}
                 </CollapseInfo>
                 {

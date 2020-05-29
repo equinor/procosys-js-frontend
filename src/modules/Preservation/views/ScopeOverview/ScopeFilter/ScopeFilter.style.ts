@@ -13,16 +13,29 @@ export const Header = styled.header`
     margin-left: var(--grid-unit);
 `;
 
-export const Collapse = styled.div<{ isExpanded: boolean }>`
+interface FilterProps {
+    isExpanded: boolean;
+    filterActive?: boolean;
+}
+
+export const Collapse = styled.div<FilterProps>`
     display: flex;
     margin-bottom: 6px;
     padding: calc(var(--grid-unit) + 4px) var(--grid-unit);
     cursor: pointer;
     align-items: center;
-    ${ (props): any => props.isExpanded && css`
+    ${ ({isExpanded}): any => isExpanded && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};
         background:${tokens.colors.interactive.primary__selected_highlight.rgba};
-    `}; 
+    `};
+    ${({filterActive}): any => filterActive && css`
+        div {
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+        }
+        path {
+            fill: ${tokens.colors.interactive.primary__resting.rgba};
+        }
+    `}
 `;
 
 export const CollapseInfo = styled.div`

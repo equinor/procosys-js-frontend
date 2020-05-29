@@ -3,6 +3,7 @@ import { CollapseInfo, Collapse } from './ScopeFilter.style';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 
 interface Option {
@@ -16,9 +17,10 @@ interface RadioGroupFilterProps {
     value: string | null;
     onChange: (value: string) => void;
     label?: string;
+    icon: string;
 }
 
-const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilterProps): JSX.Element => {
+const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGroupFilterProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -31,10 +33,20 @@ const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilte
         onChange(newValue);
     };
 
+    const filterActiveCheck = (): boolean => {
+        const defaultValue = options.find(o => o.default);
+        if (value == null || defaultValue && value == defaultValue.value) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader">
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader" filterActive={filterActiveCheck()}>
                 <CollapseInfo>
+                    <EdsIcon name={icon} />
                     {label}
                 </CollapseInfo>
                 {
@@ -52,9 +64,6 @@ const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilte
             }
         </>
     );
-
-
-
 };
 
 export default RadioGroupFilter;

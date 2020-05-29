@@ -5,6 +5,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import {SelectedItemsContainer, Item, SelectedItem, FilterContainer} from './MultiSelectFilter.style';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { tokens } from '@equinor/eds-tokens';
 
 interface Item {
     title: string;
@@ -17,6 +18,7 @@ type MultiSelectProps = {
     inputLabel: string;
     inputPlaceholder: string;
     onChange: (selectedItems: Item[]) => void;
+    icon: string;
 }
 
 const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
@@ -59,6 +61,7 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
         <>
             <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="MultiSelectHeader">
                 <CollapseInfo>
+                    <EdsIcon name={props.icon} color={selectedItems.length > 0 ? tokens.colors.interactive.primary__resting.rgba : tokens.colors.ui.background__medium.rgba } />
                     {props.headerLabel}
                 </CollapseInfo>
                 {

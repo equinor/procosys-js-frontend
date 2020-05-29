@@ -155,7 +155,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
                             backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
                         }),
-
+                        thirdSortClick: false
                     }}
                     components={{
                         Toolbar: (data): any => (

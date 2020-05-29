@@ -1,4 +1,4 @@
-import {hot} from 'react-hot-loader';
+import { hot } from 'react-hot-loader';
 import React, { useEffect, useState } from 'react';
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
@@ -25,7 +25,6 @@ const Library = (): JSX.Element => {
     const params: any = match.params;
 
     useEffect(() => {
-
         setSelectedLibraryType(params.libraryType);
     }, []);
 
@@ -36,6 +35,7 @@ const Library = (): JSX.Element => {
             <Divider />
 
             <LibraryItemDetails libraryType={selectedLibraryType} libraryItem={selectedLibraryItem} />
+
         </Container>
     );
 };

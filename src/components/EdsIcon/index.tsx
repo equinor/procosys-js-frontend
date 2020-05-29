@@ -1,10 +1,10 @@
 import React from 'react';
 import { Icon } from '@equinor/eds-core-react';
 // eslint-disable-next-line @typescript-eslint/camelcase
-import { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash } from '@equinor/eds-icons';
+import { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash, add, arrow_down, arrow_up } from '@equinor/eds-icons';
 
 // eslint-disable-next-line @typescript-eslint/camelcase
-const icons = { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash };
+const icons = { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash, add, arrow_down, arrow_up };
 
 Icon.add(icons);
 

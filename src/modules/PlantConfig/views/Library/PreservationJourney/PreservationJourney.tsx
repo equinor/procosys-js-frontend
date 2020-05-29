@@ -330,17 +330,15 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const swapSteps = async (stepA: Step, stepB: Step): Promise<void> => {
         setIsLoading(true);
-
         try {
             await preservationApiClient.swapStepsOnJourney(newJourney.id, stepA.id, stepA.rowVersion, stepB.id, stepB.rowVersion);
             getJourney(newJourney.id);
+            showSnackbarNotification('Step is moved.', 5000);
         } catch (error) {
             console.error('Swap steps failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
-
-        return Promise.resolve();
     };
 
 
@@ -348,13 +346,17 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         const steps = newJourney.steps;
         if (steps.length > 1 && stepIndex + 1 < steps.length) {
             swapSteps(steps[stepIndex], steps[stepIndex + 1]);
+        } else {
+            showSnackbarNotification('Step cannot be moved further down.', 5000);
         }
     };
 
     const moveStepUp = (stepIndex: number): void => {
         const steps = newJourney.steps;
-        if (steps.length > 1 && stepIndex - 1 > 0) {
+        if (steps.length > 1 && stepIndex > 0) {
             swapSteps(steps[stepIndex], steps[stepIndex - 1]);
+        } else {
+            showSnackbarNotification('Step cannot be moved further up.', 5000);
         }
     };
 
@@ -426,29 +428,29 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         <React.Fragment key={`step._${index}`}>
 
                             <FormFieldSpacer>
-
-                                <SelectInput
-                                    onChange={(value): void => setModeValue(value, index)}
-                                    data={mappedModes}
-                                    label={'Mode'}
-                                    disabled={newJourney.isVoided}
-                                >
-                                    {(modeSelectItem && modeSelectItem.text || 'Select mode')}
-                                </SelectInput>
-
+                                <div style={{ width: '100%' }}>
+                                    <SelectInput
+                                        onChange={(value): void => setModeValue(value, index)}
+                                        data={mappedModes}
+                                        label={'Mode'}
+                                        disabled={newJourney.isVoided}
+                                    >
+                                        {(modeSelectItem && modeSelectItem.text || 'Select mode')}
+                                    </SelectInput>
+                                </div>
                             </FormFieldSpacer>
 
                             <FormFieldSpacer>
-
-                                <SelectInput
-                                    onChange={(value): void => setResponsibleValue(value, index)}
-                                    data={mappedResponsibles}
-                                    label={'Resp'}
-                                    disabled={newJourney.isVoided}
-                                >
-                                    {(responsibleSelectItem && responsibleSelectItem.text || 'Select responsible')}
-                                </SelectInput>
-
+                                <div style={{ width: '100%' }}>
+                                    <SelectInput
+                                        onChange={(value): void => setResponsibleValue(value, index)}
+                                        data={mappedResponsibles}
+                                        label={'Resp'}
+                                        disabled={newJourney.isVoided}
+                                    >
+                                        {(responsibleSelectItem && responsibleSelectItem.text || 'Select responsible')}
+                                    </SelectInput>
+                                </div>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
                                 <div style={{ minWidth: '300px' }}>
@@ -465,10 +467,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                             <FormFieldSpacer>
                                 {newJourney.steps.length > 1 &&
                                     <>
-                                        <Button disabled={newJourney.isVoided} variant='ghost' onClick={(): void => moveStepUp(index)}>
+                                        <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
                                             {upIcon}
                                         </Button>
-                                        <Button disabled={newJourney.isVoided} variant='ghost' onClick={(): void => moveStepDown(index)}>
+                                        <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
                                             {downIcon}
                                         </Button>
                                     </>
@@ -484,7 +486,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 })}
             </StepsContainer>
 
-            {!newJourney.isVoided &&
+            {
+                !newJourney.isVoided &&
                 <IconContainer>
                     <Button variant='ghost' onClick={addNewStep}>
                         {addIcon} Add step

@@ -78,6 +78,13 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         }
     };
 
+    const voidTagFunction = (): void => {
+        showSnackbarNotification('Not implemented');
+    };
+    const unvoidTagFunction = (): void => {
+        showSnackbarNotification('Not implemented');
+    };
+
     const onRequirementsChanged = (req: RequirementFormInput[]): void => {
         setUnsavedRequirements(req);
     };
@@ -122,14 +129,16 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         requirements = unsavedRequirements;
     }
 
-
+    const isVoided = tagFunctionDetails && tagFunctionDetails.isVoided;
     return (<Container>
         <LeftSection>
             <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} />
         </LeftSection>
         <RightSection>
             <ActionContainer>
-                <Button variant="outlined">Void</Button>
+                {isVoided && (<Button variant="outlined" onClick={unvoidTagFunction}>Unvoid</Button>)}
+                {!isVoided && (<Button variant="outlined" onClick={voidTagFunction}>Void</Button>)}
+
                 <Button disabled={!unsavedRequirements} onClick={submitChanges}>Save</Button>
             </ActionContainer>
         </RightSection>

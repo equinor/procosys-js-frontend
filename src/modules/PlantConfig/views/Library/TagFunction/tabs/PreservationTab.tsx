@@ -6,7 +6,9 @@ import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { Canceler, AxiosResponse } from 'axios';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import RequirementsWidget from './RequirementsWidget';
+import { Button } from '@equinor/eds-core-react';
 import { hot } from 'react-hot-loader';
+import { LeftSection, Container, RightSection, ActionContainer } from './PreservationTab.style';
 
 interface TagFunction {
     id: number;
@@ -39,6 +41,8 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
 
     const [tagFunctionDetails, setTagFunctionDetails] = useState<TagFunction>();
 
+    const [unsavedRequirements, setUnsavedRequirements] = useState<RequirementFormInput[]|null>(null);
+
     const {auth} = useProcosysContext();
     const {plant} = useCurrentPlant();
 
@@ -63,13 +67,19 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         }
     };
 
-    const requirementsChanged = async (req: RequirementFormInput[]): Promise<void> => {
+    const submitChanges = async (): Promise<void> => {
+        const changes = unsavedRequirements || [];
         try {
-            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, req, tagFunctionDetails && tagFunctionDetails.rowVersion);
+            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes, tagFunctionDetails && tagFunctionDetails.rowVersion);
+            setUnsavedRequirements(null);
             updateTagFunctionDetails();
         } catch (err) {
             console.error('Error when syncing requirements', err.message, err.data);
         }
+    };
+
+    const onRequirementsChanged = (req: RequirementFormInput[]): void => {
+        setUnsavedRequirements(req);
     };
 
     /**
@@ -107,13 +117,23 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         };
     }, []);
 
-    const requirements = tagFunctionDetails && tagFunctionDetails.requirements || [];
+    let requirements: RequirementFormInput[] = tagFunctionDetails && tagFunctionDetails.requirements || [];
+    if (unsavedRequirements) {
+        requirements = unsavedRequirements;
+    }
 
 
-    return (<div style={{margin: 8}}>
-        <h1>Hello</h1>
-        <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={requirementsChanged} />
-    </div>);
+    return (<Container>
+        <LeftSection>
+            <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} />
+        </LeftSection>
+        <RightSection>
+            <ActionContainer>
+                <Button variant="outlined">Void</Button>
+                <Button disabled={!unsavedRequirements} onClick={submitChanges}>Save</Button>
+            </ActionContainer>
+        </RightSection>
+    </Container>);
 };
 
 export default hot(module)(PreservationTab);

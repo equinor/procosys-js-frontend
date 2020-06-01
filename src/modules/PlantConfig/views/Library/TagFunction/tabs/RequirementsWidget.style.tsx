@@ -11,8 +11,8 @@ export const Header = styled.header`
 `;
 
 export const InputContainer = styled.div`
-    margin: calc(var(--grid-unit) * 2) 0px;
     display: flex;
+    margin-bottom: calc(var(--grid-unit) *2);
     flex-direction: row;
     align-items: center;
 `;

@@ -33,7 +33,7 @@ const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
 
 const RequirementsWidget = (props: RequirementsWidgetProp): JSX.Element => {
 
-    const [requirements, setRequirements] = useState<RequirementFormInput[]>(props.requirements);
+    const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
 
     const [mappedRequirementTypes, setMappedRequirementTypes] = useState<SelectItem[]>([]);
     const [mappedIntervals] = useState<SelectItem[]>(() => {
@@ -46,28 +46,35 @@ const RequirementsWidget = (props: RequirementsWidgetProp): JSX.Element => {
     });
 
     useEffect(() => {
-        setRequirements(props.requirements);
+        const existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
+        setRequirements(existingRequirements);
     }, [props.requirements]);
 
     useEffect(() => {
         if (!props.onChange) return;
         // Check that everything is filled out
-        const allInputsAreValid = !requirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
+        const allInputsAreValid = requirements.some(req => req.requirementDefinitionId !== null || req.intervalWeeks !== null);
 
         if (!allInputsAreValid) return;
         //Do we actually have a change to submit?
-        const hasChanges = requirements.some((req) => props.requirements.indexOf(req) === -1) || requirements.length !== props.requirements.length;
+        let hasChanges = false;
+        hasChanges = requirements.some((req) => {
+
+            const hasMatchingRequirement = props.requirements.some(
+                oldReq => {
+                    return (oldReq.requirementDefinitionId === req.requirementDefinitionId
+                        && oldReq.intervalWeeks === req.intervalWeeks);
+                });
+            return !hasMatchingRequirement;
+        }) || requirements.length !== props.requirements.length;
 
         if (hasChanges) {
             const filtered: OnChangeRequirementData[] = [];
             requirements.forEach(req => {
-                if (req.intervalWeeks !== null || req.requirementDefinitionId !== null) {
-                    filtered.push({
-                        requirementDefinitionId: req.requirementDefinitionId as number,
-                        intervalWeeks: req.intervalWeeks as number
-                    });
-                }
-
+                filtered.push({
+                    requirementDefinitionId: req.requirementDefinitionId as number,
+                    intervalWeeks: req.intervalWeeks as number
+                });
             });
             props.onChange(filtered);
         }

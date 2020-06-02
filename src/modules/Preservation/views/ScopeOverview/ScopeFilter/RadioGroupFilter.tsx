@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { CollapseInfo, Collapse } from './ScopeFilter.style';
+import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -45,8 +45,8 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
     return (
         <>
             <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader" filterActive={filterActiveCheck()}>
+                <EdsIcon name={icon} />
                 <CollapseInfo>
-                    <EdsIcon name={icon} />
                     {label}
                 </CollapseInfo>
                 {
@@ -57,9 +57,11 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
             </Collapse>
             {
                 isExpanded && (
-                    <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
-                        {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} checked={((!value && option.default) || option.value === value)} control={<Radio />} />))}
-                    </RadioGroup>
+                    <ExpandedContainer>
+                        <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
+                            {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} checked={((!value && option.default) || option.value === value)} control={<Radio />} />))}
+                        </RadioGroup>
+                    </ExpandedContainer>
                 )
             }
         </>

@@ -36,10 +36,17 @@ export const Collapse = styled.div<FilterProps>`
             fill: ${tokens.colors.interactive.primary__resting.rgba};
         }
     `}
+
+    ${({filterActive}): any => !filterActive && css`
+        path {
+            fill: var(--text--default);
+        }
+    `}
 `;
 
 export const CollapseInfo = styled.div`
     flex-grow: 1;
+    padding-left: calc(var(--grid-unit) * 2);
 `;
 
 export const Section = styled.div`
@@ -50,4 +57,8 @@ export const Section = styled.div`
 export const Link = styled.span`
     color: ${tokens.colors.interactive.primary__resting.rgba};
     cursor: pointer;
+`;
+
+export const ExpandedContainer = styled.div`
+    padding-left: calc(var(--grid-unit) * 4);
 `;

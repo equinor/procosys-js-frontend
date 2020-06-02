@@ -1,10 +1,10 @@
 import React from 'react';
 import { Icon } from '@equinor/eds-core-react';
 // eslint-disable-next-line @typescript-eslint/camelcase
-import { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, place, pressure } from '@equinor/eds-icons';
+import { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, place, pressure, verticle_split, category, search, bookmark_collection } from '@equinor/eds-icons';
 
 // eslint-disable-next-line @typescript-eslint/camelcase
-const icons = { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, place, pressure };
+const icons = { error_filled, close, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, place, pressure, verticle_split, category, search, bookmark_collection };
 
 Icon.add(icons);
 

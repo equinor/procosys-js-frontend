@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Collapse, CollapseInfo, Section } from './ScopeFilter.style';
+import { Collapse, CollapseInfo, Section, ExpandedContainer } from './ScopeFilter.style';
 import { Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Checkbox from '../../../../../components/Checkbox';
 import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 interface CheckboxFilterProps {
     title: string;
@@ -12,7 +13,7 @@ interface CheckboxFilterProps {
     itemsChecked: string[];
     tagListFilterParam: TagListFilterParamType;
     onCheckboxFilterChange: (tagListFilterParam: TagListFilterParamType, id: string, checked: boolean) => void;
-    icon: JSX.Element;
+    icon: string;
 }
 
 const CheckboxFilter = ({
@@ -29,9 +30,8 @@ const CheckboxFilter = ({
     return (
         <>
             <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="CheckboxHeader" filterActive={itemsChecked.length > 0} >
+                <EdsIcon name={icon} />
                 <CollapseInfo >
-                    {icon}
-                    {/* <EdsIcon name={icon} color={itemsChecked.length > 0 ? tokens.colors.interactive.primary__resting.rgba : tokens.colors.ui.background__medium.rgba } /> */}
                     {title}
                 </CollapseInfo>
                 {
@@ -42,7 +42,7 @@ const CheckboxFilter = ({
             </Collapse>
             {
                 isExpanded && (
-                    <>
+                    <ExpandedContainer>
                         {
                             filterValues.map(value => {
                                 return (<Section key={value.id}>
@@ -59,7 +59,7 @@ const CheckboxFilter = ({
                                 </Section>);
                             })
                         }
-                    </>
+                    </ExpandedContainer>
                 )
             }
         </>

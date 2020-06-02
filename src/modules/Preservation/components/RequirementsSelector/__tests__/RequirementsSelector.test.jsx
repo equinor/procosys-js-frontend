@@ -43,12 +43,11 @@ describe('<RequirementsSelector />', () => {
 
     it('Triggers onChange', async () => {
         const mySpy = jest.fn();
-        const { getAllByText, getByText, debug } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} onChange={mySpy} />);
+        const { getAllByText, getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} onChange={mySpy} />);
         getByText('Add Requirement').click();
         getAllByText('Select')[0].click();
         getByText('Area preservation').click();
         getByText('By discipline Electrical').click();
-        debug();
         expect(mySpy).toHaveBeenCalledTimes(1);
     });
 

@@ -182,16 +182,6 @@ interface AreaFilterEntity {
     description: string;
 }
 
-export interface DisciplineResponse {
-    code: string;
-    description: string;
-}
-
-export interface AreaResponse {
-    code: string;
-    description: string;
-}
-
 interface RequirementFormInput {
     requirementDefinitionId: number;
     intervalWeeks: number;

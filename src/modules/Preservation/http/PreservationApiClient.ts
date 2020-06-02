@@ -2,7 +2,7 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
-import Qs from 'Qs';
+import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
 

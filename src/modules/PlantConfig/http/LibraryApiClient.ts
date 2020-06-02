@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
-import Qs from 'Qs';
+import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
 

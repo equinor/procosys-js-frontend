@@ -5,7 +5,7 @@ import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { Canceler, AxiosResponse } from 'axios';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import RequirementsWidget from './RequirementsWidget';
+import RequirementsWidget from '../../../../../Preservation/components/RequirementsSelector/RequirementsSelector';
 import { Button } from '@equinor/eds-core-react';
 import { hot } from 'react-hot-loader';
 import { LeftSection, Container, RightSection, ActionContainer } from './PreservationTab.style';

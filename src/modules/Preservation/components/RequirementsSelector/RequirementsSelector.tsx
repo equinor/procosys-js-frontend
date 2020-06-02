@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { RequirementType, RequirementDefinition } from './types';
+import { RequirementType, RequirementDefinition } from '../../../PlantConfig/views/Library/TagFunction/tabs/types';
 import SelectInput, { SelectItem } from '@procosys/components/Select';
 import PreservationIcon from '@procosys/components/PreservationIcon';
 import { Button } from '@equinor/eds-core-react';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { InputContainer, FormFieldSpacer, ButtonContent } from './RequirementsWidget.style';
+import { InputContainer, FormFieldSpacer, ButtonContent } from './RequirementsSelector.style';
 import { tokens } from '@equinor/eds-tokens';
 
 interface SelectedRequirementResult {
@@ -18,7 +18,7 @@ interface OnChangeRequirementData {
     intervalWeeks: number;
 }
 
-type RequirementsWidgetProp = {
+type RequirementsSelectorProps = {
     requirementTypes: RequirementType[];
     onChange?: (listOfRequirements: OnChangeRequirementData[]) => Promise<void> | void;
     requirements: RequirementFormInput[];
@@ -31,7 +31,7 @@ interface RequirementFormInput {
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
 
-const RequirementsWidget = (props: RequirementsWidgetProp): JSX.Element => {
+const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => {
 
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
 
@@ -205,4 +205,4 @@ const RequirementsWidget = (props: RequirementsWidgetProp): JSX.Element => {
     );
 };
 
-export default RequirementsWidget;
+export default RequirementsSelector;

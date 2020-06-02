@@ -1079,6 +1079,19 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async voidUnvoidTagFunction(tagFunctionCode: string, registerCode: string, action: 'VOID'|'UNVOID', rowVersion: string): Promise<void> {
+        const endpoint = `/TagFunctions/${tagFunctionCode}/${action === 'VOID' ? 'Void': 'Unvoid'}`;
+        const data = {
+            registerCode: registerCode,
+            rowVersion: rowVersion
+        };
+        try {
+            await this.client.put(endpoint,data);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Get list of tags by tag function, that can be added to preservation scope.
      */

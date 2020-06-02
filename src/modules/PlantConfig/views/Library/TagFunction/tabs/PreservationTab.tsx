@@ -73,16 +73,35 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
             await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes, tagFunctionDetails && tagFunctionDetails.rowVersion);
             setUnsavedRequirements(null);
             updateTagFunctionDetails();
+            showSnackbarNotification('Tag function requirements saved');
+
         } catch (err) {
             console.error('Error when syncing requirements', err.message, err.data);
+            showSnackbarNotification('Failed to update tagfunction requirements: ' + err.message);
         }
     };
 
-    const voidTagFunction = (): void => {
-        showSnackbarNotification('Not implemented');
+    const voidTagFunction = async (): Promise<void> => {
+        if (!tagFunctionDetails) return;
+        try {
+            await apiClient.voidUnvoidTagFunction(tagFunctionDetails.code, tagFunctionDetails.registerCode, 'VOID', tagFunctionDetails.rowVersion);
+            showSnackbarNotification('Tag function voided');
+        } catch (err) {
+            console.error('Error when voiding tag function', err.message, err.data);
+            showSnackbarNotification('Failed to void tagfunction: ' + err.message);
+
+        }
     };
-    const unvoidTagFunction = (): void => {
-        showSnackbarNotification('Not implemented');
+
+    const unvoidTagFunction = async (): Promise<void> => {
+        if (!tagFunctionDetails) return;
+        try {
+            await apiClient.voidUnvoidTagFunction(tagFunctionDetails.code, tagFunctionDetails.registerCode, 'UNVOID', tagFunctionDetails.rowVersion);
+            showSnackbarNotification('Tag function voided');
+        } catch (err) {
+            console.error('Error when unvoiding tag function', err.message, err.data);
+            showSnackbarNotification('Failed to void tagfunction: ' + err.message);
+        }
     };
 
     const onRequirementsChanged = (req: RequirementFormInput[]): void => {

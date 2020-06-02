@@ -3,6 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
+import Qs from 'Qs';
 
 const Settings = require('../../../../settings.json');
 
@@ -168,13 +169,12 @@ class LibraryApiClient extends ApiClient {
      */
     async getDisciplines(classifications: string[], setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
         const endpoint = '/Disciplines';
-        const qs = require('qs');
         const settings: AxiosRequestConfig = {
             params: {
                 classifications: classifications
             },
             paramsSerializer: function(params) {
-                return qs.stringify(params, {arrayFormat: 'repeat'});
+                return Qs.stringify(params, {arrayFormat: 'repeat'});
             }
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

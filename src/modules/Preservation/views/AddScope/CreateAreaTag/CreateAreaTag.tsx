@@ -107,7 +107,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await libraryApiClient.getDisciplines((cancel: Canceler) => requestCancellor = cancel);
+                const data = await libraryApiClient.getDisciplines('PRESERVATION', (cancel: Canceler) => requestCancellor = cancel);
 
                 setDisciplines(data);
             } catch (error) {

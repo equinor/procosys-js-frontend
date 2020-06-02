@@ -36,19 +36,23 @@ export interface Journey {
 
 export interface Step {
     id: number;
+    title: string;
     isVoided: boolean;
     mode: Mode;
     responsible: Responsible;
+    rowVersion: string;
 }
 
 export interface Mode {
     id: number;
     title: string;
+    rowVersion: string;
 }
 
 export interface Responsible {
-    id: number;
-    name: string;
+    code: string;
+    title: string;
+    rowVersion: string;
 }
 
 

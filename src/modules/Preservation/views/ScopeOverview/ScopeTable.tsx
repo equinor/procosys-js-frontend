@@ -12,7 +12,6 @@ import { Tooltip } from '@material-ui/core';
 
 interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
-    //isLoading: boolean;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
     setRefreshScopeListCallback: (callback: () => void) => void;
@@ -57,7 +56,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div style={{ display: 'block', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{tag.description}</div>
+                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -65,7 +64,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         );
     }
 
-    getNextColumn (tag: PreservedTag): string | null {
+    getNextColumn(tag: PreservedTag): string | null {
         const requirement = getFirstUpcomingRequirement(tag);
         return requirement ? requirement.nextDueAsYearAndWeek : null;
     }
@@ -116,26 +115,26 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                 <Table id='table'
                     tableRef={this.refObject} //reference will be used by parent, to trigger rendering
                     columns={[
-                        { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: {minWidth: '200px', maxWidth: '250px'}},
-                        { title: 'Description', render: this.getDescriptionColumn, cellStyle: {maxWidth: '150px'}},
+                        { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '200px', maxWidth: '250px' } },
+                        { title: 'Description', render: this.getDescriptionColumn, cellStyle: { maxWidth: '150px' } },
                         // @ts-ignore Width is not a property of material-table
-                        { title: 'Next', render: this.getNextColumn, width: '7%'},
+                        { title: 'Next', render: this.getNextColumn, width: '7%' },
                         // @ts-ignore
-                        { title: 'Due', render: this.getDueColumn, defaultSort: 'asc', width: '5%'},
+                        { title: 'Due', render: this.getDueColumn, defaultSort: 'asc', width: '5%' },
                         // @ts-ignore
-                        { title: 'Mode', field: 'mode', width: '8%'},
+                        { title: 'Mode', field: 'mode', width: '8%' },
                         // @ts-ignore
-                        { title: 'PO nr', field: 'purchaseOrderNo', width: '7%'},
+                        { title: 'PO nr', field: 'purchaseOrderNo', width: '7%' },
                         // @ts-ignore
-                        { title: 'Area', field: 'areaCode', width: '7%'},
+                        { title: 'Area', field: 'areaCode', width: '7%' },
                         // @ts-ignore
-                        { title: 'Resp', field: 'responsibleCode', width: '7%'},
+                        { title: 'Resp', field: 'responsibleCode', width: '7%' },
                         // @ts-ignore
-                        { title: 'Disc', field: 'disciplineCode', width: '5%'},
+                        { title: 'Disc', field: 'disciplineCode', width: '5%' },
                         // @ts-ignore
-                        { title: 'Status', field: 'status', width: '7%'},
+                        { title: 'Status', field: 'status', width: '7%', customSort: (): any => null },
                         // @ts-ignore
-                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%'}
+                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' }
                     ]}
                     data={this.getTagsByQuery}
                     options={{
@@ -164,7 +163,6 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                             </Toolbar>
                         )
                     }}
-                    //isLoading={isLoading}
                     onSelectionChange={this.props.setSelectedTags}
                     style={{ boxShadow: 'none' }}
                     onChangeRowsPerPage={this.props.setPageSize}

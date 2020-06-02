@@ -70,6 +70,14 @@ interface CheckAreaTagNoResponse {
 interface ModeResponse {
     id: number;
     title: string;
+    rowVersion: string;
+}
+
+interface ResponsibleResponse {
+    id: number;
+    title: string;
+    code: string;
+    rowVersion: string;
 }
 
 interface PresJourneyResponse {
@@ -115,6 +123,7 @@ interface JourneyResponse {
     steps: [
         {
             id: number;
+            title: string;
             isVoided: boolean;
             mode: {
                 id: number;
@@ -122,10 +131,11 @@ interface JourneyResponse {
                 rowVersion: string;
             };
             responsible: {
-                id: number;
-                name: string;
+                code: string;
+                title: string;
                 rowVersion: string;
             };
+            rowVersion: string;
         }
     ];
     rowVersion: string;
@@ -712,15 +722,200 @@ class PreservationApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getJourneys(setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+    async getJourneys(includeVoided: boolean, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
         const endpoint = '/Journeys';
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = {
+            params: {
+                includeVoided: includeVoided
+            }
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
+
         try {
             const result = await this.client.get<JourneyResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Get journey
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getJourney(journeyId: number, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse> {
+        const endpoint = `/Journeys/${journeyId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<JourneyResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add journey (not including steps)
+     */
+    async addJourney(title: string, setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = '/Journeys';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    title: title,
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update journey  
+     */
+    async updateJourney(journeyId: number, title: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Add new step to journey
+    */
+    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/AddStep`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.post(
+                endpoint,
+                {
+                    title: title,
+                    modeId: modeId,
+                    responsibleCode: responsibleCode,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Update journey step
+      */
+    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    modeId: modeId,
+                    responsibleCode: responsibleCode,
+                    title: title,
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Void journey
+      */
+    async voidJourney(journeyId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Void`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Unvoid journey
+      */
+    async unvoidJourney(journeyId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
+    /**
+    * Swap steps on journey 
+    */
+    async swapStepsOnJourney(journeyId: number, stepAId: number, stepARowVersion: string, stepBId: number, stepBRowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Steps/SwapSteps`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    stepA: {
+                        id: stepAId,
+                        rowVersion: stepARowVersion
+                    },
+                    stepB: {
+                        id: stepBId,
+                        rowVersion: stepBRowVersion
+                    },
+                },
+                settings
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }
@@ -1300,7 +1495,6 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
     /**
     * Get download url for  tag attachment
     */
@@ -1346,6 +1540,32 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+    * Get responsibles
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getResponsibles(setRequestCanceller?: RequestCanceler): Promise<ResponsibleResponse[]> {
+        const endpoint = '/Responsibles';
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ResponsibleResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
 
 }
 

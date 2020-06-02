@@ -983,7 +983,12 @@
     focus-visible "^5.1.0"
     lodash.uniqueid "^4.0.1"
 
-"@equinor/eds-icons@^0.1.0", "@equinor/eds-icons@workspace:*":
+"@equinor/eds-icons@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.2.0.tgz#b3d1b0bfedc17b3d388c4d4f781a96d5d54dfb59"
+  integrity sha512-Q8RtHLN5z+Hu49v5W39dhyImYl1tlkPfF1iI/S2Dt9Rm+VnaiASUqBjxS4//7mwwYL+wYpHYC5ROIwqLvfy1Yg==
+
+"@equinor/eds-icons@workspace:*":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.1.0.tgz#c5eb35b02126909ce8b6323ea8ca90284e929775"
   integrity sha512-u8IPARF2FGraoyB1J9G/iIlZQ9YOmdqtFSzUsGfuFjmLl5zyz1mdLfvBBl45XByPlgBLtYiZQXIbK811kglKFQ==

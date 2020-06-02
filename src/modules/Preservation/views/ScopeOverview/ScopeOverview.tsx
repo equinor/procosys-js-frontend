@@ -42,7 +42,6 @@ const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
-    //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
@@ -81,6 +80,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     useEffect(
         () => {
+            console.log('test', tagListFilter);
             refreshScopeList();
         }, [tagListFilter]
     );
@@ -100,7 +100,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             console.error('Get tags failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
         }
-        return {maxAvailable: 0, tags: []};
+        return { maxAvailable: 0, tags: [] };
     };
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
@@ -385,7 +385,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <PrintOutlinedIcon fontSize='small' />
                         </StyledButton>
                         <StyledButton
-                            variant='ghost'
+                            //variant={activeFilter ? 'contained' : 'ghost'}
                             onClick={(): void => {
                                 toggleFilter();
                             }}
@@ -398,7 +398,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <ScopeTable
                     getTags={getTags}
                     data-testId='scopeTable'
-                    //isLoading={isLoading}
                     setSelectedTags={setSelectedTags}
                     showTagDetails={openFlyout}
                     setRefreshScopeListCallback={setRefreshScopeListCallback}

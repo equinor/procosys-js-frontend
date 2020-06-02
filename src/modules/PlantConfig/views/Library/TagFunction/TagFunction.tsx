@@ -1,7 +1,7 @@
-import {hot} from 'react-hot-loader';
+import { hot } from 'react-hot-loader';
 
-import React, {useState, useEffect} from 'react';
-import {DetailsSection, Container, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs} from './TagFunction.style';
+import React, { useState, useEffect } from 'react';
+import { DetailsSection, Container, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs } from './TagFunction.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
@@ -22,9 +22,9 @@ interface TagFunction {
 
 const TagFunction = (props: TagFunctionProps): JSX.Element => {
 
-    const [tagFunctionData, setTagFunctionData] = useState<TagFunction|null>(null);
+    const [tagFunctionData, setTagFunctionData] = useState<TagFunction | null>(null);
 
-    const {procosysApiClient} = useProcosysContext();
+    const { procosysApiClient } = useProcosysContext();
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;

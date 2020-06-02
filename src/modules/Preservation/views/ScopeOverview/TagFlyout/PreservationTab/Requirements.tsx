@@ -4,7 +4,7 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
 import RequirementNumberField from './RequirementNumberField';
 import RequirementCheckboxField from './RequirementCheckboxField';
-import PreservationIcon from '../../../PreservationIcon';
+import PreservationIcon from '../../../../../../components/PreservationIcon';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 

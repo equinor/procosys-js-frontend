@@ -1,12 +1,13 @@
 import { hot } from 'react-hot-loader';
 
-import React, { useState, useEffect } from 'react';
-import { DetailsSection, Container, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs } from './TagFunction.style';
+import React, {useState, useEffect} from 'react';
+import {DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs} from './TagFunction.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import Spinner from '@procosys/components/Spinner';
+import PreservationTab from './tabs/PreservationTab';
 
 type TagFunctionProps = {
     tagFunctionCode: string;
@@ -31,7 +32,6 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
         (async (): Promise<void> => {
             try {
                 const data = await procosysApiClient.getTagFunction(props.tagFunctionCode, props.registerCode, (cancel: Canceler) => requestCancellor = cancel);
-
                 setTagFunctionData(data);
             } catch (error) {
                 console.error('Get tag function details failed: ', error.messsage, error.data);
@@ -49,7 +49,11 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     }, [props]);
 
     if (!tagFunctionData) {
-        return <Spinner />;
+        return (
+            <SpinnerContainer>
+                <Spinner large />
+                <Typography variant="h3">Loading library data</Typography>
+            </SpinnerContainer>);
     }
     return (
 
@@ -71,32 +75,34 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
             </DetailsSection>
             <section>
                 <TabBar>
-                    <TabBarButton current>
-                        Completion
-                    </TabBarButton>
                     <TabBarButton disabled>
+                        Completion
+                    </TabBarButton >
+                    <TabBarButton current>
                         Preservation
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         DCCL
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         CPCL
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         Running logs
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         Document requirement
                     </TabBarButton>
-                    <TabBarButton>
+                    <TabBarButton disabled>
                         SPIR Requirement
                     </TabBarButton>
                     <TabBarFiller>
                         {/* Just fills out the empty space */}
                     </TabBarFiller>
                 </TabBar>
-                <section>{props.registerCode}</section>
+                <section>
+                    <PreservationTab registerCode={props.registerCode} tagFunctionCode={props.tagFunctionCode} />
+                </section>
             </section>
 
         </Container>

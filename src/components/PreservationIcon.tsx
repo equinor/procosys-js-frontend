@@ -1,15 +1,15 @@
 import React from 'react';
 
 import BatteryChargingFullOutlinedIcon from '@material-ui/icons/BatteryChargingFullOutlined';
-import BearingIcon from '../../../assets/icons/Bearing';
+import BearingIcon from '../assets/icons/Bearing';
 import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
 import FlashOnOutlinedIcon from '@material-ui/icons/FlashOnOutlined';
-import N2Icon from '../../../assets/icons/N2';
+import N2Icon from '../assets/icons/N2';
 import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
-import PressureIcon from '../../../assets/icons/Pressure';
+import PressureIcon from '../assets/icons/Pressure';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
-import ThermostatIcon from '../../../assets/icons/Thermostat';
-import AreaIcon from '../../../assets/icons/Area';
+import ThermostatIcon from '../assets/icons/Thermostat';
+import AreaIcon from '../assets/icons/Area';
 
 interface IconProps {
     variant: string;
@@ -44,4 +44,4 @@ const PreservationIcon = ({
     }
 };
 
-export default PreservationIcon; 
+export default PreservationIcon;

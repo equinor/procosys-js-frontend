@@ -1,7 +1,7 @@
 import React from 'react';
 import { PreservedTag, Requirement } from './types';
 import { RequirementsContainer, RequirementIcon } from './RequirementIcons.style';
-import PreservationIcon from '../PreservationIcon';
+import PreservationIcon from '../../../../components/PreservationIcon';
 import {Tooltip } from '@material-ui/core';
 
 const isRequirementOverdue = (requirement: Requirement): boolean => requirement.nextDueWeeks < 0;

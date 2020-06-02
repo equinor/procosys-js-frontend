@@ -8,7 +8,7 @@ interface RequirementCheckboxFieldProps {
     requirementId: number;
     field: TagRequirementField;
     readonly: boolean;
-    isChecked: boolean | undefined;
+    isChecked?: boolean;
     onFieldChange: (requirementId: number, fieldId: number, isChecked: boolean) => void;
 }
 

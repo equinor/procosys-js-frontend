@@ -85,16 +85,42 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         const mapped: SelectItem[] = [];
         props.requirementTypes.forEach((itm: RequirementType) => {
             if (itm.requirementDefinitions.length > 0) {
+                const withUserRequiredInput: SelectItem[] = [];
+                const withoutUserRequiredInput: SelectItem[] = [];
+
+                itm.requirementDefinitions.forEach((reqDef) => {
+
+                    const data = {
+                        text: reqDef.title,
+                        value: reqDef.id
+                    };
+                    if (reqDef.needsUserInput) {
+                        withUserRequiredInput.push(data);
+                    } else {
+                        withoutUserRequiredInput.push(data);
+                    }
+                });
+
+                if (withUserRequiredInput.length) {
+                    withUserRequiredInput.unshift({
+                        title: true,
+                        text: 'Requirements with required user input',
+                        value: 'Requirements with required user input',
+                    });
+                }
+                if (withoutUserRequiredInput.length) {
+                    withoutUserRequiredInput.unshift({
+                        title: true,
+                        text: 'Mass update requirements',
+                        value: 'Mass update requirements',
+                    });
+                }
+
                 mapped.push({
                     text: itm.title,
                     value: itm.id,
                     icon: <PreservationIcon variant={itm.code} />,
-                    children: itm.requirementDefinitions.map((reqDef) => {
-                        return {
-                            text: reqDef.title,
-                            value: reqDef.id
-                        };
-                    })
+                    children: withUserRequiredInput.concat(withoutUserRequiredInput)
                 });
             }
         });

@@ -5,7 +5,7 @@ import PreservationIcon from '@procosys/components/PreservationIcon';
 import { Button } from '@equinor/eds-core-react';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { InputContainer, FormFieldSpacer, ButtonContent } from './RequirementsSelector.style';
+import { InputContainer, FormFieldSpacer, ButtonContent, ActionContainer } from './RequirementsSelector.style';
 import { tokens } from '@equinor/eds-tokens';
 
 interface SelectedRequirementResult {
@@ -197,11 +197,13 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                     </React.Fragment>
                 );
             })}
-            <Button variant='ghost' onClick={addRequirementInput}>
-                <ButtonContent>
-                    <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
-                </ButtonContent>
-            </Button>
+            <ActionContainer>
+                <Button variant='ghost' onClick={addRequirementInput}>
+                    <ButtonContent>
+                        <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
+                    </ButtonContent>
+                </Button>
+            </ActionContainer>
         </>
     );
 };

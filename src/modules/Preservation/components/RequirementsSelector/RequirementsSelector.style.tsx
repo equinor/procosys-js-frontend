@@ -11,10 +11,10 @@ export const Header = styled.header`
 `;
 
 export const InputContainer = styled.div`
-    display: flex;
+    display: grid;
     margin-bottom: calc(var(--grid-unit) *2);
-    flex-direction: row;
-    align-items: center;
+    grid-template-columns: 3fr 1fr 1fr;
+    max-width: 50vw;
 `;
 
 export const FormFieldSpacer = styled.div`
@@ -31,4 +31,8 @@ export const ButtonContent = styled.span`
     svg {
         margin-right: var(--grid-unit);
     }
+`;
+
+export const ActionContainer = styled.div`
+    max-width: 300px;
 `;

@@ -115,6 +115,44 @@ const SetTagProperties = ({
         }
     }, [journey]);
 
+    const mapRequirements = (requirementType: RequirementType): SelectItem[] => {
+        let userInput: SelectItem[] = [];
+        let noUserInput: SelectItem[] = [];
+        requirementType.requirementDefinitions.forEach(req => {
+            if (req.needsUserInput) {
+                userInput.push({
+                    text: req.title,
+                    value: req.id,
+                });
+            } else {
+                noUserInput.push({
+                    text: req.title,
+                    value: req.id,
+                });
+            }
+        });
+
+        if(noUserInput.length > 0) {
+            const titleElem = {
+                text: 'Mass update requirements',
+                value: 'Mass update requirements',
+                title: true
+            };
+            noUserInput = [titleElem, ...noUserInput];
+        }
+
+        if(userInput.length > 0) {
+            const titleElem = {
+                text: 'Requirements with required user input',
+                value: 'Requirements with required user input',
+                title: true
+            };
+            userInput = [titleElem, ...userInput];
+        }
+
+        return noUserInput.concat(userInput);
+    };
+
     /**
      * Map Requirements into menu elements
      */
@@ -126,12 +164,7 @@ const SetTagProperties = ({
                     text: itm.title,
                     value: itm.id,
                     icon: <PreservationIcon variant={itm.code} />,
-                    children: itm.requirementDefinitions.map((reqDef) => {
-                        return {
-                            text: reqDef.title,
-                            value: reqDef.id
-                        };
-                    })
+                    children: mapRequirements(itm)
                 });
             }
         });

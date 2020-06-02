@@ -8,12 +8,14 @@ import preservationCache from '../cache/PreservationCache';
 import propTypes from 'prop-types';
 import { useCurrentPlant } from '../../../core/PlantContext';
 import { useProcosysContext } from '../../../core/ProcosysContext';
+import LibraryApiClient from '@procosys/modules/PlantConfig/http/LibraryApiClient';
 
 const PreservationContext = React.createContext<PreservationContextProps>({} as PreservationContextProps);
 type PreservationContextProps = {
     project: ProjectDetails;
     setCurrentProject: (projectId: number) => void;
     apiClient: PreservationApiClient;
+    libraryApiClient: LibraryApiClient;
     availableProjects: ProjectDetails[];
 }
 
@@ -30,6 +32,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
     const {procosysApiClient, auth} = useProcosysContext();
     const {plant} = useCurrentPlant();
     const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
+    const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
 
@@ -67,6 +70,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
 
     useEffect(() => {
         preservationApiClient.setCurrentPlant(plant.id);
+        libraryApiClient.setCurrentPlant(plant.id);
     },[plant]);
 
     useEffect(() => {
@@ -97,7 +101,10 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
 
     return (
         <PreservationContext.Provider value={{
-            project: currentProject, setCurrentProject, apiClient: preservationApiClient, availableProjects
+            project: currentProject,
+            libraryApiClient: libraryApiClient,
+            setCurrentProject, apiClient: preservationApiClient,
+            availableProjects
         }}>
             {children}
         </PreservationContext.Provider>

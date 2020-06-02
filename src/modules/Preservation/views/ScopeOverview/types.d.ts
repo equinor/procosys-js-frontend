@@ -26,6 +26,7 @@ export interface PreservedTag {
     tagFunctionCode: string;
     tagNo: string;
     tagType?: string;
+    rowVersion: string;
 }
 
 export interface Requirement {

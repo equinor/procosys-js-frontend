@@ -42,7 +42,6 @@ const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
-    //const [isLoading, setIsLoading] = useState<boolean>(false);     Is removed temporary. Causes problems with setting size of table.
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
@@ -100,7 +99,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             console.error('Get tags failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message);
         }
-        return {maxAvailable: 0, tags: []};
+        return { maxAvailable: 0, tags: [] };
     };
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
@@ -113,7 +112,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const transfer = async (): Promise<void> => {
         try {
-            await apiClient.transfer(transferableTags.map(t => t.id));
+            await apiClient.transfer(transferableTags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
@@ -234,10 +236,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             preservedFunc);
     };
 
+    let completableTags: PreservedTag[] = [];
+    let nonCompletableTags: PreservedTag[] = [];
+
     const complete = async (): Promise<void> => {
         try {
             const tags = selectedTags.filter(tag => tag.readyToBeCompleted);
-            await apiClient.complete(tags.map(t => t.id));
+            await apiClient.complete(tags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
@@ -249,13 +257,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const showCompleteDialog = (): void => {
-        const hasCompletableTags = selectedTags.some(tag => tag.readyToBePreserved);
-        const completeButton = hasCompletableTags ? 'Complete' : null;
-        const completeFunc = hasCompletableTags ? complete : null;
+        completableTags = [];
+        nonCompletableTags = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeCompleted) {
+                completableTags.push(newTag);
+            } else {
+                nonCompletableTags.push(newTag);
+            }
+        });
+        const completeButton = completableTags.length > 0 ? 'Complete' : null;
+        const completeFunc = completableTags.length > 0 ? complete : null;
 
         showModalDialog(
             'Complete Preservation',
-            <CompleteDialog tags={selectedTags} />,
+            <CompleteDialog completableTags={completableTags} nonCompletableTags={nonCompletableTags} />,
             '80vw',
             backToListButton,
             null,
@@ -347,7 +365,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
                             disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 && tokens.colors.interactive.disabled__border.rgba} /></div>
+                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
                         <StyledButton
@@ -379,7 +397,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <ScopeTable
                     getTags={getTags}
                     data-testId='scopeTable'
-                    //isLoading={isLoading}
                     setSelectedTags={setSelectedTags}
                     showTagDetails={openFlyout}
                     setRefreshScopeListCallback={setRefreshScopeListCallback}

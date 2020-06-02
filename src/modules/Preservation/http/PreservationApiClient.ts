@@ -2,6 +2,7 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
+import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
 
@@ -605,9 +606,8 @@ class PreservationApiClient extends ApiClient {
             },
         };
 
-        const qs = require('qs');
         settings.paramsSerializer = (p): string => {
-            return qs.stringify(p);
+            return Qs.stringify(p);
         };
 
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -781,7 +781,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Update journey  
+     * Update journey
      */
     async updateJourney(journeyId: number, title: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}`;
@@ -894,7 +894,7 @@ class PreservationApiClient extends ApiClient {
 
 
     /**
-    * Swap steps on journey 
+    * Swap steps on journey
     */
     async swapStepsOnJourney(journeyId: number, stepAId: number, stepARowVersion: string, stepBId: number, stepBRowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Steps/SwapSteps`;

@@ -27,7 +27,7 @@ export const IconSpacer = styled.div`
 
 export const ActionList = styled.div`
     margin: 0px calc(var(--grid-unit) * 2) 0px calc(var(--grid-unit) * 2);
-    border-top: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    border-top: solid 1px  ${tokens.colors.interactive.primary__resting.rgba};
 `;
 
 export const ActionContainer = styled.div<{ isClosed: boolean }>`

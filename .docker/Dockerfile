@@ -6,7 +6,7 @@ RUN yarn install
 RUN yarn build --mode=production
 
 # production environment
-FROM nginx:1.16.1-alpine
+FROM nginx:1.19.0-alpine
 ## add permissions for nginx user
 RUN chown -R nginx:nginx /var/cache/nginx && \
         chown -R nginx:nginx /var/log/nginx && \

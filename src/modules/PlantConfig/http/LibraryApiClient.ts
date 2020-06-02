@@ -166,11 +166,15 @@ class LibraryApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getDisciplines(classifications: string, setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
+    async getDisciplines(classifications: string[], setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
         const endpoint = '/Disciplines';
+        const qs = require('qs');
         const settings: AxiosRequestConfig = {
             params: {
                 classifications: classifications
+            },
+            paramsSerializer: function(params) {
+                return qs.stringify(params, {arrayFormat: 'repeat'});
             }
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

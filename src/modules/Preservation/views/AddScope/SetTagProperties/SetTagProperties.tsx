@@ -1,17 +1,14 @@
-import { ButtonContainer, ButtonContent, CenterContent, Container, FormFieldSpacer, Header, InputContainer, RequirementMessage } from './SetTagProperties.style';
-import { Journey, Requirement, RequirementDefinition, RequirementType, Step } from '../types';
+import { ButtonContainer, CenterContent, Container, Header, InputContainer, RequirementMessage } from './SetTagProperties.style';
+import { Journey, Requirement, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import { Button } from '@equinor/eds-core-react';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Spinner from '../../../../../components/Spinner';
-import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import PreservationIcon from '../../../../../components/PreservationIcon';
 import { AddScopeMethod } from '../AddScope';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { TextField } from '@equinor/eds-core-react';
+import RequirementsSelector from '@procosys/modules/Preservation/components/RequirementsSelector/RequirementsSelector';
 
 type SetTagPropertiesProps = {
     submitForm: (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string) => Promise<void>;
@@ -25,13 +22,6 @@ interface RequirementFormInput {
     requirementDefinitionId: number | null;
     intervalWeeks: number | null;
 }
-
-interface SelectedRequirementResult {
-    requirement: RequirementType;
-    requirementDefinition: RequirementDefinition;
-}
-
-const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
 
 const SetTagProperties = ({
     submitForm,
@@ -51,15 +41,6 @@ const SetTagProperties = ({
 
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
-    const [mappedRequirements, setMappedRequirements] = useState<SelectItem[]>([]);
-    const [mappedIntervals] = useState<SelectItem[]>(() => {
-        return validWeekIntervals.map(value => {
-            return {
-                text: `${value} weeks`,
-                value: value
-            };
-        });
-    });
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -115,61 +96,6 @@ const SetTagProperties = ({
         }
     }, [journey]);
 
-    const mapRequirements = (requirementType: RequirementType): SelectItem[] => {
-        let userInput: SelectItem[] = [];
-        let noUserInput: SelectItem[] = [];
-        requirementType.requirementDefinitions.forEach(req => {
-            if (req.needsUserInput) {
-                userInput.push({
-                    text: req.title,
-                    value: req.id,
-                });
-            } else {
-                noUserInput.push({
-                    text: req.title,
-                    value: req.id,
-                });
-            }
-        });
-
-        if(noUserInput.length > 0) {
-            const titleElem = {
-                text: 'Mass update requirements',
-                value: 'Mass update requirements',
-                title: true
-            };
-            noUserInput = [titleElem, ...noUserInput];
-        }
-
-        if(userInput.length > 0) {
-            const titleElem = {
-                text: 'Requirements with required user input',
-                value: 'Requirements with required user input',
-                title: true
-            };
-            userInput = [titleElem, ...userInput];
-        }
-
-        return noUserInput.concat(userInput);
-    };
-
-    /**
-     * Map Requirements into menu elements
-     */
-    useEffect(() => {
-        const mapped: SelectItem[] = [];
-        requirementTypes.forEach((itm: RequirementType) => {
-            if (itm.requirementDefinitions.length > 0) {
-                mapped.push({
-                    text: itm.title,
-                    value: itm.id,
-                    icon: <PreservationIcon variant={itm.code} />,
-                    children: mapRequirements(itm)
-                });
-            }
-        });
-        setMappedRequirements(mapped);
-    }, [requirementTypes]);
 
     const submit = async (): Promise<void> => {
         setIsLoading(true);
@@ -211,70 +137,6 @@ const SetTagProperties = ({
     const setStepFromForm = (stepId: number): void => {
         const step = journeys[journey].steps.find((pStep: Step) => pStep.id === stepId);
         setStep(step);
-    };
-
-    const getRequirementForValue = (reqDefValue: number | null = null): SelectedRequirementResult | null => {
-        if (!reqDefValue) { return null; }
-        let reqDefIndex = -1;
-        const result = requirementTypes.find(el => {
-            reqDefIndex = el.requirementDefinitions.findIndex(RD => RD.id === reqDefValue);
-            if (reqDefIndex > -1) {
-                return true;
-            }
-            return false;
-        });
-
-        if (result) {
-            return {
-                requirement: result,
-                requirementDefinition: result.requirementDefinitions[reqDefIndex]
-            };
-        }
-        return null;
-    };
-
-    const addRequirementInput = (): void => {
-        setRequirements(oldValue => {
-            const newRequirement = {
-                requirementDefinitionId: null,
-                intervalWeeks: null
-            };
-            return [...oldValue, newRequirement];
-        });
-    };
-
-    const setRequirement = (reqDefValue: number, index: number): void => {
-        const newRequirement = getRequirementForValue(reqDefValue);
-        setRequirements((oldReq) => {
-            const copy = [...oldReq];
-            if (newRequirement) {
-                copy[index].requirementDefinitionId = newRequirement.requirementDefinition.id;
-                copy[index].intervalWeeks = newRequirement.requirementDefinition.defaultIntervalWeeks;
-            }
-            return copy;
-        });
-    };
-
-    const setIntervalValue = (intervalValue: number, index: number): void => {
-        setRequirements((oldReq) => {
-            const copy = [...oldReq];
-            copy[index].intervalWeeks = intervalValue;
-            return copy;
-        });
-    };
-
-    const deleteRequirement = (index: number): void => {
-        setRequirements(oldReq => {
-            const copy = [...oldReq];
-            copy.splice(index, 1);
-            return copy;
-        });
-    };
-
-    const getDefaultInputText = (req: RequirementFormInput): string => {
-        const value = mappedIntervals.find(el => el.value === req.intervalWeeks);
-        if (!value) return 'Select';
-        return value.text;
     };
 
 
@@ -356,42 +218,7 @@ const SetTagProperties = ({
                         addScopeMethod !== AddScopeMethod.AddTagsAutoscope && (
                             <>
                                 <h2>Requirements for all selected tags</h2>
-                                {requirements.map((requirement, index) => {
-                                    const requirementForValue = getRequirementForValue(requirement.requirementDefinitionId);
-                                    return (
-                                        <React.Fragment key={`requirementInput_${index}`}>
-                                            <InputContainer key={`req_${index}`}>
-                                                <SelectInput
-                                                    onChange={(value): void => setRequirement(value, index)}
-                                                    data={mappedRequirements}
-                                                    label={'Requirement'}
-                                                >
-                                                    {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
-                                                </SelectInput>
-                                                <FormFieldSpacer>
-                                                    <SelectInput
-                                                        onChange={(value): void => setIntervalValue(value, index)}
-                                                        data={mappedIntervals}
-                                                        disabled={!requirement.requirementDefinitionId}
-                                                        label={'Interval'}
-                                                    >
-                                                        {getDefaultInputText(requirement)}
-                                                    </SelectInput>
-                                                </FormFieldSpacer>
-                                                <FormFieldSpacer>
-                                                    <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
-                                                        <DeleteOutlinedIcon />
-                                                    </Button>
-                                                </FormFieldSpacer>
-                                            </InputContainer>
-                                        </React.Fragment>
-                                    );
-                                })}
-                                <Button variant='ghost' onClick={addRequirementInput}>
-                                    <ButtonContent>
-                                        <AddOutlinedIcon htmlColor={tokens.colors.interactive.primary__resting.hex} /> Add Requirement
-                                    </ButtonContent>
-                                </Button>
+                                <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
                             </>
                         )
                     }

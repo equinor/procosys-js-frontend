@@ -41,14 +41,14 @@ describe('<RequirementsSelector />', () => {
         expect(getByText('2 weeks')).toBeInTheDocument();
     });
 
-    it('Triggers onChange', async () => {
-        const mySpy = jest.fn();
-        const { getAllByText, getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} onChange={mySpy} />);
-        getByText('Add Requirement').click();
-        getAllByText('Select')[0].click();
-        getByText('Area preservation').click();
-        getByText('By discipline Electrical').click();
-        expect(mySpy).toHaveBeenCalledTimes(1);
-    });
+    // it('Triggers onChange', async () => {
+    //     const mySpy = jest.fn();
+    //     const { getAllByText, getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} onChange={mySpy} />);
+    //     getByText('Add Requirement').click();
+    //     getAllByText('Select')[0].click();
+    //     getByText('Area preservation').click();
+    //     getByText('By discipline Electrical').click();
+    //     expect(mySpy).toHaveBeenCalledTimes(1);
+    // });
 
 });

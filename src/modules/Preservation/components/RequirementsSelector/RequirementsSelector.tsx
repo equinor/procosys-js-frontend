@@ -52,10 +52,11 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
 
     useEffect(() => {
         if (!props.onChange) return;
-        // Check that everything is filled out
-        const allInputsAreValid = requirements.some(req => req.requirementDefinitionId !== null || req.intervalWeeks !== null);
 
-        if (!allInputsAreValid) return;
+        // Check that everything is filled out
+        const hasInvalidInputs = requirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
+        if (hasInvalidInputs) return;
+
         //Do we actually have a change to submit?
         let hasChanges = false;
         hasChanges = requirements.some((req) => {

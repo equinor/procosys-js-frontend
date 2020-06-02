@@ -132,7 +132,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         // @ts-ignore
                         { title: 'Disc', field: 'disciplineCode', width: '5%' },
                         // @ts-ignore
-                        { title: 'Status', field: 'status', width: '7%' },
+                        { title: 'Status', field: 'status', width: '7%', customSort: (): any => null },
                         // @ts-ignore
                         { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' }
                     ]}

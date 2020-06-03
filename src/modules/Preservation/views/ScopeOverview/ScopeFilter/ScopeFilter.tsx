@@ -5,7 +5,6 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { TagListFilter } from '../types';
-import { tokens } from '@equinor/eds-tokens';
 import CheckboxFilter from './CheckboxFilter';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { Canceler } from 'axios';
@@ -123,6 +122,7 @@ const ScopeFilter = ({
     const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
     const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
+    const [filterActive, setFilterActive] = useState<boolean>(false);
 
     const KEYCODE_ENTER = 13;
 
@@ -276,12 +276,24 @@ const ScopeFilter = ({
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
         const activeFilters = Object.values(localTagListFilter).filter((v) => v != null && JSON.stringify(v) != JSON.stringify([]));
+        if (activeFilters.length > 0) {
+            setFilterActive(true);
+        } else {
+            setFilterActive(false);
+        }
         setNumberOfFilters(activeFilters.length);
     }, [localTagListFilter]);
 
     useEffect(() => {
         isFirstRender.current = false;
     },[]);
+
+    const checkSearchFilter = (): boolean => {
+        if(!localTagListFilter.tagNoStartsWith && !localTagListFilter.purchaseOrderNoStartsWith && !localTagListFilter.commPkgNoStartsWith && !localTagListFilter.mcPkgNoStartsWith && !localTagListFilter.storageAreaStartsWith) {
+            return false;
+        }
+        return true;
+    };
 
     return (
         <Container>
@@ -293,11 +305,11 @@ const ScopeFilter = ({
                 </Button>
             </Header>
             <Section>
-                <Link onClick={(): void => resetFilter()}>
-                    <Typography style={{ color: tokens.colors.interactive.primary__resting.rgba }} variant='caption'>Reset filter</Typography>
+                <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault() } filterActive={filterActive}>
+                    <Typography variant='caption'>Reset filter</Typography>
                 </Link>
             </Section>
-            <Collapse isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)}>
+            <Collapse isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)} filterActive={checkSearchFilter()}>
                 <EdsIcon name='search' />
                 <CollapseInfo>
                     Search

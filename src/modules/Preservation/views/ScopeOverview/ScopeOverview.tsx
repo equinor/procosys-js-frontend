@@ -9,7 +9,7 @@ import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
@@ -387,7 +387,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={true}>
                             <PrintOutlinedIcon fontSize='small' />
                         </StyledButton>
-                        <Tooltip title={<span style={{textAlign: 'center'}}><p style={{color: 'white'}}>{numberOfFilters} active filter(s)</p><p style={{color: 'white'}}>Filter result {numberOfTags} items</p></span>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{textAlign: 'center'}}>
+                        <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{textAlign: 'center'}}>
                             <div>
                                 <StyledButton
                                     variant={numberOfFilters > 0 ? 'contained' : 'ghost'}

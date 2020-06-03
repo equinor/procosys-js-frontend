@@ -91,3 +91,10 @@ export const FilterDivider = styled.div`
 export const FilterContainer = styled.div`
     width: calc(var(--grid-unit) * 44);
 `;
+
+export const TooltipText = styled.span`
+    text-align: center;
+    p {
+        color: white;
+    }
+`;

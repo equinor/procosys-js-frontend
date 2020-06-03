@@ -14,7 +14,7 @@ export const Header = styled.header`
 `;
 
 interface FilterProps {
-    isExpanded: boolean;
+    isExpanded?: boolean;
     filterActive?: boolean;
 }
 
@@ -54,9 +54,11 @@ export const Section = styled.div`
     padding-bottom: calc(var(--grid-unit) * 2);
 `;
 
-export const Link = styled.span`
-    color: ${tokens.colors.interactive.primary__resting.rgba};
-    cursor: pointer;
+export const Link = styled.span<FilterProps>`
+    cursor: ${(props): string => props.filterActive ? 'pointer' : 'not-allowed' };
+    p {
+        color: ${(props): string => props.filterActive ? tokens.colors.interactive.primary__resting.rgba : tokens.colors.interactive.disabled__border.rgba};
+    }
 `;
 
 export const ExpandedContainer = styled.div`

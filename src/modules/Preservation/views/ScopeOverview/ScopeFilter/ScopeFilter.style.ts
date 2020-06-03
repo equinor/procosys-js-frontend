@@ -6,17 +6,22 @@ export const Container = styled.div`
     flex-direction: column;
 `;
 
-export const Header = styled.header`
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: calc(var(--grid-unit) * 4);
-    margin-left: var(--grid-unit);
-`;
-
 interface FilterProps {
     isExpanded?: boolean;
     filterActive?: boolean;
 }
+
+export const Header = styled.header<FilterProps>`
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: calc(var(--grid-unit) * 4);
+    margin-left: var(--grid-unit);
+
+    ${({filterActive}): any => filterActive && css`
+        h1 {
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+        }
+    `}`;
 
 export const Collapse = styled.div<FilterProps>`
     display: flex;
@@ -51,6 +56,7 @@ export const CollapseInfo = styled.div`
 
 export const Section = styled.div`
     display: flex;
+    justify-content: space-between;
     padding-bottom: calc(var(--grid-unit) * 2);
 `;
 

@@ -19,6 +19,7 @@ interface ScopeFilterProps {
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
     setNumberOfFilters: (activeFilters: number) => void;
+    numberOfTags: number | undefined;
 }
 
 interface FilterInput {
@@ -108,7 +109,8 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
-    setNumberOfFilters
+    setNumberOfFilters,
+    numberOfTags
 }: ScopeFilterProps): JSX.Element => {
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
@@ -275,12 +277,8 @@ const ScopeFilter = ({
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
-        const activeFilters = Object.values(localTagListFilter).filter((v) => v != null && JSON.stringify(v) != JSON.stringify([]));
-        if (activeFilters.length > 0) {
-            setFilterActive(true);
-        } else {
-            setFilterActive(false);
-        }
+        const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+        setFilterActive(activeFilters.length > 0);
         setNumberOfFilters(activeFilters.length);
     }, [localTagListFilter]);
 
@@ -297,14 +295,14 @@ const ScopeFilter = ({
 
     return (
         <Container>
-            <Header>
+            <Header filterActive={filterActive}>
                 <h1>Filter</h1>
-                <EdsIcon name='bookmark_collection' />
                 <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                     <CloseIcon />
                 </Button>
             </Header>
             <Section>
+                <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault() } filterActive={filterActive}>
                     <Typography variant='caption'>Reset filter</Typography>
                 </Link>

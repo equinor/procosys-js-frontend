@@ -136,7 +136,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             tagFunctions.map(tf => {
                 children.push({
                     id: `tf_register_${registerCode}_${tf.code}`,
-                    name: tf.code,
+                    name: `${tf.code}, ${tf.description}`,
                     onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, `${registerCode}|${tf.code}`)
                 });
             });
@@ -156,7 +156,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             registers.map(reg => {
                 children.push({
                     id: `tf_register_${reg.code}`,
-                    name: reg.code,
+                    name: reg.description,
                     getChildren: () => getTagFunctionNodes(reg.code)
                 });
             });

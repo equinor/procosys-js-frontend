@@ -53,10 +53,6 @@ export const IconBar = styled.div`
     display: flex;
     align-items: center;
 
-    button:first-of-type {
-        margin-right: calc(var(--grid-unit) * 8);
-    }
-
     button {
         margin-left: var(--grid-unit);
     }
@@ -95,4 +91,3 @@ export const FilterDivider = styled.div`
 export const FilterContainer = styled.div`
     width: calc(var(--grid-unit) * 44);
 `;
-

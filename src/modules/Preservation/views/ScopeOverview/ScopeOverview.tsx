@@ -6,7 +6,6 @@ import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
-import FilterListOutlinedIcon from '@material-ui/icons/FilterListOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
@@ -24,6 +23,7 @@ import ScopeFilter from './ScopeFilter/ScopeFilter';
 import EdsIcon from '../../../../components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
+import {Tooltip } from '@material-ui/core';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -65,12 +65,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         areaCodes: []
     });
 
+    const [numberOfTags, setNumberOfTags] = useState<number>();
+
     const {
         project,
         availableProjects,
         setCurrentProject,
         apiClient,
     } = usePreservationContext();
+    const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
 
     const refreshScopeListCallback = useRef<() => void>();
 
@@ -80,7 +83,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     useEffect(
         () => {
-            console.log('test', tagListFilter);
             refreshScopeList();
         }, [tagListFilter]
     );
@@ -93,6 +95,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter).then(
                 (response) => {
+                    setNumberOfTags(response.maxAvailable);
                     return response;
                 }
             );
@@ -384,14 +387,18 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={true}>
                             <PrintOutlinedIcon fontSize='small' />
                         </StyledButton>
-                        <StyledButton
-                            //variant={activeFilter ? 'contained' : 'ghost'}
-                            onClick={(): void => {
-                                toggleFilter();
-                            }}
-                        >
-                            <FilterListOutlinedIcon fontSize='small' />
-                        </StyledButton>
+                        <Tooltip title={<span style={{textAlign: 'center'}}><p style={{color: 'white'}}>{numberOfFilters} active filter(s)</p><p style={{color: 'white'}}>Filter result {numberOfTags} items</p></span>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{textAlign: 'center'}}>
+                            <div>
+                                <StyledButton
+                                    variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
+                                    onClick={(): void => {
+                                        toggleFilter();
+                                    }}
+                                >
+                                    <EdsIcon name='filter_list' />
+                                </StyledButton>
+                            </div>
+                        </Tooltip>
                     </IconBar>
                 </HeaderContainer>
 
@@ -425,7 +432,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setNumberOfFilters={setNumberOfFilters} />
                         </FilterContainer>
                     </>
                 )

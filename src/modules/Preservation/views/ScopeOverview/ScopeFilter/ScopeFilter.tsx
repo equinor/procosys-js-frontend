@@ -19,6 +19,7 @@ interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+    setNumberOfFilters: (activeFilters: number) => void;
 }
 
 interface FilterInput {
@@ -86,10 +87,29 @@ const ACTION_STATUS = [{
     value: 'HasOverDue'
 }];
 
+const clearTagListFilter: TagListFilter = {
+    tagNoStartsWith: null,
+    commPkgNoStartsWith: null,
+    mcPkgNoStartsWith: null,
+    purchaseOrderNoStartsWith: null,
+    storageAreaStartsWith: null,
+    preservationStatus: null,
+    actionStatus: null,
+    journeyIds: [],
+    modeIds: [],
+    dueFilters: [],
+    requirementTypeIds: [],
+    tagFunctionCodes: [],
+    disciplineCodes: [],
+    responsibleIds: [],
+    areaCodes: []
+};
+
 const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
+    setNumberOfFilters
 }: ScopeFilterProps): JSX.Element => {
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
@@ -219,23 +239,7 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = {
-            tagNoStartsWith: null,
-            commPkgNoStartsWith: null,
-            mcPkgNoStartsWith: null,
-            purchaseOrderNoStartsWith: null,
-            storageAreaStartsWith: null,
-            preservationStatus: null,
-            actionStatus: null,
-            journeyIds: [],
-            modeIds: [],
-            dueFilters: [],
-            requirementTypeIds: [],
-            tagFunctionCodes: [],
-            disciplineCodes: [],
-            responsibleIds: [],
-            areaCodes: []
-        };
+        const newTagListFilter = clearTagListFilter;
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -271,9 +275,9 @@ const ScopeFilter = ({
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
-    }, [
-        localTagListFilter
-    ]);
+        const activeFilters = Object.values(localTagListFilter).filter((v) => v != null && JSON.stringify(v) != JSON.stringify([]));
+        setNumberOfFilters(activeFilters.length);
+    }, [localTagListFilter]);
 
     useEffect(() => {
         isFirstRender.current = false;

@@ -23,6 +23,7 @@ interface RadioGroupFilterProps {
 const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGroupFilterProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [isActiveFilter, setIsActiveFilter] = useState<boolean>(false);
 
     const [inputName] = useState(() => {
         if (label) return label.toLowerCase().replace(' ', '_');
@@ -30,21 +31,13 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
     });
 
     const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, newValue: string): void => {
+        setIsActiveFilter(newValue != 'no-filter');
         onChange(newValue);
-    };
-
-    const filterActiveCheck = (): boolean => {
-        const defaultValue = options.find(o => o.default);
-        if (value == null || defaultValue && value == defaultValue.value) {
-            return false;
-        } else {
-            return true;
-        }
     };
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader" filterActive={filterActiveCheck()}>
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader" filterActive={isActiveFilter}>
                 <EdsIcon name={icon} />
                 <CollapseInfo>
                     {label}

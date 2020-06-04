@@ -3,7 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Button, TextField } from '@equinor/eds-core-react';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from '../types';
-import { Container, Header, InnerContainer, Search, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer, Toolbar } from './SelectTags.style';
+import { Container, Header, InnerContainer, Search, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer } from './SelectTags.style';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
@@ -91,12 +91,6 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         }
     };
 
-    const getTableToolbar = (selectedRows: TagRow[]): JSX.Element => {
-        // exclude any preserved tags from the count
-        const selectedCount = selectedRows.filter(row => !row.isPreserved).length;
-        return <Toolbar>{selectedCount} tags selected</Toolbar>;
-    };
-
     const cancel = (): void => {
         history.push('/');
     };
@@ -138,6 +132,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 columns={tableColumns}
                 data={props.scopeTableData}
                 options={{
+                    toolbar: false,
                     showTitle: false,
                     filtering: true,
                     search: false,
@@ -172,8 +167,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         <LoadingContainer>
                             <Loading title="Loading tags" />
                         </LoadingContainer>
-                    ),
-                    Toolbar: (data): JSX.Element => getTableToolbar(data.selectedRows)
+                    )
                 }}
             />
         </Container >

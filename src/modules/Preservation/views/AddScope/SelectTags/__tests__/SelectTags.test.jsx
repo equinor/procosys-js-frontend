@@ -61,7 +61,7 @@ describe('Module: <SelectTags />', () => {
     it('Should update selected tags when clicking checkbox in table', () => {
         const selectedTags = [];
 
-        const { container, getByText } = render(
+        const { container } = render(
             <SelectTags 
                 selectedTags={selectedTags} 
                 scopeTableData={tableData}
@@ -72,8 +72,6 @@ describe('Module: <SelectTags />', () => {
 
         const checkboxes = container.querySelectorAll('input[type="checkbox"]');
         fireEvent.click(checkboxes[1]); // fist checkbox after "select all"
-
-        expect(getByText('1 tags selected')).toBeInTheDocument();
         expect(selectedTags.length).toBe(1);
     });
 

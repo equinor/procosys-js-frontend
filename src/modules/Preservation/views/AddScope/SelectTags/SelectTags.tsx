@@ -3,7 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Button, TextField } from '@equinor/eds-core-react';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from '../types';
-import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, Toolbar, NoFilterContainer } from './SelectTags.style';
+import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, InformationContainer } from './SelectTags.style';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
@@ -89,12 +89,6 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         }
     };
 
-    const getTableToolbar = (selectedRows: TagRow[]): JSX.Element => {
-        // exclude any preserved tags from the count
-        const selectedCount = selectedRows.filter(row => !row.isPreserved).length;
-        return <Toolbar>{selectedCount} tags selected</Toolbar>;
-    };
-
     return (
         <Container>
             <Header>
@@ -125,7 +119,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 )
             }
             <Tags>
-                <NoFilterContainer>
+                <InformationContainer>
                     <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
                     {
                         props.addScopeMethod !== AddScopeMethod.AddTagsManually && (
@@ -134,11 +128,12 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                             </Next>
                         )
                     }
-                </NoFilterContainer>
+                </InformationContainer>
                 <Table
                     columns={tableColumns}
                     data={props.scopeTableData}
                     options={{
+                        toolbar: false,
                         showTitle: false,
                         filtering: true,
                         search: false,
@@ -173,8 +168,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                             <LoadingContainer>
                                 <Loading title="Loading tags" />
                             </LoadingContainer>
-                        ),
-                        Toolbar: (data): JSX.Element => getTableToolbar(data.selectedRows)
+                        )
                     }}
                 />
             </Tags>

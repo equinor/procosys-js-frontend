@@ -6,9 +6,10 @@ export const Container = styled.div`
     flex-direction: column;
 `;
 
-export const NoFilterContainer = styled.div`
+export const InformationContainer = styled.div`
     display: flex;
     align-items: center;
+    padding-bottom: calc(var(--grid-unit) * 3);
 `;
 
 export const Header = styled.header`
@@ -62,12 +63,4 @@ export const LoadingContainer = styled.div`
     h1 {
         font-size: calc(var(--grid-unit) * 3);
     }
-`;
-
-export const Toolbar = styled.div`
-    font-size: calc(var(--grid-unit) * 2);
-    line-height: calc(var(--grid-unit) * 3);
-    margin-top: calc(var(--grid-unit) * 2);
-    margin-bottom: var(--grid-unit);
-    color: ${tokens.colors.text.static_icons__secondary.rgba};
 `;

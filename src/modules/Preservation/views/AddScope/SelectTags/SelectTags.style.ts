@@ -6,11 +6,6 @@ export const Container = styled.div`
     flex-direction: column;
 `;
 
-export const NoFilterContainer = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
 export const Header = styled.header`
     display: flex;
     align-items: baseline;
@@ -20,35 +15,37 @@ export const Header = styled.header`
     };
 `;
 
-export const Actions = styled.div`
+export const InnerContainer = styled.div`
     display: flex;
-    margin-top: calc(var(--grid-unit) * 3);
+    flex-direction: column;
 `;
 
 export const Search = styled.div`
     display: flex;
     flex: 1;
-
+    padding-bottom: calc(var(--grid-unit) * 3);
     input {
         width: 500px;
     }
 `;
 
-export const Next = styled.div`
+export const ButtonsContainer = styled.div`
     display: flex;
     flex: 1;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-right: calc(var(--grid-unit));
+    flex-direction: row;
+    align-self: flex-start;
+    justify-content: flex-end;
+
+    button:last-of-type {
+        margin-left: calc(var(--grid-unit) * 2);
+    }
 `;
 
-export const Tags = styled.div`
-    margin-top: calc(var(--grid-unit) * 4);
-
-    input + svg {
-        width: 24px;
-        height: 24px;
-    }
+export const TopContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin-top: calc(var(--grid-unit) * 3);
+    align-items: center;
 `;
 
 export const TagsHeader = styled.div`

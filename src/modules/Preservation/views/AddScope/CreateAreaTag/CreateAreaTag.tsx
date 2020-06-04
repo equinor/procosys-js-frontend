@@ -1,4 +1,4 @@
-import { Container, FormFieldSpacer, Next, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, ButtonsContainer, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateAreaTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
@@ -9,6 +9,7 @@ import { showSnackbarNotification } from './../../../../../core/services/Notific
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { useHistory } from 'react-router-dom';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -55,6 +56,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     const [tagNoValid, setTagNoValid] = useState<boolean>(false);
 
     const [icon, setIcon] = useState<JSX.Element | null>(null);
+
+    const history = useHistory();
 
     /** Load areas */
     useEffect(() => {
@@ -234,6 +237,10 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         }
     }, [props.description]);
 
+    const cancel = (): void => {
+        history.push('/');
+    };
+
     return (
         <div>
             <Header>
@@ -289,9 +296,10 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                                 })}
                             </Dropdown>
                         </FormFieldSpacer>
-                        <Next>
+                        <ButtonsContainer>
+                            <Button onClick={cancel} variant='outlined' >Cancel</Button>
                             <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid}>Next</Button>
-                        </Next>
+                        </ButtonsContainer>
                     </InputContainer>
                 </Container >
             </TopContainer>

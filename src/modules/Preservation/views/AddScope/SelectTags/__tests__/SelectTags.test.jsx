@@ -1,6 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
-
 import SelectTags from '../SelectTags';
 
 jest.mock('../../../../context/PreservationContext', () => ({
@@ -12,6 +11,12 @@ jest.mock('../../../../context/PreservationContext', () => ({
                 description: 'project'
             }
         };
+    })
+}));
+
+jest.mock('react-router-dom', () => ({
+    useHistory: jest.fn(() => {
+        return {};
     })
 }));
 

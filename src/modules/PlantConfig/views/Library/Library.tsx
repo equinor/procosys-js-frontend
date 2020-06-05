@@ -33,7 +33,7 @@ const Library = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        history.push('/Library/' + (path ? path + '/' + (selectedLibraryType ? selectedLibraryType + '/' + (selectedLibraryItem ? selectedLibraryItem : '' ) : '') : '')); //+ '/' + selectedLibraryType + '/' + selectedLibraryItem);
+        history.replace('/Library/' + (path ? path + '/' + (selectedLibraryType ? selectedLibraryType + '/' + (selectedLibraryItem ? selectedLibraryItem : '' ) : '') : '')); //+ '/' + selectedLibraryType + '/' + selectedLibraryItem);
     }, [path]);
 
     return (

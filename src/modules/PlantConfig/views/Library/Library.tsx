@@ -29,12 +29,14 @@ const Library = (): JSX.Element => {
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<string>(params.libraryItem);
 
     useEffect(() => {
-        setSelectedLibraryType(params.libraryType);
-    }, []);
+        if(path) {
+            history.replace(`/Library/${path}/${selectedLibraryType}/${selectedLibraryItem}`);
+        }
+    }, [path]);
 
     useEffect(() => {
-        history.replace('/Library/' + (path ? path + '/' + (selectedLibraryType ? selectedLibraryType + '/' + (selectedLibraryItem ? selectedLibraryItem : '' ) : '') : '')); //+ '/' + selectedLibraryType + '/' + selectedLibraryItem);
-    }, [path]);
+        history.replace('/Library/');
+    }, []);
 
     return (
         <Container>

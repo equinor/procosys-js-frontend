@@ -5,7 +5,7 @@ import {RequestCanceler} from './HttpClient';
 
 const Settings = require('../../settings.json');
 
-const RESOURCE_ID = Settings.externalResources.graphApi.scope.join(' ');
+const RESOURCE_ID = JSON.parse(Settings.externalResources.graphApi.scope.replace(/'/g,'"')).join(' ');
 const BASE_URL = `${Settings.externalResources.graphApi.url}${Settings.externalResources.graphApi.version}`;
 
 export type ProfileResponse = {

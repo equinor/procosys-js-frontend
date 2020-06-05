@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'procosys - github'
+    ref: 'refs/remotes/origin/frontend_build'
 
 # Global variables for the pipeline
 variables:
@@ -69,3 +70,5 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
       clusterName: 'pcs-aks-test'
+      kvName: 'pcs-frontend-dev-kv'
+      kvRgName: 'pcs-dev-rg'

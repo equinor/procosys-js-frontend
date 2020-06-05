@@ -57,7 +57,7 @@ export const ButtonsContainer = styled.div`
 
 export const FormFieldSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
-
+    align-self: flex-end;
     #dropdownIcon {
         height: calc(var(--grid-unit) * 3);
     }

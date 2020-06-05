@@ -17,7 +17,8 @@ const errorIcon = <EdsIcon name='error_filled' size={16} />;
 
 const areaTypes: SelectItem[] = [
     { text: 'Normal', value: 'PreArea' },
-    { text: 'Site', value: 'SiteArea' }];
+    { text: 'Site', value: 'SiteArea' },
+    { text: 'Purchase Order', value: 'PO' }];
 
 type AreaItem = {
     text: string;
@@ -129,6 +130,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     if (props.areaType && props.discipline && props.description) {
         if (props.areaType.value === 'PreArea') {
             newTagNo = '#PRE';
+        } else if (props.areaType.value === 'PO'){
+            newTagNo = '#PO';
         } else {
             newTagNo = '#SITE';
         }
@@ -241,6 +244,20 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         history.push('/');
     };
 
+    const getLabel = (): string => {
+        if (props.areaType) {
+            return props.areaType.value == 'PO' ? 'Supplier' : 'Area';
+        }
+        return '';
+    };
+
+    const getMeta = (): string => {
+        if (props.areaType && props.areaType.value != 'PO') {
+            return 'Optional';
+        }
+        return ' ';
+    };
+
     return (
         <div>
             <Header>
@@ -273,9 +290,10 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                         </FormFieldSpacer>
                         <FormFieldSpacer>
                             <Dropdown
-                                label={'Area'}
+                                disabled={!props.areaType}
+                                label={getLabel()}
                                 variant='form'
-                                meta="Optional"
+                                meta={getMeta()}
                                 Icon={(props.area && props.area.description)
                                     ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div>
                                     : <KeyboardArrowDownIcon />}

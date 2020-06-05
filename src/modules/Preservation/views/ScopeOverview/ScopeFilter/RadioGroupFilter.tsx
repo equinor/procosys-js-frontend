@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import { CollapseInfo, Collapse } from './ScopeFilter.style';
+import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 
 interface Option {
@@ -16,11 +17,13 @@ interface RadioGroupFilterProps {
     value: string | null;
     onChange: (value: string) => void;
     label?: string;
+    icon: string;
 }
 
-const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilterProps): JSX.Element => {
+const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGroupFilterProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [isActiveFilter, setIsActiveFilter] = useState<boolean>(false);
 
     const [inputName] = useState(() => {
         if (label) return label.toLowerCase().replace(' ', '_');
@@ -28,12 +31,14 @@ const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilte
     });
 
     const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, newValue: string): void => {
+        setIsActiveFilter(newValue != 'no-filter');
         onChange(newValue);
     };
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader">
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader" filterActive={isActiveFilter}>
+                <EdsIcon name={icon} />
                 <CollapseInfo>
                     {label}
                 </CollapseInfo>
@@ -45,16 +50,15 @@ const RadioGroupFilter = ({options,value, onChange, label = ''}: RadioGroupFilte
             </Collapse>
             {
                 isExpanded && (
-                    <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
-                        {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} checked={((!value && option.default) || option.value === value)} control={<Radio />} />))}
-                    </RadioGroup>
+                    <ExpandedContainer>
+                        <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
+                            {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} checked={((!value && option.default) || option.value === value)} control={<Radio />} />))}
+                        </RadioGroup>
+                    </ExpandedContainer>
                 )
             }
         </>
     );
-
-
-
 };
 
 export default RadioGroupFilter;

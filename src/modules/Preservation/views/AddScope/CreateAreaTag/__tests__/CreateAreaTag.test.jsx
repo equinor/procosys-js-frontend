@@ -50,9 +50,7 @@ jest.mock('../../../../context/PreservationContext',() => ({
 }));
 
 jest.mock('react-router-dom', () => ({
-    useHistory: jest.fn(() => {
-        return {};
-    })
+    useHistory: () => {}
 }));
 
 describe('<CreateAreaTag />', () => {

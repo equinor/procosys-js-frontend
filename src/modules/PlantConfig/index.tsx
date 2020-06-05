@@ -17,7 +17,7 @@ const Preservation = (): JSX.Element => {
                     <BrowserRouter basename={url}>
                         <Switch>
                             <Route
-                                path={'/Library/:path/:libraryType/:libraryItem'}
+                                path={'/Library/:path?/:libraryType?/:libraryItem?'}
                                 component={Library}
                             />
                             <Route

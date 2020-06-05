@@ -5,6 +5,7 @@ import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
 import { useRouteMatch } from 'react-router-dom';
 import { Container, Divider } from './Library.style';
+import { useHistory } from 'react-router-dom';
 
 
 export enum LibraryType {
@@ -18,19 +19,26 @@ export enum LibraryType {
 
 const Library = (): JSX.Element => {
 
-    const [selectedLibraryType, setSelectedLibraryType] = useState('');
-    const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
-
     const match = useRouteMatch();
     const params: any = match.params;
+
+    const history = useHistory();
+
+    const [path, setPath] = useState<string>(params.path);
+    const [selectedLibraryType, setSelectedLibraryType] = useState<string>(params.libraryType);
+    const [selectedLibraryItem, setSelectedLibraryItem] = useState<string>(params.libraryItem);
 
     useEffect(() => {
         setSelectedLibraryType(params.libraryType);
     }, []);
 
+    useEffect(() => {
+        history.push('/Library/' + (path ? path + '/' + (selectedLibraryType ? selectedLibraryType + '/' + (selectedLibraryItem ? selectedLibraryItem : '' ) : '') : '')); //+ '/' + selectedLibraryType + '/' + selectedLibraryItem);
+    }, [path]);
+
     return (
         <Container>
-            <LibraryTreeview setSelectedLibraryType={setSelectedLibraryType} setSelectedLibraryItem={setSelectedLibraryItem} />
+            <LibraryTreeview setSelectedLibraryType={setSelectedLibraryType} setSelectedLibraryItem={setSelectedLibraryItem} setPath={setPath} />
 
             <Divider />
 

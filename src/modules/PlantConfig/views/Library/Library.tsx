@@ -3,10 +3,8 @@ import React, { useEffect, useState } from 'react';
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
-import { useRouteMatch } from 'react-router-dom';
 import { Container, Divider } from './Library.style';
 import { useHistory } from 'react-router-dom';
-
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -19,20 +17,10 @@ export enum LibraryType {
 
 const Library = (): JSX.Element => {
 
-    const match = useRouteMatch();
-    const params: any = match.params;
-
     const history = useHistory();
 
-    const [path, setPath] = useState<string>(params.path);
-    const [selectedLibraryType, setSelectedLibraryType] = useState<string>(params.libraryType);
-    const [selectedLibraryItem, setSelectedLibraryItem] = useState<string>(params.libraryItem);
-
-    useEffect(() => {
-        if(path && selectedLibraryType && selectedLibraryItem) {
-            history.replace(`/Library/${path}/${selectedLibraryType}/${selectedLibraryItem}`);
-        }
-    }, [path]);
+    const [selectedLibraryType, setSelectedLibraryType] = useState<string>('');
+    const [selectedLibraryItem, setSelectedLibraryItem] = useState<string>('');
 
     useEffect(() => {
         history.replace('/Library/');
@@ -40,7 +28,7 @@ const Library = (): JSX.Element => {
 
     return (
         <Container>
-            <LibraryTreeview setSelectedLibraryType={setSelectedLibraryType} setSelectedLibraryItem={setSelectedLibraryItem} setPath={setPath} />
+            <LibraryTreeview setSelectedLibraryType={setSelectedLibraryType} setSelectedLibraryItem={setSelectedLibraryItem} />
 
             <Divider />
 

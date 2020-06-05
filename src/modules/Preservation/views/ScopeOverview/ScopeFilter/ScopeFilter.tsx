@@ -5,18 +5,21 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { TagListFilter } from '../types';
-import { tokens } from '@equinor/eds-tokens';
 import CheckboxFilter from './CheckboxFilter';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import RadioGroupFilter from './RadioGroupFilter';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
+import EdsIcon from '@procosys/components/EdsIcon';
+import AreaIcon from '@procosys/assets/icons/Area';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+    setNumberOfFilters: (activeFilters: number) => void;
+    numberOfTags: number | undefined;
 }
 
 interface FilterInput {
@@ -84,10 +87,30 @@ const ACTION_STATUS = [{
     value: 'HasOverDue'
 }];
 
+const clearTagListFilter: TagListFilter = {
+    tagNoStartsWith: null,
+    commPkgNoStartsWith: null,
+    mcPkgNoStartsWith: null,
+    purchaseOrderNoStartsWith: null,
+    storageAreaStartsWith: null,
+    preservationStatus: null,
+    actionStatus: null,
+    journeyIds: [],
+    modeIds: [],
+    dueFilters: [],
+    requirementTypeIds: [],
+    tagFunctionCodes: [],
+    disciplineCodes: [],
+    responsibleIds: [],
+    areaCodes: []
+};
+
 const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
+    setNumberOfFilters,
+    numberOfTags
 }: ScopeFilterProps): JSX.Element => {
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
@@ -101,6 +124,7 @@ const ScopeFilter = ({
     const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
     const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
+    const [filterActive, setFilterActive] = useState<boolean>(false);
 
     const KEYCODE_ENTER = 13;
 
@@ -217,23 +241,7 @@ const ScopeFilter = ({
     };
 
     const resetFilter = (): void => {
-        const newTagListFilter: TagListFilter = {
-            tagNoStartsWith: null,
-            commPkgNoStartsWith: null,
-            mcPkgNoStartsWith: null,
-            purchaseOrderNoStartsWith: null,
-            storageAreaStartsWith: null,
-            preservationStatus: null,
-            actionStatus: null,
-            journeyIds: [],
-            modeIds: [],
-            dueFilters: [],
-            requirementTypeIds: [],
-            tagFunctionCodes: [],
-            disciplineCodes: [],
-            responsibleIds: [],
-            areaCodes: []
-        };
+        const newTagListFilter = clearTagListFilter;
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
@@ -269,29 +277,38 @@ const ScopeFilter = ({
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
-    }, [
-        localTagListFilter
-    ]);
+        const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+        setFilterActive(activeFilters.length > 0);
+        setNumberOfFilters(activeFilters.length);
+    }, [localTagListFilter]);
 
     useEffect(() => {
         isFirstRender.current = false;
     },[]);
 
+    const checkSearchFilter = (): boolean => {
+        if(!localTagListFilter.tagNoStartsWith && !localTagListFilter.purchaseOrderNoStartsWith && !localTagListFilter.commPkgNoStartsWith && !localTagListFilter.mcPkgNoStartsWith && !localTagListFilter.storageAreaStartsWith) {
+            return false;
+        }
+        return true;
+    };
+
     return (
         <Container>
-            <Header>
+            <Header filterActive={filterActive}>
                 <h1>Filter</h1>
-
                 <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                     <CloseIcon />
                 </Button>
             </Header>
             <Section>
-                <Link onClick={(): void => resetFilter()}>
-                    <Typography style={{ color: tokens.colors.interactive.primary__resting.rgba }} variant='caption'>Reset filter</Typography>
+                <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
+                <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault() } filterActive={filterActive}>
+                    <Typography variant='caption'>Reset filter</Typography>
                 </Link>
             </Section>
-            <Collapse isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)}>
+            <Collapse isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)} filterActive={checkSearchFilter()}>
+                <EdsIcon name='search' />
                 <CollapseInfo>
                     Search
                 </CollapseInfo>
@@ -373,17 +390,17 @@ const ScopeFilter = ({
                 )
             }
 
-            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onPreservationStatusFilterChanged} value={tagListFilter.preservationStatus} label="Preservation status" />
-            <RadioGroupFilter options={ACTION_STATUS} onChange={onActionStatusFilterChanged} value={tagListFilter.actionStatus} label="Preservation actions" />
+            <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onPreservationStatusFilterChanged} value={tagListFilter.preservationStatus} label="Preservation status" icon={'calendar_today'} />
+            <RadioGroupFilter options={ACTION_STATUS} onChange={onActionStatusFilterChanged} value={tagListFilter.actionStatus} label="Preservation actions" icon={'notifications'} />
 
-            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.dueFilters} />
-            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} />
-            <CheckboxFilter title='Preserved Modes' filterValues={modes} tagListFilterParam='modeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.modeIds} />
-            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} />
-            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} />
-            <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} />
-            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" />
-            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" />
+            <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.dueFilters} icon={'alarm_on'} />
+            <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} icon={'world'} />
+            <CheckboxFilter title='Preserved Modes' filterValues={modes} tagListFilterParam='modeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.modeIds} icon={'place'} />
+            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} icon={'pressure'}/>
+            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'verticle_split'}/>
+            <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} icon={'category'} />
+            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
+            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />}  />
 
         </Container >
     );

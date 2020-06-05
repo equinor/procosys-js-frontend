@@ -17,6 +17,7 @@ type MultiSelectProps = {
     inputLabel: string;
     inputPlaceholder: string;
     onChange: (selectedItems: Item[]) => void;
+    icon: JSX.Element;
 }
 
 const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
@@ -57,7 +58,8 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="MultiSelectHeader">
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="MultiSelectHeader" filterActive={selectedItems.length > 0} >
+                {props.icon}
                 <CollapseInfo>
                     {props.headerLabel}
                 </CollapseInfo>

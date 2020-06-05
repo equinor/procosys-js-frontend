@@ -175,13 +175,11 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         {
             id: LibraryType.TAG_FUNCTION,
             name: 'Tag Functions',
-            onClick: (): void => { handleTreeviewClick(LibraryType.TAG_FUNCTION, '', LibraryType.TAG_FUNCTION); },
             getChildren: getRegisterNodes
         },
         {
             id: LibraryType.MODE,
             name: 'Modes',
-            onClick: (): void => { handleTreeviewClick(LibraryType.MODE, '', LibraryType.MODE); },
             getChildren: getModes
         },
         {
@@ -193,7 +191,6 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         {
             id: LibraryType.PRES_REQUIREMENT_TYPE,
             name: 'Preservation requirements',
-            onClick: (): void => { handleTreeviewClick(LibraryType.PRES_REQUIREMENT_TYPE, '', LibraryType.PRES_REQUIREMENT_TYPE); },
             getChildren: getRequirementTreeNodes,
         }
     ];

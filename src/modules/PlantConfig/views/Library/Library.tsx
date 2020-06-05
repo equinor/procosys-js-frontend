@@ -29,7 +29,7 @@ const Library = (): JSX.Element => {
     const [selectedLibraryItem, setSelectedLibraryItem] = useState<string>(params.libraryItem);
 
     useEffect(() => {
-        if(path) {
+        if(path && selectedLibraryType && selectedLibraryItem) {
             history.replace(`/Library/${path}/${selectedLibraryType}/${selectedLibraryItem}`);
         }
     }, [path]);

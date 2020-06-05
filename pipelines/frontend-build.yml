@@ -10,7 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'procosys - github'
-    ref: origin/frontend_build
+    ref: 'origin/frontend_build'
 
 # Global variables for the pipeline
 variables:

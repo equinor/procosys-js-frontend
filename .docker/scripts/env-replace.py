@@ -13,7 +13,7 @@ print('Start - Replacing placeholder variables')
 keyVaultSecrets = []
 for key in os.environ:
     if (key.startswith('pcs_')):
-        keyVaultSecrets.append((key.lower().replace('pcs_',''),os.environ.get(key)))
+        keyVaultSecrets.append((key.replace('pcs_',''),os.environ.get(key)))
 
 # Get all files
 for filepath in glob.iglob('/usr/share/nginx/html/**/*.js', recursive=True):

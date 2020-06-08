@@ -46,9 +46,9 @@ stages:
       repository: ${{ variables.repositoryName }}
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
-# Dev deploy stage
+# Deploy to dev environment
 - stage: dev
-  displayName: 'Dev'
+  displayName: 'Deploy to dev'
   dependsOn: 'build_and_test'
   condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
@@ -70,5 +70,32 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
       clusterName: 'pcs-aks-test'
-      kvName: 'pcs-frontend-dev-kv'
-      kvRgName: 'pcs-frontend-dev-rg'
+      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+
+# deploy to test environment
+- stage: test
+  displayName: 'Deploy to test'
+  dependsOn: 'build_and_test'
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'test'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+
+jobs:
+- template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
+  parameters:
+    deploymentName: 'deploy_to_k8s'
+    dependsOn: ''
+    serviceConnection: '${{ variables.serviceConnection }}'
+    env: '${{ variables.envName }}'
+    envRg: 'pcs-hosting-rg'
+    envGroup: '${{ variables.envGroupName }}'
+    dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
+    clusterName: 'pcs-aks-test'
+    kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+    kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'

@@ -24,6 +24,13 @@ const mockAreas = [
     },
 ];
 
+const mockPOs = [
+    {
+        title: '01',
+        description: 'po description 1'
+    }
+];
+
 const mockValidTagNo = {
     tagNo: '#PRE-E',
     exists: false,
@@ -41,9 +48,21 @@ jest.mock('../../../../context/PreservationContext',() => ({
                 description: 'project'
             },
             apiClient: {
-                getAreas: () => Promise.resolve(mockAreas),
-                getDisciplines: () => Promise.resolve(mockDisciplines),
                 checkAreaTagNo: () => Promise.resolve(mockValidTagNo)
+            },
+            libraryApiClient: {
+                getAreas: () => Promise.resolve(mockAreas),
+                getDisciplines: () => Promise.resolve(mockDisciplines)
+            }
+        };
+    }
+}));
+
+jest.mock('../../../../../../core/ProcosysContext',() => ({
+    useProcosysContext: () => {
+        return {
+            procosysApiClient: {
+                getPurchaseOrders: () => Promise.resolve(mockPOs)
             }
         };
     }
@@ -68,7 +87,6 @@ describe('<CreateAreaTag />', () => {
         await act(async () => {
             const { queryByText } = render(<CreateAreaTag />);
 
-            expect(queryByText('Area')).toBeInTheDocument();
             expect(queryByText('Area type')).toBeInTheDocument();
             expect(queryByText('Discipline')).toBeInTheDocument();
             expect(queryByText(/Tag number/)).toBeInTheDocument();
@@ -85,7 +103,14 @@ describe('<CreateAreaTag />', () => {
 
     it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
         await act(async () => {
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' suffix='12'/>);
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='testDiscipline' suffix='12'/>);
+            expect(getByText('Next')).toHaveProperty('disabled', true);
+        });
+    });
+
+    it('\'Next\' button disabled when not all mandatory fields are passed for PO tag', async () => {
+        await act(async () => {
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='testDiscipline' description='test description' suffix='12'/>);
             expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });
@@ -94,8 +119,33 @@ describe('<CreateAreaTag />', () => {
         await act(async () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' setSelectedTags={propFunc} />);
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} />);
             await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+        });
+    });
+
+    it('\'Next\' button enabled when all mandatory fields are passed for PO tag', async () => {
+        await act(async () => {
+            /** For testing purposes this is considered a valid tagNo */
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' purchaseOrder='po' setSelectedTags={propFunc} />);
+            await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+        });
+    });
+
+    it('Area dropdown if Normal or Site area chosen', async () => {
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} />);
+            await waitFor(() => expect(getByText('Area')).toBeInTheDocument());
+        });
+    });
+
+    it('PO/CO dropdown if Supplier area chosen', async () => {
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' setSelectedTags={propFunc} />);
+            await waitFor(() => expect(getByText('Purchase order / Call off')).toBeInTheDocument());
         });
     });
 

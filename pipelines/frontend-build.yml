@@ -71,4 +71,4 @@ stages:
       dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
       clusterName: 'pcs-aks-test'
       kvName: 'pcs-frontend-dev-kv'
-      kvRgName: 'pcs-dev-rg'
+      kvRgName: 'pcs-frontend-dev-rg'

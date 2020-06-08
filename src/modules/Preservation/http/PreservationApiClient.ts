@@ -245,8 +245,14 @@ interface ActionDetailsResponse {
     dueTimeUtc: Date;
     isClosed: boolean;
     createdAtUtc: Date;
+    modifiedAtUtc: Date | null;
     closedAtUtc: Date | null;
     createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
+    modifiedBy: {
         id: number;
         firstName: string;
         lastName: string;
@@ -381,7 +387,7 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
             errorMessage = apiErrorResponse.Errors.map(err => err.ErrorMessage).join(', ');
         }
         return new PreservationApiError(errorMessage, error.response);
-    } catch(err) {
+    } catch (err) {
         return new PreservationApiError('Failed to parse errors', error.response);
     }
 
@@ -1044,7 +1050,7 @@ class PreservationApiClient extends ApiClient {
 
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
-            const result = await this.client.get<TagFunctionResponse>(endpoint,settings);
+            const result = await this.client.get<TagFunctionResponse>(endpoint, settings);
             return result.data;
         } catch (error) {
             throw getPreservationApiError(error);
@@ -1062,21 +1068,21 @@ class PreservationApiClient extends ApiClient {
             rowVersion: rowVersion || ''
         };
         try {
-            await this.client.put(endpoint,data);
+            await this.client.put(endpoint, data);
             return true;
         } catch (error) {
             throw getPreservationApiError(error);
         }
     }
 
-    async voidUnvoidTagFunction(tagFunctionCode: string, registerCode: string, action: 'VOID'|'UNVOID', rowVersion: string): Promise<void> {
-        const endpoint = `/TagFunctions/${tagFunctionCode}/${action === 'VOID' ? 'Void': 'Unvoid'}`;
+    async voidUnvoidTagFunction(tagFunctionCode: string, registerCode: string, action: 'VOID' | 'UNVOID', rowVersion: string): Promise<void> {
+        const endpoint = `/TagFunctions/${tagFunctionCode}/${action === 'VOID' ? 'Void' : 'Unvoid'}`;
         const data = {
             registerCode: registerCode,
             rowVersion: rowVersion
         };
         try {
-            await this.client.put(endpoint,data);
+            await this.client.put(endpoint, data);
         } catch (error) {
             throw getPreservationApiError(error);
         }

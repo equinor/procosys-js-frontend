@@ -88,14 +88,14 @@ stages:
 
   jobs:
   - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
-  parameters:
-    deploymentName: 'deploy_to_k8s'
-    dependsOn: ''
-    serviceConnection: '${{ variables.serviceConnection }}'
-    env: '${{ variables.envName }}'
-    envRg: 'pcs-hosting-rg'
-    envGroup: '${{ variables.envGroupName }}'
-    dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
-    clusterName: 'pcs-aks-test'
-    kvName: 'pcs-frontend-${{ variables.envName }}-kv'
-    kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+    parameters:
+      deploymentName: 'deploy_to_k8s'
+      dependsOn: ''
+      serviceConnection: '${{ variables.serviceConnection }}'
+      env: '${{ variables.envName }}'
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
+      clusterName: 'pcs-aks-test'
+      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'

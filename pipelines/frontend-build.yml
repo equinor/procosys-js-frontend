@@ -86,8 +86,8 @@ stages:
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
 
-jobs:
-- template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
+  jobs:
+  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
   parameters:
     deploymentName: 'deploy_to_k8s'
     dependsOn: ''

@@ -18,6 +18,7 @@ for key in os.environ:
 # Get all files
 for filepath in glob.iglob('/usr/share/nginx/html/**/*.js', recursive=True):
     print("Looking for stuff to replace in: {filepath}".format(**vars()))
+    s = ""
     with open(filepath) as file:
         s = file.read()
     for placeholderKey,value in keyVaultSecrets:

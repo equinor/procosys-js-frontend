@@ -35,7 +35,7 @@ const SetTagProperties = ({
     const { project } = usePreservationContext();
 
     const [journey, setJourney] = useState(-1);
-    const [step, setStep] = useState<Step>();
+    const [step, setStep] = useState<Step | null>();
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
@@ -87,6 +87,7 @@ const SetTagProperties = ({
      * Map Journey steps into menu elements
      */
     useEffect(() => {
+        setStep(null);
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
                 if(areaType == 'PoArea' && itm.mode.title.toUpperCase() == 'SUPPLIER') {

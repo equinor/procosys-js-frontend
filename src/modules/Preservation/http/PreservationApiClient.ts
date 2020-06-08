@@ -590,6 +590,7 @@ class PreservationApiClient extends ApiClient {
         areaTagType: string,
         disciplineCode: string,
         areaCode?: string | null,
+        purchaseOrderCalloffCode?: string | null,
         tagNoSuffix?: string | null,
         setRequestCanceller?: RequestCanceler
     ): Promise<CheckAreaTagNoResponse> {
@@ -600,6 +601,7 @@ class PreservationApiClient extends ApiClient {
                 AreaTagType: areaTagType,
                 DisciplineCode: disciplineCode,
                 AreaCode: areaCode,
+                PurchaseOrderCalloffCode: purchaseOrderCalloffCode,
                 TagNoSuffix: tagNoSuffix,
             }
         };
@@ -1654,7 +1656,6 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
-
 
 }
 

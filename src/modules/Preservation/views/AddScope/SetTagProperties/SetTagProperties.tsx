@@ -11,6 +11,7 @@ import { TextField } from '@equinor/eds-core-react';
 import RequirementsSelector from '@procosys/modules/Preservation/components/RequirementsSelector/RequirementsSelector';
 
 type SetTagPropertiesProps = {
+    areaType: string;
     submitForm: (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
@@ -24,6 +25,7 @@ interface RequirementFormInput {
 }
 
 const SetTagProperties = ({
+    areaType,
     submitForm,
     previousStep,
     journeys = [],
@@ -87,6 +89,9 @@ const SetTagProperties = ({
     useEffect(() => {
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
+                if(areaType == 'PoArea' && itm.mode.title.toUpperCase() == 'SUPPLIER') {
+                    setStep(itm);
+                }
                 return {
                     text: itm.mode.title,
                     value: itm.id
@@ -182,7 +187,7 @@ const SetTagProperties = ({
                         <SelectInput
                             onChange={setStepFromForm}
                             data={mappedSteps}
-                            disabled={mappedSteps.length <= 0}
+                            disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
                             label={'Preservation step'}
                         >
                             {(step && step.mode.title) || 'Select step'}

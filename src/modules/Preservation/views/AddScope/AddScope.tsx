@@ -171,7 +171,7 @@ const AddScope = (): JSX.Element => {
                     await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
                     break;
                 case AddScopeMethod.CreateAreaTag:
-                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, purchaseOrder && purchaseOrder.title, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
             }
 
@@ -314,6 +314,7 @@ const AddScope = (): JSX.Element => {
                 <Container>
                     <LargerComponent>
                         <SetTagProperties
+                            areaType={areaType ? areaType.value : null}
                             journeys={journeys}
                             requirementTypes={requirementTypes}
                             previousStep={goToPreviousStep}

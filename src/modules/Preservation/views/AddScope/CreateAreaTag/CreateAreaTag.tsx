@@ -213,7 +213,13 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     }, [disciplines]);
 
     const setAreaTypeForm = (value: string): void => {
-        props.setAreaType(areaTypes.find((p: SelectItem) => p.value === value));
+        const newAreaType = areaTypes.find((p: SelectItem) => p.value === value);
+        props.setAreaType(newAreaType);
+        if(newAreaType && newAreaType.value == 'PoArea') {
+            props.setArea(null);
+        } else {
+            props.setPurchaseOrder(null);
+        }
     };
 
     const setDisciplineForm = (value: string): void => {

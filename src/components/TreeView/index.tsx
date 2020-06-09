@@ -15,6 +15,7 @@ export interface TreeViewNode {
     name: string;
     getChildren?: () => Promise<TreeViewNode[]>;
     onClick?: () => void;
+    isOpen?: boolean;
 }
 
 // internal props
@@ -33,6 +34,7 @@ const TreeView = ({
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
+    const [ , setLoading] = useState<boolean>(false);
 
     const collapseNode = (node: NodeData): void => {
         // set collapsed state
@@ -122,15 +124,24 @@ const TreeView = ({
             // node has no function for fetching children and cannot be expanded
             return null;
         }
-
+        
         const isExpanded = node.isExpanded === true;
+
+        const iconClicked = async (): Promise<void> => {
+            setLoading(true);
+            isExpanded ? collapseNode(node) : await expandNode(node);
+            setLoading(false);
+        };
+
+        if (node.isOpen && !node.isExpanded) {
+            iconClicked();
+            node.isOpen = false;
+        }
 
         return (
             <ExpandCollapseIcon
                 isExpanded={isExpanded}
-                onClick={async (): Promise<void> => {
-                    isExpanded ? collapseNode(node) : await expandNode(node);
-                }}
+                onClick={iconClicked}
             >
                 {isExpanded && <KeyboardArrowDownIcon />}
                 {!isExpanded && <KeyboardArrowRightIcon />}
@@ -139,6 +150,15 @@ const TreeView = ({
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {
+        const clickNode = (): void => {
+            node.onClick;
+        };
+
+        if (node.isOpen && !node.isExpanded) {
+            clickNode();
+            node.isOpen = false;
+        }
+
         return (
             <NodeName
                 hasChildren={node.getChildren ? true : false}
@@ -147,7 +167,7 @@ const TreeView = ({
                     node.onClick && (
                         <NodeLink
                             isExpanded={node.isExpanded === true}
-                            onClick={node.onClick}
+                            onClick={clickNode}
                         >
                             {node.name}
                         </NodeLink>

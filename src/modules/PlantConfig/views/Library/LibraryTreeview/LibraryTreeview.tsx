@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LibraryType } from '../Library';
 import TreeView, { TreeViewNode } from '../../../../../components/TreeView';
 import { usePlantConfigContext } from '../../../context/PlantConfigContext';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { Container } from './LibraryTreeview.style';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 
 type LibraryTreeviewProps = {
     setSelectedLibraryType: (libraryType: string) => void;
@@ -18,6 +18,16 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         preservationApiClient
     } = usePlantConfigContext();
     const history = useHistory();
+    const match = useRouteMatch();
+    const params: any = match.params;
+
+    const [path] = useState<string[] | null>((): string[] | null => {
+        if (params.path) {
+            return params.path.split('|');
+        }
+        return null;
+    });
+
 
     const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string, path: string): void => {
         history.replace(`/Library/${path.replace(/\s/g, '')}/${libraryType.toUpperCase()}/${libraryItem}`);
@@ -36,7 +46,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                             {
                                 id: mode.id,
                                 name: mode.title,
-                                onClick: (): void => handleTreeviewClick(LibraryType.MODE, mode.id.toString(), `${LibraryType.MODE}s|${mode.title.toUpperCase()}`)
+                                onClick: (): void => handleTreeviewClick(LibraryType.MODE, mode.id.toString(), `${LibraryType.MODE}s|${mode.title.toUpperCase()}`),
+                                isOpen: path ? path[1] == mode.title.toUpperCase() : false
                             }));
                     }
                     return children;
@@ -60,6 +71,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                 id: journey.id,
                                 name: journey.title,
                                 onClick: (): void => handleTreeviewClick(LibraryType.PRES_JOURNEY, journey.id.toString(), `${LibraryType.PRES_JOURNEY}s|${journey.title.toUpperCase()}`),
+                                isOpen: path ? path[1] == journey.title.toUpperCase() : false
                             }));
                     }
                     return children;
@@ -89,7 +101,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                     return {
                                         id: `field_withinput_${itm.id}`,
                                         name: itm.title,
-                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString(), `${LibraryType.PRES_REQUIREMENT_TYPE}s|${requirementType.code}|withInput|${itm.title.toUpperCase()}`)
+                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString(), `${LibraryType.PRES_REQUIREMENT_TYPE}s|${requirementType.code}|withInput|${itm.title.toUpperCase()}`),
+                                        isOpen: path ? path[2] == 'withInput' && path[3] == itm.title.toUpperCase() : false
                                     };
                                 });
                             const withoutInput = requirementType.requirementDefinitions
@@ -98,7 +111,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                     return {
                                         id: `field_withoutinput_${itm.id}`,
                                         name: itm.title,
-                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString(), `${LibraryType.PRES_REQUIREMENT_TYPE}s|${requirementType.code}|withoutInput|${itm.title.toUpperCase()}`)
+                                        onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString(), `${LibraryType.PRES_REQUIREMENT_TYPE}s|${requirementType.code}|withoutInput|${itm.title.toUpperCase()}`),
+                                        isOpen: path ? path[2] == 'withoutInput' && path[3] == itm.title.toUpperCase() : false
                                     };
                                 });
                             const nodes: TreeViewNode[] = [];
@@ -114,7 +128,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                 nodes.push({
                                     id: `header_rt_${requirementType.id}_rd_withoutInput`,
                                     name: 'Without user required input',
-                                    getChildren: () => Promise.resolve(withoutInput)
+                                    getChildren: () => Promise.resolve(withoutInput),
                                 });
                             }
                             return Promise.resolve(nodes);
@@ -140,7 +154,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 children.push({
                     id: `tf_register_${registerCode}_${tf.code}`,
                     name: `${tf.code}, ${tf.description}`,
-                    onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, `${registerCode}|${tf.code}`, `${LibraryType.TAG_FUNCTION}s|${registerCode.toUpperCase()}|${tf.code.toUpperCase()}`)
+                    onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, `${registerCode}|${tf.code}`, `${LibraryType.TAG_FUNCTION}s|${registerCode}|${tf.code.toUpperCase()}`),
+                    isOpen: path ? path[2] == tf.code.toUpperCase() : false
                 });
             });
         } catch (error) {
@@ -160,7 +175,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 children.push({
                     id: `tf_register_${reg.code}`,
                     name: reg.description,
-                    getChildren: () => getTagFunctionNodes(reg.code)
+                    getChildren: () => getTagFunctionNodes(reg.code),
+                    isOpen: path ? path[1] == reg.code : false
                 });
             });
 
@@ -172,28 +188,31 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
-
-    const rootNodes: TreeViewNode[] = [
+    const rootNodes =  [
         {
             id: LibraryType.TAG_FUNCTION,
             name: 'Tag Functions',
-            getChildren: getRegisterNodes
+            getChildren: getRegisterNodes,
+            isOpen: path ? path[0] === LibraryType.TAG_FUNCTION + 's' : false
         },
         {
             id: LibraryType.MODE,
             name: 'Modes',
-            getChildren: getModes
+            getChildren: getModes,
+            isOpen: path ? path[0] == LibraryType.MODE + 's' : false
         },
         {
             id: LibraryType.PRES_JOURNEY,
             name: 'Preservation Journeys',
             onClick: (): void => { handleTreeviewClick(LibraryType.PRES_JOURNEY, '', LibraryType.PRES_JOURNEY.toUpperCase() + 'S'); },
-            getChildren: getPresJourneyTreeNodes
+            getChildren: getPresJourneyTreeNodes,
+            isOpen: path ? path[0] == LibraryType.PRES_JOURNEY + 's' : false
         },
         {
             id: LibraryType.PRES_REQUIREMENT_TYPE,
             name: 'Preservation requirements',
             getChildren: getRequirementTreeNodes,
+            isOpen: path ? path[0] == LibraryType.PRES_REQUIREMENT_TYPE + 's' : false
         }
     ];
 

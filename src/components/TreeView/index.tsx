@@ -16,6 +16,7 @@ export interface TreeViewNode {
     getChildren?: () => Promise<TreeViewNode[]>;
     onClick?: () => void;
     isOpen?: boolean;
+    initialExpanded?: boolean;
 }
 
 // internal props
@@ -34,7 +35,7 @@ const TreeView = ({
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
-    const [ , setLoading] = useState<boolean>(false);
+    //const [ , setLoading] = useState<boolean>(false);
 
     const collapseNode = (node: NodeData): void => {
         // set collapsed state
@@ -128,14 +129,14 @@ const TreeView = ({
         const isExpanded = node.isExpanded === true;
 
         const iconClicked = async (): Promise<void> => {
-            setLoading(true);
+            //setLoading(true);
             isExpanded ? collapseNode(node) : await expandNode(node);
-            setLoading(false);
+            //setLoading(false);
         };
-
-        if (node.isOpen && !node.isExpanded) {
+        if (node.initialExpanded && !node.isExpanded) {
+            console.log('click');
             iconClicked();
-            node.isOpen = false;
+            node.initialExpanded = false;
         }
 
         return (
@@ -150,12 +151,8 @@ const TreeView = ({
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {
-        const clickNode = (): void => {
-            node.onClick;
-        };
-
-        if (node.isOpen && !node.isExpanded) {
-            clickNode();
+        if (node.isOpen && node.onClick) {
+            node.onClick();
             node.isOpen = false;
         }
 
@@ -167,7 +164,7 @@ const TreeView = ({
                     node.onClick && (
                         <NodeLink
                             isExpanded={node.isExpanded === true}
-                            onClick={clickNode}
+                            onClick={node.onClick}
                         >
                             {node.name}
                         </NodeLink>

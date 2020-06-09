@@ -39,24 +39,19 @@ export const SuffixTextField = styled(TextField)`
     max-width: 200px;
 `;
 
-export const Next = styled.div`
+export const ButtonsContainer = styled.div`
     display: flex;
     flex: 1;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-end;
-    margin-right: var(--grid-unit);
+    justify-content: flex-end;
+    button:last-of-type {
+        margin-left: calc(var(--grid-unit) * 2);
+    }
 
     p {
         padding-top: var(--grid-unit);
         color: ${tokens.colors.interactive.danger__text.rgba};
-    }
-`;
-
-export const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
     }
 `;
 

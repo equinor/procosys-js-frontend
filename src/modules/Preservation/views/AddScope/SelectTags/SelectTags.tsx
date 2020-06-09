@@ -3,11 +3,12 @@ import { tokens } from '@equinor/eds-tokens';
 import { Button, TextField } from '@equinor/eds-core-react';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Tag, TagRow } from '../types';
-import { Container, Header, Actions, Search, Next, Tags, TagsHeader, LoadingContainer, InformationContainer } from './SelectTags.style';
+import { Container, Header, InnerContainer, Search, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer } from './SelectTags.style';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
 import { AddScopeMethod } from '../AddScope';
+import { useHistory } from 'react-router-dom';
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -40,6 +41,7 @@ const tableColumns = [
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
+    const history = useHistory();
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -89,89 +91,85 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         }
     };
 
+    const cancel = (): void => {
+        history.push('/');
+    };
+
     return (
         <Container>
             <Header>
                 <h1>Add preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            {
-                props.addScopeMethod === AddScopeMethod.AddTagsManually && (
-                    <Actions>
-                        <Search>
-                            <TextField
-                                id="tagSearch"
-                                placeholder="Search by tag number"
-                                helperText="Type the start of a tag number and press enter to load tags"
-                                onKeyDown={(e: any): void => {
-                                    e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
-                                }}
-                                onInput={(e: any): void => {
-                                    e.currentTarget.value.length === 0 && props.searchTags(null);
-                                }}
-                            />
-                        </Search>
-
-                        <Next>
-                            <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
-                        </Next>
-                    </Actions>
-                )
-            }
-            <Tags>
-                <InformationContainer>
-                    <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+            <TopContainer>
+                <InnerContainer>
                     {
-                        props.addScopeMethod !== AddScopeMethod.AddTagsManually && (
-                            <Next>
-                                <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
-                            </Next>
+                        props.addScopeMethod === AddScopeMethod.AddTagsManually && (
+                            <Search>
+                                <TextField
+                                    id="tagSearch"
+                                    placeholder="Search by tag number"
+                                    helperText="Type the start of a tag number and press enter to load tags"
+                                    onKeyDown={(e: any): void => {
+                                        e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
+                                    }}
+                                    onInput={(e: any): void => {
+                                        e.currentTarget.value.length === 0 && props.searchTags(null);
+                                    }}
+                                />
+                            </Search>
+                            
                         )
                     }
-                </InformationContainer>
-                <Table
-                    columns={tableColumns}
-                    data={props.scopeTableData}
-                    options={{
-                        toolbar: false,
-                        showTitle: false,
-                        filtering: true,
-                        search: false,
-                        draggable: false,
-                        pageSize: 10,
-                        pageSizeOptions: [10, 50, 100],
-                        padding: 'dense',
-                        headerStyle: {
-                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                        },
-                        selection: true,
-                        selectionProps: (data: TagRow): any => ({
-                            // Disable and hide selection checkbox for preserved tags.
-                            // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
-                            // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
-                            disabled: data.isPreserved,
-                            style: { display: data.isPreserved && 'none' }
-                        }),
-                        rowStyle: (data): any => ({
-                            backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
-                        })
-                    }}
-                    style={{
-                        boxShadow: 'none'
-                    }}
-                    onSelectionChange={(rowData, row): void => {
-                        rowSelectionChanged(rowData, row);
-                    }}
-                    isLoading={props.isLoading}
-                    components={{
-                        OverlayLoading: (): JSX.Element => (
-                            <LoadingContainer>
-                                <Loading title="Loading tags" />
-                            </LoadingContainer>
-                        )
-                    }}
-                />
-            </Tags>
+                    <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+                </InnerContainer>
+                <ButtonsContainer>
+                    <Button onClick={cancel} variant='outlined' >Cancel</Button>
+                    <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
+                </ButtonsContainer>
+            </TopContainer>
+            <Table
+                columns={tableColumns}
+                data={props.scopeTableData}
+                options={{
+                    toolbar: false,
+                    showTitle: false,
+                    filtering: true,
+                    search: false,
+                    draggable: false,
+                    pageSize: 10,
+                    pageSizeOptions: [10, 50, 100],
+                    padding: 'dense',
+                    headerStyle: {
+                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                    },
+                    selection: true,
+                    selectionProps: (data: TagRow): any => ({
+                        // Disable and hide selection checkbox for preserved tags.
+                        // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
+                        // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
+                        disabled: data.isPreserved,
+                        style: { display: data.isPreserved && 'none' }
+                    }),
+                    rowStyle: (data): any => ({
+                        backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
+                    })
+                }}
+                style={{
+                    boxShadow: 'none'
+                }}
+                onSelectionChange={(rowData, row): void => {
+                    rowSelectionChanged(rowData, row);
+                }}
+                isLoading={props.isLoading}
+                components={{
+                    OverlayLoading: (): JSX.Element => (
+                        <LoadingContainer>
+                            <Loading title="Loading tags" />
+                        </LoadingContainer>
+                    )
+                }}
+            />
         </Container >
     );
 };

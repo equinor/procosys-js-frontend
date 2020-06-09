@@ -49,6 +49,10 @@ jest.mock('../../../../context/PreservationContext',() => ({
     }
 }));
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => {}
+}));
+
 describe('<CreateAreaTag />', () => {
 
     /** Because of API calls using effect hooks, we need to wrap everything in act */

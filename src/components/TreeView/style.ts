@@ -20,12 +20,15 @@ export const NodeContainer = styled.div<NodeContainerProps>`
 
 interface ExpandCollapseIconProps {
     isExpanded: boolean;
+    spinner?: boolean;
 }
 
 export const ExpandCollapseIcon = styled.div<ExpandCollapseIconProps>`
     cursor: pointer;
     margin-right: var(--grid-unit);
     padding: var(--grid-unit) calc(var(--grid-unit) + 2px);
+    height: 24px;
+    width: 24px;
 
     :hover {
         background: ${tokens.colors.interactive.primary__selected_highlight.rgba};
@@ -35,6 +38,12 @@ export const ExpandCollapseIcon = styled.div<ExpandCollapseIconProps>`
     ${(props): any => props.isExpanded && css`
         svg path {
             fill: ${tokens.colors.interactive.primary__resting.rgba};
+        }
+    `}
+
+    ${(props): any => props.spinner && css`
+        svg {
+            padding: 2px;
         }
     `}
 `;

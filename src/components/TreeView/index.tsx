@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
+import Spinner from '../Spinner';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -22,6 +23,7 @@ interface NodeData extends TreeViewNode {
     parentId?: number | string;
     isExpanded?: boolean;
     children?: NodeData[];
+    isLoading?: boolean;
 }
 
 interface TreeViewProps {
@@ -33,6 +35,8 @@ const TreeView = ({
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
+    const [ , setLoading] = useState<boolean>(false);
+
 
     const collapseNode = (node: NodeData): void => {
         // set collapsed state
@@ -79,7 +83,9 @@ const TreeView = ({
         } else {
             // load children 
             if (node.getChildren) {
+                node.isLoading = true;
                 children = await node.getChildren();
+                node.isLoading = false;
             }
 
             // set parent relation for all children
@@ -125,15 +131,21 @@ const TreeView = ({
 
         const isExpanded = node.isExpanded === true;
 
+        const iconClicked = async (): Promise<void> => {
+            setLoading(true);
+            isExpanded ? collapseNode(node) : await expandNode(node);
+            setLoading(false);
+        };
+
         return (
             <ExpandCollapseIcon
                 isExpanded={isExpanded}
-                onClick={async (): Promise<void> => {
-                    isExpanded ? collapseNode(node) : await expandNode(node);
-                }}
+                onClick={iconClicked}
+                spinner={node.isLoading}
             >
-                {isExpanded && <KeyboardArrowDownIcon />}
-                {!isExpanded && <KeyboardArrowRightIcon />}
+                {(isExpanded && !node.isLoading) && <KeyboardArrowDownIcon />}
+                {(!isExpanded && !node.isLoading) && <KeyboardArrowRightIcon />}
+                {(node.isLoading) && <Spinner />}
             </ExpandCollapseIcon>
         );
     };

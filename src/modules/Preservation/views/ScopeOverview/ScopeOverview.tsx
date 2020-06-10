@@ -11,6 +11,7 @@ import { showSnackbarNotification } from '../../../../core/services/Notification
 import { usePreservationContext } from '../../context/PreservationContext';
 import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
+import OptionsDropdown from '../../../../components/OptionsDropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
@@ -372,6 +373,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
+                        <OptionsDropdown 
+                            text="More options" 
+                            icon='more_verticle' 
+                            variant='ghost' 
+                            disabled={selectedTags.length < 1}>
+                            <DropdownItem onClick={showCompleteDialog}>
+                                <EdsIcon name='done_all' />
+                                        Void
+                            </DropdownItem>
+                            <DropdownItem onClick={showCompleteDialog}>
+                                        Unvoid
+                            </DropdownItem>
+                        </OptionsDropdown>
                         <StyledButton
                             variant='ghost'
                             disabled={true}>

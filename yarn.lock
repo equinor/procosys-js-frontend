@@ -1099,10 +1099,15 @@
     focus-visible "^5.1.0"
     lodash.uniqueid "^4.0.1"
 
-"@equinor/eds-icons@0.2.0", "@equinor/eds-icons@^0.2.0":
+"@equinor/eds-icons@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.2.0.tgz#b3d1b0bfedc17b3d388c4d4f781a96d5d54dfb59"
   integrity sha512-Q8RtHLN5z+Hu49v5W39dhyImYl1tlkPfF1iI/S2Dt9Rm+VnaiASUqBjxS4//7mwwYL+wYpHYC5ROIwqLvfy1Yg==
+
+"@equinor/eds-icons@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.3.0.tgz#3b4b52937eb0eb66ab1ada4ceb6c24ba2bbf7367"
+  integrity sha512-XcHPX+/RS40rRekD+C6lzZlm/mijDij7KexqZRJiUsgHKQuYPWbZpjSkF54THEXS4xmSwpB0h24dznEWCPBSDg==
 
 "@equinor/eds-tokens@0.2.0":
   version "0.2.0"

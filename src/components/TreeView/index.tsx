@@ -35,7 +35,6 @@ const TreeView = ({
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
-    //const [ , setLoading] = useState<boolean>(false);
 
     const collapseNode = (node: NodeData): void => {
         // set collapsed state
@@ -129,12 +128,9 @@ const TreeView = ({
         const isExpanded = node.isExpanded === true;
 
         const iconClicked = async (): Promise<void> => {
-            //setLoading(true);
             isExpanded ? collapseNode(node) : await expandNode(node);
-            //setLoading(false);
         };
         if (node.initialExpanded && !node.isExpanded) {
-            console.log('click');
             iconClicked();
             node.initialExpanded = false;
         }

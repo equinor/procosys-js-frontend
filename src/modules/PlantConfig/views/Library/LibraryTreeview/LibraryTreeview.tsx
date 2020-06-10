@@ -23,9 +23,6 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 
     const [path] = useState<string[] | null>((): string[] | null => {
         if (params.path) {
-            const p = params.path.split('|');
-            console.log(p[1]);
-            console.log(p);
             return params.path.split('|');
         }
         return null;

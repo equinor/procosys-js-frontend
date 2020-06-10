@@ -6,7 +6,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
 import { Toolbar, TagLink, TagStatusLabel, Container } from './ScopeTable.style';
 import RequirementIcons from './RequirementIcons';
-import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
+import { isTagOverdue, getFirstUpcomingRequirement, isTagVoided } from './ScopeOverview';
 import { QueryResult, Query } from 'material-table';
 import { Tooltip } from '@material-ui/core';
 
@@ -47,16 +47,16 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                 isOverdue={isTagOverdue(tag)}
                 onClick={(): void => this.props.showTagDetails(tag)}
             >
-                <span>{tag.tagNo}</span>
+                <span style={{color: 'inherit'}}>{tag.tagNo}</span>
             </TagLink>
         );
     }
 
     getDescriptionColumn(tag: PreservedTag): JSX.Element {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{tag.description}</div>
+                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit'}}>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -152,7 +152,8 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         },
                         rowStyle: (rowData): any => ({
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
-                            backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
+                            backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba,
+                            opacity: isTagVoided(rowData) && 0.5
                         }),
                         thirdSortClick: false
                     }}

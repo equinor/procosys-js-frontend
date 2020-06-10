@@ -25,6 +25,7 @@ import EdsIcon from '../../../../components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
 import {Tooltip } from '@material-ui/core';
+import VoidDialog from './VoidDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -37,6 +38,10 @@ export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | nu
 export const isTagOverdue = (tag: PreservedTag): boolean => {
     const requirement = getFirstUpcomingRequirement(tag);
     return requirement ? requirement.nextDueWeeks < 0 : false;
+};
+
+export const isTagVoided = (tag: PreservedTag): boolean => {
+    return tag.isVoided;
 };
 
 const backToListButton = 'Back to list';
@@ -67,6 +72,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
+    const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
+    const [unVoidedTagsSelected, setUnVoidedTagsSelected] = useState<boolean>();
 
     const {
         project,
@@ -87,6 +94,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             refreshScopeList();
         }, [tagListFilter]
     );
+
+    useEffect(() => {
+        setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);        
+        setUnVoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);        
+
+    }, [selectedTags]);
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
         refreshScopeListCallback.current = callback;
@@ -286,6 +299,66 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             completeFunc);
     };
 
+    let voidableTags: PreservedTag[] = [];
+    let unVoidableTags: PreservedTag[] = [];
+
+    const voidTags = (): Promise<void> => {
+        try {
+            const tags = selectedTags.filter(tag => !tag.isVoided);
+            tags.forEach(async tag => {
+                await apiClient.voidTag(tag.id, tag.rowVersion);
+            });
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been voided.');
+        } catch (error) {
+            console.error('Voiding failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const unVoidTags = async (): Promise<void> => {
+        try {
+            const tags = selectedTags.filter(tag => tag.isVoided);
+            tags.forEach(async tag => {
+                await apiClient.unvoidTag(tag.id, tag.rowVersion);
+            });
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been unvoided.');
+        } catch (error) {
+            console.error('Unvoid failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const showVoidDialog = (voiding: boolean): void => {
+        voidableTags = [];
+        unVoidableTags = [];
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (!tag.isVoided && voiding) {
+                voidableTags.push(newTag);
+            } else if(tag.isVoided && !voiding) {
+                unVoidableTags.push(newTag);
+            }
+        });
+        const voidButton = voidableTags.length > 0 ? 'Void' : 'Unvoid';
+        const voidFunc = voidableTags.length > 0 ? voidTags : unVoidTags;
+        const voidTitle = voidableTags.length > 0 ? 'Voiding following tags' : 'Unvoiding following tags';
+
+        showModalDialog(
+            voidTitle,
+            <VoidDialog tags={voidableTags.length > 0 ? voidableTags : unVoidableTags} voiding={voiding} />,
+            '80vw',
+            backToListButton,
+            null,
+            voidButton,
+            voidFunc);
+    };
+
     const openFlyout = (tag: PreservedTag): void => {
         setFlyoutTagId(tag.id);
         setDisplayFlyout(true);
@@ -378,12 +451,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             icon='more_verticle' 
                             variant='ghost' 
                             disabled={selectedTags.length < 1}>
-                            <DropdownItem onClick={showCompleteDialog}>
-                                <EdsIcon name='done_all' />
-                                        Void
+                            <DropdownItem 
+                                disabled={!voidedTagsSelected}
+                                onClick={(e: any): any => !voidedTagsSelected ? e.preventDefault() : showVoidDialog(true)}>
+                                <EdsIcon name='delete_forever' color={!voidedTagsSelected && tokens.colors.interactive.disabled__border.rgba} />
+                                Void
                             </DropdownItem>
-                            <DropdownItem onClick={showCompleteDialog}>
-                                        Unvoid
+                            <DropdownItem 
+                                disabled={!unVoidedTagsSelected}
+                                onClick={(e: any): any => !unVoidedTagsSelected ? e.preventDefault() : showVoidDialog(false)}>
+                                <EdsIcon name='restore_from_trash' color={!unVoidedTagsSelected && tokens.colors.interactive.disabled__border.rgba}/>
+                                Unvoid
                             </DropdownItem>
                         </OptionsDropdown>
                         <StyledButton

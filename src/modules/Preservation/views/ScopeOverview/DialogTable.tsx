@@ -10,8 +10,8 @@ import { Column } from 'material-table';
 interface TableProps {
     tags: PreservedTag[];
     columns: Column<any>[];
-    toolbarText: string;
-    toolbarColor: string;
+    toolbarText?: string;
+    toolbarColor?: string;
 }
 
 const DialogTable = ({
@@ -45,7 +45,7 @@ const DialogTable = ({
         components={{
             Toolbar: (): any => (
                 <Toolbar>
-                    <Typography style={{ color: toolbarColor }} variant='h6' >{numTags} {toolbarText}</Typography>
+                    {toolbarText && <Typography style={{ color: toolbarColor }} variant='h6' >{numTags} {toolbarText}</Typography>}
                 </Toolbar>
             )
         }}

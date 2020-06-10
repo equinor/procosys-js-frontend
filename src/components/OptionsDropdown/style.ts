@@ -7,6 +7,7 @@ export const Container = styled.div`
     ul {
         position: absolute;
         margin-top: 0.5rem;
+        margin-left: var(--grid-unit);
         max-height: 300px;
         background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
@@ -21,7 +22,6 @@ export const Container = styled.div`
 
 interface DropdownButtonProps {
     readonly isOpen: boolean;
-    variant?: string;
     disabled?: boolean;
 }
 
@@ -38,26 +38,10 @@ export const DropdownButton = styled(Button)`
     svg path {
         color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
     }
-    /* background-color: transparent;
-    border: 0;
-    display: flex;
-    text-overflow: '...';
-    align-items: center;
-    padding: 6px;
-    width: 100%;
-    cursor: pointer; */
 
     ${(props): any => props.isOpen && css`
         background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-        /* :focus & {
-            outline: none;
-        } */
     `}
-    ${(props): any => props.variant === 'form' && css`
-        background-color: ${tokens.colors.ui.background__light.rgba};
-        border-bottom: 1px solid black;
-    `}
-
 `;
 
 export const DropdownItem = styled.li`
@@ -67,6 +51,14 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
+    div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        svg {
+            padding-right: calc(var(--grid-unit) * 2);
+        }
+    }
 `;
 
 export const TopTextContainer = styled.div`

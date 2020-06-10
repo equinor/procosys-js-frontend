@@ -23,7 +23,6 @@ interface NodeData extends TreeViewNode {
     parentId?: number | string;
     isExpanded?: boolean;
     children?: NodeData[];
-    isLoading?: boolean;
 }
 
 interface TreeViewProps {
@@ -35,8 +34,7 @@ const TreeView = ({
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
-    const [ , setLoading] = useState<boolean>(false);
-
+    const [loading, setLoading] = useState<number | string | null>();
 
     const collapseNode = (node: NodeData): void => {
         // set collapsed state
@@ -83,9 +81,9 @@ const TreeView = ({
         } else {
             // load children 
             if (node.getChildren) {
-                node.isLoading = true;
+                setLoading(node.id);
                 children = await node.getChildren();
-                node.isLoading = false;
+                setLoading(null);
             }
 
             // set parent relation for all children
@@ -131,21 +129,17 @@ const TreeView = ({
 
         const isExpanded = node.isExpanded === true;
 
-        const iconClicked = async (): Promise<void> => {
-            setLoading(true);
-            isExpanded ? collapseNode(node) : await expandNode(node);
-            setLoading(false);
-        };
-
         return (
             <ExpandCollapseIcon
                 isExpanded={isExpanded}
-                onClick={iconClicked}
-                spinner={node.isLoading}
+                onClick={async (): Promise<void> => {
+                    loading ? null : (isExpanded ? collapseNode(node) : await expandNode(node));
+                }}
+                spinner={loading == node.id}
             >
-                {(isExpanded && !node.isLoading) && <KeyboardArrowDownIcon />}
-                {(!isExpanded && !node.isLoading) && <KeyboardArrowRightIcon />}
-                {(node.isLoading) && <Spinner />}
+                {(isExpanded && loading != node.id) && <KeyboardArrowDownIcon />}
+                {(!isExpanded && loading != node.id) && <KeyboardArrowRightIcon />}
+                {(loading == node.id) && <Spinner />}
             </ExpandCollapseIcon>
         );
     };

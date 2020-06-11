@@ -55,7 +55,7 @@ const AddScope = (): JSX.Element => {
     const [areaType, setAreaType] = useState<SelectItem | undefined>();
     const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
     const [areaTagArea, setAreaTagArea] = useState<Area | null>();
-    const [purchaseOrder, setPurchaseOrder] = useState<PurchaseOrder | null>();
+    const [pO, setPO] = useState<PurchaseOrder | null>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
 
@@ -171,7 +171,7 @@ const AddScope = (): JSX.Element => {
                     await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
                     break;
                 case AddScopeMethod.CreateAreaTag:
-                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, purchaseOrder && purchaseOrder.title, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
             }
 
@@ -290,8 +290,8 @@ const AddScope = (): JSX.Element => {
                             setDiscipline={setAreaTagDiscipline}
                             area={areaTagArea}
                             setArea={setAreaTagArea}
-                            purchaseOrder={purchaseOrder}
-                            setPurchaseOrder={setPurchaseOrder}
+                            purchaseOrder={pO}
+                            setPurchaseOrder={setPO}
                             suffix={areaTagSuffix}
                             setSuffix={setAreaTagSuffix}
                             description={areaTagDescription}

@@ -133,7 +133,7 @@ describe('<CreateAreaTag />', () => {
         });
     });
 
-    it('Area dropdown if Normal or Site area chosen', async () => {
+    it('Should display area dropdown if areaType is Normal or Site', async () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} />);
@@ -141,7 +141,7 @@ describe('<CreateAreaTag />', () => {
         });
     });
 
-    it('PO/CO dropdown if Supplier area chosen', async () => {
+    it('Sould display PO/CO dropdown if areaType is Supplier', async () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' setSelectedTags={propFunc} />);

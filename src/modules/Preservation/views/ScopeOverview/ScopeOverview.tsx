@@ -73,7 +73,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
-    const [unVoidedTagsSelected, setUnVoidedTagsSelected] = useState<boolean>();
+    const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
 
     const {
         project,
@@ -97,8 +97,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);        
-        setUnVoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);        
-
+        setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);        
     }, [selectedTags]);
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
@@ -452,15 +451,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             variant='ghost' 
                             disabled={selectedTags.length < 1}>
                             <DropdownItem 
-                                disabled={!voidedTagsSelected}
-                                onClick={(e: any): any => !voidedTagsSelected ? e.preventDefault() : showVoidDialog(true)}>
-                                <EdsIcon name='delete_forever' color={!voidedTagsSelected && tokens.colors.interactive.disabled__border.rgba} />
+                                disabled={!unvoidedTagsSelected}
+                                onClick={(e: any): any => !unvoidedTagsSelected ? e.preventDefault() : showVoidDialog(true)}>
+                                <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                                 Void
                             </DropdownItem>
                             <DropdownItem 
-                                disabled={!unVoidedTagsSelected}
-                                onClick={(e: any): any => !unVoidedTagsSelected ? e.preventDefault() : showVoidDialog(false)}>
-                                <EdsIcon name='restore_from_trash' color={!unVoidedTagsSelected && tokens.colors.interactive.disabled__border.rgba}/>
+                                disabled={!voidedTagsSelected}
+                                onClick={(e: any): any => !voidedTagsSelected ? e.preventDefault() : showVoidDialog(false)}>
+                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''}/>
                                 Unvoid
                             </DropdownItem>
                         </OptionsDropdown>

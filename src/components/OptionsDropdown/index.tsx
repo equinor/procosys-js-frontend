@@ -32,7 +32,6 @@ const Select: React.FC<DropdownProps> = ({
     }, containerRef);
 
     const toggleDropdown = (): void => {
-        console.log(children);
         setIsOpen(!isOpen);
     };
 
@@ -64,7 +63,7 @@ const Select: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
-                {icon && <div className='iconNextToText' ><EdsIcon name={icon} color={disabled && tokens.colors.interactive.disabled__border.rgba} /></div>}
+                {icon && <div className='iconNextToText' ><EdsIcon name={icon} color={disabled ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>}
                 {text}
             </DropdownButton>
             {isOpen && (

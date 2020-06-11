@@ -45,6 +45,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <TagLink
                 isOverdue={isTagOverdue(tag)}
+                isVoided={tag.isVoided}
                 onClick={(): void => this.props.showTagDetails(tag)}
             >
                 <span style={{color: 'inherit'}}>{tag.tagNo}</span>
@@ -159,9 +160,9 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                             fontFamily: 'Equinor',
                         },
                         rowStyle: (rowData): any => ({
+                            opacity: isTagVoided(rowData) && 0.5,
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
                             backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba,
-                            opacity: isTagVoided(rowData) && 0.5
                         }),
                         thirdSortClick: false
                     }}

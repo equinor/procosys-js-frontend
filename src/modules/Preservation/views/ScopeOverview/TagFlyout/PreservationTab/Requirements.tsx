@@ -7,8 +7,10 @@ import RequirementCheckboxField from './RequirementCheckboxField';
 import PreservationIcon from '../../../../../../components/PreservationIcon';
 import { Container, Section, Field, NextInfo } from './Requirements.style';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
+import RequirementAttachmentField from './RequirementAttachmentField';
 
 interface RequirementProps {
+    tagId: number;
     requirements: TagRequirement[];
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
@@ -16,6 +18,7 @@ interface RequirementProps {
 }
 
 const Requirements = ({
+    tagId,
     requirements,
     readonly,
     recordTagRequirementValues,
@@ -169,7 +172,7 @@ const Requirements = ({
         const requirement = requirementValues.find(value => value.requirementId == requirementId);
         if (requirement && field.currentValue) {
             const fieldIndex = requirement.checkBoxValues.findIndex(f => f.fieldId == field.id);
-            if (fieldIndex > -1){
+            if (fieldIndex > -1) {
                 return requirement.checkBoxValues[fieldIndex].isChecked;
             }
         }
@@ -200,6 +203,15 @@ const Requirements = ({
                         onFieldChange={setNumberFieldValue}
                     />
                 );
+            case 'attachment':
+                return (
+                    <RequirementAttachmentField
+                        requirementId={requirementId}
+                        field={field}
+                        tagId={tagId}
+                    />
+                );
+
             default:
                 return <div>Unknown field type</div>;
         }
@@ -214,28 +226,28 @@ const Requirements = ({
                     return (
                         <Container key={requirement.id}>
                             <Section>
-                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography variant='h4'>
                                         {requirement.requirementTypeTitle}
                                     </Typography>
-                                    <div style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}>
+                                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
                                         <PreservationIcon variant={requirement.requirementTypeCode} />
                                     </div>
                                 </div>
                                 <Typography variant='h6'>
                                     {requirement.requirementDefinitionTitle}
                                 </Typography>
-                                <div style={{display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)'}}>
+                                <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)' }}>
                                     <Typography variant='caption'>Interval</Typography>
-                                    <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>{`${requirement.intervalWeeks} weeks`}</Typography>
-                                    <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 4)'}}>Next</Typography>
-                                    <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>
+                                    <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>{`${requirement.intervalWeeks} weeks`}</Typography>
+                                    <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>Next</Typography>
+                                    <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>
                                         <NextInfo isOverdue={isOverdue}>
                                             {requirement.nextDueAsYearAndWeek}
                                         </NextInfo>
                                     </Typography>
-                                    <Typography variant='caption' style={{marginLeft: 'calc(var(--grid-unit) * 4)'}}>Due</Typography>
-                                    <Typography variant='body_short' bold style={{marginLeft: 'var(--grid-unit)'}}>
+                                    <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>Due</Typography>
+                                    <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>
                                         <NextInfo isOverdue={isOverdue}>
                                             {requirement.nextDueWeeks}
                                         </NextInfo>
@@ -268,7 +280,7 @@ const Requirements = ({
                                 />
                             </Section>
                             <Section>
-                                <div style={{display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end'}}>
+                                <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>
                                     <Button
                                         disabled={!isSaveButtonEnabled(requirement.id)}
                                         onClick={(): void => saveRequirement(requirement.id)}
@@ -278,7 +290,7 @@ const Requirements = ({
                                     <Button
                                         disabled={!isPreserveButtonEnabled(requirement.id, requirement.readyToBePreserved)}
                                         onClick={(): void => preserveRequirement(requirement.id)}
-                                        style={{marginLeft: 'calc(var(--grid-unit) * 2)'}}
+                                        style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}
                                     >
                                         Preserved this week
                                     </Button>

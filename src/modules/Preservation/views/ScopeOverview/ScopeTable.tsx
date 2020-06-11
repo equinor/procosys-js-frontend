@@ -64,6 +64,14 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         );
     }
 
+    getResponsibleColumn(tag: PreservedTag): JSX.Element {
+        return (
+            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit'}}>{tag.responsibleCode}</div>
+            </Tooltip>
+        );
+    }
+
     getNextColumn(tag: PreservedTag): string | null {
         const requirement = getFirstUpcomingRequirement(tag);
         return requirement ? requirement.nextDueAsYearAndWeek : null;
@@ -128,7 +136,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         // @ts-ignore
                         { title: 'Area', field: 'areaCode', width: '7%' },
                         // @ts-ignore
-                        { title: 'Resp', field: 'responsibleCode', width: '7%' },
+                        { title: 'Resp', render: this.getResponsibleColumn, width: '7%', cellStyle: { maxWidth: '150px' } },
                         // @ts-ignore
                         { title: 'Disc', field: 'disciplineCode', width: '5%' },
                         // @ts-ignore

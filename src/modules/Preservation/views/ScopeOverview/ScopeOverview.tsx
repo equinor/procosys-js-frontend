@@ -453,13 +453,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <DropdownItem 
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(e: any): any => !unvoidedTagsSelected ? e.preventDefault() : showVoidDialog(true)}>
-                                <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                                <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Void
                             </DropdownItem>
                             <DropdownItem 
                                 disabled={!voidedTagsSelected}
                                 onClick={(e: any): any => !voidedTagsSelected ? e.preventDefault() : showVoidDialog(false)}>
-                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''}/>
+                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba}/>
                                 Unvoid
                             </DropdownItem>
                         </OptionsDropdown>
@@ -486,7 +486,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         toggleFilter();
                                     }}
                                 >
-                                    <EdsIcon name='filter_list' />
+                                    <EdsIcon name='filter_list'/>
                                 </StyledButton>
                             </div>
                         </Tooltip>

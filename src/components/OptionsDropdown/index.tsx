@@ -15,7 +15,7 @@ type DropdownProps = {
 
 const KEYCODE_ESCAPE = 27;
 
-const Select: React.FC<DropdownProps> = ({
+const OptionsDropdown: React.FC<DropdownProps> = ({
     disabled = false,
     text = '',
     icon,
@@ -92,4 +92,4 @@ const Select: React.FC<DropdownProps> = ({
     );
 };
 
-export default Select;
+export default OptionsDropdown;

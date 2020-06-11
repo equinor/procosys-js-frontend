@@ -60,10 +60,3 @@ export const DropdownItem = styled.li`
         }
     }
 `;
-
-export const TopTextContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    font-size: 12px;
-`;

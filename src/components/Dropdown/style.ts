@@ -30,6 +30,7 @@ export const IconContainer = styled.div`
 interface DropdownButtonProps {
     readonly isOpen: boolean;
     variant?: string;
+    disabled?: boolean;
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
@@ -41,6 +42,16 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     cursor: pointer;
+
+    path {
+        ${({disabled}): any => disabled && css`
+            fill: ${tokens.colors.interactive.disabled__text.rgba};
+        `}
+    }
+
+    ${({disabled}): any => disabled && css`
+        color: ${tokens.colors.interactive.disabled__text.rgba};
+    `}
 
     ${(props): any => props.isOpen && css`
         background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};

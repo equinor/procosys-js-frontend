@@ -24,6 +24,13 @@ const mockAreas = [
     },
 ];
 
+const mockPOs = [
+    {
+        title: '01',
+        description: 'po description 1'
+    }
+];
+
 const mockValidTagNo = {
     tagNo: '#PRE-E',
     exists: false,
@@ -41,9 +48,21 @@ jest.mock('../../../../context/PreservationContext',() => ({
                 description: 'project'
             },
             apiClient: {
-                getAreas: () => Promise.resolve(mockAreas),
-                getDisciplines: () => Promise.resolve(mockDisciplines),
                 checkAreaTagNo: () => Promise.resolve(mockValidTagNo)
+            },
+            libraryApiClient: {
+                getAreas: () => Promise.resolve(mockAreas),
+                getDisciplines: () => Promise.resolve(mockDisciplines)
+            }
+        };
+    }
+}));
+
+jest.mock('../../../../../../core/ProcosysContext',() => ({
+    useProcosysContext: () => {
+        return {
+            procosysApiClient: {
+                getPurchaseOrders: () => Promise.resolve(mockPOs)
             }
         };
     }
@@ -58,7 +77,8 @@ describe('<CreateAreaTag />', () => {
     /** Because of API calls using effect hooks, we need to wrap everything in act */
     it('Next button should be disabled intially.', async () => {
         await act(async () => {
-            const { getByText } = render(<CreateAreaTag />);
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag  setArea={propFunc} setPurchaseOrder={propFunc}/>);
             expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });
@@ -66,9 +86,9 @@ describe('<CreateAreaTag />', () => {
     it('Renders with correct fields', async () => {
         /** Because of API calls using effect hooks, we need to wrap everything in act */
         await act(async () => {
-            const { queryByText } = render(<CreateAreaTag />);
+            var propFunc = jest.fn();
+            const { queryByText } = render(<CreateAreaTag setArea={propFunc} setPurchaseOrder={propFunc} />);
 
-            expect(queryByText('Area')).toBeInTheDocument();
             expect(queryByText('Area type')).toBeInTheDocument();
             expect(queryByText('Discipline')).toBeInTheDocument();
             expect(queryByText(/Tag number/)).toBeInTheDocument();
@@ -78,14 +98,24 @@ describe('<CreateAreaTag />', () => {
 
     it('Displays error message when suffix contains space', async () => {
         await act(async () => {
-            const { queryByText } = render(<CreateAreaTag suffix="1 2" />);
+            var propFunc = jest.fn();
+            const { queryByText } = render(<CreateAreaTag suffix="1 2"  setArea={propFunc} setPurchaseOrder={propFunc}/>);
             await waitFor(() => expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument());
         });
     });
 
     it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
         await act(async () => {
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='testDiscipline' suffix='12'/>);
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='testDiscipline' suffix='12' setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            expect(getByText('Next')).toHaveProperty('disabled', true);
+        });
+    });
+
+    it('\'Next\' button disabled when not all mandatory fields are passed for PO tag', async () => {
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='testDiscipline' description='test description' suffix='12' setArea={propFunc} setPurchaseOrder={propFunc}/>);
             expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });
@@ -94,8 +124,33 @@ describe('<CreateAreaTag />', () => {
         await act(async () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateAreaTag areaType='PreArea' discipline='E' description='description text' setSelectedTags={propFunc} />);
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
             await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+        });
+    });
+
+    it('\'Next\' button enabled when all mandatory fields are passed for PO tag', async () => {
+        await act(async () => {
+            /** For testing purposes this is considered a valid tagNo */
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' purchaseOrder='po' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+        });
+    });
+
+    it('Should display area dropdown if areaType is Normal or Site', async () => {
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            await waitFor(() => expect(getByText('Area')).toBeInTheDocument());
+        });
+    });
+
+    it('Sould display PO/CO dropdown if areaType is Supplier', async () => {
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            await waitFor(() => expect(getByText('Purchase order / Call off')).toBeInTheDocument());
         });
     });
 

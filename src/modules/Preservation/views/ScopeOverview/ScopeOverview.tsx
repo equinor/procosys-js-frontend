@@ -301,16 +301,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     let voidableTags: PreservedTag[] = [];
     let unVoidableTags: PreservedTag[] = [];
 
-    const voidTagsApi = async (): Promise<void> => {
-        const tags = selectedTags.filter(tag => !tag.isVoided);
-        for(const tag of tags) {
-            await apiClient.voidTag(tag.id, tag.rowVersion);
-        }
-    };
-
     const voidTags = async (): Promise<void> => {
         try {
-            await voidTagsApi();
+            for(const tag of voidableTags) {
+                await apiClient.voidTag(tag.id, tag.rowVersion);
+            }
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been voided.');
@@ -321,16 +316,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    const unvoidTagsApi = async (): Promise<void> => {
-        const tags = selectedTags.filter(tag => tag.isVoided);
-        for(const tag of tags) {
-            await apiClient.unvoidTag(tag.id, tag.rowVersion);
-        }
-    };
-
     const unVoidTags = async (): Promise<void> => {
         try {
-            await unvoidTagsApi();
+            for(const tag of unVoidableTags) {
+                await apiClient.unvoidTag(tag.id, tag.rowVersion);
+            }
             refreshScopeList();
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been unvoided.');

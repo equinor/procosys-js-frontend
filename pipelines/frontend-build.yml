@@ -16,6 +16,7 @@ resources:
 variables:
  - template: templates/variables/procosys-web-variables.yml@templates
  - template: templates/variables/procosys-global-variables.yml@templates
+ - template: templates/variables/frontend-variables.yml@templates
 
  - name: 'repositoryName'
    value: procosys/frontend

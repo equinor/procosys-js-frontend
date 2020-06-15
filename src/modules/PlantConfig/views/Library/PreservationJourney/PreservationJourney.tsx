@@ -148,7 +148,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             console.error('Add journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
             getJourney(newJourney.id);
-            setIsSaved(false);
         }
     };
 
@@ -175,7 +174,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             console.error('Update journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
             getJourney(newJourney.id);
-            setIsSaved(false);
         }
     };
 
@@ -191,7 +189,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     console.error('Update journey failed: ', error.messsage, error.data);
                     showSnackbarNotification(error.message, 5000);
                     getJourney(newJourney.id);
-                    setIsSaved(false);
                 }
             }
         }

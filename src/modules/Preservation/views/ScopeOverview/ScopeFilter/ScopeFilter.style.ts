@@ -41,6 +41,11 @@ export const Collapse = styled.div<FilterProps>`
             fill: ${tokens.colors.interactive.primary__resting.rgba};
         }
     `}
+    ${({filterActive}): any => !filterActive && css`
+        path {
+            fill: ${tokens.colors.text.static_icons__tertiary.rgba};
+        }
+    `}
 `;
 
 export const CollapseInfo = styled.div`

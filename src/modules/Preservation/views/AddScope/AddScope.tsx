@@ -1,5 +1,5 @@
 import { Divider, Container, SelectedTags, LargerComponent } from './AddScope.style';
-import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area, PurchaseOrder } from './types';
+import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area, PurchaseOrder, TagMigrationRow } from './types';
 import React, { useEffect, useState, useMemo } from 'react';
 
 import { Canceler } from 'axios';
@@ -12,16 +12,20 @@ import { showSnackbarNotification } from './../../../../core/services/Notificati
 import { useHistory, useParams } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
+import SelectMigrateTags from './SelectMigrateTags/SelectMigrateTags';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 export enum AddScopeMethod {
     AddTagsManually = 'AddTagsManually',
     AddTagsAutoscope = 'AddTagsAutoscope',
     CreateAreaTag = 'CreateAreaTag',
+    MigrateTags = 'MigrateTags',
     Unknown = 'Unknown'
 }
 
 const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
+    const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
     const { method } = useParams();
 
@@ -33,6 +37,8 @@ const AddScope = (): JSX.Element => {
                 return (AddScopeMethod.AddTagsAutoscope);
             case 'createAreaTag':
                 return (AddScopeMethod.CreateAreaTag);
+            case 'selectMigrateTags':
+                return (AddScopeMethod.MigrateTags);
             default:
                 return (AddScopeMethod.Unknown);
         }
@@ -49,6 +55,7 @@ const AddScope = (): JSX.Element => {
         return [];
     });
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
+    const [migrationTableData, setMigrationTableData] = useState<TagMigrationRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -79,12 +86,33 @@ const AddScope = (): JSX.Element => {
         setIsLoading(false);
     };
 
+    const getTagsForMigration = async (): Promise<void> => {
+        setIsLoading(true);
+        try {
+            let result: TagMigrationRow[] = [];
+            result = await procosysApiClient.getTagsForMigrationToNewPreservation(project.name);
+
+            if (result.length === 0) {
+                showSnackbarNotification('No tags for migration was found.', 5000);
+            }
+            setSelectedTags([]);
+            setMigrationTableData(result);
+        } catch (error) {
+            console.error('Fetching tags for migration failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        setIsLoading(false);
+    };
+
+
     /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
      */
     useEffect(() => {
         if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
             getTagsForAutoscoping();
+        } else if (addScopeMethod === AddScopeMethod.MigrateTags) {
+            getTagsForMigration();
         }
     }, [addScopeMethod]);
 
@@ -172,6 +200,9 @@ const AddScope = (): JSX.Element => {
                     break;
                 case AddScopeMethod.CreateAreaTag:
                     await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    break;
+                case AddScopeMethod.MigrateTags:
+                    // todo: await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
             }
 
@@ -304,7 +335,25 @@ const AddScope = (): JSX.Element => {
                         <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
                     </SelectedTags>
                 </Container>);
+            } else if (addScopeMethod === AddScopeMethod.MigrateTags) {
+                return (<Container>
+                    <SelectMigrateTags
+                        nextStep={goToNextStep}
+                        setSelectedTags={setSelectedTags}
+                        searchTags={searchTags}
+                        selectedTags={selectedTags}
+                        migrationTableData={migrationTableData}
+                        isLoading={isLoading}
+                        addScopeMethod={addScopeMethod}
+                        removeTag={removeSelectedTag}
+                    />
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
+                    </SelectedTags>
+                </Container>);
             }
+
             break;
         case 2:
             if (isLoading) {

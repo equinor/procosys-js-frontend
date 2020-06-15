@@ -30,6 +30,25 @@ interface PurchaseOrderResponse {
     description: string;
 }
 
+type TagMigrationResponse = {
+    id: number;
+    tagNo: string;
+    description: string;
+    registerCode: string;
+    tagFunctionCode: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    callOfNo: string;
+    purchaseOrderTitle: string;
+    mccrResponsibleCodes: string;
+    preservationRemark: string;
+    storageArea: string;
+    modeCode: string;
+    heating: boolean;
+    special: boolean;
+}
+
 /**
  * API for interacting with data in ProCoSys.
  */
@@ -135,7 +154,7 @@ class ProCoSysClient extends ApiClient {
     async getPurchaseOrders(projectName: string, setRequestCanceller?: RequestCanceler): Promise<PurchaseOrderResponse[]> {
         const endpoint = '/PurchaseOrders';
         const settings: AxiosRequestConfig = {
-            params: { 
+            params: {
                 projectName: projectName
             }
         };
@@ -143,7 +162,28 @@ class ProCoSysClient extends ApiClient {
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as PurchaseOrderResponse[];
     }
-}
 
+    /**
+    * Get tags for migration to new preservation module. 
+    */
+    async getTagsForMigrationToNewPreservation(
+        projectName: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagMigrationResponse[]> {
+        const endpoint = '/PreservationTags';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        const result = await this.client.get<TagMigrationResponse[]>(
+            endpoint,
+            settings
+        );
+        return PascalCaseConverter.objectToCamelCase(result.data) as TagMigrationResponse[];
+    }
+}
 
 export default ProCoSysClient;

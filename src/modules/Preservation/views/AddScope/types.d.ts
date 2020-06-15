@@ -18,6 +18,28 @@ export interface TagRow {
     };
 }
 
+export interface TagMigrationRow {
+    id: number;
+    tagNo: string;
+    description: string;
+    registerCode: string;
+    tagFunctionCode: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    callOfNo: string;
+    purchaseOrderTitle: string;
+    mccrResponsibleCodes: string;
+    preservationRemark: string;
+    storageArea: string;
+    modeCode: string;
+    heating: boolean;
+    special: boolean;
+    tableData?: {
+        checked: boolean;
+    };
+}
+
 export interface CheckAreaTagNo {
     tagNo: string;
     exists: boolean;

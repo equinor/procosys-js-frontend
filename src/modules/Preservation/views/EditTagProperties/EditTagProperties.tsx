@@ -198,7 +198,7 @@ const SetTagProperties = ({
                     <Button
                         onClick={submit}
                         color="primary"
-                        disabled={(!formIsValid || isLoading)}
+                        //disabled={(!formIsValid || isLoading)}
                     >
                         {isLoading && (
                             <CenterContent>

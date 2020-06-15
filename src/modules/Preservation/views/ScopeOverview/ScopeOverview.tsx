@@ -449,6 +449,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             variant='ghost' 
                             disabled={selectedTags.length < 1}>
                             <DropdownItem 
+                                disabled={selectedTags.length > 1}
+                                onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>
+                                <EdsIcon name='edit_text' color={selectedTags.length > 1 ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                Edit
+                            </DropdownItem>
+                            <DropdownItem 
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />

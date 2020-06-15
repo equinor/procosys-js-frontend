@@ -139,12 +139,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     }, [props.journeyId]);
 
-    const saveNewStep = async (journeyId: number, step: Step): Promise<void> => {
+    const saveNewStep = async (journeyId: number, step: Step): Promise<boolean> => {
         try {
             await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code);
+            return true;
         } catch (error) {
             console.error('Add journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
+            return false;
         }
     };
 
@@ -163,42 +165,53 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
-    const updateJourney = async (): Promise<void> => {
+    const updateJourney = async (): Promise<boolean> => {
         try {
             await preservationApiClient.updateJourney(newJourney.id, newJourney.title, newJourney.rowVersion);
+            return true;
         } catch (error) {
             console.error('Update journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
+            return false;
         }
     };
 
-    const saveUpdatedStep = async (step: Step): Promise<void> => {
+    const saveUpdatedStep = async (step: Step): Promise<boolean> => {
         if (journey) {
             const originalStep = journey.steps.find((s) => s.id == step.id);
             if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
                 //There are changes to save
                 try {
                     await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.rowVersion);
+                    return true;
                 } catch (error) {
                     console.error('Update journey failed: ', error.messsage, error.data);
+                    console.log('error is: ', error.message);
                     showSnackbarNotification(error.message, 5000);
+                    return false;
                 }
             }
         }
+        return false;
     };
 
     const saveUpdatedJourney = async (): Promise<void> => {
         let isSaved = false;
+        let error = false;
 
         if (journey && journey.title != newJourney.title) {
-            await updateJourney();
-            isSaved = true;
+            isSaved = await updateJourney();
+            if (!isSaved) {
+                error = true;
+            }
         }
 
         for await (const step of newJourney.steps) {
             if (step.id === -1) {
-                await saveNewStep(newJourney.id, step);
-                isSaved = true;
+                isSaved = await saveNewStep(newJourney.id, step);
+                if (!isSaved) {
+                    error = true;
+                }
             } else {
                 if (journey) {
                     const originalStep = journey.steps.find((s) => s.id == step.id);
@@ -210,14 +223,17 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     }
 
                     if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
-                        await saveUpdatedStep(step);
-                        isSaved = true;
+                        isSaved = await saveUpdatedStep(step);
+                        if (!isSaved) {
+                            error = true;
+                        }
                     }
                 }
             }
         }
-
-        if (isSaved) {
+        if (error) {
+            getJourney(newJourney.id);
+        } else if (isSaved) {
             getJourney(newJourney.id);
             showSnackbarNotification('Changes for journey is saved.', 5000);
         } else {

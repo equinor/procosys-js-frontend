@@ -17,6 +17,11 @@ export interface DisciplineResponse {
     description: string;
 }
 
+export interface ResponsibleResponse {
+    code: string;
+    description: string;
+}
+
 class LibraryApiError extends Error {
 
     data: ErrorResponse | null;
@@ -181,6 +186,31 @@ class LibraryApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getLibraryApiError(error);
+        }
+    }
+
+    /**
+    * Get responsibles
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getResponsibles(setRequestCanceller?: RequestCanceler): Promise<ResponsibleResponse[]> {
+        const endpoint = '/Responsibles';
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ResponsibleResponse[]>(
+                endpoint,
+                settings
+            );
             return result.data;
         }
         catch (error) {

@@ -74,13 +74,6 @@ interface ModeResponse {
     rowVersion: string;
 }
 
-interface ResponsibleResponse {
-    id: number;
-    title: string;
-    code: string;
-    rowVersion: string;
-}
-
 interface PresJourneyResponse {
     id: number;
     title: string;
@@ -1725,31 +1718,6 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<ModeResponse[]>(
-                endpoint,
-                settings
-            );
-            return result.data;
-        }
-        catch (error) {
-            throw getPreservationApiError(error);
-        }
-    }
-
-    /**
-    * Get responsibles
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
-    */
-    async getResponsibles(setRequestCanceller?: RequestCanceler): Promise<ResponsibleResponse[]> {
-        const endpoint = '/Responsibles';
-
-        const settings: AxiosRequestConfig = {
-            params: {}
-        };
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<ResponsibleResponse[]>(
                 endpoint,
                 settings
             );

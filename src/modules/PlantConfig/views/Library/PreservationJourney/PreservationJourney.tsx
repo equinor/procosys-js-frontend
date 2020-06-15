@@ -56,7 +56,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [isDirty, setIsDirty] = useState<boolean>(false);
 
     const {
-        preservationApiClient
+        preservationApiClient,
+        libraryApiClient
     } = usePlantConfigContext();
 
     const cloneJourney = (journey: Journey): Journey => {
@@ -95,10 +96,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         (async (): Promise<void> => {
             setIsLoading(true);
             try {
-                const responsibles = await preservationApiClient.getResponsibles((cancel: Canceler) => requestCancellor = cancel);
+                const responsibles = await libraryApiClient.getResponsibles((cancel: Canceler) => requestCancellor = cancel);
                 const mappedResponsibles: SelectItem[] = [];
 
-                responsibles.forEach(resp => mappedResponsibles.push({ text: resp.title, value: resp.code, selected: false }));
+                responsibles.forEach(resp => mappedResponsibles.push({ text: resp.description, value: resp.code, selected: false }));
                 setMappedResponsibles(mappedResponsibles);
             } catch (error) {
                 console.error('Get Responsibles failed: ', error.messsage, error.data);

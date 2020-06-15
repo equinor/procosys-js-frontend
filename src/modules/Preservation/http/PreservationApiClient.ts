@@ -762,6 +762,36 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Void tag
+     * @param tagId tag id of tag to void
+     * @param rowVersion row version
+     */
+    async voidTag(tagId: number, rowVersion: string): Promise<void> {
+        const endpoint = `Tags/${tagId}/Void`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, {rowVersion: rowVersion}, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Unoid tag
+     * @param tagId tag id of tag to unvoid
+     * @param rowVersion row version
+     */
+    async unvoidTag(tagId: number, rowVersion: string): Promise<void> {
+        const endpoint = `Tags/${tagId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, {rowVersion: rowVersion}, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Get all journeys
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request

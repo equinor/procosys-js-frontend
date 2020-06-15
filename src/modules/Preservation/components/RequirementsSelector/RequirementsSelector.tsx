@@ -16,6 +16,9 @@ interface SelectedRequirementResult {
 interface OnChangeRequirementData {
     requirementDefinitionId: number;
     intervalWeeks: number;
+    requirementTypeTitle?: string;
+    requirementDefinitionTitle?: string;
+    disabledRequirement?: boolean;
 }
 
 type RequirementsSelectorProps = {
@@ -27,6 +30,9 @@ type RequirementsSelectorProps = {
 interface RequirementFormInput {
     requirementDefinitionId: number | null;
     intervalWeeks: number | null;
+    requirementTypeTitle?: string;
+    requirementDefinitionTitle?: string;
+    disabledRequirement?: boolean;
 }
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
@@ -51,6 +57,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     }, [props.requirements]);
 
     useEffect(() => {
+        console.log(props);
         if (!props.onChange) return;
 
         // Check that everything is filled out
@@ -160,6 +167,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         const newRequirement = getRequirementForValue(reqDefValue);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
+            
             if (newRequirement) {
                 copy[index].requirementDefinitionId = newRequirement.requirementDefinition.id;
                 copy[index].intervalWeeks = newRequirement.requirementDefinition.defaultIntervalWeeks;
@@ -176,6 +184,10 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         });
     };
 
+    useEffect(() => {
+        console.log(requirements);
+    }, [requirements]);
+
     const deleteRequirement = (index: number): void => {
         setRequirements(oldReq => {
             const copy = [...oldReq];
@@ -190,10 +202,15 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         return value.text;
     };
 
+    const getTitle = (req: RequirementFormInput): string => {
+        return `${req.requirementTypeTitle} - ${req.requirementDefinitionTitle}`;
+    };
+
     return (
         <>
             {requirements.map((requirement, index) => {
-                const requirementForValue = getRequirementForValue(requirement.requirementDefinitionId);
+                const title = getTitle(requirement);
+                const requirementForValue = requirement.requirementDefinitionTitle ? null : getRequirementForValue(requirement.requirementDefinitionId);
                 return (
                     <React.Fragment key={`requirementInput_${index}`}>
                         <InputContainer key={`req_${index}`}>
@@ -201,8 +218,10 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 onChange={(value): void => setRequirement(value, index)}
                                 data={mappedRequirementTypes}
                                 label={'Requirement'}
+                                disabled={requirement.disabledRequirement}
                             >
-                                {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
+                                {requirement.requirementDefinitionTitle ? title :
+                                    (requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
                             </SelectInput>
                             <FormFieldSpacer>
                                 <SelectInput

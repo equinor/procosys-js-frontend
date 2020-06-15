@@ -56,6 +56,10 @@ export const IconBar = styled.div`
     button {
         margin-left: var(--grid-unit);
     }
+
+    a {
+        text-decoration: none;
+    }
 `;
 
 export const StyledButton = styled(Button)`

@@ -4,6 +4,24 @@ export interface Tag {
     mcPkgNo?: string;
 }
 
+export interface TagDetails {
+    id: number;
+    tagNo: string;
+    description: string;
+    status: string;
+    journeyTitle: string;
+    mode: string;
+    responsibleName: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    purchaseOrderNo: string;
+    areaCode: string;
+    readyToBePreserved: boolean;
+    remark: string;
+    storageArea: string;
+    rowVersion: string;
+}
+
 export interface TagRow {
     tagNo: string;
     description: string;

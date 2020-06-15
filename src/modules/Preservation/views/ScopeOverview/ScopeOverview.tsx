@@ -74,6 +74,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
+    const [selectedTagId, setSelectedTagId] = useState<string | number>();
 
     const {
         project,
@@ -97,7 +98,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);        
-        setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);        
+        setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);
+        if(selectedTags.length == 1) {
+            setSelectedTagId(selectedTags[0].id);
+        } else {
+            setSelectedTagId('');
+        }       
     }, [selectedTags]);
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
@@ -448,12 +454,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             icon='more_verticle' 
                             variant='ghost' 
                             disabled={selectedTags.length < 1}>
-                            <DropdownItem 
-                                disabled={selectedTags.length > 1}
-                                onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>
-                                <EdsIcon name='edit_text' color={selectedTags.length > 1 ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                            <Link to={'/EditTagProperties/' + selectedTagId}>
+                                <DropdownItem 
+                                    disabled={selectedTags.length > 1}
+                                    onClick={(e: React.MouseEvent): void => e.stopPropagation()}>
+                                    <EdsIcon name='edit_text' color={selectedTags.length > 1 ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
-                            </DropdownItem>
+                                </DropdownItem>
+                            </Link>
                             <DropdownItem 
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>

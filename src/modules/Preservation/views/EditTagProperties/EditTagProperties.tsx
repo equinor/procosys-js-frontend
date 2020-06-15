@@ -1,5 +1,5 @@
 import { ButtonContainer, CenterContent, Container, Header, InputContainer } from './EditTagProperties.style';
-import { Journey, Requirement, RequirementType, Step } from './types';
+import { TagDetails, Step, Journey, RequirementType } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
 import { Button } from '@equinor/eds-core-react';
@@ -7,66 +7,123 @@ import Spinner from '../../../../components/Spinner';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { TextField } from '@equinor/eds-core-react';
-
-type SetTagPropertiesProps = {
-    areaType: string;
-    submitForm: (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string) => Promise<void>;
-    previousStep: () => void;
-    journeys: Journey[];
-    requirementTypes: RequirementType[];
-    //addScopeMethod: AddScopeMethod;
-};
+import { useParams, useHistory } from 'react-router-dom';
+import { Canceler } from 'axios';
+import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
 
 interface RequirementFormInput {
     requirementDefinitionId: number | null;
     intervalWeeks: number | null;
+    requirementTypeTitle?: string;
+    requirementDefinitionTitle?: string;
+    disabledRequirement?: boolean;
 }
 
-const SetTagProperties = ({
-    areaType,
-    //submitForm,
-    previousStep,
-    journeys = [],
-    //requirementTypes = [],
-    // addScopeMethod,
-}: SetTagPropertiesProps): JSX.Element => {
-    const { project } = usePreservationContext();
+const SetTagProperties = (): JSX.Element => {
+    const { apiClient, project } = usePreservationContext();
+    const history = useHistory();
 
     const [journey, setJourney] = useState(-1);
+    const [journeys, setJourneys] = useState<Journey[]>([]);
     const [step, setStep] = useState<Step | null>();
-    //const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
     //const [formIsValid, setFormIsValid] = useState(false);
+    const [tag, setTag] = useState<TagDetails>();
+    const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
+    const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
 
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState<boolean>(false);
 
-    // /**
-    //  * Form validation
-    //  */
-    // useEffect(() => {
-    //     if (journey > -1 && step) {
-    //         if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
-    //             //For autoscoping, the requiremnts will be added automatically based on tag function
-    //             setFormIsValid(true);
-    //             return;
-    //         }
+    const { tagId } = useParams();
 
-    //         if (requirements.length > 0) {
-    //             const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
-    //                 return req.intervalWeeks != null && req.requirementDefinitionId != null;
-    //             };
-    //             const requirementsIsValid = requirements.every(hasAllPropertiesSet);
+    const getTag = async (): Promise<void> => {
+        if (tagId) {
+            try {
+                const details = await apiClient.getTagDetails(Number.parseInt(tagId));
+                setTag(details);
+                
+            } catch (error) {
+                console.error('Get tag details failed: ', error.message);
+            }
+        }
+    };
 
-    //             setFormIsValid(requirementsIsValid);
-    //             return;
-    //         }
-    //     }
-    //     setFormIsValid(false);
-    // }, [journey, step, requirements]);
+    const getRequirements = async (): Promise<void> => {
+        if (tagId) {
+            try {
+                const response = await apiClient.getTagRequirements(Number.parseInt(tagId));
+                setRequirements(response.map(itm => {
+                    return {
+                        requirementDefinitionId: itm.id,
+                        intervalWeeks: itm.intervalWeeks,
+                        requirementTypeTitle: itm.requirementTypeTitle,
+                        requirementDefinitionTitle: itm.requirementDefinitionTitle,
+                        disabledRequirement: true,
+                    };
+                }));
+            } catch (error) {
+                console.error('Get requirement failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+        }
+    };
+    
+    const getRequirementTypes = async (): Promise<void> => {
+        if (tagId) {
+            try {
+                const response = await apiClient.getRequirementTypes(false);
+                setRequirementTypes(response.data);
+            } catch (error) {
+                console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+        }
+    };
+
+    useEffect(() => {
+        getTag();
+        getRequirements();
+        getRequirementTypes();
+    }, []);
+
+    /**
+     * Get Journeys
+     */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            try {
+                const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
+                setJourneys(data);
+            } catch (error) {
+                console.error('Get Journeys failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+
+    useEffect(() => {
+        if(journeys.length > 0 && tag) {
+            if (remarkInputRef.current) {
+                remarkInputRef.current.value = tag.remark;
+            }
+            if (storageAreaInputRef.current) {
+                storageAreaInputRef.current.value = tag.storageArea;
+            }
+            const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journeyTitle);
+            setJourney(initialJourney);
+            setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.title === tag.mode));
+        }
+    }, [tag, journeys]);
 
     /**
      * Map journeys into menu elements
@@ -88,9 +145,6 @@ const SetTagProperties = ({
         setStep(null);
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
-                if(areaType == 'PoArea' && itm.mode.title.toUpperCase() == 'SUPPLIER') {
-                    setStep(itm);
-                }
                 return {
                     text: itm.mode.title,
                     value: itm.id
@@ -101,52 +155,62 @@ const SetTagProperties = ({
     }, [journey]);
 
 
-    const submit = async (): Promise<void> => {
-        setIsLoading(true);
-        // const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
-        // let storageAreaValue;
-        // if (storageAreaInputRef.current) {
-        //     storageAreaValue = storageAreaInputRef.current.value;
-        // }
-
-        if (step) {
-            // if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
-            //     await submitForm(step.id, [], remarkValue, storageAreaValue);
-            // } else {
-            //     const requirementsMappedForApi: Requirement[] = [];
-            //     requirements.forEach((req) => {
-            //         if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
-            //             requirementsMappedForApi.push({
-            //                 requirementDefinitionId: req.requirementDefinitionId,
-            //                 intervalWeeks: req.intervalWeeks
-            //             });
-            //         }
-            //     });
-            //     if (requirementsMappedForApi.length > 0) {
-            //         await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
-            //     } else {
-            //         showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
-            //     }
-            // }
-        } else {
-            showSnackbarNotification('Error occured. Step is not provided.', 5000);
-        }
-        setIsLoading(false);
-    };
-
     const setJourneyFromForm = (value: number): void => {
         setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
     };
 
-    const setStepFromForm = (stepId: number): void => {
-        const step = journeys[journey].steps.find((pStep: Step) => pStep.id === stepId);
-        setStep(step);
+
+
+    // const submit = async (): Promise<void> => {
+    //     setIsLoading(true);
+    //     // const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
+    //     // let storageAreaValue;
+    //     // if (storageAreaInputRef.current) {
+    //     //     storageAreaValue = storageAreaInputRef.current.value;
+    //     // }
+
+    //     if (step) {
+    //         // if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
+    //         //     await submitForm(step.id, [], remarkValue, storageAreaValue);
+    //         // } else {
+    //         //     const requirementsMappedForApi: Requirement[] = [];
+    //         //     requirements.forEach((req) => {
+    //         //         if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
+    //         //             requirementsMappedForApi.push({
+    //         //                 requirementDefinitionId: req.requirementDefinitionId,
+    //         //                 intervalWeeks: req.intervalWeeks
+    //         //             });
+    //         //         }
+    //         //     });
+    //         //     if (requirementsMappedForApi.length > 0) {
+    //         //         await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
+    //         //     } else {
+    //         //         showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
+    //         //     }
+    //         // }
+    //     } else {
+    //         showSnackbarNotification('Error occured. Step is not provided.', 5000);
+    //     }
+    //     setIsLoading(false);
+    // };
+
+    // const setJourneyFromForm = (value: number): void => {
+    //     setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
+    // };
+
+    // const setStepFromForm = (stepId: number): void => {
+    //     const step = journeys[journey].steps.find((pStep: Step) => pStep.id === stepId);
+    //     setStep(step);
+    // };
+
+    const cancel = (): void => {
+        history.push('/');
     };
 
     return (
         <div>
             <Header>
-                <h1>Add preservation scope</h1>
+                <h1>Edit preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
             <Container>
@@ -162,50 +226,52 @@ const SetTagProperties = ({
                     </InputContainer>
                     <InputContainer>
                         <SelectInput
-                            onChange={setStepFromForm}
+                            //onChange={setStepFromForm}
                             data={mappedSteps}
-                            disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
+                            //disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
                             label={'Preservation step'}
                         >
-                            {(step && step.mode.title) || 'Select step'}
+                            {(step && step.mode.title) || 'Select step'}                        
                         </SelectInput>
                     </InputContainer>
                     <InputContainer style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Remark'}
-                            label="Remark for whole preservation journey"
+                            label='Remark for whole preservation journey'
                             inputRef={remarkInputRef}
-                            placeholder="Write Here"
-                            helpertext="For example: Check according to predecure 123, or check specifications from supplier"
-                            meta="Optional"
+                            placeholder={'Write Here'}
+                            helpertext='For example: Check according to predecure 123, or check specifications from supplier'
+                            meta='Optional'
                         />
                     </InputContainer>
                     <InputContainer style={{ maxWidth: '150px' }}>
                         <TextField
                             id={'StorageArea'}
-                            label="Storage area"
+                            label='Storage area'
                             inputRef={storageAreaInputRef}
-                            placeholder="Write Here"
-                            helpertext="For example: AR123"
-                            meta="Optional"
+                            placeholder='Write Here'
+                            helpertext='For example: AR123'
+                            meta='Optional'
                         />
                     </InputContainer>
+                    <h2>Requirements for all selected tags</h2>
+                    <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
                 </div>
                 <ButtonContainer>
-                    <Button onClick={previousStep} variant="outlined" disabled={isLoading}>
-                        Previous
+                    <Button  onClick={cancel} variant="outlined" disabled={isLoading}>
+                        Cancel
                     </Button>
                     <Button
-                        onClick={submit}
+                        //onClick={submit}
                         color="primary"
                         //disabled={(!formIsValid || isLoading)}
                     >
                         {isLoading && (
                             <CenterContent>
-                                <Spinner /> Add to Scope
+                                <Spinner /> Save
                             </CenterContent>
                         )}
-                        {!isLoading && ('Add to scope')}
+                        {!isLoading && ('Save')}
                     </Button>
                 </ButtonContainer>
             </Container>

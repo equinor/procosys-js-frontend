@@ -57,7 +57,6 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     }, [props.requirements]);
 
     useEffect(() => {
-        console.log(props);
         if (!props.onChange) return;
 
         // Check that everything is filled out
@@ -81,7 +80,10 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             requirements.forEach(req => {
                 filtered.push({
                     requirementDefinitionId: req.requirementDefinitionId as number,
-                    intervalWeeks: req.intervalWeeks as number
+                    intervalWeeks: req.intervalWeeks as number,
+                    requirementTypeTitle: req.requirementTypeTitle,
+                    requirementDefinitionTitle: req.requirementDefinitionTitle,
+                    disabledRequirement: req.disabledRequirement
                 });
             });
             props.onChange(filtered);

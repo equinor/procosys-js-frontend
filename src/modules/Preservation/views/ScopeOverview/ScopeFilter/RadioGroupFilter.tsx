@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EdsIcon from '@procosys/components/EdsIcon';
-
 
 interface Option {
     title: string;
@@ -31,9 +30,12 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
     });
 
     const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, newValue: string): void => {
-        setIsActiveFilter(newValue != 'no-filter');
         onChange(newValue);
     };
+
+    useEffect(() => {
+        setIsActiveFilter(value && value != 'no-filter' ? true : false);
+    }, [value]);
 
     return (
         <>

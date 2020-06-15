@@ -284,6 +284,8 @@ const ScopeFilter = ({
 
     useEffect(() => {
         isFirstRender.current = false;
+        const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+        setFilterActive(activeFilters.length > 0);
     },[]);
 
     const checkSearchFilter = (): boolean => {

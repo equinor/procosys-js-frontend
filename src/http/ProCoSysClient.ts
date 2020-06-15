@@ -25,6 +25,11 @@ interface TagFunctionResponse {
     registerDescription: string;
 }
 
+interface PurchaseOrderResponse {
+    title: string;
+    description: string;
+}
+
 /**
  * API for interacting with data in ProCoSys.
  */
@@ -120,6 +125,23 @@ class ProCoSysClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as TagFunctionResponse;
+    }
+
+    /**
+    * Get Purchase orders
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getPurchaseOrders(projectName: string, setRequestCanceller?: RequestCanceler): Promise<PurchaseOrderResponse[]> {
+        const endpoint = '/PurchaseOrders';
+        const settings: AxiosRequestConfig = {
+            params: { 
+                projectName: projectName
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get(endpoint, settings);
+        return PascalCaseConverter.objectToCamelCase(result.data) as PurchaseOrderResponse[];
     }
 }
 

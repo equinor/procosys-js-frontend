@@ -41,6 +41,7 @@ export interface TagRequirementField {
         isChecked: boolean;         // applicable for fieldType = CheckBox
         isNA: boolean;              // applicable for fieldType = Number
         value: number | null;       // applicable for fieldType = Number
+        fileName: string | null;    // applicable for fieldType = Attachment
     };
     // previousValue applicable for fieldType = Number
     previousValue?:
@@ -68,3 +69,4 @@ interface RecordCheckBoxValue {
     fieldId: number;
     isChecked: boolean;
 }
+

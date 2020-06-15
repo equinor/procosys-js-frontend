@@ -89,13 +89,14 @@ const PreservationTab = ({
 
     const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active';
 
-    const getRequirementsSection = (): JSX.Element => {
+    const getRequirementsSection = (tagId: number): JSX.Element => {
         if (tagRequirements === null) {
-            return <div style={{margin: 'calc(var(--grid-unit) * 5) auto'}}><Spinner medium /></div>;
+            return <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner medium /></div>;
         }
 
         return (
             <Requirements
+                tagId={tagId}
                 requirements={tagRequirements}
                 readonly={isReadOnly()}
                 recordTagRequirementValues={recordTagRequirementValues}
@@ -116,7 +117,7 @@ const PreservationTab = ({
     };
 
     const saveRemark = (): void => {
-        if(remarkInputRef.current) {
+        if (remarkInputRef.current) {
             setRemark(remarkInputRef.current.value);
             saveRemarkAndStorageArea(remarkInputRef.current.value, storageArea);
         } else {
@@ -133,7 +134,7 @@ const PreservationTab = ({
     };
 
     const saveStorageArea = (): void => {
-        if(storageAreaInputRef.current) {
+        if (storageAreaInputRef.current) {
             setStorageArea(storageAreaInputRef.current.value);
             saveRemarkAndStorageArea(remark, storageAreaInputRef.current.value);
         } else {
@@ -154,26 +155,26 @@ const PreservationTab = ({
             <TagDetailsContainer>
                 <Details>
                     <Typography variant='h6'>{tagDetails.description}</Typography>
-                    <div style={{marginTop: 'calc(var(--grid-unit) * 2)'}}>
+                    <div style={{ marginTop: 'calc(var(--grid-unit) * 2)' }}>
                         <GridFirstRow>
-                            <Typography variant='caption' style={{gridColumn: '1', gridRow: '1'}}>Journey</Typography>
-                            <Typography variant='caption' style={{gridColumn: '2', gridRow: '1'}}>Mode</Typography>
-                            <Typography variant='caption' style={{gridColumn: '3', gridRow: '1'}}>Resp.</Typography>
-                            <Typography variant='body_long' style={{gridColumn: '1', gridRow: '2'}}>{tagDetails.journeyTitle}</Typography>
-                            <Typography variant='body_long' style={{gridColumn: '2', gridRow: '2'}}>{tagDetails.mode}</Typography>
-                            <Typography variant='body_long' style={{gridColumn: '3', gridRow: '2'}}>{tagDetails.responsibleName}</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Journey</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Mode</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '3', gridRow: '1' }}>Resp.</Typography>
+                            <Typography variant='body_long' style={{ gridColumn: '1', gridRow: '2' }}>{tagDetails.journeyTitle}</Typography>
+                            <Typography variant='body_long' style={{ gridColumn: '2', gridRow: '2' }}>{tagDetails.mode}</Typography>
+                            <Typography variant='body_long' style={{ gridColumn: '3', gridRow: '2' }}>{tagDetails.responsibleName}</Typography>
                         </GridFirstRow>
                     </div>
-                    <div style={{marginTop: 'var(--grid-unit)'}}>
+                    <div style={{ marginTop: 'var(--grid-unit)' }}>
                         <GridSecondRow>
-                            <Typography variant='caption' style={{gridColumn: '1', gridRow: '1'}}>Comm pkg</Typography>
-                            <Typography variant='caption' style={{gridColumn: '2', gridRow: '1'}}>MC pkg</Typography>
-                            <Typography variant='caption' style={{gridColumn: '3', gridRow: '1'}}>PO</Typography>
-                            <Typography variant='caption' style={{gridColumn: '4', gridRow: '1'}}>Area</Typography>
-                            <Typography variant='body_short' style={{gridColumn: '1', gridRow: '2'}}>{tagDetails.commPkgNo}</Typography>
-                            <Typography variant='body_short' style={{gridColumn: '2', gridRow: '2'}}>{tagDetails.mcPkgNo}</Typography>
-                            <Typography variant='body_short' style={{gridColumn: '3', gridRow: '2'}}>{tagDetails.purchaseOrderNo}</Typography>
-                            <Typography variant='body_short' style={{gridColumn: '4', gridRow: '2'}}>{tagDetails.areaCode}</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Comm pkg</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>MC pkg</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '3', gridRow: '1' }}>PO</Typography>
+                            <Typography variant='caption' style={{ gridColumn: '4', gridRow: '1' }}>Area</Typography>
+                            <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>{tagDetails.commPkgNo}</Typography>
+                            <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>{tagDetails.mcPkgNo}</Typography>
+                            <Typography variant='body_short' style={{ gridColumn: '3', gridRow: '2' }}>{tagDetails.purchaseOrderNo}</Typography>
+                            <Typography variant='body_short' style={{ gridColumn: '4', gridRow: '2' }}>{tagDetails.areaCode}</Typography>
                         </GridSecondRow>
                     </div>
                 </Details>
@@ -191,19 +192,19 @@ const PreservationTab = ({
                                 saveRemark();
                         }}
                     />
-                    { editingRemark ?
+                    {editingRemark ?
                         <IconContainer>
                             <StyledButton
                                 data-testid="remarkClearIcon"
                                 variant='ghost_icon'
                                 onClick={cancelEditRemark}>
-                                <ClearIcon fontSize='small'/>
+                                <ClearIcon fontSize='small' />
                             </StyledButton>
                             <StyledButton
                                 data-testid="remarkCheckIcon"
                                 variant='ghost_icon'
                                 onClick={saveRemark}>
-                                <CheckIcon fontSize='small'/>
+                                <CheckIcon fontSize='small' />
                             </StyledButton>
                         </IconContainer>
                         :
@@ -212,7 +213,7 @@ const PreservationTab = ({
                                 data-testid="remarkEditIcon"
                                 variant='ghost_icon'
                                 onClick={(): void => setEditingRemark(true)}>
-                                <EditOutlinedIcon fontSize='small'/>
+                                <EditOutlinedIcon fontSize='small' />
                             </StyledButton>
                         </IconContainer>
                     }
@@ -229,19 +230,19 @@ const PreservationTab = ({
                                 saveStorageArea();
                         }}
                     />
-                    { editingStorageArea ?
+                    {editingStorageArea ?
                         <IconContainer>
                             <StyledButton
                                 data-testid="storageAreaClearIcon"
                                 variant='ghost_icon'
                                 onClick={cancelEditStorageArea}>
-                                <ClearIcon fontSize='small'/>
+                                <ClearIcon fontSize='small' />
                             </StyledButton>
                             <StyledButton
                                 data-testid="storageAreaCheckIcon"
                                 variant='ghost_icon'
                                 onClick={saveStorageArea}>
-                                <CheckIcon fontSize='small'/>
+                                <CheckIcon fontSize='small' />
                             </StyledButton>
                         </IconContainer>
                         :
@@ -250,14 +251,14 @@ const PreservationTab = ({
                                 data-testid="storageAreaEditIcon"
                                 variant='ghost_icon'
                                 onClick={(): void => setEditingStorageArea(true)}>
-                                <EditOutlinedIcon fontSize='small'/>
+                                <EditOutlinedIcon fontSize='small' />
                             </StyledButton>
                         </IconContainer>
                     }
                 </TextFieldContainer>
             </TagDetailsInputContainer>
             {
-                getRequirementsSection()
+                getRequirementsSection(tagDetails.id)
             }
         </Container>
     );

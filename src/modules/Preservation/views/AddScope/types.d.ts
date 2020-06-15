@@ -106,3 +106,8 @@ export interface Area {
     code: string;
     description: string;
 }
+
+export interface PurchaseOrder {
+    title: string;
+    description: string;
+}

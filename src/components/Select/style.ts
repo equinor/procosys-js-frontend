@@ -31,12 +31,21 @@ export const Container = styled.div`
     }
 `;
 
-export const DropdownIcon = styled.div`
+interface IconProps {
+    disabled: boolean;
+}
+
+export const DropdownIcon = styled.div<IconProps>`
     padding-left: 8px;
     display: flex;
     flex: 1;
     justify-content: flex-end;
     align-items: right;
+    path {
+        ${({disabled}): any => disabled && css`
+            fill: ${tokens.colors.interactive.disabled__text.rgba};
+        `}
+    }
 `;
 
 interface DropdownButtonProps {

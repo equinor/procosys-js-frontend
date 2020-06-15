@@ -6,7 +6,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
 import { Toolbar, TagLink, TagStatusLabel, Container } from './ScopeTable.style';
 import RequirementIcons from './RequirementIcons';
-import { isTagOverdue, getFirstUpcomingRequirement } from './ScopeOverview';
+import { isTagOverdue, getFirstUpcomingRequirement, isTagVoided } from './ScopeOverview';
 import { QueryResult, Query } from 'material-table';
 import { Tooltip } from '@material-ui/core';
 
@@ -45,22 +45,31 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <TagLink
                 isOverdue={isTagOverdue(tag)}
+                isVoided={tag.isVoided}
                 onClick={(): void => this.props.showTagDetails(tag)}
             >
-                <span>{tag.tagNo}</span>
+                <span style={{color: 'inherit'}}>{tag.tagNo}</span>
             </TagLink>
         );
     }
 
     getDescriptionColumn(tag: PreservedTag): JSX.Element {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', }}>
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{tag.description}</div>
+                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit'}}>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
 
+        );
+    }
+
+    getResponsibleColumn(tag: PreservedTag): JSX.Element {
+        return (
+            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit'}}>{tag.responsibleCode}</div>
+            </Tooltip>
         );
     }
 
@@ -128,7 +137,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         // @ts-ignore
                         { title: 'Area', field: 'areaCode', width: '7%' },
                         // @ts-ignore
-                        { title: 'Resp', field: 'responsibleCode', width: '7%' },
+                        { title: 'Resp', render: this.getResponsibleColumn, width: '7%', cellStyle: { maxWidth: '150px' } },
                         // @ts-ignore
                         { title: 'Disc', field: 'disciplineCode', width: '5%' },
                         // @ts-ignore
@@ -151,8 +160,9 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                             fontFamily: 'Equinor',
                         },
                         rowStyle: (rowData): any => ({
+                            opacity: isTagVoided(rowData) && 0.5,
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,
-                            backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba
+                            backgroundColor: rowData.tableData.checked && tokens.colors.interactive.primary__selected_highlight.rgba,
                         }),
                         thirdSortClick: false
                     }}

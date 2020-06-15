@@ -1,5 +1,5 @@
 import { Divider, Container, SelectedTags, LargerComponent } from './AddScope.style';
-import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area } from './types';
+import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area, PurchaseOrder } from './types';
 import React, { useEffect, useState, useMemo } from 'react';
 
 import { Canceler } from 'axios';
@@ -42,7 +42,7 @@ const AddScope = (): JSX.Element => {
     const [selectedTags, setSelectedTags] = useState<Tag[]>((): Tag[] => {
         if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
             return [{
-                tagNo: 'type-discipline-area-suffix',
+                tagNo: 'type-discipline-area/PO-suffix',
                 description: ''
             }];
         }
@@ -55,6 +55,7 @@ const AddScope = (): JSX.Element => {
     const [areaType, setAreaType] = useState<SelectItem | undefined>();
     const [areaTagDiscipline, setAreaTagDiscipline] = useState<Discipline | undefined>();
     const [areaTagArea, setAreaTagArea] = useState<Area | null>();
+    const [pO, setPO] = useState<PurchaseOrder | null>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
 
@@ -170,7 +171,7 @@ const AddScope = (): JSX.Element => {
                     await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
                     break;
                 case AddScopeMethod.CreateAreaTag:
-                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
             }
 
@@ -289,6 +290,8 @@ const AddScope = (): JSX.Element => {
                             setDiscipline={setAreaTagDiscipline}
                             area={areaTagArea}
                             setArea={setAreaTagArea}
+                            purchaseOrder={pO}
+                            setPurchaseOrder={setPO}
                             suffix={areaTagSuffix}
                             setSuffix={setAreaTagSuffix}
                             description={areaTagDescription}
@@ -311,6 +314,7 @@ const AddScope = (): JSX.Element => {
                 <Container>
                     <LargerComponent>
                         <SetTagProperties
+                            areaType={areaType ? areaType.value : null}
                             journeys={journeys}
                             requirementTypes={requirementTypes}
                             previousStep={goToPreviousStep}

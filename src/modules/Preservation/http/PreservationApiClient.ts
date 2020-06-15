@@ -210,6 +210,8 @@ interface TagRequirementsResponse {
                 isChecked: boolean;
                 isNA: boolean;
                 value: number | null;
+                id: string | null;
+                fileName: string | null;
             };
             previousValue:
             {
@@ -557,6 +559,7 @@ class PreservationApiClient extends ApiClient {
         projectName: string,
         disciplineCode?: string,
         areaCode?: string | null,
+        purchaseOrderCalloffCode?: string | null,
         suffix?: string,
         description?: string,
         remark?: string | null,
@@ -572,6 +575,7 @@ class PreservationApiClient extends ApiClient {
                 areaTagType: areaTagType,
                 disciplineCode: disciplineCode,
                 areaCode: areaCode,
+                purchaseOrderCalloffCode: purchaseOrderCalloffCode,
                 tagNoSuffix: suffix,
                 stepId: stepId,
                 requirements,
@@ -589,6 +593,7 @@ class PreservationApiClient extends ApiClient {
         areaTagType: string,
         disciplineCode: string,
         areaCode?: string | null,
+        purchaseOrderCalloffCode?: string | null,
         tagNoSuffix?: string | null,
         setRequestCanceller?: RequestCanceler
     ): Promise<CheckAreaTagNoResponse> {
@@ -599,6 +604,7 @@ class PreservationApiClient extends ApiClient {
                 AreaTagType: areaTagType,
                 DisciplineCode: disciplineCode,
                 AreaCode: areaCode,
+                PurchaseOrderCalloffCode: purchaseOrderCalloffCode,
                 TagNoSuffix: tagNoSuffix,
             }
         };
@@ -734,8 +740,6 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
-
     /**
      * Complete  given tags
      * @param tags  List with tag IDs
@@ -745,6 +749,36 @@ class PreservationApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.put(endpoint, tags, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Void tag
+     * @param tagId tag id of tag to void
+     * @param rowVersion row version
+     */
+    async voidTag(tagId: number, rowVersion: string): Promise<void> {
+        const endpoint = `Tags/${tagId}/Void`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, {rowVersion: rowVersion}, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Unoid tag
+     * @param tagId tag id of tag to unvoid
+     * @param rowVersion row version
+     */
+    async unvoidTag(tagId: number, rowVersion: string): Promise<void> {
+        const endpoint = `Tags/${tagId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, {rowVersion: rowVersion}, settings);
         } catch (error) {
             throw getPreservationApiError(error);
         }
@@ -1155,6 +1189,71 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async recordAttachmentOnTagRequirement(
+        tagId: number,
+        requirementId: number,
+        fieldId: number,
+        file: File,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Tags/${tagId}/Requirements/${requirementId}/Attachment/${fieldId}`;
+
+        const formData = new FormData();
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, formData, settings);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async removeAttachmentOnTagRequirement(
+        tagId: number,
+        requirementId: number,
+        fieldId: number,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/Tags/${tagId}/Requirements/${requirementId}/Attachment/${fieldId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async getDownloadUrlForAttachmentOnTagRequirement(
+        tagId: number,
+        requirementId: number,
+        fieldId: number,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+
+        const endpoint = `/Tags/${tagId}/Requirements/${requirementId}/Attachment/${fieldId}`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
             throw getPreservationApiError(error);
         }
     }

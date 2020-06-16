@@ -1,9 +1,3 @@
-export interface Tag {
-    tagNo: string;
-    description: string;
-    mcPkgNo?: string;
-}
-
 export interface TagDetails {
     id: number;
     tagNo: string;
@@ -22,25 +16,6 @@ export interface TagDetails {
     rowVersion: string;
 }
 
-export interface TagRow {
-    tagNo: string;
-    description: string;
-    purchaseOrderNumber: string;
-    commPkgNo: string;
-    mcPkgNo: string;
-    mccrResponsibleCodes: string;
-    tagFunctionCode: string;
-    isPreserved: boolean;
-    tableData?: {
-        checked: boolean;
-    };
-}
-
-export interface CheckAreaTagNo {
-    tagNo: string;
-    exists: boolean;
-}
-
 /**
  * Journey
  */
@@ -57,7 +32,6 @@ export interface Step {
     title: string;
     isVoided: boolean;
     mode: Mode;
-    responsible: Responsible;
     rowVersion: string;
 }
 
@@ -66,13 +40,6 @@ export interface Mode {
     title: string;
     rowVersion: string;
 }
-
-export interface Responsible {
-    code: string;
-    title: string;
-    rowVersion: string;
-}
-
 
 /**
  * Requirement type
@@ -110,22 +77,4 @@ export interface RequirementField {
     fieldType: string;
     unit: string | null;
     showPrevious: boolean;
-}
-
-/**
- * Interfaces for area tag
- */
-export interface Discipline {
-    code: string;
-    description: string;
-}
-
-export interface Area {
-    code: string;
-    description: string;
-}
-
-export interface PurchaseOrder {
-    title: string;
-    description: string;
 }

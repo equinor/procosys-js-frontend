@@ -3,6 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
+    overflow-x: scroll;
 `;
 
 export const LargerComponent = styled.div`
@@ -10,7 +11,7 @@ export const LargerComponent = styled.div`
 `;
 
 export const SelectedTags = styled.div`
-    width: 30%;
+    width: 500px;
     margin-left: var(--grid-unit);
     margin-bottom: calc(var(--grid-unit) * 4);
 `;

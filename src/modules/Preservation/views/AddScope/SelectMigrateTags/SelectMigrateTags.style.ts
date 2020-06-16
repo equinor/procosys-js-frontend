@@ -3,6 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
+    overflow-x: scroll;
     flex-direction: column;
     input + svg {
         width: 24px;
@@ -33,16 +34,17 @@ export const Search = styled.div`
     }
 `;
 
+export const ButtonSeparator = styled.div`
+     margin-left: calc(var(--grid-unit) * 2);
+`;
+
+
 export const ButtonsContainer = styled.div`
     display: flex;
     flex: 1;
     flex-direction: row;
     align-self: flex-start;
     justify-content: flex-end;
-
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
-    }
 `;
 
 export const TopContainer = styled.div`
@@ -64,3 +66,4 @@ export const LoadingContainer = styled.div`
         font-size: calc(var(--grid-unit) * 3);
     }
 `;
+

@@ -2,12 +2,16 @@ import React from 'react';
 import { tokens } from '@equinor/eds-tokens';
 import { Button } from '@equinor/eds-core-react';
 import { Tag, TagMigrationRow } from '../types';
-import { Container, Header, InnerContainer, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer } from './SelectMigrateTags.style';
+import { Container, Header, InnerContainer, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer, ButtonSeparator } from './SelectMigrateTags.style';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import Table from '../../../../../components/Table';
 import Loading from '../../../../../components/Loading';
 import { AddScopeMethod } from '../AddScope';
 import { useHistory } from 'react-router-dom';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+
 
 type SelectMigrateTagsProps = {
     selectedTags: Tag[];
@@ -21,8 +25,12 @@ type SelectMigrateTagsProps = {
 }
 
 const tableColumns = [
-    { title: 'Tag no', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
+    { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
+    { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
+    { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
+    { title: 'Register', field: 'registerCode' },
+    { title: 'Due', field: 'nextUpcommingDueTime' },
+    { title: 'Start date', field: 'startDate' },
     { title: 'Register', field: 'registerCode' },
     { title: 'Tag Func', field: 'tagFunctionCode' },
     { title: 'Comm Pkg', field: 'commPkgNo' },
@@ -31,15 +39,25 @@ const tableColumns = [
     { title: 'PO title', field: 'purchaseOrderTitle' },
     { title: 'Call Off', field: 'callOffNo' },
     { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
-    { title: 'Remark', field: 'preservationRemark' },
     { title: 'Storage Area', field: 'storageArea' },
     { title: 'Mode', field: 'modeCode' },
-    { title: 'Heating', render: (tag: TagMigrationRow): string => tag.heating === true ? 'Yes' : 'No' },
-    { title: 'Special Req.', render: (tag: TagMigrationRow): string => tag.special === true ? 'Yes' : 'No' }
+    {
+        title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
+    },
+
+    { title: 'Special Req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
+    {
+        title: 'Preserved',
+        field: 'isPreserved',
+        render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
+        filtering: false
+    },
+
 ];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
+    const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
 
     const removeAllSelectedTagsInScope = (): void => {
@@ -55,6 +73,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
         const allRows = rowData
             .map(row => {
                 return {
+                    tagId: row.id,
                     tagNo: row.tagNo,
                     description: row.description,
                     mcPkgNo: row.mcPkgNo
@@ -74,6 +93,23 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
             props.removeTag(row.tagNo);
         } else {
             props.setSelectedTags([...props.selectedTags, tagToHandle]);
+        }
+    };
+
+    const removeFromMigrationScope = async (): Promise<void> => {
+        try {
+            const tags: number[] = [];
+            props.selectedTags.map(t => {
+                if (t.tagId) {
+                    tags.push(t.tagId);
+                }
+            });
+            await procosysApiClient.markTagsAsMigrated(project.name, tags);
+            props.setSelectedTags([]);
+            showSnackbarNotification('Tags are removed from migration scope.', 5000);
+        } catch (error) {
+            console.error('Fetching tags for migration failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
         }
     };
 
@@ -105,6 +141,9 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                 </InnerContainer>
                 <ButtonsContainer>
                     <Button onClick={cancel} variant='outlined' >Cancel</Button>
+                    <ButtonSeparator />
+                    <Button onClick={removeFromMigrationScope} variant='outlined' >Remove from migration scope</Button>
+                    <ButtonSeparator />
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </ButtonsContainer>
             </TopContainer>

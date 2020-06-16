@@ -13,7 +13,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 import SelectMigrateTags from './SelectMigrateTags/SelectMigrateTags';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 export enum AddScopeMethod {
     AddTagsManually = 'AddTagsManually',
@@ -25,7 +24,6 @@ export enum AddScopeMethod {
 
 const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
-    const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
     const { method } = useParams();
 
@@ -90,7 +88,7 @@ const AddScope = (): JSX.Element => {
         setIsLoading(true);
         try {
             let result: TagMigrationRow[] = [];
-            result = await procosysApiClient.getTagsForMigrationToNewPreservation(project.name);
+            result = await apiClient.getTagsForMigration(project.name);
 
             if (result.length === 0) {
                 showSnackbarNotification('No tags for migration was found.', 5000);
@@ -202,7 +200,7 @@ const AddScope = (): JSX.Element => {
                     await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
                 case AddScopeMethod.MigrateTags:
-                    // todo: await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    await apiClient.migrateTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
                     break;
             }
 
@@ -272,6 +270,33 @@ const AddScope = (): JSX.Element => {
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
         }
     };
+
+    const removeSelectedTagMigration = (tagNo: string): void => {
+        const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
+        const tableDataIndex = migrationTableData.findIndex(tag => tag.tagNo === tagNo);
+        if (selectedIndex > -1) {
+            // remove from selected tags
+            setSelectedTags(() => {
+                return [
+                    ...selectedTags.slice(0, selectedIndex),
+                    ...selectedTags.slice(selectedIndex + 1)
+                ];
+            });
+
+            // remove checked state from table data (needed to reflect change when navigating to "previous" step)
+            const newMigrationTableData = [...migrationTableData];
+            if (tableDataIndex > -1) {
+                const tagToUncheck = newMigrationTableData[tableDataIndex];
+                if (tagToUncheck.tableData) {
+                    tagToUncheck.tableData.checked = false;
+                    setMigrationTableData(newMigrationTableData);
+                }
+            }
+
+            showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
+        }
+    };
+
 
     switch (step) {
         case 1:
@@ -345,7 +370,7 @@ const AddScope = (): JSX.Element => {
                         migrationTableData={migrationTableData}
                         isLoading={isLoading}
                         addScopeMethod={addScopeMethod}
-                        removeTag={removeSelectedTag}
+                        removeTag={removeSelectedTagMigration}
                     />
                     <Divider />
                     <SelectedTags>

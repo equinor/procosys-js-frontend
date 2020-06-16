@@ -129,7 +129,7 @@ class ProCoSysClient extends ApiClient {
     /**
      * Returns Tag function details
      *
-     * @param tagFunctionCode Tag Function Code
+     * @param tagFunctionCode Tag Function Codex
      * @param registerCode Register Code
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
@@ -183,6 +183,24 @@ class ProCoSysClient extends ApiClient {
             settings
         );
         return PascalCaseConverter.objectToCamelCase(result.data) as TagMigrationResponse[];
+    }
+
+    /**
+     * Mark tags as migrated.  
+     */
+    async markTagsAsMigrated(
+        projectName: string,
+        tags: number[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = '/PreservationTags';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        await this.client.put(endpoint, tags, settings);
     }
 }
 

@@ -1,4 +1,5 @@
 export interface Tag {
+    tagId?: number;
     tagNo: string;
     description: string;
     mcPkgNo?: string;
@@ -35,6 +36,9 @@ export interface TagMigrationRow {
     modeCode: string;
     heating: boolean;
     special: boolean;
+    nextUpcommingDueTime: Date;
+    startDate: Date;
+    isPreserved: boolean;
     tableData?: {
         checked: boolean;
     };

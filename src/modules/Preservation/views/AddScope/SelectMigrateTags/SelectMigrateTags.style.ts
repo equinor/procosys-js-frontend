@@ -35,9 +35,8 @@ export const Search = styled.div`
 `;
 
 export const ButtonSeparator = styled.div`
-     margin-left: calc(var(--grid-unit) * 2);
+     margin-right: calc(var(--grid-unit) * 2);
 `;
-
 
 export const ButtonsContainer = styled.div`
     display: flex;

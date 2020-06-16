@@ -19,8 +19,14 @@ interface ActionDetails {
     dueTimeUtc: Date | null;
     isClosed: boolean;
     createdAtUtc: Date;
+    modifiedAtUtc: Date | null;
     closedAtUtc: Date | null;
     createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
+    modifiedBy: {
         id: number;
         firstName: string;
         lastName: string;
@@ -149,20 +155,40 @@ const ActionExpanded = ({
                     </Section>
                 )
             }
-            <Section>
-                <div>
-                    <GridRow>
-                        <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
-                        <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
-                        <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                            {getDateField(actionDetails.createdAtUtc)}
-                        </Typography>
-                        <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                            {actionDetails.createdBy.firstName} {actionDetails.createdBy.lastName}
-                        </Typography>
-                    </GridRow>
-                </div>
-            </Section>
+            {
+                !actionDetails.modifiedAtUtc && (
+                    <Section>
+                        <div>
+                            <GridRow>
+                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
+                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                                    {getDateField(actionDetails.createdAtUtc)}
+                                </Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                                    {actionDetails.createdBy.firstName} {actionDetails.createdBy.lastName}
+                                </Typography>
+                            </GridRow>
+                        </div>
+                    </Section>
+                )}
+            {
+                actionDetails.modifiedAtUtc && (
+                    <Section>
+                        <div>
+                            <GridRow>
+                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Modified at</Typography>
+                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Modified by</Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
+                                    {getDateField(actionDetails.modifiedAtUtc)}
+                                </Typography>
+                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
+                                    {actionDetails.modifiedBy.firstName} {actionDetails.modifiedBy.lastName}
+                                </Typography>
+                            </GridRow>
+                        </div>
+                    </Section>
+                )}
             <Section>
                 <Typography variant='caption'>Description</Typography>
                 <Typography variant="body_short">{actionDetails.description}</Typography>

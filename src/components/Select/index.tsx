@@ -141,7 +141,7 @@ const Select = ({
             >
                 {children}
 
-                <DropdownIcon>
+                <DropdownIcon disabled={disabled} >
                     <KeyboardArrowDownIcon />
                 </DropdownIcon>
             </DropdownButton>

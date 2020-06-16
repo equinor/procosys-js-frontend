@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
+import Spinner from '../Spinner';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -33,6 +34,7 @@ const TreeView = ({
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
+    const [loading, setLoading] = useState<number | string | null>();
 
     const collapseNode = (node: NodeData): void => {
         // set collapsed state
@@ -79,7 +81,9 @@ const TreeView = ({
         } else {
             // load children 
             if (node.getChildren) {
+                setLoading(node.id);
                 children = await node.getChildren();
+                setLoading(null);
             }
 
             // set parent relation for all children
@@ -129,11 +133,13 @@ const TreeView = ({
             <ExpandCollapseIcon
                 isExpanded={isExpanded}
                 onClick={async (): Promise<void> => {
-                    isExpanded ? collapseNode(node) : await expandNode(node);
+                    loading ? null : (isExpanded ? collapseNode(node) : await expandNode(node));
                 }}
+                spinner={loading == node.id}
             >
-                {isExpanded && <KeyboardArrowDownIcon />}
-                {!isExpanded && <KeyboardArrowRightIcon />}
+                {(isExpanded && loading != node.id) && <KeyboardArrowDownIcon />}
+                {(!isExpanded && loading != node.id) && <KeyboardArrowRightIcon />}
+                {(loading == node.id) && <Spinner />}
             </ExpandCollapseIcon>
         );
     };

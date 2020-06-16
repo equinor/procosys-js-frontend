@@ -25,3 +25,21 @@ export const NextInfo = styled.span<{ isOverdue: boolean }>`
         color: ${tokens.colors.interactive.danger__text.rgba};
     `}
 `;
+
+export const SelectFileLabel = styled.div`
+    padding: 10px;
+    border: 1px solid ${tokens.colors.interactive.primary__resting.rgba};
+    box-sizing: border-box;
+    border-radius: 4px;
+    cursor: pointer;
+    :hover {
+        background-color: ${tokens.colors.interactive.primary__hover_alt.rgba};
+    }
+`;
+
+export const AttachmentLink = styled.div`
+    display: flex;
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+    text-decoration: underline;
+    cursor: pointer;
+`;

@@ -6,12 +6,12 @@ import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
-import FilterListOutlinedIcon from '@material-ui/icons/FilterListOutlined';
 import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
+import OptionsDropdown from '../../../../components/OptionsDropdown';
 import Flyout from './../../../../components/Flyout';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
@@ -24,6 +24,8 @@ import ScopeFilter from './ScopeFilter/ScopeFilter';
 import EdsIcon from '../../../../components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
+import {Tooltip } from '@material-ui/core';
+import VoidDialog from './VoidDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -36,6 +38,10 @@ export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | nu
 export const isTagOverdue = (tag: PreservedTag): boolean => {
     const requirement = getFirstUpcomingRequirement(tag);
     return requirement ? requirement.nextDueWeeks < 0 : false;
+};
+
+export const isTagVoided = (tag: PreservedTag): boolean => {
+    return tag.isVoided;
 };
 
 const backToListButton = 'Back to list';
@@ -65,12 +71,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         areaCodes: []
     });
 
+    const [numberOfTags, setNumberOfTags] = useState<number>();
+    const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
+    const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
+
     const {
         project,
         availableProjects,
         setCurrentProject,
         apiClient,
     } = usePreservationContext();
+    const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
 
     const refreshScopeListCallback = useRef<() => void>();
 
@@ -84,6 +95,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }, [tagListFilter]
     );
 
+    useEffect(() => {
+        setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);        
+        setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);        
+    }, [selectedTags]);
+
     const setRefreshScopeListCallback = (callback: () => void): void => {
         refreshScopeListCallback.current = callback;
     };
@@ -92,6 +108,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter).then(
                 (response) => {
+                    setNumberOfTags(response.maxAvailable);
                     return response;
                 }
             );
@@ -281,6 +298,64 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             completeFunc);
     };
 
+    let voidableTags: PreservedTag[] = [];
+    let unVoidableTags: PreservedTag[] = [];
+
+    const voidTags = async (): Promise<void> => {
+        try {
+            for(const tag of voidableTags) {
+                await apiClient.voidTag(tag.id, tag.rowVersion);
+            }
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been voided.');
+        } catch (error) {
+            console.error('Voiding failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const unVoidTags = async (): Promise<void> => {
+        try {
+            for(const tag of unVoidableTags) {
+                await apiClient.unvoidTag(tag.id, tag.rowVersion);
+            }
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been unvoided.');
+        } catch (error) {
+            console.error('Unvoid failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const showVoidDialog = (voiding: boolean): void => {
+        voidableTags = [];
+        unVoidableTags = [];
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (!tag.isVoided && voiding) {
+                voidableTags.push(newTag);
+            } else if(tag.isVoided && !voiding) {
+                unVoidableTags.push(newTag);
+            }
+        });
+        const voidButton = voidableTags.length > 0 ? 'Void' : 'Unvoid';
+        const voidFunc = voidableTags.length > 0 ? voidTags : unVoidTags;
+        const voidTitle = voidableTags.length > 0 ? 'Voiding following tags' : 'Unvoiding following tags';
+
+        showModalDialog(
+            voidTitle,
+            <VoidDialog tags={voidableTags.length > 0 ? voidableTags : unVoidableTags} voiding={voiding} />,
+            '80vw',
+            backToListButton,
+            null,
+            voidButton,
+            voidFunc);
+    };
+
     const openFlyout = (tag: PreservedTag): void => {
         setFlyoutTagId(tag.id);
         setDisplayFlyout(true);
@@ -368,6 +443,24 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
+                        <OptionsDropdown 
+                            text="More options" 
+                            icon='more_verticle' 
+                            variant='ghost' 
+                            disabled={selectedTags.length < 1}>
+                            <DropdownItem 
+                                disabled={!unvoidedTagsSelected}
+                                onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>
+                                <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                Void
+                            </DropdownItem>
+                            <DropdownItem 
+                                disabled={!voidedTagsSelected}
+                                onClick={(e: React.MouseEvent): void => !voidedTagsSelected ? e.stopPropagation() : showVoidDialog(false)}>
+                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba}/>
+                                Unvoid
+                            </DropdownItem>
+                        </OptionsDropdown>
                         <StyledButton
                             variant='ghost'
                             disabled={true}>
@@ -383,14 +476,18 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={true}>
                             <PrintOutlinedIcon fontSize='small' />
                         </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            onClick={(): void => {
-                                toggleFilter();
-                            }}
-                        >
-                            <FilterListOutlinedIcon fontSize='small' />
-                        </StyledButton>
+                        <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{textAlign: 'center'}}>
+                            <div>
+                                <StyledButton
+                                    variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
+                                    onClick={(): void => {
+                                        toggleFilter();
+                                    }}
+                                >
+                                    <EdsIcon name='filter_list'/>
+                                </StyledButton>
+                            </div>
+                        </Tooltip>
                     </IconBar>
                 </HeaderContainer>
 
@@ -424,7 +521,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

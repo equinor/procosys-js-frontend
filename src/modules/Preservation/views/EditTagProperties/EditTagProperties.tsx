@@ -1,9 +1,8 @@
-import { ButtonContainer, CenterContent, Container, Header, InputContainer } from './EditTagProperties.style';
+import { ButtonContainer, Container, Header, InputContainer } from './EditTagProperties.style';
 import { TagDetails, Step, Journey, RequirementType } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
 import { Button } from '@equinor/eds-core-react';
-import Spinner from '../../../../components/Spinner';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { TextField } from '@equinor/eds-core-react';
@@ -11,6 +10,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { Canceler } from 'axios';
 import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+import Spinner from '@procosys/components/Spinner';
 
 interface RequirementFormInput {
     requirementDefinitionId: number | null;
@@ -27,27 +27,32 @@ const SetTagProperties = (): JSX.Element => {
 
     const [journey, setJourney] = useState(-1);
     const [journeys, setJourneys] = useState<Journey[]>([]);
+    const [newJourney, setNewJourney] = useState<string>();
     const [step, setStep] = useState<Step | null>();
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
-    //const [formIsValid, setFormIsValid] = useState(false);
     const [tag, setTag] = useState<TagDetails>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
-
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
-
-    const [isLoading] = useState<boolean>(false);
+    const [remarkOrStorageAreaEdited, setRemarkOrStorageAreaEdited] = useState<boolean>(false);
+    const [journeyOrRequirementsEdited, setJourneyOrRequirementsEdited] = useState<boolean>(false);
+    const [poTag, setPoTag] = useState<boolean>(false);
+    const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
+    const [pageLoading] = useState<boolean>(false);
 
     const { tagId } = useParams();
+
 
     const getTag = async (): Promise<void> => {
         if (tagId) {
             try {
                 const details = await apiClient.getTagDetails(Number.parseInt(tagId));
                 setTag(details);
-                
+                if(details.tagNo.substr(0,4) == '#PO-') {
+                    setPoTag(true);
+                }
             } catch (error) {
                 console.error('Get tag details failed: ', error.message);
             }
@@ -58,7 +63,7 @@ const SetTagProperties = (): JSX.Element => {
         if (tagId) {
             try {
                 const response = await apiClient.getTagRequirements(Number.parseInt(tagId));
-                setRequirements(response.map(itm => {
+                const mappedResponse = response.map(itm => {
                     return {
                         requirementDefinitionId: itm.id,
                         intervalWeeks: itm.intervalWeeks,
@@ -67,7 +72,9 @@ const SetTagProperties = (): JSX.Element => {
                         editingRequirements: true,
                         isVoided: itm.isVoided
                     };
-                }));
+                });
+                setRequirements([...mappedResponse]);
+                setOriginalRequirements([...mappedResponse]);
             } catch (error) {
                 console.error('Get requirement failed: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
@@ -113,7 +120,6 @@ const SetTagProperties = (): JSX.Element => {
         };
     }, []);
 
-
     useEffect(() => {
         if(journeys.length > 0 && tag) {
             if (remarkInputRef.current) {
@@ -124,7 +130,7 @@ const SetTagProperties = (): JSX.Element => {
             }
             const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journeyTitle);
             setJourney(initialJourney);
-            setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.title === tag.mode));
+            setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode));
         }
     }, [tag, journeys]);
 
@@ -145,9 +151,14 @@ const SetTagProperties = (): JSX.Element => {
      * Map Journey steps into menu elements
      */
     useEffect(() => {
-        setStep(null);
+        if(journeyOrRequirementsEdited) {
+            setStep(null);
+        }
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
+                if(poTag && itm.mode.title.toUpperCase() == 'SUPPLIER') {
+                    setStep(itm);
+                }
                 return {
                     text: itm.mode.title,
                     value: itm.id
@@ -155,15 +166,53 @@ const SetTagProperties = (): JSX.Element => {
             });
             setMappedSteps(mapped);
         }
+        
     }, [journey]);
 
 
     const setJourneyFromForm = (value: number): void => {
-        setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
+        const j = journeys.find((pJourney: Journey) => pJourney.id === value);
+        if (j) {
+            setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
+            setNewJourney(j.title);
+        }
     };
 
-    const save = (): void => {
-        console.log('Saving...');
+    // const setStepFromForm = (stepId: number): void => {
+    //     setStep(journeys[journey].steps.find((pStep: Step) => pStep.id === stepId));
+    // };
+
+    const remarkOrStorageAreaChange = (): void => {
+        if (tag && remarkInputRef.current && storageAreaInputRef.current && (remarkInputRef.current.value != tag.remark || storageAreaInputRef.current.value != tag.storageArea)) {
+            setRemarkOrStorageAreaEdited(true);
+        } else {
+            setRemarkOrStorageAreaEdited(false);
+        }
+    };
+
+    useEffect( () => {
+        if (tag && ((newJourney && newJourney != tag.journeyTitle) || (step && step.mode.title != tag.mode) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
+            setJourneyOrRequirementsEdited(true);
+        } else {
+            setJourneyOrRequirementsEdited(false);
+        }
+    }, [requirements, step, journey]);
+
+    const updateRemarkAndStorageArea = async (): Promise<void> => {
+        try {
+            if (tag && remarkInputRef.current && storageAreaInputRef.current) {
+                await apiClient.setRemarkAndStorageArea(tag.id, remarkInputRef.current.value, storageAreaInputRef.current.value, tag.rowVersion);
+            }
+        } catch (error) {
+            console.error('Error updating remark and storage area', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+    const save = async (): Promise<void> => {
+        if(remarkOrStorageAreaEdited) {
+            await updateRemarkAndStorageArea();
+        }
     };
 
     const saveDialog = (): void => {
@@ -178,118 +227,77 @@ const SetTagProperties = (): JSX.Element => {
             true);
     };
 
-    // const submit = async (): Promise<void> => {
-    //     setIsLoading(true);
-    //     // const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
-    //     // let storageAreaValue;
-    //     // if (storageAreaInputRef.current) {
-    //     //     storageAreaValue = storageAreaInputRef.current.value;
-    //     // }
-
-    //     if (step) {
-    //         // if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
-    //         //     await submitForm(step.id, [], remarkValue, storageAreaValue);
-    //         // } else {
-    //         //     const requirementsMappedForApi: Requirement[] = [];
-    //         //     requirements.forEach((req) => {
-    //         //         if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
-    //         //             requirementsMappedForApi.push({
-    //         //                 requirementDefinitionId: req.requirementDefinitionId,
-    //         //                 intervalWeeks: req.intervalWeeks
-    //         //             });
-    //         //         }
-    //         //     });
-    //         //     if (requirementsMappedForApi.length > 0) {
-    //         //         await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
-    //         //     } else {
-    //         //         showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
-    //         //     }
-    //         // }
-    //     } else {
-    //         showSnackbarNotification('Error occured. Step is not provided.', 5000);
-    //     }
-    //     setIsLoading(false);
-    // };
-
-    // const setJourneyFromForm = (value: number): void => {
-    //     setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
-    // };
-
-    // const setStepFromForm = (stepId: number): void => {
-    //     const step = journeys[journey].steps.find((pStep: Step) => pStep.id === stepId);
-    //     setStep(step);
-    // };
-
     const cancel = (): void => {
         history.push('/');
     };
 
     return (
         <div>
+            
             <Header>
                 <h1>Edit preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            <Container>
-                <div>
-                    <InputContainer>
-                        <SelectInput
-                            onChange={setJourneyFromForm}
-                            data={mappedJourneys}
-                            label={'Preservation journey for all selected tags'}
-                        >
-                            {(journey > -1 && journeys[journey].title) || 'Select journey'}
-                        </SelectInput>
-                    </InputContainer>
-                    <InputContainer>
-                        <SelectInput
+            { pageLoading ? 
+                <Spinner /> :
+                <Container>
+                    <div>
+                        <InputContainer>
+                            <SelectInput
+                                onChange={setJourneyFromForm}
+                                data={mappedJourneys}
+                                label={'Preservation journey for all selected tags'}
+                            >
+                                {(journey > -1 && journeys[journey].title) || 'Select journey'}
+                            </SelectInput>
+                        </InputContainer>
+                        <InputContainer>
+                            <SelectInput
                             //onChange={setStepFromForm}
-                            data={mappedSteps}
-                            //disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
-                            label={'Preservation step'}
-                        >
-                            {(step && step.mode.title) || 'Select step'}                        
-                        </SelectInput>
-                    </InputContainer>
-                    <InputContainer style={{ maxWidth: '480px' }}>
-                        <TextField
-                            id={'Remark'}
-                            label='Remark for whole preservation journey'
-                            inputRef={remarkInputRef}
-                            placeholder={'Write Here'}
-                            meta='Optional'
-                        />
-                    </InputContainer>
-                    <InputContainer style={{ maxWidth: '150px' }}>
-                        <TextField
-                            id={'StorageArea'}
-                            label='Storage area'
-                            inputRef={storageAreaInputRef}
-                            placeholder='Write Here'
-                            meta='Optional'
-                        />
-                    </InputContainer>
-                    <h2>Requirements for all selected tags</h2>
-                    <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
-                </div>
-                <ButtonContainer>
-                    <Button  onClick={cancel} variant="outlined" disabled={isLoading}>
+                                data={mappedSteps}
+                                disabled={poTag}
+                                label={'Preservation step'}
+                            >
+                                {(step && step.mode.title) || 'Select step'}                        
+                            </SelectInput>
+                        </InputContainer>
+                        <InputContainer style={{ maxWidth: '480px' }}>
+                            <TextField
+                                id={'Remark'}
+                                label='Remark for whole preservation journey'
+                                inputRef={remarkInputRef}
+                                placeholder={'Write Here'}
+                                meta='Optional'
+                                onChange={remarkOrStorageAreaChange}
+                            />
+                        </InputContainer>
+                        <InputContainer style={{ maxWidth: '150px' }}>
+                            <TextField
+                                id={'StorageArea'}
+                                label='Storage area'
+                                inputRef={storageAreaInputRef}
+                                placeholder='Write Here'
+                                meta='Optional'
+                                onChange={remarkOrStorageAreaChange}
+                            />
+                        </InputContainer>
+                        <h2>Requirements for all selected tags</h2>
+                        <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
+                    </div>
+                    <ButtonContainer>
+                        <Button  onClick={cancel} variant="outlined">
                         Cancel
-                    </Button>
-                    <Button
-                        onClick={saveDialog}
-                        color="primary"
-                        //disabled={(!formIsValid || isLoading)}
-                    >
-                        {isLoading && (
-                            <CenterContent>
-                                <Spinner /> Save
-                            </CenterContent>
-                        )}
-                        {!isLoading && ('Save')}
-                    </Button>
-                </ButtonContainer>
-            </Container>
+                        </Button>
+                        <Button
+                            onClick={saveDialog}
+                            color="primary"
+                            disabled={(!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited)}
+                        >
+                            {'Save'}
+                        </Button>
+                    </ButtonContainer>
+                </Container>
+            }
         </div>
 
     );

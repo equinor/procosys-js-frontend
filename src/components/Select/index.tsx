@@ -144,9 +144,9 @@ const Select = ({
             >
                 {children}
 
-                {!isVoided && <DropdownIcon disabled={disabled} >
+                <DropdownIcon voided={isVoided} disabled={disabled} >
                     <KeyboardArrowDownIcon />
-                </DropdownIcon>}
+                </DropdownIcon>
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
                 <ul ref={listRef}

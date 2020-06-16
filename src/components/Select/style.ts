@@ -35,6 +35,7 @@ export const Container = styled.div`
 
 interface IconProps {
     disabled: boolean;
+    voided: boolean;
 }
 
 export const DropdownIcon = styled.div<IconProps>`
@@ -48,6 +49,12 @@ export const DropdownIcon = styled.div<IconProps>`
             fill: ${tokens.colors.interactive.disabled__text.rgba};
         `}
     }
+    min-height: calc(var(--grid-unit) * 3);
+    ${({voided}): any => voided && css`
+        svg {
+            display: none;
+        }
+    `}
 `;
 
 interface DropdownButtonProps {

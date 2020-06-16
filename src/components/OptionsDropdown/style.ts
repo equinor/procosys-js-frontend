@@ -51,12 +51,15 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
+
+    > * {
+        width: 100%
+    }
     div {
-        width: 100%;
         display: flex;
         align-items: center;
         svg {
             padding-right: calc(var(--grid-unit) * 2);
-        }
+    }
     }
 `;

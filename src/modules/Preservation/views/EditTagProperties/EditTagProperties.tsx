@@ -21,7 +21,7 @@ interface RequirementFormInput {
     isVoided?: boolean;
 }
 
-const SetTagProperties = (): JSX.Element => {
+const EditTagProperties = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
 
@@ -63,6 +63,10 @@ const SetTagProperties = (): JSX.Element => {
         }
     };
 
+    useEffect(() => {
+        //console.log(requirements);
+    }, [requirements]);
+
     const getRequirements = async (): Promise<void> => {
         if (tagId) {
             try {
@@ -79,6 +83,8 @@ const SetTagProperties = (): JSX.Element => {
                 });
                 setRequirements([...mappedResponse]);
                 setOriginalRequirements([...mappedResponse]);
+                setLoading(false);
+                //console.log('-');
             } catch (error) {
                 console.error('Get requirement failed: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
@@ -137,6 +143,7 @@ const SetTagProperties = (): JSX.Element => {
             setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode));
         }
     }, [tag, journeys]);
+
 
     /**
      * Map journeys into menu elements
@@ -237,7 +244,7 @@ const SetTagProperties = (): JSX.Element => {
 
 
     const save = async (): Promise<void> => {
-        setLoading(true);
+        //setLoading(true);
         if (remarkOrStorageAreaEdited) {
             await updateRemarkAndStorageArea();
         }
@@ -246,7 +253,7 @@ const SetTagProperties = (): JSX.Element => {
         }
         showSnackbarNotification('Changes to the tag have been saved');
         history.push('/');
-        setLoading(false);
+        //setLoading(false);
     };
 
     const saveDialog = (): void => {
@@ -268,7 +275,7 @@ const SetTagProperties = (): JSX.Element => {
     return (
         <div>
             <Header>
-                <h1>Edit preservation scope</h1>
+                <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing' }</h1>
                 <div>{project.description}</div>
             </Header>
             { loading ? 
@@ -338,4 +345,4 @@ const SetTagProperties = (): JSX.Element => {
     );
 };
 
-export default SetTagProperties;
+export default EditTagProperties;

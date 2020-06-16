@@ -10,6 +10,7 @@ import { TextField } from '@equinor/eds-core-react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Canceler } from 'axios';
 import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 
 interface RequirementFormInput {
     requirementDefinitionId: number | null;
@@ -161,7 +162,21 @@ const SetTagProperties = (): JSX.Element => {
         setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
     };
 
+    const save = (): void => {
+        console.log('Saving...');
+    };
 
+    const saveDialog = (): void => {
+        showModalDialog(
+            'Confirm saving changes to tag',
+            null,
+            '30vw',
+            'Back to editing',
+            null,
+            'Save',
+            save,
+            true);
+    };
 
     // const submit = async (): Promise<void> => {
     //     setIsLoading(true);
@@ -262,7 +277,7 @@ const SetTagProperties = (): JSX.Element => {
                         Cancel
                     </Button>
                     <Button
-                        //onClick={submit}
+                        onClick={saveDialog}
                         color="primary"
                         //disabled={(!formIsValid || isLoading)}
                     >

@@ -42,7 +42,7 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'fonts/'
+                            outputPath: 'v2-assets/fonts/'
                         }
                     }
                 ]
@@ -64,10 +64,10 @@ module.exports = {
     },
     output: {
         // `filename` provides a template for naming your bundles (remember to use `[name]`)
-        filename: '[name].[hash].bundle.js',
+        filename: 'v2-assets/[name].[hash].bundle.js',
         // `chunkFilename` provides a template for naming code-split bundles (optional)
-        chunkFilename: '[name].[hash].chunk.js',
-        path: path.resolve(__dirname, 'build/'),
+        chunkFilename: 'v2-assets/[name].[hash].chunk.js',
+        path: path.resolve(__dirname, 'build'),
         publicPath: '/'
     },
     devServer: {

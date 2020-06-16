@@ -15,7 +15,7 @@ const authConfig: Configuration = {
     // }
 };
 
-const defaultLoginScopes = settings.auth.defaultScopes;
+const defaultLoginScopes = JSON.parse(settings.auth.defaultScopes.replace(/'/g,'"'));
 
 export interface IAuthService {
     /**

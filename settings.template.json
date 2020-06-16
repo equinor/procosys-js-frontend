@@ -2,27 +2,27 @@
     "auth": {
         "clientId": "",
         "authority": "",
-        "defaultScopes": []
+        "defaultScopes": "[]"
     },
     "externalResources": {
         "procosysApi": {
             "url": "",
-            "scope": [],
+            "scope": "[]",
             "version": ""
         },
         "graphApi": {
             "url": "",
-            "scope": [],
+            "scope": "[]",
             "version": ""
         },
         "preservationApi": {
             "url": "",
-            "scope": [],
+            "scope": "[]",
             "version": ""
         },
         "libraryApi": {
             "url": "",
-            "scope": [],
+            "scope": "[]",
             "version": ""
         }
     }

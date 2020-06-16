@@ -5,6 +5,7 @@ import { RequestCanceler } from '../../../http/HttpClient';
 import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
+const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g,'"'));
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -396,7 +397,7 @@ class PreservationApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.preservationApi.scope.join(' '),
+            scopes.join(' '),
             Settings.externalResources.preservationApi.url
         );
         this.client.interceptors.request.use(

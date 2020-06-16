@@ -39,3 +39,13 @@ export const RequirementMessage = styled.div`
     font-weight: bold;
     margin-top: calc(var(--grid-unit)*6);
 `;
+
+export const SpinnerContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    margin-bottom: 36px;
+`;

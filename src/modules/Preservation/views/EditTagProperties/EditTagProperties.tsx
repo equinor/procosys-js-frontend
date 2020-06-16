@@ -1,4 +1,4 @@
-import { ButtonContainer, Container, Header, InputContainer } from './EditTagProperties.style';
+import { ButtonContainer, Container, Header, InputContainer, SpinnerContainer } from './EditTagProperties.style';
 import { TagDetails, Step, Journey, RequirementType } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
@@ -44,7 +44,7 @@ const SetTagProperties = (): JSX.Element => {
     const [poTag, setPoTag] = useState<boolean>(false);
     const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
 
-    const [pageLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
 
     const { tagId } = useParams();
 
@@ -186,6 +186,7 @@ const SetTagProperties = (): JSX.Element => {
         setStep(journeys[journey].steps.find((pStep: Step) => pStep.id === stepId));
     };
 
+
     const remarkOrStorageAreaChange = (): void => {
         if (tag && remarkInputRef.current && storageAreaInputRef.current && (remarkInputRef.current.value != tag.remark || storageAreaInputRef.current.value != tag.storageArea)) {
             setRemarkOrStorageAreaEdited(true);
@@ -194,7 +195,9 @@ const SetTagProperties = (): JSX.Element => {
         }
     };
 
-
+    /**
+     * Check if any changes have been made to journey, step or requirements
+     */
     useEffect( () => {
         if (tag && ((newJourney && newJourney != tag.journeyTitle) || (step && step.mode.title != tag.mode) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
             setJourneyOrRequirementsEdited(true);
@@ -234,13 +237,16 @@ const SetTagProperties = (): JSX.Element => {
 
 
     const save = async (): Promise<void> => {
+        setLoading(true);
         if (remarkOrStorageAreaEdited) {
             await updateRemarkAndStorageArea();
         }
         if (journeyOrRequirementsEdited) {
             await updateJourneyAndRequirements();
         }
-
+        showSnackbarNotification('Changes to the tag have been saved');
+        history.push('/');
+        setLoading(false);
     };
 
     const saveDialog = (): void => {
@@ -261,20 +267,21 @@ const SetTagProperties = (): JSX.Element => {
 
     return (
         <div>
-            
             <Header>
                 <h1>Edit preservation scope</h1>
                 <div>{project.description}</div>
             </Header>
-            { pageLoading ? 
-                <Spinner /> :
+            { loading ? 
+                <SpinnerContainer>
+                    <Spinner large /> 
+                </SpinnerContainer>:
                 <Container>
                     <div>
                         <InputContainer>
                             <SelectInput
                                 onChange={setJourneyFromForm}
                                 data={mappedJourneys}
-                                label={'Preservation journey for all selected tags'}
+                                label={'Preservation journey for selected tag'}
                             >
                                 {(journey > -1 && journeys[journey].title) || 'Select journey'}
                             </SelectInput>
@@ -319,7 +326,7 @@ const SetTagProperties = (): JSX.Element => {
                         <Button
                             onClick={saveDialog}
                             color="primary"
-                            disabled={(!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited)}
+                            disabled={((!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
                         >
                             {'Save'}
                         </Button>

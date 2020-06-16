@@ -229,6 +229,7 @@ interface TagRequirementsResponse {
         }
     ];
     comment: string;
+    isVoided: boolean;
     rowVersion: string;
 }
 

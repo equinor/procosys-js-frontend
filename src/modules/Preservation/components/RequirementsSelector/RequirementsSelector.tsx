@@ -4,9 +4,9 @@ import SelectInput, { SelectItem } from '@procosys/components/Select';
 import PreservationIcon from '@procosys/components/PreservationIcon';
 import { Button } from '@equinor/eds-core-react';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { InputContainer, FormFieldSpacer, ButtonContent, ActionContainer } from './RequirementsSelector.style';
 import { tokens } from '@equinor/eds-tokens';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 interface SelectedRequirementResult {
     requirement: RequirementType;
@@ -18,7 +18,8 @@ interface OnChangeRequirementData {
     intervalWeeks: number;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
-    disabledRequirement?: boolean;
+    editingRequirements?: boolean;
+    isVoided?: boolean;
 }
 
 type RequirementsSelectorProps = {
@@ -32,7 +33,8 @@ interface RequirementFormInput {
     intervalWeeks: number | null;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
-    disabledRequirement?: boolean;
+    editingRequirements?: boolean;
+    isVoided?: boolean;
 }
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
@@ -83,7 +85,8 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                     intervalWeeks: req.intervalWeeks as number,
                     requirementTypeTitle: req.requirementTypeTitle,
                     requirementDefinitionTitle: req.requirementDefinitionTitle,
-                    disabledRequirement: req.disabledRequirement
+                    editingRequirements: req.editingRequirements,
+                    isVoided: req.isVoided
                 });
             });
             props.onChange(filtered);
@@ -186,14 +189,26 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         });
     };
 
-    useEffect(() => {
-        console.log(requirements);
-    }, [requirements]);
-
     const deleteRequirement = (index: number): void => {
         setRequirements(oldReq => {
             const copy = [...oldReq];
             copy.splice(index, 1);
+            return copy;
+        });
+    };
+
+    const unvoidRequirement = (index: number): void => {
+        setRequirements(oldReq => {
+            const copy = [...oldReq];
+            copy[index].isVoided = false;
+            return copy;
+        });
+    };
+
+    const voidRequirement = (index: number): void => {
+        setRequirements(oldReq => {
+            const copy = [...oldReq];
+            copy[index].isVoided = true;
             return copy;
         });
     };
@@ -220,7 +235,8 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 onChange={(value): void => setRequirement(value, index)}
                                 data={mappedRequirementTypes}
                                 label={'Requirement'}
-                                disabled={requirement.disabledRequirement}
+                                disabled={requirement.editingRequirements}
+                                isVoided={requirement.isVoided}
                             >
                                 {requirement.requirementDefinitionTitle ? title :
                                     (requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
@@ -229,16 +245,30 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 <SelectInput
                                     onChange={(value): void => setIntervalValue(value, index)}
                                     data={mappedIntervals}
-                                    disabled={!requirement.requirementDefinitionId}
+                                    disabled={!requirement.requirementDefinitionId || requirement.isVoided}
                                     label={'Interval'}
+                                    isVoided={requirement.isVoided}
                                 >
                                     {getDefaultInputText(requirement)}
                                 </SelectInput>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
-                                <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
-                                    <DeleteOutlinedIcon />
-                                </Button>
+                                { requirement.editingRequirements ? 
+                                    ( requirement.isVoided ? 
+                                        <Button className='requirementActionIcon' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
+                                            <EdsIcon name='restore_from_trash' />
+                                            Unvoid
+                                        </Button>
+                                        :
+                                        <Button className='requirementActionIcon' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
+                                            <EdsIcon name='delete_forever' />
+                                            Void
+                                        </Button> )
+                                    :
+                                    <Button className='requirementActionIcon' title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
+                                        <EdsIcon name='delete_to_trash' />
+                                    </Button>
+                                }
                             </FormFieldSpacer>
                         </InputContainer>
                     </React.Fragment>

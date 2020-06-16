@@ -16,7 +16,8 @@ interface RequirementFormInput {
     intervalWeeks: number | null;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
-    disabledRequirement?: boolean;
+    editingRequirements?: boolean;
+    isVoided?: boolean;
 }
 
 const SetTagProperties = (): JSX.Element => {
@@ -62,7 +63,8 @@ const SetTagProperties = (): JSX.Element => {
                         intervalWeeks: itm.intervalWeeks,
                         requirementTypeTitle: itm.requirementTypeTitle,
                         requirementDefinitionTitle: itm.requirementDefinitionTitle,
-                        disabledRequirement: true,
+                        editingRequirements: true,
+                        isVoided: itm.isVoided
                     };
                 }));
             } catch (error) {
@@ -240,7 +242,6 @@ const SetTagProperties = (): JSX.Element => {
                             label='Remark for whole preservation journey'
                             inputRef={remarkInputRef}
                             placeholder={'Write Here'}
-                            helpertext='For example: Check according to predecure 123, or check specifications from supplier'
                             meta='Optional'
                         />
                     </InputContainer>
@@ -250,7 +251,6 @@ const SetTagProperties = (): JSX.Element => {
                             label='Storage area'
                             inputRef={storageAreaInputRef}
                             placeholder='Write Here'
-                            helpertext='For example: AR123'
                             meta='Optional'
                         />
                     </InputContainer>

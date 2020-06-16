@@ -2,7 +2,9 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
+
 export const Container = styled.div`
+    
     ul {
         position: absolute;
         background-color: transparent;
@@ -50,9 +52,14 @@ export const DropdownIcon = styled.div<IconProps>`
 
 interface DropdownButtonProps {
     readonly isOpen: boolean;
+    isVoided?: boolean;
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
+    ${(props): any => props.isVoided && css`
+        cursor: not-allowed;
+        color: ${tokens.colors.interactive.disabled__text.rgba};
+    `}
     border: none;
     display: flex;
     width: 100%;
@@ -153,6 +160,13 @@ export const TitleContent = styled.div<TitleContentProps>`
     `}
 `;
 
-export const Label = styled.div`
+interface LabelProps {
+    isVoided: boolean;
+}
+
+export const Label = styled.div<LabelProps>`
     font-size: 12px;
+    ${(props): any => props.isVoided && css`
+        color: ${tokens.colors.interactive.disabled__text.rgba};
+    `}
 `;

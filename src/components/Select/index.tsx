@@ -19,6 +19,7 @@ type SelectProps = {
     onChange?: (newValue: any) => void;
     children: ReactNode;
     label?: string;
+    isVoided?: boolean;
 };
 
 const KEYCODE_ENTER = 13;
@@ -32,6 +33,7 @@ const Select = ({
     },
     children,
     label,
+    isVoided = false
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -130,8 +132,9 @@ const Select = ({
 
     return (
         <Container ref={containerRef}>
-            <Label>{label}</Label>
+            <Label isVoided={isVoided}>{label}</Label>
             <DropdownButton
+                isVoided={isVoided}
                 onClick={toggleDropdown}
                 disabled={disabled}
                 role="listbox"
@@ -141,9 +144,9 @@ const Select = ({
             >
                 {children}
 
-                <DropdownIcon disabled={disabled} >
+                {!isVoided && <DropdownIcon disabled={disabled} >
                     <KeyboardArrowDownIcon />
-                </DropdownIcon>
+                </DropdownIcon>}
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
                 <ul ref={listRef}

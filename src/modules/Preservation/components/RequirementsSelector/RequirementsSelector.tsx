@@ -255,17 +255,17 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                             <FormFieldSpacer>
                                 { requirement.editingRequirements ? 
                                     ( requirement.isVoided ? 
-                                        <Button className='requirementActionIcon' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
+                                        <Button className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
                                             <EdsIcon name='restore_from_trash' />
                                             Unvoid
                                         </Button>
                                         :
-                                        <Button className='requirementActionIcon' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
+                                        <Button className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
                                             <EdsIcon name='delete_forever' />
                                             Void
                                         </Button> )
                                     :
-                                    <Button className='requirementActionIcon' title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
+                                    <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
                                         <EdsIcon name='delete_to_trash' />
                                     </Button>
                                 }

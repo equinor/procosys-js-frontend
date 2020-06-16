@@ -13,8 +13,8 @@ import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 import Spinner from '@procosys/components/Spinner';
 
 interface RequirementFormInput {
-    requirementDefinitionId: number | null;
-    intervalWeeks: number | null;
+    requirementDefinitionId: number;
+    intervalWeeks: number;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
@@ -27,19 +27,23 @@ const SetTagProperties = (): JSX.Element => {
 
     const [journey, setJourney] = useState(-1);
     const [journeys, setJourneys] = useState<Journey[]>([]);
+    const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [newJourney, setNewJourney] = useState<string>();
+
+    const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [step, setStep] = useState<Step | null>();
+
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
+
     const [tag, setTag] = useState<TagDetails>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
-    const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
-    const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [remarkOrStorageAreaEdited, setRemarkOrStorageAreaEdited] = useState<boolean>(false);
     const [journeyOrRequirementsEdited, setJourneyOrRequirementsEdited] = useState<boolean>(false);
     const [poTag, setPoTag] = useState<boolean>(false);
     const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
+
     const [pageLoading] = useState<boolean>(false);
 
     const { tagId } = useParams();
@@ -178,9 +182,9 @@ const SetTagProperties = (): JSX.Element => {
         }
     };
 
-    // const setStepFromForm = (stepId: number): void => {
-    //     setStep(journeys[journey].steps.find((pStep: Step) => pStep.id === stepId));
-    // };
+    const setStepFromForm = (stepId: number): void => {
+        setStep(journeys[journey].steps.find((pStep: Step) => pStep.id === stepId));
+    };
 
     const remarkOrStorageAreaChange = (): void => {
         if (tag && remarkInputRef.current && storageAreaInputRef.current && (remarkInputRef.current.value != tag.remark || storageAreaInputRef.current.value != tag.storageArea)) {
@@ -190,13 +194,15 @@ const SetTagProperties = (): JSX.Element => {
         }
     };
 
+
     useEffect( () => {
         if (tag && ((newJourney && newJourney != tag.journeyTitle) || (step && step.mode.title != tag.mode) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
             setJourneyOrRequirementsEdited(true);
         } else {
             setJourneyOrRequirementsEdited(false);
         }
-    }, [requirements, step, journey]);
+    }, [requirements, step, journey, originalRequirements]);
+
 
     const updateRemarkAndStorageArea = async (): Promise<void> => {
         try {
@@ -209,10 +215,32 @@ const SetTagProperties = (): JSX.Element => {
         }
     };
 
+
+    const updateJourneyAndRequirements = async (): Promise<void> => {
+        try {
+            if (tag && step) {
+                let newRequirements: RequirementFormInput[] = [];
+                const numberOfNewReq = requirements.length - originalRequirements.length;
+                if (requirements.length > originalRequirements.length) {
+                    newRequirements = [...requirements.slice(-numberOfNewReq)];
+                } 
+                await apiClient.updateStepAndRequirements(tag.id, step.id, requirements.slice(0, -numberOfNewReq), newRequirements);
+            }
+        } catch (error) {
+            console.error('Error updating remark and storage area', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+
     const save = async (): Promise<void> => {
-        if(remarkOrStorageAreaEdited) {
+        if (remarkOrStorageAreaEdited) {
             await updateRemarkAndStorageArea();
         }
+        if (journeyOrRequirementsEdited) {
+            await updateJourneyAndRequirements();
+        }
+
     };
 
     const saveDialog = (): void => {
@@ -253,7 +281,7 @@ const SetTagProperties = (): JSX.Element => {
                         </InputContainer>
                         <InputContainer>
                             <SelectInput
-                            //onChange={setStepFromForm}
+                                onChange={setStepFromForm}
                                 data={mappedSteps}
                                 disabled={poTag}
                                 label={'Preservation step'}

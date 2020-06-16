@@ -15,6 +15,7 @@ resources:
 variables:
  - template: templates/variables/procosys-web-variables.yml@templates
  - template: templates/variables/procosys-global-variables.yml@templates
+ - template: templates/variables/frontend-variables.yml@templates
 
  - name: 'repositoryName'
    value: procosys/frontend
@@ -27,7 +28,6 @@ stages:
     envName: 'build_and_test'
     envRg: '${{ variables.envRgName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     dockerfilePath: '/.docker/Dockerfile'
@@ -45,9 +45,9 @@ stages:
       repository: ${{ variables.repositoryName }}
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
-# Dev deploy stage
+# Deploy to dev environment
 - stage: dev
-  displayName: 'Dev'
+  displayName: 'Deploy to dev'
   dependsOn: 'build_and_test'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
@@ -55,7 +55,6 @@ stages:
     envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
 
   jobs:
@@ -69,3 +68,57 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
       clusterName: 'pcs-aks-test'
+      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+
+# deploy to test environment
+- stage: test
+  displayName: 'Deploy to test'
+  dependsOn: 'build_and_test'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'test'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+
+  jobs:
+  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
+    parameters:
+      deploymentName: 'deploy_to_k8s'
+      dependsOn: ''
+      serviceConnection: '${{ variables.serviceConnection }}'
+      env: '${{ variables.envName }}'
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
+      clusterName: 'pcs-aks-test'
+      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+
+      # deploy to test environment
+- stage: production
+  displayName: 'Deploy to production'
+  dependsOn: 'build_and_test'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'prod'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.prodServiceConnection }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+
+  jobs:
+  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
+    parameters:
+      deploymentName: 'deploy_to_k8s'
+      dependsOn: ''
+      serviceConnection: '${{ variables.serviceConnection }}'
+      env: '${{ variables.envName }}'
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
+      clusterName: 'pcs-aks-prod'
+      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'

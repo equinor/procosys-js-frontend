@@ -6,6 +6,7 @@ import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApi
 import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
+const scopes = JSON.parse(Settings.externalResources.libraryApi.scope.replace(/'/g,'"'));
 
 export interface AreaResponse {
     code: string;
@@ -56,7 +57,7 @@ class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.libraryApi.scope.join(' '),
+            scopes.join(' '),
             Settings.externalResources.libraryApi.url
         );
         this.client.interceptors.request.use(

@@ -56,7 +56,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     useEffect(() => {
         const existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
         setRequirements(existingRequirements);
-    }, [props.requirements]);
+    }, []);
 
     useEffect(() => {
         if (!props.onChange) return;

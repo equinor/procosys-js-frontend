@@ -7,10 +7,10 @@ import { usePreservationContext } from '../../context/PreservationContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { TextField } from '@equinor/eds-core-react';
 import { useParams, useHistory } from 'react-router-dom';
-import { Canceler } from 'axios';
 import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 import Spinner from '@procosys/components/Spinner';
+import { Canceler } from 'axios';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -44,10 +44,11 @@ const EditTagProperties = (): JSX.Element => {
     const [poTag, setPoTag] = useState<boolean>(false);
     const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const { tagId } = useParams();
 
+    const [requirementsFetched, setRequirementsFetched] = useState(false);
 
     const getTag = async (): Promise<void> => {
         if (tagId) {
@@ -58,14 +59,11 @@ const EditTagProperties = (): JSX.Element => {
                     setPoTag(true);
                 }
             } catch (error) {
-                console.error('Get tag details failed: ', error.message);
+                console.error('Get tag details failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
             }
         }
     };
-
-    useEffect(() => {
-        //console.log(requirements);
-    }, [requirements]);
 
     const getRequirements = async (): Promise<void> => {
         if (tagId) {
@@ -83,11 +81,10 @@ const EditTagProperties = (): JSX.Element => {
                 });
                 setRequirements([...mappedResponse]);
                 setOriginalRequirements([...mappedResponse]);
-                setLoading(false);
-                //console.log('-');
+                setRequirementsFetched(true);
             } catch (error) {
                 console.error('Get requirement failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
         }
     };
@@ -99,16 +96,10 @@ const EditTagProperties = (): JSX.Element => {
                 setRequirementTypes(response.data);
             } catch (error) {
                 console.error('Get Requirement Types failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
         }
     };
-
-    useEffect(() => {
-        getTag();
-        getRequirements();
-        getRequirementTypes();
-    }, []);
 
     /**
      * Get Journeys
@@ -121,7 +112,7 @@ const EditTagProperties = (): JSX.Element => {
                 setJourneys(data);
             } catch (error) {
                 console.error('Get Journeys failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
         })();
 
@@ -131,18 +122,20 @@ const EditTagProperties = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        if(journeys.length > 0 && tag) {
-            if (remarkInputRef.current) {
-                remarkInputRef.current.value = tag.remark;
-            }
-            if (storageAreaInputRef.current) {
-                storageAreaInputRef.current.value = tag.storageArea;
-            }
+        if(journeys.length > 0 && tag && requirementsFetched) {
             const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journeyTitle);
             setJourney(initialJourney);
             setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode));
+            setLoading(false);
         }
-    }, [tag, journeys]);
+    }, [tag, journeys, requirementsFetched]);
+
+
+    useEffect(() => {
+        getTag();
+        getRequirements();
+        getRequirementTypes();
+    }, []);
 
 
     /**
@@ -157,6 +150,7 @@ const EditTagProperties = (): JSX.Element => {
         });
         setMappedJourneys(mapped);
     }, [journeys]);
+
 
     /**
      * Map Journey steps into menu elements
@@ -177,7 +171,6 @@ const EditTagProperties = (): JSX.Element => {
             });
             setMappedSteps(mapped);
         }
-        
     }, [journey]);
 
 
@@ -244,16 +237,16 @@ const EditTagProperties = (): JSX.Element => {
 
 
     const save = async (): Promise<void> => {
-        //setLoading(true);
+        setLoading(true);
         if (remarkOrStorageAreaEdited) {
             await updateRemarkAndStorageArea();
         }
         if (journeyOrRequirementsEdited) {
             await updateJourneyAndRequirements();
         }
+        setLoading(false);
         showSnackbarNotification('Changes to the tag have been saved');
         history.push('/');
-        //setLoading(false);
     };
 
     const saveDialog = (): void => {
@@ -278,10 +271,11 @@ const EditTagProperties = (): JSX.Element => {
                 <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing' }</h1>
                 <div>{project.description}</div>
             </Header>
-            { loading ? 
+            { loading ?
                 <SpinnerContainer>
                     <Spinner large /> 
-                </SpinnerContainer>:
+                </SpinnerContainer> 
+                :
                 <Container>
                     <div>
                         <InputContainer>
@@ -307,6 +301,7 @@ const EditTagProperties = (): JSX.Element => {
                             <TextField
                                 id={'Remark'}
                                 label='Remark for whole preservation journey'
+                                defaultValue={tag ? tag.remark : ''}
                                 inputRef={remarkInputRef}
                                 placeholder={'Write Here'}
                                 meta='Optional'
@@ -317,6 +312,7 @@ const EditTagProperties = (): JSX.Element => {
                             <TextField
                                 id={'StorageArea'}
                                 label='Storage area'
+                                defaultValue={tag ? tag.storageArea : ''}
                                 inputRef={storageAreaInputRef}
                                 placeholder='Write Here'
                                 meta='Optional'
@@ -327,7 +323,7 @@ const EditTagProperties = (): JSX.Element => {
                         <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
                     </div>
                     <ButtonContainer>
-                        <Button  onClick={cancel} variant="outlined">
+                        <Button onClick={cancel} variant="outlined">
                         Cancel
                         </Button>
                         <Button
@@ -335,7 +331,7 @@ const EditTagProperties = (): JSX.Element => {
                             color="primary"
                             disabled={((!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
                         >
-                            {'Save'}
+                            Save
                         </Button>
                     </ButtonContainer>
                 </Container>

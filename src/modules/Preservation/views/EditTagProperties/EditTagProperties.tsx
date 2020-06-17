@@ -10,7 +10,6 @@ import { useParams, useHistory } from 'react-router-dom';
 import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 import Spinner from '@procosys/components/Spinner';
-import { Canceler } from 'axios';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -49,6 +48,7 @@ const EditTagProperties = (): JSX.Element => {
     const { tagId } = useParams();
 
     const [requirementsFetched, setRequirementsFetched] = useState(false);
+
 
     const getTag = async (): Promise<void> => {
         if (tagId) {
@@ -104,22 +104,15 @@ const EditTagProperties = (): JSX.Element => {
     /**
      * Get Journeys
      */
-    useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            try {
-                const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
-                setJourneys(data);
-            } catch (error) {
-                console.error('Get Journeys failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message);
-            }
-        })();
-
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
-    }, []);
+    const getJourneys = async (): Promise<void> => {
+        try {
+            const data = await apiClient.getJourneys(false);
+            setJourneys(data);
+        } catch (error) {
+            console.error('Get Journeys failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
 
     useEffect(() => {
         if(journeys.length > 0 && tag && requirementsFetched) {
@@ -134,6 +127,7 @@ const EditTagProperties = (): JSX.Element => {
     useEffect(() => {
         getTag();
         getRequirements();
+        getJourneys();
         getRequirementTypes();
     }, []);
 
@@ -156,7 +150,7 @@ const EditTagProperties = (): JSX.Element => {
      * Map Journey steps into menu elements
      */
     useEffect(() => {
-        if(journeyOrRequirementsEdited) {
+        if(newJourney) {
             setStep(null);
         }
         if (journeys.length > 0 && journeys[journey]) {
@@ -245,7 +239,9 @@ const EditTagProperties = (): JSX.Element => {
             await updateJourneyAndRequirements();
         }
         setLoading(false);
-        showSnackbarNotification('Changes to the tag have been saved');
+        if (tag) {
+            showSnackbarNotification(`Changes to ${tag.tagNo} have been saved`);
+        }
         history.push('/');
     };
 

@@ -186,7 +186,7 @@ interface AreaFilterEntity {
 interface RequirementFormInput {
     requirementDefinitionId: number;
     intervalWeeks: number;
-    voided?: boolean;
+    isVoided?: boolean;
 }
 
 interface UpdateTagFunctionRequestData {
@@ -466,17 +466,17 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateStepAndRequirements(tagId: number, stepId: number, updatedRequirements: RequirementFormInput[], newRequirements: RequirementFormInput[],  setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementFormInput[], newRequirements: RequirementFormInput[],  setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-
         try {
             const result = await this.client.put(endpoint, {
                 stepId,
                 newRequirements,
-                updatedRequirements
-            });
+                updatedRequirements,
+                rowVersion
+            }, settings);
             return result.data;
         }
         catch (error) {

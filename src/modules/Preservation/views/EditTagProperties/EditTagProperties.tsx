@@ -48,6 +48,7 @@ const EditTagProperties = (): JSX.Element => {
     const { tagId } = useParams();
 
     const [requirementsFetched, setRequirementsFetched] = useState(false);
+    const [rowVersion, setRowVersion] = useState<string>('');
 
 
     const getTag = async (): Promise<void> => {
@@ -58,6 +59,7 @@ const EditTagProperties = (): JSX.Element => {
                 if(details.tagNo.substr(0,4) == '#PO-') {
                     setPoTag(true);
                 }
+                setRowVersion(details.rowVersion);
             } catch (error) {
                 console.error('Get tag details failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
@@ -204,11 +206,12 @@ const EditTagProperties = (): JSX.Element => {
     const updateRemarkAndStorageArea = async (): Promise<void> => {
         try {
             if (tag && remarkInputRef.current && storageAreaInputRef.current) {
-                await apiClient.setRemarkAndStorageArea(tag.id, remarkInputRef.current.value, storageAreaInputRef.current.value, tag.rowVersion);
+                const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tag.id, remarkInputRef.current.value, storageAreaInputRef.current.value, rowVersion);
+                setRowVersion(updatedRowVersion);
             }
         } catch (error) {
             console.error('Error updating remark and storage area', error.message, error.data);
-            showSnackbarNotification(error.message);
+            throw(showSnackbarNotification(error.message));
         }
     };
 
@@ -221,11 +224,12 @@ const EditTagProperties = (): JSX.Element => {
                 if (requirements.length > originalRequirements.length) {
                     newRequirements = [...requirements.slice(-numberOfNewReq)];
                 } 
-                await apiClient.updateStepAndRequirements(tag.id, step.id, requirements.slice(0, -numberOfNewReq), newRequirements);
+                await apiClient.updateStepAndRequirements(tag.id, step.id, rowVersion, requirements.slice(0, originalRequirements.length), newRequirements);
             }
         } catch (error) {
-            console.error('Error updating remark and storage area', error.message, error.data);
-            showSnackbarNotification(error.message);
+            console.error('Error updating journey, step or requirements', error.message, error.data);
+            throw(showSnackbarNotification(error.message));
+
         }
     };
 
@@ -233,10 +237,20 @@ const EditTagProperties = (): JSX.Element => {
     const save = async (): Promise<void> => {
         setLoading(true);
         if (remarkOrStorageAreaEdited) {
-            await updateRemarkAndStorageArea();
+            try {
+                await updateRemarkAndStorageArea();
+            } catch (error) {
+                setLoading(false);
+                throw('error');
+            }
         }
         if (journeyOrRequirementsEdited) {
-            await updateJourneyAndRequirements();
+            try {
+                await updateJourneyAndRequirements();
+            } catch(error) {
+                setLoading(false);
+                throw('error');
+            }
         }
         setLoading(false);
         if (tag) {

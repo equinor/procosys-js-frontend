@@ -6,6 +6,7 @@ import Spinner from '@procosys/components/Spinner';
 import { Container } from './HistoryTab.style';
 import Table from '../../../../../../components/Table';
 import { tokens } from '@equinor/eds-tokens';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 export interface HistoryLogItem {
     id: number;
@@ -56,18 +57,21 @@ const HistoryTab = ({
     }, []);
 
 
+    const getDateField = (historyLogItem: HistoryLogItem): string => {
+        return getFormattedDate(historyLogItem.createdAtUtc);
+    };
+
     if (isLoading) {
         return (
             <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
         );
     }
-
     return (
         <Container>
             <Table
                 columns={[
-                    { title: 'Date', field: 'date' },
-                    { title: 'User', field: 'user' },
+                    { title: 'Date', render: getDateField, cellStyle: { maxWidth: '50px' } },
+                    { title: 'User', field: 'createdById' },
                     { title: 'Due', field: 'dueWeeks' },
                     { title: 'Description', field: 'description' },
                 ]}
@@ -86,6 +90,12 @@ const HistoryTab = ({
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
                     },
                 }}
+                components={{
+                    Toolbar: (): any => (
+                        <></>
+                    )
+                }}
+
                 style={{ boxShadow: 'none' }}
             />
 

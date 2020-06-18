@@ -60,7 +60,6 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
 
     useEffect(() => {
         if (!props.onChange) return;
-
         // Check that everything is filled out
         const hasInvalidInputs = requirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
         if (hasInvalidInputs) return;
@@ -72,7 +71,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             const hasMatchingRequirement = props.requirements.some(
                 oldReq => {
                     return (oldReq.requirementDefinitionId === req.requirementDefinitionId
-                        && oldReq.intervalWeeks === req.intervalWeeks);
+                        && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided);
                 });
             return !hasMatchingRequirement;
         }) || requirements.length !== props.requirements.length;

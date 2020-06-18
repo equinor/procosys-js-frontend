@@ -454,23 +454,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             icon='more_verticle' 
                             variant='ghost' 
                             disabled={selectedTags.length < 1}>
-                            <Link to={'/EditTagProperties/' + selectedTagId}>
+                            <Link to={'/EditTagProperties/' + selectedTagId}  className={selectedTags.length > 1 || voidedTagsSelected ? 'disableLink' : ''} >
                                 <DropdownItem 
-                                    disabled={selectedTags.length > 1}
-                                    onClick={(e: React.MouseEvent): void => e.stopPropagation()}>
-                                    <EdsIcon name='edit_text' color={selectedTags.length > 1 ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    disabled={selectedTags.length > 1 || voidedTagsSelected}>
+                                    <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
                                 </DropdownItem>
                             </Link>
                             <DropdownItem 
                                 disabled={!unvoidedTagsSelected}
-                                onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>
+                                onClick={(): void => {if(unvoidedTagsSelected) {showVoidDialog(true);}}}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Void
                             </DropdownItem>
                             <DropdownItem 
                                 disabled={!voidedTagsSelected}
-                                onClick={(e: React.MouseEvent): void => !voidedTagsSelected ? e.stopPropagation() : showVoidDialog(false)}>
+                                onClick={(): void => {if(voidedTagsSelected) {showVoidDialog(false);}}}>
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba}/>
                                 Unvoid
                             </DropdownItem>

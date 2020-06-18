@@ -51,6 +51,9 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
+    .disableLink {
+        pointer-events: none;
+    }
 
     > * {
         width: 100%

@@ -14,10 +14,12 @@ import Spinner from '@procosys/components/Spinner';
 interface RequirementFormInput {
     requirementDefinitionId: number;
     intervalWeeks: number;
+    requirementId?: number;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    rowVersion?: string;
 }
 
 const EditTagProperties = (): JSX.Element => {
@@ -73,12 +75,14 @@ const EditTagProperties = (): JSX.Element => {
                 const response = await apiClient.getTagRequirements(Number.parseInt(tagId));
                 const mappedResponse = response.map(itm => {
                     return {
-                        requirementDefinitionId: itm.id,
+                        requirementDefinitionId: -1,
+                        requirementId: itm.id,
                         intervalWeeks: itm.intervalWeeks,
                         requirementTypeTitle: itm.requirementTypeTitle,
                         requirementDefinitionTitle: itm.requirementDefinitionTitle,
                         editingRequirements: true,
-                        isVoided: itm.isVoided
+                        isVoided: itm.isVoided,
+                        rowVersion: itm.rowVersion
                     };
                 });
                 setRequirements([...mappedResponse]);
@@ -203,12 +207,14 @@ const EditTagProperties = (): JSX.Element => {
     }, [requirements, step, journey, originalRequirements]);
 
 
-    const updateRemarkAndStorageArea = async (): Promise<void> => {
+    const updateRemarkAndStorageArea = async (): Promise<string> => {
         try {
             if (tag && remarkInputRef.current && storageAreaInputRef.current) {
                 const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tag.id, remarkInputRef.current.value, storageAreaInputRef.current.value, rowVersion);
                 setRowVersion(updatedRowVersion);
+                return updatedRowVersion;
             }
+            return rowVersion;
         } catch (error) {
             console.error('Error updating remark and storage area', error.message, error.data);
             throw(showSnackbarNotification(error.message));
@@ -216,7 +222,7 @@ const EditTagProperties = (): JSX.Element => {
     };
 
 
-    const updateJourneyAndRequirements = async (): Promise<void> => {
+    const updateJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
         try {
             if (tag && step) {
                 let newRequirements: RequirementFormInput[] = [];
@@ -224,7 +230,15 @@ const EditTagProperties = (): JSX.Element => {
                 if (requirements.length > originalRequirements.length) {
                     newRequirements = [...requirements.slice(-numberOfNewReq)];
                 } 
-                await apiClient.updateStepAndRequirements(tag.id, step.id, rowVersion, requirements.slice(0, originalRequirements.length), newRequirements);
+                const updatedRequirements = requirements.slice(0, originalRequirements.length).map(req => {
+                    return {
+                        requirementId: req.requirementId,
+                        intervalWeeks: req.intervalWeeks,
+                        isVoided: req.isVoided,
+                        rowVersion: req.rowVersion
+                    };
+                });
+                await apiClient.updateStepAndRequirements(tag.id, step.id, currentRowVersion, updatedRequirements, newRequirements);
             }
         } catch (error) {
             console.error('Error updating journey, step or requirements', error.message, error.data);
@@ -236,9 +250,10 @@ const EditTagProperties = (): JSX.Element => {
 
     const save = async (): Promise<void> => {
         setLoading(true);
+        let currentRowVersion = rowVersion;
         if (remarkOrStorageAreaEdited) {
             try {
-                await updateRemarkAndStorageArea();
+                currentRowVersion = await updateRemarkAndStorageArea();
             } catch (error) {
                 setLoading(false);
                 throw('error');
@@ -246,7 +261,7 @@ const EditTagProperties = (): JSX.Element => {
         }
         if (journeyOrRequirementsEdited) {
             try {
-                await updateJourneyAndRequirements();
+                await updateJourneyAndRequirements(currentRowVersion);
             } catch(error) {
                 setLoading(false);
                 throw('error');

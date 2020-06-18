@@ -16,10 +16,12 @@ interface SelectedRequirementResult {
 interface OnChangeRequirementData {
     requirementDefinitionId: number;
     intervalWeeks: number;
+    requirementId?: number;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    rowVersion?: string;
 }
 
 type RequirementsSelectorProps = {
@@ -31,10 +33,12 @@ type RequirementsSelectorProps = {
 interface RequirementFormInput {
     requirementDefinitionId: number | null;
     intervalWeeks: number | null;
+    requirementId?: number;
     requirementTypeTitle?: string;
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    rowVersion?: string;
 }
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
@@ -82,10 +86,12 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                 filtered.push({
                     requirementDefinitionId: req.requirementDefinitionId as number,
                     intervalWeeks: req.intervalWeeks as number,
+                    requirementId: req.requirementId,
                     requirementTypeTitle: req.requirementTypeTitle,
                     requirementDefinitionTitle: req.requirementDefinitionTitle,
                     editingRequirements: req.editingRequirements,
-                    isVoided: req.isVoided
+                    isVoided: req.isVoided,
+                    rowVersion: req.rowVersion
                 });
             });
             props.onChange(filtered);

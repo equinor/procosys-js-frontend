@@ -6,6 +6,7 @@ import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApi
 import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
+const scopes = JSON.parse(Settings.externalResources.libraryApi.scope.replace(/'/g,'"'));
 
 export interface AreaResponse {
     code: string;
@@ -13,6 +14,11 @@ export interface AreaResponse {
 }
 
 export interface DisciplineResponse {
+    code: string;
+    description: string;
+}
+
+export interface ResponsibleResponse {
     code: string;
     description: string;
 }
@@ -51,7 +57,7 @@ class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.libraryApi.scope.join(' '),
+            scopes.join(' '),
             Settings.externalResources.libraryApi.url
         );
         this.client.interceptors.request.use(
@@ -181,6 +187,31 @@ class LibraryApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getLibraryApiError(error);
+        }
+    }
+
+    /**
+    * Get responsibles
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getResponsibles(setRequestCanceller?: RequestCanceler): Promise<ResponsibleResponse[]> {
+        const endpoint = '/Responsibles';
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ResponsibleResponse[]>(
+                endpoint,
+                settings
+            );
             return result.data;
         }
         catch (error) {

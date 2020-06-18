@@ -5,6 +5,7 @@ import { RequestCanceler } from '../../../http/HttpClient';
 import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
+const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g,'"'));
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -71,13 +72,6 @@ interface CheckAreaTagNoResponse {
 interface ModeResponse {
     id: number;
     title: string;
-    rowVersion: string;
-}
-
-interface ResponsibleResponse {
-    id: number;
-    title: string;
-    code: string;
     rowVersion: string;
 }
 
@@ -411,7 +405,7 @@ class PreservationApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            Settings.externalResources.preservationApi.scope.join(' '),
+            scopes.join(' '),
             Settings.externalResources.preservationApi.url
         );
         this.client.interceptors.request.use(
@@ -1753,31 +1747,6 @@ class PreservationApiClient extends ApiClient {
 
         try {
             const result = await this.client.get<ModeResponse[]>(
-                endpoint,
-                settings
-            );
-            return result.data;
-        }
-        catch (error) {
-            throw getPreservationApiError(error);
-        }
-    }
-
-    /**
-    * Get responsibles
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
-    */
-    async getResponsibles(setRequestCanceller?: RequestCanceler): Promise<ResponsibleResponse[]> {
-        const endpoint = '/Responsibles';
-
-        const settings: AxiosRequestConfig = {
-            params: {}
-        };
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<ResponsibleResponse[]>(
                 endpoint,
                 settings
             );

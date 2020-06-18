@@ -5,6 +5,7 @@ import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
 
 const Settings = require('../../settings.json');
+const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g,'"'));
 
 export type PlantResponse = {
     id: string;
@@ -36,7 +37,7 @@ interface PurchaseOrderResponse {
 class ProCoSysClient extends ApiClient {
 
     constructor(authService: IAuthService) {
-        super(authService, Settings.externalResources.procosysApi.scope.join(' '), Settings.externalResources.procosysApi.url);
+        super(authService, scopes.join(' '), Settings.externalResources.procosysApi.url);
         this.client.interceptors.request.use((config) => {
             config.params = {
                 ...config.params,

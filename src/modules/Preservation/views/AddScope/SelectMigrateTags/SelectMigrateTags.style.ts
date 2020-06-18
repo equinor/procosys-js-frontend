@@ -3,7 +3,6 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
-    overflow-x: scroll;
     flex-direction: column;
     input + svg {
         width: 24px;

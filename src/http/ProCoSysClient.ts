@@ -111,7 +111,7 @@ class ProCoSysClient extends ApiClient {
     /**
      * Returns Tag function details
      *
-     * @param tagFunctionCode Tag Function Codex
+     * @param tagFunctionCode Tag Function Code
      * @param registerCode Register Code
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */

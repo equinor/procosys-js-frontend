@@ -38,18 +38,11 @@ const tableColumns = [
     { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
     { title: 'Due', render: getFormattedDueDate },
     { title: 'Start date', render: getFormattedsStartDate },
-    { title: 'Comm Pkg', field: 'commPkgNo' },
-    { title: 'Mc Pkg', field: 'mcPkgNo' },
-    { title: 'Register', field: 'registerCode' },
-    { title: 'Tag Func', field: 'tagFunctionCode' },
-    { title: 'PO title', field: 'purchaseOrderTitle' },
-    { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
     { title: 'Storage Area', field: 'storageArea' },
     { title: 'Mode', field: 'modeCode' },
     {
         title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
     },
-
     { title: 'Special Req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
     {
         title: 'Preserved',
@@ -57,7 +50,11 @@ const tableColumns = [
         render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
         filtering: false
     },
-
+    { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
+    { title: 'PO', field: 'purchaseOrderTitle' },
+    { title: 'Comm Pkg', field: 'commPkgNo' },
+    { title: 'Mc Pkg', field: 'mcPkgNo' },
+    { title: 'Tag Function', field: 'tagFunctionCode' },
 ];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {

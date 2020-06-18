@@ -90,7 +90,7 @@ const SetTagProperties = ({
         setStep(null);
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
-                if(areaType == 'PoArea' && itm.mode.title.toUpperCase() == 'SUPPLIER') {
+                if (areaType == 'PoArea' && itm.mode.title.toUpperCase() == 'SUPPLIER') {
                     setStep(itm);
                 }
                 return {
@@ -170,7 +170,19 @@ const SetTagProperties = ({
     return (
         <div>
             <Header>
-                <h1>Add preservation scope</h1>
+
+                {
+                    addScopeMethod === AddScopeMethod.MigrateTags && (
+                        <h1>Migrate preservation scope</h1>
+                    )
+                }
+
+                {
+                    addScopeMethod !== AddScopeMethod.MigrateTags && (
+                        <h1>Add preservation scope</h1>
+                    )
+                }
+
                 <div>{project.description}</div>
             </Header>
             <Container>
@@ -224,7 +236,7 @@ const SetTagProperties = ({
                         addScopeMethod !== AddScopeMethod.AddTagsAutoscope && (
                             <>
                                 <h2>Requirements for all selected tags</h2>
-                                <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
+                                <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)} />
                             </>
                         )
                     }

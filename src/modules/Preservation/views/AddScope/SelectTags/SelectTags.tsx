@@ -26,10 +26,10 @@ const KEYCODE_ENTER = 13;
 const tableColumns = [
     { title: 'Tag no', field: 'tagNo' },
     { title: 'Description', field: 'description' },
-    { title: 'MC Pkg no', field: 'mcPkgNo' },
+    { title: 'MC Pkg', field: 'mcPkgNo' },
     { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
     { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
+    { title: 'Comm Pkg', field: 'commPkgNo' },
     { title: 'Tag Function', field: 'tagFunctionCode' },
     {
         title: 'Preserved',

@@ -20,11 +20,6 @@ export const Container = styled.div`
     }
 `;
 
-interface DropdownButtonProps {
-    readonly isOpen: boolean;
-    disabled?: boolean;
-}
-
 export const DropdownButton = styled(Button)`
     display: flex;
     align-items: center;

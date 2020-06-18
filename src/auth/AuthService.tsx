@@ -7,7 +7,7 @@ const settings = require('./../../settings.json');
 const authConfig: Configuration = {
     auth: {
         clientId: settings.auth.clientId,
-        redirectUri: window.location.origin,
+        redirectUri: window.location.href,
         authority: settings.auth.authority,
     },
     // system: {

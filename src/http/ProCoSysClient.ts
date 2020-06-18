@@ -5,7 +5,7 @@ import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
 
 const Settings = require('../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g,'"'));
+const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g, '"'));
 
 export type PlantResponse = {
     id: string;
@@ -29,25 +29,6 @@ interface TagFunctionResponse {
 interface PurchaseOrderResponse {
     title: string;
     description: string;
-}
-
-type TagMigrationResponse = {
-    id: number;
-    tagNo: string;
-    description: string;
-    registerCode: string;
-    tagFunctionCode: string;
-    commPkgNo: string;
-    mcPkgNo: string;
-    purchaseOrderNo: string;
-    callOfNo: string;
-    purchaseOrderTitle: string;
-    mccrResponsibleCodes: string;
-    preservationRemark: string;
-    storageArea: string;
-    modeCode: string;
-    heating: boolean;
-    special: boolean;
 }
 
 /**
@@ -162,28 +143,6 @@ class ProCoSysClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as PurchaseOrderResponse[];
-    }
-
-    /**
-    * Get tags for migration to new preservation module. 
-    */
-    async getTagsForMigrationToNewPreservation(
-        projectName: string,
-        setRequestCanceller?: RequestCanceler
-    ): Promise<TagMigrationResponse[]> {
-        const endpoint = '/PreservationTags';
-        const settings: AxiosRequestConfig = {
-            params: {
-                projectName: projectName,
-            },
-        };
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        const result = await this.client.get<TagMigrationResponse[]>(
-            endpoint,
-            settings
-        );
-        return PascalCaseConverter.objectToCamelCase(result.data) as TagMigrationResponse[];
     }
 
     /**

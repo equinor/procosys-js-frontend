@@ -13,6 +13,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 import SelectMigrateTags from './SelectMigrateTags/SelectMigrateTags';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 export enum AddScopeMethod {
     AddTagsManually = 'AddTagsManually',
@@ -24,6 +25,7 @@ export enum AddScopeMethod {
 
 const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
+    const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
     const { method } = useParams();
 
@@ -228,7 +230,7 @@ const AddScope = (): JSX.Element => {
                 return {
                     tagNo: r.tagNo,
                     description: r.description,
-                    purchaseOrderNumber: r.purchaseOrderNumber,
+                    purchaseOrderTitle: r.purchaseOrderTitle,
                     commPkgNo: r.commPkgNo,
                     mcPkgNo: r.mcPkgNo,
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
@@ -268,6 +270,24 @@ const AddScope = (): JSX.Element => {
             }
 
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
+        }
+    };
+
+    const removeFromMigrationScope = async (): Promise<void> => {
+        try {
+            const tags: number[] = [];
+            selectedTags.map(t => {
+                if (t.tagId) {
+                    tags.push(t.tagId);
+                }
+            });
+            await procosysApiClient.markTagsAsMigrated(project.name, tags);
+            setSelectedTags([]);
+            getTagsForMigration();
+            showSnackbarNotification('Tags are removed from migration scope.', 5000);
+        } catch (error) {
+            console.error('Fetching tags for migration failed: ', error.messsage, error.data);
+            showSnackbarNotification(error.message, 5000);
         }
     };
 
@@ -371,6 +391,7 @@ const AddScope = (): JSX.Element => {
                         isLoading={isLoading}
                         addScopeMethod={addScopeMethod}
                         removeTag={removeSelectedTagMigration}
+                        removeFromMigrationScope={removeFromMigrationScope}
                     />
                     <Divider />
                     <SelectedTags>

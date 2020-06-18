@@ -28,7 +28,7 @@ const tableColumns = [
     { title: 'Description', field: 'description' },
     { title: 'MC Pkg no', field: 'mcPkgNo' },
     { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO no', field: 'purchaseOrderNumber' },
+    { title: 'PO', field: 'purchaseOrderTitle' },
     { title: 'Comm pkg', field: 'commPkgNo' },
     { title: 'Tag Function', field: 'tagFunctionCode' },
     {
@@ -84,7 +84,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
 
         if (rowData.length == 0 && props.scopeTableData.length > 0) {
             removeAllSelectedTagsInScope();
-        } else if(rowData.length > 0 && rowData[0].tableData && !row) {
+        } else if (rowData.length > 0 && rowData[0].tableData && !row) {
             addAllTagsInScope(rowData);
         } else if (rowData.length > 0 && !row.isPreserved) {
             handleSingleTag(row);
@@ -118,7 +118,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                                     }}
                                 />
                             </Search>
-                            
+
                         )
                     }
                     <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>

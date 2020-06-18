@@ -5,7 +5,7 @@ import { RequestCanceler } from '../../../http/HttpClient';
 import Qs from 'qs';
 
 const Settings = require('../../../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g,'"'));
+const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g, '"'));
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -50,7 +50,7 @@ interface PreservedTagResponse {
 type TagSearchResponse = {
     tagNo: string;
     description: string;
-    purchaseOrderNumber: string;
+    purchaseOrderTitle: string;
     commPkgNo: string;
     mcPkgNo: string;
     registerCode: string;
@@ -63,11 +63,12 @@ type TagMigrationResponse = {
     id: number;
     tagNo: string;
     description: string;
+    nextUpcommingDueTime: Date;
+    startDate: Date;
     registerCode: string;
     tagFunctionCode: string;
     commPkgNo: string;
     mcPkgNo: string;
-    purchaseOrderNo: string;
     callOfNo: string;
     purchaseOrderTitle: string;
     mccrResponsibleCodes: string;
@@ -76,8 +77,6 @@ type TagMigrationResponse = {
     modeCode: string;
     heating: boolean;
     special: boolean;
-    nextUpcommingDueTime: Date;
-    startDate: Date;
     isPreserved: boolean;
 }
 
@@ -543,7 +542,7 @@ class PreservationApiClient extends ApiClient {
         remark?: string | null,
         storageArea?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = '/Tags/Standard';
+        const endpoint = '/Tags/MigrateStandard';
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -560,7 +559,6 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
-
 
     /**
      * Add a set of tags to preservation scope based on autoscoping.
@@ -1126,13 +1124,13 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Get list of tags that can be migrated from old preservation module
-     */
+         * Get tags for migration to new preservation module. Temporary. 
+         */
     async getTagsForMigration(
         projectName: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<TagMigrationResponse[]> {
-        const endpoint = '​/Tags​/Search​/Preserved';
+        const endpoint = '/Tags/Search/Preserved';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
@@ -1146,12 +1144,10 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }
-
     /**
      * Get tag function details
      *

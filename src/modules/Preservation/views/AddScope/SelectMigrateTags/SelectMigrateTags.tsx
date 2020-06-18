@@ -9,8 +9,7 @@ import Loading from '../../../../../components/Loading';
 import { AddScopeMethod } from '../AddScope';
 import { useHistory } from 'react-router-dom';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 
 type SelectMigrateTagsProps = {
@@ -22,21 +21,28 @@ type SelectMigrateTagsProps = {
     isLoading: boolean;
     addScopeMethod: AddScopeMethod;
     removeTag: (tagNo: string) => void;
+    removeFromMigrationScope: () => void;
 }
+
+const getFormattedDueDate = (tag: TagMigrationRow): string => {
+    return getFormattedDate(tag.nextUpcommingDueTime);
+};
+
+const getFormattedsStartDate = (tag: TagMigrationRow): string => {
+    return getFormattedDate(tag.startDate);
+};
 
 const tableColumns = [
     { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
     { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
     { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
-    { title: 'Due', field: 'nextUpcommingDueTime' },
-    { title: 'Start date', field: 'startDate' },
+    { title: 'Due', render: getFormattedDueDate },
+    { title: 'Start date', render: getFormattedsStartDate },
     { title: 'Comm Pkg', field: 'commPkgNo' },
     { title: 'Mc Pkg', field: 'mcPkgNo' },
     { title: 'Register', field: 'registerCode' },
     { title: 'Tag Func', field: 'tagFunctionCode' },
-    { title: 'PO No', field: 'purchaseOrderNo' },
     { title: 'PO title', field: 'purchaseOrderTitle' },
-    { title: 'Call Off', field: 'callOffNo' },
     { title: 'MCCR Resp', field: 'mccrResponsibleCodes' },
     { title: 'Storage Area', field: 'storageArea' },
     { title: 'Mode', field: 'modeCode' },
@@ -56,7 +62,6 @@ const tableColumns = [
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     const { project } = usePreservationContext();
-    const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
 
     const removeAllSelectedTagsInScope = (): void => {
@@ -84,6 +89,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
 
     const handleSingleTag = (row: TagMigrationRow): void => {
         const tagToHandle = {
+            tagId: row.id,
             tagNo: row.tagNo,
             description: row.description,
             mcPkgNo: row.mcPkgNo
@@ -95,26 +101,8 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
         }
     };
 
-    const removeFromMigrationScope = async (): Promise<void> => {
-        try {
-            const tags: number[] = [];
-            props.selectedTags.map(t => {
-                if (t.tagId) {
-                    tags.push(t.tagId);
-                }
-            });
-            await procosysApiClient.markTagsAsMigrated(project.name, tags);
-            props.setSelectedTags([]);
-            showSnackbarNotification('Tags are removed from migration scope.', 5000);
-        } catch (error) {
-            console.error('Fetching tags for migration failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message, 5000);
-        }
-    };
-
     const rowSelectionChanged = (rowData: TagMigrationRow[], row: TagMigrationRow): void => {
         // exclude any preserved tags (material-table bug)
-
         if (rowData.length == 0 && props.migrationTableData.length > 0) {
             removeAllSelectedTagsInScope();
         } else if (rowData.length > 0 && rowData[0].tableData && !row) {
@@ -141,7 +129,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                 <ButtonsContainer>
                     <Button onClick={cancel} variant='outlined' >Cancel</Button>
                     <ButtonSeparator />
-                    <Button onClick={removeFromMigrationScope} variant='outlined' >Remove from migration scope</Button>
+                    <Button onClick={props.removeFromMigrationScope} disabled={props.selectedTags.length === 0}>Remove from migration scope</Button>
                     <ButtonSeparator />
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </ButtonsContainer>

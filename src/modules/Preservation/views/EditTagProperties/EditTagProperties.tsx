@@ -10,6 +10,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 import Spinner from '@procosys/components/Spinner';
+import { Canceler } from 'axios';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -52,73 +53,109 @@ const EditTagProperties = (): JSX.Element => {
     const [requirementsFetched, setRequirementsFetched] = useState(false);
     const [rowVersion, setRowVersion] = useState<string>('');
 
-
-    const getTag = async (): Promise<void> => {
-        if (tagId) {
-            try {
-                const details = await apiClient.getTagDetails(Number.parseInt(tagId));
-                setTag(details);
-                if(details.tagNo.substr(0,4) == '#PO-') {
-                    setPoTag(true);
+    /**
+     * Get Journeys
+     */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            if (tagId) {
+                try {
+                    const details = await apiClient.getTagDetails(Number.parseInt(tagId), (cancel: Canceler) => requestCancellor = cancel);
+                    setTag(details);
+                    if(details.tagNo.substr(0,4) == '#PO-') {
+                        setPoTag(true);
+                    }
+                    setRowVersion(details.rowVersion);
+                } catch (error) {
+                    console.error('Get tag details failed: ', error.message, error.data);
+                    showSnackbarNotification(error.message);
                 }
-                setRowVersion(details.rowVersion);
-            } catch (error) {
-                console.error('Get tag details failed: ', error.message, error.data);
-                showSnackbarNotification(error.message);
             }
-        }
-    };
+        })();
 
-    const getRequirements = async (): Promise<void> => {
-        if (tagId) {
-            try {
-                const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true);
-                const mappedResponse = response.map(itm => {
-                    return {
-                        requirementDefinitionId: -1,
-                        requirementId: itm.id,
-                        intervalWeeks: itm.intervalWeeks,
-                        requirementTypeTitle: itm.requirementTypeTitle,
-                        requirementDefinitionTitle: itm.requirementDefinitionTitle,
-                        editingRequirements: true,
-                        isVoided: itm.isVoided,
-                        rowVersion: itm.rowVersion
-                    };
-                });
-                setRequirements([...mappedResponse]);
-                setOriginalRequirements([...mappedResponse]);
-                setRequirementsFetched(true);
-            } catch (error) {
-                console.error('Get requirement failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message);
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+    /**
+     * Get Requirements
+     */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            if (tagId) {
+                try {
+                    const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true, (cancel: Canceler) => requestCancellor = cancel);
+                    const mappedResponse = response.map(itm => {
+                        return {
+                            requirementDefinitionId: -1,
+                            requirementId: itm.id,
+                            intervalWeeks: itm.intervalWeeks,
+                            requirementTypeTitle: itm.requirementTypeTitle,
+                            requirementDefinitionTitle: itm.requirementDefinitionTitle,
+                            editingRequirements: true,
+                            isVoided: itm.isVoided,
+                            rowVersion: itm.rowVersion
+                        };
+                    });
+                    setRequirements([...mappedResponse]);
+                    setOriginalRequirements([...mappedResponse]);
+                    setRequirementsFetched(true);
+                } catch (error) {
+                    console.error('Get requirement failed: ', error.messsage, error.data);
+                    showSnackbarNotification(error.message);
+                }
             }
-        }
-    };
-    
-    const getRequirementTypes = async (): Promise<void> => {
-        if (tagId) {
-            try {
-                const response = await apiClient.getRequirementTypes(false);
-                setRequirementTypes(response.data);
-            } catch (error) {
-                console.error('Get Requirement Types failed: ', error.messsage, error.data);
-                showSnackbarNotification(error.message);
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+    /**
+     * Get Requirement Types
+     */
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            if (tagId) {
+                try {
+                    const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => requestCancellor = cancel);
+                    setRequirementTypes(response.data);
+                } catch (error) {
+                    console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                    showSnackbarNotification(error.message);
+                }
             }
-        }
-    };
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
 
     /**
      * Get Journeys
      */
-    const getJourneys = async (): Promise<void> => {
-        try {
-            const data = await apiClient.getJourneys(false);
-            setJourneys(data);
-        } catch (error) {
-            console.error('Get Journeys failed: ', error.messsage, error.data);
-            showSnackbarNotification(error.message);
-        }
-    };
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            try {
+                const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
+                setJourneys(data);
+            } catch (error) {
+                console.error('Get Journeys failed: ', error.messsage, error.data);
+                showSnackbarNotification(error.message);
+            }
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
 
     useEffect(() => {
         if(journeys.length > 0 && tag && requirementsFetched) {
@@ -128,15 +165,6 @@ const EditTagProperties = (): JSX.Element => {
             setLoading(false);
         }
     }, [tag, journeys, requirementsFetched]);
-
-
-    useEffect(() => {
-        getTag();
-        getRequirements();
-        getJourneys();
-        getRequirementTypes();
-    }, []);
-
 
     /**
      * Map journeys into menu elements

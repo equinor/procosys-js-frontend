@@ -14,7 +14,7 @@ import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
 
 enum PreservationStatus {
-    NotStarted = 'NotStarted',
+    NotStarted = 'Not started',
     Active = 'Active',
     Completed = 'Completed',
     Unknown = 'Unknown'

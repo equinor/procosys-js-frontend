@@ -11,8 +11,6 @@ type LibraryItemProps = {
 
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
 
-    // TODO: add "setDirtyLibrary type" to all types and events within them.
-
     switch (props.libraryType) {
         case LibraryType.TAG_FUNCTION: {
             const [registerCode, tagFunctionCode] = props.libraryItem.split('|');

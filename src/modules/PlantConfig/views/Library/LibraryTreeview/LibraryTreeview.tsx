@@ -8,6 +8,8 @@ import { Container } from './LibraryTreeview.style';
 type LibraryTreeviewProps = {
     setSelectedLibraryType: (libraryType: string) => void;
     setSelectedLibraryItem: (libraryItem: string) => void;
+    dirtyLibraryType: string;
+    resetDirtyLibraryType: () => void;
 };
 
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
@@ -16,7 +18,6 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         libraryApiClient,
         preservationApiClient
     } = usePlantConfigContext();
-
 
     const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string): void => {
         props.setSelectedLibraryType(libraryType);
@@ -169,7 +170,6 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         return children;
     };
 
-
     const rootNodes: TreeViewNode[] = [
         {
             id: LibraryType.TAG_FUNCTION,
@@ -195,9 +195,12 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     ];
 
     return (
-
         <Container>
-            <TreeView rootNodes={rootNodes}></TreeView>
+            <TreeView 
+                rootNodes={rootNodes} 
+                dirtyNodeId={props.dirtyLibraryType} 
+                resetDirtyNode={props.resetDirtyLibraryType} 
+            />
         </Container>
     );
 };

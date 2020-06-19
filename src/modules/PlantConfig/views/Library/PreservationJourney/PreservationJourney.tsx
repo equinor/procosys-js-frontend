@@ -39,6 +39,7 @@ interface Step {
 
 type PreservationJourneyProps = {
     journeyId: number;
+    setDirtyLibraryType: () => void;
 };
 
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
@@ -156,7 +157,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
             }
+
             getJourney(journeyId);
+            
+            props.setDirtyLibraryType();
+            
             showSnackbarNotification('New journey is saved.', 5000);
         } catch (error) {
             console.error('Add journey failed: ', error.messsage, error.data);
@@ -167,6 +172,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const updateJourney = async (): Promise<void> => {
         try {
             await preservationApiClient.updateJourney(newJourney.id, newJourney.title, newJourney.rowVersion);
+            props.setDirtyLibraryType();
         } catch (error) {
             console.error('Update journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -219,7 +225,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
 
         if (isSaved) {
-            getJourney(newJourney.id);
+            getJourney(newJourney.id);            
             showSnackbarNotification('Changes for journey is saved.', 5000);
         } else {
             showSnackbarNotification('No changes need to be saved.', 5000);

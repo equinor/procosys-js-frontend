@@ -141,6 +141,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                     search: false,
                     draggable: false,
                     pageSize: 10,
+                    emptyRowsWhenPaging: false,
                     pageSizeOptions: [10, 50, 100],
                     padding: 'dense',
                     headerStyle: {

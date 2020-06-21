@@ -395,7 +395,7 @@ const AddScope = (): JSX.Element => {
                     />
                     <Divider />
                     <SelectedTags>
-                        <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
+                        <TagDetails selectedTags={selectedTags} showMCPkg={false} removeTag={removeSelectedTagMigration} />
                     </SelectedTags>
                 </Container>);
             }

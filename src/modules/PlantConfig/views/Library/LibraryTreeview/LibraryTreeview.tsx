@@ -179,7 +179,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         {
             id: LibraryType.MODE,
             name: 'Modes',
-            getChildren: getModes
+            getChildren: getModes,
+            onClick: (): void => { handleTreeviewClick(LibraryType.MODE, ''); }
         },
         {
             id: LibraryType.PRES_JOURNEY,

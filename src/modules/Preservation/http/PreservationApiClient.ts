@@ -72,6 +72,8 @@ interface CheckAreaTagNoResponse {
 interface ModeResponse {
     id: number;
     title: string;
+    forSupplier: boolean;
+    isVoided: boolean;
     rowVersion: string;
 }
 
@@ -1735,6 +1737,118 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get mode
+    */
+    async getMode(modeId: number, setRequestCanceller?: RequestCanceler): Promise<ModeResponse> {
+        const endpoint = `/Modes/${modeId}`;
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ModeResponse>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add mode 
+     */
+    async addMode(title: string, forSupplier: boolean, setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = '/Modes';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    title: title,
+                    forSupplier: forSupplier
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update mode
+     */
+    async updateMode(modeId: number, title: string, forSupplier: boolean, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    forSupplier: forSupplier,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Void mode
+    */
+    async voidMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}/Void`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Unvoid mode
+      */
+    async unvoidMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

@@ -358,6 +358,16 @@ interface ErrorResponse {
     }[];
 }
 
+interface HistoryResponse {
+    id: number;
+    description: string;
+    createdAtUtc: Date;
+    createdById: string;
+    eventType: string;
+    dueWeeks: number;
+    preservationRecordId: number;
+}
+
 class PreservationApiError extends Error {
 
     data: AxiosResponse | null;
@@ -1815,6 +1825,33 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+     * Get history log 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getHistory(tagId: number, setRequestCanceller?: RequestCanceler): Promise<HistoryResponse[]> {
+        const endpoint = `/Tags/${tagId}/History`;
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<HistoryResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
 }
 
 export default PreservationApiClient;

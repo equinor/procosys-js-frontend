@@ -48,7 +48,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                 isVoided={tag.isVoided}
                 onClick={(): void => this.props.showTagDetails(tag)}
             >
-                <span style={{color: 'inherit'}}>{tag.tagNo}</span>
+                <span style={{ color: 'inherit' }}>{tag.tagNo}</span>
             </TagLink>
         );
     }
@@ -57,7 +57,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit'}}>{tag.description}</div>
+                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -68,19 +68,19 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getResponsibleColumn(tag: PreservedTag): JSX.Element {
         return (
             <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit'}}>{tag.responsibleCode}</div>
+                <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>{tag.responsibleCode}</div>
             </Tooltip>
         );
     }
 
     getNextColumn(tag: PreservedTag): string | null {
         const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueAsYearAndWeek : null;
+        return (!requirement || tag.isVoided) ? null : requirement.nextDueAsYearAndWeek;
     }
 
     getDueColumn(tag: PreservedTag): number | null {
         const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueWeeks : null;
+        return (!requirement || tag.isVoided) ? null : requirement.nextDueWeeks;
     }
 
     getRequirementColumn(tag: PreservedTag): JSX.Element {

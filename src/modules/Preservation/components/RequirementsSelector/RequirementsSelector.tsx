@@ -4,9 +4,9 @@ import SelectInput, { SelectItem } from '@procosys/components/Select';
 import PreservationIcon from '@procosys/components/PreservationIcon';
 import { Button } from '@equinor/eds-core-react';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { InputContainer, FormFieldSpacer, ButtonContent, ActionContainer } from './RequirementsSelector.style';
 import { tokens } from '@equinor/eds-tokens';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 interface SelectedRequirementResult {
     requirement: RequirementType;
@@ -16,6 +16,12 @@ interface SelectedRequirementResult {
 interface OnChangeRequirementData {
     requirementDefinitionId: number;
     intervalWeeks: number;
+    requirementId?: number;
+    requirementTypeTitle?: string;
+    requirementDefinitionTitle?: string;
+    editingRequirements?: boolean;
+    isVoided?: boolean;
+    rowVersion?: string;
 }
 
 type RequirementsSelectorProps = {
@@ -27,6 +33,12 @@ type RequirementsSelectorProps = {
 interface RequirementFormInput {
     requirementDefinitionId: number | null;
     intervalWeeks: number | null;
+    requirementId?: number;
+    requirementTypeTitle?: string;
+    requirementDefinitionTitle?: string;
+    editingRequirements?: boolean;
+    isVoided?: boolean;
+    rowVersion?: string;
 }
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
@@ -48,11 +60,10 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     useEffect(() => {
         const existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
         setRequirements(existingRequirements);
-    }, [props.requirements]);
+    }, []);
 
     useEffect(() => {
         if (!props.onChange) return;
-
         // Check that everything is filled out
         const hasInvalidInputs = requirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
         if (hasInvalidInputs) return;
@@ -64,7 +75,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             const hasMatchingRequirement = props.requirements.some(
                 oldReq => {
                     return (oldReq.requirementDefinitionId === req.requirementDefinitionId
-                        && oldReq.intervalWeeks === req.intervalWeeks);
+                        && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided);
                 });
             return !hasMatchingRequirement;
         }) || requirements.length !== props.requirements.length;
@@ -74,7 +85,13 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             requirements.forEach(req => {
                 filtered.push({
                     requirementDefinitionId: req.requirementDefinitionId as number,
-                    intervalWeeks: req.intervalWeeks as number
+                    intervalWeeks: req.intervalWeeks as number,
+                    requirementId: req.requirementId,
+                    requirementTypeTitle: req.requirementTypeTitle,
+                    requirementDefinitionTitle: req.requirementDefinitionTitle,
+                    editingRequirements: req.editingRequirements,
+                    isVoided: req.isVoided,
+                    rowVersion: req.rowVersion
                 });
             });
             props.onChange(filtered);
@@ -160,6 +177,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         const newRequirement = getRequirementForValue(reqDefValue);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
+            
             if (newRequirement) {
                 copy[index].requirementDefinitionId = newRequirement.requirementDefinition.id;
                 copy[index].intervalWeeks = newRequirement.requirementDefinition.defaultIntervalWeeks;
@@ -184,16 +202,37 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         });
     };
 
+    const unvoidRequirement = (index: number): void => {
+        setRequirements(oldReq => {
+            const copy = [...oldReq];
+            copy[index].isVoided = false;
+            return copy;
+        });
+    };
+
+    const voidRequirement = (index: number): void => {
+        setRequirements(oldReq => {
+            const copy = [...oldReq];
+            copy[index].isVoided = true;
+            return copy;
+        });
+    };
+
     const getDefaultInputText = (req: RequirementFormInput): string => {
         const value = mappedIntervals.find(el => el.value === req.intervalWeeks);
         if (!value) return 'Select';
         return value.text;
     };
 
+    const getTitle = (req: RequirementFormInput): string => {
+        return `${req.requirementTypeTitle} - ${req.requirementDefinitionTitle}`;
+    };
+
     return (
         <>
             {requirements.map((requirement, index) => {
-                const requirementForValue = getRequirementForValue(requirement.requirementDefinitionId);
+                const title = getTitle(requirement);
+                const requirementForValue = requirement.requirementDefinitionTitle ? null : getRequirementForValue(requirement.requirementDefinitionId);
                 return (
                     <React.Fragment key={`requirementInput_${index}`}>
                         <InputContainer key={`req_${index}`}>
@@ -201,23 +240,40 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 onChange={(value): void => setRequirement(value, index)}
                                 data={mappedRequirementTypes}
                                 label={'Requirement'}
+                                disabled={requirement.editingRequirements}
+                                isVoided={requirement.isVoided}
                             >
-                                {(requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
+                                {requirement.requirementDefinitionTitle ? title :
+                                    (requirementForValue) && (`${requirementForValue.requirement.title} - ${requirementForValue.requirementDefinition.title}`) || 'Select'}
                             </SelectInput>
                             <FormFieldSpacer>
                                 <SelectInput
                                     onChange={(value): void => setIntervalValue(value, index)}
                                     data={mappedIntervals}
-                                    disabled={!requirement.requirementDefinitionId}
+                                    disabled={!requirement.requirementDefinitionId || requirement.isVoided}
                                     label={'Interval'}
+                                    isVoided={requirement.isVoided}
                                 >
                                     {getDefaultInputText(requirement)}
                                 </SelectInput>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
-                                <Button title="Delete" variant='ghost' style={{ marginTop: 'calc(var(--grid-unit)*2)' }} onClick={(): void => deleteRequirement(index)}>
-                                    <DeleteOutlinedIcon />
-                                </Button>
+                                { requirement.editingRequirements ? 
+                                    ( requirement.isVoided ? 
+                                        <Button className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
+                                            <EdsIcon name='restore_from_trash' />
+                                            Unvoid
+                                        </Button>
+                                        :
+                                        <Button className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
+                                            <EdsIcon name='delete_forever' />
+                                            Void
+                                        </Button> )
+                                    :
+                                    <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
+                                        <EdsIcon name='delete_to_trash' />
+                                    </Button>
+                                }
                             </FormFieldSpacer>
                         </InputContainer>
                     </React.Fragment>

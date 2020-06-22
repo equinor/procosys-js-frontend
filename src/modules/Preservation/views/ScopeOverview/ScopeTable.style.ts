@@ -20,12 +20,12 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    color: ${(props): string => props.isVoided ? 
+    color: ${(props): string => props.isVoided ?
         '' :
         props.isOverdue
             ? tokens.colors.interactive.danger__text.rgba
             : tokens.colors.interactive.primary__resting.rgba};
-    span { color: ${(props): string => props.isVoided ? 
+    span { color: ${(props): string => props.isVoided ?
         '' :
         props.isOverdue
             ? tokens.colors.interactive.danger__text.rgba
@@ -39,5 +39,6 @@ export const Container = styled.div`
     input + svg {
         width: 24px;
         height: 24px;
+        
     }
 `;

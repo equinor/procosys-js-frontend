@@ -19,6 +19,9 @@ export const InputContainer = styled.div`
 
 export const FormFieldSpacer = styled.div`
     margin-left: calc(var(--grid-unit) * 2);
+    .voidUnvoid svg {
+        padding-right: var(--grid-unit);
+    }
 `;
 
 export const ButtonContent = styled.span`

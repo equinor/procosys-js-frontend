@@ -5,7 +5,7 @@ import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
 
 const Settings = require('../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g,'"'));
+const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g, '"'));
 
 export type PlantResponse = {
     id: string;
@@ -136,7 +136,7 @@ class ProCoSysClient extends ApiClient {
     async getPurchaseOrders(projectName: string, setRequestCanceller?: RequestCanceler): Promise<PurchaseOrderResponse[]> {
         const endpoint = '/PurchaseOrders';
         const settings: AxiosRequestConfig = {
-            params: { 
+            params: {
                 projectName: projectName
             }
         };
@@ -144,7 +144,24 @@ class ProCoSysClient extends ApiClient {
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as PurchaseOrderResponse[];
     }
-}
 
+    /**
+     * Mark tags as migrated.  
+     */
+    async markTagsAsMigrated(
+        projectName: string,
+        tags: number[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = '/PreservationTags';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        await this.client.put(endpoint, tags, settings);
+    }
+}
 
 export default ProCoSysClient;

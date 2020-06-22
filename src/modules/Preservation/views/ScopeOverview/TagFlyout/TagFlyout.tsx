@@ -15,7 +15,7 @@ import AttachmentTab from './AttachmentTab/AttachmentTab';
 import HistoryTab from './HistoryTab/HistoryTab';
 
 enum PreservationStatus {
-    NotStarted = 'NotStarted',
+    NotStarted = 'Not started',
     Active = 'Active',
     Completed = 'Completed',
     Unknown = 'Unknown'

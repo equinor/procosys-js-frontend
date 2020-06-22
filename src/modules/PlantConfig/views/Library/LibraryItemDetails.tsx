@@ -7,6 +7,7 @@ import Mode from './Mode/Mode';
 type LibraryItemProps = {
     libraryType: string;
     libraryItem: string;
+    setDirtyLibraryType: (libraryType: string) => void;
 };
 
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
@@ -19,7 +20,10 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
         case LibraryType.MODE:
             return <Mode modeId={Number(props.libraryItem)} />;
         case LibraryType.PRES_JOURNEY:
-            return <PreservationJourney journeyId={Number(props.libraryItem)} />;
+            return <PreservationJourney 
+                journeyId={Number(props.libraryItem)} 
+                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_JOURNEY)} 
+            />;
         case LibraryType.PRES_REQUIREMENT_TYPE:
             return <div>req type</div>;
         case LibraryType.PRES_REQUIREMENT_DEFINITION:

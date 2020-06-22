@@ -22,7 +22,7 @@ const tableData = [
     {
         tagNo: 'tagno-test',
         description: 'description-test',
-        purchaseOrderNumber: 'pono-test',
+        purchaseOrderTitle: 'pono-test',
         commPkgNo: 'commpkg-test',
         mcPkgNo: 'mcpkgno-test',
         isPreserved: false

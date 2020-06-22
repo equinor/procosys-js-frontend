@@ -50,7 +50,7 @@ interface PreservedTagResponse {
 type TagSearchResponse = {
     tagNo: string;
     description: string;
-    purchaseOrderNumber: string;
+    purchaseOrderTitle: string;
     commPkgNo: string;
     mcPkgNo: string;
     registerCode: string;
@@ -58,6 +58,28 @@ type TagSearchResponse = {
     mccrResponsibleCodes: string;
     isPreserved: boolean;
 }
+
+type TagMigrationResponse = {
+    id: number;
+    tagNo: string;
+    description: string;
+    nextUpcommingDueTime: Date;
+    startDate: Date;
+    registerCode: string;
+    tagFunctionCode: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    callOfNo: string;
+    purchaseOrderTitle: string;
+    mccrResponsibleCodes: string;
+    preservationRemark: string;
+    storageArea: string;
+    modeCode: string;
+    heating: boolean;
+    special: boolean;
+    isPreserved: boolean;
+}
+
 
 type PreservedTag = {
     id: number;
@@ -184,6 +206,13 @@ interface RequirementFormInput {
     intervalWeeks: number;
 }
 
+interface RequirementForUpdate {
+    requirementId: number | undefined;
+    intervalWeeks: number;
+    isVoided: boolean | undefined;
+    rowVersion: string | undefined;
+}
+
 interface UpdateTagFunctionRequestData {
     registerCode: string;
     tagFunctionCode: string;
@@ -225,6 +254,7 @@ interface TagRequirementsResponse {
         }
     ];
     comment: string;
+    isVoided: boolean;
     rowVersion: string;
 }
 
@@ -470,6 +500,24 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[],  setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.put(endpoint, {
+                stepId,
+                newRequirements,
+                updatedRequirements,
+                rowVersion
+            }, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Add a set of tags to preservation scope.
      *
@@ -493,6 +541,46 @@ class PreservationApiClient extends ApiClient {
         storageArea?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = '/Tags/Standard';
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                tagNos: listOfTagNo,
+                projectName: projectName,
+                stepId: stepId,
+                requirements,
+                remark,
+                storageArea
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * migrate a set of tags to preservation scope.
+     *
+     * @param listOfTagNo List of Tag Numbers
+     * @param stepId Step ID
+     * @param requirements List of Requirements
+     * @param projectName Name of affected project
+     * @param remark Optional: Remark for all tags
+     * @param storageArea Optional: Storage area for all tags
+     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+     *
+     * @returns Promise<void>
+     * @throws PreservationApiError
+     */
+    async migrateTagsToScope(
+        listOfTagNo: string[],
+        stepId: number,
+        requirements: PreserveTagRequirement[],
+        projectName: string,
+        remark?: string | null,
+        storageArea?: string | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/Tags/MigrateStandard';
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1074,6 +1162,31 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+         * Get tags for migration to new preservation module. Temporary. 
+         */
+    async getTagsForMigration(
+        projectName: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagMigrationResponse[]> {
+        const endpoint = '/Tags/Search/Preserved';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagMigrationResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+    /**
      * Get tag function details
      *
      * @param tagFunctionCode Tag Function Code
@@ -1172,9 +1285,11 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async getTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
+    async getTagRequirements(tagId: number, includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = {params: {
+            IncludeVoided: includeVoided,
+        },};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {

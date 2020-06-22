@@ -75,13 +75,13 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
             </DetailsSection>
             <section>
                 <TabBar>
-                    <TabBarButton disabled>
+                    {/* <TabBarButton disabled>
                         Completion
-                    </TabBarButton >
+                    </TabBarButton > */}
                     <TabBarButton current>
                         Preservation
                     </TabBarButton>
-                    <TabBarButton disabled>
+                    {/* <TabBarButton disabled>
                         DCCL
                     </TabBarButton>
                     <TabBarButton disabled>
@@ -95,7 +95,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                     </TabBarButton>
                     <TabBarButton disabled>
                         SPIR Requirement
-                    </TabBarButton>
+                    </TabBarButton> */}
                     <TabBarFiller>
                         {/* Just fills out the empty space */}
                     </TabBarFiller>

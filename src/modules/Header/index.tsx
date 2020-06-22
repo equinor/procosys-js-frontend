@@ -11,14 +11,14 @@ import {
 import { NavLink, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
-import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import AppsOutlinedIcon from '@material-ui/icons/AppsOutlined';
 import Dropdown from '../../components/Dropdown';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import OptionsDropdown from '../../components/OptionsDropdown';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
+import {Button} from '@equinor/eds-core-react';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 type PlantItem = {
     text: string;
@@ -248,18 +248,61 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuItem>
-                        <InfoOutlinedIcon />
+                    <MenuItem className='reducePadding'>
+                        <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
+                            <a href={'https://procosyspublictoc.azurewebsites.net/'}>
+                                <DropdownItem>
+                                ProCoSys Help
+                                </DropdownItem>
+                            </a>
+                            <a href={'https://equinor.service-now.com/selfservice?id=sc_cat_item&sys_id=67053df4dbe82b008a0f9407db9619d1'}>
+                                <DropdownItem>
+                                Open a Request Item
+                                </DropdownItem>
+                            </a>
+                            <a href={'https://equinor.service-now.com/selfservice/?id=sc_cat_item&sys_id=3373cf4cdb97f200bc7af7461d96195b'}>
+                                <DropdownItem>
+                                Report an error
+                                </DropdownItem>
+                            </a>
+                        </OptionsDropdown>
                     </MenuItem>
-                    <MenuItem>
-                        <LockOutlinedIcon />
+                    <MenuItem className='reducePadding'>
+                        <OptionsDropdown variant={'ghost'} icon='lock' iconSize={24}>
+                            <a href={`/${params.plant}/Security/User`}>
+                                <DropdownItem>
+                                Users
+                                </DropdownItem>
+                            </a>
+                            <a href={`/${params.plant}/Security/UserRole`}>
+                                <DropdownItem>
+                                User Roles
+                                </DropdownItem>
+                            </a>
+                            <a href={`/${params.plant}/Security/PrivilegeGroup`}>
+                                <DropdownItem>
+                                Privilige Groups
+                                </DropdownItem>
+                            </a>
+                            <a href={`/${params.plant}/Security/RestrictionRole`}>
+                                <DropdownItem>
+                                Restriction Roles
+                                </DropdownItem>
+                            </a>
+                        </OptionsDropdown>
+                    </MenuItem >
+                    <MenuItem className={'accountButton reducePadding'}>
+                        <a href={`/${params.plant}/Security/User/EditSelf`}>
+                            <Button variant={'ghost'} >
+                                <EdsIcon name='account_circle' size={24} />
+                                {user.name}
+                            </Button>
+                        </a>
                     </MenuItem>
-                    <MenuItem>
-                        <Dropdown iconFirst={true} Icon={<AccountCircleOutlinedIcon />} text={user.name} >
-                            <DropdownItem title="Logout" onClick={logout}>
-                                Logout
-                            </DropdownItem>
-                        </Dropdown>
+                    <MenuItem className='reducePadding lastButton'>
+                        <Button variant={'ghost'} onClick={logout}>
+                            Logout
+                        </Button>
                     </MenuItem>
                 </MenuContainer>
             </Nav>

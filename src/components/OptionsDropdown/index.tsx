@@ -1,4 +1,4 @@
-import { Container, DropdownButton, DropdownItem } from './style';
+import { Container, DropdownButton, DropdownItem, IconContainer } from './style';
 import React, { useRef, useState, useEffect } from 'react';
 import { useClickOutsideNotifier } from '../../hooks';
 import EdsIcon from '../EdsIcon';
@@ -11,6 +11,7 @@ type DropdownProps = {
     children?: React.ReactNode;
     icon?: string;
     variant?: string;
+    iconSize?: number;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -20,7 +21,8 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
     text = '',
     icon,
     children,
-    variant
+    variant,
+    iconSize = 16
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -63,7 +65,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
-                {icon && <div className='iconNextToText' ><EdsIcon name={icon} color={disabled ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>}
+                {icon && <IconContainer size={iconSize} text={text != ''}><EdsIcon name={icon} size={iconSize} color={disabled ? tokens.colors.interactive.disabled__border.rgba : ''} /></IconContainer>}
                 {text}
             </DropdownButton>
             {isOpen && (

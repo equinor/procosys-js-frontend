@@ -39,6 +39,7 @@ interface Step {
 
 type PreservationJourneyProps = {
     journeyId: number;
+    setDirtyLibraryType: () => void;
 };
 
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
@@ -159,7 +160,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
             }
+
             getJourney(journeyId);
+            props.setDirtyLibraryType();
             showSnackbarNotification('New journey is saved.', 5000);
         } catch (error) {
             console.error('Add journey failed: ', error.messsage, error.data);
@@ -170,6 +173,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const updateJourney = async (): Promise<void> => {
         try {
             await preservationApiClient.updateJourney(newJourney.id, newJourney.title, newJourney.rowVersion);
+            props.setDirtyLibraryType();
             setIsSaved(true);
         } catch (error) {
             console.error('Update journey failed: ', error.messsage, error.data);
@@ -260,6 +264,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.voidJourney(journey.id, journey.rowVersion);
                 getJourney(journey.id);
+                props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is voided.', 5000);
             } catch (error) {
                 console.error('Error occured when trying to void journey: ', error.messsage, error.data);
@@ -275,6 +280,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.unvoidJourney(journey.id, journey.rowVersion);
                 getJourney(journey.id);
+                props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is unvoided.', 5000);
             } catch (error) {
                 console.error('Error occured when trying to unvoid journey: ', error.messsage, error.data);

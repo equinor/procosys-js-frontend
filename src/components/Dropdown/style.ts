@@ -19,16 +19,8 @@ export const Container = styled.div`
     }
 `;
 
-interface IconContainerProps {
-    iconFirst?: boolean;
-}
-export const IconContainer = styled.div<IconContainerProps>`
-    ${({iconFirst}): any => iconFirst && css`
-        padding-right: var(--grid-unit);
-    `}
-    ${({iconFirst}): any => !iconFirst && css`
-        padding-left: var(--grid-unit);
-    `}
+export const IconContainer = styled.div`
+    padding-left: var(--grid-unit);
     display: flex;
     flex: 1;
     justify-content: flex-end;

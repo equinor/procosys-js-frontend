@@ -1,4 +1,5 @@
 export interface Tag {
+    tagId?: number;
     tagNo: string;
     description: string;
     mcPkgNo?: string;
@@ -7,11 +8,35 @@ export interface Tag {
 export interface TagRow {
     tagNo: string;
     description: string;
-    purchaseOrderNumber: string;
+    purchaseOrderTitle: string;
     commPkgNo: string;
     mcPkgNo: string;
     mccrResponsibleCodes: string;
     tagFunctionCode: string;
+    isPreserved: boolean;
+    tableData?: {
+        checked: boolean;
+    };
+}
+
+export interface TagMigrationRow {
+    id: number;
+    tagNo: string;
+    description: string;
+    nextUpcommingDueTime: Date;
+    startDate: Date;
+    registerCode: string;
+    tagFunctionCode: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    callOfNo: string;
+    purchaseOrderTitle: string;
+    mccrResponsibleCodes: string;
+    preservationRemark: string;
+    storageArea: string;
+    modeCode: string;
+    heating: boolean;
+    special: boolean;
     isPreserved: boolean;
     tableData?: {
         checked: boolean;

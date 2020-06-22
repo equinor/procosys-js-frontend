@@ -348,7 +348,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                         <FormFieldSpacer>
                             { (props.areaType && props.areaType.value == 'PoArea') ?
                                 <Dropdown
-                                    label={'Purchase order / Call off'}
+                                    label={'PO/Calloff'}
                                     variant='form'
                                     text={(props.purchaseOrder && props.purchaseOrder.description) || 'Type to select'}
                                     onFilter={setFilterForPOs}

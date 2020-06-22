@@ -12,9 +12,10 @@ import { showSnackbarNotification } from './../../../../../core/services/Notific
 import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
+import HistoryTab from './HistoryTab/HistoryTab';
 
 enum PreservationStatus {
-    NotStarted = 'NotStarted',
+    NotStarted = 'Not started',
     Active = 'Active',
     Completed = 'Completed',
     Unknown = 'Unknown'
@@ -115,7 +116,7 @@ const TagFlyout = ({
             case 'attachments':
                 return <AttachmentTab tagId={tagId} />;
             case 'history':
-                return <div></div>;
+                return <HistoryTab tagId={tagId} />;
             default:
                 return <div>Unknown</div>;
         }

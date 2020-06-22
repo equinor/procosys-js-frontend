@@ -55,6 +55,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
+    const [isSaved, setIsSaved] = useState<boolean>(false);
 
     const {
         preservationApiClient,
@@ -144,9 +145,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const saveNewStep = async (journeyId: number, step: Step): Promise<void> => {
         try {
             await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code);
+            setIsSaved(true);
         } catch (error) {
             console.error('Add journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
+            getJourney(newJourney.id);
         }
     };
 
@@ -159,9 +162,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             }
 
             getJourney(journeyId);
-            
             props.setDirtyLibraryType();
-            
             showSnackbarNotification('New journey is saved.', 5000);
         } catch (error) {
             console.error('Add journey failed: ', error.messsage, error.data);
@@ -173,9 +174,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         try {
             await preservationApiClient.updateJourney(newJourney.id, newJourney.title, newJourney.rowVersion);
             props.setDirtyLibraryType();
+            setIsSaved(true);
         } catch (error) {
             console.error('Update journey failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);
+            getJourney(newJourney.id);
         }
     };
 
@@ -186,26 +189,27 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 //There are changes to save
                 try {
                     await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.rowVersion);
+                    setIsSaved(true);
                 } catch (error) {
                     console.error('Update journey failed: ', error.messsage, error.data);
                     showSnackbarNotification(error.message, 5000);
+                    getJourney(newJourney.id);
                 }
             }
         }
     };
 
     const saveUpdatedJourney = async (): Promise<void> => {
-        let isSaved = false;
-
+        let noChangesToSave = true;
         if (journey && journey.title != newJourney.title) {
             await updateJourney();
-            isSaved = true;
+            noChangesToSave = false;
         }
 
         for await (const step of newJourney.steps) {
             if (step.id === -1) {
                 await saveNewStep(newJourney.id, step);
-                isSaved = true;
+                noChangesToSave = false;
             } else {
                 if (journey) {
                     const originalStep = journey.steps.find((s) => s.id == step.id);
@@ -218,19 +222,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
                     if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
                         await saveUpdatedStep(step);
-                        isSaved = true;
+                        noChangesToSave = false;
                     }
                 }
             }
         }
 
-        if (isSaved) {
-            getJourney(newJourney.id);            
-            showSnackbarNotification('Changes for journey is saved.', 5000);
-        } else {
+        if (noChangesToSave) {
             showSnackbarNotification('No changes need to be saved.', 5000);
         }
     };
+
+    useEffect(() => {
+        if(isSaved) {
+            getJourney(newJourney.id);
+            showSnackbarNotification('Changes for journey is saved.', 5000);
+            setIsSaved(false);
+        }
+    }, [isSaved]);
 
     const handleSave = (): void => {
         if (newJourney.id === -1) {

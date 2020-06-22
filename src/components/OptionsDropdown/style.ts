@@ -20,11 +20,6 @@ export const Container = styled.div`
     }
 `;
 
-interface DropdownButtonProps {
-    readonly isOpen: boolean;
-    disabled?: boolean;
-}
-
 export const DropdownButton = styled(Button)`
     display: flex;
     align-items: center;
@@ -51,12 +46,19 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
+
+    > div {
+        width: 100%
+    }
     div {
-        width: 100%;
         display: flex;
         align-items: center;
         svg {
             padding-right: calc(var(--grid-unit) * 2);
         }
     }
+    div[disabled] {
+        pointer-events: none;
+    }
+
 `;

@@ -1,6 +1,7 @@
 import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
 
 import AddScope from './views/AddScope/AddScope';
+import EditTagProperties from './views/EditTagProperties/EditTagProperties';
 import { Container } from './style';
 import { PreservationContextProvider } from './context/PreservationContext';
 import React from 'react';
@@ -24,6 +25,11 @@ const Preservation = (): JSX.Element => {
                             path={'/'}
                             exact
                             component={ScopeOverview}
+                        />
+                        <Route
+                            path={'/EditTagProperties/:tagId'}
+                            exact
+                            component={EditTagProperties}
                         />
                         <Route
                             component={(): JSX.Element =>

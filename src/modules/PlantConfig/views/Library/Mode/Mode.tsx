@@ -136,6 +136,7 @@ const Mode = (props: ModeProps): JSX.Element => {
             try {
                 await preservationApiClient.voidMode(mode.id, mode.rowVersion);
                 getMode(mode.id);
+                props.setDirtyLibraryType();
                 showSnackbarNotification('Mode is voided.', 5000);
             } catch (error) {
                 console.error('Error occured when trying to void mode: ', error.messsage, error.data);
@@ -151,6 +152,7 @@ const Mode = (props: ModeProps): JSX.Element => {
             try {
                 await preservationApiClient.unvoidMode(mode.id, mode.rowVersion);
                 getMode(mode.id);
+                props.setDirtyLibraryType();
                 showSnackbarNotification('Mode is unvoided.', 5000);
             } catch (error) {
                 console.error('Error occured when trying to unvoid mode: ', error.messsage, error.data);
@@ -219,7 +221,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                 </Button>
             </ButtonContainer>
 
-            <InputContainer>
+            <InputContainer style={{ width: '280px' }}>
                 <TextField
                     id={'title'}
                     label='Title for this mode'
@@ -233,6 +235,7 @@ const Mode = (props: ModeProps): JSX.Element => {
             <InputContainer>
                 <Checkbox
                     checked={newMode.forSupplier}
+                    disabled={newMode.isVoided}
                     onChange={(checked: boolean): void => {
                         setForSupplierValue(checked);
                     }}

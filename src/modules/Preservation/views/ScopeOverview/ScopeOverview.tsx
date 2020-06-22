@@ -129,6 +129,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
         setCurrentProject(availableProjects[index].id);
+        refreshScopeList();
+        setSelectedTags([]);
     };
 
     let transferableTags: PreservedTag[];

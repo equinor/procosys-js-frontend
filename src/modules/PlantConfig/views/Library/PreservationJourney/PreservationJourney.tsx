@@ -234,7 +234,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     useEffect(() => {
-        if(isSaved) {
+        if (isSaved) {
             getJourney(newJourney.id);
             showSnackbarNotification('Changes for journey is saved.', 5000);
             setIsSaved(false);

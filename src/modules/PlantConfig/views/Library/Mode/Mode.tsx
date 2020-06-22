@@ -19,6 +19,7 @@ interface ModeItem {
 
 type ModeProps = {
     modeId: number;
+    setDirtyLibraryType: () => void;
 };
 
 const Mode = (props: ModeProps): JSX.Element => {
@@ -72,6 +73,7 @@ const Mode = (props: ModeProps): JSX.Element => {
         try {
             const modeId = await preservationApiClient.addMode(newMode.title, newMode.forSupplier);
             getMode(modeId);
+            props.setDirtyLibraryType();
             showSnackbarNotification('New mode is saved.', 5000);
         } catch (error) {
             console.error('Add mode failed: ', error.messsage, error.data);
@@ -83,6 +85,7 @@ const Mode = (props: ModeProps): JSX.Element => {
         try {
             await preservationApiClient.updateMode(newMode.id, newMode.title, newMode.forSupplier, newMode.rowVersion);
             setIsSaved(true);
+            props.setDirtyLibraryType();
         } catch (error) {
             console.error('Update mode failed: ', error.messsage, error.data);
             showSnackbarNotification(error.message, 5000);

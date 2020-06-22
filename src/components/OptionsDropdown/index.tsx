@@ -78,7 +78,6 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                                 <DropdownItem
                                     key={index}
                                     role="option"
-                                    onClick={toggleDropdown}
                                     tabIndex={0}
                                 >
                                     {item}

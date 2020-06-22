@@ -204,6 +204,13 @@ interface RequirementFormInput {
     intervalWeeks: number;
 }
 
+interface RequirementForUpdate {
+    requirementId: number | undefined;
+    intervalWeeks: number;
+    isVoided: boolean | undefined;
+    rowVersion: string | undefined;
+}
+
 interface UpdateTagFunctionRequestData {
     registerCode: string;
     tagFunctionCode: string;
@@ -245,6 +252,7 @@ interface TagRequirementsResponse {
         }
     ];
     comment: string;
+    isVoided: boolean;
     rowVersion: string;
 }
 
@@ -483,6 +491,24 @@ class PreservationApiClient extends ApiClient {
                 storageArea,
                 rowVersion
             });
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[],  setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.put(endpoint, {
+                stepId,
+                newRequirements,
+                updatedRequirements,
+                rowVersion
+            }, settings);
             return result.data;
         }
         catch (error) {
@@ -1257,9 +1283,11 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async getTagRequirements(tagId: number, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
+    async getTagRequirements(tagId: number, includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = {params: {
+            IncludeVoided: includeVoided,
+        },};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {

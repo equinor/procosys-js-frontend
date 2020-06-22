@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
@@ -74,6 +74,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
+    const [selectedTagId, setSelectedTagId] = useState<string | number>();
 
     const {
         project,
@@ -81,6 +82,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject,
         apiClient,
     } = usePreservationContext();
+    const history = useHistory();
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
 
     const refreshScopeListCallback = useRef<() => void>();
@@ -98,6 +100,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);
         setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);
+        if (selectedTags.length == 1) {
+            setSelectedTagId(selectedTags[0].id);
+        } else {
+            setSelectedTagId('');
+        }
     }, [selectedTags]);
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
@@ -454,14 +461,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             variant='ghost'
                             disabled={selectedTags.length < 1}>
                             <DropdownItem
+                                disabled={selectedTags.length > 1 || voidedTagsSelected}
+                                onClick={(): void => { history.push(`/EditTagProperties/${selectedTagId}`); }}>
+                                <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                Edit
+                            </DropdownItem>
+                            <DropdownItem
                                 disabled={!unvoidedTagsSelected}
-                                onClick={(e: React.MouseEvent): void => !unvoidedTagsSelected ? e.stopPropagation() : showVoidDialog(true)}>
+                                onClick={(): void => showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Void
                             </DropdownItem>
                             <DropdownItem
                                 disabled={!voidedTagsSelected}
-                                onClick={(e: React.MouseEvent): void => !voidedTagsSelected ? e.stopPropagation() : showVoidDialog(false)}>
+                                onClick={(): void => showVoidDialog(false)}>
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>

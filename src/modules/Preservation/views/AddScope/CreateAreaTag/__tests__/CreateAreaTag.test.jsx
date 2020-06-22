@@ -150,7 +150,7 @@ describe('<CreateAreaTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(<CreateAreaTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(getByText('Purchase order / Call off')).toBeInTheDocument());
+            await waitFor(() => expect(getByText('PO/Calloff')).toBeInTheDocument());
         });
     });
 

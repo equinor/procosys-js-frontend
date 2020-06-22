@@ -75,12 +75,12 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getNextColumn(tag: PreservedTag): string | null {
         const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueAsYearAndWeek : null;
+        return (!requirement || tag.isVoided) ? null : requirement.nextDueAsYearAndWeek;
     }
 
     getDueColumn(tag: PreservedTag): number | null {
         const requirement = getFirstUpcomingRequirement(tag);
-        return requirement ? requirement.nextDueWeeks : null;
+        return (!requirement || tag.isVoided) ? null : requirement.nextDueWeeks;
     }
 
     getRequirementColumn(tag: PreservedTag): JSX.Element {

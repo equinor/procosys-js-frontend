@@ -16,6 +16,7 @@ interface ModalDialogProps {
     buttonOneCallback: (() => void) | null;
     buttonTwoText: string | null;
     buttonTwoCallback: (() => void) | null;
+    buttonOneOutlined?: boolean;
 }
 
 const ModalDialog = (props: ModalDialogProps): JSX.Element => {
@@ -52,7 +53,7 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
                 }
                 <ButtonContainer>
                     {props.buttonOneText &&
-                        <Button onClick={buttonOneHandler}>
+                        <Button variant={props.buttonOneOutlined ? 'outlined' : 'contained'} onClick={buttonOneHandler}>
                             {props.buttonOneText}
                         </Button>
 
@@ -87,7 +88,8 @@ export const showModalDialog = (
     buttonOneCallback: (() => void) | null,
     buttonTwoText: string | null,
     buttonTwoCallback: (() => void) | null,
+    buttonOneOutlined?: boolean
 ): any => {
-    render(<ModalDialog title={title} content={content} width={width} buttonOneText={buttonOneText} buttonOneCallback={buttonOneCallback} buttonTwoText={buttonTwoText} buttonTwoCallback={buttonTwoCallback} />, modalDialogContainer);
+    render(<ModalDialog title={title} content={content} width={width} buttonOneText={buttonOneText} buttonOneCallback={buttonOneCallback} buttonTwoText={buttonTwoText} buttonTwoCallback={buttonTwoCallback} buttonOneOutlined={buttonOneOutlined} />, modalDialogContainer);
 };
 

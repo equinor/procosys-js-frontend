@@ -8,12 +8,14 @@ import Spinner from '../Spinner';
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
  * @param name Node display name.
+ * @param isVoided Optional: indicates that node is voided (will render different than non-voided nodes)
  * @param getChildren Optional: function to load children.
  * @param onClick Optional: function to handle click event on node.
  */
 export interface TreeViewNode {
     id: number | string;
     name: string;
+    isVoided?: boolean;
     getChildren?: () => Promise<TreeViewNode[]>;
     onClick?: () => void;
 }
@@ -47,7 +49,7 @@ const TreeView = ({
             let nodeParentId: number | string | null | undefined = treeNode.parentId;
             
             while (nodeParentId) {
-                // check whether the child exists under the parent node in question
+                // check whether the child exists under the parent node in question (and collapse)
                 if (nodeParentId === parentNodeId) {
                     treeNode.isExpanded = false;
                     childCount++;
@@ -186,11 +188,13 @@ const TreeView = ({
         return (
             <NodeName
                 hasChildren={node.getChildren ? true : false}
-                isExpanded={node.isExpanded === true}>
+                isExpanded={node.isExpanded === true}
+                isVoided={node.isVoided === true}>
                 {
                     node.onClick && (
                         <NodeLink
                             isExpanded={node.isExpanded === true}
+                            isVoided={node.isVoided === true}
                             onClick={node.onClick}
                         >
                             {node.name}

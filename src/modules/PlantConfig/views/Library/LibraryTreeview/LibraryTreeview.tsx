@@ -34,6 +34,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                             {
                                 id: mode.id,
                                 name: mode.title,
+                                // TODO: isVoided (need data from API)
                                 onClick: (): void => handleTreeviewClick(LibraryType.MODE, mode.id.toString())
                             }));
                     }
@@ -57,6 +58,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                             {
                                 id: journey.id,
                                 name: journey.title,
+                                isVoided: journey.isVoided,
                                 onClick: (): void => handleTreeviewClick(LibraryType.PRES_JOURNEY, journey.id.toString()),
                             }));
                     }
@@ -79,6 +81,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                     {
                         id: `rt_${requirementType.id}`,
                         name: requirementType.title,
+                        isVoided: requirementType.isVoided,
                         onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_TYPE, requirementType.id.toString()),
                         getChildren: (): Promise<TreeViewNode[]> => {
                             const withInputNodes = requirementType.requirementDefinitions
@@ -87,6 +90,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                     return {
                                         id: `field_withinput_${itm.id}`,
                                         name: itm.title,
+                                        isVoided: itm.isVoided,
                                         onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString())
                                     };
                                 });
@@ -96,6 +100,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                     return {
                                         id: `field_withoutinput_${itm.id}`,
                                         name: itm.title,
+                                        isVoided: itm.isVoided,
                                         onClick: (): void => handleTreeviewClick(LibraryType.PRES_REQUIREMENT_DEFINITION, itm.id.toString())
                                     };
                                 });
@@ -138,6 +143,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 children.push({
                     id: `tf_register_${registerCode}_${tf.code}`,
                     name: `${tf.code}, ${tf.description}`,
+                    // TODO: isVoided (need data from API)
                     onClick: (): void => handleTreeviewClick(LibraryType.TAG_FUNCTION, `${registerCode}|${tf.code}`)
                 });
             });
@@ -158,6 +164,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 children.push({
                     id: `tf_register_${reg.code}`,
                     name: reg.description,
+                    // TODO: isVoided (need data from API)
                     getChildren: () => getTagFunctionNodes(reg.code)
                 });
             });

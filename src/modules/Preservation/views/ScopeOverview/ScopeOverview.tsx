@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
@@ -82,6 +82,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject,
         apiClient,
     } = usePreservationContext();
+    const history = useHistory();
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
 
     const refreshScopeListCallback = useRef<() => void>();
@@ -454,22 +455,21 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             icon='more_verticle' 
                             variant='ghost' 
                             disabled={selectedTags.length < 1}>
-                            <Link to={'/EditTagProperties/' + selectedTagId}  className={selectedTags.length > 1 || voidedTagsSelected ? 'disableLink' : ''} >
-                                <DropdownItem 
-                                    disabled={selectedTags.length > 1 || voidedTagsSelected}>
-                                    <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                            <DropdownItem 
+                                disabled={selectedTags.length > 1 || voidedTagsSelected}
+                                onClick={(): void => { history.push(`/EditTagProperties/${selectedTagId}`); }}>
+                                <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
-                                </DropdownItem>
-                            </Link>
+                            </DropdownItem>
                             <DropdownItem 
                                 disabled={!unvoidedTagsSelected}
-                                onClick={(): void => {if(unvoidedTagsSelected) {showVoidDialog(true);}}}>
+                                onClick={(): void => showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Void
                             </DropdownItem>
                             <DropdownItem 
                                 disabled={!voidedTagsSelected}
-                                onClick={(): void => {if(voidedTagsSelected) {showVoidDialog(false);}}}>
+                                onClick={(): void => showVoidDialog(false)}>
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba}/>
                                 Unvoid
                             </DropdownItem>

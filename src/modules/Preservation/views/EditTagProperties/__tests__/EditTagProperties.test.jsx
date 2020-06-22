@@ -194,11 +194,9 @@ describe('Module: <EditTagProperties />', () => {
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
         getByText('Add Requirement').click();
-        let components = queryAllByText('Requirement');
-        expect(expect(components.length).toBe(2));
 
         getByTitle('Delete').click();
-        components = queryAllByText('Requirement');
+        const components = queryAllByText('Requirement');
         expect(components.length).toBe(1);
     });
 

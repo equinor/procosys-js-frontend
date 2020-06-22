@@ -46,11 +46,8 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
-    .disableLink {
-        pointer-events: none;
-    }
 
-    > * {
+    > div {
         width: 100%
     }
     div {
@@ -58,6 +55,10 @@ export const DropdownItem = styled.li`
         align-items: center;
         svg {
             padding-right: calc(var(--grid-unit) * 2);
+        }
     }
+    div[disabled] {
+        pointer-events: none;
     }
+
 `;

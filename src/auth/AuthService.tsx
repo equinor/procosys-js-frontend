@@ -9,6 +9,7 @@ const authConfig: Configuration = {
         clientId: settings.auth.clientId,
         redirectUri: window.location.href,
         authority: settings.auth.authority,
+        postLogoutRedirectUri: 'http://myapps.microsoft.com/'
     },
     // system: {
     //     logger: new Logger((lvl: any, message: any, piEnabled?: boolean ): void => { console.log('Auth: ', message);})

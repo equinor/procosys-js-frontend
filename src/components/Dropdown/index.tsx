@@ -12,6 +12,7 @@ type DropdownProps = {
     label?: string;
     variant?: string;
     meta?: string;
+    iconFirst?: boolean;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -24,7 +25,8 @@ const Select: React.FC<DropdownProps> = ({
     onFilter,
     label,
     variant,
-    meta
+    meta,
+    iconFirst = false
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -76,9 +78,10 @@ const Select: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
+                {iconFirst && <IconContainer iconFirst={true}>{Icon}</IconContainer>}
                 {text}
 
-                <IconContainer>{Icon}</IconContainer>
+                {!iconFirst && <IconContainer iconFirst={false}>{Icon}</IconContainer>}
             </DropdownButton>
             {isOpen && (
                 <ul ref={listRef}

@@ -19,8 +19,16 @@ export const Container = styled.div`
     }
 `;
 
-export const IconContainer = styled.div`
-    padding-left: 8px;
+interface IconContainerProps {
+    iconFirst?: boolean;
+}
+export const IconContainer = styled.div<IconContainerProps>`
+    ${({iconFirst}): any => iconFirst && css`
+        padding-right: var(--grid-unit);
+    `}
+    ${({iconFirst}): any => !iconFirst && css`
+        padding-left: var(--grid-unit);
+    `}
     display: flex;
     flex: 1;
     justify-content: flex-end;

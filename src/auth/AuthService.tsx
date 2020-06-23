@@ -9,7 +9,6 @@ const authConfig: Configuration = {
         clientId: settings.auth.clientId,
         redirectUri: window.location.href,
         authority: settings.auth.authority,
-        postLogoutRedirectUri: 'http://myapps.microsoft.com/'
     },
     // system: {
     //     logger: new Logger((lvl: any, message: any, piEnabled?: boolean ): void => { console.log('Auth: ', message);})
@@ -28,11 +27,6 @@ export interface IAuthService {
      * Redirects the user to authority for authentication
      */
     login(): void;
-
-    /**
-     * Clears localstorage and redirects user to authority for signout
-     */
-    logout(): void;
 
     /**
      * Handle response from authority when user is done authenticating
@@ -71,10 +65,6 @@ export default class AuthService implements IAuthService {
 
     aquireConcent(resource: string): void {
         this.authInstance.loginRedirect({scopes: [resource]});
-    }
-
-    logout(): void {
-        this.authInstance.logout();
     }
 
     handleRedirectCallback(): void {

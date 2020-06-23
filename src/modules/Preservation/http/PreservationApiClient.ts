@@ -417,6 +417,9 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
     if (error.response.status == 409) {
         return new PreservationApiError('Data has been updated by another user. Please reload and start over!', error.response);
     }
+    if (error.response.status == 404) {
+        return new PreservationApiError(error.response.data, error.response);
+    }
     try {
         const apiErrorResponse = error.response.data as ErrorResponse;
         let errorMessage = `${error.response.status} (${error.response.statusText})`;

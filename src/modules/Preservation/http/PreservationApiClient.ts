@@ -1,5 +1,5 @@
 import ApiClient from '../../../http/ApiClient';
-import { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import Axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import Qs from 'qs';
@@ -379,11 +379,13 @@ interface HistoryResponse {
 class PreservationApiError extends Error {
 
     data: AxiosResponse | null;
+    isCancel: boolean;
 
     constructor(message: string, apiResponse?: AxiosResponse) {
         super(message);
         this.data = apiResponse || null;
         this.name = 'PreservationApiError';
+        this.isCancel = false;
     }
 }
 
@@ -405,6 +407,12 @@ function DelayData(data: any, fail = false): Promise<any> {
 }
 
 function getPreservationApiError(error: AxiosError): PreservationApiError {
+    if (Axios.isCancel(error)) {
+        const cancelledError = new PreservationApiError('The request was cancelled');
+        cancelledError.isCancel = true;
+        return cancelledError;
+    }
+
     if (!error || !error.response) {
         console.error('An unknown API error occured, error: ', error);
         return new PreservationApiError('Unknown error');
@@ -426,7 +434,6 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
     } catch (err) {
         return new PreservationApiError('Failed to parse errors', error.response);
     }
-
 }
 
 /**
@@ -498,7 +505,7 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[],  setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1285,9 +1292,11 @@ class PreservationApiClient extends ApiClient {
 
     async getTagRequirements(tagId: number, includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
-        const settings: AxiosRequestConfig = {params: {
-            IncludeVoided: includeVoided,
-        },};
+        const settings: AxiosRequestConfig = {
+            params: {
+                IncludeVoided: includeVoided,
+            },
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {

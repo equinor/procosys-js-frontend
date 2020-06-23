@@ -23,19 +23,10 @@ export default class HttpClient {
      * @param customSettings Any custom <AxiosRequestConfig> for the client
      */
     constructor(baseUrl = '', customSettings: AxiosRequestConfig = {}) {
-        const instance =  axios.create({
+        const instance = axios.create({
             ...axiosSettings,
             baseURL: baseUrl,
             ...customSettings
-        });
-
-        instance.interceptors.response.use((successResponse) => {
-            return successResponse;
-        }, (error) => {
-            if (axios.isCancel(error)) {
-                return Promise.reject('Cancelled');
-            }
-            return Promise.reject(error);
         });
 
         this.client = instance;

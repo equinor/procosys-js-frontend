@@ -20,7 +20,7 @@ export const Container = styled.div`
 `;
 
 export const IconContainer = styled.div`
-    padding-left: 8px;
+    padding-left: var(--grid-unit);
     display: flex;
     flex: 1;
     justify-content: flex-end;

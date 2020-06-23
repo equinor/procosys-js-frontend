@@ -24,7 +24,7 @@ const Select: React.FC<DropdownProps> = ({
     onFilter,
     label,
     variant,
-    meta
+    meta,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);

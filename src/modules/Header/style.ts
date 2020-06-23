@@ -60,11 +60,30 @@ export const MenuContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    .reducePadding {
+        padding: 0;
+    }
+
+    .lastButton {
+        padding-right: calc(var(--grid-unit) * 2);
+    }
+    
+    .accountButton {
+        svg {
+            padding-right: var(--grid-unit);
+        }
+    }
 `;
 
 export const MenuItem = styled.div`
     padding: 0px 16px;
+    
     a {
         text-decoration: none;
     }
+    button svg {
+        height: 24px;
+        width: 24px;
+    }
+
 `;

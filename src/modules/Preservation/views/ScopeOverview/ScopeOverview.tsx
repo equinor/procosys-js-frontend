@@ -464,7 +464,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={selectedTags.length < 1}>
                             <DropdownItem
                                 disabled={selectedTags.length > 1 || voidedTagsSelected}
-                                onClick={(): void => { history.push(`/EditTagProperties/${selectedTagId}`); }}>
+                                onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
                                 <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
                             </DropdownItem>

@@ -25,11 +25,6 @@ export const DropdownButton = styled(Button)`
     align-items: center;
     justify-content: center;
 
-    .iconNextToText {
-        margin-right: var(--grid-unit);
-        height: calc(var(--grid-unit) * 2);
-    }
-
     svg path {
         color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
     }
@@ -37,6 +32,23 @@ export const DropdownButton = styled(Button)`
     ${(props): any => props.isOpen && css`
         background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
     `}
+`;
+
+interface IconContainerProps {
+    text?: boolean;
+    size: number;
+}
+export const IconContainer = styled.div<IconContainerProps>`
+    ${(props): any => props.text && css`
+        margin-right: var(--grid-unit);
+    `}
+    svg {
+        height: size + 'px';
+        width: size + 'px';
+    }
+    height: size + 'px';
+    display: flex;
+    align-items: center;
 `;
 
 export const DropdownItem = styled.li`
@@ -47,7 +59,7 @@ export const DropdownItem = styled.li`
     font-weight: normal;
     cursor: pointer;
 
-    > div {
+    > * {
         width: 100%
     }
     div {

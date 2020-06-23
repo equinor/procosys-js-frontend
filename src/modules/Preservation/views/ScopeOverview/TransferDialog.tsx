@@ -36,8 +36,8 @@ const TransferDialog = ({
     return (<div>
         {nonTransferableTags.length > 0 && (
             <div>
-                <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started/already completed.</Typography>
-                <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) will not be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or is voided.</Typography>
+                <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
             </div>
         )}
         {transferableTags.length > 0 && (

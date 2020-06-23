@@ -159,7 +159,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
-            if (tag.readyToBeTransferred) {
+            if (tag.readyToBeTransferred && !tag.isVoided) {
                 transferableTags.push(newTag);
             } else {
                 nonTransferableTags.push(newTag);
@@ -200,7 +200,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         nonStartableTags = [];
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
-            if (tag.readyToBeStarted) {
+            if (tag.readyToBeStarted && !tag.isVoided) {
                 startableTags.push(newTag);
             } else {
                 nonStartableTags.push(newTag);
@@ -288,7 +288,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
-            if (tag.readyToBeCompleted) {
+            if (tag.readyToBeCompleted && !tag.isVoided) {
                 completableTags.push(newTag);
             } else {
                 nonCompletableTags.push(newTag);

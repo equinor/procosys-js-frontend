@@ -18,6 +18,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
+import { useProcosysContext } from '../../core/ProcosysContext';
 
 type PlantItem = {
     text: string;
@@ -26,6 +27,7 @@ type PlantItem = {
 
 const Header: React.FC = (): JSX.Element => {
     const user = useCurrentUser();
+    const { auth } = useProcosysContext();
     const { plant, setCurrentPlant } = useCurrentPlant();
     const params = useParams<any>();
     const [filterForPlants, setFilterForPlants] = useState<string>('');
@@ -36,6 +38,8 @@ const Header: React.FC = (): JSX.Element => {
         }));
     });
     const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
+
+
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
@@ -50,12 +54,6 @@ const Header: React.FC = (): JSX.Element => {
         }
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
-
-    const logout = (): void => {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.assign('http://myapps.microsoft.com/');
-    };
 
     return (
         <div>
@@ -254,7 +252,7 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                     <MenuItem>
                         <Dropdown Icon={<AccountCircleOutlinedIcon />}>
-                            <DropdownItem title="Logout" onClick={logout}>
+                            <DropdownItem title="Logout" onClick={(): void => auth.logout()}>
                                 Logout
                             </DropdownItem>
                         </Dropdown>

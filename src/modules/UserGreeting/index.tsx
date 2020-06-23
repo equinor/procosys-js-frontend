@@ -50,12 +50,6 @@ const UserGreeting = (): JSX.Element => {
         };
     }, []);
 
-    const logout = (): void => {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.assign('http://myapps.microsoft.com/');
-    };
-
     return (
         <Container>
             <h1>{user.name}</h1>
@@ -64,7 +58,7 @@ const UserGreeting = (): JSX.Element => {
             <br />
             <h1>PLANT: {plant.title}</h1>
 
-            <Button onClick={logout}>Logout</Button>
+            <Button onClick={(): void => auth.logout()}>Logout</Button>
         </Container>
     );
 };

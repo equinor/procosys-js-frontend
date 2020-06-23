@@ -29,6 +29,11 @@ export interface IAuthService {
     login(): void;
 
     /**
+     * Clears localstorage and redirects user to authority for signout
+     */
+    logout(): void;
+
+    /**
      * Handle response from authority when user is done authenticating
      */
     handleRedirectCallback(): void;
@@ -65,6 +70,12 @@ export default class AuthService implements IAuthService {
 
     aquireConcent(resource: string): void {
         this.authInstance.loginRedirect({scopes: [resource]});
+    }
+
+    logout(): void {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.assign('https://myapps.microsoft.com/');
     }
 
     handleRedirectCallback(): void {

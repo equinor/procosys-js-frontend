@@ -34,7 +34,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                             {
                                 id: mode.id,
                                 name: mode.title,
-                                // TODO: isVoided (need data from API)
+                                isVoided: mode.isVoided,
                                 onClick: (): void => handleTreeviewClick(LibraryType.MODE, mode.id.toString())
                             }));
                     }
@@ -186,7 +186,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         {
             id: LibraryType.MODE,
             name: 'Modes',
-            getChildren: getModes
+            getChildren: getModes,
+            onClick: (): void => { handleTreeviewClick(LibraryType.MODE, ''); }
         },
         {
             id: LibraryType.PRES_JOURNEY,
@@ -203,10 +204,10 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 
     return (
         <Container>
-            <TreeView 
-                rootNodes={rootNodes} 
-                dirtyNodeId={props.dirtyLibraryType} 
-                resetDirtyNode={props.resetDirtyLibraryType} 
+            <TreeView
+                rootNodes={rootNodes}
+                dirtyNodeId={props.dirtyLibraryType}
+                resetDirtyNode={props.resetDirtyLibraryType}
             />
         </Container>
     );

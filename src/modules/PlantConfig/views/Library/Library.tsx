@@ -20,6 +20,7 @@ const Library = (): JSX.Element => {
 
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
+    const [dirtyLibraryType, setDirtyLibraryType] = useState('');
 
     const match = useRouteMatch();
     const params: any = match.params;
@@ -30,11 +31,20 @@ const Library = (): JSX.Element => {
 
     return (
         <Container>
-            <LibraryTreeview setSelectedLibraryType={setSelectedLibraryType} setSelectedLibraryItem={setSelectedLibraryItem} />
+            <LibraryTreeview 
+                setSelectedLibraryType={setSelectedLibraryType} 
+                setSelectedLibraryItem={setSelectedLibraryItem} 
+                dirtyLibraryType={dirtyLibraryType} 
+                resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
+            />
 
             <Divider />
 
-            <LibraryItemDetails libraryType={selectedLibraryType} libraryItem={selectedLibraryItem} />
+            <LibraryItemDetails 
+                libraryType={selectedLibraryType} 
+                libraryItem={selectedLibraryItem} 
+                setDirtyLibraryType={setDirtyLibraryType}
+            />
 
         </Container>
     );

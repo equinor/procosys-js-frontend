@@ -24,7 +24,7 @@ import ScopeFilter from './ScopeFilter/ScopeFilter';
 import EdsIcon from '../../../../components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
-import {Tooltip } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import VoidDialog from './VoidDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -98,13 +98,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     );
 
     useEffect(() => {
-        setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);        
+        setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);
         setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);
-        if(selectedTags.length == 1) {
+        if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
         } else {
             setSelectedTagId('');
-        }       
+        }
     }, [selectedTags]);
 
     const setRefreshScopeListCallback = (callback: () => void): void => {
@@ -129,6 +129,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
         setCurrentProject(availableProjects[index].id);
+        refreshScopeList();
+        setSelectedTags([]);
     };
 
     let transferableTags: PreservedTag[];
@@ -310,7 +312,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const voidTags = async (): Promise<void> => {
         try {
-            for(const tag of voidableTags) {
+            for (const tag of voidableTags) {
                 await apiClient.voidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
@@ -325,7 +327,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const unVoidTags = async (): Promise<void> => {
         try {
-            for(const tag of unVoidableTags) {
+            for (const tag of unVoidableTags) {
                 await apiClient.unvoidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
@@ -345,7 +347,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             const newTag: PreservedTag = { ...tag };
             if (!tag.isVoided && voiding) {
                 voidableTags.push(newTag);
-            } else if(tag.isVoided && !voiding) {
+            } else if (tag.isVoided && !voiding) {
                 unVoidableTags.push(newTag);
             }
         });
@@ -419,6 +421,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Create area tag
                                 </DropdownItem>
                             </Link>
+                            <Link to={'/AddScope/selectMigrateTags'}>
+                                <DropdownItem>
+                                    Migrate tags from old (temporary)
+                                </DropdownItem>
+                            </Link>
                         </Dropdown>
                     </Header>
                     <IconBar>
@@ -450,27 +457,27 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
-                        <OptionsDropdown 
-                            text="More options" 
-                            icon='more_verticle' 
-                            variant='ghost' 
+                        <OptionsDropdown
+                            text="More options"
+                            icon='more_verticle'
+                            variant='ghost'
                             disabled={selectedTags.length < 1}>
-                            <DropdownItem 
+                            <DropdownItem
                                 disabled={selectedTags.length > 1 || voidedTagsSelected}
                                 onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
                                 <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
                             </DropdownItem>
-                            <DropdownItem 
+                            <DropdownItem
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(): void => showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Void
                             </DropdownItem>
-                            <DropdownItem 
+                            <DropdownItem
                                 disabled={!voidedTagsSelected}
                                 onClick={(): void => showVoidDialog(false)}>
-                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba}/>
+                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>
                         </OptionsDropdown>
@@ -489,7 +496,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             disabled={true}>
                             <PrintOutlinedIcon fontSize='small' />
                         </StyledButton>
-                        <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{textAlign: 'center'}}>
+                        <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton
                                     variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
@@ -497,7 +504,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         toggleFilter();
                                     }}
                                 >
-                                    <EdsIcon name='filter_list'/>
+                                    <EdsIcon name='filter_list' />
                                 </StyledButton>
                             </div>
                         </Tooltip>

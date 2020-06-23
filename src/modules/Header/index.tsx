@@ -55,10 +55,6 @@ const Header: React.FC = (): JSX.Element => {
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
 
-    const logout = (): void => {
-        auth.logout();
-    };
-
     return (
         <div>
             <Nav>
@@ -300,7 +296,7 @@ const Header: React.FC = (): JSX.Element => {
                         </a>
                     </MenuItem>
                     <MenuItem className='reducePadding lastButton'>
-                        <Button variant={'ghost'} onClick={logout}>
+                        <Button variant={'ghost'} onClick={(): void => auth.logout()}>
                             Logout
                         </Button>
                     </MenuItem>

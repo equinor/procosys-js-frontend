@@ -51,6 +51,7 @@ export const ExpandCollapseIcon = styled.div<ExpandCollapseIconProps>`
 interface NodeNameProps {
     hasChildren: boolean;
     isExpanded: boolean;
+    isVoided: boolean;
 }
 
 export const NodeName = styled.div<NodeNameProps>`
@@ -61,12 +62,17 @@ export const NodeName = styled.div<NodeNameProps>`
         color: ${tokens.colors.interactive.primary__resting.rgba};
     `}
 
+    ${(props): any => props.isVoided && css`
+        color: ${tokens.colors.interactive.danger__resting.rgba};
+    `}
+
     /* add margin to nodes without children, to align with those that do (with expand/collapse icon) */
     margin-left: ${(props): string => !props.hasChildren ? 'calc(var(--grid-unit) * 6.5)' : '0'};
 `;
 
 interface NodeLinkProps {
     isExpanded: boolean;
+    isVoided: boolean;
 }
 
 export const NodeLink = styled.span<NodeLinkProps>`
@@ -76,7 +82,11 @@ export const NodeLink = styled.span<NodeLinkProps>`
         color: ${tokens.colors.interactive.primary__resting.rgba};
     `}
 
+    ${(props): any => props.isVoided && css`
+        color: ${tokens.colors.interactive.danger__resting.rgba};
+    `}
+
     :hover {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
+        color: ${(props): string => !props.isVoided ? tokens.colors.interactive.primary__resting.rgba : ''}
     }
 `;

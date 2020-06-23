@@ -3,6 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
+    
 `;
 
 export const LargerComponent = styled.div`

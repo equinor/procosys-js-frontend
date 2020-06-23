@@ -50,7 +50,7 @@ interface PreservedTagResponse {
 type TagSearchResponse = {
     tagNo: string;
     description: string;
-    purchaseOrderNumber: string;
+    purchaseOrderTitle: string;
     commPkgNo: string;
     mcPkgNo: string;
     registerCode: string;
@@ -58,6 +58,28 @@ type TagSearchResponse = {
     mccrResponsibleCodes: string;
     isPreserved: boolean;
 }
+
+type TagMigrationResponse = {
+    id: number;
+    tagNo: string;
+    description: string;
+    nextUpcommingDueTime: Date;
+    startDate: Date;
+    registerCode: string;
+    tagFunctionCode: string;
+    commPkgNo: string;
+    mcPkgNo: string;
+    callOfNo: string;
+    purchaseOrderTitle: string;
+    mccrResponsibleCodes: string;
+    preservationRemark: string;
+    storageArea: string;
+    modeCode: string;
+    heating: boolean;
+    special: boolean;
+    isPreserved: boolean;
+}
+
 
 type PreservedTag = {
     id: number;
@@ -72,6 +94,8 @@ interface CheckAreaTagNoResponse {
 interface ModeResponse {
     id: number;
     title: string;
+    forSupplier: boolean;
+    isVoided: boolean;
     rowVersion: string;
 }
 
@@ -393,6 +417,9 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
     if (error.response.status == 409) {
         return new PreservationApiError('Data has been updated by another user. Please reload and start over!', error.response);
     }
+    if (error.response.status == 404) {
+        return new PreservationApiError(error.response.data, error.response);
+    }
     try {
         const apiErrorResponse = error.response.data as ErrorResponse;
         let errorMessage = `${error.response.status} (${error.response.statusText})`;
@@ -517,6 +544,46 @@ class PreservationApiClient extends ApiClient {
         storageArea?: string | null,
         setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = '/Tags/Standard';
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                tagNos: listOfTagNo,
+                projectName: projectName,
+                stepId: stepId,
+                requirements,
+                remark,
+                storageArea
+            });
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * migrate a set of tags to preservation scope.
+     *
+     * @param listOfTagNo List of Tag Numbers
+     * @param stepId Step ID
+     * @param requirements List of Requirements
+     * @param projectName Name of affected project
+     * @param remark Optional: Remark for all tags
+     * @param storageArea Optional: Storage area for all tags
+     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+     *
+     * @returns Promise<void>
+     * @throws PreservationApiError
+     */
+    async migrateTagsToScope(
+        listOfTagNo: string[],
+        stepId: number,
+        requirements: PreserveTagRequirement[],
+        projectName: string,
+        remark?: string | null,
+        storageArea?: string | null,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/Tags/MigrateStandard';
 
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1097,6 +1164,31 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+         * Get tags for migration to new preservation module. Temporary. 
+         */
+    async getTagsForMigration(
+        projectName: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagMigrationResponse[]> {
+        const endpoint = '/Tags/Search/Preserved';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+            },
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagMigrationResponse[]>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
     /**
      * Get tag function details
      *
@@ -1763,6 +1855,118 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Get mode
+    */
+    async getMode(modeId: number, setRequestCanceller?: RequestCanceler): Promise<ModeResponse> {
+        const endpoint = `/Modes/${modeId}`;
+
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<ModeResponse>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add mode 
+     */
+    async addMode(title: string, forSupplier: boolean, setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = '/Modes';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    title: title,
+                    forSupplier: forSupplier
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update mode
+     */
+    async updateMode(modeId: number, title: string, forSupplier: boolean, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    forSupplier: forSupplier,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Void mode
+    */
+    async voidMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}/Void`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Unvoid mode
+      */
+    async unvoidMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

@@ -55,10 +55,6 @@ const Header: React.FC = (): JSX.Element => {
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
 
-    const logout = (): void => {
-        auth.logout();
-    };
-
     return (
         <div>
             <Nav>
@@ -256,7 +252,7 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                     <MenuItem>
                         <Dropdown Icon={<AccountCircleOutlinedIcon />}>
-                            <DropdownItem title="Logout" onClick={logout}>
+                            <DropdownItem title="Logout" onClick={(): void => auth.logout()}>
                                 Logout
                             </DropdownItem>
                         </Dropdown>

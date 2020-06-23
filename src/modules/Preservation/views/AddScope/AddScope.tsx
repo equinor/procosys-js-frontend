@@ -80,7 +80,7 @@ const AddScope = (): JSX.Element => {
             setSelectedTags([]);
             setScopeTableData(result);
         } catch (error) {
-            console.error('Search tags for autoscoping failed: ', error.messsage, error.data);
+            console.error('Search tags for autoscoping failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -98,7 +98,7 @@ const AddScope = (): JSX.Element => {
             setSelectedTags([]);
             setMigrationTableData(result);
         } catch (error) {
-            console.error('Fetching tags for migration failed: ', error.messsage, error.data);
+            console.error('Fetching tags for migration failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -126,7 +126,7 @@ const AddScope = (): JSX.Element => {
                 const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(data);
             } catch (error) {
-                console.error('Get Journeys failed: ', error.messsage, error.data);
+                console.error('Get Journeys failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -148,7 +148,7 @@ const AddScope = (): JSX.Element => {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
                     setRequirementTypes(response.data);
                 } catch (error) {
-                    console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                    console.error('Get Requirement Types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
                 }
             })();
@@ -209,7 +209,7 @@ const AddScope = (): JSX.Element => {
             showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
             history.push('/');
         } catch (error) {
-            console.error('Tag preservation failed: ', error.messsage, error.data);
+            console.error('Tag preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return Promise.resolve();
@@ -241,7 +241,7 @@ const AddScope = (): JSX.Element => {
             });
             setScopeTableData(res);
         } catch (error) {
-            console.error('Search tags failed: ', error.messsage, error.data);
+            console.error('Search tags failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -286,7 +286,7 @@ const AddScope = (): JSX.Element => {
             getTagsForMigration();
             showSnackbarNotification('Tags are removed from migration scope.', 5000);
         } catch (error) {
-            console.error('Fetching tags for migration failed: ', error.messsage, error.data);
+            console.error('Fetching tags for migration failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };

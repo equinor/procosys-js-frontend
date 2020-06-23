@@ -73,7 +73,9 @@ export default class AuthService implements IAuthService {
     }
 
     logout(): void {
-        this.authInstance.logout();
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.assign('https://myapps.microsoft.com/');
     }
 
     handleRedirectCallback(): void {

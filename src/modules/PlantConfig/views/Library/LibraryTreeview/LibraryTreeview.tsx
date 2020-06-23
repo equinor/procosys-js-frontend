@@ -27,7 +27,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getModes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await preservationApiClient.getModes().then(
+            return await preservationApiClient.getModes(true).then(
                 (response) => {
                     if (response) {
                         response.forEach(mode => children.push(

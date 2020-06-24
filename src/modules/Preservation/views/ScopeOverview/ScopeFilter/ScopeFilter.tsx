@@ -141,7 +141,7 @@ const ScopeFilter = ({
                 const journeys = await apiClient.getJourneyFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(journeys);
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }})();
         return (): void => requestCancellor && requestCancellor();
     },[]);
@@ -154,7 +154,7 @@ const ScopeFilter = ({
                 const response = await apiClient.getResponsiblesFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
                 setResponsibles(response.map(resp => {return {id: resp.id, title: resp.code};}));
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }})();
         return (): void => requestCancellor && requestCancellor();
     },[]);
@@ -167,7 +167,7 @@ const ScopeFilter = ({
                 const response = await apiClient.getAreaFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
                 setAreas(response.map(resp => {return {id: resp.code, title: resp.code};}));
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }})();
         return (): void => requestCancellor && requestCancellor();
     },[]);
@@ -180,7 +180,7 @@ const ScopeFilter = ({
                 const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setModes(modes);
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }})();
         return (): void => requestCancellor && requestCancellor();
     },[]);
@@ -193,7 +193,7 @@ const ScopeFilter = ({
                 const requirements = await apiClient.getRequirementTypeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
                 setRequirements(requirements);
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }})();
         return (): void => requestCancellor && requestCancellor();
     },[]);
@@ -210,7 +210,7 @@ const ScopeFilter = ({
                 });
                 setTagFunctions(tagFunctions);
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }})();
         return (): void => requestCancellor && requestCancellor();
     },[]);
@@ -226,7 +226,7 @@ const ScopeFilter = ({
                 });
                 setDisciplines(disciplines);
             } catch (error) {
-                showSnackbarNotification(error.message, 5000);
+                !error.isCancel && showSnackbarNotification(error.message, 5000);
             }
         })();
 

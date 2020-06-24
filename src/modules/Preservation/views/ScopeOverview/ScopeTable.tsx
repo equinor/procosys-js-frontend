@@ -17,6 +17,8 @@ interface ScopeTableProps {
     setRefreshScopeListCallback: (callback: () => void) => void;
     pageSize: number;
     setPageSize: (pageSize: number) => void;
+    shouldSelectFirstPage: boolean;
+    setFirstPageSelected: () => void;
 }
 
 class ScopeTable extends React.Component<ScopeTableProps, {}> {
@@ -102,6 +104,12 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
             'Disc': 'Discipline',
             'Mode': 'Mode'
         };
+
+        if (this.props.shouldSelectFirstPage) {
+            // set query to first page = 0
+            query.page = 0;
+            this.props.setFirstPageSelected();
+        }
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
         const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;

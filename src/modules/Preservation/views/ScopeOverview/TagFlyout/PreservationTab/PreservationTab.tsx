@@ -187,6 +187,7 @@ const PreservationTab = ({
                         defaultValue={tagDetails.remark}
                         inputRef={remarkInputRef}
                         disabled={!editingRemark}
+                        meta="Optional"
                         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
                             e.keyCode === KEYCODE_ENTER &&
                                 saveRemark();
@@ -225,6 +226,7 @@ const PreservationTab = ({
                         defaultValue={tagDetails.storageArea}
                         inputRef={storageAreaInputRef}
                         disabled={!editingStorageArea}
+                        meta="Optional"
                         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
                             e.keyCode === KEYCODE_ENTER &&
                                 saveStorageArea();

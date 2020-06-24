@@ -7,6 +7,7 @@ const preservableTags = [
     {
         tagNo: 'tagNo1',
         readyToBePreserved: true,
+        isVoided: false,
         description: 'Tag description 1',
         status: 'Active',
         requirements: [{id: 1, requirementTypeCode: 'Grease'}],
@@ -17,6 +18,7 @@ const nonPreservableTags = [
     {
         tagNo: 'tagNo2',
         readyToBePreserved: false,
+        isVoided:false,
         description: 'Tag description 2',
         status: 'Active',
         requirements: [{id: 1, requirementTypeCode: 'Grease'}],

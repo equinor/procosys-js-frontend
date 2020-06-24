@@ -7,6 +7,7 @@ const startableTags = [
     {
         tagNo: 'tagNo1',
         readyToBeStarted: true,
+        isVoided: false,
         description: 'Tag description 1',
         status: 'NotStarted',
         requirements: [{id: 1, requirementTypeCode: 'Grease'}],
@@ -17,6 +18,7 @@ const nonStartableTags = [
     {
         tagNo: 'tagNo2',
         readyToBeStarted: false,
+        isVoided: false,
         description: 'Tag description 2',
         status: 'Active',
         requirements: [{id: 1, requirementTypeCode: 'Grease'}],

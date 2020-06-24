@@ -270,10 +270,11 @@ const Requirements = ({
                             <Section>
                                 <TextField
                                     id={`requirementComment${requirement.id}`}
-                                    label='Comment for this preservation period (optional)'
+                                    label='Comment for this preservation period'
                                     placeholder='Write here'
                                     disabled={readonly}
                                     defaultValue={requirement.comment}
+                                    meta="Optional"
                                     onChange={(event: React.FormEvent<HTMLInputElement>): void => {
                                         setComment(requirement.id, event.currentTarget.value);
                                     }}

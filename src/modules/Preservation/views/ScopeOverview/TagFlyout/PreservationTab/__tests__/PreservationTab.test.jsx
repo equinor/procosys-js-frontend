@@ -45,11 +45,13 @@ describe('<PreservationTab />', () => {
             expect(getByText('po-no')).toBeInTheDocument();
             expect(getByText('area-code')).toBeInTheDocument();
 
-            const remark = getByLabelText('Remark');
+            const remark = getByLabelText('Remark', {
+                exact:  false});
             expect(remark).toBeInTheDocument();
             expect(remark.value).toEqual('remark text');
 
-            const storageArea = getByLabelText('Storage area');
+            const storageArea = getByLabelText('Storage area', {
+                exact:  false});
             expect(storageArea).toBeInTheDocument();
             expect(storageArea.value).toEqual('SA123');
         });
@@ -67,10 +69,12 @@ describe('<PreservationTab />', () => {
         await act(async () => {
             const { getByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
 
-            const remark = getByLabelText('Remark');
+            const remark = getByLabelText('Remark', {
+                exact:  false});
             expect(remark).toBeDisabled();
 
-            const storageArea = getByLabelText('Storage area');
+            const storageArea = getByLabelText('Storage area', {
+                exact:  false});
             expect(storageArea).toBeDisabled();
         });
     });

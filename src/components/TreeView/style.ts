@@ -73,17 +73,24 @@ export const NodeName = styled.div<NodeNameProps>`
 interface NodeLinkProps {
     isExpanded: boolean;
     isVoided: boolean;
+    isSelected: boolean;
 }
 
 export const NodeLink = styled.span<NodeLinkProps>`
     cursor: pointer;
+    white-space: nowrap;
 
-    ${(props): any => props.isExpanded && css`
+    ${(props): any => (props.isExpanded) && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};
     `}
 
     ${(props): any => props.isVoided && css`
-        color: ${tokens.colors.interactive.danger__resting.rgba};
+        opacity: 0.5;
+    `}
+
+    ${(props): any => (props.isSelected) && css`
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+        background: ${tokens.colors.ui.background__light.rgba};
     `}
 
     :hover {

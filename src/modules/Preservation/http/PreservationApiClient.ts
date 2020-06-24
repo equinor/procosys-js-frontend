@@ -503,7 +503,7 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[],  setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1290,9 +1290,11 @@ class PreservationApiClient extends ApiClient {
 
     async getTagRequirements(tagId: number, includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
-        const settings: AxiosRequestConfig = {params: {
-            IncludeVoided: includeVoided,
-        },};
+        const settings: AxiosRequestConfig = {
+            params: {
+                IncludeVoided: includeVoided,
+            },
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
@@ -1839,11 +1841,13 @@ class PreservationApiClient extends ApiClient {
     *
     * @param setRequestCanceller Returns a function that can be called to cancel the request
     */
-    async getModes(setRequestCanceller?: RequestCanceler): Promise<ModeResponse[]> {
+    async getModes(includeVoided: boolean, setRequestCanceller?: RequestCanceler): Promise<ModeResponse[]> {
         const endpoint = '/Modes';
 
         const settings: AxiosRequestConfig = {
-            params: {}
+            params: {
+                includeVoided: includeVoided
+            }
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 

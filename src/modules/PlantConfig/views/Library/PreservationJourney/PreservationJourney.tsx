@@ -73,7 +73,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const modes = await preservationApiClient.getModes((cancel: Canceler) => requestCancellor = cancel);
+                const modes = await preservationApiClient.getModes(false, (cancel: Canceler) => requestCancellor = cancel);
                 const mappedModes: SelectItem[] = [];
 
                 modes.forEach(mode => mappedModes.push({ text: mode.title, value: mode.id, selected: false }));

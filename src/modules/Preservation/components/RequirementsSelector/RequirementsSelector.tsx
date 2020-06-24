@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { RequirementType, RequirementDefinition } from '../../../PlantConfig/views/Library/TagFunction/tabs/types';
 import SelectInput, { SelectItem } from '@procosys/components/Select';
 import PreservationIcon from '@procosys/components/PreservationIcon';
@@ -60,7 +60,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     useEffect(() => {
         const existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
         setRequirements(existingRequirements);
-    }, []);
+    }, [props.requirements]);
 
     useEffect(() => {
         if (!props.onChange) return;
@@ -177,7 +177,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         const newRequirement = getRequirementForValue(reqDefValue);
         setRequirements((oldReq) => {
             const copy = [...oldReq];
-            
+
             if (newRequirement) {
                 copy[index].requirementDefinitionId = newRequirement.requirementDefinition.id;
                 copy[index].intervalWeeks = newRequirement.requirementDefinition.defaultIntervalWeeks;
@@ -258,8 +258,8 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 </SelectInput>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
-                                { requirement.editingRequirements ? 
-                                    ( requirement.isVoided ? 
+                                {requirement.editingRequirements ?
+                                    (requirement.isVoided ?
                                         <Button className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
                                             <EdsIcon name='restore_from_trash' />
                                             Unvoid
@@ -268,7 +268,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                         <Button className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
                                             <EdsIcon name='delete_forever' />
                                             Void
-                                        </Button> )
+                                        </Button>)
                                     :
                                     <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
                                         <EdsIcon name='delete_to_trash' />

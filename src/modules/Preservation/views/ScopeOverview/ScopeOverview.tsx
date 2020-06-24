@@ -75,6 +75,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
+    const [filterWasActivated, setFilterWasActivated] = useState<boolean>(false);
 
     const {
         project,
@@ -93,6 +94,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     useEffect(
         () => {
+            setFilterWasActivated(true);
             refreshScopeList();
         }, [tagListFilter]
     );
@@ -519,6 +521,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setRefreshScopeListCallback={setRefreshScopeListCallback}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
+                    shouldSelectFirstPage={filterWasActivated}
+                    setFirstPageSelected={(): void => setFilterWasActivated(false)}
                 />
                 {
                     displayFlyout && (

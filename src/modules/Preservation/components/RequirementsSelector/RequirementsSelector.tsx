@@ -65,21 +65,20 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     }, [props.requirements]);
 
     useEffect(() => {
-        let existingRequirements = requirements;
+
         if (hasNewPropsReq) {
-            //Cannot use 'requirements' becuase its not updated in this rendering. This is a quick fix  to avoid running in circle.  
-            //todo: Simplify implementation.
-            existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
+            return;
         }
 
         if (!props.onChange) return;
         // Check that everything is filled out
-        const hasInvalidInputs = existingRequirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
+
+        const hasInvalidInputs = requirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
         if (hasInvalidInputs) return;
 
         //Do we actually have a change to submit?
         let hasChanges = false;
-        hasChanges = existingRequirements.some((req) => {
+        hasChanges = requirements.some((req) => {
 
             const hasMatchingRequirement = props.requirements.some(
                 oldReq => {
@@ -87,11 +86,11 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                         && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided);
                 });
             return !hasMatchingRequirement;
-        }) || existingRequirements.length !== props.requirements.length;
+        }) || requirements.length !== props.requirements.length;
 
         if (hasChanges) {
             const filtered: OnChangeRequirementData[] = [];
-            existingRequirements.forEach(req => {
+            requirements.forEach(req => {
                 filtered.push({
                     requirementDefinitionId: req.requirementDefinitionId as number,
                     intervalWeeks: req.intervalWeeks as number,

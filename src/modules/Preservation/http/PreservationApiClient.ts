@@ -436,7 +436,7 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
 
             for (const validatedField in validationErrors) {
                 const fieldErrors = validationErrors[validatedField].join(' | ');
-                validationErrorMessage += ` ${validatedField}: ${fieldErrors} `;
+                validationErrorMessage += ` ${fieldErrors} `;
             }
 
             return new PreservationApiError(validationErrorMessage, error.response);

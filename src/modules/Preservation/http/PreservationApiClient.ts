@@ -428,6 +428,18 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
     if (error.response.status == 404) {
         return new PreservationApiError(error.response.data, error.response);
     }
+    if (error.response.status == 400) {
+        // input and business validation errors
+        let validationErrorMessage = error.response.data.title;
+        const validationErrors = error.response.data.errors;
+
+        for (const validatedField in validationErrors) {
+            const fieldErrors = validationErrors[validatedField].join(' | ');
+            validationErrorMessage += ` ${validatedField}: ${fieldErrors} `;
+        }
+
+        return new PreservationApiError(validationErrorMessage, error.response);
+    }
     try {
         const apiErrorResponse = error.response.data as ErrorResponse;
         let errorMessage = `${error.response.status} (${error.response.statusText})`;

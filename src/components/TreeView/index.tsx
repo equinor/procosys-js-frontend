@@ -18,7 +18,6 @@ export interface TreeViewNode {
     isVoided?: boolean;
     getChildren?: () => Promise<TreeViewNode[]>;
     onClick?: () => void;
-    isSelected?: boolean;
 }
 
 // internal props
@@ -188,18 +187,16 @@ const TreeView = ({
         );
     };
 
-    const selectNode = (node: NodeData): void => {
-        if (node.onClick) {
-            if (selectedNodeId) {
-                const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
-                if (currentSelectedNodeIndex != -1) {
-                    treeData[currentSelectedNodeIndex].isSelected = false;
-                }
+    const handleOnClick = (node: NodeData): void => {
+        if (selectedNodeId) {
+            const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
+            if (currentSelectedNodeIndex != -1) {
+                treeData[currentSelectedNodeIndex].isSelected = false;
             }
-            node.isSelected = true;
-            setSelectedNodeId(node.id);
-            node.onClick();
         }
+        node.isSelected = true;
+        setSelectedNodeId(node.id);
+        node.onClick && node.onClick();
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {
@@ -207,13 +204,14 @@ const TreeView = ({
             <NodeName
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
-                isVoided={node.isVoided === true}>
+                isVoided={node.isVoided === true}
+                isSelected={node.isSelected === true}>
                 {
                     node.onClick && (
                         <NodeLink
                             isExpanded={node.isExpanded === true}
                             isVoided={node.isVoided === true}
-                            onClick={(): void => { selectNode(node); }}
+                            onClick={(): void => { handleOnClick(node); }}
                             isSelected={node.isSelected ? true : false}
                         >
                             {node.name}

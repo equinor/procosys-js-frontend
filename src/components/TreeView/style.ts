@@ -52,19 +52,26 @@ interface NodeNameProps {
     hasChildren: boolean;
     isExpanded: boolean;
     isVoided: boolean;
+    isSelected: boolean;
 }
 
 export const NodeName = styled.div<NodeNameProps>`
     padding: var(--grid-unit) 0;
     font-weight: 500;
+    white-space: nowrap;
 
     ${(props): any => props.isExpanded && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};
     `}
 
     ${(props): any => props.isVoided && css`
-        color: ${tokens.colors.interactive.danger__resting.rgba};
+        opacity: 0.5;
     `}
+
+    ${(props): any => (props.isSelected) && css`
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+        background: ${tokens.colors.ui.background__light.rgba};
+`}
 
     /* add margin to nodes without children, to align with those that do (with expand/collapse icon) */
     margin-left: ${(props): string => !props.hasChildren ? 'calc(var(--grid-unit) * 6.5)' : '0'};
@@ -78,7 +85,6 @@ interface NodeLinkProps {
 
 export const NodeLink = styled.span<NodeLinkProps>`
     cursor: pointer;
-    white-space: nowrap;
 
     ${(props): any => (props.isExpanded) && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};

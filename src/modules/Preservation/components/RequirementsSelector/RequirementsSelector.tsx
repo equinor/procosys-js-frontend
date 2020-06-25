@@ -65,8 +65,9 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     }, [props.requirements]);
 
     useEffect(() => {
-
         if (hasNewPropsReq) {
+            //To avoid running in a circle, we return here, if requirements where updated in previous useEffect.
+            //Later: Should do some reqfactoring here. 
             return;
         }
 

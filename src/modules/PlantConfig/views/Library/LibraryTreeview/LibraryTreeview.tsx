@@ -32,7 +32,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                     if (response) {
                         response.forEach(mode => children.push(
                             {
-                                id: mode.id,
+                                id: 'mode_' + mode.id,
                                 name: mode.title,
                                 isVoided: mode.isVoided,
                                 onClick: (): void => handleTreeviewClick(LibraryType.MODE, mode.id.toString())
@@ -56,7 +56,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                     if (response) {
                         response.forEach(journey => children.push(
                             {
-                                id: journey.id,
+                                id: 'journey_' + journey.id,
                                 name: journey.title,
                                 isVoided: journey.isVoided,
                                 onClick: (): void => handleTreeviewClick(LibraryType.PRES_JOURNEY, journey.id.toString()),

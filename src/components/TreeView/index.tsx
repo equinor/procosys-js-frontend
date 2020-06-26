@@ -24,6 +24,7 @@ export interface TreeViewNode {
 interface NodeData extends TreeViewNode {
     parentId?: number | string;
     isExpanded?: boolean;
+    isSelected?: boolean;
     children?: NodeData[];
 }
 
@@ -41,20 +42,22 @@ const TreeView = ({
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
+    const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
+
 
     const getNodeChildCountAndCollapse = (parentNodeId: string | number): number => {
         let childCount = 0;
-    
+
         treeData.forEach(treeNode => {
             let nodeParentId: number | string | null | undefined = treeNode.parentId;
-            
+
             while (nodeParentId) {
                 // check whether the child exists under the parent node in question (and collapse)
                 if (nodeParentId === parentNodeId) {
                     treeNode.isExpanded = false;
                     childCount++;
                 }
-    
+
                 // move up the tree
                 const parent = treeData.find(data => data.id === nodeParentId);
                 nodeParentId = parent ? parent.parentId : null;
@@ -125,14 +128,14 @@ const TreeView = ({
     const refreshNode = async (node: NodeData): Promise<void> => {
         const refreshingNodeId = node.id;
         const refreshingNodeIndex = treeData.findIndex(data => data.id === refreshingNodeId);
-    
+
         // get number of child nodes to remove
         const childCount = getNodeChildCountAndCollapse(refreshingNodeId);
-  
+
         // remove children after parent
         const newTreeData = [...treeData];
         newTreeData.splice(refreshingNodeIndex + 1, childCount);
-    
+
         // get new children
         const newChildren = await getNodeChildren(node);
 
@@ -184,18 +187,32 @@ const TreeView = ({
         );
     };
 
+    const handleOnClick = (node: NodeData): void => {
+        if (selectedNodeId) {
+            const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
+            if (currentSelectedNodeIndex != -1) {
+                treeData[currentSelectedNodeIndex].isSelected = false;
+            }
+        }
+        node.isSelected = true;
+        setSelectedNodeId(node.id);
+        node.onClick && node.onClick();
+    };
+
     const getNodeLink = (node: NodeData): JSX.Element => {
         return (
             <NodeName
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
-                isVoided={node.isVoided === true}>
+                isVoided={node.isVoided === true}
+                isSelected={node.isSelected === true}>
                 {
                     node.onClick && (
                         <NodeLink
                             isExpanded={node.isExpanded === true}
                             isVoided={node.isVoided === true}
-                            onClick={node.onClick}
+                            onClick={(): void => { handleOnClick(node); }}
+                            isSelected={node.isSelected ? true : false}
                         >
                             {node.name}
                         </NodeLink>
@@ -226,8 +243,8 @@ const TreeView = ({
             if (dirtyNode && dirtyNode.children && dirtyNode.children.length > 0) {
                 refreshNode(dirtyNode);
                 resetDirtyNode && resetDirtyNode();
-            }            
-        }        
+            }
+        }
     }, [dirtyNodeId]);
 
     return (

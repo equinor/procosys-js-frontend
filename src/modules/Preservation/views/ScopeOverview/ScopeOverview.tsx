@@ -525,9 +525,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </DropdownItem>
                             <DropdownItem
                                 disabled={true}
-                                //onClick={}
                             >
-                                <EdsIcon name='delete_forever' color={tokens.colors.interactive.disabled__border.rgba} />
+                                <EdsIcon name='delete_to_trash' color={tokens.colors.interactive.disabled__border.rgba} />
                                 Remove
                             </DropdownItem>
                             <DropdownItem
@@ -544,7 +543,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </DropdownItem>
                             <DropdownItem
                                 disabled={true}
-                                //onClick={}
                             >
                                 <EdsIcon name='print' color={tokens.colors.interactive.disabled__border.rgba} />
                                 Print

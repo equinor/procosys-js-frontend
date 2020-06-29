@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
@@ -26,6 +26,7 @@ import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
 import { Tooltip } from '@material-ui/core';
 import VoidDialog from './VoidDialog';
+import Qs from 'qs';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -47,6 +48,7 @@ export const isTagVoided = (tag: PreservedTag): boolean => {
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
+
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
@@ -76,6 +78,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [filterWasActivated, setFilterWasActivated] = useState<boolean>(false);
+    const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
 
     const {
         project,
@@ -83,8 +86,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCurrentProject,
         apiClient,
     } = usePreservationContext();
+
     const history = useHistory();
-    const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
+    const location = useLocation();
 
     const refreshScopeListCallback = useRef<() => void>();
 
@@ -385,6 +389,42 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };
+
+    useEffect((): void => {
+        if (location.search === '') {
+            // querystring is empty
+            return;
+        }
+
+        // parse querystring
+        const qsParameters = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+        // get "pono" and apply filter when given
+        const poNoFilter = qsParameters['pono'] as string;
+
+        if (poNoFilter && poNoFilter !== '') {
+            setTagListFilter({
+                tagNoStartsWith: null,
+                commPkgNoStartsWith: null,
+                mcPkgNoStartsWith: null,
+                purchaseOrderNoStartsWith: poNoFilter,
+                storageAreaStartsWith: null,
+                preservationStatus: null,
+                actionStatus: null,
+                journeyIds: [],
+                modeIds: [],
+                dueFilters: [],
+                requirementTypeIds: [],
+                tagFunctionCodes: [],
+                disciplineCodes: [],
+                responsibleIds: [],
+                areaCodes: []
+            });
+    
+            setNumberOfFilters(1);    
+            toggleFilter();
+        }
+    }, [location]);
 
     return (
         <Container>

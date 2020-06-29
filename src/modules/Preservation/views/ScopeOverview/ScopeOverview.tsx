@@ -122,7 +122,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
             );
         } catch (error) {
-            console.error('Get tags failed: ', error.messsage, error.data);
+            console.error('Get tags failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return { maxAvailable: 0, tags: [] };
@@ -148,7 +148,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
-            console.error('Transfer failed: ', error.messsage, error.data);
+            console.error('Transfer failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -191,7 +191,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
         } catch (error) {
-            console.error('Start preservation failed: ', error.messsage, error.data);
+            console.error('Start preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -232,7 +232,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been preserved for this week.');
         } catch (error) {
-            console.error('Preserve failed: ', error.messsage, error.data);
+            console.error('Preserve failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -278,7 +278,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
         } catch (error) {
-            console.error('Complete failed: ', error.messsage, error.data);
+            console.error('Complete failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -321,7 +321,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been voided.');
         } catch (error) {
-            console.error('Voiding failed: ', error.messsage, error.data);
+            console.error('Voiding failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -336,7 +336,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been unvoided.');
         } catch (error) {
-            console.error('Unvoid failed: ', error.messsage, error.data);
+            console.error('Unvoid failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();

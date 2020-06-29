@@ -29,7 +29,7 @@ const AttachmentTab = ({
                     setAttachments(attachments);
                 }
             } catch (error) {
-                console.error('Get attachments failed: ', error.messsage, error.data, true);
+                console.error('Get attachments failed: ', error.message, error.data, true);
                 showSnackbarNotification(error.message, 5000, true);
             }
             setIsLoading(false);
@@ -58,7 +58,7 @@ const AttachmentTab = ({
                 showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag.`, 5000, true);
             }
         } catch (error) {
-            console.error('Upload file attachment failed: ', error.messsage, error.data);
+            console.error('Upload file attachment failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);
@@ -72,7 +72,7 @@ const AttachmentTab = ({
                 showSnackbarNotification('Attachment is downloaded.', 5000, true);
             }
         } catch (error) {
-            console.error('Not able to get download url for tag attachment: ', error.messsage, error.data);
+            console.error('Not able to get download url for tag attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -86,7 +86,7 @@ const AttachmentTab = ({
                 showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
             }
         } catch (error) {
-            console.error('Not able to delete tag attachment: ', error.messsage, error.data);
+            console.error('Not able to delete tag attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);

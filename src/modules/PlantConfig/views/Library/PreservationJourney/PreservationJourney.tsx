@@ -83,7 +83,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 setMappedModes(mappedModes);
 
             } catch (error) {
-                console.error('Get Modes failed: ', error.messsage, error.data);
+                console.error('Get Modes failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -107,7 +107,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 responsibles.forEach(resp => mappedResponsibles.push({ text: resp.description, value: resp.code, selected: false }));
                 setMappedResponsibles(mappedResponsibles);
             } catch (error) {
-                console.error('Get Responsibles failed: ', error.messsage, error.data);
+                console.error('Get Responsibles failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -130,7 +130,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 }
             );
         } catch (error) {
-            console.error('Get preservation journey failed: ', error.messsage, error.data);
+            console.error('Get preservation journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -151,7 +151,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code);
             setIsSaved(true);
         } catch (error) {
-            console.error('Add journey failed: ', error.messsage, error.data);
+            console.error('Add journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
             getJourney(newJourney.id);
         }
@@ -169,7 +169,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             props.setDirtyLibraryType();
             showSnackbarNotification('New journey is saved.', 5000);
         } catch (error) {
-            console.error('Add journey failed: ', error.messsage, error.data);
+            console.error('Add journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
@@ -180,7 +180,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             props.setDirtyLibraryType();
             setIsSaved(true);
         } catch (error) {
-            console.error('Update journey failed: ', error.messsage, error.data);
+            console.error('Update journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
             getJourney(newJourney.id);
         }
@@ -195,7 +195,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.rowVersion);
                     setIsSaved(true);
                 } catch (error) {
-                    console.error('Update journey failed: ', error.messsage, error.data);
+                    console.error('Update journey failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
                     getJourney(newJourney.id);
                 }
@@ -299,7 +299,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is voided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to void journey: ', error.messsage, error.data);
+                console.error('Error occured when trying to void journey: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -315,7 +315,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is unvoided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to unvoid journey: ', error.messsage, error.data);
+                console.error('Error occured when trying to unvoid journey: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -333,7 +333,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is deleted.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to delete journey: ', error.messsage, error.data);
+                console.error('Error occured when trying to delete journey: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -374,7 +374,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const addNewStep = (): void => {
-        setIsDirty(true);
         const newStep: Step = {
             id: -1,
             title: '',
@@ -403,7 +402,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             getJourney(newJourney.id);
             showSnackbarNotification('Step is moved.', 5000);
         } catch (error) {
-            console.error('Swap steps failed: ', error.messsage, error.data);
+            console.error('Swap steps failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -440,7 +439,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     getJourney(journey.id);
                     showSnackbarNotification('Journey step is deleted.', 5000);
                 } catch (error) {
-                    console.error('Error occured when trying to delete journey step: ', error.messsage, error.data);
+                    console.error('Error occured when trying to delete journey step: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
                 }
                 setIsLoading(false);
@@ -456,7 +455,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 getJourney(journey.id);
                 showSnackbarNotification('Journey step is voided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to void journey step: ', error.messsage, error.data);
+                console.error('Error occured when trying to void journey step: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -472,7 +471,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 getJourney(journey.id);
                 showSnackbarNotification('Journey step is unvoided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to unvoid journey step: ', error.messsage, error.data);
+                console.error('Error occured when trying to unvoid journey step: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -553,20 +552,19 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                         onChange={(value): void => setModeValue(value, index)}
                                         data={mappedModes}
                                         label={'Mode'}
-                                        disabled={newJourney.isVoided}
+                                        disabled={newJourney.isVoided || step.isVoided}
                                     >
                                         {(modeSelectItem && modeSelectItem.text || 'Select mode')}
                                     </SelectInput>
                                 </div>
                             </FormFieldSpacer>
-
                             <FormFieldSpacer>
                                 <div style={{ width: '100%' }}>
                                     <SelectInput
                                         onChange={(value): void => setResponsibleValue(value, index)}
                                         data={mappedResponsibles}
                                         label={'Resp'}
-                                        disabled={newJourney.isVoided}
+                                        disabled={newJourney.isVoided || step.isVoided}
                                     >
                                         {(responsibleSelectItem && responsibleSelectItem.text || 'Select responsible')}
                                     </SelectInput>
@@ -580,7 +578,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                         value={step.title}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setStepTitleValue(e.target.value, index)}
                                         placeholder="Write Here"
-                                        disabled={newJourney.isVoided}
+                                        disabled={newJourney.isVoided || step.isVoided}
                                     />
                                 </div>
                             </FormFieldSpacer>

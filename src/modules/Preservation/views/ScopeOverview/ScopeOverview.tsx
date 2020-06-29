@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
@@ -26,6 +25,7 @@ import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
 import { Tooltip } from '@material-ui/core';
 import VoidDialog from './VoidDialog';
+import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -48,6 +48,13 @@ export const isTagVoided = (tag: PreservedTag): boolean => {
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
+
+    const {
+        project,
+        availableProjects,
+        setCurrentProject,
+        apiClient,
+    } = usePreservationContext();
 
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
@@ -79,13 +86,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [filterWasActivated, setFilterWasActivated] = useState<boolean>(false);
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
-
-    const {
-        project,
-        availableProjects,
-        setCurrentProject,
-        apiClient,
-    } = usePreservationContext();
+    const [filterForProjects, setFilterForProjects] = useState<string>('');
+    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
 
     const history = useHistory();
     const location = useLocation();
@@ -95,6 +97,19 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const refreshScopeList = (): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current();
     };
+
+    useEffect(() => {
+        // filter project dropdown
+        if (filterForProjects.length <= 0) {
+            setFilteredProjects(availableProjects);
+            return;
+        }
+
+        setFilteredProjects(availableProjects.filter((p: ProjectDetails) => {
+            return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 || 
+                p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
+        }));        
+    }, [filterForProjects]);
 
     useEffect(
         () => {
@@ -134,7 +149,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setCurrentProject(availableProjects[index].id);
+        setCurrentProject(filteredProjects[index].id);
         refreshScopeList();
         setSelectedTags([]);
     };
@@ -432,8 +447,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <HeaderContainer>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown text={project.name}>
-                            {availableProjects.map((projectItem, index) => {
+                        <Dropdown 
+                            text={project.name}
+                            onFilter={setFilterForProjects}
+                        >
+                            {filteredProjects.map((projectItem, index) => {
                                 return (
                                     <DropdownItem
                                         key={index}

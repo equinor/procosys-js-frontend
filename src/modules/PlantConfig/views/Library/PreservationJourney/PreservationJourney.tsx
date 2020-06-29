@@ -12,7 +12,8 @@ const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
 const downIcon = <EdsIcon name='arrow_down' size={16} />;
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const voidUnvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 interface Journey {
     id: number;
@@ -437,9 +438,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 try {
                     await preservationApiClient.deleteJourneyStep(journey.id, step.id, step.rowVersion);
                     getJourney(journey.id);
-                    showSnackbarNotification('Journey step is voided.', 5000);
+                    showSnackbarNotification('Journey step is deleted.', 5000);
                 } catch (error) {
-                    console.error('Error occured when trying to void journey step: ', error.messsage, error.data);
+                    console.error('Error occured when trying to delete journey step: ', error.messsage, error.data);
                     showSnackbarNotification(error.message, 5000);
                 }
                 setIsLoading(false);
@@ -469,9 +470,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.unvoidJourneyStep(journey.id, step.id, step.rowVersion);
                 getJourney(journey.id);
-                showSnackbarNotification('Journey step is voided.', 5000);
+                showSnackbarNotification('Journey step is unvoided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to void journey step: ', error.messsage, error.data);
+                console.error('Error occured when trying to unvoid journey step: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -508,12 +509,12 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 <ButtonSpacer />
                 {newJourney.isVoided &&
                     <Button className='buttonIcon' variant="outlined" onClick={unvoidJourney}>
-                        {voidUnvoidIcon} Unvoid
+                        {unvoidIcon} Unvoid
                     </Button>
                 }
                 {!newJourney.isVoided &&
                     <Button className='buttonIcon' variant="outlined" onClick={voidJourney}>
-                        {voidUnvoidIcon} Void
+                        {voidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />
@@ -604,19 +605,19 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                         </>
                                     }
                                     {(step.id == -1 || (journey && !journey.isInUse) && step.isVoided) &&
-                                        (<Button variant='ghost' onClick={(): Promise<void> => deleteStep(step, index)}>
+                                        (<Button variant='ghost' title="Delete" onClick={(): Promise<void> => deleteStep(step, index)}>
                                             {deleteIcon}
                                         </Button>)
                                     }
                                     {(step.id != -1 && !step.isVoided) &&
                                         (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
-                                            {voidUnvoidIcon} Void
+                                            {voidIcon} Void
                                         </Button>)
                                     }
 
                                     {(step.id != -1 && step.isVoided) &&
                                         (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
-                                            {voidUnvoidIcon} Unvoid
+                                            {unvoidIcon} Unvoid
                                         </Button>)
                                     }
                                 </FormFieldSpacer>

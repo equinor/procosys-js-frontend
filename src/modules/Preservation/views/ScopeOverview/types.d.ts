@@ -52,6 +52,7 @@ export interface TagListFilter {
     disciplineCodes: string[];
     preservationStatus: string | null;
     actionStatus: string | null;
+    voidedFilter: string | null;
     responsibleIds: string[] | null;
     areaCodes: string[] | null;
 }

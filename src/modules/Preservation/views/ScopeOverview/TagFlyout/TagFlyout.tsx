@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon, StyledButton } from './TagFlyout.style';
+import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon, StyledButton, TagNoContainer } from './TagFlyout.style';
 import PreservationTab from './PreservationTab/PreservationTab';
 import ActionTab from './ActionTab/ActionTab';
 import CloseIcon from '@material-ui/icons/Close';
@@ -13,6 +13,8 @@ import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
 import HistoryTab from './HistoryTab/HistoryTab';
+import { useParams, useHistory } from 'react-router-dom';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 enum PreservationStatus {
     NotStarted = 'Not started',
@@ -36,7 +38,10 @@ const TagFlyout = ({
     const [tagDetails, setTagDetails] = useState<TagDetails | null>(null);
     const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
     const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
-    const { apiClient } = usePreservationContext();
+    const { apiClient, project } = usePreservationContext();
+    const { procosysApiClient } = useProcosysContext();
+    const params = useParams<any>();
+    const history = useHistory();
 
     const getTagDetails = async (): Promise<void> => {
         try {
@@ -122,6 +127,22 @@ const TagFlyout = ({
         }
     };
 
+    const goToTag = async (): Promise<void> => {
+        if (tagDetails) {
+            try {
+                const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name);
+                if (tag.length > 0) {
+                    history.push(`${params.plant}/Completion#Tag|${tag[0].id}`);
+                } else {
+                    showSnackbarNotification('Something went wrong. Could not direct you to tag.');
+                }
+            } catch (error) {
+                console.error(`Getting tag id failed: ${error.message}`);
+                showSnackbarNotification(error.message);
+            }
+        }
+    };
+
     return (
         <Container>
             {
@@ -136,9 +157,11 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <h1>
-                    {tagDetails ? tagDetails.tagNo : '-'}
-                </h1>
+                <TagNoContainer onClick={goToTag}>
+                    <h1>
+                        {tagDetails ? tagDetails.tagNo : '-'}
+                    </h1>
+                </TagNoContainer>
                 <HeaderActions>
                     {preservationIsStarted &&
                         <StyledButton

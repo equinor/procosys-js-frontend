@@ -14,7 +14,7 @@ export const Header = styled.div`
         calc(var(--grid-unit) * 4)
         calc(var(--grid-unit) * 2)
         var(--grid-unit)
-        calc(var(--grid-unit) * 2);
+        var(--grid-unit);
 
     h1 {
         font-size: calc(var(--grid-unit) * 3);
@@ -95,5 +95,12 @@ export const StyledButton = styled(Button)`
         height: 20px;
         width: 20px;
     }
+`;
 
+export const TagNoContainer = styled.div`
+    cursor: pointer;
+    padding: var(--grid-unit);
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba}
+    }
 `;

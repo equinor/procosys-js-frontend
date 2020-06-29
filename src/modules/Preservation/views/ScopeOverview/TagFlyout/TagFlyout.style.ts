@@ -99,7 +99,7 @@ export const StyledButton = styled(Button)`
 
 export const TagNoContainer = styled.div`
     cursor: pointer;
-    padding: var(--grid-unit);
+    padding: 0px var(--grid-unit);
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba}
     }

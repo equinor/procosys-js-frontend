@@ -8,6 +8,9 @@ export const FormFieldSpacer = styled.div`
     display: flex;
     margin-right: calc(var(--grid-unit) * 2);
     padding-bottom: calc(var(--grid-unit) * 2);
+    .voidUnvoid svg {
+        padding-right: var(--grid-unit);
+    }
 `;
 
 export const InputContainer = styled.div`
@@ -36,6 +39,9 @@ export const ButtonContainer = styled.div`
     display: flex;
     width: 100%;
     justify-content: flex-end;
+    .buttonIcon svg {
+        padding-right: var(--grid-unit);
+    }
 `;
 
 export const IconContainer = styled.div`

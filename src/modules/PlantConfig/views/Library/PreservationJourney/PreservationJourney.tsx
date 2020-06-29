@@ -12,11 +12,13 @@ const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
 const downIcon = <EdsIcon name='arrow_down' size={16} />;
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
+const voidUnvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 interface Journey {
     id: number;
     title: string;
     isVoided: boolean;
+    isInUse: boolean;
     steps: Step[];
     rowVersion: string;
 }
@@ -45,7 +47,7 @@ type PreservationJourneyProps = {
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const createNewJourney = (): Journey => {
-        return { id: -1, title: '', isVoided: false, steps: [], rowVersion: '' };
+        return { id: -1, title: '', isVoided: false, isInUse: false, steps: [], rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -119,10 +121,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const getJourney = async (journeyId: number): Promise<void> => {
         setIsLoading(true);
         try {
-            await preservationApiClient.getJourney(journeyId).then(
+            await preservationApiClient.getJourney(journeyId, true).then(
                 (response) => {
                     setJourney(response);
                     setNewJourney(cloneJourney(response));
+                    setIsDirty(false);
                 }
             );
         } catch (error) {
@@ -241,7 +244,34 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     }, [isSaved]);
 
+    const inputIsComplete = (): boolean => {
+        let ok = true;
+        let errorMessage = 'Cannot save: ';
+        if (newJourney.title === '') {
+            ok = false;
+            errorMessage += 'Title is missing. ';
+        }
+
+        newJourney.steps.some((step: Step) => {
+            if (step.mode.id === -1 || step.responsible.code === '' || step.title === '') {
+                errorMessage += 'Some step information is missing.';
+                ok = false;
+                return true;
+            }
+        });
+
+        if (!ok) {
+            showSnackbarNotification(errorMessage, 5000);
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSave = (): void => {
+        if (!inputIsComplete()) {
+            return;
+        }
         if (newJourney.id === -1) {
             saveNewJourney();
         } else {
@@ -255,6 +285,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             return;
         }
         setJourney(null);
+        setIsDirty(false);
         setIsEditMode(false);
     };
 
@@ -284,6 +315,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 showSnackbarNotification('Journey is unvoided.', 5000);
             } catch (error) {
                 console.error('Error occured when trying to unvoid journey: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+            setIsLoading(false);
+        }
+    };
+
+    const deleteJourney = async (): Promise<void> => {
+        if (journey) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.deleteJourney(journey.id, journey.rowVersion);
+                setJourney(null);
+                setIsDirty(false);
+                setIsEditMode(false);
+                props.setDirtyLibraryType();
+                showSnackbarNotification('Journey is deleted.', 5000);
+            } catch (error) {
+                console.error('Error occured when trying to delete journey: ', error.messsage, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -378,9 +427,57 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
-    const deleteStep = (stepIndex: number): void => {
-        console.log(stepIndex);
+    const deleteStep = async (step: Step, stepIndex: number): Promise<void> => {
+        if (step.id == -1) {
+            newJourney.steps.splice(stepIndex);
+            setNewJourney(cloneJourney(newJourney));
+        } else {
+            if (journey) {
+                setIsLoading(true);
+                try {
+                    await preservationApiClient.deleteJourneyStep(journey.id, step.id, step.rowVersion);
+                    getJourney(journey.id);
+                    showSnackbarNotification('Journey step is voided.', 5000);
+                } catch (error) {
+                    console.error('Error occured when trying to void journey step: ', error.messsage, error.data);
+                    showSnackbarNotification(error.message, 5000);
+                }
+                setIsLoading(false);
+            }
+        }
     };
+
+    const voidStep = async (step: Step): Promise<void> => {
+        if (journey) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.voidJourneyStep(journey.id, step.id, step.rowVersion);
+                getJourney(journey.id);
+                showSnackbarNotification('Journey step is voided.', 5000);
+            } catch (error) {
+                console.error('Error occured when trying to void journey step: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+            setIsLoading(false);
+        }
+    };
+
+
+    const unvoidStep = async (step: Step): Promise<void> => {
+        if (journey) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.unvoidJourneyStep(journey.id, step.id, step.rowVersion);
+                getJourney(journey.id);
+                showSnackbarNotification('Journey step is voided.', 5000);
+            } catch (error) {
+                console.error('Error occured when trying to void journey step: ', error.messsage, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+            setIsLoading(false);
+        }
+    };
+
 
     if (isLoading) {
         return <Spinner large />;
@@ -403,15 +500,20 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 <Typography bold variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>Journey is voided</Typography>
             }
             <ButtonContainer>
-                {newJourney.isVoided &&
-                    <Button variant="outlined" onClick={unvoidJourney}>
-                        Unvoid
+                {(newJourney.isVoided && !newJourney.isInUse) &&
+                    <Button className='buttonIcon' variant="outlined" onClick={deleteJourney}>
+                        {deleteIcon} Delete
                     </Button>
                 }
-
+                <ButtonSpacer />
+                {newJourney.isVoided &&
+                    <Button className='buttonIcon' variant="outlined" onClick={unvoidJourney}>
+                        {voidUnvoidIcon} Unvoid
+                    </Button>
+                }
                 {!newJourney.isVoided &&
-                    <Button variant="outlined" onClick={voidJourney}>
-                        Void
+                    <Button className='buttonIcon' variant="outlined" onClick={voidJourney}>
+                        {voidUnvoidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />
@@ -440,7 +542,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 {newJourney.steps && newJourney.steps.map((step, index) => {
                     const modeSelectItem: SelectItem | undefined = mappedModes.find(mode => mode.value === step.mode.id);
                     const responsibleSelectItem: SelectItem | undefined = mappedResponsibles.find(resp => resp.value === step.responsible.code);
-
 
                     return (
                         <React.Fragment key={`step._${index}`}>
@@ -482,23 +583,44 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     />
                                 </div>
                             </FormFieldSpacer>
-                            <FormFieldSpacer>
-                                {newJourney.steps.length > 1 &&
-                                    <>
-                                        <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
-                                            {upIcon}
-                                        </Button>
-                                        <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
-                                            {downIcon}
-                                        </Button>
-                                    </>
-                                }
-                                <Button disabled={newJourney.isVoided} variant='ghost' onClick={(): void => deleteStep(index)}>
-                                    {deleteIcon}
-                                </Button>
+                            {(isDirty && index == 0) &&
+                                <FormFieldSpacer>
+                                    <Typography variant="caption">Actions on steps are unavailable until other changes are saved.</Typography>
+                                </FormFieldSpacer>
+                            }
+                            {(isDirty && index != 0) &&
+                                <div></div>
+                            }
+                            {!isDirty && (
+                                <FormFieldSpacer>
+                                    {newJourney.steps.length > 1 &&
+                                        <>
+                                            <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
+                                                {upIcon}
+                                            </Button>
+                                            <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
+                                                {downIcon}
+                                            </Button>
+                                        </>
+                                    }
+                                    {(step.id == -1 || (journey && !journey.isInUse) && step.isVoided) &&
+                                        (<Button variant='ghost' onClick={(): Promise<void> => deleteStep(step, index)}>
+                                            {deleteIcon}
+                                        </Button>)
+                                    }
+                                    {(step.id != -1 && !step.isVoided) &&
+                                        (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                            {voidUnvoidIcon} Void
+                                        </Button>)
+                                    }
 
-                            </FormFieldSpacer>
-
+                                    {(step.id != -1 && step.isVoided) &&
+                                        (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                            {voidUnvoidIcon} Unvoid
+                                        </Button>)
+                                    }
+                                </FormFieldSpacer>
+                            )}
                         </React.Fragment>
                     );
                 })}

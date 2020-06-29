@@ -50,6 +50,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                 (response) => {
                     setMode(response);
                     setNewMode(cloneMode(response));
+                    setIsDirty(false);
                 }
             );
         } catch (error) {

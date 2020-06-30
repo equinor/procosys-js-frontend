@@ -34,7 +34,12 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
     };
 
     useEffect(() => {
-        setIsActiveFilter(value && value != 'no-filter' ? true : false);
+        const option = options.find(o => o.value == value);
+        if (option) {
+            setIsActiveFilter(option.default ? false : true);
+        } else {
+            setIsActiveFilter(false);
+        }
     }, [value]);
 
     return (

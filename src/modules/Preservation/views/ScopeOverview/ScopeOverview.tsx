@@ -1,12 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
-import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
-import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
-import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
@@ -26,6 +20,8 @@ import { tokens } from '@equinor/eds-tokens';
 import CompleteDialog from './CompleteDialog';
 import { Tooltip } from '@material-ui/core';
 import VoidDialog from './VoidDialog';
+import { ProjectDetails } from '../../types';
+import Qs from 'qs';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -47,6 +43,14 @@ export const isTagVoided = (tag: PreservedTag): boolean => {
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
+
+    const {
+        project,
+        availableProjects,
+        setCurrentProject,
+        apiClient,
+    } = usePreservationContext();
+
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
@@ -61,6 +65,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         storageAreaStartsWith: null,
         preservationStatus: null,
         actionStatus: null,
+        voidedFilter: null,
         journeyIds: [],
         modeIds: [],
         dueFilters: [],
@@ -76,21 +81,31 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [filterWasActivated, setFilterWasActivated] = useState<boolean>(false);
-
-    const {
-        project,
-        availableProjects,
-        setCurrentProject,
-        apiClient,
-    } = usePreservationContext();
-    const history = useHistory();
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
+    const [filterForProjects, setFilterForProjects] = useState<string>('');
+    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
+
+    const history = useHistory();
+    const location = useLocation();
 
     const refreshScopeListCallback = useRef<() => void>();
 
     const refreshScopeList = (): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current();
     };
+
+    useEffect(() => {
+        // filter project dropdown
+        if (filterForProjects.length <= 0) {
+            setFilteredProjects(availableProjects);
+            return;
+        }
+
+        setFilteredProjects(availableProjects.filter((p: ProjectDetails) => {
+            return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 || 
+                p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
+        }));        
+    }, [filterForProjects]);
 
     useEffect(
         () => {
@@ -130,7 +145,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setCurrentProject(availableProjects[index].id);
+        setCurrentProject(filteredProjects[index].id);
         refreshScopeList();
         setSelectedTags([]);
     };
@@ -386,14 +401,54 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
+    useEffect((): void => {
+        if (location.search === '') {
+            // querystring is empty
+            return;
+        }
+
+        // parse querystring
+        const qsParameters = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+        // get "pono" and apply filter when given
+        const poNoFilter = qsParameters['pono'] as string;
+
+        if (poNoFilter && poNoFilter !== '') {
+            setTagListFilter({
+                tagNoStartsWith: null,
+                commPkgNoStartsWith: null,
+                mcPkgNoStartsWith: null,
+                purchaseOrderNoStartsWith: poNoFilter,
+                storageAreaStartsWith: null,
+                preservationStatus: null,
+                actionStatus: null,
+                voidedFilter: null,
+                journeyIds: [],
+                modeIds: [],
+                dueFilters: [],
+                requirementTypeIds: [],
+                tagFunctionCodes: [],
+                disciplineCodes: [],
+                responsibleIds: [],
+                areaCodes: []
+            });
+    
+            setNumberOfFilters(1);    
+            toggleFilter();
+        }
+    }, [location]);
+
     return (
         <Container>
             <ContentContainer>
                 <HeaderContainer>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown text={project.name}>
-                            {availableProjects.map((projectItem, index) => {
+                        <Dropdown 
+                            text={project.name}
+                            onFilter={setFilterForProjects}
+                        >
+                            {filteredProjects.map((projectItem, index) => {
                                 return (
                                     <DropdownItem
                                         key={index}
@@ -440,7 +495,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={selectedTags.length < 1}>
-                            <PlayArrowOutlinedIcon className='iconNextToText' fontSize='small' />
+                            <div className='iconNextToText' ><EdsIcon name='play' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Start
                         </StyledButton>
                         <StyledButton
@@ -448,7 +503,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={selectedTags.length < 1}>
-                            <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
+                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -471,6 +526,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Edit
                             </DropdownItem>
                             <DropdownItem
+                                disabled={true}
+                            >
+                                <EdsIcon name='delete_to_trash' color={tokens.colors.interactive.disabled__border.rgba} />
+                                Remove
+                            </DropdownItem>
+                            <DropdownItem
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(): void => showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
@@ -482,22 +543,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>
+                            <DropdownItem
+                                disabled={true}
+                            >
+                                <EdsIcon name='print' color={tokens.colors.interactive.disabled__border.rgba} />
+                                Print
+                            </DropdownItem>
                         </OptionsDropdown>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <CreateOutlinedIcon fontSize='small' />
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <DeleteOutlinedIcon fontSize='small' />
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <PrintOutlinedIcon fontSize='small' />
-                        </StyledButton>
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton

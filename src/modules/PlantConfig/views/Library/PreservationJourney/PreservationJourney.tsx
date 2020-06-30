@@ -56,6 +56,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [canSave, setCanSave] = useState<boolean>(false);
 
     const {
         preservationApiClient,
@@ -381,6 +382,29 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         console.log(stepIndex);
     };
 
+    useEffect(() => {
+        if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
+            setCanSave(false);
+            return;
+        }
+        if (newJourney.title.length < 3) {
+            setCanSave(false);
+            return;
+        } 
+        newJourney.steps.forEach((step, i) => {
+            if(step.title.length < 1) {
+                setCanSave(false);
+
+            }
+            const mode = mappedModes.find(mode => mode.value == step.mode.id);
+            if(i != 0 && mode && mode.title && mode.text == 'SUPPLIER') {
+                setCanSave(false);
+
+            }
+        });
+        setCanSave(true);
+    }, [newJourney]);
+
     if (isLoading) {
         return <Spinner large />;
     }
@@ -418,7 +442,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty}>
+                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty || !canSave}>
                     Save
                 </Button>
             </ButtonContainer>

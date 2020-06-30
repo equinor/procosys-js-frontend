@@ -50,10 +50,11 @@ const Mode = (props: ModeProps): JSX.Element => {
                 (response) => {
                     setMode(response);
                     setNewMode(cloneMode(response));
+                    setIsDirty(false);
                 }
             );
         } catch (error) {
-            console.error('Get mode failed: ', error.messsage, error.data);
+            console.error('Get mode failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -76,7 +77,7 @@ const Mode = (props: ModeProps): JSX.Element => {
             props.setDirtyLibraryType();
             showSnackbarNotification('New mode is saved.', 5000);
         } catch (error) {
-            console.error('Add mode failed: ', error.messsage, error.data);
+            console.error('Add mode failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
@@ -87,7 +88,7 @@ const Mode = (props: ModeProps): JSX.Element => {
             setIsSaved(true);
             props.setDirtyLibraryType();
         } catch (error) {
-            console.error('Update mode failed: ', error.messsage, error.data);
+            console.error('Update mode failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
             getMode(newMode.id);
         }
@@ -139,7 +140,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Mode is voided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to void mode: ', error.messsage, error.data);
+                console.error('Error occured when trying to void mode: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -155,7 +156,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Mode is unvoided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to unvoid mode: ', error.messsage, error.data);
+                console.error('Error occured when trying to unvoid mode: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);

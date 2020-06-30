@@ -63,7 +63,7 @@ const EditTagProperties = (): JSX.Element => {
                 try {
                     const details = await apiClient.getTagDetails(Number.parseInt(tagId), (cancel: Canceler) => requestCancellor = cancel);
                     setTag(details);
-                    if(details.tagNo.substr(0,4) == '#PO-') {
+                    if (details.tagNo.substr(0, 4) == '#PO-') {
                         setPoTag(true);
                     }
                     setRowVersion(details.rowVersion);
@@ -104,7 +104,7 @@ const EditTagProperties = (): JSX.Element => {
                     setOriginalRequirements([...mappedResponse]);
                     setRequirementsFetched(true);
                 } catch (error) {
-                    console.error('Get requirement failed: ', error.messsage, error.data);
+                    console.error('Get requirement failed: ', error.message, error.data);
                     showSnackbarNotification(error.message);
                 }
             }
@@ -126,7 +126,7 @@ const EditTagProperties = (): JSX.Element => {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => requestCancellor = cancel);
                     setRequirementTypes(response.data);
                 } catch (error) {
-                    console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                    console.error('Get Requirement Types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message);
                 }
             }
@@ -147,7 +147,7 @@ const EditTagProperties = (): JSX.Element => {
                 const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(data);
             } catch (error) {
-                console.error('Get Journeys failed: ', error.messsage, error.data);
+                console.error('Get Journeys failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         })();
@@ -158,7 +158,7 @@ const EditTagProperties = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        if(journeys.length > 0 && tag && requirementsFetched) {
+        if (journeys.length > 0 && tag && requirementsFetched) {
             const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journeyTitle);
             setJourney(initialJourney);
             setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode));
@@ -184,12 +184,12 @@ const EditTagProperties = (): JSX.Element => {
      * Map Journey steps into menu elements
      */
     useEffect(() => {
-        if(newJourney) {
+        if (newJourney) {
             setStep(null);
         }
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
-                if(poTag && itm.mode.title.toUpperCase() == 'SUPPLIER') {
+                if (poTag && itm.mode.title.toUpperCase() == 'SUPPLIER') {
                     setStep(itm);
                 }
                 return {
@@ -226,7 +226,7 @@ const EditTagProperties = (): JSX.Element => {
     /**
      * Check if any changes have been made to journey, step or requirements
      */
-    useEffect( () => {
+    useEffect(() => {
         if (tag && ((newJourney && newJourney != tag.journeyTitle) || (step && step.mode.title != tag.mode) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
             setJourneyOrRequirementsEdited(true);
         } else {
@@ -245,7 +245,7 @@ const EditTagProperties = (): JSX.Element => {
             return rowVersion;
         } catch (error) {
             console.error('Error updating remark and storage area', error.message, error.data);
-            throw(showSnackbarNotification(error.message));
+            throw (showSnackbarNotification(error.message));
         }
     };
 
@@ -257,7 +257,7 @@ const EditTagProperties = (): JSX.Element => {
                 const numberOfNewReq = requirements.length - originalRequirements.length;
                 if (requirements.length > originalRequirements.length) {
                     newRequirements = [...requirements.slice(-numberOfNewReq)];
-                } 
+                }
                 const updatedRequirements = requirements.slice(0, originalRequirements.length).map(req => {
                     return {
                         requirementId: req.requirementId,
@@ -270,7 +270,7 @@ const EditTagProperties = (): JSX.Element => {
             }
         } catch (error) {
             console.error('Error updating journey, step or requirements', error.message, error.data);
-            throw(showSnackbarNotification(error.message));
+            throw (showSnackbarNotification(error.message));
 
         }
     };
@@ -284,15 +284,15 @@ const EditTagProperties = (): JSX.Element => {
                 currentRowVersion = await updateRemarkAndStorageArea();
             } catch (error) {
                 setLoading(false);
-                throw('error');
+                throw ('error');
             }
         }
         if (journeyOrRequirementsEdited) {
             try {
                 await updateJourneyAndRequirements(currentRowVersion);
-            } catch(error) {
+            } catch (error) {
                 setLoading(false);
-                throw('error');
+                throw ('error');
             }
         }
         setLoading(false);
@@ -321,13 +321,13 @@ const EditTagProperties = (): JSX.Element => {
     return (
         <div>
             <Header>
-                <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing' }</h1>
+                <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing'}</h1>
                 <div>{project.description}</div>
             </Header>
-            { loading ?
+            {loading ?
                 <SpinnerContainer>
-                    <Spinner large /> 
-                </SpinnerContainer> 
+                    <Spinner large />
+                </SpinnerContainer>
                 :
                 <Container>
                     <div>
@@ -347,7 +347,7 @@ const EditTagProperties = (): JSX.Element => {
                                 disabled={poTag}
                                 label={'Preservation step'}
                             >
-                                {(step && step.mode.title) || 'Select step'}                        
+                                {(step && step.mode.title) || 'Select step'}
                             </SelectInput>
                         </InputContainer>
                         <InputContainer style={{ maxWidth: '480px' }}>
@@ -373,11 +373,11 @@ const EditTagProperties = (): JSX.Element => {
                             />
                         </InputContainer>
                         <h2>Requirements for all selected tags</h2>
-                        <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)}/>
+                        <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)} />
                     </div>
                     <ButtonContainer>
                         <Button onClick={cancel} variant="outlined">
-                        Cancel
+                            Cancel
                         </Button>
                         <Button
                             onClick={saveDialog}

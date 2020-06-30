@@ -45,6 +45,24 @@ export const isTagVoided = (tag: PreservedTag): boolean => {
     return tag.isVoided;
 };
 
+const defaultTagListFilter: TagListFilter = {
+    tagNoStartsWith: null,
+    commPkgNoStartsWith: null,
+    mcPkgNoStartsWith: null,
+    purchaseOrderNoStartsWith: null,
+    storageAreaStartsWith: null,
+    preservationStatus: null,
+    actionStatus: null,
+    journeyIds: [],
+    modeIds: [],
+    dueFilters: [],
+    requirementTypeIds: [],
+    tagFunctionCodes: [],
+    disciplineCodes: [],
+    responsibleIds: [],
+    areaCodes: []
+};
+
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -62,37 +80,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({
-        tagNoStartsWith: null,
-        commPkgNoStartsWith: null,
-        mcPkgNoStartsWith: null,
-        purchaseOrderNoStartsWith: null,
-        storageAreaStartsWith: null,
-        preservationStatus: null,
-        actionStatus: null,
-        journeyIds: [],
-        modeIds: [],
-        dueFilters: [],
-        requirementTypeIds: [],
-        tagFunctionCodes: [],
-        disciplineCodes: [],
-        responsibleIds: [],
-        areaCodes: []
-    });
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(defaultTagListFilter);
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
-    const [filterWasActivated, setFilterWasActivated] = useState<boolean>(false);
+    const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
-
+    
     const history = useHistory();
     const location = useLocation();
-
+    
     const refreshScopeListCallback = useRef<() => void>();
+    const isFirstRender = useRef<boolean>(true);
 
     const refreshScopeList = (): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current();
@@ -111,12 +114,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }));        
     }, [filterForProjects]);
 
-    useEffect(
-        () => {
-            setFilterWasActivated(true);
-            refreshScopeList();
-        }, [tagListFilter]
-    );
+    useEffect(() => {
+        if (isFirstRender.current) {
+            // skip refreshing scope list on first render, when default/empty filters are set
+            return;
+        }
+
+        setResetTablePaging(true);
+        refreshScopeList();
+    }, [tagListFilter]);
 
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);
@@ -150,6 +156,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
         setCurrentProject(filteredProjects[index].id);
+        setResetTablePaging(true);
         refreshScopeList();
         setSelectedTags([]);
     };
@@ -406,6 +413,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     useEffect((): void => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+        }
+
         if (location.search === '') {
             // querystring is empty
             return;
@@ -414,31 +425,34 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         // parse querystring
         const qsParameters = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
-        // get "pono" and apply filter when given
-        const poNoFilter = qsParameters['pono'] as string;
+        // get "project" and set as current project
+        const projectName = qsParameters['project'] as string;
 
-        if (poNoFilter && poNoFilter !== '') {
-            setTagListFilter({
-                tagNoStartsWith: null,
-                commPkgNoStartsWith: null,
-                mcPkgNoStartsWith: null,
-                purchaseOrderNoStartsWith: poNoFilter,
-                storageAreaStartsWith: null,
-                preservationStatus: null,
-                actionStatus: null,
-                journeyIds: [],
-                modeIds: [],
-                dueFilters: [],
-                requirementTypeIds: [],
-                tagFunctionCodes: [],
-                disciplineCodes: [],
-                responsibleIds: [],
-                areaCodes: []
-            });
-    
-            setNumberOfFilters(1);    
-            toggleFilter();
+        if (projectName && projectName !== '') {
+            const project = filteredProjects.find(p => p.name === projectName);
+
+            if (project) {
+                setCurrentProject(project.id);
+
+                // get "pono" and apply filter when given
+                const poNoFilter = qsParameters['pono'] as string;
+                
+                if (poNoFilter && poNoFilter !== '') {
+                    const filter = defaultTagListFilter;
+                    filter.purchaseOrderNoStartsWith = poNoFilter;
+
+                    setTagListFilter(filter);            
+                    setNumberOfFilters(1);    
+                    toggleFilter();
+                }
+            } else {
+                showSnackbarNotification(`The requested project ${projectName} is not available`);
+            }
         }
+
+        // clear parameters in browser url
+        history.replace('/');
+
     }, [location]);
 
     return (
@@ -579,8 +593,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setRefreshScopeListCallback={setRefreshScopeListCallback}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
-                    shouldSelectFirstPage={filterWasActivated}
-                    setFirstPageSelected={(): void => setFilterWasActivated(false)}
+                    shouldSelectFirstPage={resetTablePaging}
+                    setFirstPageSelected={(): void => setResetTablePaging(false)}
                 />
                 {
                     displayFlyout && (

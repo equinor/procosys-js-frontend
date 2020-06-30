@@ -13,6 +13,8 @@ const upIcon = <EdsIcon name='arrow_up' size={16} />;
 const downIcon = <EdsIcon name='arrow_down' size={16} />;
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 
+const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
+
 interface Journey {
     id: number;
     title: string;
@@ -391,17 +393,30 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             setCanSave(false);
             return;
         } 
+        let breakFunction = false;
         newJourney.steps.forEach((step, i) => {
-            if(step.title.length < 1) {
+            if (!step.title || step.mode.id == -1 || !step.responsible.code) {
                 setCanSave(false);
-
+                breakFunction = true;
+                return;
+            }
+            if (newJourney.steps.find((s, j) => j != i && s.title == step.title)) {
+                setCanSave(false);
+                breakFunction = true;
+                return;
             }
             const mode = mappedModes.find(mode => mode.value == step.mode.id);
-            if(i != 0 && mode && mode.title && mode.text == 'SUPPLIER') {
+            if (i != 0 && mode && mode.title && mode.text == 'SUPPLIER') {
                 setCanSave(false);
-
+                breakFunction = true;
+                return;
             }
         });
+
+        if (breakFunction) {
+            return;
+        }
+
         setCanSave(true);
     }, [newJourney]);
 
@@ -442,7 +457,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty || !canSave}>
+                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty || !canSave} title={canSave ? '' : saveTitle}>
                     Save
                 </Button>
             </ButtonContainer>

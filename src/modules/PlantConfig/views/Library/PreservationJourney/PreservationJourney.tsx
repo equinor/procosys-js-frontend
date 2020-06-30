@@ -406,7 +406,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 return;
             }
             const mode = mappedModes.find(mode => mode.value == step.mode.id);
-            if (i != 0 && mode && mode.title && mode.text == 'SUPPLIER') {
+            if (i != 0 && mode && mode.text == 'SUPPLIER') {
                 setCanSave(false);
                 breakFunction = true;
                 return;

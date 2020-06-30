@@ -429,7 +429,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const deleteStep = async (step: Step, stepIndex: number): Promise<void> => {
         if (step.id == -1) {
-            newJourney.steps.splice(stepIndex);
+            newJourney.steps.splice(stepIndex, 1);
             setNewJourney(cloneJourney(newJourney));
         } else {
             if (journey) {
@@ -477,7 +477,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             setIsLoading(false);
         }
     };
-
 
     if (isLoading) {
         return <Spinner large />;

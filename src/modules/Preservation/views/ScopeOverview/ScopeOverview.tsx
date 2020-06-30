@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
-import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
-import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
-import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
@@ -500,7 +495,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={selectedTags.length < 1}>
-                            <PlayArrowOutlinedIcon className='iconNextToText' fontSize='small' />
+                            <div className='iconNextToText' ><EdsIcon name='play' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Start
                         </StyledButton>
                         <StyledButton
@@ -508,7 +503,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={selectedTags.length < 1}>
-                            <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
+                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -531,6 +526,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Edit
                             </DropdownItem>
                             <DropdownItem
+                                disabled={true}
+                            >
+                                <EdsIcon name='delete_to_trash' color={tokens.colors.interactive.disabled__border.rgba} />
+                                Remove
+                            </DropdownItem>
+                            <DropdownItem
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(): void => showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
@@ -542,22 +543,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>
+                            <DropdownItem
+                                disabled={true}
+                            >
+                                <EdsIcon name='print' color={tokens.colors.interactive.disabled__border.rgba} />
+                                Print
+                            </DropdownItem>
                         </OptionsDropdown>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <CreateOutlinedIcon fontSize='small' />
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <DeleteOutlinedIcon fontSize='small' />
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <PrintOutlinedIcon fontSize='small' />
-                        </StyledButton>
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton

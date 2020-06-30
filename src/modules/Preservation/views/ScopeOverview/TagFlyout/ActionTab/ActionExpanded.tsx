@@ -66,7 +66,7 @@ const ActionExpanded = ({
                     setActionDetails(actionDetails);
                 }
             } catch (error) {
-                console.error('Get Journeys failed: ', error.messsage, error.data);
+                console.error('Get Journeys failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();
@@ -85,7 +85,7 @@ const ActionExpanded = ({
                 showSnackbarNotification('Action is closed.', 5000, true);
             }
         } catch (error) {
-            console.error('Closing action failed: ', error.messsage, error.data);
+            console.error('Closing action failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
     };

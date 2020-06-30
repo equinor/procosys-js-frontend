@@ -33,7 +33,7 @@ const RequirementAttachmentField = ({
             window.open(url, '_blank');
             showSnackbarNotification('Attachment is downloaded.', 5000, true);
         } catch (error) {
-            console.error('Not able to get download url for tag requirement attachment: ', error.messsage, error.data);
+            console.error('Not able to get download url for tag requirement attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -47,7 +47,7 @@ const RequirementAttachmentField = ({
             }
             showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag requirement.`, 5000, true);
         } catch (error) {
-            console.error('Upload file attachment failed: ', error.messsage, error.data);
+            console.error('Upload file attachment failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);
@@ -60,7 +60,7 @@ const RequirementAttachmentField = ({
             setFilename(null);
             showSnackbarNotification('Attachment is deleted.', 5000, true);
         } catch (error) {
-            console.error('Not able to delete attachment on tag requirement: ', error.messsage, error.data);
+            console.error('Not able to delete attachment on tag requirement: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);

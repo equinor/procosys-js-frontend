@@ -85,7 +85,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 }));
                 setAllAreas(areas);
             } catch (error) {
-                console.error('Get areas failed: ', error.messsage, error.data);
+                console.error('Get areas failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -106,7 +106,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 }));
                 setAllPOs(purchaseOrders);
             } catch (error) {
-                console.error('Get purchase ordres failed: ', error.messsage, error.data);
+                console.error('Get purchase ordres failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         })();
@@ -166,7 +166,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
                 setDisciplines(data);
             } catch (error) {
-                console.error('Get Disciplines failed: ', error.messsage, error.data);
+                console.error('Get Disciplines failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -181,7 +181,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     if (props.areaType && props.discipline && props.description) {
         if (props.areaType.value === 'PreArea') {
             newTagNo = '#PRE';
-        } else if (props.areaType.value === 'PoArea'){
+        } else if (props.areaType.value === 'PoArea') {
             newTagNo = '#PO';
         } else {
             newTagNo = '#SITE';
@@ -218,7 +218,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     };
 
     useEffect(() => {
-        if(props.areaType && props.areaType.value == 'PoArea'){
+        if (props.areaType && props.areaType.value == 'PoArea') {
             props.setArea(null);
         } else {
             props.setPurchaseOrder(null);
@@ -250,10 +250,10 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
             return response;
         } catch (error) {
-            console.error('Get tag nos failed: ', error.messsage, error.data);
+            console.error('Get tag nos failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        return {tagNo: '', exists: true};
+        return { tagNo: '', exists: true };
     };
 
     useEffect(() => {
@@ -267,7 +267,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, null, props.suffix || null);
                 props.setSelectedTags([{
                     tagNo: response.tagNo,
-                    description: props.description || ''}
+                    description: props.description || ''
+                }
                 ]);
                 setTagNoValid(!response.exists);
                 setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
@@ -275,7 +276,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 const response = await checkTagNo(props.areaType.value, props.discipline.code, null, props.purchaseOrder.title, props.suffix || null);
                 props.setSelectedTags([{
                     tagNo: response.tagNo,
-                    description: props.description || ''}
+                    description: props.description || ''
+                }
                 ]);
                 setTagNoValid(!response.exists);
                 setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
@@ -295,7 +297,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
     const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
         props.setSuffix(e.target.value.toUpperCase());
-        if(e.target.value.includes(' ')) {
+        if (e.target.value.includes(' ')) {
             setIcon(errorIcon);
         } else {
             setIcon(null);
@@ -306,7 +308,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         if (props.selectedTags && props.selectedTags.length > 0) {
             props.setSelectedTags([{
                 tagNo: props.selectedTags[0].tagNo,
-                description: props.description || ''}
+                description: props.description || ''
+            }
             ]);
         }
     }, [props.description]);
@@ -346,7 +349,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             </SelectInput>
                         </FormFieldSpacer>
                         <FormFieldSpacer>
-                            { (props.areaType && props.areaType.value == 'PoArea') ?
+                            {(props.areaType && props.areaType.value == 'PoArea') ?
                                 <Dropdown
                                     label={'PO/Calloff'}
                                     variant='form'
@@ -408,7 +411,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                     placeholder="Write Here"
                     helperText="Spaces are not allowed"
                     helperIcon={icon}
-                    variant={icon ? 'error': 'default' }
+                    variant={icon ? 'error' : 'default'}
                     meta="Optional"
                     onChange={checkSuffix}
                 />

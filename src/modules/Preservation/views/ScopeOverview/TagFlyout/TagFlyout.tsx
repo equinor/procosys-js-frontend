@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon, StyledButton } from './TagFlyout.style';
+import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon, StyledButton, TagNoContainer } from './TagFlyout.style';
 import PreservationTab from './PreservationTab/PreservationTab';
 import ActionTab from './ActionTab/ActionTab';
 import CloseIcon from '@material-ui/icons/Close';
@@ -13,6 +13,9 @@ import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
 import HistoryTab from './HistoryTab/HistoryTab';
+import { useParams, useHistory } from 'react-router-dom';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { Canceler } from 'axios';
 
 enum PreservationStatus {
     NotStarted = 'Not started',
@@ -34,9 +37,13 @@ const TagFlyout = ({
 }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
     const [tagDetails, setTagDetails] = useState<TagDetails | null>(null);
+    const [mainTagId, setMainTagId] = useState<number>();
     const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
     const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
-    const { apiClient } = usePreservationContext();
+    const { apiClient, project } = usePreservationContext();
+    const { procosysApiClient } = useProcosysContext();
+    const params = useParams<any>();
+    const history = useHistory();
 
     const getTagDetails = async (): Promise<void> => {
         try {
@@ -48,6 +55,28 @@ const TagFlyout = ({
             showSnackbarNotification(error.message, 5000, true);
         }
     };
+
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            if (tagDetails) {
+                try {
+                    const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name,  (cancel: Canceler) => requestCancellor = cancel);
+                    if (tag.length > 0) {
+                        setMainTagId(tag[0].id);
+                    } 
+                } catch (error) {
+                    console.error(`Getting tag id failed: ${error.message}`);
+                    showSnackbarNotification(error.message);
+                }
+            }
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, [tagDetails]);
+
 
     useEffect(() => {
         getTagDetails();
@@ -122,6 +151,14 @@ const TagFlyout = ({
         }
     };
 
+    const goToTag = (): void => {
+        if (mainTagId) {
+            history.push(`${params.plant}/Completion#Tag|${mainTagId}`);
+        } else {
+            showSnackbarNotification('Something went wrong. Could not direct you to tag.');
+        }
+    };
+
     return (
         <Container>
             {
@@ -136,9 +173,11 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <h1>
-                    {tagDetails ? tagDetails.tagNo : '-'}
-                </h1>
+                <TagNoContainer onClick={goToTag}>
+                    <h1>
+                        {tagDetails ? tagDetails.tagNo : '-'}
+                    </h1>
+                </TagNoContainer>
                 <HeaderActions>
                     {preservationIsStarted &&
                         <StyledButton

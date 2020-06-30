@@ -110,7 +110,7 @@ const PreservationTab = ({
             const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagRowVersionRef.current);
             tagRowVersionRef.current = updatedRowVersion;
         } catch (error) {
-            console.error('Edit failed: ', error.messsage, error.data);
+            console.error('Edit failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();

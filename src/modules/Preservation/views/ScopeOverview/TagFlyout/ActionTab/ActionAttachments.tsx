@@ -30,7 +30,7 @@ const ActionAttachments = ({
                 const attachments = await apiClient.getActionAttachments(tagId, actionId, (cancel: Canceler) => requestCancellor = cancel);
                 setAttachments(attachments);
             } catch (error) {
-                console.error('Get attachments failed: ', error.messsage, error.data, true);
+                console.error('Get attachments failed: ', error.message, error.data, true);
                 showSnackbarNotification(error.message, 5000, true);
             }
             setIsLoading(false);
@@ -56,7 +56,7 @@ const ActionAttachments = ({
             window.open(url, '_blank');
             showSnackbarNotification('Attachment is downloaded.', 5000, true);
         } catch (error) {
-            console.error('Not able to get download url for action attachment: ', error.messsage, error.data);
+            console.error('Not able to get download url for action attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -68,7 +68,7 @@ const ActionAttachments = ({
             getAttachments();
             showSnackbarNotification(`Attachment with filename '${file.name}' is added to action.`, 5000, true);
         } catch (error) {
-            console.error('Upload file attachment failed: ', error.messsage, error.data);
+            console.error('Upload file attachment failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);
@@ -82,7 +82,7 @@ const ActionAttachments = ({
             getAttachments();
             showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
         } catch (error) {
-            console.error('Not able to delete action attachment: ', error.messsage, error.data);
+            console.error('Not able to delete action attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
         setIsLoading(false);

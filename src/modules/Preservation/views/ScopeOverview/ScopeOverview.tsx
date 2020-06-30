@@ -48,6 +48,7 @@ const defaultTagListFilter: TagListFilter = {
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,
+    voidedFilter: null,
     journeyIds: [],
     modeIds: [],
     dueFilters: [],

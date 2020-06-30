@@ -13,9 +13,9 @@ import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
 import HistoryTab from './HistoryTab/HistoryTab';
-import { useParams, useHistory } from 'react-router-dom';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 enum PreservationStatus {
     NotStarted = 'Not started',
@@ -40,15 +40,16 @@ const TagFlyout = ({
     const [mainTagId, setMainTagId] = useState<number>();
     const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
     const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
+    const [isStandardTag, setIsStandardTag] = useState<boolean>(false);
     const { apiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
-    const params = useParams<any>();
-    const history = useHistory();
+    const { plant } = useCurrentPlant();
 
     const getTagDetails = async (): Promise<void> => {
         try {
             const details = await apiClient.getTagDetails(tagId);
             setTagDetails(details);
+            setIsStandardTag(details.tagType == 'Standard');
         }
         catch (error) {
             console.error(`Get TagDetails failed: ${error.message}`);
@@ -59,7 +60,7 @@ const TagFlyout = ({
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            if (tagDetails) {
+            if (isStandardTag && tagDetails) {
                 try {
                     const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name,  (cancel: Canceler) => requestCancellor = cancel);
                     if (tag.length > 0) {
@@ -75,7 +76,7 @@ const TagFlyout = ({
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, [tagDetails]);
+    }, [isStandardTag]);
 
 
     useEffect(() => {
@@ -153,7 +154,7 @@ const TagFlyout = ({
 
     const goToTag = (): void => {
         if (mainTagId) {
-            history.push(`${params.plant}/Completion#Tag|${mainTagId}`);
+            window.location.href = `/${plant.pathId}/Completion#Tag|${mainTagId}`;
         } else {
             showSnackbarNotification('Something went wrong. Could not direct you to tag.');
         }
@@ -173,7 +174,7 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <TagNoContainer onClick={goToTag}>
+                <TagNoContainer isStandardTag={isStandardTag} onClick={goToTag}>
                     <h1>
                         {tagDetails ? tagDetails.tagNo : '-'}
                     </h1>

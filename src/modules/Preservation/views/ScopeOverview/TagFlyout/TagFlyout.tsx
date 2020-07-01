@@ -55,10 +55,17 @@ const TagFlyout = ({
         }
     };
 
+    const isStandardTag = (): boolean => {
+        if (tagDetails) {
+            return tagDetails.tagType == 'Standard';
+        }
+        return false;
+    };
+
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            if (tagDetails && tagDetails.tagType == 'Standard') {
+            if (tagDetails && isStandardTag()) {
                 try {
                     const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name,  (cancel: Canceler) => requestCancellor = cancel);
                     if (tag.length > 0) {
@@ -172,7 +179,7 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <TagNoContainer isStandardTag={tagDetails ? tagDetails.tagType == 'Standard' : false} onClick={goToTag}>
+                <TagNoContainer isStandardTag={isStandardTag()} onClick={goToTag}>
                     <h1>
                         {tagDetails ? tagDetails.tagNo : '-'}
                     </h1>

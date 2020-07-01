@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const ButtonSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
@@ -48,3 +49,9 @@ export const IconContainer = styled.div`
     display: flex;
 `;
 
+export const DropdownItem = styled.div`
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+    :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba}
+    }
+`;

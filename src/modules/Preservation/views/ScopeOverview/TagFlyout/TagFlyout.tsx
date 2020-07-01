@@ -40,7 +40,6 @@ const TagFlyout = ({
     const [mainTagId, setMainTagId] = useState<number>();
     const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
     const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
-    const [isStandardTag, setIsStandardTag] = useState<boolean>(false);
     const { apiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const { plant } = useCurrentPlant();
@@ -49,7 +48,6 @@ const TagFlyout = ({
         try {
             const details = await apiClient.getTagDetails(tagId);
             setTagDetails(details);
-            setIsStandardTag(details.tagType == 'Standard');
         }
         catch (error) {
             console.error(`Get TagDetails failed: ${error.message}`);
@@ -60,7 +58,7 @@ const TagFlyout = ({
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            if (isStandardTag && tagDetails) {
+            if (tagDetails && tagDetails.tagType == 'Standard') {
                 try {
                     const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name,  (cancel: Canceler) => requestCancellor = cancel);
                     if (tag.length > 0) {
@@ -76,7 +74,7 @@ const TagFlyout = ({
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, [isStandardTag]);
+    }, [tagDetails]);
 
 
     useEffect(() => {
@@ -174,7 +172,7 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <TagNoContainer isStandardTag={isStandardTag} onClick={goToTag}>
+                <TagNoContainer isStandardTag={tagDetails ? tagDetails.tagType == 'Standard' : false} onClick={goToTag}>
                     <h1>
                         {tagDetails ? tagDetails.tagNo : '-'}
                     </h1>

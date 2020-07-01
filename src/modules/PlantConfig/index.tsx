@@ -10,32 +10,28 @@ const Preservation = (): JSX.Element => {
 
     const { url } = useRouteMatch();
     return (
-        <div>
-
-            <PlantConfigContextProvider>
-                <Container>
-                    <BrowserRouter basename={url}>
-                        <Switch>
-                            <Route
-                                path={'/Library/:path/:libraryType/:libraryItem'}
-                                component={Library}
-                            />
-                            <Route
-                                path={'/'}
-                                exact
-                                component={Library}  //TODO: WILL LATER BE ROUTED TO MAIN
-                            />
-                            <Route
-                                component={(): JSX.Element =>
-                                    (<h2>Sorry, this page does not exist</h2>)
-                                }
-                            />
-                        </Switch>
-                    </BrowserRouter>
-                </Container>
-            </PlantConfigContextProvider>
-
-        </div>
+        <PlantConfigContextProvider>
+            <Container>
+                <BrowserRouter basename={url}>
+                    <Switch>
+                        <Route
+                            path={'/Library/:path/:libraryType/:libraryItem'}
+                            component={Library}
+                        />
+                        <Route
+                            path={'/'}
+                            exact
+                            component={Library}  //TODO: WILL LATER BE ROUTED TO MAIN
+                        />
+                        <Route
+                            component={(): JSX.Element =>
+                                (<h2>Sorry, this page does not exist</h2>)
+                            }
+                        />
+                    </Switch>
+                </BrowserRouter>
+            </Container>
+        </PlantConfigContextProvider>
     );
 };
 

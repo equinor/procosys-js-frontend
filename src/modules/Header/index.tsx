@@ -39,8 +39,6 @@ const Header: React.FC = (): JSX.Element => {
     });
     const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
 
-
-
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
         setCurrentPlant(filteredPlants[plantIndex].value as string);

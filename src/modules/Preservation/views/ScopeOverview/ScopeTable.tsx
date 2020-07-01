@@ -90,6 +90,9 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
             <RequirementIcons tag={tag} />
         );
     }
+    getPOColumn(tag: PreservedTag): string | null {
+        return tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo;
+    }
 
     getTagsByQuery(query: Query<any>): Promise<QueryResult<any>> {
         const sortFieldMap: { [key: string]: string } = {
@@ -141,7 +144,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         // @ts-ignore
                         { title: 'Mode', field: 'mode', width: '8%' },
                         // @ts-ignore
-                        { title: 'PO nr', field: 'purchaseOrderNo', width: '7%' },
+                        { title: 'PO', render: this.getPOColumn, width: '7%' },
                         // @ts-ignore
                         { title: 'Area', field: 'areaCode', width: '7%' },
                         // @ts-ignore

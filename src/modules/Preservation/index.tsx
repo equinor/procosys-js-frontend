@@ -39,7 +39,7 @@ const Preservation = (): JSX.Element => {
                     </Switch>
                 </Router>
             </Container>
-        </PreservationContextProvider>
+        </PreservationContextProvider >
     );
 };
 

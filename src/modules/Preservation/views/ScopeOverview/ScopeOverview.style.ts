@@ -11,6 +11,7 @@ export const ContentContainer = styled.div`
     flex-direction: column;
     overflow-x: hidden;
     width: 100%;
+    margin-top: -16px
 `;
 
 export const HeaderContainer = styled.div`
@@ -109,4 +110,13 @@ export const TooltipText = styled.span`
     p {
         color: white;
     }
+`;
+
+export const OldPreservationLink = styled.div`
+    display: flex;
+    padding-bottom: var(--grid-unit);
+    justify-content: flex-end;
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+    text-decoration: underline;
+    cursor: pointer;
 `;

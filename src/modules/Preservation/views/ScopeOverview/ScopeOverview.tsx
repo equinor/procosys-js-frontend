@@ -3,7 +3,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText, OldPreservationLink } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import OptionsDropdown from '../../../../components/OptionsDropdown';
 import Flyout from './../../../../components/Flyout';
@@ -22,6 +22,7 @@ import { Tooltip } from '@material-ui/core';
 import VoidDialog from './VoidDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
+import { Typography } from '@equinor/eds-core-react';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -93,10 +94,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
-    
+
     const history = useHistory();
     const location = useLocation();
-    
+
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
 
@@ -112,9 +113,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
 
         setFilteredProjects(availableProjects.filter((p: ProjectDetails) => {
-            return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 || 
+            return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 ||
                 p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
-        }));        
+        }));
     }, [filterForProjects]);
 
     useEffect(() => {
@@ -476,10 +477,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     return (
         <Container>
             <ContentContainer>
+                <OldPreservationLink>
+                    <Typography bold variant="caption" >
+                        <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
+                            <a href="OldPreservation">Switch to old system</a>
+                        </Tooltip>
+                    </Typography>
+                </OldPreservationLink>
                 <HeaderContainer>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown 
+                        <Dropdown
                             text={project.name}
                             onFilter={setFilterForProjects}
                         >

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
 import { useRouteMatch } from 'react-router-dom';
-import { Container, Divider } from './Library.style';
+import { Container, Divider, LibraryItemContainer } from './Library.style';
 
 
 export enum LibraryType {
@@ -39,12 +39,13 @@ const Library = (): JSX.Element => {
             />
 
             <Divider />
-
-            <LibraryItemDetails 
-                libraryType={selectedLibraryType} 
-                libraryItem={selectedLibraryItem} 
-                setDirtyLibraryType={setDirtyLibraryType}
-            />
+            <LibraryItemContainer addPaddingTop={selectedLibraryType != LibraryType.TAG_FUNCTION} >
+                <LibraryItemDetails 
+                    libraryType={selectedLibraryType} 
+                    libraryItem={selectedLibraryItem} 
+                    setDirtyLibraryType={setDirtyLibraryType}
+                />
+            </LibraryItemContainer>
 
         </Container>
     );

@@ -22,12 +22,14 @@ export const DetailsSection = styled.section`
     padding: calc(var(--grid-unit)*2) calc(var(--grid-unit)*4);
 `;
 
+export const Section = styled.section`
+    padding-right: calc(var(--grid-unit)*2);
+`;
+
 export const Container = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
-    margin-right: calc(var(--margin-module--right) *-1);
-    margin-top: calc(var(--margin-module--top) *-1);
 `;
 
 export const SpinnerContainer = styled.div`

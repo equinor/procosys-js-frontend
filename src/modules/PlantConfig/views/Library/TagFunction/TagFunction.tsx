@@ -1,7 +1,7 @@
 import { hot } from 'react-hot-loader';
 
 import React, {useState, useEffect} from 'react';
-import {DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs} from './TagFunction.style';
+import {DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs, Section } from './TagFunction.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
@@ -73,7 +73,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                     </div>
                 </InformationContainer>
             </DetailsSection>
-            <section>
+            <Section>
                 <TabBar>
                     {/* <TabBarButton disabled>
                         Completion
@@ -100,10 +100,10 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                         {/* Just fills out the empty space */}
                     </TabBarFiller>
                 </TabBar>
-                <section>
+                <Section>
                     <PreservationTab registerCode={props.registerCode} tagFunctionCode={props.tagFunctionCode} />
-                </section>
-            </section>
+                </Section>
+            </Section>
 
         </Container>
     );

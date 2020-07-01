@@ -1,15 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-
-export const Container = styled.div`
-    top: 0;
-    position: fixed;
-    z-index: 1000;
-    background-color: white;
-    width: 100%;    
-`;
-
 export const Nav = styled.nav`
     display: grid;
     grid-template-columns: auto auto 200px 1fr auto;

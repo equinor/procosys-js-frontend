@@ -41,7 +41,7 @@ export interface Requirement {
 export interface TagListFilter {
     tagNoStartsWith: string | null;
     purchaseOrderNoStartsWith: string | null;
-    callOffNoStartsWith: string | null;
+    callOffStartsWith: string | null;
     storageAreaStartsWith: string | null;
     commPkgNoStartsWith: string | null;
     mcPkgNoStartsWith: string | null;

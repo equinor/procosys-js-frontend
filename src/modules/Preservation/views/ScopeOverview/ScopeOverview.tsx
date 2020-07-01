@@ -438,7 +438,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 // set as current project
                 setCurrentProject(project.id);
 
-                // get and and apply supported tag filters
+                // get and apply supported tag filters
                 let filtersUsed = 0;
                 const supportedFilters: SupportedQueryStringFilters = {
                     pono: null,

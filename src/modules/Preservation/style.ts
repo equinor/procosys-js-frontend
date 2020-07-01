@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
-    margin: calc(var(--grid-unit) * 2) var(--margin-module--right);
+    margin: var(--margin-module--top) var(--margin-module--right);
     display: flex;
     height: 100%;
     flex-direction: column;
@@ -11,11 +10,3 @@ export const Container = styled.div`
     }
 `;
 
-export const OldPreservationLink = styled.div`
-    display: flex;
-    padding-bottom: var(--grid-unit);
-    justify-content: flex-end;
-    color: ${tokens.colors.interactive.primary__resting.rgba};
-    text-decoration: underline;
-    cursor: pointer;
-`;

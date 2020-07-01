@@ -30,7 +30,6 @@ export const Container = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
-    margin-right: calc(var(--margin-module--right) *-1);
 `;
 
 export const SpinnerContainer = styled.div`

@@ -45,6 +45,7 @@ const defaultTagListFilter: TagListFilter = {
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
     purchaseOrderNoStartsWith: null,
+    callOffStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,
@@ -86,10 +87,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
-    
+
     const history = useHistory();
     const location = useLocation();
-    
+
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
 
@@ -105,9 +106,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
 
         setFilteredProjects(availableProjects.filter((p: ProjectDetails) => {
-            return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 || 
+            return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 ||
                 p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
-        }));        
+        }));
     }, [filterForProjects]);
 
     useEffect(() => {
@@ -432,13 +433,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
                 // get "pono" and apply filter when given
                 const poNoFilter = qsParameters['pono'] as string;
-                
+
                 if (poNoFilter && poNoFilter !== '') {
                     const filter = defaultTagListFilter;
                     filter.purchaseOrderNoStartsWith = poNoFilter;
 
-                    setTagListFilter(filter);            
-                    setNumberOfFilters(1);    
+                    setTagListFilter(filter);
+                    setNumberOfFilters(1);
                     toggleFilter();
                 }
             } else {
@@ -457,7 +458,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <HeaderContainer>
                     <Header>
                         <h1>Preservation tags</h1>
-                        <Dropdown 
+                        <Dropdown
                             text={project.name}
                             onFilter={setFilterForProjects}
                         >

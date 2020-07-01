@@ -45,6 +45,7 @@ const defaultTagListFilter: TagListFilter = {
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
     purchaseOrderNoStartsWith: null,
+    callOffNoStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,
@@ -456,7 +457,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 if (filtersUsed > 0) {
                     const tagFilter = defaultTagListFilter;
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
-                    // TODO: tagFilter.callOffStartsWith = supportedFilters.calloff;
+                    tagFilter.callOffNoStartsWith = supportedFilters.calloff;
 
                     setTagListFilter(tagFilter);
                     setNumberOfFilters(filtersUsed);

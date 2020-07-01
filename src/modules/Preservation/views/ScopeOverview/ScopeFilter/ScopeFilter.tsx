@@ -106,6 +106,7 @@ const clearTagListFilter: TagListFilter = {
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
     purchaseOrderNoStartsWith: null,
+    callOffNoStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,

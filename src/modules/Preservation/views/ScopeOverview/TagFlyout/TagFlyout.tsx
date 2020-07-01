@@ -13,9 +13,9 @@ import { TagDetails } from './types';
 import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
 import HistoryTab from './HistoryTab/HistoryTab';
-import { useParams, useHistory } from 'react-router-dom';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 enum PreservationStatus {
     NotStarted = 'Not started',
@@ -42,8 +42,7 @@ const TagFlyout = ({
     const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
     const { apiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
-    const params = useParams<any>();
-    const history = useHistory();
+    const { plant } = useCurrentPlant();
 
     const getTagDetails = async (): Promise<void> => {
         try {
@@ -56,10 +55,17 @@ const TagFlyout = ({
         }
     };
 
+    const isStandardTag = (): boolean => {
+        if (tagDetails) {
+            return tagDetails.tagType == 'Standard';
+        }
+        return false;
+    };
+
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
-            if (tagDetails) {
+            if (tagDetails && isStandardTag()) {
                 try {
                     const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name,  (cancel: Canceler) => requestCancellor = cancel);
                     if (tag.length > 0) {
@@ -153,7 +159,7 @@ const TagFlyout = ({
 
     const goToTag = (): void => {
         if (mainTagId) {
-            history.push(`${params.plant}/Completion#Tag|${mainTagId}`);
+            window.location.href = `/${plant.pathId}/Completion#Tag|${mainTagId}`;
         } else {
             showSnackbarNotification('Something went wrong. Could not direct you to tag.');
         }
@@ -173,7 +179,7 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <TagNoContainer onClick={goToTag}>
+                <TagNoContainer isStandardTag={isStandardTag()} onClick={goToTag}>
                     <h1>
                         {tagDetails ? tagDetails.tagNo : '-'}
                     </h1>

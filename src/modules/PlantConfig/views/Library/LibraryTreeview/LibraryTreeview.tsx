@@ -42,7 +42,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 }
             );
         } catch (error) {
-            console.error('Get modes failed: ', error.messsage, error.data);
+            console.error('Get modes failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return children;
@@ -66,7 +66,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 }
             );
         } catch (error) {
-            console.error('Get preservation journeys failed: ', error.messsage, error.data);
+            console.error('Get preservation journeys failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return children;
@@ -127,7 +127,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             });
 
         } catch (error) {
-            console.error('Failed to fetch treenodes for Requirements: ', error.messsage, error.data);
+            console.error('Failed to fetch treenodes for Requirements: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return children;

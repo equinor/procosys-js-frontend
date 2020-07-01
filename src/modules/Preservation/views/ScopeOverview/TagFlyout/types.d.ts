@@ -14,6 +14,7 @@ export interface TagDetails {
     remark: string;
     storageArea: string;
     rowVersion: string;
+    tagType: string;
 }
 
 export interface TagRequirement {

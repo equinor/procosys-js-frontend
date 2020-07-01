@@ -43,7 +43,7 @@ const ActionTab = ({
                     setActions(actions);
                 }
             } catch (error) {
-                console.error('Get action list failed: ', error.messsage, error.data);
+                console.error('Get action list failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();

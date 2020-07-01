@@ -120,6 +120,7 @@ interface TagDetailsResponse {
     remark: string;
     storageArea: string;
     rowVersion: string;
+    tagType: string;
 }
 
 interface TagListFilter {
@@ -139,6 +140,7 @@ interface JourneyResponse {
     id: number;
     title: string;
     isVoided: boolean;
+    isInUse: boolean;
     steps: [
         {
             id: number;
@@ -939,9 +941,13 @@ class PreservationApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getJourney(journeyId: number, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse> {
+    async getJourney(journeyId: number, includeVoided: boolean, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse> {
         const endpoint = `/Journeys/${journeyId}`;
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = {
+            params: {
+                includeVoided: includeVoided
+            }
+        };
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             const result = await this.client.get<JourneyResponse>(endpoint, settings);
@@ -1086,6 +1092,87 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+    * Delete journey 
+    */
+    async deleteJourney(journeyId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Void journey step
+      */
+    async voidJourneyStep(journeyId: number, stepId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Steps/${stepId}/Void`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Unvoid journey step
+     */
+    async unvoidJourneyStep(journeyId: number, stepId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Steps/${stepId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Delete journey step
+     */
+    async deleteJourneyStep(journeyId: number, stepId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 
     /**
     * Swap steps on journey

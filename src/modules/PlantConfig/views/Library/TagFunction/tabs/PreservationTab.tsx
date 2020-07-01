@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import {RequirementType} from './types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { RequirementType } from './types';
 import PreservationApiClient from '@procosys/modules/Preservation/http/PreservationApiClient';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
@@ -41,26 +41,26 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
 
     const [tagFunctionDetails, setTagFunctionDetails] = useState<TagFunction>();
 
-    const [unsavedRequirements, setUnsavedRequirements] = useState<RequirementFormInput[]|null>(null);
+    const [unsavedRequirements, setUnsavedRequirements] = useState<RequirementFormInput[] | null>(null);
 
-    const {auth} = useProcosysContext();
-    const {plant} = useCurrentPlant();
+    const { auth } = useProcosysContext();
+    const { plant } = useCurrentPlant();
 
     const apiClient = useMemo(() => {
         const client = new PreservationApiClient(auth);
         client.setCurrentPlant(plant.id);
         return client;
-    },[plant]);
+    }, [plant]);
 
     const updateTagFunctionDetails = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
-            const response = await apiClient.getTagFunction(props.tagFunctionCode, props.registerCode,requestCanceller);
+            const response = await apiClient.getTagFunction(props.tagFunctionCode, props.registerCode, requestCanceller);
             setTagFunctionDetails(response);
         } catch (error) {
             if (error && error.data) {
                 const serverError = error.data as AxiosResponse;
                 if (serverError.status !== 404) {
-                    console.error('Failed to get tag function details: ', error.messsage, error.data);
+                    console.error('Failed to get tag function details: ', error.message, error.data);
                     showSnackbarNotification(error.message);
                 }
             }
@@ -118,7 +118,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
                 const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
                 setRequirementTypes(response.data);
             } catch (error) {
-                console.error('Get Requirement Types failed: ', error.messsage, error.data);
+                console.error('Get Requirement Types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         })();

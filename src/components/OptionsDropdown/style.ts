@@ -4,6 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: inline-block;
+    position: relative;
     ul {
         position: absolute;
         margin-top: 0.5rem;

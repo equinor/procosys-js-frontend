@@ -120,6 +120,7 @@ interface TagDetailsResponse {
     remark: string;
     storageArea: string;
     rowVersion: string;
+    tagType: string;
 }
 
 interface TagListFilter {

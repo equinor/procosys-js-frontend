@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 import { Button } from '@equinor/eds-core-react';
 
@@ -97,10 +97,20 @@ export const StyledButton = styled(Button)`
     }
 `;
 
-export const TagNoContainer = styled.div`
-    cursor: pointer;
+interface TagProps {
+    isStandardTag: boolean;
+}
+export const TagNoContainer = styled.div<TagProps>`
     padding: 0px var(--grid-unit);
-    :hover {
-        background-color: ${tokens.colors.ui.background__light.rgba}
-    }
+    
+    ${(props): any => !props.isStandardTag && css`
+        pointer-events: none;
+    `}
+
+    ${(props): any => props.isStandardTag && css`
+        :hover {
+            background-color: ${tokens.colors.ui.background__light.rgba}
+        }
+        cursor: pointer;
+    `}
 `;

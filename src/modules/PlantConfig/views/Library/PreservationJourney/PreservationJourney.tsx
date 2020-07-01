@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, IconContainer } from './PreservationJourney.style';
+import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer } from './PreservationJourney.style';
 import EdsIcon from '../../../../../components/EdsIcon';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
+import Dropdown from '../../../../../components/Dropdown';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -59,8 +60,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [newJourney, setNewJourney] = useState<Journey>(createNewJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
+    const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
     const [canSave, setCanSave] = useState<boolean>(false);
 
     const {
@@ -107,7 +110,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 const responsibles = await libraryApiClient.getResponsibles((cancel: Canceler) => requestCancellor = cancel);
                 const mappedResponsibles: SelectItem[] = [];
 
-                responsibles.forEach(resp => mappedResponsibles.push({ text: resp.description, value: resp.code, selected: false }));
+                responsibles.forEach(resp => mappedResponsibles.push({ text: (resp.code + ' - ' + resp.description), value: resp.code, selected: false }));
                 setMappedResponsibles(mappedResponsibles);
             } catch (error) {
                 console.error('Get Responsibles failed: ', error.message, error.data);
@@ -359,10 +362,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setNewJourney(cloneJourney(newJourney));
     };
 
-    const setResponsibleValue = (value: string, index: number): void => {
+    const setResponsibleValue = (event: React.MouseEvent, stepIndex: number, filtRespIndex: number): void => {
+        event.preventDefault();
         if (newJourney.steps) {
             setIsDirty(true);
-            newJourney.steps[index].responsible.code = value;
+            newJourney.steps[stepIndex].responsible.code = filteredResponsibles[filtRespIndex].value;
             setNewJourney(cloneJourney(newJourney));
         }
     };
@@ -480,6 +484,15 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
+    /** Update list of responsibled based on filter */
+    useEffect(() => {
+        if (filterForResponsibles.length <= 0) {
+            setFilteredResponsibles(mappedResponsibles);
+            return;
+        }
+        setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
+    }, [filterForResponsibles, mappedResponsibles]);
+
     useEffect(() => {
         if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
             setCanSave(false);
@@ -488,7 +501,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         if (newJourney.title.length < 3) {
             setCanSave(false);
             return;
-        } 
+        }
         let breakFunction = false;
         newJourney.steps.forEach((step, i) => {
             if (!step.title || step.mode.id == -1 || !step.responsible.code) {
@@ -597,14 +610,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                             </FormFieldSpacer>
                             <FormFieldSpacer>
                                 <div style={{ width: '100%' }}>
-                                    <SelectInput
-                                        onChange={(value): void => setResponsibleValue(value, index)}
-                                        data={mappedResponsibles}
-                                        label={'Resp'}
+                                    <Dropdown
                                         disabled={newJourney.isVoided || step.isVoided}
+                                        label={'Resp'}
+                                        variant='form'
+                                        text={(responsibleSelectItem && responsibleSelectItem.text) || 'Type to select'}
+                                        onFilter={setFilterForResponsibles}
                                     >
-                                        {(responsibleSelectItem && responsibleSelectItem.text || 'Select responsible')}
-                                    </SelectInput>
+                                        {filteredResponsibles.map((respItem, filtRespIndex) => {
+                                            return (
+                                                <DropdownItem
+                                                    key={index}
+                                                    onClick={(event): void => setResponsibleValue(event, index, filtRespIndex)}
+                                                >
+                                                    {respItem.text}
+                                                </DropdownItem>
+                                            );
+                                        })}
+                                    </Dropdown>
                                 </div>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
@@ -619,44 +642,48 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     />
                                 </div>
                             </FormFieldSpacer>
-                            {(isDirty && index == 0) &&
+                            {
+                                (isDirty && index == 0) &&
                                 <FormFieldSpacer>
                                     <Typography variant="caption">Actions on steps are unavailable until other changes are saved.</Typography>
                                 </FormFieldSpacer>
                             }
-                            {(isDirty && index != 0) &&
+                            {
+                                (isDirty && index != 0) &&
                                 <div></div>
                             }
-                            {!isDirty && (
-                                <FormFieldSpacer>
-                                    {newJourney.steps.length > 1 &&
-                                        <>
-                                            <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
-                                                {upIcon}
-                                            </Button>
-                                            <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
-                                                {downIcon}
-                                            </Button>
-                                        </>
-                                    }
-                                    {(step.id == -1 || (journey && !journey.isInUse) && step.isVoided) &&
-                                        (<Button variant='ghost' title="Delete" onClick={(): Promise<void> => deleteStep(step, index)}>
-                                            {deleteIcon}
-                                        </Button>)
-                                    }
-                                    {(step.id != -1 && !step.isVoided) &&
-                                        (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
-                                            {voidIcon} Void
-                                        </Button>)
-                                    }
+                            {
+                                !isDirty && (
+                                    <FormFieldSpacer>
+                                        {newJourney.steps.length > 1 &&
+                                            <>
+                                                <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
+                                                    {upIcon}
+                                                </Button>
+                                                <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
+                                                    {downIcon}
+                                                </Button>
+                                            </>
+                                        }
+                                        {(step.id == -1 || (journey && !journey.isInUse) && step.isVoided) &&
+                                            (<Button variant='ghost' title="Delete" onClick={(): Promise<void> => deleteStep(step, index)}>
+                                                {deleteIcon}
+                                            </Button>)
+                                        }
+                                        {(step.id != -1 && !step.isVoided) &&
+                                            (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                                {voidIcon} Void
+                                            </Button>)
+                                        }
 
-                                    {(step.id != -1 && step.isVoided) &&
-                                        (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
-                                            {unvoidIcon} Unvoid
-                                        </Button>)
-                                    }
-                                </FormFieldSpacer>
-                            )}
+                                        {(step.id != -1 && step.isVoided) &&
+                                            (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                                {unvoidIcon} Unvoid
+                                            </Button>)
+                                        }
+                                    </FormFieldSpacer>
+                                )
+                            }
                         </React.Fragment>
                     );
                 })}

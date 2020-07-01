@@ -55,12 +55,7 @@ const TagFlyout = ({
         }
     };
 
-    const isStandardTag = (): boolean => {
-        if (tagDetails) {
-            return tagDetails.tagType == 'Standard';
-        }
-        return false;
-    };
+    const isStandardTag = (): boolean => tagDetails ? tagDetails.tagType === 'Standard' : false;
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;

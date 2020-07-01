@@ -106,6 +106,7 @@ const clearTagListFilter: TagListFilter = {
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
     purchaseOrderNoStartsWith: null,
+    callOffStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,
@@ -157,35 +158,38 @@ const ScopeFilter = ({
                 setJourneys(journeys);
             } catch (error) {
                 !error.isCancel && showSnackbarNotification(error.message, 5000);
-            }})();
+            }
+        })();
         return (): void => requestCancellor && requestCancellor();
-    },[]);
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler;
 
         (async (): Promise<void> => {
             try {
-                const response = await apiClient.getResponsiblesFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
-                setResponsibles(response.map(resp => {return {id: resp.id, title: resp.code};}));
+                const response = await apiClient.getResponsiblesFilterForProject(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                setResponsibles(response.map(resp => { return { id: resp.id, title: resp.code }; }));
             } catch (error) {
                 !error.isCancel && showSnackbarNotification(error.message, 5000);
-            }})();
+            }
+        })();
         return (): void => requestCancellor && requestCancellor();
-    },[]);
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler;
 
         (async (): Promise<void> => {
             try {
-                const response = await apiClient.getAreaFilterForProject(project.name,(cancel: Canceler) => requestCancellor = cancel);
-                setAreas(response.map(resp => {return {id: resp.code, title: resp.code};}));
+                const response = await apiClient.getAreaFilterForProject(project.name, (cancel: Canceler) => requestCancellor = cancel);
+                setAreas(response.map(resp => { return { id: resp.code, title: resp.code }; }));
             } catch (error) {
                 !error.isCancel && showSnackbarNotification(error.message, 5000);
-            }})();
+            }
+        })();
         return (): void => requestCancellor && requestCancellor();
-    },[]);
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -196,9 +200,10 @@ const ScopeFilter = ({
                 setModes(modes);
             } catch (error) {
                 !error.isCancel && showSnackbarNotification(error.message, 5000);
-            }})();
+            }
+        })();
         return (): void => requestCancellor && requestCancellor();
-    },[]);
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -209,9 +214,10 @@ const ScopeFilter = ({
                 setRequirements(requirements);
             } catch (error) {
                 !error.isCancel && showSnackbarNotification(error.message, 5000);
-            }})();
+            }
+        })();
         return (): void => requestCancellor && requestCancellor();
-    },[]);
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -226,9 +232,10 @@ const ScopeFilter = ({
                 setTagFunctions(tagFunctions);
             } catch (error) {
                 !error.isCancel && showSnackbarNotification(error.message, 5000);
-            }})();
+            }
+        })();
         return (): void => requestCancellor && requestCancellor();
-    },[]);
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -285,12 +292,12 @@ const ScopeFilter = ({
         setLocalTagListFilter((old): TagListFilter => { return { ...old, voidedFilter: value }; });
     };
 
-    const responsibleFilterUpdated = (values: {id: string; title: string}[]): void => {
-        setLocalTagListFilter((old): TagListFilter => {return {...old, responsibleIds: values.map(itm => itm.id)};});
+    const responsibleFilterUpdated = (values: { id: string; title: string }[]): void => {
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, responsibleIds: values.map(itm => itm.id) }; });
     };
 
-    const areaFilterUpdated = (values: {id: string; title: string}[]): void => {
-        setLocalTagListFilter((old): TagListFilter => {return {...old, areaCodes: values.map(itm => itm.id)};});
+    const areaFilterUpdated = (values: { id: string; title: string }[]): void => {
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => itm.id) }; });
     };
 
     useEffect((): void => {
@@ -305,10 +312,10 @@ const ScopeFilter = ({
         isFirstRender.current = false;
         const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
         setFilterActive(activeFilters.length > 0);
-    },[]);
+    }, []);
 
     const checkSearchFilter = (): boolean => {
-        if(!localTagListFilter.tagNoStartsWith && !localTagListFilter.purchaseOrderNoStartsWith && !localTagListFilter.commPkgNoStartsWith && !localTagListFilter.mcPkgNoStartsWith && !localTagListFilter.storageAreaStartsWith) {
+        if (!localTagListFilter.tagNoStartsWith && !localTagListFilter.purchaseOrderNoStartsWith && !localTagListFilter.commPkgNoStartsWith && !localTagListFilter.mcPkgNoStartsWith && !localTagListFilter.storageAreaStartsWith) {
             return false;
         }
         return true;
@@ -324,7 +331,7 @@ const ScopeFilter = ({
             </Header>
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
-                <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault() } filterActive={filterActive}>
+                <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>
                     <Typography variant='caption'>Reset filter</Typography>
                 </Link>
             </Section>
@@ -363,6 +370,19 @@ const ScopeFilter = ({
                                     setLocalTagListFilter({ ...localTagListFilter, purchaseOrderNoStartsWith: e.target.value });
                                 }}
                                 value={localTagListFilter.purchaseOrderNoStartsWith || ''}
+                                onKeyDown={(e: any): void => {
+                                    e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
+                                }}
+                            />
+                        </Section>
+                        <Section>
+                            <TextField
+                                id="callOffNoSearch"
+                                placeholder="Search call off number"
+                                onChange={(e: any): void => {
+                                    setLocalTagListFilter({ ...localTagListFilter, callOffStartsWith: e.target.value });
+                                }}
+                                value={localTagListFilter.callOffStartsWith || ''}
                                 onKeyDown={(e: any): void => {
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
                                 }}
@@ -418,11 +438,11 @@ const ScopeFilter = ({
             <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.dueFilters} icon={'alarm_on'} />
             <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} icon={'world'} />
             <CheckboxFilter title='Preserved Modes' filterValues={modes} tagListFilterParam='modeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.modeIds} icon={'place'} />
-            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} icon={'pressure'}/>
-            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'verticle_split'}/>
+            <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} icon={'pressure'} />
+            <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'verticle_split'} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} icon={'category'} />
             <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
-            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />}  />
+            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />} />
 
         </Container >
     );

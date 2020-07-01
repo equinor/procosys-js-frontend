@@ -46,6 +46,7 @@ const defaultTagListFilter: TagListFilter = {
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
     purchaseOrderNoStartsWith: null,
+    callOffStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,

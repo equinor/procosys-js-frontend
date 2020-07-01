@@ -156,7 +156,7 @@ const SetTagProperties = ({
                 </Header>
                 <Container>
                     <div>
-                        Missing data
+                        Missing Journey or Requirement definitions. Please create this first, and try again
                     </div>
                     <ButtonContainer>
                         <Button onClick={previousStep} variant="outlined">

@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
-import FastForwardOutlinedIcon from '@material-ui/icons/FastForwardOutlined';
-import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
-import PrintOutlinedIcon from '@material-ui/icons/PrintOutlined';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText } from './ScopeOverview.style';
@@ -70,6 +65,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         storageAreaStartsWith: null,
         preservationStatus: null,
         actionStatus: null,
+        voidedFilter: null,
         journeyIds: [],
         modeIds: [],
         dueFilters: [],
@@ -141,7 +137,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
             );
         } catch (error) {
-            console.error('Get tags failed: ', error.messsage, error.data);
+            console.error('Get tags failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return { maxAvailable: 0, tags: [] };
@@ -167,7 +163,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
-            console.error('Transfer failed: ', error.messsage, error.data);
+            console.error('Transfer failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -210,7 +206,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
         } catch (error) {
-            console.error('Start preservation failed: ', error.messsage, error.data);
+            console.error('Start preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -251,7 +247,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been preserved for this week.');
         } catch (error) {
-            console.error('Preserve failed: ', error.messsage, error.data);
+            console.error('Preserve failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -297,7 +293,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
         } catch (error) {
-            console.error('Complete failed: ', error.messsage, error.data);
+            console.error('Complete failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -340,7 +336,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been voided.');
         } catch (error) {
-            console.error('Voiding failed: ', error.messsage, error.data);
+            console.error('Voiding failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -355,7 +351,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been unvoided.');
         } catch (error) {
-            console.error('Unvoid failed: ', error.messsage, error.data);
+            console.error('Unvoid failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
@@ -426,6 +422,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 storageAreaStartsWith: null,
                 preservationStatus: null,
                 actionStatus: null,
+                voidedFilter: null,
                 journeyIds: [],
                 modeIds: [],
                 dueFilters: [],
@@ -498,7 +495,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={selectedTags.length < 1}>
-                            <PlayArrowOutlinedIcon className='iconNextToText' fontSize='small' />
+                            <div className='iconNextToText' ><EdsIcon name='play' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Start
                         </StyledButton>
                         <StyledButton
@@ -506,7 +503,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={selectedTags.length < 1}>
-                            <FastForwardOutlinedIcon className='iconNextToText' fontSize='small' />
+                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -529,6 +526,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Edit
                             </DropdownItem>
                             <DropdownItem
+                                disabled={true}
+                            >
+                                <EdsIcon name='delete_to_trash' color={tokens.colors.interactive.disabled__border.rgba} />
+                                Remove
+                            </DropdownItem>
+                            <DropdownItem
                                 disabled={!unvoidedTagsSelected}
                                 onClick={(): void => showVoidDialog(true)}>
                                 <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
@@ -540,22 +543,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>
+                            <DropdownItem
+                                disabled={true}
+                            >
+                                <EdsIcon name='print' color={tokens.colors.interactive.disabled__border.rgba} />
+                                Print
+                            </DropdownItem>
                         </OptionsDropdown>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <CreateOutlinedIcon fontSize='small' />
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <DeleteOutlinedIcon fontSize='small' />
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            disabled={true}>
-                            <PrintOutlinedIcon fontSize='small' />
-                        </StyledButton>
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton

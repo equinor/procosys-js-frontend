@@ -60,7 +60,7 @@ const CreateOrEditAction = ({
                 showSnackbarNotification('New action is created.', 5000, true);
             }
         } catch (error) {
-            console.error('Tag preservation failed: ', error.messsage, error.data);
+            console.error('Tag preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
     };

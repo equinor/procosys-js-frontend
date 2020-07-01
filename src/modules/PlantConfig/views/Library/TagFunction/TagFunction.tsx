@@ -1,7 +1,7 @@
 import { hot } from 'react-hot-loader';
 
-import React, {useState, useEffect} from 'react';
-import {DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs} from './TagFunction.style';
+import React, { useState, useEffect } from 'react';
+import { DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs } from './TagFunction.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
@@ -34,7 +34,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                 const data = await procosysApiClient.getTagFunction(props.tagFunctionCode, props.registerCode, (cancel: Canceler) => requestCancellor = cancel);
                 setTagFunctionData(data);
             } catch (error) {
-                console.error('Get tag function details failed: ', error.messsage, error.data);
+                console.error('Get tag function details failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();

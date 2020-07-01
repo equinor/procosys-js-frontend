@@ -87,6 +87,20 @@ const ACTION_STATUS = [{
     value: 'HasOverDue'
 }];
 
+const VOIDED = [{
+    title: 'All',
+    value: 'All',
+},
+{
+    title: 'Not voided (default)',
+    value: 'NotVoided',
+    default: true
+},
+{
+    title: 'Voided',
+    value: 'Voided'
+}];
+
 const clearTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
     commPkgNoStartsWith: null,
@@ -95,6 +109,7 @@ const clearTagListFilter: TagListFilter = {
     storageAreaStartsWith: null,
     preservationStatus: null,
     actionStatus: null,
+    voidedFilter: null,
     journeyIds: [],
     modeIds: [],
     dueFilters: [],
@@ -266,6 +281,10 @@ const ScopeFilter = ({
         setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: filter }; });
     };
 
+    const onVoidedFilterChanged = (value: string): void => {
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, voidedFilter: value }; });
+    };
+
     const responsibleFilterUpdated = (values: {id: string; title: string}[]): void => {
         setLocalTagListFilter((old): TagListFilter => {return {...old, responsibleIds: values.map(itm => itm.id)};});
     };
@@ -394,6 +413,7 @@ const ScopeFilter = ({
 
             <RadioGroupFilter options={PRESERVATION_STATUS} onChange={onPreservationStatusFilterChanged} value={tagListFilter.preservationStatus} label="Preservation status" icon={'calendar_today'} />
             <RadioGroupFilter options={ACTION_STATUS} onChange={onActionStatusFilterChanged} value={tagListFilter.actionStatus} label="Preservation actions" icon={'notifications'} />
+            <RadioGroupFilter options={VOIDED} onChange={onVoidedFilterChanged} value={tagListFilter.voidedFilter} label="Voided/unvoided tags" icon={'delete_forever'} />
 
             <CheckboxFilter title='Preservation Due Date' filterValues={dueDates} tagListFilterParam='dueFilters' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.dueFilters} icon={'alarm_on'} />
             <CheckboxFilter title='Preserved Journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} icon={'world'} />

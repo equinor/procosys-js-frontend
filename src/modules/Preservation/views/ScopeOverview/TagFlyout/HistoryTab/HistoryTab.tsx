@@ -40,7 +40,7 @@ const HistoryTab = ({
                     setHistoryLog(historyLog);
                 }
             } catch (error) {
-                console.error('Get history log failed: ', error.messsage, error.data);
+                console.error('Get history log failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000, true);
             }
             setIsLoading(false);

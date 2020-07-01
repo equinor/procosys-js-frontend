@@ -1,3 +1,5 @@
+import React from 'react';
+
 import AreaIcon from '../assets/icons/Area';
 import BatteryChargingFullOutlinedIcon from '@material-ui/icons/BatteryChargingFullOutlined';
 import BearingIcon from '../assets/icons/Bearing';
@@ -7,7 +9,6 @@ import N2Icon from '../assets/icons/N2';
 import OtherIcon from '@material-ui/icons/AddToPhotosOutlined';
 import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
 import PressureIcon from '../assets/icons/Pressure';
-import React from 'react';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import ThermostatIcon from '../assets/icons/Thermostat';
 

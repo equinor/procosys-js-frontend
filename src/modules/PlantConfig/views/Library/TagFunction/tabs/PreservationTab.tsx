@@ -55,7 +55,6 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     const updateTagFunctionDetails = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
             const response = await apiClient.getTagFunction(props.tagFunctionCode, props.registerCode, requestCanceller);
-            console.log(response);
             setTagFunctionDetails(response);
             setIsLoading(false);
         } catch (error) {

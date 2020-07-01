@@ -6,6 +6,6 @@ export const Container = styled.div`
     overflow-y: scroll;
     padding-top: var(--margin-module--top);
     padding-right: calc(var(--grid-unit) * 5);
-    padding-left: var(--grid-unit);
+    padding-left: calc(var(--grid-unit) * 5);
 `;
 

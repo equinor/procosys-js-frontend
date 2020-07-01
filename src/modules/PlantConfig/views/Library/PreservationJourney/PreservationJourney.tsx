@@ -15,6 +15,8 @@ const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
+const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
+
 interface Journey {
     id: number;
     title: string;
@@ -59,6 +61,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [canSave, setCanSave] = useState<boolean>(false);
 
     const {
         preservationApiClient,
@@ -160,11 +163,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const saveNewJourney = async (): Promise<void> => {
         try {
             const journeyId = await preservationApiClient.addJourney(newJourney.title);
-
+            setNewJourney((newJourney): Journey => { return { ...newJourney, id: journeyId }; });
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
             }
-
             getJourney(journeyId);
             props.setDirtyLibraryType();
             showSnackbarNotification('New journey is saved.', 5000);
@@ -478,6 +480,42 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
+    useEffect(() => {
+        if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
+            setCanSave(false);
+            return;
+        }
+        if (newJourney.title.length < 3) {
+            setCanSave(false);
+            return;
+        } 
+        let breakFunction = false;
+        newJourney.steps.forEach((step, i) => {
+            if (!step.title || step.mode.id == -1 || !step.responsible.code) {
+                setCanSave(false);
+                breakFunction = true;
+                return;
+            }
+            if (newJourney.steps.find((s, j) => j != i && s.title == step.title)) {
+                setCanSave(false);
+                breakFunction = true;
+                return;
+            }
+            const mode = mappedModes.find(mode => mode.value == step.mode.id);
+            if (i != 0 && mode && mode.text == 'SUPPLIER') {
+                setCanSave(false);
+                breakFunction = true;
+                return;
+            }
+        });
+
+        if (breakFunction) {
+            return;
+        }
+
+        setCanSave(true);
+    }, [newJourney]);
+
     if (isLoading) {
         return <Spinner large />;
     }
@@ -520,7 +558,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty}>
+                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty || !canSave} title={canSave ? '' : saveTitle}>
                     Save
                 </Button>
             </ButtonContainer>

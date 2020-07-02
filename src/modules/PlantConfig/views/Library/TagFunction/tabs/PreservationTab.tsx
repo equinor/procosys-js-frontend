@@ -90,7 +90,6 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         } catch (err) {
             console.error('Error when voiding tag function', err.message, err.data);
             showSnackbarNotification('Failed to void tagfunction: ' + err.message);
-
         }
     };
 
@@ -151,9 +150,6 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     }
 
     const isVoided = tagFunctionDetails && tagFunctionDetails.isVoided;
-    if (isVoided) {
-        requirements = requirements.map(req => ({ ...req, isVoided: true }));
-    }
 
     if (isLoading) {
         return (<Spinner large />);
@@ -161,7 +157,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
 
     return (<Container>
         <LeftSection>
-            <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} disableActions={isVoided} />
+            <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} disabled={isVoided} />
         </LeftSection>
         <RightSection>
             <ActionContainer>

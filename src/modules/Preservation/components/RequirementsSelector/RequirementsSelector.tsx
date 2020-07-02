@@ -26,7 +26,7 @@ type RequirementsSelectorProps = {
     requirementTypes: RequirementType[];
     onChange?: (listOfRequirements: OnChangeRequirementData[]) => Promise<void> | void;
     requirements: RequirementFormInput[];
-    disableActions?: boolean;
+    disabled?: boolean;
 }
 
 interface RequirementFormInput {
@@ -42,13 +42,9 @@ interface RequirementFormInput {
 
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
 
-const RequirementsSelector = ({
-    requirementTypes,
-    onChange,
-    requirements,
-    disableActions = false }: RequirementsSelectorProps): JSX.Element => {
+const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => {
 
-    const [localRequirements, setLocalRequirements] = useState<RequirementFormInput[]>([]);
+    const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
 
     const [mappedRequirementTypes, setMappedRequirementTypes] = useState<SelectItem[]>([]);
     const [mappedIntervals] = useState<SelectItem[]>(() => {
@@ -60,12 +56,21 @@ const RequirementsSelector = ({
         });
     });
 
+    const getDisabledValue = (): boolean => {
+        if(props.disabled == undefined) {
+            return false;
+        }
+        return props.disabled;
+    };
+    
+    const disableSelector = getDisabledValue();
+
     let hasNewPropsReq = false;
     useEffect(() => {
-        const existingRequirements = requirements.map(req => (Object.assign({}, req)));
-        setLocalRequirements(existingRequirements);
+        const existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
+        setRequirements(existingRequirements);
         hasNewPropsReq = true;
-    }, [requirements]);
+    }, [props.requirements]);
 
     useEffect(() => {
         if (hasNewPropsReq) {
@@ -74,27 +79,27 @@ const RequirementsSelector = ({
             return;
         }
 
-        if (!onChange) return;
+        if (!props.onChange) return;
         // Check that everything is filled out
 
-        const hasInvalidInputs = localRequirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
+        const hasInvalidInputs = requirements.some(req => req.requirementDefinitionId === null || req.intervalWeeks === null);
         if (hasInvalidInputs) return;
 
         //Do we actually have a change to submit?
         let hasChanges = false;
-        hasChanges = localRequirements.some((req) => {
+        hasChanges = requirements.some((req) => {
 
-            const hasMatchingRequirement = requirements.some(
+            const hasMatchingRequirement = props.requirements.some(
                 oldReq => {
                     return (oldReq.requirementDefinitionId === req.requirementDefinitionId
                         && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided);
                 });
             return !hasMatchingRequirement;
-        }) || localRequirements.length !== requirements.length;
+        }) || requirements.length !== props.requirements.length;
 
         if (hasChanges) {
             const filtered: OnChangeRequirementData[] = [];
-            localRequirements.forEach(req => {
+            requirements.forEach(req => {
                 filtered.push({
                     requirementDefinitionId: req.requirementDefinitionId as number,
                     intervalWeeks: req.intervalWeeks as number,
@@ -106,13 +111,13 @@ const RequirementsSelector = ({
                     rowVersion: req.rowVersion
                 });
             });
-            onChange(filtered);
+            props.onChange(filtered);
         }
-    }, [localRequirements]);
+    }, [requirements]);
 
     useEffect(() => {
         const mapped: SelectItem[] = [];
-        requirementTypes.forEach((itm: RequirementType) => {
+        props.requirementTypes.forEach((itm: RequirementType) => {
             if (itm.requirementDefinitions.length > 0) {
                 const withUserRequiredInput: SelectItem[] = [];
                 const withoutUserRequiredInput: SelectItem[] = [];
@@ -154,12 +159,12 @@ const RequirementsSelector = ({
             }
         });
         setMappedRequirementTypes(mapped);
-    }, [requirementTypes]);
+    }, [props.requirementTypes]);
 
     const getRequirementForValue = (reqDefValue: number | null = null): SelectedRequirementResult | null => {
         if (!reqDefValue) { return null; }
         let reqDefIndex = -1;
-        const result = requirementTypes.find(el => {
+        const result = props.requirementTypes.find(el => {
             reqDefIndex = el.requirementDefinitions.findIndex(RD => RD.id === reqDefValue);
             if (reqDefIndex > -1) {
                 return true;
@@ -176,7 +181,7 @@ const RequirementsSelector = ({
     };
 
     const addRequirementInput = (): void => {
-        setLocalRequirements(oldValue => {
+        setRequirements(oldValue => {
             const newRequirement = {
                 requirementDefinitionId: null,
                 intervalWeeks: null
@@ -187,7 +192,7 @@ const RequirementsSelector = ({
 
     const setRequirement = (reqDefValue: number, index: number): void => {
         const newRequirement = getRequirementForValue(reqDefValue);
-        setLocalRequirements((oldReq) => {
+        setRequirements((oldReq) => {
             const copy = [...oldReq];
 
             if (newRequirement) {
@@ -199,7 +204,7 @@ const RequirementsSelector = ({
     };
 
     const setIntervalValue = (intervalValue: number, index: number): void => {
-        setLocalRequirements((oldReq) => {
+        setRequirements((oldReq) => {
             const copy = [...oldReq];
             copy[index].intervalWeeks = intervalValue;
             return copy;
@@ -207,7 +212,7 @@ const RequirementsSelector = ({
     };
 
     const deleteRequirement = (index: number): void => {
-        setLocalRequirements(oldReq => {
+        setRequirements(oldReq => {
             const copy = [...oldReq];
             copy.splice(index, 1);
             return copy;
@@ -215,7 +220,7 @@ const RequirementsSelector = ({
     };
 
     const unvoidRequirement = (index: number): void => {
-        setLocalRequirements(oldReq => {
+        setRequirements(oldReq => {
             const copy = [...oldReq];
             copy[index].isVoided = false;
             return copy;
@@ -223,7 +228,7 @@ const RequirementsSelector = ({
     };
 
     const voidRequirement = (index: number): void => {
-        setLocalRequirements(oldReq => {
+        setRequirements(oldReq => {
             const copy = [...oldReq];
             copy[index].isVoided = true;
             return copy;
@@ -242,7 +247,7 @@ const RequirementsSelector = ({
 
     return (
         <>
-            {localRequirements.map((requirement, index) => {
+            {requirements.map((requirement, index) => {
                 const title = getTitle(requirement);
                 const requirementForValue = requirement.requirementDefinitionTitle ? null : getRequirementForValue(requirement.requirementDefinitionId);
                 return (
@@ -252,7 +257,7 @@ const RequirementsSelector = ({
                                 onChange={(value): void => setRequirement(value, index)}
                                 data={mappedRequirementTypes}
                                 label={'Requirement'}
-                                disabled={requirement.editingRequirements}
+                                disabled={requirement.editingRequirements || disableSelector}
                                 isVoided={requirement.isVoided}
                             >
                                 {requirement.requirementDefinitionTitle ? title :
@@ -262,7 +267,7 @@ const RequirementsSelector = ({
                                 <SelectInput
                                     onChange={(value): void => setIntervalValue(value, index)}
                                     data={mappedIntervals}
-                                    disabled={!requirement.requirementDefinitionId || requirement.isVoided}
+                                    disabled={!requirement.requirementDefinitionId || requirement.isVoided || disableSelector}
                                     label={'Interval'}
                                     isVoided={requirement.isVoided}
                                 >
@@ -272,17 +277,17 @@ const RequirementsSelector = ({
                             <FormFieldSpacer>
                                 {requirement.editingRequirements ?
                                     (requirement.isVoided ?
-                                        <Button className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
+                                        <Button disabled={disableSelector} className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
                                             <EdsIcon name='restore_from_trash' />
                                             Unvoid
                                         </Button>
                                         :
-                                        <Button className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
+                                        <Button disabled={disableSelector} className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
                                             <EdsIcon name='delete_forever' />
                                             Void
                                         </Button>)
                                     :
-                                    <Button disabled={disableActions} title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
+                                    <Button title="Delete" variant='ghost' disabled={disableSelector} style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
                                         <EdsIcon name='delete_to_trash' />
                                     </Button>
                                 }
@@ -292,8 +297,8 @@ const RequirementsSelector = ({
                 );
             })}
             <ActionContainer>
-                <Button variant='ghost' onClick={addRequirementInput} disabled={disableActions}>
-                    <EdsIcon name='add'/> Add Requirement
+                <Button variant='ghost' onClick={addRequirementInput} disabled={disableSelector}>
+                    <EdsIcon name='add' /> Add Requirement
                 </Button>
             </ActionContainer>
         </>

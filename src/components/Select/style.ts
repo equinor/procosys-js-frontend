@@ -11,7 +11,7 @@ export const Container = styled.div`
         border-radius: 4px;
         z-index: 100;
         white-space: nowrap;
-        overflow-y :hidden;
+        
         li div {
             box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
         }

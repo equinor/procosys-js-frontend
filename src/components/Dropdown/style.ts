@@ -12,7 +12,7 @@ export const Container = styled.div`
         background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
-        overflow-y: scroll;
+        overflow-y: auto;
         z-index: 100;
         white-space: nowrap;
     }

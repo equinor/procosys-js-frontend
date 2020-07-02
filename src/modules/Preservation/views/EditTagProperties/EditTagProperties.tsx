@@ -87,7 +87,7 @@ const EditTagProperties = (): JSX.Element => {
         (async (): Promise<void> => {
             if (tagId) {
                 try {
-                    const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true, (cancel: Canceler) => requestCancellor = cancel);
+                    const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true, true, (cancel: Canceler) => requestCancellor = cancel);
                     const mappedResponse = response.map(itm => {
                         return {
                             requirementDefinitionId: -1,

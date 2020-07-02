@@ -1399,11 +1399,12 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async getTagRequirements(tagId: number, includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
+    async getTagRequirements(tagId: number, includeVoided = false, includeAllUsages = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
         const settings: AxiosRequestConfig = {
             params: {
                 IncludeVoided: includeVoided,
+                IncludeAllUsages: includeAllUsages
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);

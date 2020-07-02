@@ -2,8 +2,11 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
+interface ContainerProps {
+    maxHeight?: boolean;
+}
 
-export const Container = styled.div`
+export const Container = styled.div<ContainerProps>`
     position: relative;
     ul {
         position: absolute;
@@ -12,17 +15,24 @@ export const Container = styled.div`
         z-index: 100;
         white-space: nowrap;
 
-        li div {
-            box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
-        }
+        ${(props): any => props.maxHeight && css`
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: ${tokens.elevation.raised};
+        `}
 
-        li:first-child > div {
-            box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
-        }
-        li:only-child > div {
-            box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
-        }
+        ${(props): any => !props.maxHeight && css`
+            li div {
+                box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+            }
 
+            li:first-child > div {
+                box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
+            }
+            li:only-child > div {
+                box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+            }
+        `}
 
         > div:hover, li[data-selected="true"] > div {
             background-color: ${tokens.colors.ui.background__light.rgba};
@@ -38,6 +48,7 @@ interface IconProps {
     disabled: boolean;
     voided: boolean;
 }
+
 
 export const DropdownIcon = styled.div<IconProps>`
     padding-left: 8px;
@@ -122,6 +133,9 @@ export const CascadingItem = styled.ul`
     width: max-content;
     align-items: center;
     margin-left: var(--grid-unit);
+    div {
+        margin-left: var(--grid-unit);
+    }
     li {
         left: calc(var(--grid-unit) * -1);
     }
@@ -136,7 +150,6 @@ export const ItemContent = styled.div`
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
     cursor: pointer;
-    margin-left: var(--grid-unit);
 
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba};

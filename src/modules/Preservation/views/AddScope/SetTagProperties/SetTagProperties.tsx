@@ -190,6 +190,7 @@ const SetTagProperties = ({
                 <div>
                     <InputContainer>
                         <SelectInput
+                            maxHeight={true}
                             onChange={setJourneyFromForm}
                             data={mappedJourneys}
                             label={'Preservation journey for all selected tags'}

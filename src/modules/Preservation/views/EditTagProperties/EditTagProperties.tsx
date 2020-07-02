@@ -333,6 +333,7 @@ const EditTagProperties = (): JSX.Element => {
                     <div>
                         <InputContainer>
                             <SelectInput
+                                maxHeight={true}
                                 onChange={setJourneyFromForm}
                                 data={mappedJourneys}
                                 label={'Preservation journey for selected tag'}

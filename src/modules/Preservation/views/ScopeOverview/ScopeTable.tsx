@@ -131,7 +131,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     render(): ReactNode {
         return (
-            <Container id='scopeTable'>
+            <Container>
                 <Table id='table'
                     tableRef={this.refObject} //reference will be used by parent, to trigger rendering
                     columns={[

@@ -596,6 +596,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton
+                                    id='filterButton'
                                     variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
                                     onClick={(): void => {
                                         toggleFilter();

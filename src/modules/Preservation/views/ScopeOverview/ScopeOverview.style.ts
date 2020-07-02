@@ -55,8 +55,12 @@ export const IconBar = styled.div`
     display: flex;
     align-items: center;
 
+    #filterButton {
+        margin-right: 0px;
+    }
+
     button {
-        margin-left: var(--grid-unit);
+        margin-right: var(--grid-unit);
     }
 `;
 

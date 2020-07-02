@@ -4,6 +4,8 @@ import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
+    height: 100%;
+    overflow-y: hidden;
 `;
 
 export const ContentContainer = styled.div`
@@ -11,7 +13,7 @@ export const ContentContainer = styled.div`
     flex-direction: column;
     overflow-x: hidden;
     width: 100%;
-    margin-top: -16px
+    margin-top: -16px;
 `;
 
 export const HeaderContainer = styled.div`

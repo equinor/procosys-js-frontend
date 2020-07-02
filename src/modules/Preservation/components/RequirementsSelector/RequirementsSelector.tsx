@@ -56,15 +56,6 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         });
     });
 
-    const getDisabledValue = (): boolean => {
-        if(props.disabled == undefined) {
-            return false;
-        }
-        return props.disabled;
-    };
-    
-    const disableSelector = getDisabledValue();
-
     let hasNewPropsReq = false;
     useEffect(() => {
         const existingRequirements = props.requirements.map(req => (Object.assign({}, req)));
@@ -257,7 +248,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 onChange={(value): void => setRequirement(value, index)}
                                 data={mappedRequirementTypes}
                                 label={'Requirement'}
-                                disabled={requirement.editingRequirements || disableSelector}
+                                disabled={requirement.editingRequirements || props.disabled}
                                 isVoided={requirement.isVoided}
                             >
                                 {requirement.requirementDefinitionTitle ? title :
@@ -267,7 +258,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                 <SelectInput
                                     onChange={(value): void => setIntervalValue(value, index)}
                                     data={mappedIntervals}
-                                    disabled={!requirement.requirementDefinitionId || requirement.isVoided || disableSelector}
+                                    disabled={!requirement.requirementDefinitionId || requirement.isVoided || props.disabled}
                                     label={'Interval'}
                                     isVoided={requirement.isVoided}
                                 >
@@ -277,17 +268,17 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                             <FormFieldSpacer>
                                 {requirement.editingRequirements ?
                                     (requirement.isVoided ?
-                                        <Button disabled={disableSelector} className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
+                                        <Button disabled={props.disabled} className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
                                             <EdsIcon name='restore_from_trash' />
                                             Unvoid
                                         </Button>
                                         :
-                                        <Button disabled={disableSelector} className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
+                                        <Button disabled={props.disabled} className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
                                             <EdsIcon name='delete_forever' />
                                             Void
                                         </Button>)
                                     :
-                                    <Button title="Delete" variant='ghost' disabled={disableSelector} style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
+                                    <Button title="Delete" variant='ghost' disabled={props.disabled} style={{ marginTop: '12px' }} onClick={(): void => deleteRequirement(index)}>
                                         <EdsIcon name='delete_to_trash' />
                                     </Button>
                                 }
@@ -297,7 +288,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                 );
             })}
             <ActionContainer>
-                <Button variant='ghost' onClick={addRequirementInput} disabled={disableSelector}>
+                <Button variant='ghost' onClick={addRequirementInput} disabled={props.disabled}>
                     <EdsIcon name='add' /> Add Requirement
                 </Button>
             </ActionContainer>

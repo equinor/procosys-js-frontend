@@ -9,6 +9,7 @@ import RequirementsWidget from '../../../../../Preservation/components/Requireme
 import { Button } from '@equinor/eds-core-react';
 import { hot } from 'react-hot-loader';
 import { LeftSection, Container, RightSection, ActionContainer } from './PreservationTab.style';
+import Spinner from '@procosys/components/Spinner';
 
 interface TagFunction {
     id: number;
@@ -32,16 +33,15 @@ type PreservationTabProps = {
 interface RequirementFormInput {
     requirementDefinitionId: number;
     intervalWeeks: number;
+    isVoided?: boolean;
 }
 
 const PreservationTab = (props: PreservationTabProps): JSX.Element => {
 
-
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
-
     const [tagFunctionDetails, setTagFunctionDetails] = useState<TagFunction>();
-
     const [unsavedRequirements, setUnsavedRequirements] = useState<RequirementFormInput[] | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
@@ -56,6 +56,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         try {
             const response = await apiClient.getTagFunction(props.tagFunctionCode, props.registerCode, requestCanceller);
             setTagFunctionDetails(response);
+            setIsLoading(false);
         } catch (error) {
             if (error && error.data) {
                 const serverError = error.data as AxiosResponse;
@@ -74,7 +75,6 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
             setUnsavedRequirements(null);
             updateTagFunctionDetails();
             showSnackbarNotification('Tag function requirements saved');
-
         } catch (err) {
             console.error('Error when syncing requirements', err.message, err.data);
             showSnackbarNotification('Failed to update tagfunction requirements: ' + err.message);
@@ -85,11 +85,11 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         if (!tagFunctionDetails) return;
         try {
             await apiClient.voidUnvoidTagFunction(tagFunctionDetails.code, tagFunctionDetails.registerCode, 'VOID', tagFunctionDetails.rowVersion);
+            updateTagFunctionDetails();
             showSnackbarNotification('Tag function voided');
         } catch (err) {
             console.error('Error when voiding tag function', err.message, err.data);
             showSnackbarNotification('Failed to void tagfunction: ' + err.message);
-
         }
     };
 
@@ -97,10 +97,11 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         if (!tagFunctionDetails) return;
         try {
             await apiClient.voidUnvoidTagFunction(tagFunctionDetails.code, tagFunctionDetails.registerCode, 'UNVOID', tagFunctionDetails.rowVersion);
-            showSnackbarNotification('Tag function voided');
+            updateTagFunctionDetails();
+            showSnackbarNotification('Tag function unvoided');
         } catch (err) {
             console.error('Error when unvoiding tag function', err.message, err.data);
-            showSnackbarNotification('Failed to void tagfunction: ' + err.message);
+            showSnackbarNotification('Failed to unvoid tag function: ' + err.message);
         }
     };
 
@@ -149,9 +150,14 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     }
 
     const isVoided = tagFunctionDetails && tagFunctionDetails.isVoided;
+
+    if (isLoading) {
+        return (<Spinner large />);
+    }
+
     return (<Container>
         <LeftSection>
-            <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} />
+            <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} disabled={isVoided} />
         </LeftSection>
         <RightSection>
             <ActionContainer>

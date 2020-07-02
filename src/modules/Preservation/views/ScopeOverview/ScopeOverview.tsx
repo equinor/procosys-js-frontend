@@ -61,6 +61,12 @@ const defaultTagListFilter: TagListFilter = {
     areaCodes: []
 };
 
+interface SupportedQueryStringFilters {
+    [index: string]: string | null;
+    pono: string | null;
+    calloff: string | null;
+}
+
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -423,24 +429,39 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         // parse querystring
         const qsParameters = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
-        // get "project" and set as current project
+        // get "project" from querystring (mandatory in order to use other filters)
         const projectName = qsParameters['project'] as string;
 
         if (projectName && projectName !== '') {
             const project = filteredProjects.find(p => p.name === projectName);
 
             if (project) {
+                // set as current project
                 setCurrentProject(project.id);
 
-                // get "pono" and apply filter when given
-                const poNoFilter = qsParameters['pono'] as string;
+                // get and apply supported tag filters
+                let filtersUsed = 0;
+                const supportedFilters: SupportedQueryStringFilters = {
+                    pono: null,
+                    calloff: null
+                };
 
-                if (poNoFilter && poNoFilter !== '') {
-                    const filter = defaultTagListFilter;
-                    filter.purchaseOrderNoStartsWith = poNoFilter;
+                for (const f in supportedFilters) {
+                    const qsParam = qsParameters[f];
 
-                    setTagListFilter(filter);
-                    setNumberOfFilters(1);
+                    if (qsParam) {
+                        supportedFilters[f] = qsParam as string;
+                        filtersUsed++;
+                    }
+                }
+
+                if (filtersUsed > 0) {
+                    const tagFilter = defaultTagListFilter;
+                    tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
+                    tagFilter.callOffStartsWith = supportedFilters.calloff;
+
+                    setTagListFilter(tagFilter);
+                    setNumberOfFilters(filtersUsed);
                     toggleFilter();
                 }
             } else {

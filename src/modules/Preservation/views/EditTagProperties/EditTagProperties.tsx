@@ -193,7 +193,7 @@ const EditTagProperties = (): JSX.Element => {
                     setStep(itm);
                 }
                 return {
-                    text: itm.mode.title,
+                    text: itm.title,
                     value: itm.id
                 };
             });
@@ -347,7 +347,7 @@ const EditTagProperties = (): JSX.Element => {
                                 disabled={poTag}
                                 label={'Preservation step'}
                             >
-                                {(step && step.mode.title) || 'Select step'}
+                                {(step && step.title) || 'Select step'}
                             </SelectInput>
                         </InputContainer>
                         <InputContainer style={{ maxWidth: '480px' }}>

@@ -9,6 +9,7 @@ const mockJourneys = [{
     steps: [{
         id: 1,
         isVoided: false,
+        title: 'stepTitle1',
         mode: {
             id: 1,
             title: 'FABRICATION-1'
@@ -26,6 +27,7 @@ const mockJourneys = [{
     steps: [{
         id: 2,
         isVoided: false,
+        title: 'stepTitle2',
         mode: {
             id: 2,
             title: 'FABRICATION-1'
@@ -155,7 +157,7 @@ describe('Module: <EditTagProperties />', () => {
         expect(document.getElementById('Remark').nodeValue == mockTag.remark);
         expect(document.getElementById('StorageArea').nodeValue == mockTag.storageArea);
         expect(getByText(mockTag.journeyTitle)).toBeInTheDocument();
-        expect(getByText(mockTag.mode)).toBeInTheDocument();
+        expect(getByText(mockJourneys[0].steps[0].title)).toBeInTheDocument();
     });
 
     it('Should render Save button disabled when tag is not edited', async () => {

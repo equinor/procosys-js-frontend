@@ -94,7 +94,7 @@ const SetTagProperties = ({
                     setStep(itm);
                 }
                 return {
-                    text: itm.mode.title,
+                    text: itm.title,
                     value: itm.id
                 };
             });
@@ -204,7 +204,7 @@ const SetTagProperties = ({
                             disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
                             label={'Preservation step'}
                         >
-                            {(step && step.mode.title) || 'Select step'}
+                            {(step && step.title) || 'Select step'}
                         </SelectInput>
                     </InputContainer>
                     <InputContainer style={{ maxWidth: '480px' }}>

@@ -150,15 +150,13 @@ describe('Module: <EditTagProperties />', () => {
     });
 
     it('Should render with tag details', async () => {
-        const { getByTitle, getByText, debug } = render(<EditTagProperties />);
+        const { getByTitle, getByText } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
         expect(getByText('Editing ' + mockTag.tagNo)).toBeInTheDocument();
         expect(document.getElementById('Remark').nodeValue == mockTag.remark);
         expect(document.getElementById('StorageArea').nodeValue == mockTag.storageArea);
         expect(getByText(mockTag.journeyTitle)).toBeInTheDocument();
-        debug();
-        console.log(mockJourneys[0].steps.title);
         expect(getByText(mockJourneys[0].steps[0].title)).toBeInTheDocument();
     });
 

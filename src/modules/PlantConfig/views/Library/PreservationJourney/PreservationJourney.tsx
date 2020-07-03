@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer } from './PreservationJourney.style';
+import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer, ResponsibleDropdownContainer } from './PreservationJourney.style';
 import EdsIcon from '../../../../../components/EdsIcon';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -610,7 +610,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                 </div>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
-                                <div style={{ width: '100%' }}>
+                                <ResponsibleDropdownContainer>
                                     <Dropdown
                                         disabled={newJourney.isVoided || step.isVoided}
                                         label={'Resp'}
@@ -629,7 +629,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             );
                                         })}
                                     </Dropdown>
-                                </div>
+                                </ResponsibleDropdownContainer>
                             </FormFieldSpacer>
                             <FormFieldSpacer>
                                 <div style={{ minWidth: '300px' }}>

@@ -59,7 +59,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>{tag.description}</div>
+                    <div>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -69,7 +69,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getResponsibleColumn(tag: PreservedTag): JSX.Element {
         return (
             <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>{tag.responsibleCode}</div>
+                <div>{tag.responsibleCode}</div>
             </Tooltip>
         );
     }
@@ -77,7 +77,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getNextColumn(tag: PreservedTag): JSX.Element {
         const requirement = getFirstUpcomingRequirement(tag);
         return (
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {(!requirement || tag.isVoided) ? null : requirement.nextDueAsYearAndWeek}
             </div>);
     }
@@ -85,7 +85,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getDueColumn(tag: PreservedTag): JSX.Element {
         const requirement = getFirstUpcomingRequirement(tag);
         return (
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {(!requirement || tag.isVoided) ? null : requirement.nextDueWeeks}
             </div>);
     }
@@ -98,7 +98,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getPOColumn(tag: PreservedTag): JSX.Element {
         return (<Tooltip title={tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo ? tag.purchaseOrderNo : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo}
             </div>
         </Tooltip>);
@@ -106,28 +106,28 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getMode(tag: PreservedTag): JSX.Element {
         return (
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {tag.mode}
             </div>);
     }
 
     getAreaCode(tag: PreservedTag): JSX.Element {
         return (
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {tag.areaCode}
             </div>);
     }
 
     getDisciplineCode(tag: PreservedTag): JSX.Element {
         return (
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {tag.disciplineCode}
             </div>);
     }
 
     getStatus(tag: PreservedTag): JSX.Element {
         return (
-            <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>
+            <div>
                 {tag.status}
             </div>);
     }

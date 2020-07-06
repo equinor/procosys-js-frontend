@@ -516,9 +516,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Autoscope by Tag Function
                                 </DropdownItem>
                             </Link>
-                            <Link to={'/AddScope/createAreaTag'}>
+                            <Link to={'/AddScope/createDummyTag'}>
                                 <DropdownItem>
-                                    Create area tag
+                                    Create dummy tag
                                 </DropdownItem>
                             </Link>
                             <Link to={'/AddScope/selectMigrateTags'}>

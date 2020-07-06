@@ -20,7 +20,7 @@ type SelectProps = {
     children: ReactNode;
     label?: string;
     isVoided?: boolean;
-    hasMaxHeight?: boolean;
+    maxHeight?: string;
 };
 
 const KEYCODE_ENTER = 13;
@@ -35,7 +35,7 @@ const Select = ({
     children,
     label,
     isVoided = false,
-    hasMaxHeight
+    maxHeight
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -133,7 +133,7 @@ const Select = ({
     };
 
     return (
-        <Container ref={containerRef} hasMaxHeight={hasMaxHeight}>
+        <Container ref={containerRef} maxHeight={maxHeight}>
             <Label isVoided={isVoided}>{label}</Label>
             <DropdownButton
                 isVoided={isVoided}

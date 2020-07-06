@@ -599,7 +599,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                             <FormFieldSpacer>
                                 <div style={{ width: '100%' }}>
                                     <SelectInput
-                                        hasMaxHeight={true}
+                                        maxHeight={'300px'}
                                         onChange={(value): void => setModeValue(value, index)}
                                         data={mappedModes}
                                         label={'Mode'}

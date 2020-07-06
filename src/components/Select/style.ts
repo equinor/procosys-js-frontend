@@ -2,11 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-interface ContainerProps {
-    hasMaxHeight?: boolean;
-}
-
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div<{ maxHeight?: string }>`
     position: relative;
     ul {
         position: absolute;
@@ -15,8 +11,9 @@ export const Container = styled.div<ContainerProps>`
         z-index: 100;
         white-space: nowrap;
 
-        ${(props): any => props.hasMaxHeight && css`
-            max-height: 300px;
+
+        ${(props): any => props.maxHeight && css`
+            max-height: ${props.maxHeight};
             overflow-y: auto;
             box-shadow: ${tokens.elevation.raised};
         `}

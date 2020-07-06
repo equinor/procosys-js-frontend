@@ -322,7 +322,7 @@ const EditTagProperties = (): JSX.Element => {
         <div>
             <Header>
                 <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing'}</h1>
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             {loading ?
                 <SpinnerContainer>

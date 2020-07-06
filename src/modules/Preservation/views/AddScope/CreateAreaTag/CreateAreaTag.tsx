@@ -322,7 +322,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
         <div>
             <Header>
                 <h1>Create Area Tag</h1>
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             <TopContainer>
                 <ErrorContainer>

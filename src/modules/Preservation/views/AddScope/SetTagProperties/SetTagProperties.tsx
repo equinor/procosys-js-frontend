@@ -152,7 +152,7 @@ const SetTagProperties = ({
             <div>
                 <Header>
                     <h1>Add preservation scope</h1>
-                    <div>{project.description}</div>
+                    <div>{project.name}</div>
                 </Header>
                 <Container>
                     <div>
@@ -184,7 +184,7 @@ const SetTagProperties = ({
                     )
                 }
 
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             <Container>
                 <div>

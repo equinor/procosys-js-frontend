@@ -117,7 +117,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
         <Container>
             <Header>
                 <h1>Migrate preservation scope</h1>
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             <TopContainer>
                 <InnerContainer>

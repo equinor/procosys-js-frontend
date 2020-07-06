@@ -55,3 +55,10 @@ export const DropdownItem = styled.div`
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
 `;
+
+export const ResponsibleDropdownContainer = styled.div`
+    width: 100%;
+    > div {
+        width: 100%;
+    }
+`;

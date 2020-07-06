@@ -89,7 +89,7 @@ describe('<CreateDummyTag />', () => {
             var propFunc = jest.fn();
             const { queryByText } = render(<CreateDummyTag setArea={propFunc} setPurchaseOrder={propFunc} />);
 
-            expect(queryByText('Area type')).toBeInTheDocument();
+            expect(queryByText('Dummy type')).toBeInTheDocument();
             expect(queryByText('Discipline')).toBeInTheDocument();
             expect(queryByText(/Tag number/)).toBeInTheDocument();
             expect(queryByText('Description')).toBeInTheDocument();

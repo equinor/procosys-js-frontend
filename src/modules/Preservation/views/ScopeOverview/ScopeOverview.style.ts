@@ -11,8 +11,8 @@ export const ContentContainer = styled.div`
     flex-direction: column;
     overflow-x: hidden;
     width: 100%;
-    overflow: visible;
     margin-top: -16px;
+    min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
 `;
 
 export const HeaderContainer = styled.div`

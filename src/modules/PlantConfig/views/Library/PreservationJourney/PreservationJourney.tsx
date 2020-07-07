@@ -159,14 +159,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         } catch (error) {
             console.error('Add journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
-            getJourney(newJourney.id);
+            getJourney(journeyId);
         }
     };
 
     const saveNewJourney = async (): Promise<void> => {
         try {
             const journeyId = await preservationApiClient.addJourney(newJourney.title);
-            setNewJourney((newJourney): Journey => { return { ...newJourney, id: journeyId }; });
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
             }
@@ -644,24 +643,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                 </div>
                             </FormFieldSpacer>
                             {
-                                (isDirty && index == 0) &&
-                                <FormFieldSpacer>
-                                    <Typography variant="caption">Actions on steps are unavailable until other changes are saved.</Typography>
-                                </FormFieldSpacer>
-                            }
-                            {
-                                (isDirty && index != 0) &&
-                                <div></div>
-                            }
-                            {
-                                !isDirty && (
+                                (
                                     <FormFieldSpacer>
-                                        {newJourney.steps.length > 1 &&
+                                        {
                                             <>
-                                                <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
+                                                <Button disabled={isDirty || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepUp(index)}>
                                                     {upIcon}
                                                 </Button>
-                                                <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
+                                                <Button disabled={isDirty || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepDown(index)}>
                                                     {downIcon}
                                                 </Button>
                                             </>
@@ -672,13 +661,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             </Button>)
                                         }
                                         {(step.id != -1 && !step.isVoided) &&
-                                            (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                            (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
                                                 {voidIcon} Void
                                             </Button>)
                                         }
 
                                         {(step.id != -1 && step.isVoided) &&
-                                            (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                            (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
                                                 {unvoidIcon} Unvoid
                                             </Button>)
                                         }
@@ -689,7 +678,12 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     );
                 })}
             </StepsContainer>
-
+            {
+                (isDirty && newJourney.steps.length > 0) &&
+                <div style={{ display: 'flex', marginLeft: 'var(--grid-unit)', marginBottom: 'calc(var(--grid-unit) * 2)' }}>
+                    <Typography variant="caption">Note: Some actions on steps will be disabled until changes are saved.</Typography>
+                </div>
+            }
             {
                 !newJourney.isVoided &&
                 <IconContainer>
@@ -698,8 +692,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     </Button>
                 </IconContainer>
             }
-
-
         </Container >
 
     );

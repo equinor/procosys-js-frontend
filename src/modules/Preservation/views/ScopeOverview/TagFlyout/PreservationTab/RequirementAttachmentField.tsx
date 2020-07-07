@@ -15,12 +15,14 @@ interface RequirementAttachmentFieldProps {
     requirementId: number;
     field: TagRequirementField;
     tagId: number;
+    attachmentWasUpdated: () => void;
 }
 
 const RequirementAttachmentField = ({
     requirementId,
     field,
-    tagId
+    tagId,
+    attachmentWasUpdated
 }: RequirementAttachmentFieldProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -32,7 +34,8 @@ const RequirementAttachmentField = ({
             const url = await apiClient.getDownloadUrlForAttachmentOnTagRequirement(tagId, requirementId, field.id);
             window.open(url, '_blank');
             showSnackbarNotification('Attachment is downloaded.', 5000, true);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Not able to get download url for tag requirement attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
@@ -46,9 +49,13 @@ const RequirementAttachmentField = ({
                 setFilename(file.name);
             }
             showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag requirement.`, 5000, true);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Upload file attachment failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            attachmentWasUpdated();
         }
         setIsLoading(false);
     };
@@ -59,9 +66,13 @@ const RequirementAttachmentField = ({
             await apiClient.removeAttachmentOnTagRequirement(tagId, requirementId, field.id);
             setFilename(null);
             showSnackbarNotification('Attachment is deleted.', 5000, true);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Not able to delete attachment on tag requirement: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            attachmentWasUpdated();
         }
         setIsLoading(false);
     };

@@ -101,6 +101,7 @@ const PreservationTab = ({
                 readonly={isReadOnly()}
                 recordTagRequirementValues={recordTagRequirementValues}
                 preserveRequirement={preserveRequirement}
+                refreshRequirements={refreshTagDetails}
             />
         );
     };

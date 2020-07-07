@@ -15,6 +15,7 @@ interface RequirementProps {
     readonly: boolean;
     recordTagRequirementValues: (values: TagRequirementRecordValues) => void;
     preserveRequirement: (requirementId: number) => void;
+    refreshRequirements: () => void;
 }
 
 const Requirements = ({
@@ -22,7 +23,8 @@ const Requirements = ({
     requirements,
     readonly,
     recordTagRequirementValues,
-    preserveRequirement
+    preserveRequirement,
+    refreshRequirements
 }: RequirementProps): JSX.Element => {
 
     const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
@@ -209,6 +211,7 @@ const Requirements = ({
                         requirementId={requirementId}
                         field={field}
                         tagId={tagId}
+                        onAttachmentUpdated={refreshRequirements}
                     />
                 );
 

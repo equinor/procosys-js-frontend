@@ -7,7 +7,7 @@ import Spinner from '@procosys/components/Spinner';
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
-import { SelectFileLabel, AttachmentLink } from './Requirements.style';
+import { SelectFileButton, SelectFileLabel, AttachmentLink } from './Requirements.style';
 
 const deleteIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
@@ -15,12 +15,14 @@ interface RequirementAttachmentFieldProps {
     requirementId: number;
     field: TagRequirementField;
     tagId: number;
+    onAttachmentUpdated: () => void;
 }
 
 const RequirementAttachmentField = ({
     requirementId,
     field,
-    tagId
+    tagId,
+    onAttachmentUpdated
 }: RequirementAttachmentFieldProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -32,7 +34,8 @@ const RequirementAttachmentField = ({
             const url = await apiClient.getDownloadUrlForAttachmentOnTagRequirement(tagId, requirementId, field.id);
             window.open(url, '_blank');
             showSnackbarNotification('Attachment is downloaded.', 5000, true);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Not able to get download url for tag requirement attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
@@ -46,9 +49,13 @@ const RequirementAttachmentField = ({
                 setFilename(file.name);
             }
             showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag requirement.`, 5000, true);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Upload file attachment failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            onAttachmentUpdated();
         }
         setIsLoading(false);
     };
@@ -59,9 +66,13 @@ const RequirementAttachmentField = ({
             await apiClient.removeAttachmentOnTagRequirement(tagId, requirementId, field.id);
             setFilename(null);
             showSnackbarNotification('Attachment is deleted.', 5000, true);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Not able to delete attachment on tag requirement: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
+        }
+        finally {
+            onAttachmentUpdated();
         }
         setIsLoading(false);
     };
@@ -82,7 +93,7 @@ const RequirementAttachmentField = ({
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             {
                 filename &&
-                < div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     <AttachmentLink onClick={downloadAttachment}>
                         {filename}
                     </AttachmentLink>
@@ -91,15 +102,16 @@ const RequirementAttachmentField = ({
                     </Button>
                 </div>
             }
-            <div style={{ display: 'flex', marginTop: 'calc(var(--grid-unit)' }}>
-                <form>
-                    <label htmlFor="uploadFile">
-                        <SelectFileLabel>
-                            Select file
-                        </SelectFileLabel>
-                    </label>
-                    <input id="uploadFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
-                </form>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div style={{ marginTop: 'var(--grid-unit)' }}>
+                    <form>
+                        <label htmlFor="uploadFile">
+                            <SelectFileButton>Select file</SelectFileButton>
+                        </label>
+                        <input id="uploadFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
+                    </form>
+                </div>
+                <SelectFileLabel>{field.label}</SelectFileLabel>
             </div>
         </div>
     );

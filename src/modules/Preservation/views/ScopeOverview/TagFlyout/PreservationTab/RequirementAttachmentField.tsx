@@ -15,14 +15,14 @@ interface RequirementAttachmentFieldProps {
     requirementId: number;
     field: TagRequirementField;
     tagId: number;
-    attachmentWasUpdated: () => void;
+    onAttachmentUpdated: () => void;
 }
 
 const RequirementAttachmentField = ({
     requirementId,
     field,
     tagId,
-    attachmentWasUpdated
+    onAttachmentUpdated
 }: RequirementAttachmentFieldProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -55,7 +55,7 @@ const RequirementAttachmentField = ({
             showSnackbarNotification(error.message, 5000, true);
         }
         finally {
-            attachmentWasUpdated();
+            onAttachmentUpdated();
         }
         setIsLoading(false);
     };
@@ -72,7 +72,7 @@ const RequirementAttachmentField = ({
             showSnackbarNotification(error.message, 5000, true);
         }
         finally {
-            attachmentWasUpdated();
+            onAttachmentUpdated();
         }
         setIsLoading(false);
     };

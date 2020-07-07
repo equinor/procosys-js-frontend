@@ -211,7 +211,7 @@ const Requirements = ({
                         requirementId={requirementId}
                         field={field}
                         tagId={tagId}
-                        attachmentWasUpdated={refreshRequirements}
+                        onAttachmentUpdated={refreshRequirements}
                     />
                 );
 

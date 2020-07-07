@@ -65,8 +65,7 @@ const AddScope = (): JSX.Element => {
     const [pO, setPO] = useState<PurchaseOrder | null>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
-
-
+    const [isSubmittingScope, setIsSubmittingScope] = useState(false);
 
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
@@ -188,6 +187,7 @@ const AddScope = (): JSX.Element => {
     };
 
     const submit = async (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string): Promise<void> => {
+        setIsSubmittingScope(true);
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
 
@@ -207,11 +207,12 @@ const AddScope = (): JSX.Element => {
             }
 
             showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
-            history.push('/');
+            history.push('/');  
         } catch (error) {
             console.error('Tag preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        setIsSubmittingScope(false);
         return Promise.resolve();
     };
 
@@ -415,6 +416,7 @@ const AddScope = (): JSX.Element => {
                             previousStep={goToPreviousStep}
                             submitForm={submit}
                             addScopeMethod={addScopeMethod}
+                            isLoading={isSubmittingScope}
                         />
                     </LargerComponent>
                     <Divider />

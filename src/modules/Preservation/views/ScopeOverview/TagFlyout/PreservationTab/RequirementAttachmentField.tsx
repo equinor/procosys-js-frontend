@@ -7,7 +7,7 @@ import Spinner from '@procosys/components/Spinner';
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
-import { SelectFileLabel, AttachmentLink } from './Requirements.style';
+import { SelectFileButton, SelectFileLabel, AttachmentLink } from './Requirements.style';
 
 const deleteIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
@@ -93,7 +93,7 @@ const RequirementAttachmentField = ({
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             {
                 filename &&
-                < div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     <AttachmentLink onClick={downloadAttachment}>
                         {filename}
                     </AttachmentLink>
@@ -102,18 +102,16 @@ const RequirementAttachmentField = ({
                     </Button>
                 </div>
             }
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-                <div style={{marginTop: 'calc(var(--grid-unit) * 2 + 3px)', marginRight: 'var(--grid-unit)'}}>
-                    {field.label}
-                </div>
-                <div style={{ display: 'flex', marginTop: 'var(--grid-unit)' }}>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div style={{ marginTop: 'var(--grid-unit)' }}>
                     <form>
                         <label htmlFor="uploadFile">
-                            <SelectFileLabel>Select file</SelectFileLabel>
+                            <SelectFileButton>Select file</SelectFileButton>
                         </label>
                         <input id="uploadFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
                     </form>
                 </div>
+                <SelectFileLabel>{field.label}</SelectFileLabel>
             </div>
         </div>
     );

@@ -29,20 +29,21 @@ const Library = (): JSX.Element => {
         setSelectedLibraryType(params.libraryType);
     }, []);
 
+
     return (
         <Container>
-            <LibraryTreeview 
-                setSelectedLibraryType={setSelectedLibraryType} 
-                setSelectedLibraryItem={setSelectedLibraryItem} 
-                dirtyLibraryType={dirtyLibraryType} 
+            <LibraryTreeview
+                setSelectedLibraryType={setSelectedLibraryType}
+                setSelectedLibraryItem={setSelectedLibraryItem}
+                dirtyLibraryType={dirtyLibraryType}
                 resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
             />
 
             <Divider />
             <LibraryItemContainer addPaddingTop={selectedLibraryType != LibraryType.TAG_FUNCTION} >
-                <LibraryItemDetails 
-                    libraryType={selectedLibraryType} 
-                    libraryItem={selectedLibraryItem} 
+                <LibraryItemDetails
+                    libraryType={selectedLibraryType}
+                    libraryItem={selectedLibraryItem}
                     setDirtyLibraryType={setDirtyLibraryType}
                 />
             </LibraryItemContainer>

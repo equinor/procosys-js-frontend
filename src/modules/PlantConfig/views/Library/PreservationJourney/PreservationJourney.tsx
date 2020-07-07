@@ -8,6 +8,9 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
 import Dropdown from '../../../../../components/Dropdown';
+import { useProcosysContext } from '../../../../../core/ProcosysContext';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -61,10 +64,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
-    const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
     const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
     const [canSave, setCanSave] = useState<boolean>(false);
+
+    const { dirtyComponents } = useProcosysContext();
+    const JourneyLibraryStr = 'JourneyLibrary';
+    const isDirty = dirtyComponents.has(JourneyLibraryStr);
 
     const {
         preservationApiClient,
@@ -132,7 +138,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 (response) => {
                     setJourney(response);
                     setNewJourney(cloneJourney(response));
-                    setIsDirty(false);
+                    dirtyComponents.delete(JourneyLibraryStr);
                 }
             );
         } catch (error) {
@@ -283,16 +289,28 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         } else {
             saveUpdatedJourney();
         }
-        setIsDirty(false);
+        dirtyComponents.delete(JourneyLibraryStr);
     };
 
     const cancel = (): void => {
-        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        let doCancel = true;
+        if (isDirty) {
+            showModalDialog(
+                'Discard any changes?',
+                null,
+                '30vw',
+                'Yes',
+                null,
+                'No',
+                () => doCancel = false,
+                true);
+
         }
-        setJourney(null);
-        setIsDirty(false);
-        setIsEditMode(false);
+        if (doCancel) {
+            setJourney(null);
+            dirtyComponents.clear();
+            setIsEditMode(false);
+        }
     };
 
     const voidJourney = async (): Promise<void> => {
@@ -333,7 +351,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.deleteJourney(journey.id, journey.rowVersion);
                 setJourney(null);
-                setIsDirty(false);
+                dirtyComponents.delete(JourneyLibraryStr);
                 setIsEditMode(false);
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is deleted.', 5000);
@@ -351,13 +369,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const setJourneyTitleValue = (value: string): void => {
-        setIsDirty(true);
+        dirtyComponents.add(JourneyLibraryStr);
         newJourney.title = value;
         setNewJourney(cloneJourney(newJourney));
     };
 
     const setModeValue = (value: number, index: number): void => {
-        setIsDirty(true);
+        dirtyComponents.add(JourneyLibraryStr);
         newJourney.steps[index].mode.id = value;
         setNewJourney(cloneJourney(newJourney));
     };
@@ -365,7 +383,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const setResponsibleValue = (event: React.MouseEvent, stepIndex: number, filtRespIndex: number): void => {
         event.preventDefault();
         if (newJourney.steps) {
-            setIsDirty(true);
+            dirtyComponents.add(JourneyLibraryStr);
             newJourney.steps[stepIndex].responsible.code = filteredResponsibles[filtRespIndex].value;
             setNewJourney(cloneJourney(newJourney));
         }
@@ -373,7 +391,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const setStepTitleValue = (value: string, index: number): void => {
         if (newJourney.steps) {
-            setIsDirty(true);
+            dirtyComponents.add(JourneyLibraryStr);
             newJourney.steps[index].title = value;
             setNewJourney(cloneJourney(newJourney));
         }

@@ -6,6 +6,8 @@ import EdsIcon from '../../../../../components/EdsIcon';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
 import Checkbox from './../../../../../components/Checkbox';
+import { useProcosysContext } from '../../../../../core/ProcosysContext';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 
@@ -32,8 +34,11 @@ const Mode = (props: ModeProps): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [mode, setMode] = useState<ModeItem | null>(null);
     const [newMode, setNewMode] = useState<ModeItem>(createNewMode);
-    const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+
+    const { dirtyComponents } = useProcosysContext();
+    const modeLibraryStr = 'ModeLibrary';
+    const isDirty = dirtyComponents.has(modeLibraryStr);
 
     const {
         preservationApiClient,
@@ -50,7 +55,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                 (response) => {
                     setMode(response);
                     setNewMode(cloneMode(response));
-                    setIsDirty(false);
+                    dirtyComponents.delete(modeLibraryStr);
                 }
             );
         } catch (error) {
@@ -120,16 +125,30 @@ const Mode = (props: ModeProps): JSX.Element => {
         } else {
             saveUpdatedMode();
         }
-        setIsDirty(false);
+        dirtyComponents.delete(modeLibraryStr);
     };
 
     const cancel = (): void => {
-        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        let doCancel = true;
+        if (isDirty) {
+            showModalDialog(
+                'Discard any changes?',
+                null,
+                '30vw',
+                'Yes',
+                null,
+                'No',
+                () => doCancel = false,
+                true);
+
         }
-        setMode(null);
-        setIsEditMode(false);
+        if (doCancel) {
+            dirtyComponents.clear();
+            setMode(null);
+            setIsEditMode(false);
+        }
     };
+
 
     const voidMode = async (): Promise<void> => {
         if (mode) {
@@ -169,13 +188,13 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     const setTitleValue = (value: string): void => {
-        setIsDirty(true);
+        dirtyComponents.add(modeLibraryStr);
         newMode.title = value;
         setNewMode(cloneMode(newMode));
     };
 
     const setForSupplierValue = (value: boolean): void => {
-        setIsDirty(true);
+        dirtyComponents.add(modeLibraryStr);
         newMode.forSupplier = value;
         setNewMode(cloneMode(newMode));
     };

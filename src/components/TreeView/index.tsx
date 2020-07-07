@@ -4,6 +4,8 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
 import Spinner from '../Spinner';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -37,13 +39,14 @@ interface TreeViewProps {
 const TreeView = ({
     rootNodes,
     dirtyNodeId,
-    resetDirtyNode
+    resetDirtyNode,
 }: TreeViewProps): JSX.Element => {
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
     const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
 
+    const { dirtyComponents } = useProcosysContext();
 
     const getNodeChildCountAndCollapse = (parentNodeId: string | number): number => {
         let childCount = 0;
@@ -187,7 +190,7 @@ const TreeView = ({
         );
     };
 
-    const handleOnClick = (node: NodeData): void => {
+    const selectNode = (node: NodeData): void => {
         if (selectedNodeId) {
             const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
             if (currentSelectedNodeIndex != -1) {
@@ -197,6 +200,26 @@ const TreeView = ({
         node.isSelected = true;
         setSelectedNodeId(node.id);
         node.onClick && node.onClick();
+
+    };
+
+    const handleOnClick = (node: NodeData): void => {
+        if (dirtyComponents.size > 0) {
+            showModalDialog(
+                'Changes you made may not be saved.',
+                null,
+                '30vw',
+                'Leave',
+                () => {
+                    dirtyComponents.clear();
+                    selectNode(node);
+                },
+                'Cancel',
+                null,
+                true);
+            return;
+        }
+        selectNode(node);
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {

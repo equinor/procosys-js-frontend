@@ -17,6 +17,7 @@ type SetTagPropertiesProps = {
     journeys: Journey[];
     requirementTypes: RequirementType[];
     addScopeMethod: AddScopeMethod;
+    isLoading: boolean;
 };
 
 interface RequirementFormInput {
@@ -31,6 +32,7 @@ const SetTagProperties = ({
     journeys = [],
     requirementTypes = [],
     addScopeMethod,
+    isLoading
 }: SetTagPropertiesProps): JSX.Element => {
     const { project } = usePreservationContext();
 
@@ -40,11 +42,8 @@ const SetTagProperties = ({
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
     const [formIsValid, setFormIsValid] = useState(false);
-
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
-
-    const [isLoading, setIsLoading] = useState(false);
 
     /**
      * Form validation
@@ -104,7 +103,6 @@ const SetTagProperties = ({
 
 
     const submit = async (): Promise<void> => {
-        setIsLoading(true);
         const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
         let storageAreaValue;
         if (storageAreaInputRef.current) {
@@ -133,7 +131,6 @@ const SetTagProperties = ({
         } else {
             showSnackbarNotification('Error occured. Step is not provided.', 5000);
         }
-        setIsLoading(false);
     };
 
     const setJourneyFromForm = (value: number): void => {

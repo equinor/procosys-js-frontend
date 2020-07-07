@@ -91,15 +91,18 @@ const RequirementAttachmentField = ({
                     </Button>
                 </div>
             }
-            <div style={{ display: 'flex', marginTop: 'calc(var(--grid-unit)' }}>
-                <form>
-                    <label htmlFor="uploadFile">
-                        <SelectFileLabel>
-                            Select file
-                        </SelectFileLabel>
-                    </label>
-                    <input id="uploadFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
-                </form>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <div style={{marginTop: 'calc(var(--grid-unit) * 2 + 3px)', marginRight: 'var(--grid-unit)'}}>
+                    {field.label}
+                </div>
+                <div style={{ display: 'flex', marginTop: 'var(--grid-unit)' }}>
+                    <form>
+                        <label htmlFor="uploadFile">
+                            <SelectFileLabel>Select file</SelectFileLabel>
+                        </label>
+                        <input id="uploadFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
+                    </form>
+                </div>
             </div>
         </div>
     );

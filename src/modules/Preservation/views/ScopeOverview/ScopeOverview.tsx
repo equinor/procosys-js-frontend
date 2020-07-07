@@ -478,7 +478,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         <Container>
             <ContentContainer>
                 <OldPreservationLink>
-                    <Typography bold variant="caption" >
+                    <Typography variant="caption">
                         <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
                             <a href="OldPreservation">Switch to old system</a>
                         </Tooltip>

@@ -547,7 +547,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     return (
         <Container>
             {newJourney.isVoided &&
-                <Typography bold variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>Journey is voided</Typography>
+                <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }
             <ButtonContainer>
                 {(newJourney.isVoided && !newJourney.isInUse) &&
@@ -634,7 +634,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                             <FormFieldSpacer>
                                 <div style={{ minWidth: '300px' }}>
                                     <TextField
-                                        id={'titleStep'}
+                                        id={`titleStep_${index}`}
                                         label="Title for this step"
                                         value={step.title}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setStepTitleValue(e.target.value, index)}

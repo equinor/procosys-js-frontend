@@ -198,7 +198,7 @@ const Mode = (props: ModeProps): JSX.Element => {
     return (
         <Container>
             {newMode.isVoided &&
-                <Typography bold variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>Mode is voided</Typography>
+                <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Mode is voided</Typography>
             }
             <ButtonContainer>
                 {newMode.isVoided &&

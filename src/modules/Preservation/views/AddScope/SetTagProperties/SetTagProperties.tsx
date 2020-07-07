@@ -125,7 +125,6 @@ const SetTagProperties = ({
                     }
                 });
                 if (requirementsMappedForApi.length > 0) {
-                    setIsLoading(false);
                     await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
                 } else {
                     showSnackbarNotification('Error occured. Requirements are not provided.', 5000);

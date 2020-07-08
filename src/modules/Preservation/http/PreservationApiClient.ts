@@ -114,6 +114,7 @@ interface TagDetailsResponse {
     responsibleName: string;
     commPkgNo: string;
     mcPkgNo: string;
+    calloffNo: string;
     purchaseOrderNo: string;
     areaCode: string;
     readyToBePreserved: boolean;

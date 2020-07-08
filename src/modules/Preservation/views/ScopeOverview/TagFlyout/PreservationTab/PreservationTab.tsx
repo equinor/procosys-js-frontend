@@ -21,17 +21,17 @@ const PreservationTab = ({
     refreshTagDetails,
     setDirty
 }: PreservationTabProps): JSX.Element => {
-    const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const { apiClient } = usePreservationContext();
 
+    const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const [editingRemark, setEditingRemark] = useState<boolean>(false);
     const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
-
     const [remark, setRemark] = useState<string>(tagDetails.remark);
-    const tagRowVersionRef = useRef(tagDetails.rowVersion);
-    const remarkInputRef = useRef<HTMLInputElement>(null);
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
+
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
+    const remarkInputRef = useRef<HTMLInputElement>(null);
+    const tagRowVersionRef = useRef(tagDetails.rowVersion);
 
     const KEYCODE_ENTER = 13;
 
@@ -174,7 +174,9 @@ const PreservationTab = ({
                             <Typography variant='caption' style={{ gridColumn: '4', gridRow: '1' }}>Area</Typography>
                             <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>{tagDetails.commPkgNo}</Typography>
                             <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>{tagDetails.mcPkgNo}</Typography>
-                            <Typography variant='body_short' style={{ gridColumn: '3', gridRow: '2' }}>{tagDetails.purchaseOrderNo}</Typography>
+                            <Typography variant='body_short' style={{ gridColumn: '3', gridRow: '2' }}>
+                                {tagDetails.calloffNo ? `${tagDetails.purchaseOrderNo}/${tagDetails.calloffNo}` : tagDetails.purchaseOrderNo}
+                            </Typography>
                             <Typography variant='body_short' style={{ gridColumn: '4', gridRow: '2' }}>{tagDetails.areaCode}</Typography>
                         </GridSecondRow>
                     </div>

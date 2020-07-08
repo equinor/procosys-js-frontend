@@ -99,7 +99,7 @@ describe('<CreateDummyTag />', () => {
     it('Displays error message when suffix contains space', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { queryByText } = render(<CreateDummyTag suffix="1 2"  setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            const { queryByText } = render(<CreateDummyTag suffix="1 2" setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
             await waitFor(() => expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument());
         });
     });
@@ -107,7 +107,7 @@ describe('<CreateDummyTag />', () => {
     it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='testDiscipline' suffix='12' setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='testDiscipline' suffix='12' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
             expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });
@@ -115,7 +115,7 @@ describe('<CreateDummyTag />', () => {
     it('\'Next\' button disabled when not all mandatory fields are passed for PO tag', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='testDiscipline' description='test description' suffix='12' setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='testDiscipline' description='test description' suffix='12' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
             expect(getByText('Next')).toHaveProperty('disabled', true);
         });
     });

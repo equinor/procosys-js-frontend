@@ -138,7 +138,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
             'Description': 'Description',
             'Due': 'Due',
             'Next': 'Due',
-            'PO nr': 'PO',
+            'PO': 'PO',
             'Resp': 'Responsible',
             'Status': 'Status',
             'Area': 'Area',
@@ -154,6 +154,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
         const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
+
         return new Promise((resolve) => {
             this.props.getTags(query.page, query.pageSize, orderByField, orderDirection).then(result => {
                 resolve({

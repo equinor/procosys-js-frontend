@@ -258,18 +258,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
 
     useEffect(() => {
         const checkTagNos = async (): Promise<void> => {
-            if (props.suffix && /\s/.test(props.suffix)) {
-                setTagNoValidationError(spacesInTagNoMessage);
-                setTagNoValid(false);
-            }
-            else if (props.discipline && props.areaType && props.areaType.value != 'PoArea') {
+            if (props.discipline && props.areaType && props.areaType.value != 'PoArea') {
                 const areaCode = (props.area) ? props.area.code : null;
                 const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, null, props.suffix || null);
                 props.setSelectedTags([{
                     tagNo: response.tagNo,
                     description: props.description || ''
-                }
-                ]);
+                }]);
                 setTagNoValid(!response.exists);
                 setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else if (props.areaType && props.discipline && props.purchaseOrder && props.areaType.value == 'PoArea') {
@@ -277,12 +272,20 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                 props.setSelectedTags([{
                     tagNo: response.tagNo,
                     description: props.description || ''
-                }
-                ]);
+                }]);
                 setTagNoValid(!response.exists);
                 setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else {
+                props.setSelectedTags([{
+                    tagNo: 'type-discipline-area/PO-suffix',
+                    description: props.description || ''
+                }]);
                 setTagNoValidationError(null);
+            }
+
+            if (props.suffix && /\s/.test(props.suffix)) {
+                setTagNoValidationError(spacesInTagNoMessage);
+                setTagNoValid(false);
             }
         };
 

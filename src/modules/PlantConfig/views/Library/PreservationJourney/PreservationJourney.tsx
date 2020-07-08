@@ -62,7 +62,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
-    const [isSaved, setIsSaved] = useState<boolean>(false);
     const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
     const [canSave, setCanSave] = useState<boolean>(false);
 
@@ -124,7 +123,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         };
     }, []);
 
-
     const getJourney = async (journeyId: number): Promise<void> => {
         setIsLoading(true);
         try {
@@ -152,103 +150,110 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     }, [props.journeyId]);
 
-    const saveNewStep = async (journeyId: number, step: Step): Promise<void> => {
+    const saveNewStep = async (journeyId: number, step: Step): Promise<boolean> => {
         try {
             await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code);
-            setIsSaved(true);
+            return true;
         } catch (error) {
             console.error('Add journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
-            getJourney(newJourney.id);
         }
+        return false;
     };
 
     const saveNewJourney = async (): Promise<void> => {
+        setIsLoading(true);
+        let journeyId = -1;
         try {
-            const journeyId = await preservationApiClient.addJourney(newJourney.title);
-            setNewJourney((newJourney): Journey => { return { ...newJourney, id: journeyId }; });
+
+            journeyId = await preservationApiClient.addJourney(newJourney.title);
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
             }
-            getJourney(journeyId);
             props.setDirtyLibraryType();
             showSnackbarNotification('New journey is saved.', 5000);
         } catch (error) {
             console.error('Add journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        if (journeyId != -1) {
+            getJourney(journeyId);
+        }
+        setIsLoading(false);
     };
 
-    const updateJourney = async (): Promise<void> => {
+    const updateJourney = async (): Promise<boolean> => {
         try {
             await preservationApiClient.updateJourney(newJourney.id, newJourney.title, newJourney.rowVersion);
             props.setDirtyLibraryType();
-            setIsSaved(true);
+            return true;
         } catch (error) {
             console.error('Update journey failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
-            getJourney(newJourney.id);
         }
+        return false;
     };
 
-    const saveUpdatedStep = async (step: Step): Promise<void> => {
+    const saveUpdatedStep = async (step: Step): Promise<boolean> => {
         if (journey) {
             const originalStep = journey.steps.find((s) => s.id == step.id);
             if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
                 //There are changes to save
                 try {
                     await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.rowVersion);
-                    setIsSaved(true);
                 } catch (error) {
                     console.error('Update journey failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
-                    getJourney(newJourney.id);
+                    return false;
                 }
             }
         }
+        return true;
     };
 
     const saveUpdatedJourney = async (): Promise<void> => {
+        setIsLoading(true);
+        let saveOk = true;
         let noChangesToSave = true;
         if (journey && journey.title != newJourney.title) {
-            await updateJourney();
+            saveOk = await updateJourney();
             noChangesToSave = false;
         }
 
         for await (const step of newJourney.steps) {
-            if (step.id === -1) {
-                await saveNewStep(newJourney.id, step);
-                noChangesToSave = false;
-            } else {
-                if (journey) {
-                    const originalStep = journey.steps.find((s) => s.id == step.id);
+            if (saveOk) {
+                if (step.id === -1) {
+                    saveOk = await saveNewStep(newJourney.id, step);
+                    noChangesToSave = false;
+                } else {
+                    if (journey) {
+                        const originalStep = journey.steps.find((s) => s.id == step.id);
 
-                    if (originalStep === null) {
-                        console.log('Error occured when trying to save update to a step that was not found in the journey.');
-                        showSnackbarNotification('Error occured when trying to save update to a step that was not found in the journey.', 5000);
-                        return;
-                    }
+                        if (originalStep === null) {
+                            console.log('Error occured when trying to save update to a step that was not found in the journey.');
+                            showSnackbarNotification('Error occured when trying to save update to a step that was not found in the journey.', 5000);
+                            setIsLoading(false);
+                            return;
+                        }
 
-                    if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
-                        await saveUpdatedStep(step);
-                        noChangesToSave = false;
+                        if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
+                            saveOk = await saveUpdatedStep(step);
+                            noChangesToSave = false;
+                        }
                     }
                 }
             }
         }
-
         if (noChangesToSave) {
             showSnackbarNotification('No changes need to be saved.', 5000);
+        } else {
+            if (saveOk) {
+                getJourney(newJourney.id);
+                showSnackbarNotification('Changes for journey is saved.', 5000);
+            }
         }
+        setIsLoading(false);
     };
-
-    useEffect(() => {
-        if (isSaved) {
-            getJourney(newJourney.id);
-            showSnackbarNotification('Changes for journey is saved.', 5000);
-            setIsSaved(false);
-        }
-    }, [isSaved]);
 
     const inputIsComplete = (): boolean => {
         let ok = true;
@@ -644,24 +649,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                 </div>
                             </FormFieldSpacer>
                             {
-                                (isDirty && index == 0) &&
-                                <FormFieldSpacer>
-                                    <Typography variant="caption">Actions on steps are unavailable until other changes are saved.</Typography>
-                                </FormFieldSpacer>
-                            }
-                            {
-                                (isDirty && index != 0) &&
-                                <div></div>
-                            }
-                            {
-                                !isDirty && (
+                                (
                                     <FormFieldSpacer>
-                                        {newJourney.steps.length > 1 &&
+                                        {
                                             <>
-                                                <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepUp(index)}>
+                                                <Button disabled={isDirty || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepUp(index)}>
                                                     {upIcon}
                                                 </Button>
-                                                <Button disabled={newJourney.isVoided || step.id === -1} variant='ghost' onClick={(): void => moveStepDown(index)}>
+                                                <Button disabled={isDirty || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepDown(index)}>
                                                     {downIcon}
                                                 </Button>
                                             </>
@@ -672,13 +667,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             </Button>)
                                         }
                                         {(step.id != -1 && !step.isVoided) &&
-                                            (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                            (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
                                                 {voidIcon} Void
                                             </Button>)
                                         }
 
                                         {(step.id != -1 && step.isVoided) &&
-                                            (<Button className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                            (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
                                                 {unvoidIcon} Unvoid
                                             </Button>)
                                         }
@@ -689,7 +684,12 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     );
                 })}
             </StepsContainer>
-
+            {
+                (isDirty && newJourney.steps.length > 0) &&
+                <div style={{ display: 'flex', marginLeft: 'var(--grid-unit)', marginBottom: 'calc(var(--grid-unit) * 2)' }}>
+                    <Typography variant="caption">Note: Some actions on steps will be disabled until changes are saved.</Typography>
+                </div>
+            }
             {
                 !newJourney.isVoided &&
                 <IconContainer>
@@ -698,8 +698,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     </Button>
                 </IconContainer>
             }
-
-
         </Container >
 
     );

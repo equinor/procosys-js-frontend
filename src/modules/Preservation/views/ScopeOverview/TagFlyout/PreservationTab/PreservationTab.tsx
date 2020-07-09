@@ -191,7 +191,7 @@ const PreservationTab = ({
                             <TextFieldLabelReadOnly>
                                 Remark
                             </TextFieldLabelReadOnly>
-                            <TextFieldReadOnly>
+                            <TextFieldReadOnly data-testid='remarkReadOnly'>
                                 {remark}
                             </TextFieldReadOnly>
                         </div>
@@ -240,7 +240,7 @@ const PreservationTab = ({
                             <TextFieldLabelReadOnly>
                                 Storage area
                             </TextFieldLabelReadOnly>
-                            <TextFieldReadOnly>
+                            <TextFieldReadOnly data-testid='storageAreaReadOnly'>
                                 {storageArea}
                             </TextFieldReadOnly>
                         </div>

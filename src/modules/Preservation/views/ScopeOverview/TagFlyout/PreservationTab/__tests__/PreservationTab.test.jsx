@@ -34,7 +34,7 @@ describe('<PreservationTab />', () => {
 
     it('Should render tag details', async () => {
         await act(async () => {
-            const { getByText, getByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const { getByText, getByTestId } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
 
             expect(getByText('tag-description')).toBeInTheDocument();
             expect(getByText('journey-title')).toBeInTheDocument();
@@ -44,16 +44,8 @@ describe('<PreservationTab />', () => {
             expect(getByText('mcpkg-no')).toBeInTheDocument();
             expect(getByText('po-no')).toBeInTheDocument();
             expect(getByText('area-code')).toBeInTheDocument();
-
-            const remark = getByLabelText('Remark', {
-                exact:  false});
-            expect(remark).toBeInTheDocument();
-            expect(remark.value).toEqual('remark text');
-
-            const storageArea = getByLabelText('Storage area', {
-                exact:  false});
-            expect(storageArea).toBeInTheDocument();
-            expect(storageArea.value).toEqual('SA123');
+            expect(getByTestId('remarkReadOnly')).toHaveTextContent('remark text');
+            expect(getByTestId('storageAreaReadOnly')).toHaveTextContent('SA123');
         });
     });
 
@@ -65,17 +57,11 @@ describe('<PreservationTab />', () => {
         });
     });
 
-    it('Should have remark and storage area text fields disabled on render', async () => {
+    it('Should not render  remark and storage area text fields when read only', async () => {
         await act(async () => {
-            const { getByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
-
-            const remark = getByLabelText('Remark', {
-                exact:  false});
-            expect(remark).toBeDisabled();
-
-            const storageArea = getByLabelText('Storage area', {
-                exact:  false});
-            expect(storageArea).toBeDisabled();
+            const { queryByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            expect(queryByLabelText('Remark', {exact:  false})).toBeNull();
+            expect(queryByLabelText('Storage area', {exact:  false})).toBeNull();
         });
     });
 

@@ -51,7 +51,6 @@ const CreateOrEditAction = ({
             if (actionId) {
                 if (rowVersion) {
                     await apiClient.updateAction(tagId, actionId, newTitle, newDescription, newDueTimeUtc, rowVersion);
-                    setDirty();
                     backToParentView();
                     showSnackbarNotification('Action is updated.', 5000, true);
                 } else {

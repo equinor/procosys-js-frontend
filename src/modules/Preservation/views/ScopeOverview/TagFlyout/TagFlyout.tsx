@@ -141,7 +141,7 @@ const TagFlyout = ({
                 return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} setDirty={setDirty} />;
             }
             case 'actions': {
-                return <ActionTab tagId={tagId} />;
+                return <ActionTab tagId={tagId} setDirty={setDirty} />;
             }
             case 'attachments':
                 return <AttachmentTab tagId={tagId} />;

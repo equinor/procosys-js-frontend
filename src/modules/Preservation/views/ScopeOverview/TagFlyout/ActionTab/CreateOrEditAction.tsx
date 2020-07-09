@@ -16,6 +16,7 @@ interface ActionTabProps {
     dueTimeUtc?: Date | null;
     rowVersion?: string;
     backToParentView: () => void;
+    setDirty: () => void;
 }
 
 const CreateOrEditAction = ({
@@ -26,6 +27,7 @@ const CreateOrEditAction = ({
     dueTimeUtc,
     rowVersion,
     backToParentView,
+    setDirty
 }: ActionTabProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -49,6 +51,7 @@ const CreateOrEditAction = ({
             if (actionId) {
                 if (rowVersion) {
                     await apiClient.updateAction(tagId, actionId, newTitle, newDescription, newDueTimeUtc, rowVersion);
+                    setDirty();
                     backToParentView();
                     showSnackbarNotification('Action is updated.', 5000, true);
                 } else {
@@ -56,6 +59,7 @@ const CreateOrEditAction = ({
                 }
             } else {
                 await apiClient.createNewAction(tagId, newTitle, newDescription, newDueTimeUtc);
+                setDirty();
                 backToParentView();
                 showSnackbarNotification('New action is created.', 5000, true);
             }

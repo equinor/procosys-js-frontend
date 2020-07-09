@@ -44,13 +44,15 @@ interface ActionDetailsProps {
     actionId: number;
     toggleDetails: () => void;
     getActionList: () => void;
+    setDirty: () => void;
 }
 
 const ActionExpanded = ({
     tagId,
     actionId,
     toggleDetails,
-    getActionList
+    getActionList,
+    setDirty
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [actionDetails, setActionDetails] = useState<ActionDetails>();
@@ -80,6 +82,7 @@ const ActionExpanded = ({
         try {
             if (actionDetails) {
                 await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
+                setDirty();
                 getActionList();
                 toggleDetails();
                 showSnackbarNotification('Action is closed.', 5000, true);
@@ -103,7 +106,7 @@ const ActionExpanded = ({
 
     if (showEditMode) {
         return (
-            < CreateOrEditAction
+            <CreateOrEditAction
                 tagId={tagId}
                 actionId={actionId}
                 title={actionDetails.title}
@@ -111,6 +114,7 @@ const ActionExpanded = ({
                 dueTimeUtc={actionDetails.dueTimeUtc}
                 rowVersion={actionDetails.rowVersion}
                 backToParentView={(): void => { getActionList(); setShowEditMode(false); }}
+                setDirty={setDirty}
             />
         );
     }

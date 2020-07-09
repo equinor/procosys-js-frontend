@@ -7,6 +7,8 @@ export const Header = styled.header`
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
         margin-bottom: calc(var(--grid-unit) * 2);
+        font-size: calc(var(--grid-unit) * 3);
+        line-height: calc(var(--grid-unit) * 5);
     };
 `;
 

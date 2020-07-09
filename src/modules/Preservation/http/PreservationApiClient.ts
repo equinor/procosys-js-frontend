@@ -10,6 +10,7 @@ const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.repla
 interface PreservedTagResponse {
     maxAvailable: number;
     tags: [{
+        actionStatus: string;
         areaCode: string;
         calloffNo: string;
         commPkgNo: string;

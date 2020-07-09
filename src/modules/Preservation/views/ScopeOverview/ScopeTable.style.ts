@@ -54,3 +54,7 @@ export const Container = styled.div`
         color: inherit;
     }
 `;
+
+export const SingleIconContainer = styled.div`
+    margin-bottom: calc(var(--grid-unit) * -1); /* centers the icon vertically and prevents the row height from expanding */
+`;

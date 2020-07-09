@@ -3,6 +3,7 @@ export interface PreservedTags {
     tags: PreservedTag[];
 }
 export interface PreservedTag {
+    actionStatus: string;
     areaCode: string;
     calloffNo: string;
     commPkgNo: string;

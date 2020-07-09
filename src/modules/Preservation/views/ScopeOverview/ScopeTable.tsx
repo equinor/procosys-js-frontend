@@ -4,11 +4,12 @@ import Table from './../../../../components/Table';
 import { PreservedTag, PreservedTags } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import { Typography } from '@equinor/eds-core-react';
-import { Toolbar, TagLink, TagStatusLabel, Container } from './ScopeTable.style';
+import { Toolbar, TagLink, TagStatusLabel, Container, SingleIconContainer } from './ScopeTable.style';
 import RequirementIcons from './RequirementIcons';
 import { isTagOverdue, getFirstUpcomingRequirement, isTagVoided } from './ScopeOverview';
 import { QueryResult, Query } from 'material-table';
 import { Tooltip } from '@material-ui/core';
+import EdsIcon from '../../../../components/EdsIcon';
 
 interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
@@ -19,6 +20,12 @@ interface ScopeTableProps {
     setPageSize: (pageSize: number) => void;
     shouldSelectFirstPage: boolean;
     setFirstPageSelected: () => void;
+}
+
+enum ActionStatus {
+    Closed = 'HasClosed',
+    Open = 'HasOpen',
+    OverDue = 'HasOverDue'
 }
 
 class ScopeTable extends React.Component<ScopeTableProps, {}> {
@@ -132,6 +139,41 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
             </div>);
     }
 
+    getActionsColumn(tag: PreservedTag): JSX.Element {
+        if (!tag.actionStatus || tag.actionStatus === ActionStatus.Closed) {
+            return <div></div>;
+        }        
+
+        return (
+            <Tooltip 
+                title={tag.actionStatus === ActionStatus.OverDue ? 'Overdue action(s)' : 'Open action(s)'} 
+                arrow={true} 
+                enterDelay={200} 
+                enterNextDelay={100}
+            >
+                <SingleIconContainer>
+                    <EdsIcon 
+                        name='notifications' 
+                        size={24} 
+                        color={
+                            tag.actionStatus === ActionStatus.OverDue
+                                ? tokens.colors.interactive.danger__text.rgba 
+                                : tokens.colors.text.static_icons__tertiary.rgba
+                        } 
+                    />
+                </SingleIconContainer>
+            </Tooltip>
+        );
+    }
+
+    getActionsHeader(): JSX.Element {
+        return (
+            <SingleIconContainer>
+                <EdsIcon name='notifications' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
+            </SingleIconContainer>
+        );
+    }    
+
     getTagsByQuery(query: Query<any>): Promise<QueryResult<any>> {
         const sortFieldMap: { [key: string]: string } = {
             'Tag nr': 'TagNo',
@@ -163,9 +205,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                     totalCount: result.maxAvailable
                 });
             });
-
         });
-
     }
 
     render(): ReactNode {
@@ -193,7 +233,9 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         // @ts-ignore
                         { title: 'Status', render: this.getStatus, width: '7%', customSort: (): any => null, cellStyle: { whiteSpace: 'nowrap' } },
                         // @ts-ignore
-                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' }
+                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' },
+                        // @ts-ignore
+                        { title: this.getActionsHeader(), render: this.getActionsColumn, sorting: false, width: '2%', cellStyle: { borderLeft: 'solid 1px #dcdcdc' }, headerStyle: { borderLeft: 'solid 1px #dcdcdc' } }
                     ]}
                     data={this.getTagsByQuery}
                     options={{

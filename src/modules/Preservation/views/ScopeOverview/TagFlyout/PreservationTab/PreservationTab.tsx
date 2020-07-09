@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, StyledTextField } from './PreservationTab.style';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, TextFieldLabelReadOnly, TextFieldReadOnly } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
@@ -30,8 +30,6 @@ const PreservationTab = ({
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
 
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
-    const remarkInputRef = useRef<HTMLInputElement>(null);
-    const tagRowVersionRef = useRef(tagDetails.rowVersion);
 
     const KEYCODE_ENTER = 13;
 
@@ -108,8 +106,8 @@ const PreservationTab = ({
 
     const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
         try {
-            const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagRowVersionRef.current);
-            tagRowVersionRef.current = updatedRowVersion;
+            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagDetails.rowVersion);
+            refreshTagDetails();
         } catch (error) {
             console.error('Edit failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
@@ -118,29 +116,17 @@ const PreservationTab = ({
     };
 
     const saveRemark = (): void => {
-        if (remarkInputRef.current) {
-            setRemark(remarkInputRef.current.value);
-            saveRemarkAndStorageArea(remarkInputRef.current.value, storageArea);
-        } else {
-            showSnackbarNotification('Something went wrong. Remark was not updated.');
-        }
+        saveRemarkAndStorageArea(remark, storageArea);
         setEditingRemark(false);
     };
 
     const cancelEditRemark = (): void => {
-        if (remarkInputRef.current) {
-            remarkInputRef.current.value = remark;
-        }
+        setRemark(tagDetails.remark);
         setEditingRemark(false);
     };
 
     const saveStorageArea = (): void => {
-        if (storageAreaInputRef.current) {
-            setStorageArea(storageAreaInputRef.current.value);
-            saveRemarkAndStorageArea(remark, storageAreaInputRef.current.value);
-        } else {
-            showSnackbarNotification('Something went wrong. Storage area was not updated.');
-        }
+        saveRemarkAndStorageArea(remark, storageArea);
         setEditingStorageArea(false);
     };
 
@@ -184,18 +170,28 @@ const PreservationTab = ({
             </TagDetailsContainer>
             <TagDetailsInputContainer>
                 <TextFieldContainer>
-                    <TextField
-                        id='remark'
-                        label='Remark'
-                        defaultValue={tagDetails.remark}
-                        inputRef={remarkInputRef}
-                        disabled={!editingRemark}
-                        meta="Optional"
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                            e.keyCode === KEYCODE_ENTER &&
-                                saveRemark();
-                        }}
-                    />
+                    {editingRemark ?
+                        <TextField
+                            id='remark'
+                            label='Remark'
+                            value={remark}
+                            meta="Optional"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setRemark(e.target.value); }}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    saveRemark();
+                            }}
+                        />
+                        :
+                        <div style={{ width: '100%' }}>
+                            <TextFieldLabelReadOnly>
+                                Remark
+                            </TextFieldLabelReadOnly>
+                            <TextFieldReadOnly>
+                                {remark}
+                            </TextFieldReadOnly>
+                        </div>
+                    }
                     {editingRemark ?
                         <IconContainer>
                             <StyledButton
@@ -222,19 +218,30 @@ const PreservationTab = ({
                         </IconContainer>
                     }
                 </TextFieldContainer>
-                <TextFieldContainer>
-                    <StyledTextField
-                        id='storageArea'
-                        label='Storage area'
-                        defaultValue={tagDetails.storageArea}
-                        inputRef={storageAreaInputRef}
-                        disabled={!editingStorageArea}
-                        meta="Optional"
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                            e.keyCode === KEYCODE_ENTER &&
-                                saveStorageArea();
-                        }}
-                    />
+                <TextFieldContainer style={{ width: '55%' }}>
+                    {editingStorageArea ?
+                        <TextField
+                            id='storageArea'
+                            label='Storage area'
+                            defaultValue={tagDetails.storageArea}
+                            meta="Optional"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setStorageArea(e.target.value); }}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    saveStorageArea();
+                            }}
+                        />
+                        :
+                        <div style={{ width: '100%' }}>
+                            <TextFieldLabelReadOnly>
+                                Storage area
+                            </TextFieldLabelReadOnly>
+                            <TextFieldReadOnly>
+                                {storageArea}
+                            </TextFieldReadOnly>
+                        </div>
+                    }
+
                     {editingStorageArea ?
                         <IconContainer>
                             <StyledButton
@@ -265,7 +272,7 @@ const PreservationTab = ({
             {
                 getRequirementsSection(tagDetails.id)
             }
-        </Container>
+        </Container >
     );
 };
 

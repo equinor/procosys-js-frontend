@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
-import { Button, TextField } from '@equinor/eds-core-react';
+import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -16,11 +16,21 @@ export const TagDetailsContainer = styled.div`
 export const TextFieldContainer = styled.div`
     display: flex;
     align-items: center;
-
-    #remark {
-        margin-bottom: calc(var(--grid-unit) * 2);
-    }
+    margin-bottom: calc(var(--grid-unit) * 2);
 `;
+
+export const TextFieldLabelReadOnly = styled.div`
+    padding-top: 1px;
+    padding-bottom: 1px;
+    font-size: 12px;
+`;
+
+export const TextFieldReadOnly = styled.div`
+    padding: 11px 8px 11px 8px;
+    background: #f7f7f7;
+    height: 16px; 
+`;
+
 
 export const StyledButton = styled(Button)`
     display: flex;
@@ -35,11 +45,6 @@ export const StyledButton = styled(Button)`
     svg path {
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
-`;
-
-export const StyledTextField = styled(TextField)`
-    margin-bottom: calc(var(--grid-unit) * 2);
-    width: 30%;
 `;
 
 export const Details = styled.div`
@@ -74,4 +79,6 @@ export const GridSecondRow = styled.div`
 
 export const IconContainer = styled.div`
     display: flex;
+    margin-right:var(--grid-unit);
+    padding-top:calc(var(--grid-unit)*2);
 `;

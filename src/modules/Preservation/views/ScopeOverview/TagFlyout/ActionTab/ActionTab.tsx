@@ -23,10 +23,12 @@ export interface ActionListItem {
 
 interface ActionTabProps {
     tagId: number;
+    setDirty: () => void;
 }
 
 const ActionTab = ({
-    tagId
+    tagId,
+    setDirty
 }: ActionTabProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [expandedAction, setExpandedAction] = useState<number | null>();
@@ -111,7 +113,7 @@ const ActionTab = ({
                 </Collapse>
                 {
                     isExpanded && (
-                        <ActionExpanded tagId={tagId} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} />
+                        <ActionExpanded tagId={tagId} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} setDirty={setDirty} />
                     )
                 }
             </ActionContainer >
@@ -127,6 +129,7 @@ const ActionTab = ({
                         getActionList();
                         setShowCreateAction(false);
                     }}
+                    setDirty={setDirty}
                 />
             }
             {

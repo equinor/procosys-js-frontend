@@ -28,7 +28,8 @@ export const TextFieldLabelReadOnly = styled.div`
 export const TextFieldReadOnly = styled.div`
     padding: 11px 8px 11px 8px;
     background: #f7f7f7;
-    height: 16px; 
+    min-height: 16px; 
+    overflow-wrap: anywhere;
 `;
 
 

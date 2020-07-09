@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, TextFieldLabelReadOnly, TextFieldReadOnly } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
@@ -28,8 +28,6 @@ const PreservationTab = ({
     const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
     const [remark, setRemark] = useState<string>(tagDetails.remark);
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
-
-    const storageAreaInputRef = useRef<HTMLInputElement>(null);
 
     const KEYCODE_ENTER = 13;
 
@@ -104,20 +102,24 @@ const PreservationTab = ({
         );
     };
 
-    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
+    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<boolean> => {
         try {
             await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagDetails.rowVersion);
-            refreshTagDetails();
+            return Promise.resolve(true);
         } catch (error) {
             console.error('Edit failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
+            return Promise.resolve(false);
         }
-        return Promise.resolve();
     };
 
     const saveRemark = (): void => {
-        saveRemarkAndStorageArea(remark, storageArea);
-        setEditingRemark(false);
+        saveRemarkAndStorageArea(remark, storageArea).then(saveOk => {
+            if (saveOk == true) {
+                setEditingRemark(false);
+                refreshTagDetails();
+            }
+        });
     };
 
     const cancelEditRemark = (): void => {
@@ -126,14 +128,16 @@ const PreservationTab = ({
     };
 
     const saveStorageArea = (): void => {
-        saveRemarkAndStorageArea(remark, storageArea);
-        setEditingStorageArea(false);
+        saveRemarkAndStorageArea(remark, storageArea).then(saveOk => {
+            if (saveOk) {
+                setEditingStorageArea(false);
+                refreshTagDetails();
+            }
+        });
     };
 
     const cancelEditStorageArea = (): void => {
-        if (storageAreaInputRef.current) {
-            storageAreaInputRef.current.value = storageArea;
-        }
+        setStorageArea(tagDetails.storageArea);
         setEditingStorageArea(false);
     };
 

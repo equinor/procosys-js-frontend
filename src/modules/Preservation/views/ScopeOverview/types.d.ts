@@ -24,6 +24,7 @@ export interface PreservedTag {
     requirements: Requirement[];
     status: string;
     responsibleCode: string;
+    responsibleDescription: string;
     tagFunctionCode: string;
     tagNo: string;
     tagType?: string;

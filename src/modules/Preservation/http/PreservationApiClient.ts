@@ -41,6 +41,7 @@ interface PreservedTagResponse {
         ];
         status: string;
         responsibleCode: string;
+        responsibleDescription: string;
         tagFunctionCode: string;
         tagNo: string;
         tagType: string;

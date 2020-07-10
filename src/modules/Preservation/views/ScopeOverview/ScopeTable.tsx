@@ -75,7 +75,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getResponsibleColumn(tag: PreservedTag): JSX.Element {
         return (
-            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div>{tag.responsibleCode}</div>
             </Tooltip>
         );

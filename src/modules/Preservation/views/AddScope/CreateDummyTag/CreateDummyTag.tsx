@@ -280,6 +280,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     tagNo: 'type-discipline-area/PO-suffix',
                     description: props.description || ''
                 }]);
+                setTagNoValid(false);
                 setTagNoValidationError(null);
             }
 

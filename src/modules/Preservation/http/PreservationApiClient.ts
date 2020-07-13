@@ -269,6 +269,7 @@ interface ActionResponse {
     title: string;
     dueTimeUtc: Date | null;
     isClosed: boolean;
+    attachmentCount: number;
     rowVersion: string;
 }
 

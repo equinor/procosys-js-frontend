@@ -379,7 +379,11 @@ interface HistoryResponse {
     id: number;
     description: string;
     createdAtUtc: Date;
-    createdById: string;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
     eventType: string;
     dueWeeks: number;
     preservationRecordId: number;

@@ -4,11 +4,12 @@ import { showSnackbarNotification } from '../../../../../../core/services/Notifi
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
-import { Container } from './HistoryTab.style';
+import { Container, DetailsContainer, DueContainer } from './HistoryTab.style';
 import Table from '../../../../../../components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { Tooltip } from '@material-ui/core';
 
 interface HistoryLogItem {
     id: number;
@@ -24,11 +25,6 @@ interface HistoryLogItem {
     preservationRecordId: number;
 }
 
-interface HistoryLogTableItem extends HistoryLogItem {
-    createdAtFormatted: string;
-    createdByFullName: string;
-}
-
 interface HistoryTabProps {
     tagId: number;
 }
@@ -38,7 +34,7 @@ const HistoryTab = ({
 }: HistoryTabProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
-    const [historyLog, setHistoryLog] = useState<HistoryLogTableItem[]>([]);
+    const [historyLog, setHistoryLog] = useState<HistoryLogItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const getHistoryLog = (): Canceler | null => {
@@ -48,17 +44,7 @@ const HistoryTab = ({
                 if (tagId != null) {
                     setIsLoading(true);
                     const historyLog = await apiClient.getHistory(tagId, (cancel: Canceler) => requestCancellor = cancel);
-                    const historyTableItems: HistoryLogTableItem[] = [];
-
-                    historyLog.forEach(history => {
-                        historyTableItems.push({
-                            ...history,
-                            createdAtFormatted: getFormattedDate(history.createdAtUtc),
-                            createdByFullName: `${history.createdBy.firstName} ${history.createdBy.lastName}`
-                        });
-                    });
-
-                    setHistoryLog(historyTableItems);
+                    setHistoryLog(historyLog);
                 }
             } catch (error) {
                 console.error('Get history log failed: ', error.message, error.data);
@@ -77,9 +63,39 @@ const HistoryTab = ({
         getHistoryLog();
     }, []);
 
-    const getInformationIcon = (historyItem: HistoryLogTableItem): JSX.Element => {
+    const getDateColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        return (
+            <DueContainer isOverdue={historyItem.dueWeeks < 0}>
+                {getFormattedDate(historyItem.createdAtUtc)}
+            </DueContainer>
+        );
+    };
+
+    const getUserColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        return (
+            <div>
+                {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
+            </div>
+        );
+    };
+
+    const getDueColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        return (
+            <DueContainer isOverdue={historyItem.dueWeeks < 0}>
+                {historyItem.dueWeeks}
+            </DueContainer>
+        );
+    };
+
+    const getDetailsColumn = (historyItem: HistoryLogItem): JSX.Element => {
         if (historyItem.eventType === 'RequirementPreserved') {
-            return <EdsIcon name='info_circle' size={24} />;
+            return (
+                <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <DetailsContainer>
+                        <EdsIcon name='info_circle' size={24} />
+                    </DetailsContainer>
+                </Tooltip>
+            );            
         }
 
         return <div></div>;
@@ -95,15 +111,15 @@ const HistoryTab = ({
             <Table
                 columns={[
                     // @ts-ignore
-                    { title: 'Date', field: 'createdAtFormatted', width: '5%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                    { title: 'Date', render: getDateColumn, width: '5%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
                     // @ts-ignore
-                    { title: 'User', field: 'createdByFullName', width: '20%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                    { title: 'User', render: getUserColumn, width: '20%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
                     // @ts-ignore
-                    { title: 'Due', field: 'dueWeeks', width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                    { title: 'Due', render: getDueColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
                     // @ts-ignore
                     { title: 'Description', field: 'description', width: '73%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
                     // @ts-ignore
-                    { title: '', render: getInformationIcon, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} }
+                    { title: '', render: getDetailsColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} }
                 ]}
                 data={historyLog}
                 options={{

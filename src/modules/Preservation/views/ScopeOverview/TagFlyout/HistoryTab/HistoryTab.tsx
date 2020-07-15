@@ -10,6 +10,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
+import HistoryDetails from './HistoryDetails';
 
 interface HistoryLogItem {
     id: number;
@@ -36,6 +37,7 @@ const HistoryTab = ({
     const { apiClient } = usePreservationContext();
     const [historyLog, setHistoryLog] = useState<HistoryLogItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showRequirementDialog, setShowRequirementDialog] = useState<boolean>(false);
 
     const getHistoryLog = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
@@ -62,6 +64,11 @@ const HistoryTab = ({
     useEffect(() => {
         getHistoryLog();
     }, []);
+
+    const showRequirementPreservedDetails = (historyItem: HistoryLogItem): void => {
+        console.log(historyItem);
+        setShowRequirementDialog(true);
+    };
 
     const getDateColumn = (historyItem: HistoryLogItem): JSX.Element => {
         return (
@@ -91,7 +98,7 @@ const HistoryTab = ({
         if (historyItem.eventType === 'RequirementPreserved') {
             return (
                 <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <DetailsContainer>
+                    <DetailsContainer onClick={(): void => showRequirementPreservedDetails(historyItem)}>
                         <EdsIcon name='info_circle' size={24} />
                     </DetailsContainer>
                 </Tooltip>
@@ -106,50 +113,60 @@ const HistoryTab = ({
             <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
         );
     }
+
     return (
-        <Container>
-            <Table
-                columns={[
+        <>
+            <Container>
+                <Table
+                    columns={[
                     // @ts-ignore
-                    { title: 'Date', render: getDateColumn, width: '5%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
-                    // @ts-ignore
-                    { title: 'User', render: getUserColumn, width: '20%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
-                    // @ts-ignore
-                    { title: 'Due', render: getDueColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
-                    // @ts-ignore
-                    { title: 'Description', field: 'description', width: '73%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
-                    // @ts-ignore
-                    { title: '', render: getDetailsColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} }
-                ]}
-                data={historyLog}
-                options={{
-                    search: false,
-                    pageSize: 10,
-                    pageSizeOptions: [5, 10, 50, 100],
-                    padding: 'dense',
-                    showTitle: false,
-                    draggable: false,
-                    selection: false,
-                    emptyRowsWhenPaging: false,
-                    filtering: false,
-                    thirdSortClick: false,
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                        paddingLeft: 'var(--grid-unit)',
-                        paddingRight: 'var(--grid-unit)'
-                    },
-                    rowStyle: { 
-                        verticalAlign: 'top'
-                    }
-                }}
-                components={{
-                    Toolbar: (): any => (
-                        <></>
-                    )
-                }}
-                style={{ boxShadow: 'none' }}
-            />
-        </Container>
+                        { title: 'Date', render: getDateColumn, width: '5%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        // @ts-ignore
+                        { title: 'User', render: getUserColumn, width: '20%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        // @ts-ignore
+                        { title: 'Due', render: getDueColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        // @ts-ignore
+                        { title: 'Description', field: 'description', width: '73%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        // @ts-ignore
+                        { title: '', render: getDetailsColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} }
+                    ]}
+                    data={historyLog}
+                    options={{
+                        search: false,
+                        pageSize: 10,
+                        pageSizeOptions: [5, 10, 50, 100],
+                        padding: 'dense',
+                        showTitle: false,
+                        draggable: false,
+                        selection: false,
+                        emptyRowsWhenPaging: false,
+                        filtering: false,
+                        thirdSortClick: false,
+                        headerStyle: {
+                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                            paddingLeft: 'var(--grid-unit)',
+                            paddingRight: 'var(--grid-unit)'
+                        },
+                        rowStyle: { 
+                            verticalAlign: 'top'
+                        }
+                    }}
+                    components={{
+                        Toolbar: (): any => (
+                            <></>
+                        )
+                    }}
+                    style={{ boxShadow: 'none' }}
+                />
+            </Container>
+            {
+                showRequirementDialog && (
+                    <HistoryDetails close={(): void => setShowRequirementDialog(false)}>
+                        <div>TODO: insert preserved requirement details.</div>
+                    </HistoryDetails>
+                )
+            }
+        </>
     );
 };
 

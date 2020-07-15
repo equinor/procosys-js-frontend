@@ -46,8 +46,7 @@ export const Container = styled.div`
         overflow-y: hidden !important; /* This is to remove the scrollbar in table that makes it seem like the page is lagging when user is scrolling  */
     }
 
-    td table div {
-        display: block;
+    table tbody td div {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;

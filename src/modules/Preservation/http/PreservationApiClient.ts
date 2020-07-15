@@ -386,7 +386,8 @@ interface HistoryResponse {
     };
     eventType: string;
     dueWeeks: number;
-    preservationRecordId: number;
+    tagRequirementId: number;
+    preservationRecordGuid: string;
 }
 
 class PreservationApiError extends Error {
@@ -2120,7 +2121,27 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Get preservation record 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getPreservationRecord(tagId: number, requirementId: number, preservationRecordGuid: string, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse> {
+        const endpoint = `/Tags/${tagId}/Requirements/${requirementId}/PreservationRecord/${preservationRecordGuid}`;
 
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagRequirementsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 }
 
 export default PreservationApiClient;

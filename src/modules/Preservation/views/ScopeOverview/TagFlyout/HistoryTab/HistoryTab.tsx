@@ -11,6 +11,7 @@ import { getFormattedDate } from '@procosys/core/services/DateService';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
 import HistoryDetails from './HistoryDetails';
+import PreservedRequirement from './PreservedRequirement';
 
 interface HistoryLogItem {
     id: number;
@@ -23,7 +24,8 @@ interface HistoryLogItem {
     };
     eventType: string;
     dueWeeks: number;
-    preservationRecordId: number;
+    tagRequirementId: number;
+    preservationRecordGuid: string;
 }
 
 interface HistoryTabProps {
@@ -36,6 +38,7 @@ const HistoryTab = ({
 
     const { apiClient } = usePreservationContext();
     const [historyLog, setHistoryLog] = useState<HistoryLogItem[]>([]);
+    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryLogItem | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showRequirementDialog, setShowRequirementDialog] = useState<boolean>(false);
 
@@ -65,9 +68,17 @@ const HistoryTab = ({
         getHistoryLog();
     }, []);
 
-    const showRequirementPreservedDetails = (historyItem: HistoryLogItem): void => {
-        console.log(historyItem);
-        setShowRequirementDialog(true);
+    const showHistoryDetails = (historyItem: HistoryLogItem): void => {
+        setSelectedHistoryItem(historyItem);
+
+        if (historyItem.eventType === 'RequirementPreserved') {
+            setShowRequirementDialog(true);
+        }
+    };
+
+    const closeHistoryDetails = (): void => {
+        setSelectedHistoryItem(null);
+        setShowRequirementDialog(false);
     };
 
     const getDateColumn = (historyItem: HistoryLogItem): JSX.Element => {
@@ -98,7 +109,7 @@ const HistoryTab = ({
         if (historyItem.eventType === 'RequirementPreserved') {
             return (
                 <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <DetailsContainer onClick={(): void => showRequirementPreservedDetails(historyItem)}>
+                    <DetailsContainer onClick={(): void => showHistoryDetails(historyItem)}>
                         <EdsIcon name='info_circle' size={24} />
                     </DetailsContainer>
                 </Tooltip>
@@ -161,8 +172,17 @@ const HistoryTab = ({
             </Container>
             {
                 showRequirementDialog && (
-                    <HistoryDetails close={(): void => setShowRequirementDialog(false)}>
-                        <div>TODO: insert preserved requirement details.</div>
+                    <HistoryDetails close={(): void => closeHistoryDetails()}>
+                        {
+                            selectedHistoryItem && (
+                                <PreservedRequirement 
+                                    tagId={tagId}
+                                    requirementId={selectedHistoryItem.tagRequirementId}
+                                    preservationRecordGuid={selectedHistoryItem.preservationRecordGuid}
+                                    close={closeHistoryDetails}
+                                />       
+                            )
+                        }                        
                     </HistoryDetails>
                 )
             }

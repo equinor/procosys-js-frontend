@@ -215,7 +215,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                     tableRef={this.refObject} //reference will be used by parent, to trigger rendering
                     columns={[
                         { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px', maxWidth: '200px' } },
-                        { title: 'Description', render: this.getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '550px' } },
+                        { title: 'Description', render: this.getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '600px' } },
                         // @ts-ignore Width is not a property of material-table
                         { title: 'Next', render: this.getNextColumn, width: '7%' },
                         // @ts-ignore

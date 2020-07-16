@@ -29,7 +29,7 @@ const Checkbox = ({
                 disabled={disabled}
                 onChange={handleOnChange}
             />
-            <Checkmark className="checkmark" disabled={disabled} />
+            <Checkmark className="checkmark" disabled={disabled} checked={checked} />
         </Container>
     );
 };

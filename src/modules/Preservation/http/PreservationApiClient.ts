@@ -379,10 +379,15 @@ interface HistoryResponse {
     id: number;
     description: string;
     createdAtUtc: Date;
-    createdById: string;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
     eventType: string;
     dueWeeks: number;
-    preservationRecordId: number;
+    tagRequirementId: number;
+    preservationRecordGuid: string;
 }
 
 class PreservationApiError extends Error {
@@ -1507,6 +1512,29 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async getDownloadUrlForAttachmentOnPreservationRecord(
+        tagId: number,
+        tagRequirementId: number,
+        preservationRecordGuid: string,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+
+        const endpoint = `/Tags/${tagId}/Requirements/${tagRequirementId}/PreservationRecord/${preservationRecordGuid}/Attachment`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Get all requirement types
      *
@@ -2116,7 +2144,27 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Get preservation record 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getPreservationRecord(tagId: number, tagRequirementId: number, preservationRecordGuid: string, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse> {
+        const endpoint = `/Tags/${tagId}/Requirements/${tagRequirementId}/PreservationRecord/${preservationRecordGuid}`;
 
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagRequirementsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 }
 
 export default PreservationApiClient;

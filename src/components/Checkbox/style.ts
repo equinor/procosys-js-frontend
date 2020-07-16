@@ -3,6 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 interface CheckboxStyleProps {
     disabled: boolean;
+    checked?: boolean;
 }
 
 export const Container = styled.label<CheckboxStyleProps>`
@@ -63,7 +64,7 @@ export const Checkmark = styled.span<CheckboxStyleProps>`
     background-color: ${tokens.colors.ui.background__default.rgba};
     border-radius: 3px;
 
-    border: solid 2px ${(props): string => props.disabled
+    border: solid 2px ${(props): string => props.disabled && !props.checked
         ? tokens.colors.interactive.disabled__fill.rgba
         : tokens.colors.interactive.primary__resting.rgba};
 

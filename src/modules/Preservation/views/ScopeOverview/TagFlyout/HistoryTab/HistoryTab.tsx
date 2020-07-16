@@ -1,26 +1,41 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
-import { Container } from './HistoryTab.style';
+import { Container, DetailsContainer, DueContainer } from './HistoryTab.style';
 import Table from '../../../../../../components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { getFormattedDate } from '@procosys/core/services/DateService';
+import EdsIcon from '@procosys/components/EdsIcon';
+import { Tooltip } from '@material-ui/core';
+import HistoryDetails from './HistoryDetails';
+import PreservedRequirement from './PreservedRequirement';
 
-export interface HistoryLogItem {
+interface HistoryLogItem {
     id: number;
     description: string;
     createdAtUtc: Date;
-    createdById: string;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
     eventType: string;
     dueWeeks: number;
-    preservationRecordId: number;
+    tagRequirementId: number;
+    preservationRecordGuid: string;
 }
 
 interface HistoryTabProps {
     tagId: number;
 }
+
+const tableCellStyling = {
+    paddingLeft: 'var(--grid-unit)',
+    paddingRight: 'var(--grid-unit)'
+};
 
 const HistoryTab = ({
     tagId
@@ -28,7 +43,9 @@ const HistoryTab = ({
 
     const { apiClient } = usePreservationContext();
     const [historyLog, setHistoryLog] = useState<HistoryLogItem[]>([]);
+    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryLogItem | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showRequirementDialog, setShowRequirementDialog] = useState<boolean>(false);
 
     const getHistoryLog = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
@@ -56,9 +73,55 @@ const HistoryTab = ({
         getHistoryLog();
     }, []);
 
+    const showHistoryDetails = (historyItem: HistoryLogItem): void => {
+        setSelectedHistoryItem(historyItem);
 
-    const getDateField = (historyLogItem: HistoryLogItem): string => {
-        return getFormattedDate(historyLogItem.createdAtUtc);
+        if (historyItem.eventType === 'RequirementPreserved') {
+            setShowRequirementDialog(true);
+        }
+    };
+
+    const closeHistoryDetails = (): void => {
+        setSelectedHistoryItem(null);
+        setShowRequirementDialog(false);
+    };
+
+    const getDateColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        return (
+            <DueContainer isOverdue={historyItem.dueWeeks < 0}>
+                {getFormattedDate(historyItem.createdAtUtc)}
+            </DueContainer>
+        );
+    };
+
+    const getUserColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        return (
+            <div>
+                {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
+            </div>
+        );
+    };
+
+    const getDueColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        return (
+            <DueContainer isOverdue={historyItem.dueWeeks < 0}>
+                {historyItem.dueWeeks}
+            </DueContainer>
+        );
+    };
+
+    const getDetailsColumn = (historyItem: HistoryLogItem): JSX.Element => {
+        if (historyItem.eventType === 'RequirementPreserved') {
+            return (
+                <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <DetailsContainer onClick={(): void => showHistoryDetails(historyItem)}>
+                        <EdsIcon name='info_circle' size={24} />
+                    </DetailsContainer>
+                </Tooltip>
+            );            
+        }
+
+        return <div></div>;
     };
 
     if (isLoading) {
@@ -66,41 +129,70 @@ const HistoryTab = ({
             <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
         );
     }
+
     return (
-        <Container>
-            <Table
-                columns={[
-                    { title: 'Date', render: getDateField, cellStyle: { maxWidth: '50px' } },
-                    { title: 'User', field: 'createdById' },
-                    { title: 'Due', field: 'dueWeeks' },
-                    { title: 'Description', field: 'description' },
-                ]}
-                data={historyLog}
-                options={{
-                    search: false,
-                    pageSize: 5,
-                    pageSizeOptions: [5, 10, 50, 100],
-                    padding: 'dense',
-                    showTitle: false,
-                    draggable: false,
-                    selection: false,
-                    emptyRowsWhenPaging: false,
-                    filtering: true,
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
-                    },
-                }}
-                components={{
-                    Toolbar: (): any => (
-                        <></>
-                    )
-                }}
-
-                style={{ boxShadow: 'none' }}
-            />
-
-        </Container>
+        <>
+            <Container>
+                <Table
+                    columns={[
+                        // @ts-ignore
+                        { title: 'Date', render: getDateColumn, width: '5%', cellStyle: tableCellStyling },
+                        // @ts-ignore
+                        { title: 'User', render: getUserColumn, width: '20%', cellStyle: tableCellStyling },
+                        // @ts-ignore
+                        { title: 'Due', render: getDueColumn, width: '1%', cellStyle: tableCellStyling },
+                        // @ts-ignore
+                        { title: 'Description', field: 'description', width: '73%', cellStyle: tableCellStyling },
+                        // @ts-ignore
+                        { title: '', render: getDetailsColumn, width: '1%', cellStyle: tableCellStyling }
+                    ]}
+                    data={historyLog}
+                    options={{
+                        search: false,
+                        pageSize: 10,
+                        pageSizeOptions: [5, 10, 50, 100],
+                        padding: 'dense',
+                        showTitle: false,
+                        draggable: false,
+                        selection: false,
+                        emptyRowsWhenPaging: false,
+                        filtering: false,
+                        thirdSortClick: false,
+                        headerStyle: {
+                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                            paddingLeft: 'var(--grid-unit)',
+                            paddingRight: 'var(--grid-unit)'
+                        },
+                        rowStyle: { 
+                            verticalAlign: 'top'
+                        }
+                    }}
+                    components={{
+                        Toolbar: (): any => (
+                            <></>
+                        )
+                    }}
+                    style={{ boxShadow: 'none' }}
+                />
+            </Container>
+            {
+                showRequirementDialog && (
+                    <HistoryDetails close={(): void => closeHistoryDetails()}>
+                        {
+                            selectedHistoryItem && (
+                                <PreservedRequirement 
+                                    tagId={tagId}
+                                    tagRequirementId={selectedHistoryItem.tagRequirementId}
+                                    preservationRecordGuid={selectedHistoryItem.preservationRecordGuid}
+                                    close={closeHistoryDetails}
+                                />       
+                            )
+                        }                        
+                    </HistoryDetails>
+                )
+            }
+        </>
     );
 };
 
-export default HistoryTab; 
+export default HistoryTab;

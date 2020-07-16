@@ -32,6 +32,11 @@ interface HistoryTabProps {
     tagId: number;
 }
 
+const tableCellStyling = {
+    paddingLeft: 'var(--grid-unit)',
+    paddingRight: 'var(--grid-unit)'
+};
+
 const HistoryTab = ({
     tagId
 }: HistoryTabProps): JSX.Element => {
@@ -131,15 +136,15 @@ const HistoryTab = ({
                 <Table
                     columns={[
                     // @ts-ignore
-                        { title: 'Date', render: getDateColumn, width: '5%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        { title: 'Date', render: getDateColumn, width: '5%', cellStyle: tableCellStyling },
                         // @ts-ignore
-                        { title: 'User', render: getUserColumn, width: '20%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        { title: 'User', render: getUserColumn, width: '20%', cellStyle: tableCellStyling },
                         // @ts-ignore
-                        { title: 'Due', render: getDueColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        { title: 'Due', render: getDueColumn, width: '1%', cellStyle: tableCellStyling },
                         // @ts-ignore
-                        { title: 'Description', field: 'description', width: '73%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} },
+                        { title: 'Description', field: 'description', width: '73%', cellStyle: tableCellStyling },
                         // @ts-ignore
-                        { title: '', render: getDetailsColumn, width: '1%', cellStyle: {paddingLeft: 'var(--grid-unit)', paddingRight: 'var(--grid-unit)'} }
+                        { title: '', render: getDetailsColumn, width: '1%', cellStyle: tableCellStyling }
                     ]}
                     data={historyLog}
                     options={{

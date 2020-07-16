@@ -135,7 +135,7 @@ const HistoryTab = ({
             <Container>
                 <Table
                     columns={[
-                    // @ts-ignore
+                        // @ts-ignore
                         { title: 'Date', render: getDateColumn, width: '5%', cellStyle: tableCellStyling },
                         // @ts-ignore
                         { title: 'User', render: getUserColumn, width: '20%', cellStyle: tableCellStyling },

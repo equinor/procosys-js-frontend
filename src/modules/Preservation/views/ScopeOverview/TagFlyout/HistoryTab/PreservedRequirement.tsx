@@ -4,12 +4,11 @@ import PreservationIcon from '@procosys/components/PreservationIcon';
 import EdsIcon from '@procosys/components/EdsIcon';
 import RequirementNumberField from '../PreservationTab/RequirementNumberField';
 import RequirementCheckboxField from '../PreservationTab/RequirementCheckboxField';
-import RequirementAttachmentField from '../PreservationTab/RequirementAttachmentField';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { Canceler } from 'axios';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { TagRequirement, TagRequirementField } from '../types';
-import { Section, Field } from './PreservedRequirement.style';
+import { Section, Field, AttachmentLink } from './PreservedRequirement.style';
 import { Typography, Button } from '@equinor/eds-core-react';
 
 interface PreservedRequirementProps {
@@ -86,12 +85,12 @@ const PreservedRequirement = ({
                 );
             case 'attachment':
                 return (
-                    <RequirementAttachmentField
-                        requirementId={0}
-                        field={field}
-                        tagId={tagId}
-                        onAttachmentUpdated={(): void => { return; }}
-                    />
+                    <div>
+                        <AttachmentLink>
+                            {field.currentValue && field.currentValue.fileName}
+                        </AttachmentLink>
+                        {field.label}
+                    </div>
                 );
             default:
                 return <div>Unknown field type</div>;

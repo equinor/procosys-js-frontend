@@ -190,4 +190,4 @@ const HistoryTab = ({
     );
 };
 
-export default HistoryTab; 
+export default HistoryTab;

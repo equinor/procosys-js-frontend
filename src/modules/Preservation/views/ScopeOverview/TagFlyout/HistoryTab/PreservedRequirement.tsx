@@ -145,7 +145,7 @@ const PreservedRequirement = ({
                 <Typography variant='caption' style={{ marginBottom: 'var(--grid-unit)' }}>
                     Comment for this preservation period (optional)
                 </Typography>
-                {preservationRecord.comment}
+                {preservationRecord.comment ? preservationRecord.comment : '-'}
             </Section>
         </div>
     );

@@ -13,14 +13,14 @@ import { Typography, Button } from '@equinor/eds-core-react';
 
 interface PreservedRequirementProps {
     tagId: number;
-    requirementId: number;
+    tagRequirementId: number;
     preservationRecordGuid: string;
     close: () => void;
 }
 
 const PreservedRequirement = ({
     tagId,
-    requirementId,
+    tagRequirementId,
     preservationRecordGuid,
     close
 }: PreservedRequirementProps): JSX.Element => {
@@ -37,7 +37,7 @@ const PreservedRequirement = ({
 
                 const preservationRecord = await apiClient.getPreservationRecord(
                     tagId, 
-                    requirementId, 
+                    tagRequirementId, 
                     preservationRecordGuid, 
                     (cancel: Canceler) => requestCancellor = cancel);
 
@@ -59,6 +59,18 @@ const PreservedRequirement = ({
     useEffect(() => {
         getPreservationRecord();
     }, []);
+
+    const downloadAttachment = async (): Promise<void> => {
+        try {
+            const url = await apiClient.getDownloadUrlForAttachmentOnPreservationRecord(tagId, tagRequirementId, preservationRecordGuid);
+            window.open(url, '_blank');
+            showSnackbarNotification('Attachment is downloaded.', 5000, true);
+        } 
+        catch (error) {
+            console.error('Not able to get download url for preservation record attachment: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+    };    
 
     const getRequirementField = (field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
@@ -86,7 +98,7 @@ const PreservedRequirement = ({
             case 'attachment':
                 return (
                     <div>
-                        <AttachmentLink>
+                        <AttachmentLink onClick={downloadAttachment}>
                             {field.currentValue && field.currentValue.fileName}
                         </AttachmentLink>
                         {field.label}

@@ -177,7 +177,7 @@ const HistoryTab = ({
                             selectedHistoryItem && (
                                 <PreservedRequirement 
                                     tagId={tagId}
-                                    requirementId={selectedHistoryItem.tagRequirementId}
+                                    tagRequirementId={selectedHistoryItem.tagRequirementId}
                                     preservationRecordGuid={selectedHistoryItem.preservationRecordGuid}
                                     close={closeHistoryDetails}
                                 />       

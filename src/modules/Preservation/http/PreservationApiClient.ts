@@ -1512,6 +1512,29 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async getDownloadUrlForAttachmentOnPreservationRecord(
+        tagId: number,
+        tagRequirementId: number,
+        preservationRecordGuid: string,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+
+        const endpoint = `/Tags/${tagId}/Requirements/${tagRequirementId}/PreservationRecord/${preservationRecordGuid}/Attachment`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Get all requirement types
      *
@@ -2126,8 +2149,8 @@ class PreservationApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getPreservationRecord(tagId: number, requirementId: number, preservationRecordGuid: string, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse> {
-        const endpoint = `/Tags/${tagId}/Requirements/${requirementId}/PreservationRecord/${preservationRecordGuid}`;
+    async getPreservationRecord(tagId: number, tagRequirementId: number, preservationRecordGuid: string, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse> {
+        const endpoint = `/Tags/${tagId}/Requirements/${tagRequirementId}/PreservationRecord/${preservationRecordGuid}`;
 
         const settings: AxiosRequestConfig = {
             params: {}

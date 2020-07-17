@@ -7,15 +7,22 @@ export const Nav = styled.nav`
     grid-column-gap: 10px;
     grid-template-rows: 64px;
     border-bottom: 2px solid ${tokens.colors.ui.background__light.rgba};
+    font-weight: 500;
+    button {
+        font-size: calc(var(--grid-unit)*2);
+        font-weight: 500;
+    }
 `;
 
 export const SubNav = styled.nav`
     border-bottom: 2px solid ${tokens.colors.ui.background__medium.rgba};
+    font-weight: 500;
     a {
         display: inline-block;
         padding: 16px;
         text-decoration: none;
-        &.active {
+        &.active, &:hover {
+            background-color: rgba(222,237,238,1);
             border-bottom: 2px solid ${tokens.colors.interactive.primary__resting.rgba};
             margin-bottom: -2px;
         }
@@ -27,6 +34,9 @@ export const IconContainer = styled.div`
     justify-content: center;
     align-items: center;
     padding: 16px;
+    color: #ee3c3c;
+    font-size: 36px;
+    font-weight: 1000;
 `;
 
 export const LogoContainer = styled.div`
@@ -46,11 +56,11 @@ export const PlantSelector = styled.div`
     button {
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
-    font-weight: 500;
 `;
 
 export const DropdownItem = styled.div`
-    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+    padding: calc(var(--grid-unit) * 1) calc(var(--grid-unit) * 2);
+    font-weight: 500;
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
@@ -77,9 +87,14 @@ export const MenuContainer = styled.div`
 
 export const MenuItem = styled.div`
     padding: 0px 16px;
+    &:hover {
+        background-color: rgba(222,237,238,1);
+        border-radius: calc(var(--grid-unit) / 2);
+    }
     
     a {
         text-decoration: none;
+
     }
     button svg {
         height: 24px;

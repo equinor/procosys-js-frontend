@@ -115,7 +115,7 @@ const HistoryTab = ({
             return (
                 <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
                     <DetailsContainer onClick={(): void => showHistoryDetails(historyItem)}>
-                        <EdsIcon name='info_circle' size={24} />
+                        <EdsIcon name='info_circle' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
                     </DetailsContainer>
                 </Tooltip>
             );            

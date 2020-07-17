@@ -245,7 +245,7 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuItem className='reducePadding'>
+                    <MenuItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>
                                 <DropdownItem>
@@ -264,7 +264,7 @@ const Header: React.FC = (): JSX.Element => {
                             </a>
                         </OptionsDropdown>
                     </MenuItem>
-                    <MenuItem className='reducePadding'>
+                    <MenuItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='lock' iconSize={24}>
                             <a href={`/${params.plant}/Security/User`}>
                                 <DropdownItem>
@@ -288,7 +288,7 @@ const Header: React.FC = (): JSX.Element => {
                             </a>
                         </OptionsDropdown>
                     </MenuItem >
-                    <MenuItem className={'accountButton reducePadding'}>
+                    <MenuItem className={'accountButton compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
                                 <EdsIcon name='account_circle' size={24} />
@@ -296,7 +296,7 @@ const Header: React.FC = (): JSX.Element => {
                             </Button>
                         </a>
                     </MenuItem>
-                    <MenuItem className='reducePadding lastButton'>
+                    <MenuItem className='compact lastButton'>
                         <Button variant={'ghost'} onClick={(): void => auth.logout()}>
                             Logout
                         </Button>

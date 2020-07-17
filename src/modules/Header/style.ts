@@ -70,23 +70,23 @@ export const MenuContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    .reducePadding {
-        padding: 0;
+    .compact {
+        margin: 0;
     }
 
     .lastButton {
-        padding-right: calc(var(--grid-unit) * 2);
+        margin-right: calc(var(--grid-unit) * 2);
     }
     
     .accountButton {
         svg {
-            padding-right: var(--grid-unit);
+            margin-right: var(--grid-unit);
         }
     }
 `;
 
 export const MenuItem = styled.div`
-    padding: 0px 16px;
+    margin: 0px 16px;
     &:hover {
         background-color: rgba(222,237,238,1);
         border-radius: calc(var(--grid-unit) / 2);

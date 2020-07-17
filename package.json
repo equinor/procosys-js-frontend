@@ -77,7 +77,7 @@
         "@equinor/eds-core-react": "^0.2.2",
         "@equinor/eds-icons": "^0.3.0",
         "@equinor/eds-tokens": "^0.0.1-alpha.5",
-        "@material-ui/core": "^4.8.3",
+        "@material-ui/core": "^4.11.0",
         "@material-ui/icons": "^4.5.1",
         "@material-ui/pickers": "^3.2.10",
         "@types/qs": "^6.9.3",

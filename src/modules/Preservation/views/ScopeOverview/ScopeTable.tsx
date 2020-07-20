@@ -242,6 +242,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         showTitle: false,
                         draggable: false,
                         selection: true,
+                        selectionProps: {disableRipple: true},
                         padding: 'dense',
                         pageSize: this.props.pageSize,
                         emptyRowsWhenPaging: false,

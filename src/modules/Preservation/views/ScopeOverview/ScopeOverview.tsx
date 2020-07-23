@@ -488,6 +488,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <Header>
                         <h1>Preservation tags</h1>
                         <Dropdown
+                            maxHeight='300px'
                             text={project.name}
                             onFilter={setFilterForProjects}
                         >

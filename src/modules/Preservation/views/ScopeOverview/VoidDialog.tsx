@@ -29,8 +29,6 @@ const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
     );
 };
 
-
-
 const columns: Column<any>[] = [
     { title: 'Tag nr', field: 'tagNo' },
     { title: 'Description', field: 'description' },

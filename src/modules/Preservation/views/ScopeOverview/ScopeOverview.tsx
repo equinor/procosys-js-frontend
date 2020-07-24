@@ -89,6 +89,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
+    const [completableTagsSelected, setCompletableTagsSelected] = useState<boolean>();
+    const [preservableTagsSelected, setPreservableTagsSelected] = useState<boolean>();
+    const [startableTagsSelected, setStartableTagsSelected] = useState<boolean>();
+    const [transferableTagsSelected, setTransferableTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
@@ -131,6 +135,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);
         setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);
+        setCompletableTagsSelected(selectedTags.find(t => t.readyToBeCompleted) ? true : false);
+        setPreservableTagsSelected(selectedTags.find(t => t.readyToBePreserved) ? true : false);
+        setStartableTagsSelected(selectedTags.find(t => t.readyToBeStarted) ? true : false);
+        setTransferableTagsSelected(selectedTags.find(t => t.readyToBeTransferred) ? true : false);
         if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
         } else {
@@ -531,30 +539,30 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <IconBar>
                         <Button
                             onClick={preservedDialog}
-                            disabled={selectedTags.length < 1}>Preserved this week
+                            disabled={!preservableTagsSelected}>Preserved this week
                         </Button>
                         <StyledButton
                             variant='ghost'
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
-                            disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='play' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            disabled={!startableTagsSelected}>
+                            <div className='iconNextToText' ><EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Start
                         </StyledButton>
                         <StyledButton
                             variant='ghost'
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
-                            disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            disabled={!transferableTagsSelected}>
+                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Transfer
                         </StyledButton>
                         <StyledButton
                             variant='ghost'
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
-                            disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            disabled={!completableTagsSelected}>
+                            <div className='iconNextToText' ><EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
                         <OptionsDropdown

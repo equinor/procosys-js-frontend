@@ -555,8 +555,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }
             <ButtonContainer>
-                {(newJourney.isVoided && !newJourney.isInUse) &&
-                    <Button className='buttonIcon' variant="outlined" onClick={deleteJourney}>
+                {(newJourney.isVoided) &&
+                    <Button className='buttonIcon' variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
                         {deleteIcon} Delete
                     </Button>
                 }

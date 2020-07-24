@@ -97,6 +97,7 @@ interface ModeResponse {
     id: number;
     title: string;
     forSupplier: boolean;
+    inUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -2070,6 +2071,27 @@ class PreservationApiClient extends ApiClient {
                     rowVersion: rowVersion
                 },
                 settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete mode
+    */
+    async deleteMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }            
             );
         } catch (error) {
             throw getPreservationApiError(error);

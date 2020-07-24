@@ -130,6 +130,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setResetTablePaging(true);
         refreshScopeList();
+        setSelectedTags([]);
     }, [tagListFilter]);
 
     useEffect(() => {

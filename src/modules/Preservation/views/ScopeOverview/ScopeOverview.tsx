@@ -136,10 +136,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);
         setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);
-        setCompletableTagsSelected(selectedTags.find(t => t.readyToBeCompleted) ? true : false);
-        setPreservableTagsSelected(selectedTags.find(t => t.readyToBePreserved) ? true : false);
-        setStartableTagsSelected(selectedTags.find(t => t.readyToBeStarted) ? true : false);
-        setTransferableTagsSelected(selectedTags.find(t => t.readyToBeTransferred) ? true : false);
+        setCompletableTagsSelected(selectedTags.find(t => t.readyToBeCompleted && !t.isVoided) ? true : false);
+        setPreservableTagsSelected(selectedTags.find(t => t.readyToBePreserved && !t.isVoided) ? true : false);
+        setStartableTagsSelected(selectedTags.find(t => t.readyToBeStarted && !t.isVoided) ? true : false);
+        setTransferableTagsSelected(selectedTags.find(t => t.readyToBeTransferred && !t.isVoided) ? true : false);
         if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
         } else {
@@ -349,7 +349,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     let voidableTags: PreservedTag[] = [];
-    let unVoidableTags: PreservedTag[] = [];
+    let unvoidableTags: PreservedTag[] = [];
 
     const voidTags = async (): Promise<void> => {
         try {
@@ -368,7 +368,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const unVoidTags = async (): Promise<void> => {
         try {
-            for (const tag of unVoidableTags) {
+            for (const tag of unvoidableTags) {
                 await apiClient.unvoidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
@@ -383,22 +383,33 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
-        unVoidableTags = [];
+        unvoidableTags = [];
+        // selectedTags.map((tag) => {
+        //     const newTag: PreservedTag = { ...tag };
+        //     if (!tag.isVoided && voiding) {
+        //         voidableTags.push(newTag);
+        //     } else if (tag.isVoided && !voiding) {
+        //         unvoidableTags.push(newTag);
+        //     }
+        // });
+        // const voidButton = voidableTags.length > 0 ? 'Void' : 'Unvoid';
+        // const voidFunc = voidableTags.length > 0 ? voidTags : unVoidTags;
+        // const voidTitle = voidableTags.length > 0 ? 'Voiding following tags' : 'Unvoiding following tags';
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
-            if (!tag.isVoided && voiding) {
+            if (!tag.isVoided) {
                 voidableTags.push(newTag);
-            } else if (tag.isVoided && !voiding) {
-                unVoidableTags.push(newTag);
+            } else {
+                unvoidableTags.push(newTag);
             }
         });
-        const voidButton = voidableTags.length > 0 ? 'Void' : 'Unvoid';
-        const voidFunc = voidableTags.length > 0 ? voidTags : unVoidTags;
-        const voidTitle = voidableTags.length > 0 ? 'Voiding following tags' : 'Unvoiding following tags';
+        const voidButton = voiding ? 'Void' : 'Unvoid';
+        const voidFunc = voiding ? voidTags : unVoidTags;
+        const voidTitle = voiding ? 'Voiding following tags' : 'Unvoiding following tags';
 
         showModalDialog(
             voidTitle,
-            <VoidDialog tags={voidableTags.length > 0 ? voidableTags : unVoidableTags} voiding={voiding} />,
+            <VoidDialog voidableTags={voidableTags} unvoidableTags={unvoidableTags} voiding={voiding} />,
             '80vw',
             backToListButton,
             null,

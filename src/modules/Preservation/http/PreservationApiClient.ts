@@ -1123,6 +1123,21 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+    * Duplicate journey 
+    */
+    async duplicateJourney(journeyId: number, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Duplicate`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(endpoint);
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
       * Void journey step
       */
     async voidJourneyStep(journeyId: number, stepId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {

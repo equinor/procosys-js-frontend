@@ -196,9 +196,10 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             onClick: (): void => { handleTreeviewClick(LibraryType.PRES_JOURNEY, ''); }
         },
         {
-            id: LibraryType.PRES_REQUIREMENT_TYPE,
+            id: LibraryType.PRES_REQUIREMENT,
             name: 'Preservation requirements',
-            getChildren: getRequirementTreeNodes
+            getChildren: getRequirementTreeNodes,
+            onClick: (): void => { handleTreeviewClick(LibraryType.PRES_REQUIREMENT, ''); }
         }
     ];
 

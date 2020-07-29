@@ -11,36 +11,58 @@ import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
 import PressureIcon from '../assets/icons/Pressure';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import ThermostatIcon from '../assets/icons/Thermostat';
+import MeasureIcon from '@procosys/assets/icons/Measure';
 
 interface IconProps {
     variant: string;
 }
 
+export interface PreservationTypeIcon {
+    code: string;
+    title: string;
+}
+
+export const preservationIconList: Array<PreservationTypeIcon> = [
+    { code: 'Area', title: 'Area' },
+    { code: 'Battery', title: 'Electrical Battery' },
+    { code: 'Bearings', title: 'Bearings, moving parts' },
+    { code: 'Electrical', title: 'Electrical' },
+    { code: 'Heating', title: 'Heating thermostat' },
+    { code: 'Installation', title: 'Installation, mechanical' },
+    { code: 'Measure', title: 'Measure' },
+    { code: 'Power', title: 'Power' },
+    { code: 'Nitrogen', title: 'Nitrogen' },
+    { code: 'Pressure', title: 'Pressure' },
+    { code: 'Rotate', title: 'Rotate' },
+    { code: 'Other', title: 'Other' }
+];
+
 const PreservationIcon = ({
     variant
 }: IconProps): JSX.Element | null => {
-    switch (variant.toLowerCase()) {
-
-        case 'area':
+    switch (variant) {
+        case 'Area':
             return <AreaIcon />;
-        case 'charging':
+        case 'Battery':
             return <BatteryChargingFullOutlinedIcon />;
-        case 'grease':
+        case 'Bearings':
             return <BearingIcon />;
-        case 'heating':
-            return <ThermostatIcon />;
-        case 'ir test':
+        case 'Electrical':
             return <FlashOnOutlinedIcon />;
-        case 'nitrogen':
-            return <N2Icon />;
-        case 'oil level':
-            return <PressureIcon />;
-        case 'powered':
-            return <PowerOutlinedIcon />;
-        case 'rotation':
-            return <RotateRightIcon />;
-        case 'vci':
+        case 'Heating':
+            return <ThermostatIcon />;
+        case 'Installation':
             return <BuildOutlinedIcon />;
+        case 'Measure':
+            return <MeasureIcon />;
+        case 'Power':
+            return <PowerOutlinedIcon />;
+        case 'Nitrogen':
+            return <N2Icon />;
+        case 'Pressure':
+            return <PressureIcon />;
+        case 'Rotate':
+            return <RotateRightIcon />;
         default:
             return <OtherIcon />;
     }

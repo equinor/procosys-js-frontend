@@ -144,7 +144,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                 mapped.push({
                     text: itm.title,
                     value: itm.id,
-                    icon: <PreservationIcon variant={itm.code} />,
+                    icon: <PreservationIcon variant={itm.icon} />,
                     children: withUserRequiredInput.concat(withoutUserRequiredInput)
                 });
             }

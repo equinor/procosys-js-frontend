@@ -53,14 +53,18 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         setIconList(items);
     }, []);
 
+    //Set dirty when forms is updated
     useEffect(() => {
         if (JSON.stringify(requirementType) == JSON.stringify(newRequirementType)) {
             setIsDirty(false);
-            return;
+        } else {
+            if (newRequirementType.code && newRequirementType.icon && newRequirementType.sortKey && newRequirementType.title) {
+                setIsDirty(true);
+            } else {
+                setIsDirty(false);
+            }
         }
     }, [newRequirementType]);
-
-
 
     const cloneRequirementType = (requirementType: RequirementTypeItem): RequirementTypeItem => {
         return JSON.parse(JSON.stringify(requirementType));
@@ -73,7 +77,6 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                 (response) => {
                     setRequirementType(response.data);
                     setNewRequirementType(cloneRequirementType(response.data));
-                    setIsDirty(false);
                 }
             );
         } catch (error) {
@@ -135,7 +138,6 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         if (isSaved) {
             getRequirementType(newRequirementType.id);
             showSnackbarNotification('Changes for requirement type is saved.', 5000);
-            setIsSaved(false);
         }
     }, [isSaved]);
 
@@ -145,7 +147,6 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         } else {
             saveUpdated();
         }
-        setIsDirty(false);
     };
 
     const cancelChanges = (): void => {
@@ -189,7 +190,6 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     };
 
     const valueUpdated = (): void => {
-        setIsDirty(true);
         setNewRequirementType(cloneRequirementType(newRequirementType));
     };
 

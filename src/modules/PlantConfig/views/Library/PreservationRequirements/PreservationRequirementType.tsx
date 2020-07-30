@@ -33,7 +33,6 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     const [requirementType, setRequirementType] = useState<RequirementTypeItem | null>(null);
     const [newRequirementType, setNewRequirementType] = useState<RequirementTypeItem>(createNewRequirementType());
     const [isDirty, setIsDirty] = useState<boolean>(false);
-    const [isSaved, setIsSaved] = useState<boolean>(false);
     const [iconList, setIconList] = useState<SelectItem[]>([]);
 
     const {
@@ -94,9 +93,6 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         }
     }, [props.requirementTypeId]);
 
-
-
-
     const saveNew = async (): Promise<void> => {
         try {
             const requirementTypeId = await preservationApiClient.addRequirementType(newRequirementType.code, newRequirementType.title, newRequirementType.icon, newRequirementType.sortKey);
@@ -110,36 +106,17 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     };
 
     const saveUpdated = async (): Promise<void> => {
-        let noChangesToSave = true;
-        if (requirementType &&
-            (requirementType.code != newRequirementType.code
-                || requirementType.title != newRequirementType.title
-                || requirementType.icon != newRequirementType.icon
-                || requirementType.sortKey != newRequirementType.sortKey)
-        ) {
-            try {
-                await preservationApiClient.updateRequirementType(newRequirementType.id, newRequirementType.code, newRequirementType.title, newRequirementType.icon, newRequirementType.sortKey, newRequirementType.rowVersion);
-                setIsSaved(true);
-                props.setDirtyLibraryType();
-            } catch (error) {
-                console.error('Update requirement type failed: ', error.message, error.data);
-                showSnackbarNotification(error.message, 5000);
-                getRequirementType(newRequirementType.id);
-            }
-            noChangesToSave = false;
-        }
-
-        if (noChangesToSave) {
-            showSnackbarNotification('No changes need to be saved.', 5000);
-        }
-    };
-
-    useEffect(() => {
-        if (isSaved) {
+        try {
+            await preservationApiClient.updateRequirementType(newRequirementType.id, newRequirementType.code, newRequirementType.title, newRequirementType.icon, newRequirementType.sortKey, newRequirementType.rowVersion);
             getRequirementType(newRequirementType.id);
             showSnackbarNotification('Changes for requirement type is saved.', 5000);
+            props.setDirtyLibraryType();
+        } catch (error) {
+            console.error('Update requirement type failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+            getRequirementType(newRequirementType.id);
         }
-    }, [isSaved]);
+    };
 
     const handleSave = (): void => {
         if (newRequirementType.id === -1) {

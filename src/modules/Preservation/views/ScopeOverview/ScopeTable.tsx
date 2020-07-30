@@ -1,15 +1,16 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-import React, { RefObject, ReactNode } from 'react';
-import Table from './../../../../components/Table';
+import { Container, SingleIconContainer, TagLink, TagStatusLabel, Toolbar } from './ScopeTable.style';
 import { PreservedTag, PreservedTags } from './types';
-import { tokens } from '@equinor/eds-tokens';
-import { Typography } from '@equinor/eds-core-react';
-import { Toolbar, TagLink, TagStatusLabel, Container, SingleIconContainer } from './ScopeTable.style';
-import RequirementIcons from './RequirementIcons';
-import { isTagOverdue, getFirstUpcomingRequirement, isTagVoided } from './ScopeOverview';
-import { QueryResult, Query } from 'material-table';
-import { Tooltip } from '@material-ui/core';
+import { Query, QueryResult } from 'material-table';
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+import React, { ReactNode, RefObject } from 'react';
+import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
+
 import EdsIcon from '../../../../components/EdsIcon';
+import RequirementIcons from './RequirementIcons';
+import Table from './../../../../components/Table';
+import { Tooltip } from '@material-ui/core';
+import { Typography } from '@equinor/eds-core-react';
+import { tokens } from '@equinor/eds-tokens';
 
 interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
@@ -66,7 +67,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div>{tag.description}</div>
+                    <div className='controlOverflow'>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
@@ -75,8 +76,8 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getResponsibleColumn(tag: PreservedTag): JSX.Element {
         return (
-            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <div>{tag.responsibleCode}</div>
+            <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div className='controlOverflow'>{tag.responsibleCode}</div>
             </Tooltip>
         );
     }
@@ -84,7 +85,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getNextColumn(tag: PreservedTag): JSX.Element {
         const requirement = getFirstUpcomingRequirement(tag);
         return (
-            <div>
+            <div className='controlOverflow'>
                 {(!requirement || tag.isVoided) ? null : requirement.nextDueAsYearAndWeek}
             </div>);
     }
@@ -92,7 +93,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getDueColumn(tag: PreservedTag): JSX.Element {
         const requirement = getFirstUpcomingRequirement(tag);
         return (
-            <div>
+            <div className='controlOverflow'>
                 {(!requirement || tag.isVoided) ? null : requirement.nextDueWeeks}
             </div>);
     }
@@ -105,7 +106,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getPOColumn(tag: PreservedTag): JSX.Element {
         return (<Tooltip title={tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo ? tag.purchaseOrderNo : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-            <div>
+            <div className='controlOverflow'>
                 {tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo}
             </div>
         </Tooltip>);
@@ -113,28 +114,28 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
     getMode(tag: PreservedTag): JSX.Element {
         return (
-            <div>
+            <div className='controlOverflow'>
                 {tag.mode}
             </div>);
     }
 
     getAreaCode(tag: PreservedTag): JSX.Element {
         return (
-            <div>
+            <div className='controlOverflow'>
                 {tag.areaCode}
             </div>);
     }
 
     getDisciplineCode(tag: PreservedTag): JSX.Element {
         return (
-            <div>
+            <div className='controlOverflow'>
                 {tag.disciplineCode}
             </div>);
     }
 
     getStatus(tag: PreservedTag): JSX.Element {
         return (
-            <div>
+            <div className='controlOverflow'>
                 {tag.status}
             </div>);
     }
@@ -142,24 +143,24 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     getActionsColumn(tag: PreservedTag): JSX.Element {
         if (!tag.actionStatus || tag.actionStatus === ActionStatus.Closed) {
             return <div></div>;
-        }        
+        }
 
         return (
-            <Tooltip 
-                title={tag.actionStatus === ActionStatus.OverDue ? 'Overdue action(s)' : 'Open action(s)'} 
-                arrow={true} 
-                enterDelay={200} 
+            <Tooltip
+                title={tag.actionStatus === ActionStatus.OverDue ? 'Overdue action(s)' : 'Open action(s)'}
+                arrow={true}
+                enterDelay={200}
                 enterNextDelay={100}
             >
                 <SingleIconContainer>
-                    <EdsIcon 
-                        name='notifications' 
-                        size={24} 
+                    <EdsIcon
+                        name='notifications'
+                        size={24}
                         color={
                             tag.actionStatus === ActionStatus.OverDue
-                                ? tokens.colors.interactive.danger__text.rgba 
+                                ? tokens.colors.interactive.danger__text.rgba
                                 : tokens.colors.text.static_icons__tertiary.rgba
-                        } 
+                        }
                     />
                 </SingleIconContainer>
             </Tooltip>
@@ -172,7 +173,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                 <EdsIcon name='notifications' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
             </SingleIconContainer>
         );
-    }    
+    }
 
     getTagsByQuery(query: Query<any>): Promise<QueryResult<any>> {
         const sortFieldMap: { [key: string]: string } = {
@@ -211,7 +212,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
     render(): ReactNode {
         return (
             <Container>
-                <Table id='table'
+                <Table
                     tableRef={this.refObject} //reference will be used by parent, to trigger rendering
                     columns={[
                         { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px', maxWidth: '200px' } },

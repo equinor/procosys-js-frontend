@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, StyledTextField } from './PreservationTab.style';
+import React, { useState, useEffect } from 'react';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, TextFieldLabelReadOnly, TextFieldReadOnly } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
@@ -28,10 +28,6 @@ const PreservationTab = ({
     const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
     const [remark, setRemark] = useState<string>(tagDetails.remark);
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
-
-    const storageAreaInputRef = useRef<HTMLInputElement>(null);
-    const remarkInputRef = useRef<HTMLInputElement>(null);
-    const tagRowVersionRef = useRef(tagDetails.rowVersion);
 
     const KEYCODE_ENTER = 13;
 
@@ -106,48 +102,42 @@ const PreservationTab = ({
         );
     };
 
-    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
+    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<boolean> => {
         try {
-            const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagRowVersionRef.current);
-            tagRowVersionRef.current = updatedRowVersion;
+            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagDetails.rowVersion);
+            return Promise.resolve(true);
         } catch (error) {
             console.error('Edit failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
+            return Promise.resolve(false);
         }
-        return Promise.resolve();
     };
 
     const saveRemark = (): void => {
-        if (remarkInputRef.current) {
-            setRemark(remarkInputRef.current.value);
-            saveRemarkAndStorageArea(remarkInputRef.current.value, storageArea);
-        } else {
-            showSnackbarNotification('Something went wrong. Remark was not updated.');
-        }
-        setEditingRemark(false);
+        saveRemarkAndStorageArea(remark, storageArea).then(saveOk => {
+            if (saveOk == true) {
+                setEditingRemark(false);
+                refreshTagDetails();
+            }
+        });
     };
 
     const cancelEditRemark = (): void => {
-        if (remarkInputRef.current) {
-            remarkInputRef.current.value = remark;
-        }
+        setRemark(tagDetails.remark);
         setEditingRemark(false);
     };
 
     const saveStorageArea = (): void => {
-        if (storageAreaInputRef.current) {
-            setStorageArea(storageAreaInputRef.current.value);
-            saveRemarkAndStorageArea(remark, storageAreaInputRef.current.value);
-        } else {
-            showSnackbarNotification('Something went wrong. Storage area was not updated.');
-        }
-        setEditingStorageArea(false);
+        saveRemarkAndStorageArea(remark, storageArea).then(saveOk => {
+            if (saveOk) {
+                setEditingStorageArea(false);
+                refreshTagDetails();
+            }
+        });
     };
 
     const cancelEditStorageArea = (): void => {
-        if (storageAreaInputRef.current) {
-            storageAreaInputRef.current.value = storageArea;
-        }
+        setStorageArea(tagDetails.storageArea);
         setEditingStorageArea(false);
     };
 
@@ -184,18 +174,28 @@ const PreservationTab = ({
             </TagDetailsContainer>
             <TagDetailsInputContainer>
                 <TextFieldContainer>
-                    <TextField
-                        id='remark'
-                        label='Remark'
-                        defaultValue={tagDetails.remark}
-                        inputRef={remarkInputRef}
-                        disabled={!editingRemark}
-                        meta="Optional"
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                            e.keyCode === KEYCODE_ENTER &&
-                                saveRemark();
-                        }}
-                    />
+                    {editingRemark ?
+                        <TextField
+                            id='remark'
+                            label='Remark'
+                            value={remark}
+                            meta="Optional"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setRemark(e.target.value); }}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    saveRemark();
+                            }}
+                        />
+                        :
+                        <div style={{ width: '100%' }}>
+                            <TextFieldLabelReadOnly>
+                                Remark
+                            </TextFieldLabelReadOnly>
+                            <TextFieldReadOnly data-testid='remarkReadOnly'>
+                                {remark}
+                            </TextFieldReadOnly>
+                        </div>
+                    }
                     {editingRemark ?
                         <IconContainer>
                             <StyledButton
@@ -222,19 +222,30 @@ const PreservationTab = ({
                         </IconContainer>
                     }
                 </TextFieldContainer>
-                <TextFieldContainer>
-                    <StyledTextField
-                        id='storageArea'
-                        label='Storage area'
-                        defaultValue={tagDetails.storageArea}
-                        inputRef={storageAreaInputRef}
-                        disabled={!editingStorageArea}
-                        meta="Optional"
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                            e.keyCode === KEYCODE_ENTER &&
-                                saveStorageArea();
-                        }}
-                    />
+                <TextFieldContainer style={{ width: '55%' }}>
+                    {editingStorageArea ?
+                        <TextField
+                            id='storageArea'
+                            label='Storage area'
+                            defaultValue={tagDetails.storageArea}
+                            meta="Optional"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setStorageArea(e.target.value); }}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    saveStorageArea();
+                            }}
+                        />
+                        :
+                        <div style={{ width: '100%' }}>
+                            <TextFieldLabelReadOnly>
+                                Storage area
+                            </TextFieldLabelReadOnly>
+                            <TextFieldReadOnly data-testid='storageAreaReadOnly'>
+                                {storageArea}
+                            </TextFieldReadOnly>
+                        </div>
+                    }
+
                     {editingStorageArea ?
                         <IconContainer>
                             <StyledButton
@@ -265,7 +276,7 @@ const PreservationTab = ({
             {
                 getRequirementsSection(tagDetails.id)
             }
-        </Container>
+        </Container >
     );
 };
 

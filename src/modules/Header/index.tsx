@@ -11,14 +11,13 @@ import {
 import { NavLink, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
-import AppsOutlinedIcon from '@material-ui/icons/AppsOutlined';
+import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
+import EdsIcon from '@procosys/components/EdsIcon';
 import OptionsDropdown from '../../components/OptionsDropdown';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
-import {Button} from '@equinor/eds-core-react';
-import EdsIcon from '@procosys/components/EdsIcon';
 
 type PlantItem = {
     text: string;
@@ -57,7 +56,7 @@ const Header: React.FC = (): JSX.Element => {
         <div>
             <Nav>
                 <IconContainer>
-                    <AppsOutlinedIcon />
+                    &gt;
                 </IconContainer>
                 <LogoContainer>
                     <a
@@ -238,54 +237,58 @@ const Header: React.FC = (): JSX.Element => {
                         </Dropdown>
                     </MenuItem>
                     <MenuItem>
-                        <a href={`/${params.plant}/Reports`}><DropdownItem>Reports</DropdownItem></a>
+                        <a href={`/${params.plant}/Reports`}>
+                            <Button variant={'ghost'}>
+                                Reports
+                            </Button>
+                        </a>
                     </MenuItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuItem className='reducePadding'>
+                    <MenuItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>
                                 <DropdownItem>
-                                ProCoSys Help
+                                    ProCoSys Help
                                 </DropdownItem>
                             </a>
                             <a href={'https://equinor.service-now.com/selfservice?id=sc_cat_item&sys_id=67053df4dbe82b008a0f9407db9619d1'}>
                                 <DropdownItem>
-                                Open a Request Item
+                                    Open a Request Item
                                 </DropdownItem>
                             </a>
                             <a href={'https://equinor.service-now.com/selfservice/?id=sc_cat_item&sys_id=3373cf4cdb97f200bc7af7461d96195b'}>
                                 <DropdownItem>
-                                Report an error
+                                    Report an error
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
                     </MenuItem>
-                    <MenuItem className='reducePadding'>
+                    <MenuItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='lock' iconSize={24}>
                             <a href={`/${params.plant}/Security/User`}>
                                 <DropdownItem>
-                                Users
+                                    Users
                                 </DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Security/UserRole`}>
                                 <DropdownItem>
-                                User Roles
+                                    User Roles
                                 </DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Security/PrivilegeGroup`}>
                                 <DropdownItem>
-                                Privilige Groups
+                                    Privilige Groups
                                 </DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Security/RestrictionRole`}>
                                 <DropdownItem>
-                                Restriction Roles
+                                    Restriction Roles
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
                     </MenuItem >
-                    <MenuItem className={'accountButton reducePadding'}>
+                    <MenuItem className={'accountButton compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
                                 <EdsIcon name='account_circle' size={24} />
@@ -293,7 +296,7 @@ const Header: React.FC = (): JSX.Element => {
                             </Button>
                         </a>
                     </MenuItem>
-                    <MenuItem className='reducePadding lastButton'>
+                    <MenuItem className='compact lastButton'>
                         <Button variant={'ghost'} onClick={(): void => auth.logout()}>
                             Logout
                         </Button>

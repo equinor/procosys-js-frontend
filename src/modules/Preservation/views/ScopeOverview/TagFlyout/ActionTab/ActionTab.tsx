@@ -10,7 +10,7 @@ import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
 import CreateOrEditAction from './CreateOrEditAction';
 
-//const attachIcon = <EdsIcon name='attach_file' size={16} />;
+const attachmentIcon = <EdsIcon name='attach_file' size={16} />;
 const notificationIcon = <EdsIcon name='notifications' size={16} />;
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 
@@ -19,6 +19,7 @@ export interface ActionListItem {
     title: string;
     dueTimeUtc: Date | null;
     isClosed: boolean;
+    attachmentCount: number;
 }
 
 interface ActionTabProps {
@@ -82,14 +83,8 @@ const ActionTab = ({
             }
         };
 
-        const showNotification = (): boolean => {
-            if (!action.isClosed &&
-                action.dueTimeUtc &&
-                isDue()) {
-                return true;
-            }
-            return false;
-        };
+        const showNotificationIcon = (): boolean => !action.isClosed && isDue();
+        const showAttachmentIcon = (): boolean => action.attachmentCount > 0;
 
         return (
             <ActionContainer isClosed={action.isClosed} key={action.id}>
@@ -104,12 +99,8 @@ const ActionTab = ({
                     <CollapseInfo isClosed={action.isClosed} isExpanded={isExpanded}>
                         {action.title}
                     </CollapseInfo>
-                    {showNotification() &&
-                        notificationIcon
-                    }
-                    {/* todo: add attachment icon when flag is available <IconSpacer />
-                    {attachIcon} */}
-
+                    { showNotificationIcon() && notificationIcon }
+                    { showAttachmentIcon() && attachmentIcon }
                 </Collapse>
                 {
                     isExpanded && (

@@ -11,6 +11,7 @@ export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
     MODE = 'Mode',
     PRES_JOURNEY = 'PresJourney',
+    PRES_REQUIREMENT = 'PresRequirement',
     PRES_REQUIREMENT_TYPE = 'PresReqType',
     PRES_REQUIREMENT_DEFINITION = 'PresReqDef',
     NOT_SELECTED = 'NotSelected'
@@ -31,18 +32,18 @@ const Library = (): JSX.Element => {
 
     return (
         <Container>
-            <LibraryTreeview 
-                setSelectedLibraryType={setSelectedLibraryType} 
-                setSelectedLibraryItem={setSelectedLibraryItem} 
-                dirtyLibraryType={dirtyLibraryType} 
+            <LibraryTreeview
+                setSelectedLibraryType={setSelectedLibraryType}
+                setSelectedLibraryItem={setSelectedLibraryItem}
+                dirtyLibraryType={dirtyLibraryType}
                 resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
             />
 
             <Divider />
             <LibraryItemContainer addPaddingTop={selectedLibraryType != LibraryType.TAG_FUNCTION} >
-                <LibraryItemDetails 
-                    libraryType={selectedLibraryType} 
-                    libraryItem={selectedLibraryItem} 
+                <LibraryItemDetails
+                    libraryType={selectedLibraryType}
+                    libraryItem={selectedLibraryItem}
                     setDirtyLibraryType={setDirtyLibraryType}
                 />
             </LibraryItemContainer>

@@ -5,6 +5,7 @@ import PreservationJourney from './PreservationJourney/PreservationJourney';
 import Mode from './Mode/Mode';
 import PreservationRequirementType from './PreservationRequirements/PreservationRequirementType';
 import PreservationRequirements from './PreservationRequirements/PreservationRequirements';
+import PreservationRequirementDefinition from './PreservationRequirements/PreservationRequirementDefinition';
 
 type LibraryItemProps = {
     libraryType: string;
@@ -46,7 +47,11 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
                 cancel={(): void => { setLibraryType(LibraryType.PRES_REQUIREMENT); }}
             />;
         case LibraryType.PRES_REQUIREMENT_DEFINITION:
-            return <div>def</div>;
+            return <PreservationRequirementDefinition
+                requirementDefinitionId={Number(props.libraryItem)}
+                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
+                cancel={(): void => { setLibraryType(LibraryType.PRES_REQUIREMENT); }}
+            />;
         default:
             return <div></div>;
 

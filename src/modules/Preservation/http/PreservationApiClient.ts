@@ -182,11 +182,12 @@ interface RequirementTypesResponse {
             isVoided: boolean;
             defaultIntervalWeeks: number;
             sortKey: number;
+            usage: string;
             fields: [{
                 id: number;
                 label: string;
                 isVoided: boolean;
-                sortKey: string;
+                sortKey: number;
                 fieldType: string;
                 unit: string | null;
                 showPrevious: boolean;
@@ -234,6 +235,14 @@ interface RequirementForUpdate {
     intervalWeeks: number;
     isVoided: boolean | undefined;
     rowVersion: string | undefined;
+}
+
+interface FieldsFormInput {
+    label: string;
+    sortKey: number;
+    fieldType: string;
+    unit: string | null;
+    showPrevious: boolean;
 }
 
 interface UpdateTagFunctionRequestData {
@@ -1706,7 +1715,58 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Add requirement type 
+     */
+    async addRequirementDefinition(requirementTypeId: number, sortKey: number, usage: string, title: string, defaultIntervalWeeks: number, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
 
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    sortKey,
+                    usage,
+                    title,
+                    defaultIntervalWeeks,
+                    fields
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update requirement definition 
+     */
+    async updateRequirementDefinition(requirementDefId: number, requirementTypeId: number, title: string, defaultIntervalWeeks: number, usage: string, sortKey: number,
+        rowVersion: string, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/Update`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    usage: usage,
+                    title: title,
+                    defaultIntervalWeeks: defaultIntervalWeeks,
+                    sortKey: sortKey,
+                    rowVersion: rowVersion,
+                    fields: fields
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 
     /**
      * Get actions

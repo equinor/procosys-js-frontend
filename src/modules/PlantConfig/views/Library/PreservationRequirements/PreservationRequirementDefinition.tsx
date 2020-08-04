@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, IconContainer } from './PreservationRequirements.style';
+import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, IconContainer, FieldsContainer, FormHeader } from './PreservationRequirements.style';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Spinner from '@procosys/components/Spinner';
 import PreservationIcon from '@procosys/components/PreservationIcon';
 import EdsIcon from '@procosys/components/EdsIcon';
+import Checkbox from './../../../../../components/Checkbox';
+
 
 const addIcon = <EdsIcon name='add' size={16} />;
+const upIcon = <EdsIcon name='arrow_up' size={16} />;
+const downIcon = <EdsIcon name='arrow_down' size={16} />;
+const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 interface RequirementType {
     id: number;
@@ -60,7 +67,6 @@ interface Field {
     showPrevious: boolean;
 }
 
-
 const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
 
 export interface RequirementUsageCode {
@@ -88,12 +94,6 @@ type PreservationRequirementDefinitionProps = {
 };
 
 const PreservationRequirementDefinition = (props: PreservationRequirementDefinitionProps): JSX.Element => {
-
-    const createNewRequirementDefinition = (): RequirementDefinitionItem => {
-        return {
-            id: -1, title: '', icon: '', requirementTypeTitle: '', isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
-        };
-    };
 
     const [requirementDefinitionId, setRequirementDefinitionId] = useState<number>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
@@ -127,10 +127,12 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         setIsLoading(false);
     };
 
+    //Get the requirement types initially
     useEffect(() => {
         getRequirementTypes();
     }, []);
 
+    //Update requirement definition id
     useEffect(() => {
         setRequirementDefinitionId(props.requirementDefinitionId);
     }, [props.requirementDefinitionId]);
@@ -198,7 +200,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 }
             });
         } else {
-            setNewRequirementDefinition(createNewRequirementDefinition());
+            setNewRequirementDefinition({
+                id: -1, title: '', icon: '', requirementTypeTitle: '', isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
+            });
         }
     }, [requirementDefinitionId, requirementTypes]);
 
@@ -236,7 +240,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     newRequirementDefinition.rowVersion,
                     newRequirementDefinition.fields);
 
-                await getRequirementTypes();
+                getRequirementTypes();
                 showSnackbarNotification('Changes for requirement definition is saved.', 5000);
                 props.setDirtyLibraryType();
             } catch (error) {
@@ -263,11 +267,11 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     const voidRequirementDefinition = async (): Promise<void> => {
-        if (requirementDefinition) {
+        if (newRequirementDefinition) {
             setIsLoading(true);
             try {
-                //          await preservationApiClient.voidRequirementType(requirementDefinition.id, requirementDefinition.rowVersion);
-                //       getRequirementDefinition(requirementDefinition.id);
+                await preservationApiClient.voidRequirementDefinition(newRequirementDefinition.requirementTypeId, newRequirementDefinition.id, newRequirementDefinition.rowVersion);
+                getRequirementTypes();
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Requirement definition is voided.', 5000);
             } catch (error) {
@@ -279,11 +283,11 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     const unvoidRequirementDefinition = async (): Promise<void> => {
-        if (requirementDefinition) {
+        if (newRequirementDefinition) {
             setIsLoading(true);
             try {
-                //                await preservationApiClient.unvoidRequirementDefinition(requirementDefinition.id, requirementDefinition.rowVersion);
-                //    getRequirementDefinition(requirementDefinition.id);
+                await preservationApiClient.unvoidRequirementDefinition(newRequirementDefinition.requirementTypeId, newRequirementDefinition.id, newRequirementDefinition.rowVersion);
+                getRequirementTypes();
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Requirement definition is unvoided.', 5000);
             } catch (error) {
@@ -296,9 +300,46 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     const addField = (): void => {
         if (newRequirementDefinition) {
-            newRequirementDefinition.fields.push({ label: '', sortKey: -1, fieldType: '', unit: '', showPrevious: false });
+            let largestSortKey = 0;
+            newRequirementDefinition.fields.forEach(field => largestSortKey = Math.max(field.sortKey, largestSortKey));
+            largestSortKey++;
+            newRequirementDefinition.fields.push({ label: '', sortKey: largestSortKey, fieldType: '', unit: '', showPrevious: false });
             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
         }
+    };
+
+    const moveFieldUp = (index: number): void => {
+        if (newRequirementDefinition && index > 0) {
+            const sortKeyTemp = newRequirementDefinition.fields[index].sortKey;
+            newRequirementDefinition.fields[index].sortKey = newRequirementDefinition.fields[index - 1].sortKey;
+            newRequirementDefinition.fields[index - 1].sortKey = sortKeyTemp;
+            newRequirementDefinition.fields.sort((a, b) => a.sortKey > b.sortKey ? 1 : -1);
+            setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+        }
+    };
+
+    const moveFieldDown = (index: number): void => {
+        if (newRequirementDefinition && index + 1 < newRequirementDefinition.fields.length) {
+            const sortKeyTemp = newRequirementDefinition.fields[index].sortKey;
+            newRequirementDefinition.fields[index].sortKey = newRequirementDefinition.fields[index + 1].sortKey;
+            newRequirementDefinition.fields[index + 1].sortKey = sortKeyTemp;
+            newRequirementDefinition.fields.sort((a, b) => a.sortKey > b.sortKey ? 1 : -1);
+            setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+        }
+    };
+
+    const deleteField = (index: number): void => {
+        if (newRequirementDefinition) {
+            newRequirementDefinition.fields.splice(index, 1);
+            setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+        }
+    };
+
+    const voidField = (index: number): void => {
+        console.log(index);
+    };
+    const unvoidField = (index: number): void => {
+        console.log(index);
     };
 
     if (isLoading) {
@@ -312,7 +353,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 <PreservationIcon variant={newRequirementDefinition.icon} /> {newRequirementDefinition.requirementTypeTitle}
             </SelectText>;
         }
-        return <div>Select requirement</div>;
+        return <div>Select type</div>;
     };
 
     if (newRequirementDefinition === null) {
@@ -322,22 +363,21 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     return (
         <Container>
             {newRequirementDefinition.isVoided &&
-                <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement definition is voided</Typography>
+                <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement definition is voided</Typography>
             }
             <ButtonContainer>
                 {newRequirementDefinition.isVoided &&
-                    <Button variant="outlined" onClick={unvoidRequirementDefinition}>
+                    <Button variant='outlined' onClick={unvoidRequirementDefinition}>
                         Unvoid
                     </Button>
                 }
-
                 {!newRequirementDefinition.isVoided &&
-                    <Button variant="outlined" onClick={voidRequirementDefinition}>
+                    <Button variant='outlined' onClick={voidRequirementDefinition}>
                         Void
                     </Button>
                 }
                 <ButtonSpacer />
-                <Button variant="outlined" onClick={cancelChanges} disabled={newRequirementDefinition.isVoided}>
+                <Button variant='outlined' onClick={cancelChanges} disabled={newRequirementDefinition.isVoided}>
                     Cancel
                 </Button>
                 <ButtonSpacer />
@@ -345,9 +385,8 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     Save
                 </Button>
             </ButtonContainer>
-
             <InputContainer>
-                <FormFieldSpacer style={{ width: '100px' }}>
+                <FormFieldSpacer style={{ marginTop: '-3px', width: '100px' }}>
                     <TextField
                         id={'sortKey'}
                         label='SortKey'
@@ -356,27 +395,23 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             newRequirementDefinition.sortKey = Number(e.target.value);
                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                         }}
-                        placeholder="Write Here"
+                        placeholder='Write Here'
                         disabled={newRequirementDefinition.isVoided}
                     />
                 </FormFieldSpacer>
-
                 <FormFieldSpacer>
                     <SelectInput
                         onChange={(value: string): void => {
                             newRequirementDefinition.usage = value;
                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
-
                         }}
                         data={requirementUsageSelectItems}
                         label={'Select usage'}
                         disabled={newRequirementDefinition.isVoided}
                     >
-                        {newRequirementDefinition.usage}
+                        {newRequirementDefinition.usage && newRequirementDefinition.usage || 'Select usage'}
                     </SelectInput>
                 </FormFieldSpacer>
-            </InputContainer>
-            <InputContainer>
                 <FormFieldSpacer>
                     <SelectInput
                         onChange={(value: number): void => {
@@ -396,84 +431,131 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                         {getSelectedReqTypeText()}
                     </SelectInput>
                 </FormFieldSpacer>
-                <FormFieldSpacer style={{ width: '300px' }}>
+            </InputContainer>
+            <InputContainer>
+                <FormFieldSpacer style={{ marginTop: '-3px', width: '300px' }}>
                     <TextField
                         id={'title'}
-                        label='Title for this type'
+                        label='Title for this definition'
                         value={newRequirementDefinition.title}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                             newRequirementDefinition.title = e.target.value;
                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                         }}
-                        placeholder="Write Here"
+                        placeholder='Write Here'
                         disabled={newRequirementDefinition.isVoided}
                     />
                 </FormFieldSpacer>
+                <FormFieldSpacer>
+                    <SelectInput
+                        onChange={(value: number): void => {
+                            newRequirementDefinition.defaultIntervalWeeks = value;
+                            setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+                        }}
+                        data={intervalSelectItems}
+                        label={'Set default interval'}
+                        disabled={newRequirementDefinition.isVoided}
+                    >
+                        {newRequirementDefinition.defaultIntervalWeeks > -1 && `${newRequirementDefinition.defaultIntervalWeeks} Weeks` || 'Select interval'}
+                    </SelectInput>
+                </FormFieldSpacer>
             </InputContainer>
-            <InputContainer>
-                <SelectInput
-                    onChange={(value: number): void => {
-                        newRequirementDefinition.defaultIntervalWeeks = value;
-                        setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
-                    }}
-                    data={intervalSelectItems}
-                    label={'Set default interval'}
-                    disabled={newRequirementDefinition.isVoided}
-                >
-                    {newRequirementDefinition.defaultIntervalWeeks} Weeks
-                </SelectInput>
-            </InputContainer>
+            <FormHeader>
+                Add fields to this requirement definition (optional)
+            </FormHeader>
+            <FieldsContainer>
+                {newRequirementDefinition.fields.map((field, index) => {
+                    return (
+                        <React.Fragment key={`field._${index}`}>
+                            <FormFieldSpacer>
+                                <div style={{ width: '100%' }}>
+                                    <SelectInput
+                                        onChange={(value: string): void => {
+                                            field.fieldType = value;
+                                            setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+                                        }}
+                                        data={fieldTypesSelectItems}
+                                        label={'Type'}
+                                        disabled={newRequirementDefinition.isVoided}
+                                    >
+                                        {field.fieldType && field.fieldType || 'Select field type'}
+                                    </SelectInput>
+                                </div>
+                            </FormFieldSpacer>
+                            <FormFieldSpacer style={{ width: '300px' }}>
+                                <TextField
+                                    id={'label'}
+                                    label='Label'
+                                    value={field.label}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                        field.label = e.target.value;
+                                        setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+                                    }}
+                                    placeholder='Write Here'
+                                    disabled={newRequirementDefinition.isVoided}
+                                />
+                            </FormFieldSpacer>
+                            <FormFieldSpacer style={{ width: '100px' }}>
+                                <TextField
+                                    id={'unit'}
+                                    label='Unit'
+                                    value={field.unit}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                        field.unit = e.target.value;
+                                        setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+                                    }}
+                                    placeholder='Write Here'
 
+                                    disabled={newRequirementDefinition.isVoided}
+                                />
+                            </FormFieldSpacer>
+                            <div style={{ paddingLeft: 'calc(var(--grid-unit) * 2) ', paddingRight: 'calc(var(--grid-unit) * 2)', paddingBottom: 'calc(var(--grid-unit) + 6px)' }}>
+                                <Checkbox
+                                    checked={field.showPrevious
+                                    }
+                                    disabled={newRequirementDefinition.isVoided}
+                                    onChange={(checked: boolean): void => {
+                                        field.showPrevious = checked;
+                                        setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
+                                    }}
+                                >
+                                    <Typography variant='body_long'>Show previous value</Typography>
+                                </Checkbox>
+                            </div>
+                            <FormFieldSpacer>
+                                {
+                                    <>
+                                        <Button disabled={newRequirementDefinition.isVoided} variant='ghost' onClick={(): void => moveFieldUp(index)}>
+                                            {upIcon}
+                                        </Button>
+                                        <Button disabled={newRequirementDefinition.isVoided} variant='ghost' onClick={(): void => moveFieldDown(index)}>
+                                            {downIcon}
+                                        </Button>
+                                    </>
+                                }
+                                {/*(step.id == -1 || (journey && !journey.isInUse) && step.isVoided)* &&*/
+                                    (<Button variant='ghost' title="Delete" onClick={(): void => deleteField(index)}>
+                                        {deleteIcon}
+                                    </Button>)
+                                }
+                                {(/*step.id != -1 && !step.isVoided) &&*/
+                                    (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): void => voidField(index)}>
+                                        {voidIcon} Void
+                                    </Button>)
+                                )}
 
-            {newRequirementDefinition.fields.map(field => {
-                return (
-                    <InputContainer key={field.label}>
-                        <FormFieldSpacer>
-                            <SelectInput
-                                onChange={(value: string): void => {
-                                    field.fieldType = value;
-                                    setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
-                                }}
-                                data={fieldTypesSelectItems}
-                                label={'Type'}
-                                disabled={newRequirementDefinition.isVoided}
-                            >
-                                {field.fieldType}
-                            </SelectInput>
-                        </FormFieldSpacer>
+                                {(/*step.id != -1 && step.isVoided) &&*/
+                                    (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): void => unvoidField(index)}>
+                                        {unvoidIcon} Unvoid
+                                    </Button>)
+                                )}
+                            </FormFieldSpacer>
 
-                        <FormFieldSpacer style={{ width: '300px' }}>
-                            <TextField
-                                id={'label'}
-                                label='Label'
-                                value={field.label}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                                    field.label = e.target.value;
-                                    setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
-                                }}
-                                placeholder="Write Here"
-                                disabled={newRequirementDefinition.isVoided}
-                            />
-                        </FormFieldSpacer>
-                        <FormFieldSpacer style={{ width: '100px' }}>
-                            <TextField
-                                id={'unit'}
-                                label='Unit'
-                                value={field.unit}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                                    field.unit = e.target.value;
-                                    setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
-                                }}
-                                placeholder="Write Here"
-                                disabled={newRequirementDefinition.isVoided}
-                            />
-                        </FormFieldSpacer>
+                        </React.Fragment>
+                    );
+                })}
 
-                    </InputContainer>
-
-                );
-            })}
-
+            </FieldsContainer >
             <InputContainer>
                 <IconContainer>
                     <Button variant='ghost' onClick={(): void => addField()}>
@@ -481,9 +563,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     </Button>
                 </IconContainer>
             </InputContainer>
-
-
-        </Container>
+        </Container >
     );
 };
 

@@ -55,6 +55,7 @@ export interface RequirementType {
     code: string;
     title: string;
     isVoided: boolean;
+    icon: string;
     sortKey: number;
     requirementDefinitions: RequirementDefinition[];
 }

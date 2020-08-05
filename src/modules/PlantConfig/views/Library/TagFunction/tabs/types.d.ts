@@ -9,6 +9,7 @@ export interface RequirementType {
     title: string;
     isVoided: boolean;
     sortKey: number;
+    icon: string;
     requirementDefinitions: RequirementDefinition[];
 }
 

@@ -13,6 +13,7 @@ const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
 const downIcon = <EdsIcon name='arrow_down' size={16} />;
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
+const duplicateIcon = <EdsIcon name='copy' size={16} />;
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
@@ -350,6 +351,22 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
+    const duplicateJourney = async (): Promise<void> => {
+        if (journey) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.duplicateJourney(journey.id);
+                getJourney(journey.id);
+                props.setDirtyLibraryType();
+                showSnackbarNotification('Journey is duplicated.');
+            } catch (error) {
+                console.error('Error occured when trying to duplicate journey: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+            setIsLoading(false);
+        }
+    };
+
     const initNewJourney = (): void => {
         setNewJourney(createNewJourney());
         setIsEditMode(true);
@@ -558,6 +575,12 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 {(newJourney.isVoided) &&
                     <Button className='buttonIcon' variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
                         {deleteIcon} Delete
+                    </Button>
+                }
+                <ButtonSpacer />
+                {!newJourney.isVoided &&
+                    <Button className='buttonIcon' variant="outlined" onClick={duplicateJourney}>
+                        {duplicateIcon} Duplicate
                     </Button>
                 }
                 <ButtonSpacer />

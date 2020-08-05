@@ -9,10 +9,12 @@ import { Container } from './AttachmentTab.style';
 
 interface AttachmentTabProps {
     tagId: number;
+    isVoided: boolean;
 }
 
 const AttachmentTab = ({
-    tagId
+    tagId,
+    isVoided
 }: AttachmentTabProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -102,6 +104,7 @@ const AttachmentTab = ({
         <Container>
             <AttachmentList
                 attachments={attachments}
+                disabled={isVoided}
                 addAttachment={addAttachment}
                 deleteAttachment={deleteAttachment}
                 downloadAttachment={downloadAttachment}
@@ -110,4 +113,4 @@ const AttachmentTab = ({
     );
 };
 
-export default AttachmentTab; 
+export default AttachmentTab;

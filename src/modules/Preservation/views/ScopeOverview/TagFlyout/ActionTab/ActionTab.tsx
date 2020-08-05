@@ -24,11 +24,13 @@ export interface ActionListItem {
 
 interface ActionTabProps {
     tagId: number;
+    isVoided: boolean;
     setDirty: () => void;
 }
 
 const ActionTab = ({
     tagId,
+    isVoided,
     setDirty
 }: ActionTabProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
@@ -104,7 +106,7 @@ const ActionTab = ({
                 </Collapse>
                 {
                     isExpanded && (
-                        <ActionExpanded tagId={tagId} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} setDirty={setDirty} />
+                        <ActionExpanded tagId={tagId} isVoided={isVoided} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} setDirty={setDirty} />
                     )
                 }
             </ActionContainer >
@@ -116,6 +118,7 @@ const ActionTab = ({
             {showCreateAction &&
                 <CreateOrEditAction
                     tagId={tagId}
+                    isVoided={isVoided}
                     backToParentView={(): void => {
                         getActionList();
                         setShowCreateAction(false);
@@ -128,6 +131,7 @@ const ActionTab = ({
                 <Container>
                     <AddActionContainer>
                         <StyledButton
+                            disabled={isVoided}
                             variant='ghost'
                             onClick={(): void => setShowCreateAction(true)}>
                             {addIcon} <ButtonSpacer /> Add action

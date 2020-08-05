@@ -8,12 +8,14 @@ import { Container } from './ActionAttachment.style';
 
 interface ActionAttachmentsProps {
     tagId: number;
+    isVoided: boolean;
     actionId: number;
     enableActions: boolean;
 }
 
 const ActionAttachments = ({
     tagId,
+    isVoided,
     actionId,
     enableActions
 }: ActionAttachmentsProps): JSX.Element => {
@@ -98,6 +100,7 @@ const ActionAttachments = ({
         <Container>
             <AttachmentList
                 attachments={attachments}
+                disabled={isVoided}
                 addAttachment={enableActions ? addAttachment : undefined}
                 deleteAttachment={enableActions ? deleteAttachment : undefined}
                 downloadAttachment={downloadAttachment}

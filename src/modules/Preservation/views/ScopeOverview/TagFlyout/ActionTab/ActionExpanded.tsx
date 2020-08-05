@@ -41,6 +41,7 @@ interface ActionDetails {
 
 interface ActionDetailsProps {
     tagId: number;
+    isVoided: boolean;
     actionId: number;
     toggleDetails: () => void;
     getActionList: () => void;
@@ -49,6 +50,7 @@ interface ActionDetailsProps {
 
 const ActionExpanded = ({
     tagId,
+    isVoided,
     actionId,
     toggleDetails,
     getActionList,
@@ -108,6 +110,7 @@ const ActionExpanded = ({
         return (
             <CreateOrEditAction
                 tagId={tagId}
+                isVoided={isVoided}
                 actionId={actionId}
                 title={actionDetails.title}
                 description={actionDetails.description}
@@ -129,7 +132,7 @@ const ActionExpanded = ({
                     </Typography>
                 </Section>
                 {
-                    !actionDetails.isClosed && (
+                    (!isVoided && !actionDetails.isClosed) && (
                         <IconContainer>
                             <StyledButton
                                 data-testid="editIcon"
@@ -202,6 +205,7 @@ const ActionExpanded = ({
                 <Typography variant='caption'>Attachments</Typography>
                 <ActionAttachments
                     tagId={tagId}
+                    isVoided={isVoided}
                     actionId={actionId}
                     enableActions={false}
                 />
@@ -211,7 +215,11 @@ const ActionExpanded = ({
                 !actionDetails.isClosed && (
                     <Section>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button onClick={closeAction}>Close action</Button>
+                            <Button 
+                                disabled={isVoided}
+                                onClick={closeAction}>
+                                Close action
+                            </Button>
                         </div>
                     </Section>
                 )

@@ -150,7 +150,8 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
                         // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
                         disabled: data.isPreserved,
-                        style: { display: data.isPreserved && 'none' }
+                        style: { display: data.isPreserved && 'none' },
+                        disableRipple: true
                     }),
                     rowStyle: (data): any => ({
                         backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'

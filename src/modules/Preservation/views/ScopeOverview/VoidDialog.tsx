@@ -9,7 +9,8 @@ import { Column } from 'material-table';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 interface VoidDialogProps {
-    tags: PreservedTag[];
+    voidableTags: PreservedTag[];
+    unvoidableTags: PreservedTag[];
     voiding: boolean;
 }
 
@@ -28,9 +29,6 @@ const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
     );
 };
 
-const voidingText = 'Tags will be removed from preservation scope';
-const unVoidingText = 'Note that tags have been removed from preservation during the period the tags have been voided. Preservation will be started in the same step of the journey as when they were voided.';
-
 const columns: Column<any>[] = [
     { title: 'Tag nr', field: 'tagNo' },
     { title: 'Description', field: 'description' },
@@ -41,18 +39,31 @@ const columns: Column<any>[] = [
 ];
 
 const VoidDialog = ({
-    tags,
+    voidableTags,
+    unvoidableTags,
     voiding
 }: VoidDialogProps): JSX.Element => {
+    const topTable = voiding ? unvoidableTags : voidableTags;
+    const bottomTable = voiding ? voidableTags : unvoidableTags;
+
+    const voidingText = `${voidableTags.length} tag(s) will be removed from preservation scope`;
+    const unvoidingText = 'Note that tag(s) have been removed from preservation during the period the tag(s) have been voided. Preservation will be started in the same step of the journey as when they were voided.';
 
     return (<div>
-        <TopText>
-            <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba}/>
-            <Typography variant="caption" style={{color: tokens.colors.interactive.danger__text.rgba}}>{voiding ? voidingText : unVoidingText} </Typography>
-        </TopText>
-        <DialogTable tags={tags} columns={columns} />
-    </div>
-    );
+        {topTable.length > 0 && (
+            <div>
+                <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
+                <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+            </div>)}
+        {bottomTable.length > 0 && (
+            <div>
+                <TopText>
+                    <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba}/>
+                    <Typography variant='h6' style={{color: tokens.colors.interactive.danger__text.rgba}}>{voiding ? voidingText : unvoidingText}</Typography>
+                </TopText>
+                <DialogTable tags={bottomTable} columns={columns} />
+            </div>)}
+    </div>);
 };
 
 export default VoidDialog;

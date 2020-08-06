@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
+import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -13,6 +14,8 @@ import RadioGroupFilter from './RadioGroupFilter';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
 import EdsIcon from '@procosys/components/EdsIcon';
 import AreaIcon from '@procosys/assets/icons/Area';
+import SavedScopeFilters from './SavedScopeFilters';
+import Popover from '@material-ui/core/Popover';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
@@ -141,6 +144,7 @@ const ScopeFilter = ({
     const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
     const [filterActive, setFilterActive] = useState<boolean>(false);
+    const [showSavedFiltersPopover, setShowSavedFiltersPopover] = useState<boolean>(false);
 
     const KEYCODE_ENTER = 13;
 
@@ -321,14 +325,42 @@ const ScopeFilter = ({
         return true;
     };
 
+    const [anchorElement, setAnchorElement] = React.useState(null);
+    const open = Boolean(anchorElement);
+
     return (
         <Container>
             <Header filterActive={filterActive}>
                 <h1>Filter</h1>
-                <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
-                    <CloseIcon />
-                </Button>
+                <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Close' onClick={(event: any): void => {
+                        showSavedFiltersPopover ? setShowSavedFiltersPopover(false) : setShowSavedFiltersPopover(true);
+                        setAnchorElement(event.currentTarget);
+                    }}>
+                        <SavedFiltersIcon />
+                    </Button>
+                    <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
+                        <CloseIcon />
+                    </Button>
+                </div>
             </Header>
+
+            <Popover
+                open={open}
+                anchorEl={anchorElement}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                onClose={(): void => setAnchorElement(null)}
+            >
+                <SavedScopeFilters tagListFilter={tagListFilter} />
+            </Popover >
+
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>

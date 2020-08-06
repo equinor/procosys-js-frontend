@@ -142,6 +142,14 @@ interface TagListFilter {
     actionStatus: string | null;
 }
 
+interface SavedScopeFilterResponse {
+    id: string;
+    title: string | null;
+    default: boolean;
+    criteria: string | null;
+}
+
+
 interface JourneyResponse {
     id: number;
     title: string;
@@ -213,7 +221,6 @@ interface RequirementTypeResponse {
         rowVersion: string;
     };
 }
-
 
 interface ResponsibleEntity {
     id: string;
@@ -820,6 +827,50 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+     * Get saved scope filters
+     */
+    async getSavedScopeFilters(setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
+        const endpoint = '/SavedFilter';
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<SavedScopeFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+    /**
+     * Add scope filter
+     */
+    async addScopeFilter(title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+        const endpoint = '/SavedFilter';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    title: title,
+                    default: defaultFilter,
+                    criteria: criteria
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
 
     /**
      * Start preservation for the given tags.
@@ -2241,7 +2292,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 {
                     data: { rowVersion: rowVersion }
-                }            
+                }
             );
         } catch (error) {
             throw getPreservationApiError(error);

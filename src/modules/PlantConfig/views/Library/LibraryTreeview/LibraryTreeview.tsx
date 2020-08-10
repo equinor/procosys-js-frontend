@@ -75,7 +75,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getRequirementTreeNodes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            const requirementTypes = await preservationApiClient.getRequirementTypes();
+            const requirementTypes = await preservationApiClient.getRequirementTypes(true);
             requirementTypes.data.forEach(requirementType => {
                 children.push(
                     {

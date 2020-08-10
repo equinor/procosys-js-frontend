@@ -183,20 +183,23 @@ interface RequirementTypesResponse {
             defaultIntervalWeeks: number;
             sortKey: number;
             usage: string;
+            rowVersion: string;
             fields: [{
                 id: number;
                 label: string;
                 isVoided: boolean;
                 sortKey: number;
                 fieldType: string;
-                unit: string | null;
+                unit: string;
                 showPrevious: boolean;
+                rowVersion: string;
             }];
             needsUserInput: boolean;
         }];
         rowVersion: string;
     }];
 }
+
 
 interface RequirementTypeResponse {
     resultType: string;
@@ -238,10 +241,13 @@ interface RequirementForUpdate {
 }
 
 interface FieldsFormInput {
-    label: string;
+    id: number | null;
+    rowVersion: string | null;
+    isVoided: boolean | null;
     sortKey: number;
     fieldType: string;
-    unit: string | null;
+    label: string;
+    unit: string;
     showPrevious: boolean;
 }
 
@@ -1744,12 +1750,11 @@ class PreservationApiClient extends ApiClient {
     /**
      * Update requirement definition 
      */
-    async updateRequirementDefinition(requirementDefId: number, requirementTypeId: number, title: string, defaultIntervalWeeks: number, usage: string, sortKey: number,
-        rowVersion: string, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/RequirementTypes/${requirementTypeId}/Update`;
+    async updateRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, title: string, defaultIntervalWeeks: number, usage: string, sortKey: number,
+        rowVersion: string, updatedFields: FieldsFormInput[], newFields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-
         try {
             await this.client.put(
                 endpoint,
@@ -1759,7 +1764,8 @@ class PreservationApiClient extends ApiClient {
                     defaultIntervalWeeks: defaultIntervalWeeks,
                     sortKey: sortKey,
                     rowVersion: rowVersion,
-                    fields: fields
+                    updatedFields: updatedFields,
+                    newFields: newFields
                 },
                 settings
             );

@@ -14,13 +14,15 @@ import RadioGroupFilter from './RadioGroupFilter';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
 import EdsIcon from '@procosys/components/EdsIcon';
 import AreaIcon from '@procosys/assets/icons/Area';
-import SavedScopeFilters from './SavedScopeFilters';
+import SavedFilters from './SavedFilters';
 import Popover from '@material-ui/core/Popover';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+    selectedSavedFilterId: number | null;
+    setSelectedSavedFilterId: (savedFilterId: number | null) => void;
     setNumberOfFilters: (activeFilters: number) => void;
     numberOfTags: number | undefined;
 }
@@ -128,6 +130,8 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
+    selectedSavedFilterId,
+    setSelectedSavedFilterId,
     setNumberOfFilters,
     numberOfTags
 }: ScopeFilterProps): JSX.Element => {
@@ -145,6 +149,7 @@ const ScopeFilter = ({
     const isFirstRender = useRef<boolean>(true);
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [showSavedFiltersPopover, setShowSavedFiltersPopover] = useState<boolean>(false);
+    const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
 
@@ -297,11 +302,11 @@ const ScopeFilter = ({
     };
 
     const responsibleFilterUpdated = (values: { id: string; title: string }[]): void => {
-        setLocalTagListFilter((old): TagListFilter => { return { ...old, responsibleIds: values.map(itm => itm.id) }; });
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, responsibleIds: values.map(itm => String(itm.id)) }; });
     };
 
     const areaFilterUpdated = (values: { id: string; title: string }[]): void => {
-        setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => itm.id) }; });
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => String(itm.id)) }; });
     };
 
     useEffect((): void => {
@@ -325,15 +330,12 @@ const ScopeFilter = ({
         return true;
     };
 
-    const [anchorElement, setAnchorElement] = React.useState(null);
-    const open = Boolean(anchorElement);
-
     return (
         <Container>
             <Header filterActive={filterActive}>
                 <h1>Filter</h1>
                 <div style={{ display: 'flex' }}>
-                    <Button variant='ghost' title='Close' onClick={(event: any): void => {
+                    <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFiltersPopover ? setShowSavedFiltersPopover(false) : setShowSavedFiltersPopover(true);
                         setAnchorElement(event.currentTarget);
                     }}>
@@ -346,7 +348,7 @@ const ScopeFilter = ({
             </Header>
 
             <Popover
-                open={open}
+                open={showSavedFiltersPopover}
                 anchorEl={anchorElement}
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -356,9 +358,9 @@ const ScopeFilter = ({
                     vertical: 'top',
                     horizontal: 'right',
                 }}
-                onClose={(): void => setAnchorElement(null)}
+                onClose={(): void => setShowSavedFiltersPopover(false)}
             >
-                <SavedScopeFilters tagListFilter={tagListFilter} />
+                <SavedFilters tagListFilter={tagListFilter} selectedSavedFilterId={selectedSavedFilterId} setSelectedSavedFilterId={setSelectedSavedFilterId} setTagListFilter={setLocalTagListFilter} onCloseRequest={(): void => setShowSavedFiltersPopover(false)} />
             </Popover >
 
             <Section>
@@ -473,8 +475,8 @@ const ScopeFilter = ({
             <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} icon={'pressure'} />
             <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'verticle_split'} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} icon={'category'} />
-            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
-            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />} />
+            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} selectedItems={localTagListFilter.responsibleIds} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
+            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} selectedItems={localTagListFilter.areaCodes} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />} />
 
         </Container >
     );

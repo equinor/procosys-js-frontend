@@ -143,12 +143,12 @@ interface TagListFilter {
 }
 
 interface SavedScopeFilterResponse {
-    id: string;
-    title: string | null;
+    id: number;
+    title: string;
     default: boolean;
-    criteria: string | null;
+    criteria: string;
+    rowVersion: string;
 }
-
 
 interface JourneyResponse {
     id: number;
@@ -829,9 +829,9 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Get saved scope filters
+     * Get saved tag list filters
      */
-    async getSavedScopeFilters(setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
+    async getSavedTagListFilters(setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
         const endpoint = '/SavedFilter';
         const settings: AxiosRequestConfig = {
             params: {}
@@ -847,9 +847,9 @@ class PreservationApiClient extends ApiClient {
         }
     }
     /**
-     * Add scope filter
+     * Add tag list filter
      */
-    async addScopeFilter(title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+    async addSavedTagListFilter(title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
         const endpoint = '/SavedFilter';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);

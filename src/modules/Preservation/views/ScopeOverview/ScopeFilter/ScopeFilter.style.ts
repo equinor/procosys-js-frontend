@@ -69,39 +69,3 @@ export const Link = styled.span<FilterProps>`
 export const ExpandedContainer = styled.div`
     padding-left: calc(var(--grid-unit) * 4);
 `;
-
-export const SavedFilterListContainer = styled.div`
-    display: grid;
-    grid-template-columns: auto auto; 
-    justify-content: space-between;
-    width: 100%;
-    padding: var(--grid-unit);
-    align-items:flex-end;
-    svg {
-        padding: calc(var(--grid-unit) * 2);
-    }
-`;
-
-export const SavedFilterContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin: calc(var(--grid-unit) * 2);
-    min-width: 300px;
-`;
-
-export const Divider = styled.div`
-    border-top: 1px solid ${tokens.colors.interactive.disabled__border.rgba};      
-    box-sizing: border-box;
-    margin-top: var(--grid-unit);
-    padding-bottom: var(--grid-unit);
-`;
-
-export const Column = styled.div`
-    display: flex;
-    padding-bottom: var(--grid-unit);
-    svg {
-        padding: calc(var(--grid-unit) * 2);
-    } 
-`;
-
-

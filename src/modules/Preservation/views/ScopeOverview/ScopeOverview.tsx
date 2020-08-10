@@ -98,6 +98,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
+    const [selectedSavedFilterId, setSelectedSavedFilterId] = useState<number | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -662,7 +663,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterId={setSelectedSavedFilterId} selectedSavedFilterId={selectedSavedFilterId} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

@@ -32,7 +32,7 @@ const StartPreservationDialog = ({
     return (<div>
         {nonStartableTags.length > 0 && (
             <div>
-                <Typography variant="meta">{nonStartableTags.length} tag(s) cannot be startedcannot be started. Tags are already started, or are voided.</Typography>
+                <Typography variant="meta">{nonStartableTags.length} tag(s) cannot be started. Tags are already started, or are voided.</Typography>
                 <DialogTable tags={nonStartableTags} columns={columns} toolbarText='tag(s) will not be started' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
             </div>
         )}

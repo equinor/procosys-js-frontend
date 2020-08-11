@@ -234,7 +234,7 @@ const Requirements = ({
                                         {requirement.requirementTypeTitle}
                                     </Typography>
                                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
-                                        <PreservationIcon variant={requirement.requirementTypeCode} />
+                                        <PreservationIcon variant={requirement.requirementTypeIcon} />
                                     </div>
                                 </div>
                                 <Typography variant='h6'>

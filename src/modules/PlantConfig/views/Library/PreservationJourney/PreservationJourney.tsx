@@ -8,6 +8,7 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
 import Dropdown from '../../../../../components/Dropdown';
+import Checkbox from './../../../../../components/Checkbox';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -31,6 +32,8 @@ interface Journey {
 interface Step {
     id: number;
     title: string;
+    autoTransferRFCC: boolean;
+    autoTransferRFOC: boolean;
     isVoided: boolean;
     mode: {
         id: number;
@@ -201,7 +204,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
                 //There are changes to save
                 try {
-                    await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.rowVersion);
+                    await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.autoTransferRFCC, step.autoTransferRFOC, step.rowVersion);
                 } catch (error) {
                     console.error('Update journey failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
@@ -401,10 +404,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
+    const setStepAutoTransValue = (value: boolean, status: string, index: number): void => {
+        if (newJourney.steps) {
+            setIsDirty(true);
+            if (status === 'RFCC') {
+                newJourney.steps[index].autoTransferRFCC = value;
+            } else {
+                newJourney.steps[index].autoTransferRFOC = value;
+            }
+            setNewJourney(cloneJourney(newJourney));
+        }
+    };
+
     const addNewStep = (): void => {
         const newStep: Step = {
             id: -1,
             title: '',
+            autoTransferRFCC: false,
+            autoTransferRFOC: false,
             isVoided: false,
             mode: {
                 id: -1,
@@ -671,6 +688,40 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     />
                                 </div>
                             </FormFieldSpacer>
+                            <FormFieldSpacer>
+
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    {index != 100 &&
+                                        <div style={{ fontSize: '12px', paddingBottom: 'var(--grid-unit)' }}>Automatic transfer on signing</div>
+                                    }
+                                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                        <FormFieldSpacer>
+                                            <Checkbox
+                                                checked={step.autoTransferRFCC}
+                                                disabled={newJourney.isVoided || step.isVoided || step.autoTransferRFOC}
+                                                onChange={(checked: boolean): void => {
+                                                    setStepAutoTransValue(checked, 'RFCC', index);
+                                                }}
+                                            >
+                                                <Typography title='asdf' variant='body_long'>RFCC</Typography>
+                                            </Checkbox>
+                                        </FormFieldSpacer>
+
+                                        <FormFieldSpacer>
+                                            <Checkbox
+                                                checked={step.autoTransferRFOC}
+                                                disabled={newJourney.isVoided || step.isVoided || step.autoTransferRFCC}
+                                                onChange={(checked: boolean): void => {
+                                                    setStepAutoTransValue(checked, 'RFOC', index);
+                                                }}
+                                            >
+                                                <Typography variant='body_long'>RFOC</Typography>
+                                            </Checkbox>
+                                        </FormFieldSpacer>
+                                    </div>
+                                </div>
+                            </FormFieldSpacer>
+
                             {
                                 (
                                     <FormFieldSpacer>

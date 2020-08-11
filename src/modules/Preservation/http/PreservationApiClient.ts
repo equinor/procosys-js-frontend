@@ -152,6 +152,8 @@ interface JourneyResponse {
             id: number;
             title: string;
             isVoided: boolean;
+            autoTransferRFCC: boolean;
+            autoTransferRFOC: boolean;
             mode: {
                 id: number;
                 title: string;
@@ -1034,7 +1036,7 @@ class PreservationApiClient extends ApiClient {
     /**
     * Add new step to journey
     */
-    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, autoTransferRFCC: boolean, autoTransferRFOC: boolean, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/AddStep`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1046,6 +1048,8 @@ class PreservationApiClient extends ApiClient {
                     title: title,
                     modeId: modeId,
                     responsibleCode: responsibleCode,
+                    autoTransferRFCC: autoTransferRFCC,
+                    autoTransferRFOC: autoTransferRFOC
                 },
                 settings
             );
@@ -1057,7 +1061,7 @@ class PreservationApiClient extends ApiClient {
     /**
       * Update journey step
       */
-    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, autoTransferRFCC: boolean, autoTransferRFOC: boolean, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1069,6 +1073,8 @@ class PreservationApiClient extends ApiClient {
                     modeId: modeId,
                     responsibleCode: responsibleCode,
                     title: title,
+                    autoTransferRFCC: autoTransferRFCC,
+                    autoTransferRFOC: autoTransferRFOC,
                     rowVersion: rowVersion,
                 },
                 settings
@@ -2241,7 +2247,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 {
                     data: { rowVersion: rowVersion }
-                }            
+                }
             );
         } catch (error) {
             throw getPreservationApiError(error);

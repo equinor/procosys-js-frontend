@@ -30,7 +30,7 @@ export const Container = styled.div`
 
 export const StepsContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto; 
+    grid-template-columns: auto auto auto auto auto; 
     width: fit-content;
     padding: var(--grid-unit);
     align-items:flex-end;

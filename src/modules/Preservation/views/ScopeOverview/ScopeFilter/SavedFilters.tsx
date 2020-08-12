@@ -5,9 +5,9 @@ import Checkbox from '../../../../../components/Checkbox';
 import { ListContainer, Container, Header, Divider, Link, Row } from './SavedFilters.style';
 import Spinner from '@procosys/components/Spinner';
 import { TagListFilter } from '../types';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import EdsIcon from '@procosys/components/EdsIcon';
 import CloseIcon from '@material-ui/icons/Close';
+import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
 
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const defaultTrueIcon = <EdsIcon name='star_filled' size={16} />;
@@ -16,16 +16,15 @@ const defaultFalseIcon = <EdsIcon name='star_outlined' size={16} />;
 interface SavedFiltersProps {
     tagListFilter: TagListFilter;
     setTagListFilter: (tagListFilter: TagListFilter) => void;
-    selectedSavedFilterId: number | null;
-    setSelectedSavedFilterId: (savedFilterId: number | null) => void;
+    selectedSavedFilterTitle: string | null;
+    setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     onCloseRequest: () => void;
 }
 
 interface SavedFilter {
-    id: number;
     title: string;
     criteria: string;
-    default: boolean;
+    defaultFilter: boolean;
     rowVersion: string;
 }
 
@@ -39,51 +38,15 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     const [selectedFilterIndex, setSelectedFilterIndex] = useState<number | null>();
 
     const {
-        preservationApiClient,
-    } = usePlantConfigContext();
+        project,
+        apiClient
+    } = usePreservationContext();
 
     const getSavedFilters = async (): Promise<void> => {
         setIsLoading(true);
         try {
-            const response = await preservationApiClient.getSavedTagListFilters();
+            const response = await apiClient.getSavedTagListFilters(project.name);
             setSavedFilters(response);
-            /*            setSavedFilters([
-                            {
-                                id: 6,
-                                title: 'Alle active',
-                                criteria: {
-                                    'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10']
-                                },
-                                default: true, rowVersion: 'asdf'
-                            },
-                            {
-                                id: 1, title: 'No overdue actions', criteria:
-                                    { "tagNoStartsWith": null, "commPkgNoStartsWith": null, "mcPkgNoStartsWith": null, "purchaseOrderNoStartsWith": null, "callOffStartsWith": null, "storageAreaStartsWith": null, "preservationStatus": null, "actionStatus": "HasOverDue", "voidedFilter": null, "journeyIds": [], "modeIds": [], "dueFilters": [], "requirementTypeIds": [], "tagFunctionCodes": [], "disciplineCodes": [], "responsibleIds": [], "areaCodes": [] }
-                                , default: false, rowVersion: 'asdf'
-                            },
-                            {
-                                id: 3, title: 'diverse', criteria:
-                                    { "tagNoStartsWith": null, "commPkgNoStartsWith": null, "mcPkgNoStartsWith": null, "purchaseOrderNoStartsWith": null, "callOffStartsWith": null, "storageAreaStartsWith": null, "preservationStatus": null, "actionStatus": null, "voidedFilter": null, "journeyIds": [], "modeIds": [], "dueFilters": [], "requirementTypeIds": [], "tagFunctionCodes": [], "disciplineCodes": [], "responsibleIds": [], "areaCodes": ["M90"] }
-                                , default: false, rowVersion: 'asdf'
-            
-                            },
-                            { id: 4, title: 'Alle active3', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 5, title: 'Alle active4', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 6, title: 'Alle active5', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 7, title: 'Alle active6', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 8, title: 'Alle active7', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 9, title: 'Alle active8', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 10, title: 'Alle active9', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 11, title: 'Alle active10', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 12, title: 'Alle active11', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 13, title: 'Alle active12', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 14, title: 'Alle active13', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 15, title: 'Alle active14', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-                            { id: 16, title: 'Alle active15', criteria: { 'tagNoStartsWith': 'EV-11', 'commPkgNoStartsWith': null, 'mcPkgNoStartsWith': null, 'purchaseOrderNoStartsWith': null, 'callOffStartsWith': null, 'storageAreaStartsWith': null, 'preservationStatus': 'Completed', 'actionStatus': null, 'voidedFilter': 'NotVoided', 'journeyIds': [], 'modeIds': [], 'dueFilters': ['NextWeek'], 'requirementTypeIds': ['12'], 'tagFunctionCodes': [], 'disciplineCodes': [], 'responsibleIds': [], 'areaCodes': ['M10'] }, default: false, rowVersion: 'asdf' },
-            
-                        ]
-                        );
-            */
         } catch (error) {
             console.error('Get saved filters failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -97,11 +60,11 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     //Set selected filter to null, if filter values are changed
     useEffect((): void => {
-        if (savedFilters && props.selectedSavedFilterId) {
-            const selectedFilterIndex = savedFilters.findIndex((filter) => filter.id == props.selectedSavedFilterId);
+        if (savedFilters && props.selectedSavedFilterTitle) {
+            const selectedFilterIndex = savedFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
             setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterId && JSON.stringify(props.tagListFilter) != JSON.stringify(savedFilters[selectedFilterIndex].criteria)) {
-                props.setSelectedSavedFilterId(null);
+            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != JSON.stringify(savedFilters[selectedFilterIndex].criteria)) {
+                props.setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }
         }
@@ -109,7 +72,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onSaveFilter = async (): Promise<void> => {
         try {
-            await preservationApiClient.addSavedTagListFilter(newFilterTitle, newFilterIsDefault, JSON.stringify(props.tagListFilter));
+            await apiClient.addSavedTagListFilter(project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.tagListFilter));
             getSavedFilters();
             showSnackbarNotification('Filter is saved.', 5000);
             setSaveFilterMode(false);
@@ -138,14 +101,11 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onSelectFilter = (index: number): void => {
         if (savedFilters) {
-            props.setSelectedSavedFilterId(savedFilters[index].id);
+            props.setSelectedSavedFilterTitle(savedFilters[index].title);
             props.setTagListFilter(JSON.parse(savedFilters[index].criteria));
+            props.onCloseRequest();
         }
     };
-
-    if (isLoading) {
-        return <Spinner large />;
-    }
 
     if (saveFilterMode) {
         return (
@@ -185,10 +145,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         );
     }
 
-    console.log('Tag: ', props.tagListFilter);
-
-    console.log('Tag: ' + JSON.stringify(props.tagListFilter));
-
     return (
         <Container>
             <Header>
@@ -199,11 +155,14 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
             </Header>
             <Divider />
             <div style={{ padding: 'calc(var(--grid-unit) * 2) 0px calc(var(--grid-unit) * 2)' }}>
-                <Button onClick={(): void => { setSaveFilterMode(true); }} disabled={props.selectedSavedFilterId}>
+                <Button onClick={(): void => { setSaveFilterMode(true); }} disabled={props.selectedSavedFilterTitle}>
                     Save current filter
                 </Button>
-            </div>
-            <ListContainer>
+            </div>¨
+
+            {isLoading && <Spinner />}
+
+            {!isLoading && <ListContainer>
                 {savedFilters && savedFilters.map((filter, index) => {
                     return (
                         <React.Fragment key={`filter._${index}`}>
@@ -212,7 +171,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                                     {filter.title}
                                 </Link>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                    {filter.default ?
+                                    {filter.defaultFilter ?
                                         <Button variant='ghost' title="Remove as default filter" onClick={(): Promise<void> => onRemoveDefault(index)}>
                                             {defaultTrueIcon}
                                         </Button>
@@ -232,6 +191,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                     );
                 })}
             </ListContainer>
+            }
         </Container >
     );
 };

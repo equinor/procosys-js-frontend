@@ -21,8 +21,8 @@ interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
-    selectedSavedFilterId: number | null;
-    setSelectedSavedFilterId: (savedFilterId: number | null) => void;
+    selectedSavedFilterTitle: string | null;
+    setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     setNumberOfFilters: (activeFilters: number) => void;
     numberOfTags: number | undefined;
 }
@@ -130,8 +130,8 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
-    selectedSavedFilterId,
-    setSelectedSavedFilterId,
+    selectedSavedFilterTitle,
+    setSelectedSavedFilterTitle,
     setNumberOfFilters,
     numberOfTags
 }: ScopeFilterProps): JSX.Element => {
@@ -148,7 +148,7 @@ const ScopeFilter = ({
     const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
     const [filterActive, setFilterActive] = useState<boolean>(false);
-    const [showSavedFiltersPopover, setShowSavedFiltersPopover] = useState<boolean>(false);
+    const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
     const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
@@ -336,7 +336,7 @@ const ScopeFilter = ({
                 <h1>Filter</h1>
                 <div style={{ display: 'flex' }}>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
-                        showSavedFiltersPopover ? setShowSavedFiltersPopover(false) : setShowSavedFiltersPopover(true);
+                        showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
                         setAnchorElement(event.currentTarget);
                     }}>
                         <SavedFiltersIcon />
@@ -346,9 +346,9 @@ const ScopeFilter = ({
                     </Button>
                 </div>
             </Header>
-
             <Popover
-                open={showSavedFiltersPopover}
+                id={'savedFilter-popover'}
+                open={showSavedFilters}
                 anchorEl={anchorElement}
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -358,11 +358,14 @@ const ScopeFilter = ({
                     vertical: 'top',
                     horizontal: 'right',
                 }}
-                onClose={(): void => setShowSavedFiltersPopover(false)}
+                onClose={(): void => setShowSavedFilters(false)}
             >
-                <SavedFilters tagListFilter={tagListFilter} selectedSavedFilterId={selectedSavedFilterId} setSelectedSavedFilterId={setSelectedSavedFilterId} setTagListFilter={setLocalTagListFilter} onCloseRequest={(): void => setShowSavedFiltersPopover(false)} />
+                <SavedFilters tagListFilter={tagListFilter}
+                    selectedSavedFilterTitle={selectedSavedFilterTitle}
+                    setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                    setTagListFilter={setLocalTagListFilter}
+                    onCloseRequest={(): void => setShowSavedFilters(false)} />
             </Popover >
-
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>

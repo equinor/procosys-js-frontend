@@ -143,9 +143,8 @@ interface TagListFilter {
 }
 
 interface SavedScopeFilterResponse {
-    id: number;
     title: string;
-    default: boolean;
+    defaultFilter: boolean;
     criteria: string;
     rowVersion: string;
 }
@@ -831,10 +830,12 @@ class PreservationApiClient extends ApiClient {
     /**
      * Get saved tag list filters
      */
-    async getSavedTagListFilters(setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
-        const endpoint = '/SavedFilter';
+    async getSavedTagListFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
+        const endpoint = '/SavedFilters';
         const settings: AxiosRequestConfig = {
-            params: {}
+            params: {
+                projectName: projectName
+            }
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -849,28 +850,26 @@ class PreservationApiClient extends ApiClient {
     /**
      * Add tag list filter
      */
-    async addSavedTagListFilter(title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<JourneyResponse[]> {
+    async addSavedTagListFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = '/SavedFilter';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.post(
+            await this.client.post(
                 endpoint,
                 {
+                    projectName: projectName,
                     title: title,
-                    default: defaultFilter,
+                    defaultFilter: defaultFilter,
                     criteria: criteria
                 },
                 settings
             );
-            return result.data;
         } catch (error) {
             throw getPreservationApiError(error);
         }
     }
-
-
 
     /**
      * Start preservation for the given tags.

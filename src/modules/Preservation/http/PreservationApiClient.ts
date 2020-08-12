@@ -2241,7 +2241,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 {
                     data: { rowVersion: rowVersion }
-                }            
+                }
             );
         } catch (error) {
             throw getPreservationApiError(error);

@@ -300,13 +300,34 @@ const ScopeFilter = ({
         setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => itm.id) }; });
     };
 
+    //Handle changes in text field filters
+    useEffect(() => {
+        if (isFirstRender.current) return;
+
+        const handleUpdate = async (): Promise<void> => {
+            triggerScopeListUpdate();
+            const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+            setFilterActive(activeFilters.length > 0);
+            setNumberOfFilters(activeFilters.length);
+        };
+
+        const timer = setTimeout(() => {
+            handleUpdate();
+        }, 500);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
+    }, [localTagListFilter.tagNoStartsWith, localTagListFilter.callOffStartsWith, localTagListFilter.commPkgNoStartsWith, localTagListFilter.mcPkgNoStartsWith, localTagListFilter.purchaseOrderNoStartsWith, localTagListFilter.storageAreaStartsWith]);
+
+    //Handle changes in all filters except text field filters
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
         const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
         setFilterActive(activeFilters.length > 0);
         setNumberOfFilters(activeFilters.length);
-    }, [localTagListFilter]);
+    }, [localTagListFilter.modeIds, localTagListFilter.actionStatus, localTagListFilter.areaCodes, localTagListFilter.disciplineCodes, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.preservationStatus, localTagListFilter.requirementTypeIds, localTagListFilter.responsibleIds, localTagListFilter.tagFunctionCodes, localTagListFilter.voidedFilter]);
 
     useEffect(() => {
         isFirstRender.current = false;

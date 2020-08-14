@@ -20,6 +20,12 @@ const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 
+enum AutoTransferMethod {
+    NONE = 'None',
+    RFCC = 'OnRfccSign',
+    RFOC = 'OnRfocSign'
+}
+
 interface Journey {
     id: number;
     title: string;
@@ -32,8 +38,7 @@ interface Journey {
 interface Step {
     id: number;
     title: string;
-    autoTransferRFCC: boolean;
-    autoTransferRFOC: boolean;
+    autoTransferMethod: string;
     isVoided: boolean;
     mode: {
         id: number;
@@ -46,6 +51,8 @@ interface Step {
     };
     rowVersion: string;
 }
+
+
 
 type PreservationJourneyProps = {
     journeyId: number;
@@ -156,7 +163,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const saveNewStep = async (journeyId: number, step: Step): Promise<boolean> => {
         try {
-            await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code);
+            await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code, step.autoTransferMethod);
             return true;
         } catch (error) {
             console.error('Add journey failed: ', error.message, error.data);
@@ -204,7 +211,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             if (JSON.stringify(originalStep) !== JSON.stringify(step)) {
                 //There are changes to save
                 try {
-                    await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.autoTransferRFCC, step.autoTransferRFOC, step.rowVersion);
+                    await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.autoTransferMethod, step.rowVersion);
                 } catch (error) {
                     console.error('Update journey failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
@@ -404,14 +411,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
-    const setStepAutoTransValue = (value: boolean, status: string, index: number): void => {
+    const setStepAutoTransValue = (value: string, index: number): void => {
         if (newJourney.steps) {
             setIsDirty(true);
-            if (status === 'RFCC') {
-                newJourney.steps[index].autoTransferRFCC = value;
-            } else {
-                newJourney.steps[index].autoTransferRFOC = value;
-            }
+            newJourney.steps[index].autoTransferMethod = value;
             setNewJourney(cloneJourney(newJourney));
         }
     };
@@ -420,8 +423,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         const newStep: Step = {
             id: -1,
             title: '',
-            autoTransferRFCC: false,
-            autoTransferRFOC: false,
+            autoTransferMethod: '',
             isVoided: false,
             mode: {
                 id: -1,
@@ -697,22 +699,30 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                                         <FormFieldSpacer>
                                             <Checkbox
-                                                checked={step.autoTransferRFCC}
-                                                disabled={newJourney.isVoided || step.isVoided || step.autoTransferRFOC}
+                                                checked={step.autoTransferMethod == AutoTransferMethod.RFCC}
+                                                disabled={newJourney.isVoided || step.isVoided}
                                                 onChange={(checked: boolean): void => {
-                                                    setStepAutoTransValue(checked, 'RFCC', index);
+                                                    if (checked) {
+                                                        setStepAutoTransValue(AutoTransferMethod.RFCC, index);
+                                                    } else {
+                                                        setStepAutoTransValue(AutoTransferMethod.NONE, index);
+                                                    }
                                                 }}
                                             >
-                                                <Typography title='asdf' variant='body_long'>RFCC</Typography>
+                                                <Typography variant='body_long'>RFCC</Typography>
                                             </Checkbox>
                                         </FormFieldSpacer>
 
                                         <FormFieldSpacer>
                                             <Checkbox
-                                                checked={step.autoTransferRFOC}
-                                                disabled={newJourney.isVoided || step.isVoided || step.autoTransferRFCC}
+                                                checked={step.autoTransferMethod == AutoTransferMethod.RFOC}
+                                                disabled={newJourney.isVoided || step.isVoided}
                                                 onChange={(checked: boolean): void => {
-                                                    setStepAutoTransValue(checked, 'RFOC', index);
+                                                    if (checked) {
+                                                        setStepAutoTransValue(AutoTransferMethod.RFOC, index);
+                                                    } else {
+                                                        setStepAutoTransValue(AutoTransferMethod.NONE, index);
+                                                    }
                                                 }}
                                             >
                                                 <Typography variant='body_long'>RFOC</Typography>

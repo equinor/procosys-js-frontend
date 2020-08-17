@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText } from './PreservationRequirements.style';
+import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, Breadcrumbs } from './PreservationRequirements.style';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Spinner from '@procosys/components/Spinner';
@@ -22,6 +22,8 @@ type PreservationRequirementTypeProps = {
     setDirtyLibraryType: () => void;
     cancel: () => void;
 };
+
+const baseBreadcrumb = 'Library / Preservation Requirements /';
 
 const PreservationRequirementType = (props: PreservationRequirementTypeProps): JSX.Element => {
 
@@ -171,7 +173,11 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     };
 
     if (isLoading) {
-        return <Spinner large />;
+        return (
+            <Container>
+                <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
+                <Spinner large />
+            </Container>);
     }
 
     const getIconText = (): JSX.Element => {
@@ -187,6 +193,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
 
     return (
         <Container>
+            <Breadcrumbs>{baseBreadcrumb} {newRequirementType.title}</Breadcrumbs>
             {newRequirementType.isVoided &&
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement type is voided</Typography>
             }

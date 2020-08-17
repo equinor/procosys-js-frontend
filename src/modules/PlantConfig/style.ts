@@ -7,6 +7,5 @@ export const Container = styled.div`
     h1 {
         font-size: 36px;
     }
-    overflow-y: scroll;
+    overflow-y: hidden;
 `;
-

@@ -48,3 +48,10 @@ export const SelectText = styled.div`
         padding-right: calc(var(--grid-unit) * 2);
     }
 `;
+
+export const Breadcrumbs = styled.section`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--grid-unit);
+`;

@@ -6,7 +6,7 @@ export const Breadcrumbs = styled.section`
     border-bottom: 1px solid ${tokens.colors.ui.background__medium.rgba};
     align-items: center;
     width: 100%;
-    padding: var(--grid-unit);
+    padding: calc(var(--grid-unit) * 2);
 `;
 
 export const Divider = styled.div`

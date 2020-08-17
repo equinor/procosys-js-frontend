@@ -40,7 +40,7 @@ const Library = (): JSX.Element => {
             />
 
             <Divider />
-            <LibraryItemContainer addPaddingTop={selectedLibraryType != LibraryType.TAG_FUNCTION} >
+            <LibraryItemContainer>
                 <LibraryItemDetails
                     libraryType={selectedLibraryType}
                     libraryItem={selectedLibraryItem}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, ButtonContainer, ButtonSpacer, IconContainer } from './Mode.style';
+import { Container, InputContainer, ButtonContainer, ButtonSpacer, IconContainer, Breadcrumbs } from './Mode.style';
 import EdsIcon from '../../../../../components/EdsIcon';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
@@ -26,6 +26,8 @@ type ModeProps = {
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+
+const baseBreadcrumb = 'Library / Modes';
 
 const Mode = (props: ModeProps): JSX.Element => {
 
@@ -204,12 +206,17 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     if (isLoading) {
-        return <Spinner large />;
+        return (
+            <Container>
+                <Breadcrumbs>{baseBreadcrumb} /</Breadcrumbs>
+                <Spinner large />
+            </Container>);
     }
 
     if (!isEditMode) {
         return (
             <Container>
+                <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
                 <IconContainer>
                     <Button variant='ghost' onClick={initNewMode}>
                         {addIcon} New mode
@@ -220,6 +227,7 @@ const Mode = (props: ModeProps): JSX.Element => {
 
     return (
         <Container>
+            <Breadcrumbs>{baseBreadcrumb} / {newMode.title}</Breadcrumbs>
             {newMode.isVoided &&
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Mode is voided</Typography>
             }

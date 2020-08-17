@@ -58,7 +58,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     return (
 
         <Container>
-            <Breadcrumbs>Library / Tag Function / ....</Breadcrumbs>
+            <Breadcrumbs>Library / Tag Functions / {tagFunctionData.registerDescription} / {tagFunctionData.code}, {tagFunctionData.description}</Breadcrumbs>
             <DetailsSection>
                 <Typography variant="h3">{tagFunctionData.code}, {tagFunctionData.description}</Typography>
                 <InformationContainer>

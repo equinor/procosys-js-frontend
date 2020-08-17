@@ -9,7 +9,6 @@ import PreservationIcon from '@procosys/components/PreservationIcon';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Checkbox from './../../../../../components/Checkbox';
 
-
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
 const downIcon = <EdsIcon name='arrow_down' size={16} />;
@@ -106,7 +105,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [requirementDefinition, setRequirementDefinition] = useState<RequirementDefinitionItem | null>(null);
     const [newRequirementDefinition, setNewRequirementDefinition] = useState<RequirementDefinitionItem | null>(null);
-    const [isDirty, setIsDirty] = useState<boolean>(false);
+    const [isDirtyAndValid, setIsDirtyAndValid] = useState<boolean>(false);
     const [intervalSelectItems] = useState<SelectItem[]>(() => {
         return validWeekIntervals.map(value => {
             return {
@@ -169,10 +168,25 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             return;
         }
 
+        let fieldsAreValid = true;
+        newRequirementDefinition.fields.forEach((field) => {
+            if (!field.fieldType || !field.label || (field.fieldType === 'Number' && !field.unit)) {
+                fieldsAreValid = false;
+                return;
+            }
+        });
+        if (!fieldsAreValid) {
+            setIsDirtyAndValid(false);
+            return;
+        }
+
         if (JSON.stringify(requirementDefinition) == JSON.stringify(newRequirementDefinition)) {
-            setIsDirty(false);
+            setIsDirtyAndValid(false);
+        } else if (newRequirementDefinition.sortKey != -1 && newRequirementDefinition.usage && newRequirementDefinition.requirementTypeId != -1
+            && newRequirementDefinition.title && newRequirementDefinition.defaultIntervalWeeks != -1) {
+            setIsDirtyAndValid(true);
         } else {
-            setIsDirty(true);
+            setIsDirtyAndValid(false);
         }
     }, [newRequirementDefinition]);
 
@@ -266,7 +280,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     const cancelChanges = (): void => {
-        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
+        if (isDirtyAndValid && !confirm('Do you want to cancel changes without saving?')) {
             return;
         }
         setRequirementDefinition(null);
@@ -381,7 +395,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirty}>
+                <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid}>
                     Save
                 </Button>
             </ButtonContainer>

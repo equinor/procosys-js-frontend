@@ -152,6 +152,7 @@ interface JourneyResponse {
             id: number;
             title: string;
             isVoided: boolean;
+            autoTransferMethod: string;
             mode: {
                 id: number;
                 title: string;
@@ -1035,7 +1036,7 @@ class PreservationApiClient extends ApiClient {
     /**
     * Add new step to journey
     */
-    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, autoTransferMethod: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/AddStep`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1047,6 +1048,7 @@ class PreservationApiClient extends ApiClient {
                     title: title,
                     modeId: modeId,
                     responsibleCode: responsibleCode,
+                    autoTransferMethod: autoTransferMethod,
                 },
                 settings
             );
@@ -1058,7 +1060,7 @@ class PreservationApiClient extends ApiClient {
     /**
       * Update journey step
       */
-    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, autoTransferMethod: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1070,6 +1072,7 @@ class PreservationApiClient extends ApiClient {
                     modeId: modeId,
                     responsibleCode: responsibleCode,
                     title: title,
+                    autoTransferMethod: autoTransferMethod,
                     rowVersion: rowVersion,
                 },
                 settings

@@ -47,7 +47,7 @@ describe('<StartPreservationDialog />', () => {
         expect(queryByText('1 tag(s) will be started')).toBeInTheDocument();
         expect(queryByText('tagNo1')).toBeInTheDocument();
         expect(queryByText('1 tag(s) will not be started')).toBeNull();
-        expect(queryByText('1 tag(s) cannot be started.')).not.toBeInTheDocument();
+        expect(queryByText('1 tag(s) cannot be started. Tags are already started, or are voided.')).not.toBeInTheDocument();
     });
 });
 

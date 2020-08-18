@@ -143,6 +143,7 @@ interface TagListFilter {
 }
 
 interface SavedScopeFilterResponse {
+    id: number;
     title: string;
     defaultFilter: boolean;
     criteria: string;
@@ -848,7 +849,7 @@ class PreservationApiClient extends ApiClient {
         }
     }
     /**
-     * Add tag list filter
+     * Add saved tag list filter
      */
     async addSavedTagListFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = '/SavedFilter';
@@ -865,6 +866,49 @@ class PreservationApiClient extends ApiClient {
                     criteria: criteria
                 },
                 settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Update saved tag list filter
+    */
+    async updateSavedTagListFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    critieria: criteria,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete saved tag list filter 
+    */
+    async deleteSavedTagListFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
             );
         } catch (error) {
             throw getPreservationApiError(error);

@@ -22,6 +22,7 @@ interface SavedFiltersProps {
 }
 
 interface SavedFilter {
+    id: number;
     title: string;
     criteria: string;
     defaultFilter: boolean;
@@ -83,20 +84,39 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     };
 
     const onDeleteFilter = async (index: number): Promise<void> => {
-        showSnackbarNotification('Filter is deleted.', 5000);
-        console.log(index);
-        getSavedFilters();
+        try {
+            const filter = savedFilters && savedFilters[index];
+            if (filter) {
+                await apiClient.deleteSavedTagListFilter(1, filter.rowVersion);
+                getSavedFilters();
+                showSnackbarNotification('Filter is deleted.', 5000);
+            }
+        } catch (error) {
+            console.error('Delete scope filter failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
     };
 
-    const onRemoveDefault = async (index: number): Promise<void> => {
-        showSnackbarNotification('Filter is no longer default.', 5000);
-        console.log(index);
-        getSavedFilters();
+
+    const updateSavedFilter = async (filter: SavedFilter): Promise<void> => {
+        try {
+            await apiClient.updateSavedTagListFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
+            getSavedFilters();
+            showSnackbarNotification('Filter is deleted.', 5000);
+        } catch (error) {
+            console.error('Delete scope filter failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
     };
-    const onSetDefault = async (index: number): Promise<void> => {
-        showSnackbarNotification('Filter is now default.', 5000);
-        console.log(index);
-        getSavedFilters();
+
+    const onSetDefaultValue = async (defaultValue: boolean, index: number): Promise<void> => {
+        if (savedFilters) {
+            const filter = savedFilters[index];
+            filter.defaultFilter = defaultValue;
+            updateSavedFilter(filter);
+            showSnackbarNotification('Filter is no longer default.', 5000);
+            getSavedFilters();
+        }
     };
 
     const onSelectFilter = (index: number): void => {
@@ -172,11 +192,11 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                                 </Link>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     {filter.defaultFilter ?
-                                        <Button variant='ghost' title="Remove as default filter" onClick={(): Promise<void> => onRemoveDefault(index)}>
+                                        <Button variant='ghost' title="Remove as default filter" onClick={(): Promise<void> => onSetDefaultValue(false, index)}>
                                             {defaultTrueIcon}
                                         </Button>
                                         :
-                                        <Button variant='ghost' title="Set as default" onClick={(): Promise<void> => onSetDefault(index)}>
+                                        <Button variant='ghost' title="Set as default" onClick={(): Promise<void> => onSetDefaultValue(true, index)}>
                                             {defaultFalseIcon}
                                         </Button>
                                     }

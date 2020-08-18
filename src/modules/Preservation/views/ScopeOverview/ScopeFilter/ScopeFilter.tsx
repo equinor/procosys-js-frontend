@@ -313,7 +313,7 @@ const ScopeFilter = ({
 
         const timer = setTimeout(() => {
             handleUpdate();
-        }, 500);
+        }, 1000);
 
         return (): void => {
             clearTimeout(timer);

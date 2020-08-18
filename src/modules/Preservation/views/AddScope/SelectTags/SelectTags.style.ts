@@ -4,6 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
+    width:100%;
     input + svg {
         width: 24px;
         height: 24px;

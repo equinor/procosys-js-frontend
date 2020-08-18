@@ -85,7 +85,7 @@ const requirementUsageSelectItems: Array<SelectItem> = [
 ];
 
 const fieldTypesSelectItems: Array<SelectItem> = [
-    { value: 'CheckBox', text: 'Checkbox' },
+    { value: 'Checkbox', text: 'Checkbox' },
     { value: 'Number', text: 'Number' },
     { value: 'Info', text: 'Info' },
     { value: 'Attachment', text: 'Attachment' }

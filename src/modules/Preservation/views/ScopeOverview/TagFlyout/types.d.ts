@@ -1,6 +1,7 @@
 export interface TagDetails {
     id: number;
     tagNo: string;
+    isVoided: boolean;
     description: string;
     status: string;
     journeyTitle: string;
@@ -23,6 +24,7 @@ export interface TagRequirement {
     intervalWeeks: number;
     nextDueWeeks: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;
     nextDueTimeUtc: Date;

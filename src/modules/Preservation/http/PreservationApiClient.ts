@@ -32,11 +32,11 @@ interface PreservedTagResponse {
             {
                 id: number;
                 requirementTypeCode: string;
+                requirementTypeIcon: string;
                 nextDueTimeUtc: Date;
                 nextDueAsYearAndWeek: string;
                 nextDueWeeks: number;
                 readyToBePreserved: boolean;
-                rowVersion: string;
             }
         ];
         status: string;
@@ -97,6 +97,7 @@ interface ModeResponse {
     id: number;
     title: string;
     forSupplier: boolean;
+    inUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -109,6 +110,7 @@ interface PresJourneyResponse {
 interface TagDetailsResponse {
     id: number;
     tagNo: string;
+    isVoided: boolean;
     description: string;
     status: string;
     journeyTitle: string;
@@ -263,6 +265,7 @@ interface TagRequirementsResponse {
     intervalWeeks: number;
     nextDueWeeks: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;
     nextDueTimeUtc: Date;
@@ -2328,6 +2331,27 @@ class PreservationApiClient extends ApiClient {
                     rowVersion: rowVersion
                 },
                 settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete mode
+    */
+    async deleteMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
             );
         } catch (error) {
             throw getPreservationApiError(error);

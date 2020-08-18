@@ -129,6 +129,7 @@ const TagFlyout = ({
 
     const preservationIsNotStarted = tagDetails ? tagDetails.status === PreservationStatus.NotStarted : false;
     const preservationIsStarted = tagDetails ? tagDetails.status === PreservationStatus.Active : false;
+    const isVoided = tagDetails ? tagDetails.isVoided : false;
 
     const getTabContent = (): JSX.Element => {
 
@@ -141,10 +142,10 @@ const TagFlyout = ({
                 return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} setDirty={setDirty} />;
             }
             case 'actions': {
-                return <ActionTab tagId={tagId} setDirty={setDirty} />;
+                return <ActionTab tagId={tagId} isVoided={tagDetails ? tagDetails.isVoided : false} setDirty={setDirty} />;
             }
             case 'attachments':
-                return <AttachmentTab tagId={tagId} />;
+                return <AttachmentTab tagId={tagId} isVoided={tagDetails ? tagDetails.isVoided : false} />;
             case 'history':
                 return <HistoryTab tagId={tagId} />;
             default:
@@ -163,7 +164,7 @@ const TagFlyout = ({
     return (
         <Container>
             {
-                preservationIsNotStarted &&
+                (!isVoided && preservationIsNotStarted) &&
                 <HeaderNotification>
                     <NotificationIcon>
                         <NotificationsOutlinedIcon />
@@ -180,7 +181,7 @@ const TagFlyout = ({
                     </h1>
                 </TagNoContainer>
                 <HeaderActions>
-                    {preservationIsStarted &&
+                    {(!isVoided && preservationIsStarted) &&
                         <StyledButton
                             disabled={!isPreserveTagButtonEnabled()}
                             onClick={preserveTag}
@@ -192,7 +193,7 @@ const TagFlyout = ({
                             )}
                             {!isPreservingTag && ('Preserved this week')}
                         </StyledButton>}
-                    {preservationIsNotStarted &&
+                    { (!isVoided && preservationIsNotStarted) &&
                         <StyledButton
                             variant='ghost'
                             title='Start preservation'
@@ -206,9 +207,9 @@ const TagFlyout = ({
                     </StyledButton>
                 </HeaderActions>
             </Header>
-            <StatusLabel status={tagDetails && tagDetails.status}>
+            <StatusLabel status={isVoided ? 'Voided' : tagDetails && tagDetails.status}>
                 <span style={{ margin: '0 var(--grid-unit)' }}>
-                    {tagDetails && tagDetails.status}
+                    {isVoided ? 'Voided' : tagDetails && tagDetails.status}
                 </span>
             </StatusLabel>
             <Tabs>

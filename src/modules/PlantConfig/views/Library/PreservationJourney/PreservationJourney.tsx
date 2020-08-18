@@ -573,13 +573,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             }
             <ButtonContainer>
                 {!newJourney.isVoided && newJourney.id != -1 &&
-                    < Button className='buttonIcon' variant="outlined" onClick={duplicateJourney}>
-                        {duplicateIcon} Duplicate
+                    <Button className='buttonIcon' variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
+                        {deleteIcon} Delete
                     </Button>
                 }
-                {(newJourney.isVoided && !newJourney.isInUse) &&
-                    <Button className='buttonIcon' variant="outlined" onClick={deleteJourney}>
-                        {deleteIcon} Delete
+                <ButtonSpacer />
+                {!newJourney.isVoided && newJourney.id != -1 &&
+                    < Button className='buttonIcon' variant="outlined" onClick={duplicateJourney}>
+                        {duplicateIcon} Duplicate
                     </Button>
                 }
                 <ButtonSpacer />

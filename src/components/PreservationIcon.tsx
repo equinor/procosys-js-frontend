@@ -11,7 +11,6 @@ import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
 import PressureIcon from '../assets/icons/Pressure';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import ThermostatIcon from '../assets/icons/Thermostat';
-import MeasureIcon from '@procosys/assets/icons/Measure';
 
 interface IconProps {
     variant: string;
@@ -29,7 +28,6 @@ export const preservationIconList: Array<PreservationTypeIcon> = [
     { code: 'Electrical', title: 'Electrical' },
     { code: 'Heating', title: 'Heating thermostat' },
     { code: 'Installation', title: 'Installation, mechanical' },
-    { code: 'Measure', title: 'Measure' },
     { code: 'Power', title: 'Power' },
     { code: 'Nitrogen', title: 'Nitrogen' },
     { code: 'Pressure', title: 'Pressure' },
@@ -53,8 +51,6 @@ const PreservationIcon = ({
             return <ThermostatIcon />;
         case 'Installation':
             return <BuildOutlinedIcon />;
-        case 'Measure':
-            return <MeasureIcon />;
         case 'Power':
             return <PowerOutlinedIcon />;
         case 'Nitrogen':

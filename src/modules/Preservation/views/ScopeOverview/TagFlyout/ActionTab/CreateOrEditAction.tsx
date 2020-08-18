@@ -10,6 +10,7 @@ import ActionAttachments from './ActionAttachments';
 
 interface ActionTabProps {
     tagId: number;
+    isVoided: boolean;
     actionId?: number;
     title?: string;
     description?: string;
@@ -21,6 +22,7 @@ interface ActionTabProps {
 
 const CreateOrEditAction = ({
     tagId,
+    isVoided,
     actionId,
     title,
     description,
@@ -119,6 +121,7 @@ const CreateOrEditAction = ({
 
                     <ActionAttachments
                         tagId={tagId}
+                        isVoided={isVoided}
                         actionId={actionId}
                         enableActions={true}
                     />

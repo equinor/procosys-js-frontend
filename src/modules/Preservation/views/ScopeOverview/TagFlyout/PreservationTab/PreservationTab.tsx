@@ -83,7 +83,7 @@ const PreservationTab = ({
         }
     };
 
-    const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active';
+    const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active' || tagDetails.isVoided;
 
     const getRequirementsSection = (tagId: number): JSX.Element => {
         if (tagRequirements === null) {
@@ -196,30 +196,31 @@ const PreservationTab = ({
                             </TextFieldReadOnly>
                         </div>
                     }
-                    {editingRemark ?
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="remarkClearIcon"
-                                variant='ghost_icon'
-                                onClick={cancelEditRemark}>
-                                <ClearIcon fontSize='small' />
-                            </StyledButton>
-                            <StyledButton
-                                data-testid="remarkCheckIcon"
-                                variant='ghost_icon'
-                                onClick={saveRemark}>
-                                <CheckIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
-                        :
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="remarkEditIcon"
-                                variant='ghost_icon'
-                                onClick={(): void => setEditingRemark(true)}>
-                                <EditOutlinedIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
+                    { tagDetails.isVoided ? <></> :
+                        editingRemark ?
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="remarkClearIcon"
+                                    variant='ghost_icon'
+                                    onClick={cancelEditRemark}>
+                                    <ClearIcon fontSize='small' />
+                                </StyledButton>
+                                <StyledButton
+                                    data-testid="remarkCheckIcon"
+                                    variant='ghost_icon'
+                                    onClick={saveRemark}>
+                                    <CheckIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
+                            :
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="remarkEditIcon"
+                                    variant='ghost_icon'
+                                    onClick={(): void => setEditingRemark(true)}>
+                                    <EditOutlinedIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
                     }
                 </TextFieldContainer>
                 <TextFieldContainer style={{ width: '55%' }}>
@@ -245,31 +246,31 @@ const PreservationTab = ({
                             </TextFieldReadOnly>
                         </div>
                     }
-
-                    {editingStorageArea ?
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="storageAreaClearIcon"
-                                variant='ghost_icon'
-                                onClick={cancelEditStorageArea}>
-                                <ClearIcon fontSize='small' />
-                            </StyledButton>
-                            <StyledButton
-                                data-testid="storageAreaCheckIcon"
-                                variant='ghost_icon'
-                                onClick={saveStorageArea}>
-                                <CheckIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
-                        :
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="storageAreaEditIcon"
-                                variant='ghost_icon'
-                                onClick={(): void => setEditingStorageArea(true)}>
-                                <EditOutlinedIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
+                    { tagDetails.isVoided ? <></> :
+                        editingStorageArea ?
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="storageAreaClearIcon"
+                                    variant='ghost_icon'
+                                    onClick={cancelEditStorageArea}>
+                                    <ClearIcon fontSize='small' />
+                                </StyledButton>
+                                <StyledButton
+                                    data-testid="storageAreaCheckIcon"
+                                    variant='ghost_icon'
+                                    onClick={saveStorageArea}>
+                                    <CheckIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
+                            :
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="storageAreaEditIcon"
+                                    variant='ghost_icon'
+                                    onClick={(): void => setEditingStorageArea(true)}>
+                                    <EditOutlinedIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
                     }
                 </TextFieldContainer>
             </TagDetailsInputContainer>

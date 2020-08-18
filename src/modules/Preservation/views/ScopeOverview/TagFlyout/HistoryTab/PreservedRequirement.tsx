@@ -36,9 +36,9 @@ const PreservedRequirement = ({
                 setIsLoading(true);
 
                 const preservationRecord = await apiClient.getPreservationRecord(
-                    tagId, 
-                    tagRequirementId, 
-                    preservationRecordGuid, 
+                    tagId,
+                    tagRequirementId,
+                    preservationRecordGuid,
                     (cancel: Canceler) => requestCancellor = cancel);
 
                 setPreservationRecord(preservationRecord);
@@ -65,12 +65,12 @@ const PreservedRequirement = ({
             const url = await apiClient.getDownloadUrlForAttachmentOnPreservationRecord(tagId, tagRequirementId, preservationRecordGuid);
             window.open(url, '_blank');
             showSnackbarNotification('Attachment is downloaded.', 5000, true);
-        } 
+        }
         catch (error) {
             console.error('Not able to get download url for preservation record attachment: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
-    };    
+    };
 
     const getRequirementField = (field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
@@ -123,12 +123,12 @@ const PreservedRequirement = ({
                         {preservationRecord.requirementTypeTitle}
                     </Typography>
                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
-                        <PreservationIcon variant={preservationRecord.requirementTypeCode} />
+                        <PreservationIcon variant={preservationRecord.requirementTypeIcon} />
                     </div>
                     <div style={{ marginLeft: 'auto' }}>
                         <Button variant='ghost' title='Close' onClick={(): void => close()}>
                             <EdsIcon name='close' size={24} />
-                        </Button>                        
+                        </Button>
                     </div>
                 </div>
                 <Typography variant='h6'>

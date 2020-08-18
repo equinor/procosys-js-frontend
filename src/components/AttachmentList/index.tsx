@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Table from './../Table';
-import { Container, AttachmentLink, AddFile, FormFieldSpacer } from './style';
+import { Container, AttachmentLink, AddFile, FormFieldSpacer, StyledButton } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 
-const addIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='add_circle_filled' size={16} />;
+const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 const deletIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
 export interface Attachment {
@@ -15,6 +15,7 @@ export interface Attachment {
 
 interface AttachmentListProps {
     attachments: Attachment[];
+    disabled: boolean;
     addAttachment?: (file: File) => void;
     deleteAttachment?: (attachment: Attachment) => void;
     downloadAttachment: (id: number) => void;
@@ -22,6 +23,7 @@ interface AttachmentListProps {
 
 const AttachmentList = ({
     attachments,
+    disabled,
     addAttachment,
     deleteAttachment,
     downloadAttachment,
@@ -38,7 +40,7 @@ const AttachmentList = ({
     };
 
     const handleDelete = (attachment: Attachment): void => {
-        if (deleteAttachment) {
+        if (!disabled && deleteAttachment) {
             if (confirm(`You want to delete the file '${attachment.fileName}'`)) {
                 deleteAttachment(attachment);
             }
@@ -50,6 +52,14 @@ const AttachmentList = ({
             e.preventDefault();
             const file = e.target.files[0];
             addAttachment(file);
+        }
+    };
+
+    const inputFileRef = useRef<HTMLInputElement>(null);
+
+    const handleAddFile = (): void => {
+        if (inputFileRef.current) {
+            inputFileRef.current.click();
         }
     };
 
@@ -73,9 +83,10 @@ const AttachmentList = ({
                 }}
                 actions={[
                     {
-                        icon: (): JSX.Element => deleteAttachment ? deletIcon : <>...</>,
-                        tooltip: 'Delete attachment',
-                        onClick: (event, rowData): void => handleDelete(rowData)
+                        icon: (): JSX.Element => deleteAttachment ? deletIcon : <></>,
+                        tooltip: disabled ? '' : 'Delete attachment',
+                        onClick: (event, rowData): void => handleDelete(rowData),
+                        disabled: disabled
                     },
                 ]}
                 components={{
@@ -83,10 +94,13 @@ const AttachmentList = ({
                         <AddFile>
                             {addAttachment && (
                                 <form>
-                                    <label htmlFor="addFile">
+                                    <StyledButton
+                                        variant='ghost'
+                                        disabled={disabled}
+                                        onClick={handleAddFile}>
                                         {addIcon} <FormFieldSpacer /> Add file
-                                    </label>
-                                    <input id="addFile" style={{ display: 'none' }} type='file' onChange={handleSubmitFile} />
+                                    </StyledButton>
+                                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
                                 </form>
                             )}
                         </AddFile>

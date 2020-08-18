@@ -7,6 +7,7 @@ import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
 import Checkbox from './../../../../../components/Checkbox';
 
+const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const addIcon = <EdsIcon name='add' size={16} />;
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
@@ -15,6 +16,7 @@ interface ModeItem {
     id: number;
     title: string;
     forSupplier: boolean;
+    inUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -27,7 +29,7 @@ type ModeProps = {
 const Mode = (props: ModeProps): JSX.Element => {
 
     const createNewMode = (): ModeItem => {
-        return { id: -1, title: '', isVoided: false, forSupplier: false, rowVersion: '' };
+        return { id: -1, title: '', isVoided: false, forSupplier: false, inUse: false, rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -133,6 +135,24 @@ const Mode = (props: ModeProps): JSX.Element => {
         setIsEditMode(false);
     };
 
+    const deleteMode = async (): Promise<void> => {
+        if (mode) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.deleteMode(mode.id, mode.rowVersion);
+                setMode(null);
+                setIsDirty(false);
+                setIsEditMode(false);
+                props.setDirtyLibraryType();
+                showSnackbarNotification('Mode is deleted.');
+            } catch (error) {
+                console.error('Error occured when trying to delete mode: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+            setIsLoading(false);
+        }
+    };
+
     const voidMode = async (): Promise<void> => {
         if (mode) {
             setIsLoading(true);
@@ -204,13 +224,18 @@ const Mode = (props: ModeProps): JSX.Element => {
             }
             <ButtonContainer>
                 {newMode.isVoided &&
+                    <Button className='buttonIcon' variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
+                        {deleteIcon} Delete
+                    </Button>
+                }
+                <ButtonSpacer />
+                {newMode.isVoided &&
                     <Button className='buttonIcon' variant="outlined" onClick={unvoidMode}>
                         {unvoidIcon} Unvoid
                     </Button>
                 }
-
                 {!newMode.isVoided && newMode.id != -1 &&
-                    < Button className='buttonIcon' variant="outlined" onClick={voidMode}>
+                    <Button className='buttonIcon' variant="outlined" onClick={voidMode}>
                         {voidIcon} Void
                     </Button>
                 }

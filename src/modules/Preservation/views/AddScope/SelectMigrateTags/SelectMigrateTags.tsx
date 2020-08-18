@@ -148,6 +148,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
                     selection: true,
+                    selectionProps: {disableRipple: true},
                     rowStyle: (data): any => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })

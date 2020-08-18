@@ -82,7 +82,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const rowSelectionChanged = (rowData: TagRow[], row: TagRow): void => {
         // exclude any preserved tags (material-table bug)
 
-        if (rowData.length == 0 && props.scopeTableData.length > 0) {
+        if (rowData.length == 0 && props.scopeTableData && props.scopeTableData.length > 0) {
             removeAllSelectedTagsInScope();
         } else if (rowData.length > 0 && rowData[0].tableData && !row) {
             addAllTagsInScope(rowData);
@@ -121,7 +121,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
 
                         )
                     }
-                    {props.scopeTableData.length > 0 && <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>}
+                    {props.scopeTableData && props.scopeTableData.length > 0 && <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>}
                 </InnerContainer>
                 <ButtonsContainer>
                     <Button onClick={cancel} variant='outlined' >Cancel</Button>
@@ -133,7 +133,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     <Loading title="Loading tags" />
                 </LoadingContainer>}
             {
-                props.scopeTableData.length > 0 && !props.isLoading &&
+                props.scopeTableData && props.scopeTableData.length > 0 && !props.isLoading &&
                 <Table
                     columns={tableColumns}
                     data={props.scopeTableData}

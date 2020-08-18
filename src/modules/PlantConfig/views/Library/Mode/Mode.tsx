@@ -207,8 +207,8 @@ const Mode = (props: ModeProps): JSX.Element => {
                     </Button>
                 }
 
-                {!newMode.isVoided &&
-                    <Button variant="outlined" onClick={voidMode}>
+                {!newMode.isVoided && newMode.id != -1 &&
+                    < Button variant="outlined" onClick={voidMode}>
                         Void
                     </Button>
                 }

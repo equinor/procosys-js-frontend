@@ -10,6 +10,7 @@ import PreservationRequirementDefinition from './PreservationRequirements/Preser
 type LibraryItemProps = {
     libraryType: string;
     libraryItem: string;
+    setSelectedLibraryType: (libraryType: string) => void;
     setDirtyLibraryType: (libraryType: string) => void;
 };
 
@@ -44,13 +45,13 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
             return <PreservationRequirementType
                 requirementTypeId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
-                cancel={(): void => { setLibraryType(LibraryType.PRES_REQUIREMENT); }}
+                cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
             />;
         case LibraryType.PRES_REQUIREMENT_DEFINITION:
             return <PreservationRequirementDefinition
                 requirementDefinitionId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
-                cancel={(): void => { setLibraryType(LibraryType.PRES_REQUIREMENT); }}
+                cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
             />;
         default:
             return <div></div>;

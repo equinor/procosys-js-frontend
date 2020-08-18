@@ -572,8 +572,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }
             <ButtonContainer>
-                {!newJourney.isVoided &&
-                    <Button className='buttonIcon' variant="outlined" onClick={duplicateJourney}>
+                {!newJourney.isVoided && newJourney.id != -1 &&
+                    < Button className='buttonIcon' variant="outlined" onClick={duplicateJourney}>
                         {duplicateIcon} Duplicate
                     </Button>
                 }
@@ -588,7 +588,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         {unvoidIcon} Unvoid
                     </Button>
                 }
-                {!newJourney.isVoided &&
+                {!newJourney.isVoided && newJourney.id != -1 &&
                     <Button className='buttonIcon' variant="outlined" onClick={voidJourney}>
                         {voidIcon} Void
                     </Button>

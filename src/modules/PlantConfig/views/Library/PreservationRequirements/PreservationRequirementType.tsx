@@ -6,6 +6,10 @@ import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Spinner from '@procosys/components/Spinner';
 import PreservationIcon, { preservationIconList, PreservationTypeIcon } from '@procosys/components/PreservationIcon';
+import EdsIcon from '../../../../../components/EdsIcon';
+
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 interface RequirementTypeItem {
     id: number;
@@ -192,14 +196,14 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
             }
             <ButtonContainer>
                 {newRequirementType.isVoided &&
-                    <Button variant="outlined" onClick={unvoidRequirementType}>
-                        Unvoid
+                    <Button className='buttonIcon' variant="outlined" onClick={unvoidRequirementType}>
+                        {unvoidIcon} Unvoid
                     </Button>
                 }
 
-                {!newRequirementType.isVoided &&
-                    <Button variant="outlined" onClick={voidRequirementType}>
-                        Void
+                {!newRequirementType.isVoided && newRequirementType.id != -1 &&
+                    < Button className='buttonIcon' variant="outlined" onClick={voidRequirementType}>
+                        {voidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />
@@ -267,7 +271,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                     {getIconText()}
                 </SelectInput>
             </InputContainer>
-        </Container>
+        </Container >
     );
 };
 

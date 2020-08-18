@@ -162,6 +162,10 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         })();
     }, [requirementTypes]);
 
+    const isDirty = (): boolean => {
+        return JSON.stringify(requirementDefinition) !== JSON.stringify(newRequirementDefinition);
+    };
+
     //Set dirty when forms is updated
     useEffect(() => {
         if (newRequirementDefinition === null) {
@@ -180,7 +184,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             return;
         }
 
-        if (JSON.stringify(requirementDefinition) == JSON.stringify(newRequirementDefinition)) {
+        if (!isDirty()) {
             setIsDirtyAndValid(false);
         } else if (newRequirementDefinition.sortKey != -1 && newRequirementDefinition.usage && newRequirementDefinition.requirementTypeId != -1
             && newRequirementDefinition.title && newRequirementDefinition.defaultIntervalWeeks != -1) {
@@ -218,6 +222,10 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             setNewRequirementDefinition({
                 id: -1, title: '', icon: '', requirementTypeTitle: '', isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
             });
+            setRequirementDefinition({
+                id: -1, title: '', icon: '', requirementTypeTitle: '', isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
+            });
+
         }
     }, [requirementDefinitionId, requirementTypes]);
 
@@ -280,7 +288,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     const cancelChanges = (): void => {
-        if (isDirtyAndValid && !confirm('Do you want to cancel changes without saving?')) {
+        if (isDirty() && !confirm('Do you want to cancel changes without saving?')) {
             return;
         }
         setRequirementDefinition(null);
@@ -381,13 +389,13 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             }
             <ButtonContainer>
                 {newRequirementDefinition.isVoided &&
-                    <Button variant='outlined' onClick={unvoidRequirementDefinition}>
-                        Unvoid
+                    <Button className='buttonIcon' variant='outlined' onClick={unvoidRequirementDefinition}>
+                        {unvoidIcon} Unvoid
                     </Button>
                 }
-                {!newRequirementDefinition.isVoided &&
-                    <Button variant='outlined' onClick={voidRequirementDefinition}>
-                        Void
+                {!newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
+                    < Button className='buttonIcon' variant='outlined' onClick={voidRequirementDefinition}>
+                        {voidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />
@@ -470,7 +478,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                         label={'Set default interval'}
                         disabled={newRequirementDefinition.isVoided}
                     >
-                        {newRequirementDefinition.defaultIntervalWeeks > -1 && `${newRequirementDefinition.defaultIntervalWeeks} Weeks` || 'Select interval'}
+                        {newRequirementDefinition.defaultIntervalWeeks > -1 && `${newRequirementDefinition.defaultIntervalWeeks} weeks` || 'Select interval'}
                     </SelectInput>
                 </FormFieldSpacer>
             </InputContainer>
@@ -562,7 +570,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         {deleteIcon}
                                     </Button>)
                                 }
-                                {(!field.isVoided) &&
+                                {(!field.isVoided && field.id != null) &&
                                     (<Button disabled={newRequirementDefinition.isVoided} className='voidUnvoid' variant='ghost'
                                         onClick={(): void => {
                                             field.isVoided = true;

@@ -57,7 +57,7 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
 
     }
 
-    return (<div>Something when wrong. Node type is not set correctly.</div>);
+    return (<div>Something went wrong. Node type is not set correctly.</div>);
 };
 
 export default PreservationRequirements;

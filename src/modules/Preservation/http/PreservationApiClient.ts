@@ -32,11 +32,11 @@ interface PreservedTagResponse {
             {
                 id: number;
                 requirementTypeCode: string;
+                requirementTypeIcon: string;
                 nextDueTimeUtc: Date;
                 nextDueAsYearAndWeek: string;
                 nextDueWeeks: number;
                 readyToBePreserved: boolean;
-                rowVersion: string;
             }
         ];
         status: string;
@@ -250,6 +250,7 @@ interface TagRequirementsResponse {
     intervalWeeks: number;
     nextDueWeeks: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;
     nextDueTimeUtc: Date;
@@ -2241,7 +2242,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 {
                     data: { rowVersion: rowVersion }
-                }            
+                }
             );
         } catch (error) {
             throw getPreservationApiError(error);

@@ -72,9 +72,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
-    const [isDirty, setIsDirty] = useState<boolean>(false);
-    const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
     const [canSave, setCanSave] = useState<boolean>(false);
+    const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
 
     const {
         preservationApiClient,
@@ -141,7 +140,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 (response) => {
                     setJourney(response);
                     setNewJourney(cloneJourney(response));
-                    setIsDirty(false);
                 }
             );
         } catch (error) {
@@ -299,15 +297,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         } else {
             saveUpdatedJourney();
         }
-        setIsDirty(false);
     };
 
     const cancel = (): void => {
-        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
+        if (canSave && !confirm('Do you want to cancel changes without saving?')) {
             return;
         }
         setJourney(null);
-        setIsDirty(false);
+        setCanSave(false);
         setIsEditMode(false);
     };
 
@@ -349,7 +346,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.deleteJourney(journey.id, journey.rowVersion);
                 setJourney(null);
-                setIsDirty(false);
+                setCanSave(false);
                 setIsEditMode(false);
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Journey is deleted.', 5000);
@@ -379,17 +376,16 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const initNewJourney = (): void => {
         setNewJourney(createNewJourney());
+        setJourney(cloneJourney(newJourney));
         setIsEditMode(true);
     };
 
     const setJourneyTitleValue = (value: string): void => {
-        setIsDirty(true);
         newJourney.title = value;
         setNewJourney(cloneJourney(newJourney));
     };
 
     const setModeValue = (value: number, index: number): void => {
-        setIsDirty(true);
         newJourney.steps[index].mode.id = value;
         setNewJourney(cloneJourney(newJourney));
     };
@@ -397,7 +393,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const setResponsibleValue = (event: React.MouseEvent, stepIndex: number, filtRespIndex: number): void => {
         event.preventDefault();
         if (newJourney.steps) {
-            setIsDirty(true);
             newJourney.steps[stepIndex].responsible.code = filteredResponsibles[filtRespIndex].value;
             setNewJourney(cloneJourney(newJourney));
         }
@@ -405,7 +400,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const setStepTitleValue = (value: string, index: number): void => {
         if (newJourney.steps) {
-            setIsDirty(true);
             newJourney.steps[index].title = value;
             setNewJourney(cloneJourney(newJourney));
         }
@@ -413,7 +407,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const setStepAutoTransValue = (value: string, index: number): void => {
         if (newJourney.steps) {
-            setIsDirty(true);
             newJourney.steps[index].autoTransferMethod = value;
             setNewJourney(cloneJourney(newJourney));
         }
@@ -534,6 +527,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
     }, [filterForResponsibles, mappedResponsibles]);
 
+    /** Update isDirtyAndValid when newJourney changes */
     useEffect(() => {
         if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
             setCanSave(false);
@@ -608,7 +602,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         {unvoidIcon} Unvoid
                     </Button>
                 }
-                {!newJourney.isVoided &&
+                {!newJourney.isVoided && newJourney.id != -1 &&
                     <Button className='buttonIcon' variant="outlined" onClick={voidJourney}>
                         {voidIcon} Void
                     </Button>
@@ -618,7 +612,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided || !isDirty || !canSave} title={canSave ? '' : saveTitle}>
+                <Button onClick={handleSave} disabled={newJourney.isVoided || !canSave} title={canSave ? '' : saveTitle}>
                     Save
                 </Button>
             </ButtonContainer>
@@ -737,10 +731,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     <FormFieldSpacer>
                                         {
                                             <>
-                                                <Button disabled={isDirty || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepUp(index)}>
+                                                <Button disabled={canSave || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepUp(index)}>
                                                     {upIcon}
                                                 </Button>
-                                                <Button disabled={isDirty || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepDown(index)}>
+                                                <Button disabled={canSave || newJourney.isVoided || step.id === -1 || newJourney.steps.length < 2} variant='ghost' onClick={(): void => moveStepDown(index)}>
                                                     {downIcon}
                                                 </Button>
                                             </>
@@ -751,13 +745,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             </Button>)
                                         }
                                         {(step.id != -1 && !step.isVoided) &&
-                                            (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                            (<Button disabled={canSave} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
                                                 {voidIcon} Void
                                             </Button>)
                                         }
 
                                         {(step.id != -1 && step.isVoided) &&
-                                            (<Button disabled={isDirty} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                            (<Button disabled={canSave} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
                                                 {unvoidIcon} Unvoid
                                             </Button>)
                                         }
@@ -769,7 +763,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 })}
             </StepsContainer>
             {
-                (isDirty && newJourney.steps.length > 0) &&
+                (canSave && newJourney.steps.length > 0) &&
                 <div style={{ display: 'flex', marginLeft: 'var(--grid-unit)', marginBottom: 'calc(var(--grid-unit) * 2)' }}>
                     <Typography variant="caption">Note: Some actions on steps will be disabled until changes are saved.</Typography>
                 </div>

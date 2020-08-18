@@ -87,7 +87,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         try {
             const filter = savedFilters && savedFilters[index];
             if (filter) {
-                await apiClient.deleteSavedTagListFilter(1, filter.rowVersion);
+                await apiClient.deleteSavedTagListFilter(filter.id, filter.rowVersion);
                 getSavedFilters();
                 showSnackbarNotification('Filter is deleted.', 5000);
             }
@@ -97,14 +97,13 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         }
     };
 
-
     const updateSavedFilter = async (filter: SavedFilter): Promise<void> => {
         try {
             await apiClient.updateSavedTagListFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
             getSavedFilters();
-            showSnackbarNotification('Filter is deleted.', 5000);
+            showSnackbarNotification('Filter is updated.', 5000);
         } catch (error) {
-            console.error('Delete scope filter failed: ', error.message, error.data);
+            console.error('Update scope filter failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };

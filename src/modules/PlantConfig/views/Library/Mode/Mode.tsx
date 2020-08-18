@@ -8,6 +8,8 @@ import Spinner from '@procosys/components/Spinner';
 import Checkbox from './../../../../../components/Checkbox';
 
 const addIcon = <EdsIcon name='add' size={16} />;
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 interface ModeItem {
     id: number;
@@ -202,14 +204,14 @@ const Mode = (props: ModeProps): JSX.Element => {
             }
             <ButtonContainer>
                 {newMode.isVoided &&
-                    <Button variant="outlined" onClick={unvoidMode}>
-                        Unvoid
+                    <Button className='buttonIcon' variant="outlined" onClick={unvoidMode}>
+                        {unvoidIcon} Unvoid
                     </Button>
                 }
 
                 {!newMode.isVoided && newMode.id != -1 &&
-                    < Button variant="outlined" onClick={voidMode}>
-                        Void
+                    < Button className='buttonIcon' variant="outlined" onClick={voidMode}>
+                        {voidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />

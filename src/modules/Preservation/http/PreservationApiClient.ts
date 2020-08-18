@@ -1722,7 +1722,7 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
-     * Add requirement type 
+     * Add requirement definition 
      */
     async addRequirementDefinition(requirementTypeId: number, sortKey: number, usage: string, title: string, defaultIntervalWeeks: number, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<number> {
         const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions`;

@@ -205,6 +205,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                     page: query.page,
                     totalCount: result.maxAvailable
                 });
+
             });
         });
     }
@@ -243,7 +244,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                         showTitle: false,
                         draggable: false,
                         selection: true,
-                        selectionProps: {disableRipple: true},
+                        selectionProps: { disableRipple: true },
                         padding: 'dense',
                         pageSize: this.props.pageSize,
                         emptyRowsWhenPaging: false,

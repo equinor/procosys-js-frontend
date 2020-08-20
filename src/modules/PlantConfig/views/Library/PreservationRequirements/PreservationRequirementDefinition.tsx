@@ -8,6 +8,7 @@ import Spinner from '@procosys/components/Spinner';
 import PreservationIcon from '@procosys/components/PreservationIcon';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Checkbox from './../../../../../components/Checkbox';
+import { Canceler } from 'axios';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -56,6 +57,7 @@ interface RequirementDefinitionItem {
     icon: string;
     isVoided: boolean;
     sortKey: number;
+    isInUse: boolean;
     rowVersion: string;
     fields: Field[];
 }
@@ -199,34 +201,56 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     //Find and set the requirement definition
-    useEffect((): void => {
-        if (requirementTypes.length === 0) {
-            return;
-        }
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
 
-        if (requirementDefinitionId && requirementDefinitionId > -1) {
-            requirementTypes.forEach((reqType) => {
-                const reqDef = reqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
-                if (reqDef) {
-                    const requirementDef: RequirementDefinitionItem = {
-                        ...reqDef,
-                        icon: reqType.icon,
-                        requirementTypeId: reqType.id,
-                        requirementTypeTitle: reqType.title,
-                    };
-                    setRequirementDefinition(requirementDef);
-                    setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
-                }
-            });
-        } else {
-            setNewRequirementDefinition({
-                id: -1, title: '', icon: '', requirementTypeTitle: '', isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
-            });
-            setRequirementDefinition({
-                id: -1, title: '', icon: '', requirementTypeTitle: '', isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
-            });
+        (async (): Promise<void> => {
+            if (requirementTypes.length === 0) {
+                return;
+            }
 
-        }
+            if (requirementDefinitionId && requirementDefinitionId > -1) {
+                requirementTypes.forEach(async (reqType) => {
+                    const reqDef = reqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
+                    if (reqDef) {
+                        try {
+                            //Note: We need to fetch the single requirement type, to get the 'inUse' flag. 
+                            const response = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
+                            const singleReqType: RequirementTypeItem = response.data;
+                            const singleReqDef = singleReqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
+                            if (singleReqDef) {
+                                const requirementDef: RequirementDefinitionItem = {
+                                    ...singleReqDef,
+                                    icon: reqType.icon,
+                                    requirementTypeId: reqType.id,
+                                    requirementTypeTitle: reqType.title,
+                                };
+                                setRequirementDefinition(requirementDef);
+                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
+                            }
+
+                        } catch (error) {
+                            console.error('Get requirement type failed: ', error.message, error.data);
+                            showSnackbarNotification(error.message, 5000);
+                        }
+                        setIsLoading(false);
+                    }
+                });
+            } else {
+                setNewRequirementDefinition({
+                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
+                });
+                setRequirementDefinition({
+                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
+                });
+
+            }
+
+        })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
     }, [requirementDefinitionId, requirementTypes]);
 
     const saveNew = async (): Promise<void> => {
@@ -311,6 +335,23 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
     };
 
+    const deleteRequirementDefinition = async (): Promise<void> => {
+        if (newRequirementDefinition) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.deleteRequirementDefinition(newRequirementDefinition.requirementTypeId, newRequirementDefinition.id, newRequirementDefinition.rowVersion);
+                getRequirementTypes();
+                props.setDirtyLibraryType();
+                props.cancel();
+                showSnackbarNotification('Requirement definition is deleted.', 5000);
+            } catch (error) {
+                console.error('Error occured when trying to delete requirement definition: ', error.message, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+            setIsLoading(false);
+        }
+    };
+
     const unvoidRequirementDefinition = async (): Promise<void> => {
         if (newRequirementDefinition) {
             setIsLoading(true);
@@ -388,6 +429,14 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement definition is voided</Typography>
             }
             <ButtonContainer>
+                {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
+                    <>
+                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementDefinition} disabled={newRequirementDefinition.isInUse} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use cannot be deleted' : ''}>
+                            {deleteIcon} Delete
+                        </Button>
+                        <ButtonSpacer />
+                    </>
+                }
                 {newRequirementDefinition.isVoided &&
                     <Button className='buttonIcon' variant='outlined' onClick={unvoidRequirementDefinition}>
                         {unvoidIcon} Unvoid

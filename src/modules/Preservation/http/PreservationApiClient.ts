@@ -202,12 +202,10 @@ interface RequirementTypesResponse {
     }];
 }
 
-
 interface RequirementTypeResponse {
     resultType: string;
     errors: string[];
     data: {
-
         id: number;
         code: string;
         title: string;
@@ -215,9 +213,31 @@ interface RequirementTypeResponse {
         icon: string;
         sortKey: number;
         rowVersion: string;
+        isInUse: boolean;
+        requirementDefinitions: [{
+            id: number;
+            title: string;
+            isVoided: boolean;
+            defaultIntervalWeeks: number;
+            sortKey: number;
+            usage: string;
+            isInUse: boolean;
+            rowVersion: string;
+            fields: [{
+                id: number;
+                label: string;
+                isVoided: boolean;
+                sortKey: number;
+                fieldType: string;
+                unit: string;
+                showPrevious: boolean;
+                rowVersion: string;
+            }];
+            needsUserInput: boolean;
+        }];
+
     };
 }
-
 
 interface ResponsibleEntity {
     id: string;
@@ -1725,6 +1745,25 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Delete requirement type 
+     */
+    async deleteRequirementType(requirementTypeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Add requirement definition 
      */
     async addRequirementDefinition(requirementTypeId: number, sortKey: number, usage: string, title: string, defaultIntervalWeeks: number, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<number> {
@@ -1821,12 +1860,31 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+    * Delete requirement definition 
+    */
+    async deleteRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Get actions
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getActions(tagId: number, setRequestCanceller?: RequestCanceler): Promise<ActionResponse[]> {
-        const endpoint = `/Tags/${tagId}/Actions`;
+        const endpoint = `/ Tags / ${tagId}/Actions`;
         const settings: AxiosRequestConfig = {
             params: {
                 tagId: tagId,

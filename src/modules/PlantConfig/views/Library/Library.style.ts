@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -12,12 +12,19 @@ export const Divider = styled.div`
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
 `;
 
-export const LibraryItemContainer = styled.div`
+interface LibraryItemProps {
+    addPaddingRight: boolean;
+}
+
+export const LibraryItemContainer = styled.div<LibraryItemProps>`
     display: flex;
     flex-direction: column;
     flex: 1;
     overflow-y: scroll;
     overflow-x: hidden;
+    ${(props): any => props.addPaddingRight && css`
+        padding-right: calc(var(--grid-unit) * 2);
+    `}
 `;
 
 export const Breadcrumbs = styled.section`

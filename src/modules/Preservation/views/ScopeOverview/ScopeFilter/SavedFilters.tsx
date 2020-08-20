@@ -177,7 +177,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                 <Button onClick={(): void => { setSaveFilterMode(true); }} disabled={props.selectedSavedFilterTitle}>
                     Save current filter
                 </Button>
-            </div>¨
+            </div>
 
             {isLoading && <Spinner />}
 

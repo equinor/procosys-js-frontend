@@ -177,50 +177,36 @@ interface JourneyResponse {
     rowVersion: string;
 }
 
-interface RequirementTypesResponse {
-    resultType: string;
-    errors: string[];
-    data: [{
-        id: number;
-        code: string;
-        title: string;
-        isVoided: boolean;
-        icon: string;
-        sortKey: number;
-        requirementDefinitions: [{
-            id: number;
-            title: string;
-            isVoided: boolean;
-            defaultIntervalWeeks: number;
-            sortKey: number;
-            fields: [{
-                id: number;
-                label: string;
-                isVoided: boolean;
-                sortKey: string;
-                fieldType: string;
-                unit: string | null;
-                showPrevious: boolean;
-            }];
-            needsUserInput: boolean;
-        }];
-        rowVersion: string;
-    }];
-}
-
 interface RequirementTypeResponse {
-    resultType: string;
-    errors: string[];
-    data: {
-
+    id: number;
+    code: string;
+    title: string;
+    isVoided: boolean;
+    icon: string;
+    sortKey: number;
+    rowVersion: string;
+    isInUse: boolean;
+    requirementDefinitions: [{
         id: number;
-        code: string;
         title: string;
         isVoided: boolean;
-        icon: string;
+        defaultIntervalWeeks: number;
         sortKey: number;
+        usage: string;
+        isInUse: boolean;
         rowVersion: string;
-    };
+        fields: [{
+            id: number;
+            label: string;
+            isVoided: boolean;
+            sortKey: number;
+            fieldType: string;
+            unit: string;
+            showPrevious: boolean;
+            rowVersion: string;
+        }];
+        needsUserInput: boolean;
+    }];
 }
 
 interface ResponsibleEntity {
@@ -244,6 +230,17 @@ interface RequirementForUpdate {
     intervalWeeks: number;
     isVoided: boolean | undefined;
     rowVersion: string | undefined;
+}
+
+interface FieldsFormInput {
+    id: number | null;
+    rowVersion: string | null;
+    isVoided: boolean | null;
+    sortKey: number;
+    fieldType: string;
+    label: string;
+    unit: string;
+    showPrevious: boolean;
 }
 
 interface UpdateTagFunctionRequestData {
@@ -1673,7 +1670,7 @@ class PreservationApiClient extends ApiClient {
      * @param includeVoided Include voided Requirements in result
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypesResponse> {
+    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse[]> {
         const endpoint = '/RequirementTypes';
         const settings: AxiosRequestConfig = {
             params: {
@@ -1683,7 +1680,7 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<RequirementTypesResponse>(endpoint, settings);
+            const result = await this.client.get<RequirementTypeResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {
@@ -1806,7 +1803,139 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Delete requirement type 
+     */
+    async deleteRequirementType(requirementTypeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 
+    /**
+     * Add requirement definition 
+     */
+    async addRequirementDefinition(requirementTypeId: number, sortKey: number, usage: string, title: string, defaultIntervalWeeks: number, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    sortKey,
+                    usage,
+                    title,
+                    defaultIntervalWeeks,
+                    fields
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update requirement definition 
+     */
+    async updateRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, title: string, defaultIntervalWeeks: number, usage: string, sortKey: number,
+        rowVersion: string, updatedFields: FieldsFormInput[], newFields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    usage: usage,
+                    title: title,
+                    defaultIntervalWeeks: defaultIntervalWeeks,
+                    sortKey: sortKey,
+                    rowVersion: rowVersion,
+                    updatedFields: updatedFields,
+                    newFields: newFields
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Void requirement definition 
+    */
+    async voidRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/Void`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Unvoid requirement definition 
+    */
+    async unvoidRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete requirement definition 
+    */
+    async deleteRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 
     /**
      * Get actions

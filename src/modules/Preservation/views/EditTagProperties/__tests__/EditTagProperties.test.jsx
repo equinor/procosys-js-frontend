@@ -39,9 +39,8 @@ const mockJourneys = [{
     }]
 }];
 
-const mockRequirementTypes = {
-    data:
-    [{
+const mockRequirementTypes = [
+    {
         id: 1,
         code: 'ROTATION',
         title: 'Rotate something',
@@ -61,7 +60,8 @@ const mockRequirementTypes = {
                 showPrevious: false
             }]
         }]
-    }, {
+    }, 
+    {
         id: 1,
         code: 'HEATING',
         title: 'Heating',
@@ -81,8 +81,7 @@ const mockRequirementTypes = {
                 showPrevious: false
             }]
         }]
-    }]
-};
+    }];
 
 const mockRequirements = [{
     requirementDefinitionId: -1,

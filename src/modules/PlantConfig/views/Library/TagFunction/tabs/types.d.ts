@@ -20,6 +20,7 @@ export interface RequirementDefinition {
     defaultIntervalWeeks: number;
     sortKey: number;
     fields: RequirementField[];
+    usage: string;
     needsUserInput: boolean;
 }
 
@@ -27,7 +28,7 @@ export interface RequirementField {
     id: number;
     label: string;
     isVoided: boolean;
-    sortKey: string;
+    sortKey: number;
     fieldType: string;
     unit: string | null;
     showPrevious: boolean;

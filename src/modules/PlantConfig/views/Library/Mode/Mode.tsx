@@ -7,7 +7,10 @@ import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
 import Checkbox from './../../../../../components/Checkbox';
 
+const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const addIcon = <EdsIcon name='add' size={16} />;
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 interface ModeItem {
     id: number;
@@ -22,10 +25,6 @@ type ModeProps = {
     modeId: number;
     setDirtyLibraryType: () => void;
 };
-
-const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const voidIcon = <EdsIcon name='delete_forever' size={16} />;
-const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 const Mode = (props: ModeProps): JSX.Element => {
 
@@ -235,8 +234,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                         {unvoidIcon} Unvoid
                     </Button>
                 }
-
-                {!newMode.isVoided &&
+                {!newMode.isVoided && newMode.id != -1 &&
                     <Button className='buttonIcon' variant="outlined" onClick={voidMode}>
                         {voidIcon} Void
                     </Button>

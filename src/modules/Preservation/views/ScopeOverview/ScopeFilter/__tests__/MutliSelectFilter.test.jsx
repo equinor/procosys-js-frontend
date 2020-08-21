@@ -31,8 +31,8 @@ describe('<MultiSelectFilter />', () => {
     });
 
     it('Should trigger onChange when item is selected', () => {
-        const spyFunc = jest.fn();
-        const {getByText} = render(<MultiSelectFilter items={filterValues} onChange={spyFunc} headerLabel="Header" inputPlaceholder="Select" icon={testEdsIcon} />);
+        const spyFunc = jest.fn();  
+        const {getByText} = render(<MultiSelectFilter items={filterValues} onChange={spyFunc} headerLabel="Header" inputPlaceholder="Select" icon={testEdsIcon} selectedItems={[]} />);
         getByText('Header').click();
         getByText('Select').click();
         getByText(filterValues[1].title).click();
@@ -40,35 +40,15 @@ describe('<MultiSelectFilter />', () => {
         expect(spyFunc).toHaveBeenLastCalledWith([filterValues[1]]);
     });
 
-    it('Should trigger onChange with multiple items', () => {
+    it('Should trigger onChange with multiple items', async () => {
         const spyFunc = jest.fn();
-        const {getByText} = render(<MultiSelectFilter items={filterValues} onChange={spyFunc} headerLabel="Header" inputPlaceholder="Select" icon={testEdsIcon} />);
+        const {getByText} = render(<MultiSelectFilter items={filterValues} onChange={spyFunc} headerLabel="Header" inputPlaceholder="Select" icon={testEdsIcon} selectedItems={['1']}/>);
         getByText('Header').click();
-        getByText('Select').click();
-        getByText(filterValues[0].title).click();
+        
         getByText('Select').click();
         getByText(filterValues[1].title).click();
-        expect(spyFunc).toHaveBeenCalledTimes(2);
+        expect(spyFunc).toHaveBeenCalledTimes(1);
         expect(spyFunc).toHaveBeenLastCalledWith([filterValues[0],filterValues[1]]);
-    });
 
-    it('Should display all selected items', () => {
-        const spyFunc = jest.fn();
-        const {getByText} = render(<MultiSelectFilter items={filterValues} onChange={spyFunc} headerLabel="Header" inputPlaceholder="Select" icon={testEdsIcon} />);
-        getByText('Header').click();
-        getByText('Select').click();
-        getByText(filterValues[1].title).click();
-        expect(getByText(filterValues[1].title)).toBeInTheDocument();
-    });
-
-    it('Should trigger onChange when item gets deselected', () => {
-        const spyFunc = jest.fn();
-        const {getByText} = render(<MultiSelectFilter items={filterValues} onChange={spyFunc} headerLabel="Header"  inputPlaceholder="Select" icon={testEdsIcon} />);
-        getByText('Header').click();
-        getByText('Select').click();
-        getByText(filterValues[1].title).click();
-        getByText(filterValues[1].title).click();
-        expect(spyFunc).toHaveBeenCalledTimes(2);
-        expect(spyFunc).toHaveBeenLastCalledWith([]);
     });
 });

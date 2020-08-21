@@ -407,7 +407,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             <ButtonContainer>
                 {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
                     <>
-                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementDefinition} disabled={newRequirementDefinition.isInUse} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use cannot be deleted' : ''}>
+                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementDefinition} disabled={newRequirementDefinition.isInUse} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields cannot be deleted.' : ''}>
                             {deleteIcon} Delete
                         </Button>
                         <ButtonSpacer />
@@ -624,7 +624,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             </FieldsContainer >
             <InputContainer>
                 <IconContainer>
-                    <Button variant='ghost' onClick={(): void => addField()}>
+                    <Button disabled={newRequirementDefinition.isVoided} variant='ghost' onClick={(): void => addField()}>
                         {addIcon} Add field
                     </Button>
                 </IconContainer>

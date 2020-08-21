@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import TagFunction from './TagFunction/TagFunction';
 import { LibraryType } from './Library';
 import PreservationJourney from './PreservationJourney/PreservationJourney';
@@ -16,13 +16,7 @@ type LibraryItemProps = {
 
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
 
-    const [libraryType, setLibraryType] = useState<string>(props.libraryType);
-
-    useEffect((): void => {
-        setLibraryType(props.libraryType);
-    }, [props.libraryType]);
-
-    switch (libraryType) {
+    switch (props.libraryType) {
         case LibraryType.TAG_FUNCTION: {
             const [registerCode, tagFunctionCode] = props.libraryItem.split('|');
             return <TagFunction tagFunctionCode={tagFunctionCode} registerCode={registerCode} />;

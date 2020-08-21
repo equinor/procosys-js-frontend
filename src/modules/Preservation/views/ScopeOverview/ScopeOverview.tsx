@@ -23,6 +23,8 @@ import VoidDialog from './VoidDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import { Typography } from '@equinor/eds-core-react';
+import { Canceler } from '@procosys/http/HttpClient';
+
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -98,6 +100,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
+    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -151,9 +154,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeListCallback.current = callback;
     };
 
+
+    const cancelerRef = useRef<Canceler | null>();
+
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
         try {
-            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter).then(
+            cancelerRef.current && cancelerRef.current();
+            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
                 (response) => {
                     setNumberOfTags(response.maxAvailable);
                     return response;
@@ -161,7 +168,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             );
         } catch (error) {
             console.error('Get tags failed: ', error.message, error.data);
-            showSnackbarNotification(error.message);
+            if (!error.isCancel) {
+                showSnackbarNotification(error.message);
+            }
         }
         return { maxAvailable: 0, tags: [] };
     };
@@ -662,7 +671,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

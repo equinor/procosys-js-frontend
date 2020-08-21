@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
 import CloseIcon from '@material-ui/icons/Close';
+import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -13,11 +14,15 @@ import RadioGroupFilter from './RadioGroupFilter';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
 import EdsIcon from '@procosys/components/EdsIcon';
 import AreaIcon from '@procosys/assets/icons/Area';
+import SavedFilters from './SavedFilters';
+import Popover from '@material-ui/core/Popover';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+    selectedSavedFilterTitle: string | null;
+    setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     setNumberOfFilters: (activeFilters: number) => void;
     numberOfTags: number | undefined;
 }
@@ -125,6 +130,8 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
+    selectedSavedFilterTitle,
+    setSelectedSavedFilterTitle,
     setNumberOfFilters,
     numberOfTags
 }: ScopeFilterProps): JSX.Element => {
@@ -141,6 +148,8 @@ const ScopeFilter = ({
     const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
     const [filterActive, setFilterActive] = useState<boolean>(false);
+    const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
+    const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
 
@@ -293,20 +302,41 @@ const ScopeFilter = ({
     };
 
     const responsibleFilterUpdated = (values: { id: string; title: string }[]): void => {
-        setLocalTagListFilter((old): TagListFilter => { return { ...old, responsibleIds: values.map(itm => itm.id) }; });
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, responsibleIds: values.map(itm => String(itm.id)) }; });
     };
 
     const areaFilterUpdated = (values: { id: string; title: string }[]): void => {
-        setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => itm.id) }; });
+        setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => String(itm.id)) }; });
     };
 
+    //Handle changes in text field filters
+    useEffect(() => {
+        if (isFirstRender.current) return;
+
+        const handleUpdate = async (): Promise<void> => {
+            triggerScopeListUpdate();
+            const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+            setFilterActive(activeFilters.length > 0);
+            setNumberOfFilters(activeFilters.length);
+        };
+
+        const timer = setTimeout(() => {
+            handleUpdate();
+        }, 1000);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
+    }, [localTagListFilter.tagNoStartsWith, localTagListFilter.callOffStartsWith, localTagListFilter.commPkgNoStartsWith, localTagListFilter.mcPkgNoStartsWith, localTagListFilter.purchaseOrderNoStartsWith, localTagListFilter.storageAreaStartsWith]);
+
+    //Handle changes in all filters except text field filters
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerScopeListUpdate();
         const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
         setFilterActive(activeFilters.length > 0);
         setNumberOfFilters(activeFilters.length);
-    }, [localTagListFilter]);
+    }, [localTagListFilter.modeIds, localTagListFilter.actionStatus, localTagListFilter.areaCodes, localTagListFilter.disciplineCodes, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.preservationStatus, localTagListFilter.requirementTypeIds, localTagListFilter.responsibleIds, localTagListFilter.tagFunctionCodes, localTagListFilter.voidedFilter]);
 
     useEffect(() => {
         isFirstRender.current = false;
@@ -325,10 +355,38 @@ const ScopeFilter = ({
         <Container>
             <Header filterActive={filterActive}>
                 <h1>Filter</h1>
-                <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
-                    <CloseIcon />
-                </Button>
+                <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
+                        showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
+                        setAnchorElement(event.currentTarget);
+                    }}>
+                        <SavedFiltersIcon />
+                    </Button>
+                    <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
+                        <CloseIcon />
+                    </Button>
+                </div>
             </Header>
+            <Popover
+                id={'savedFilter-popover'}
+                open={showSavedFilters}
+                anchorEl={anchorElement}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                onClose={(): void => setShowSavedFilters(false)}
+            >
+                <SavedFilters tagListFilter={tagListFilter}
+                    selectedSavedFilterTitle={selectedSavedFilterTitle}
+                    setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                    setTagListFilter={setLocalTagListFilter}
+                    onCloseRequest={(): void => setShowSavedFilters(false)} />
+            </Popover >
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>
@@ -441,8 +499,8 @@ const ScopeFilter = ({
             <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} icon={'pressure'} />
             <CheckboxFilter title='Tag Functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'verticle_split'} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} icon={'category'} />
-            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
-            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />} />
+            <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} selectedItems={localTagListFilter.responsibleIds} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
+            <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} selectedItems={localTagListFilter.areaCodes} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />} />
 
         </Container >
     );

@@ -9,6 +9,7 @@ import PreservationIcon from '@procosys/components/PreservationIcon';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Checkbox from './../../../../../components/Checkbox';
 import { Canceler } from 'axios';
+import { RequirementType } from './types';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -16,36 +17,6 @@ const downIcon = <EdsIcon name='arrow_down' size={16} />;
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
-
-interface RequirementType {
-    id: number;
-    code: string;
-    title: string;
-    isVoided: boolean;
-    icon: string;
-    sortKey: number;
-    requirementDefinitions: [{
-        id: number;
-        title: string;
-        isVoided: boolean;
-        defaultIntervalWeeks: number;
-        sortKey: number;
-        usage: string;
-        rowVersion: string;
-        fields: [{
-            id: number;
-            label: string;
-            isVoided: boolean;
-            sortKey: number;
-            fieldType: string;
-            unit: string;
-            showPrevious: boolean;
-            rowVersion: string;
-        }];
-        needsUserInput: boolean;
-    }];
-    rowVersion: string;
-}
 
 interface RequirementDefinitionItem {
     id: number;
@@ -125,7 +96,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         setIsLoading(true);
         try {
             const response = await preservationApiClient.getRequirementTypes(true);
-            setRequirementTypes(response.data);
+            setRequirementTypes(response);
         } catch (error) {
             console.error('Get requirement types failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -216,7 +187,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                         try {
                             //Note: We need to fetch the single requirement type, to get the 'inUse' flag. 
                             const response = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
-                            const singleReqType: RequirementTypeItem = response.data;
+                            const singleReqType: RequirementType = response;
                             const singleReqDef = singleReqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
                             if (singleReqDef) {
                                 const requirementDef: RequirementDefinitionItem = {
@@ -224,6 +195,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     icon: reqType.icon,
                                     requirementTypeId: reqType.id,
                                     requirementTypeTitle: reqType.title,
+
                                 };
                                 setRequirementDefinition(requirementDef);
                                 setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
@@ -255,6 +227,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     const saveNew = async (): Promise<void> => {
         if (newRequirementDefinition) {
+            setIsLoading(true);
             try {
                 const requirementDefinitionId = await preservationApiClient.addRequirementDefinition(
                     newRequirementDefinition.requirementTypeId,
@@ -272,11 +245,13 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 console.error('Add requirement definition failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
+            setIsLoading(false);
         }
     };
 
     const saveUpdated = async (): Promise<void> => {
         if (newRequirementDefinition) {
+            setIsLoading(true);
             try {
                 const newFields = newRequirementDefinition.fields.filter((field) => field.id == null);
                 const updatedFields = newRequirementDefinition.fields.filter((field) => field.id != null);
@@ -300,6 +275,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 console.error('Update requirement definition failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
+            setIsLoading(false);
         }
     };
 

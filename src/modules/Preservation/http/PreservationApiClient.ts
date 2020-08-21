@@ -168,75 +168,36 @@ interface JourneyResponse {
     rowVersion: string;
 }
 
-interface RequirementTypesResponse {
-    resultType: string;
-    errors: string[];
-    data: [{
-        id: number;
-        code: string;
-        title: string;
-        isVoided: boolean;
-        icon: string;
-        sortKey: number;
-        requirementDefinitions: [{
-            id: number;
-            title: string;
-            isVoided: boolean;
-            defaultIntervalWeeks: number;
-            sortKey: number;
-            usage: string;
-            rowVersion: string;
-            fields: [{
-                id: number;
-                label: string;
-                isVoided: boolean;
-                sortKey: number;
-                fieldType: string;
-                unit: string;
-                showPrevious: boolean;
-                rowVersion: string;
-            }];
-            needsUserInput: boolean;
-        }];
-        rowVersion: string;
-    }];
-}
-
 interface RequirementTypeResponse {
-    resultType: string;
-    errors: string[];
-    data: {
+    id: number;
+    code: string;
+    title: string;
+    isVoided: boolean;
+    icon: string;
+    sortKey: number;
+    rowVersion: string;
+    isInUse: boolean;
+    requirementDefinitions: [{
         id: number;
-        code: string;
         title: string;
         isVoided: boolean;
-        icon: string;
+        defaultIntervalWeeks: number;
         sortKey: number;
-        rowVersion: string;
+        usage: string;
         isInUse: boolean;
-        requirementDefinitions: [{
+        rowVersion: string;
+        fields: [{
             id: number;
-            title: string;
+            label: string;
             isVoided: boolean;
-            defaultIntervalWeeks: number;
             sortKey: number;
-            usage: string;
-            isInUse: boolean;
+            fieldType: string;
+            unit: string;
+            showPrevious: boolean;
             rowVersion: string;
-            fields: [{
-                id: number;
-                label: string;
-                isVoided: boolean;
-                sortKey: number;
-                fieldType: string;
-                unit: string;
-                showPrevious: boolean;
-                rowVersion: string;
-            }];
-            needsUserInput: boolean;
         }];
-
-    };
+        needsUserInput: boolean;
+    }];
 }
 
 interface ResponsibleEntity {
@@ -1611,7 +1572,7 @@ class PreservationApiClient extends ApiClient {
      * @param includeVoided Include voided Requirements in result
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypesResponse> {
+    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse[]> {
         const endpoint = '/RequirementTypes';
         const settings: AxiosRequestConfig = {
             params: {
@@ -1621,7 +1582,7 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<RequirementTypesResponse>(endpoint, settings);
+            const result = await this.client.get<RequirementTypeResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {

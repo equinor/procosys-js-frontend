@@ -7,6 +7,7 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Spinner from '@procosys/components/Spinner';
 import PreservationIcon, { preservationIconList, PreservationTypeIcon } from '@procosys/components/PreservationIcon';
 import EdsIcon from '../../../../../components/EdsIcon';
+import { RequirementType } from './types';
 
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
@@ -20,13 +21,13 @@ type PreservationRequirementTypeProps = {
 
 const PreservationRequirementType = (props: PreservationRequirementTypeProps): JSX.Element => {
 
-    const createNewRequirementType = (): RequirementTypeItem => {
+    const createNewRequirementType = (): RequirementType => {
         return { id: -1, code: '', title: '', icon: '', isVoided: false, sortKey: -1, rowVersion: '', isInUse: false, requirementDefinitions: [] };
     };
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [requirementType, setRequirementType] = useState<RequirementTypeItem | null>(null);
-    const [newRequirementType, setNewRequirementType] = useState<RequirementTypeItem>(createNewRequirementType());
+    const [requirementType, setRequirementType] = useState<RequirementType | null>(null);
+    const [newRequirementType, setNewRequirementType] = useState<RequirementType>(createNewRequirementType());
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [iconList, setIconList] = useState<SelectItem[]>([]);
 
@@ -60,7 +61,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         }
     }, [newRequirementType]);
 
-    const cloneRequirementType = (requirementType: RequirementTypeItem): RequirementTypeItem => {
+    const cloneRequirementType = (requirementType: RequirementType): RequirementType => {
         return JSON.parse(JSON.stringify(requirementType));
     };
 
@@ -69,8 +70,8 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         try {
             await preservationApiClient.getRequirementType(requirementTypeId).then(
                 (response) => {
-                    setRequirementType(response.data);
-                    setNewRequirementType(cloneRequirementType(response.data));
+                    setRequirementType(response);
+                    setNewRequirementType(cloneRequirementType(response));
                 }
             );
         } catch (error) {

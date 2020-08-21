@@ -1,5 +1,5 @@
 
-interface RequirementDefinition {
+export interface RequirementDefinition {
     id: number;
     title: string;
     isVoided: boolean;
@@ -22,7 +22,7 @@ interface RequirementDefinition {
     needsUserInput: boolean;
 }
 
-interface RequirementTypeItem {
+export interface RequirementType {
     id: number;
     code: string;
     title: string;

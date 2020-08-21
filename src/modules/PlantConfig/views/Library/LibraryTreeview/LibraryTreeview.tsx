@@ -76,7 +76,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         const children: TreeViewNode[] = [];
         try {
             const requirementTypes = await preservationApiClient.getRequirementTypes(true);
-            requirementTypes.data.forEach(requirementType => {
+            requirementTypes.forEach(requirementType => {
                 children.push(
                     {
                         id: `rt_${requirementType.id}`,

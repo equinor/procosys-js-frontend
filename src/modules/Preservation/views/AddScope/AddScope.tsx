@@ -145,7 +145,7 @@ const AddScope = (): JSX.Element => {
             (async (): Promise<void> => {
                 try {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
-                    setRequirementTypes(response.data);
+                    setRequirementTypes(response);
                 } catch (error) {
                     console.error('Get Requirement Types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
@@ -207,7 +207,7 @@ const AddScope = (): JSX.Element => {
             }
 
             showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
-            history.push('/');  
+            history.push('/');
         } catch (error) {
             console.error('Tag preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);

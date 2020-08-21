@@ -10,6 +10,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import Checkbox from './../../../../../components/Checkbox';
 import { Canceler } from 'axios';
 import { RequirementType } from './types';
+import { tokens } from '@equinor/eds-tokens';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -572,14 +573,15 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                                         }}
                                     >
-                                        <Typography variant='body_long'>Show previous value</Typography>
+                                        <Typography style={{ color: (newRequirementDefinition.isVoided || field.isVoided) ? tokens.colors.interactive.disabled__text.rgba : '' }} variant='body_long'>Show previous value</Typography>
                                     </Checkbox>
                                 </div>
                             }
-                            {field.fieldType != 'Number' &&
+                            {
+                                field.fieldType != 'Number' &&
                                 <div></div>
                             }
-                            <FormFieldSpacer>
+                            < FormFieldSpacer >
                                 {
                                     <>
                                         <Button disabled={newRequirementDefinition.isVoided} variant='ghost' onClick={(): void => moveFieldUp(index)}>

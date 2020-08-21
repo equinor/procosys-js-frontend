@@ -814,6 +814,51 @@ class PreservationApiClient extends ApiClient {
         try {
             const result = await this.client.get<PreservedTagResponse>(
                 endpoint,
+                settings,
+
+            );
+
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
+    /**
+ * Get preserved tags for currently logged in user in current plant context
+ *
+ * @param setRequestCanceller Returns a function that can be called to cancel the request
+ */
+    async exportTagsToExcel(
+        projectName: string,
+        sortProperty: string | null,
+        sortDirection: string | null,
+        tagFilter: TagListFilter,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<BlobPart> {
+        const endpoint = '/Tags/ExportTagsToExcel';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                property: sortProperty,
+                direction: sortDirection,
+                ...tagFilter,
+            },
+            responseType: 'blob'
+        };
+
+        settings.paramsSerializer = (p): string => {
+            return Qs.stringify(p);
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<BlobPart>(
+                endpoint,
                 settings
             );
             return result.data;
@@ -822,6 +867,7 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
 
     /**
      * Start preservation for the given tags.

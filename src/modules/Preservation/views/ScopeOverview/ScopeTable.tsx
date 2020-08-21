@@ -21,6 +21,8 @@ interface ScopeTableProps {
     setPageSize: (pageSize: number) => void;
     shouldSelectFirstPage: boolean;
     setFirstPageSelected: () => void;
+    setOrderByField: (orderByField: string | null) => void;
+    setOrderDirection: (orderDirection: string | null) => void;
 }
 
 enum ActionStatus {
@@ -197,7 +199,8 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
         const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
-
+        this.props.setOrderByField(orderByField);
+        this.props.setOrderDirection(orderDirection);
         return new Promise((resolve) => {
             this.props.getTags(query.page, query.pageSize, orderByField, orderDirection).then(result => {
                 resolve({

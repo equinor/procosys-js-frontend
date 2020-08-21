@@ -17,7 +17,7 @@ export const InputContainer = styled.div`
     margin: var(--grid-unit) 0px;
     display: flex;
     flex-direction: row;
-    padding: var(--grid-unit);
+    padding-left: var(--grid-unit);
 `;
 
 export const Container = styled.div`
@@ -48,3 +48,17 @@ export const SelectText = styled.div`
         padding-right: calc(var(--grid-unit) * 2);
     }
 `;
+
+export const FormHeader = styled.div`
+    margin: calc(var(--grid-unit) * 3) 0px 0px var(--grid-unit);
+    font-weight: bold;
+`;
+
+export const FieldsContainer = styled.div`
+    display: grid;
+    grid-template-columns: auto auto auto auto auto; 
+    width: fit-content;
+    padding: var(--grid-unit);
+    align-items:flex-end;
+`;
+

@@ -17,7 +17,7 @@ export const Header = styled.header<FilterProps>`
     padding-bottom: calc(var(--grid-unit) * 4);
     margin-left: var(--grid-unit);
 
-    ${({filterActive}): any => filterActive && css`
+    ${({ filterActive }): any => filterActive && css`
         h1 {
             color: ${tokens.colors.interactive.primary__resting.rgba};
         }
@@ -29,11 +29,11 @@ export const Collapse = styled.div<FilterProps>`
     padding: calc(var(--grid-unit) + 4px) var(--grid-unit);
     cursor: pointer;
     align-items: center;
-    ${ ({isExpanded}): any => isExpanded && css`
+    ${ ({ isExpanded }): any => isExpanded && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};
         background:${tokens.colors.interactive.primary__selected_highlight.rgba};
     `};
-    ${({filterActive}): any => filterActive && css`
+    ${({ filterActive }): any => filterActive && css`
         div {
             color: ${tokens.colors.interactive.primary__resting.rgba};
         }
@@ -41,7 +41,7 @@ export const Collapse = styled.div<FilterProps>`
             fill: ${tokens.colors.interactive.primary__resting.rgba};
         }
     `}
-    ${({filterActive}): any => !filterActive && css`
+    ${({ filterActive }): any => !filterActive && css`
         path {
             fill: ${tokens.colors.text.static_icons__tertiary.rgba};
         }
@@ -60,7 +60,7 @@ export const Section = styled.div`
 `;
 
 export const Link = styled.span<FilterProps>`
-    cursor: ${(props): string => props.filterActive ? 'pointer' : 'not-allowed' };
+    cursor: ${(props): string => props.filterActive ? 'pointer' : 'not-allowed'};
     p {
         color: ${(props): string => props.filterActive ? tokens.colors.interactive.primary__resting.rgba : tokens.colors.interactive.disabled__border.rgba};
     }

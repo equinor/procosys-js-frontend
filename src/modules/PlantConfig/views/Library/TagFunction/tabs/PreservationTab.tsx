@@ -117,7 +117,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         (async (): Promise<void> => {
             try {
                 const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
-                setRequirementTypes(response.data);
+                setRequirementTypes(response);
             } catch (error) {
                 console.error('Get Requirement Types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);

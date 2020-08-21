@@ -103,6 +103,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
     const [orderByField, setOrderByField] = useState<string | null>(null);
+    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -182,9 +183,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.exportTagsToExcel(project.name, orderByField, orderDirection, tagListFilter).then(
                 (response) => {
-
                     const outputFilename = `Preservation tags - ${project.name} - ${getFormattedDate(new Date())}.xlsx`;
-
                     const tempUrl = window.URL.createObjectURL(new Blob([response]));
                     const tempLink = document.createElement('a');
                     tempLink.href = tempUrl;
@@ -651,8 +650,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <DropdownItem
                                 disabled={false}
                                 onClick={async (): Promise<void> => { exportTagsToExcel(); }}>
-
-                                <EdsIcon name='export' color={tokens.colors.interactive.disabled__border.rgba} />
                                 Export to Excel
                             </DropdownItem>
                         </OptionsDropdown>
@@ -706,7 +703,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

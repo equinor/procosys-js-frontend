@@ -1739,7 +1739,7 @@ class PreservationApiClient extends ApiClient {
      * Update requirement type 
      */
     async updateRequirementType(requirementTypeId: number, code: string, title: string, icon: string, sortKey: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/RequirementTypes/${requirementTypeId}/Update`;
+        const endpoint = `/RequirementTypes/${requirementTypeId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 

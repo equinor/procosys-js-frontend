@@ -142,6 +142,14 @@ interface TagListFilter {
     actionStatus: string | null;
 }
 
+interface SavedScopeFilterResponse {
+    id: number;
+    title: string;
+    defaultFilter: boolean;
+    criteria: string;
+    rowVersion: string;
+}
+
 interface JourneyResponse {
     id: number;
     title: string;
@@ -214,7 +222,6 @@ interface RequirementTypeResponse {
         rowVersion: string;
     };
 }
-
 
 interface ResponsibleEntity {
     id: string;
@@ -819,6 +826,93 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Get saved tag list filters
+     */
+    async getSavedTagListFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
+        const endpoint = '/SavedFilters';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<SavedScopeFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+    /**
+     * Add saved tag list filter
+     */
+    async addSavedTagListFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/SavedFilter';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.post(
+                endpoint,
+                {
+                    projectName: projectName,
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    criteria: criteria
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Update saved tag list filter
+    */
+    async updateSavedTagListFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    critieria: criteria,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete saved tag list filter 
+    */
+    async deleteSavedTagListFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }

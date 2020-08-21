@@ -48,10 +48,10 @@ const CheckboxFilter = ({
                                 return (<Section key={value.id}>
                                     <Checkbox
                                         checked={itemsChecked.some(elementId => {
-                                            return value.id === elementId;
+                                            return String(value.id) === String(elementId);
                                         })}
                                         onChange={(checked: boolean): void => {
-                                            onCheckboxFilterChange(tagListFilterParam, value.id, checked);
+                                            onCheckboxFilterChange(tagListFilterParam, String(value.id), checked);
                                         }}
                                     >
                                         <Typography variant='body_long'>{value.title}</Typography>

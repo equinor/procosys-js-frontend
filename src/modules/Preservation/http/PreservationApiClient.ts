@@ -831,10 +831,10 @@ class PreservationApiClient extends ApiClient {
 
 
     /**
- * Get preserved tags for currently logged in user in current plant context
- *
- * @param setRequestCanceller Returns a function that can be called to cancel the request
- */
+     * Export tags to excel
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
     async exportTagsToExcel(
         projectName: string,
         sortProperty: string | null,

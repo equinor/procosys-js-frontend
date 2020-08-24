@@ -184,10 +184,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     const outputFilename = `Preservation tags-${project.name}.xlsx`;
                     const tempUrl = window.URL.createObjectURL(new Blob([response]));
                     const tempLink = document.createElement('a');
+                    tempLink.style.display = 'none';
                     tempLink.href = tempUrl;
                     tempLink.setAttribute('download', outputFilename);
                     document.body.appendChild(tempLink);
                     tempLink.click();
+                    tempLink.remove();
                 }
             );
         } catch (error) {

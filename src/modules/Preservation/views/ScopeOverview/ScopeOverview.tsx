@@ -24,8 +24,6 @@ import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import { Typography } from '@equinor/eds-core-react';
 import { Canceler } from '@procosys/http/HttpClient';
-import { getFormattedDate } from '@procosys/core/services/DateService';
-
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -183,7 +181,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.exportTagsToExcel(project.name, orderByField, orderDirection, tagListFilter).then(
                 (response) => {
-                    const outputFilename = `Preservation tags - ${project.name} - ${getFormattedDate(new Date())}.xlsx`;
+                    const outputFilename = `Preservation tags-${project.name}.xlsx`;
                     const tempUrl = window.URL.createObjectURL(new Blob([response]));
                     const tempLink = document.createElement('a');
                     tempLink.href = tempUrl;

@@ -41,7 +41,7 @@ const ProcosysRouter = (): JSX.Element => {
                     }
                 />
                 <Route
-                    path={`${path}/plantconfig`}
+                    path={`${path}/libraryv2`}
                     component={(routeProps: RouteComponentProps): JSX.Element =>
                         LazyRoute(PlantConfig, routeProps)
                     }

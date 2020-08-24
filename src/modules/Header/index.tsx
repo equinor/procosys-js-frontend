@@ -321,7 +321,7 @@ const Header: React.FC = (): JSX.Element => {
                 <a href={`/${params.plant}/Hookup`}>Hookup</a>
                 <NavLink
                     activeClassName={'active'}
-                    to={`/${params.plant}/PlantConfig`}
+                    to={`/${params.plant}/libraryv2`}
                 >
                     Plant Configuration
                 </NavLink>

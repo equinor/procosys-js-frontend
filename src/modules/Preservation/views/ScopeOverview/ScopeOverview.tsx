@@ -615,8 +615,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <OptionsDropdown
                             text="More options"
                             icon='more_verticle'
-                            variant='ghost'
-                            disabled={selectedTags.length < 1}>
+                            variant='ghost'>
                             <DropdownItem
                                 disabled={selectedTags.length > 1 || voidedTagsSelected}
                                 onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
@@ -640,12 +639,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 onClick={(): void => showVoidDialog(false)}>
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={true}
-                            >
-                                <EdsIcon name='print' color={tokens.colors.interactive.disabled__border.rgba} />
-                                Print
                             </DropdownItem>
                             <DropdownItem
                                 disabled={false}

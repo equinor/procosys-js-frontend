@@ -6,6 +6,7 @@ import Mode from './Mode/Mode';
 import PreservationRequirementType from './PreservationRequirements/PreservationRequirementType';
 import PreservationRequirements from './PreservationRequirements/PreservationRequirements';
 import PreservationRequirementDefinition from './PreservationRequirements/PreservationRequirementDefinition';
+import { Breadcrumbs } from './Library.style';
 
 type LibraryItemProps = {
     libraryType: string;
@@ -48,7 +49,7 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
                 cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
             />;
         default:
-            return <div></div>;
+            return <Breadcrumbs>Library /</Breadcrumbs>;
 
     }
 };

@@ -49,6 +49,13 @@ export const SelectText = styled.div`
     }
 `;
 
+export const Breadcrumbs = styled.section`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--grid-unit);
+`;
+
 export const FormHeader = styled.div`
     margin: calc(var(--grid-unit) * 3) 0px 0px var(--grid-unit);
     font-weight: bold;
@@ -61,4 +68,3 @@ export const FieldsContainer = styled.div`
     padding: var(--grid-unit);
     align-items:flex-end;
 `;
-

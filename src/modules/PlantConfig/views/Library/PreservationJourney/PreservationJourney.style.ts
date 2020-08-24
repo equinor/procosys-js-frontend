@@ -62,3 +62,10 @@ export const ResponsibleDropdownContainer = styled.div`
         width: 100%;
     }
 `;
+
+export const Breadcrumbs = styled.section`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--grid-unit);
+`;

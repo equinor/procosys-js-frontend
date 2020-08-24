@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, IconContainer } from './PreservationRequirements.style';
+import { Container, IconContainer, Breadcrumbs } from './PreservationRequirements.style';
 import EdsIcon from '../../../../../components/EdsIcon';
 import { Button } from '@equinor/eds-core-react';
 import PreservationRequirementType from './PreservationRequirementType';
@@ -24,6 +24,7 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
     if (nodeType === (NodeTypes.REQUIREMENT)) {
         return (
             <Container>
+                <Breadcrumbs>Library / Preservation Requirements</Breadcrumbs>
                 <IconContainer>
                     <Button variant='ghost' onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_TYPE)}>
                         {addIcon} New requirement type

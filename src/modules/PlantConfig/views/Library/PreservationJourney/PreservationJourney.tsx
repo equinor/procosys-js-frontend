@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer, ResponsibleDropdownContainer } from './PreservationJourney.style';
+import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer, ResponsibleDropdownContainer, Breadcrumbs } from './PreservationJourney.style';
 import EdsIcon from '../../../../../components/EdsIcon';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -19,6 +19,7 @@ const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
+const baseBreadcrumb = 'Library / Preservation Journeys';
 
 enum AutoTransferMethod {
     NONE = 'None',
@@ -565,12 +566,17 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     }, [newJourney]);
 
     if (isLoading) {
-        return <Spinner large />;
+        return (
+            <Container>
+                <Breadcrumbs>{baseBreadcrumb} /</Breadcrumbs>
+                <Spinner large />
+            </Container>);
     }
 
     if (!isEditMode) {
         return (
             <Container>
+                <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
                 <IconContainer>
                     <Button variant='ghost' onClick={initNewJourney}>
                         {addIcon} New Preservation Journey
@@ -581,6 +587,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     return (
         <Container>
+            <Breadcrumbs>{baseBreadcrumb} / {newJourney.title}</Breadcrumbs>
             {newJourney.isVoided &&
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }

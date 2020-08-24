@@ -43,6 +43,7 @@ interface Field {
     unit: string;
     showPrevious: boolean;
     isVoided: boolean;
+    isInUse: boolean;
     rowVersion: string | null;
 }
 
@@ -350,7 +351,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             let largestSortKey = 0;
             newRequirementDefinition.fields.forEach(field => largestSortKey = Math.max(field.sortKey, largestSortKey));
             largestSortKey++;
-            newRequirementDefinition.fields.push({ id: null, isVoided: false, rowVersion: null, label: '', sortKey: largestSortKey, fieldType: '', unit: '', showPrevious: false });
+            newRequirementDefinition.fields.push({ id: null, isVoided: false, rowVersion: null, label: '', sortKey: largestSortKey, isInUse: false, fieldType: '', unit: '', showPrevious: false });
             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
         }
     };
@@ -382,6 +383,15 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
     };
 
+    const canDeleteReqDef = (): boolean => {
+        if (newRequirementDefinition) {
+            if (newRequirementDefinition.isInUse || newRequirementDefinition.fields.some((field) => field.isInUse)) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     if (isLoading) {
         return (<Container>
             <Breadcrumbs>{'Library / Preservation Requirements /'}</Breadcrumbs>
@@ -404,7 +414,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     }
 
     const getBreadcrumb = (): string => {
-        let breadcrumbString = 'Library / Preservation Requirements / '; 
+        let breadcrumbString = 'Library / Preservation Requirements / ';
         if (newRequirementDefinition.id == -1) {
             return breadcrumbString;
         }
@@ -425,7 +435,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             <ButtonContainer>
                 {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
                     <>
-                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementDefinition} disabled={newRequirementDefinition.isInUse} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields cannot be deleted.' : ''}>
+                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef()} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
                             {deleteIcon} Delete
                         </Button>
                         <ButtonSpacer />
@@ -609,7 +619,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         </Button>
                                     </>
                                 }
-                                {(field.id == null) &&
+                                {(field.id == null || (field.isVoided && !field.isInUse)) &&
                                     (<Button variant='ghost' title="Delete" onClick={(): void => deleteField(index)}>
                                         {deleteIcon}
                                     </Button>)

@@ -1,14 +1,16 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-import React, { RefObject, ReactNode } from 'react';
-import Table from './../../../../components/Table';
+import { Container, SingleIconContainer, TagLink, TagStatusLabel, Toolbar } from './ScopeTable.style';
 import { PreservedTag, PreservedTags } from './types';
-import { tokens } from '@equinor/eds-tokens';
-import { Typography } from '@equinor/eds-core-react';
-import { Toolbar, TagLink, TagStatusLabel, Container } from './ScopeTable.style';
+import { Query, QueryResult } from 'material-table';
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
+import React, { ReactNode, RefObject } from 'react';
+import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
+
+import EdsIcon from '../../../../components/EdsIcon';
 import RequirementIcons from './RequirementIcons';
-import { isTagOverdue, getFirstUpcomingRequirement, isTagVoided } from './ScopeOverview';
-import { QueryResult, Query } from 'material-table';
+import Table from './../../../../components/Table';
 import { Tooltip } from '@material-ui/core';
+import { Typography } from '@equinor/eds-core-react';
+import { tokens } from '@equinor/eds-tokens';
 
 interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
@@ -19,6 +21,12 @@ interface ScopeTableProps {
     setPageSize: (pageSize: number) => void;
     shouldSelectFirstPage: boolean;
     setFirstPageSelected: () => void;
+}
+
+enum ActionStatus {
+    Closed = 'HasClosed',
+    Open = 'HasOpen',
+    OverDue = 'HasOverDue'
 }
 
 class ScopeTable extends React.Component<ScopeTableProps, {}> {
@@ -59,30 +67,35 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
         return (
             <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
                 <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>{tag.description}</div>
+                    <div className='controlOverflow'>{tag.description}</div>
                 </Tooltip>
                 {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
             </div>
-
         );
     }
 
     getResponsibleColumn(tag: PreservedTag): JSX.Element {
         return (
-            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <div style={{ display: 'block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: 'inherit' }}>{tag.responsibleCode}</div>
+            <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div className='controlOverflow'>{tag.responsibleCode}</div>
             </Tooltip>
         );
     }
 
-    getNextColumn(tag: PreservedTag): string | null {
+    getNextColumn(tag: PreservedTag): JSX.Element {
         const requirement = getFirstUpcomingRequirement(tag);
-        return (!requirement || tag.isVoided) ? null : requirement.nextDueAsYearAndWeek;
+        return (
+            <div className='controlOverflow'>
+                {(!requirement || tag.isVoided) ? null : requirement.nextDueAsYearAndWeek}
+            </div>);
     }
 
-    getDueColumn(tag: PreservedTag): number | null {
+    getDueColumn(tag: PreservedTag): JSX.Element {
         const requirement = getFirstUpcomingRequirement(tag);
-        return (!requirement || tag.isVoided) ? null : requirement.nextDueWeeks;
+        return (
+            <div className='controlOverflow'>
+                {(!requirement || tag.isVoided) ? null : requirement.nextDueWeeks}
+            </div>);
     }
 
     getRequirementColumn(tag: PreservedTag): JSX.Element {
@@ -90,8 +103,76 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
             <RequirementIcons tag={tag} />
         );
     }
-    getPOColumn(tag: PreservedTag): string | null {
-        return tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo;
+
+    getPOColumn(tag: PreservedTag): JSX.Element {
+        return (<Tooltip title={tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo ? tag.purchaseOrderNo : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <div className='controlOverflow'>
+                {tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo}
+            </div>
+        </Tooltip>);
+    }
+
+    getMode(tag: PreservedTag): JSX.Element {
+        return (
+            <div className='controlOverflow'>
+                {tag.mode}
+            </div>);
+    }
+
+    getAreaCode(tag: PreservedTag): JSX.Element {
+        return (
+            <div className='controlOverflow'>
+                {tag.areaCode}
+            </div>);
+    }
+
+    getDisciplineCode(tag: PreservedTag): JSX.Element {
+        return (
+            <div className='controlOverflow'>
+                {tag.disciplineCode}
+            </div>);
+    }
+
+    getStatus(tag: PreservedTag): JSX.Element {
+        return (
+            <div className='controlOverflow'>
+                {tag.status}
+            </div>);
+    }
+
+    getActionsColumn(tag: PreservedTag): JSX.Element {
+        if (!tag.actionStatus || tag.actionStatus === ActionStatus.Closed) {
+            return <div></div>;
+        }
+
+        return (
+            <Tooltip
+                title={tag.actionStatus === ActionStatus.OverDue ? 'Overdue action(s)' : 'Open action(s)'}
+                arrow={true}
+                enterDelay={200}
+                enterNextDelay={100}
+            >
+                <SingleIconContainer>
+                    <EdsIcon
+                        name='notifications'
+                        size={24}
+                        color={
+                            tag.actionStatus === ActionStatus.OverDue
+                                ? tokens.colors.interactive.danger__text.rgba
+                                : tokens.colors.text.static_icons__tertiary.rgba
+                        }
+                    />
+                </SingleIconContainer>
+            </Tooltip>
+        );
+    }
+
+    getActionsHeader(): JSX.Element {
+        return (
+            <SingleIconContainer>
+                <EdsIcon name='notifications' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
+            </SingleIconContainer>
+        );
     }
 
     getTagsByQuery(query: Query<any>): Promise<QueryResult<any>> {
@@ -100,7 +181,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
             'Description': 'Description',
             'Due': 'Due',
             'Next': 'Due',
-            'PO nr': 'PO',
+            'PO': 'PO',
             'Resp': 'Responsible',
             'Status': 'Status',
             'Area': 'Area',
@@ -116,6 +197,7 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
         const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
+
         return new Promise((resolve) => {
             this.props.getTags(query.page, query.pageSize, orderByField, orderDirection).then(result => {
                 resolve({
@@ -123,44 +205,46 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                     page: query.page,
                     totalCount: result.maxAvailable
                 });
+
             });
-
         });
-
     }
 
     render(): ReactNode {
         return (
             <Container>
-                <Table id='table'
+                <Table
                     tableRef={this.refObject} //reference will be used by parent, to trigger rendering
                     columns={[
-                        { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '200px', maxWidth: '250px' } },
-                        { title: 'Description', render: this.getDescriptionColumn, cellStyle: { maxWidth: '150px' } },
+                        { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px', maxWidth: '200px' } },
+                        { title: 'Description', render: this.getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '600px' } },
                         // @ts-ignore Width is not a property of material-table
                         { title: 'Next', render: this.getNextColumn, width: '7%' },
                         // @ts-ignore
                         { title: 'Due', render: this.getDueColumn, defaultSort: 'asc', width: '5%' },
                         // @ts-ignore
-                        { title: 'Mode', field: 'mode', width: '8%' },
+                        { title: 'Mode', render: this.getMode, width: '8%' },
                         // @ts-ignore
-                        { title: 'PO', render: this.getPOColumn, width: '7%' },
+                        { title: 'PO', render: this.getPOColumn, width: '8%' },
                         // @ts-ignore
-                        { title: 'Area', field: 'areaCode', width: '7%' },
+                        { title: 'Area', render: this.getAreaCode, width: '7%' },
                         // @ts-ignore
                         { title: 'Resp', render: this.getResponsibleColumn, width: '7%', cellStyle: { maxWidth: '150px' } },
                         // @ts-ignore
-                        { title: 'Disc', field: 'disciplineCode', width: '5%' },
+                        { title: 'Disc', render: this.getDisciplineCode, width: '5%' },
                         // @ts-ignore
-                        { title: 'Status', field: 'status', width: '7%', customSort: (): any => null, cellStyle: { whiteSpace: 'nowrap' } },
+                        { title: 'Status', render: this.getStatus, width: '7%', customSort: (): any => null, cellStyle: { whiteSpace: 'nowrap' } },
                         // @ts-ignore
-                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' }
+                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' },
+                        // @ts-ignore
+                        { title: this.getActionsHeader(), render: this.getActionsColumn, sorting: false, width: '2%', cellStyle: { borderLeft: 'solid 1px #dcdcdc' }, headerStyle: { borderLeft: 'solid 1px #dcdcdc' } }
                     ]}
                     data={this.getTagsByQuery}
                     options={{
                         showTitle: false,
                         draggable: false,
                         selection: true,
+                        selectionProps: { disableRipple: true },
                         padding: 'dense',
                         pageSize: this.props.pageSize,
                         emptyRowsWhenPaging: false,

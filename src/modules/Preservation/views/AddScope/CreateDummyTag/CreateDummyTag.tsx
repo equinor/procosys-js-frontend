@@ -1,11 +1,11 @@
-import { Container, FormFieldSpacer, ButtonsContainer, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateAreaTag.style';
+import { Container, FormFieldSpacer, ButtonsContainer, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateDummyTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { Tag, Discipline, Area, CheckAreaTagNo, PurchaseOrder } from '../types';
 import { Canceler } from 'axios';
-import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
+import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -17,9 +17,9 @@ const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
 const errorIcon = <EdsIcon name='error_filled' size={16} />;
 
 const areaTypes: SelectItem[] = [
-    { text: 'Normal', value: 'PreArea' },
-    { text: 'Site', value: 'SiteArea' },
-    { text: 'Supplier', value: 'PoArea' }];
+    { text: 'Area (#PRE)', value: 'PreArea' },
+    { text: 'Local storage (#SITE)', value: 'SiteArea' },
+    { text: 'Supplier (#PO)', value: 'PoArea' }];
 
 type AreaItem = {
     text: string;
@@ -31,7 +31,7 @@ type POItem = {
     value: string;
 };
 
-type CreateAreaTagProps = {
+type CreateDummyTagProps = {
     nextStep: () => void;
     setSelectedTags: (tags: Tag[]) => void;
     setAreaType: (areaType?: SelectItem) => void;
@@ -49,7 +49,7 @@ type CreateAreaTagProps = {
     selectedTags?: Tag[];
 }
 
-const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
+const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     const { apiClient, libraryApiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
 
@@ -258,18 +258,13 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
 
     useEffect(() => {
         const checkTagNos = async (): Promise<void> => {
-            if (props.suffix && /\s/.test(props.suffix)) {
-                setTagNoValidationError(spacesInTagNoMessage);
-                setTagNoValid(false);
-            }
-            else if (props.discipline && props.areaType && props.areaType.value != 'PoArea') {
+            if (props.discipline && props.areaType && props.areaType.value != 'PoArea') {
                 const areaCode = (props.area) ? props.area.code : null;
                 const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, null, props.suffix || null);
                 props.setSelectedTags([{
                     tagNo: response.tagNo,
                     description: props.description || ''
-                }
-                ]);
+                }]);
                 setTagNoValid(!response.exists);
                 setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else if (props.areaType && props.discipline && props.purchaseOrder && props.areaType.value == 'PoArea') {
@@ -277,12 +272,21 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                 props.setSelectedTags([{
                     tagNo: response.tagNo,
                     description: props.description || ''
-                }
-                ]);
+                }]);
                 setTagNoValid(!response.exists);
                 setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
             } else {
+                props.setSelectedTags([{
+                    tagNo: 'type-discipline-area/PO-suffix',
+                    description: props.description || ''
+                }]);
+                setTagNoValid(false);
                 setTagNoValidationError(null);
+            }
+
+            if (props.suffix && /\s/.test(props.suffix)) {
+                setTagNoValidationError(spacesInTagNoMessage);
+                setTagNoValid(false);
             }
         };
 
@@ -321,8 +325,8 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     return (
         <div>
             <Header>
-                <h1>Create Area Tag</h1>
-                <div>{project.description}</div>
+                <h1>Create Dummy Tag</h1>
+                <div>{project.name}</div>
             </Header>
             <TopContainer>
                 <ErrorContainer>
@@ -334,7 +338,7 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
                             <SelectInput
                                 onChange={setAreaTypeForm}
                                 data={areaTypes}
-                                label={'Area type'}
+                                label={'Dummy type'}
                             >
                                 {(props.areaType && props.areaType.text) || 'Select'}
                             </SelectInput>
@@ -431,4 +435,4 @@ const CreateAreaTag = (props: CreateAreaTagProps): JSX.Element => {
     );
 };
 
-export default CreateAreaTag;
+export default CreateDummyTag;

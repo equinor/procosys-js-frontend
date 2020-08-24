@@ -75,8 +75,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getRequirementTreeNodes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            const requirementTypes = await preservationApiClient.getRequirementTypes();
-            requirementTypes.data.forEach(requirementType => {
+            const requirementTypes = await preservationApiClient.getRequirementTypes(true);
+            requirementTypes.forEach(requirementType => {
                 children.push(
                     {
                         id: `rt_${requirementType.id}`,
@@ -196,9 +196,10 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             onClick: (): void => { handleTreeviewClick(LibraryType.PRES_JOURNEY, ''); }
         },
         {
-            id: LibraryType.PRES_REQUIREMENT_TYPE,
+            id: LibraryType.PRES_REQUIREMENT,
             name: 'Preservation requirements',
-            getChildren: getRequirementTreeNodes
+            getChildren: getRequirementTreeNodes,
+            onClick: (): void => { handleTreeviewClick(LibraryType.PRES_REQUIREMENT, ''); }
         }
     ];
 

@@ -10,22 +10,26 @@ import ActionAttachments from './ActionAttachments';
 
 interface ActionTabProps {
     tagId: number;
+    isVoided: boolean;
     actionId?: number;
     title?: string;
     description?: string;
     dueTimeUtc?: Date | null;
     rowVersion?: string;
     backToParentView: () => void;
+    setDirty: () => void;
 }
 
 const CreateOrEditAction = ({
     tagId,
+    isVoided,
     actionId,
     title,
     description,
     dueTimeUtc,
     rowVersion,
     backToParentView,
+    setDirty
 }: ActionTabProps): JSX.Element => {
 
     const { apiClient } = usePreservationContext();
@@ -56,6 +60,7 @@ const CreateOrEditAction = ({
                 }
             } else {
                 await apiClient.createNewAction(tagId, newTitle, newDescription, newDueTimeUtc);
+                setDirty();
                 backToParentView();
                 showSnackbarNotification('New action is created.', 5000, true);
             }
@@ -116,6 +121,7 @@ const CreateOrEditAction = ({
 
                     <ActionAttachments
                         tagId={tagId}
+                        isVoided={isVoided}
                         actionId={actionId}
                         enableActions={true}
                     />

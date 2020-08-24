@@ -10,7 +10,7 @@ import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
 import CreateOrEditAction from './CreateOrEditAction';
 
-//const attachIcon = <EdsIcon name='attach_file' size={16} />;
+const attachmentIcon = <EdsIcon name='attach_file' size={16} />;
 const notificationIcon = <EdsIcon name='notifications' size={16} />;
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 
@@ -19,14 +19,19 @@ export interface ActionListItem {
     title: string;
     dueTimeUtc: Date | null;
     isClosed: boolean;
+    attachmentCount: number;
 }
 
 interface ActionTabProps {
     tagId: number;
+    isVoided: boolean;
+    setDirty: () => void;
 }
 
 const ActionTab = ({
-    tagId
+    tagId,
+    isVoided,
+    setDirty
 }: ActionTabProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [expandedAction, setExpandedAction] = useState<number | null>();
@@ -80,14 +85,8 @@ const ActionTab = ({
             }
         };
 
-        const showNotification = (): boolean => {
-            if (!action.isClosed &&
-                action.dueTimeUtc &&
-                isDue()) {
-                return true;
-            }
-            return false;
-        };
+        const showNotificationIcon = (): boolean => !action.isClosed && isDue();
+        const showAttachmentIcon = (): boolean => action.attachmentCount > 0;
 
         return (
             <ActionContainer isClosed={action.isClosed} key={action.id}>
@@ -102,16 +101,12 @@ const ActionTab = ({
                     <CollapseInfo isClosed={action.isClosed} isExpanded={isExpanded}>
                         {action.title}
                     </CollapseInfo>
-                    {showNotification() &&
-                        notificationIcon
-                    }
-                    {/* todo: add attachment icon when flag is available <IconSpacer />
-                    {attachIcon} */}
-
+                    { showNotificationIcon() && notificationIcon }
+                    { showAttachmentIcon() && attachmentIcon }
                 </Collapse>
                 {
                     isExpanded && (
-                        <ActionExpanded tagId={tagId} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} />
+                        <ActionExpanded tagId={tagId} isVoided={isVoided} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} setDirty={setDirty} />
                     )
                 }
             </ActionContainer >
@@ -123,10 +118,12 @@ const ActionTab = ({
             {showCreateAction &&
                 <CreateOrEditAction
                     tagId={tagId}
+                    isVoided={isVoided}
                     backToParentView={(): void => {
                         getActionList();
                         setShowCreateAction(false);
                     }}
+                    setDirty={setDirty}
                 />
             }
             {
@@ -134,6 +131,7 @@ const ActionTab = ({
                 <Container>
                     <AddActionContainer>
                         <StyledButton
+                            disabled={isVoided}
                             variant='ghost'
                             onClick={(): void => setShowCreateAction(true)}>
                             {addIcon} <ButtonSpacer /> Add action

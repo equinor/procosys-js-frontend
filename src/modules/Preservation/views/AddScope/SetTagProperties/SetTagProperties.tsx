@@ -17,6 +17,7 @@ type SetTagPropertiesProps = {
     journeys: Journey[];
     requirementTypes: RequirementType[];
     addScopeMethod: AddScopeMethod;
+    isLoading: boolean;
 };
 
 interface RequirementFormInput {
@@ -31,6 +32,7 @@ const SetTagProperties = ({
     journeys = [],
     requirementTypes = [],
     addScopeMethod,
+    isLoading
 }: SetTagPropertiesProps): JSX.Element => {
     const { project } = usePreservationContext();
 
@@ -40,11 +42,8 @@ const SetTagProperties = ({
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
     const [formIsValid, setFormIsValid] = useState(false);
-
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
-
-    const [isLoading, setIsLoading] = useState(false);
 
     /**
      * Form validation
@@ -94,7 +93,7 @@ const SetTagProperties = ({
                     setStep(itm);
                 }
                 return {
-                    text: itm.mode.title,
+                    text: itm.title,
                     value: itm.id
                 };
             });
@@ -104,7 +103,6 @@ const SetTagProperties = ({
 
 
     const submit = async (): Promise<void> => {
-        setIsLoading(true);
         const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
         let storageAreaValue;
         if (storageAreaInputRef.current) {
@@ -125,7 +123,6 @@ const SetTagProperties = ({
                     }
                 });
                 if (requirementsMappedForApi.length > 0) {
-                    setIsLoading(false);
                     await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
                 } else {
                     showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
@@ -134,7 +131,6 @@ const SetTagProperties = ({
         } else {
             showSnackbarNotification('Error occured. Step is not provided.', 5000);
         }
-        setIsLoading(false);
     };
 
     const setJourneyFromForm = (value: number): void => {
@@ -152,7 +148,7 @@ const SetTagProperties = ({
             <div>
                 <Header>
                     <h1>Add preservation scope</h1>
-                    <div>{project.description}</div>
+                    <div>{project.name}</div>
                 </Header>
                 <Container>
                     <div>
@@ -184,12 +180,13 @@ const SetTagProperties = ({
                     )
                 }
 
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             <Container>
                 <div>
                     <InputContainer>
                         <SelectInput
+                            maxHeight={'300px'}
                             onChange={setJourneyFromForm}
                             data={mappedJourneys}
                             label={'Preservation journey for all selected tags'}
@@ -204,7 +201,7 @@ const SetTagProperties = ({
                             disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
                             label={'Preservation step'}
                         >
-                            {(step && step.mode.title) || 'Select step'}
+                            {(step && step.title) || 'Select step'}
                         </SelectInput>
                     </InputContainer>
                     <InputContainer style={{ maxWidth: '480px' }}>

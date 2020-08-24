@@ -87,7 +87,7 @@ const EditTagProperties = (): JSX.Element => {
         (async (): Promise<void> => {
             if (tagId) {
                 try {
-                    const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true, (cancel: Canceler) => requestCancellor = cancel);
+                    const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true, true, (cancel: Canceler) => requestCancellor = cancel);
                     const mappedResponse = response.map(itm => {
                         return {
                             requirementDefinitionId: -1,
@@ -124,7 +124,7 @@ const EditTagProperties = (): JSX.Element => {
             if (tagId) {
                 try {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => requestCancellor = cancel);
-                    setRequirementTypes(response.data);
+                    setRequirementTypes(response);
                 } catch (error) {
                     console.error('Get Requirement Types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message);
@@ -193,7 +193,7 @@ const EditTagProperties = (): JSX.Element => {
                     setStep(itm);
                 }
                 return {
-                    text: itm.mode.title,
+                    text: itm.title,
                     value: itm.id
                 };
             });
@@ -322,7 +322,7 @@ const EditTagProperties = (): JSX.Element => {
         <div>
             <Header>
                 <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing'}</h1>
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             {loading ?
                 <SpinnerContainer>
@@ -333,6 +333,7 @@ const EditTagProperties = (): JSX.Element => {
                     <div>
                         <InputContainer>
                             <SelectInput
+                                maxHeight={'300px'}
                                 onChange={setJourneyFromForm}
                                 data={mappedJourneys}
                                 label={'Preservation journey for selected tag'}
@@ -347,7 +348,7 @@ const EditTagProperties = (): JSX.Element => {
                                 disabled={poTag}
                                 label={'Preservation step'}
                             >
-                                {(step && step.mode.title) || 'Select step'}
+                                {(step && step.title) || 'Select step'}
                             </SelectInput>
                         </InputContainer>
                         <InputContainer style={{ maxWidth: '480px' }}>

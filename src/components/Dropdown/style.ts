@@ -8,17 +8,22 @@ export const Container = styled.div`
     ul {
         position: absolute;
         margin-top: 0.5rem;
-        max-height: 300px;
         background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
-        overflow-y: scroll;
+        overflow-y: auto;
         z-index: 100;
         white-space: nowrap;
     }
     :hover {
         cursor: pointer;
     }
+`;
+
+export const DropdownList = styled.ul<{ maxHeight?: string }>`
+    ${({ maxHeight }): any => maxHeight && css`
+        max-height: ${maxHeight};
+    `}
 `;
 
 export const IconContainer = styled.div`
@@ -46,12 +51,12 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     cursor: pointer;
 
     path {
-        ${({disabled}): any => disabled && css`
+        ${({ disabled }): any => disabled && css`
             fill: ${tokens.colors.interactive.disabled__text.rgba};
         `}
     }
 
-    ${({disabled}): any => disabled && css`
+    ${({ disabled }): any => disabled && css`
         color: ${tokens.colors.interactive.disabled__text.rgba};
     `}
 

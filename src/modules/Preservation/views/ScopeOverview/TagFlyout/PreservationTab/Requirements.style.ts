@@ -26,7 +26,7 @@ export const NextInfo = styled.span<{ isOverdue: boolean }>`
     `}
 `;
 
-export const SelectFileLabel = styled.div`
+export const SelectFileButton = styled.div`
     padding: 10px;
     border: 1px solid ${tokens.colors.interactive.primary__resting.rgba};
     box-sizing: border-box;
@@ -35,6 +35,11 @@ export const SelectFileLabel = styled.div`
     :hover {
         background-color: ${tokens.colors.interactive.primary__hover_alt.rgba};
     }
+`;
+
+export const SelectFileLabel = styled.div`
+    margin-top: calc(var(--grid-unit) * 2 + 3px);
+    margin-left: var(--grid-unit);
 `;
 
 export const AttachmentLink = styled.div`

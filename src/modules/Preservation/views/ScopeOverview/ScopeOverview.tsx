@@ -23,6 +23,8 @@ import VoidDialog from './VoidDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import { Typography } from '@equinor/eds-core-react';
+import { Canceler } from '@procosys/http/HttpClient';
+
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -61,6 +63,12 @@ const defaultTagListFilter: TagListFilter = {
     areaCodes: []
 };
 
+interface SupportedQueryStringFilters {
+    [index: string]: string | null;
+    pono: string | null;
+    calloff: string | null;
+}
+
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -83,11 +91,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
+    const [completableTagsSelected, setCompletableTagsSelected] = useState<boolean>();
+    const [preservableTagsSelected, setPreservableTagsSelected] = useState<boolean>();
+    const [startableTagsSelected, setStartableTagsSelected] = useState<boolean>();
+    const [transferableTagsSelected, setTransferableTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
+    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -120,11 +133,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setResetTablePaging(true);
         refreshScopeList();
+        setSelectedTags([]);
     }, [tagListFilter]);
 
     useEffect(() => {
         setVoidedTagsSelected(selectedTags.find(t => t.isVoided) ? true : false);
         setUnvoidedTagsSelected(selectedTags.find(t => !t.isVoided) ? true : false);
+        setCompletableTagsSelected(selectedTags.find(t => t.readyToBeCompleted && !t.isVoided) ? true : false);
+        setPreservableTagsSelected(selectedTags.find(t => t.readyToBePreserved && !t.isVoided) ? true : false);
+        setStartableTagsSelected(selectedTags.find(t => t.readyToBeStarted && !t.isVoided) ? true : false);
+        setTransferableTagsSelected(selectedTags.find(t => t.readyToBeTransferred && !t.isVoided) ? true : false);
         if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
         } else {
@@ -136,9 +154,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeListCallback.current = callback;
     };
 
+
+    const cancelerRef = useRef<Canceler | null>();
+
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
         try {
-            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter).then(
+            cancelerRef.current && cancelerRef.current();
+            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
                 (response) => {
                     setNumberOfTags(response.maxAvailable);
                     return response;
@@ -146,7 +168,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             );
         } catch (error) {
             console.error('Get tags failed: ', error.message, error.data);
-            showSnackbarNotification(error.message);
+            if (!error.isCancel) {
+                showSnackbarNotification(error.message);
+            }
         }
         return { maxAvailable: 0, tags: [] };
     };
@@ -334,7 +358,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     let voidableTags: PreservedTag[] = [];
-    let unVoidableTags: PreservedTag[] = [];
+    let unvoidableTags: PreservedTag[] = [];
 
     const voidTags = async (): Promise<void> => {
         try {
@@ -353,7 +377,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const unVoidTags = async (): Promise<void> => {
         try {
-            for (const tag of unVoidableTags) {
+            for (const tag of unvoidableTags) {
                 await apiClient.unvoidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
@@ -368,22 +392,33 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
-        unVoidableTags = [];
+        unvoidableTags = [];
+        // selectedTags.map((tag) => {
+        //     const newTag: PreservedTag = { ...tag };
+        //     if (!tag.isVoided && voiding) {
+        //         voidableTags.push(newTag);
+        //     } else if (tag.isVoided && !voiding) {
+        //         unvoidableTags.push(newTag);
+        //     }
+        // });
+        // const voidButton = voidableTags.length > 0 ? 'Void' : 'Unvoid';
+        // const voidFunc = voidableTags.length > 0 ? voidTags : unVoidTags;
+        // const voidTitle = voidableTags.length > 0 ? 'Voiding following tags' : 'Unvoiding following tags';
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
-            if (!tag.isVoided && voiding) {
+            if (!tag.isVoided) {
                 voidableTags.push(newTag);
-            } else if (tag.isVoided && !voiding) {
-                unVoidableTags.push(newTag);
+            } else {
+                unvoidableTags.push(newTag);
             }
         });
-        const voidButton = voidableTags.length > 0 ? 'Void' : 'Unvoid';
-        const voidFunc = voidableTags.length > 0 ? voidTags : unVoidTags;
-        const voidTitle = voidableTags.length > 0 ? 'Voiding following tags' : 'Unvoiding following tags';
+        const voidButton = voiding ? 'Void' : 'Unvoid';
+        const voidFunc = voiding ? voidTags : unVoidTags;
+        const voidTitle = voiding ? 'Voiding following tags' : 'Unvoiding following tags';
 
         showModalDialog(
             voidTitle,
-            <VoidDialog tags={voidableTags.length > 0 ? voidableTags : unVoidableTags} voiding={voiding} />,
+            <VoidDialog voidableTags={voidableTags} unvoidableTags={unvoidableTags} voiding={voiding} />,
             '80vw',
             backToListButton,
             null,
@@ -423,24 +458,39 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         // parse querystring
         const qsParameters = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
-        // get "project" and set as current project
+        // get "project" from querystring (mandatory in order to use other filters)
         const projectName = qsParameters['project'] as string;
 
         if (projectName && projectName !== '') {
             const project = filteredProjects.find(p => p.name === projectName);
 
             if (project) {
+                // set as current project
                 setCurrentProject(project.id);
 
-                // get "pono" and apply filter when given
-                const poNoFilter = qsParameters['pono'] as string;
+                // get and apply supported tag filters
+                let filtersUsed = 0;
+                const supportedFilters: SupportedQueryStringFilters = {
+                    pono: null,
+                    calloff: null
+                };
 
-                if (poNoFilter && poNoFilter !== '') {
-                    const filter = defaultTagListFilter;
-                    filter.purchaseOrderNoStartsWith = poNoFilter;
+                for (const f in supportedFilters) {
+                    const qsParam = qsParameters[f];
 
-                    setTagListFilter(filter);
-                    setNumberOfFilters(1);
+                    if (qsParam) {
+                        supportedFilters[f] = qsParam as string;
+                        filtersUsed++;
+                    }
+                }
+
+                if (filtersUsed > 0) {
+                    const tagFilter = defaultTagListFilter;
+                    tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
+                    tagFilter.callOffStartsWith = supportedFilters.calloff;
+
+                    setTagListFilter(tagFilter);
+                    setNumberOfFilters(filtersUsed);
                     toggleFilter();
                 }
             } else {
@@ -457,7 +507,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         <Container>
             <ContentContainer>
                 <OldPreservationLink>
-                    <Typography bold variant="caption" >
+                    <Typography variant="caption">
                         <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
                             <a href="OldPreservation">Switch to old system</a>
                         </Tooltip>
@@ -467,6 +517,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <Header>
                         <h1>Preservation tags</h1>
                         <Dropdown
+                            maxHeight='300px'
                             text={project.name}
                             onFilter={setFilterForProjects}
                         >
@@ -495,9 +546,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Autoscope by Tag Function
                                 </DropdownItem>
                             </Link>
-                            <Link to={'/AddScope/createAreaTag'}>
+                            <Link to={'/AddScope/createDummyTag'}>
                                 <DropdownItem>
-                                    Create area tag
+                                    Create dummy tag
                                 </DropdownItem>
                             </Link>
                             <Link to={'/AddScope/selectMigrateTags'}>
@@ -510,30 +561,30 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <IconBar>
                         <Button
                             onClick={preservedDialog}
-                            disabled={selectedTags.length < 1}>Preserved this week
+                            disabled={!preservableTagsSelected}>Preserved this week
                         </Button>
                         <StyledButton
                             variant='ghost'
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
-                            disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='play' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            disabled={!startableTagsSelected}>
+                            <div className='iconNextToText' ><EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Start
                         </StyledButton>
                         <StyledButton
                             variant='ghost'
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
-                            disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            disabled={!transferableTagsSelected}>
+                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Transfer
                         </StyledButton>
                         <StyledButton
                             variant='ghost'
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
-                            disabled={selectedTags.length < 1}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={selectedTags.length < 1 ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            disabled={!completableTagsSelected}>
+                            <div className='iconNextToText' ><EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
                         <OptionsDropdown
@@ -575,6 +626,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton
+                                    id='filterButton'
                                     variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
                                     onClick={(): void => {
                                         toggleFilter();
@@ -619,7 +671,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

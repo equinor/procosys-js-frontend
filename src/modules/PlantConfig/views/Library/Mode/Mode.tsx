@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, ButtonContainer, ButtonSpacer, IconContainer } from './Mode.style';
+import { Container, InputContainer, ButtonContainer, ButtonSpacer, IconContainer, Breadcrumbs } from './Mode.style';
 import EdsIcon from '../../../../../components/EdsIcon';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
@@ -9,12 +9,17 @@ import Checkbox from './../../../../../components/Checkbox';
 import { useProcosysContext } from '../../../../../core/ProcosysContext';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 
+const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const addIcon = <EdsIcon name='add' size={16} />;
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const baseBreadcrumb = 'Library / Modes';
 
 interface ModeItem {
     id: number;
     title: string;
     forSupplier: boolean;
+    inUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -27,7 +32,7 @@ type ModeProps = {
 const Mode = (props: ModeProps): JSX.Element => {
 
     const createNewMode = (): ModeItem => {
-        return { id: -1, title: '', isVoided: false, forSupplier: false, rowVersion: '' };
+        return { id: -1, title: '', isVoided: false, forSupplier: false, inUse: false, rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -129,26 +134,44 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     const cancel = (): void => {
-        let doCancel = true;
+        const doCancel = (): void => {
+            dirtyComponents.clear();
+            setMode(null);
+            setIsEditMode(false);
+        };
+
         if (isDirty) {
             showModalDialog(
                 'Discard any changes?',
                 null,
-                '30vw',
+                '15vw',
                 'Yes',
-                null,
+                doCancel,
                 'No',
-                () => doCancel = false,
+                null,
                 true);
-
-        }
-        if (doCancel) {
-            dirtyComponents.clear();
-            setMode(null);
-            setIsEditMode(false);
+        } else {
+            doCancel();
         }
     };
 
+    const deleteMode = async (): Promise<void> => {
+        if (mode) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.deleteMode(mode.id, mode.rowVersion);
+                setMode(null);
+                dirtyComponents.delete(modeLibraryStr);
+                setIsEditMode(false);
+                props.setDirtyLibraryType();
+                showSnackbarNotification('Mode is deleted.');
+            } catch (error) {
+                console.error('Error occured when trying to delete mode: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+            setIsLoading(false);
+        }
+    };
 
     const voidMode = async (): Promise<void> => {
         if (mode) {
@@ -200,12 +223,17 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     if (isLoading) {
-        return <Spinner large />;
+        return (
+            <Container>
+                <Breadcrumbs>{baseBreadcrumb} /</Breadcrumbs>
+                <Spinner large />
+            </Container>);
     }
 
     if (!isEditMode) {
         return (
             <Container>
+                <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
                 <IconContainer>
                     <Button variant='ghost' onClick={initNewMode}>
                         {addIcon} New mode
@@ -216,19 +244,25 @@ const Mode = (props: ModeProps): JSX.Element => {
 
     return (
         <Container>
+            <Breadcrumbs>{baseBreadcrumb} / {newMode.title}</Breadcrumbs>
             {newMode.isVoided &&
-                <Typography bold variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>Mode is voided</Typography>
+                <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Mode is voided</Typography>
             }
             <ButtonContainer>
                 {newMode.isVoided &&
-                    <Button variant="outlined" onClick={unvoidMode}>
-                        Unvoid
+                    <Button className='buttonIcon' variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
+                        {deleteIcon} Delete
                     </Button>
                 }
-
-                {!newMode.isVoided &&
-                    <Button variant="outlined" onClick={voidMode}>
-                        Void
+                <ButtonSpacer />
+                {newMode.isVoided &&
+                    <Button className='buttonIcon' variant="outlined" onClick={unvoidMode}>
+                        {unvoidIcon} Unvoid
+                    </Button>
+                }
+                {!newMode.isVoided && newMode.id != -1 &&
+                    <Button className='buttonIcon' variant="outlined" onClick={voidMode}>
+                        {voidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />

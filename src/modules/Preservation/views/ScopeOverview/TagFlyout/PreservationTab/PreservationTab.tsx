@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, StyledTextField } from './PreservationTab.style';
+import React, { useState, useEffect } from 'react';
+import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, TextFieldLabelReadOnly, TextFieldReadOnly } from './PreservationTab.style';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
 import Requirements from './Requirements';
@@ -21,17 +21,13 @@ const PreservationTab = ({
     refreshTagDetails,
     setDirty
 }: PreservationTabProps): JSX.Element => {
-    const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const { apiClient } = usePreservationContext();
 
+    const [tagRequirements, setTagRequirements] = useState<TagRequirement[] | null>(null);
     const [editingRemark, setEditingRemark] = useState<boolean>(false);
     const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
-
     const [remark, setRemark] = useState<string>(tagDetails.remark);
-    const tagRowVersionRef = useRef(tagDetails.rowVersion);
-    const remarkInputRef = useRef<HTMLInputElement>(null);
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
-    const storageAreaInputRef = useRef<HTMLInputElement>(null);
 
     const KEYCODE_ENTER = 13;
 
@@ -87,7 +83,7 @@ const PreservationTab = ({
         }
     };
 
-    const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active';
+    const isReadOnly = (): boolean => tagDetails.status.toLowerCase() !== 'active' || tagDetails.isVoided;
 
     const getRequirementsSection = (tagId: number): JSX.Element => {
         if (tagRequirements === null) {
@@ -101,52 +97,47 @@ const PreservationTab = ({
                 readonly={isReadOnly()}
                 recordTagRequirementValues={recordTagRequirementValues}
                 preserveRequirement={preserveRequirement}
+                refreshRequirements={refreshTagDetails}
             />
         );
     };
 
-    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<void> => {
+    const saveRemarkAndStorageArea = async (remarkString: string, storageAreaString: string): Promise<boolean> => {
         try {
-            const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagRowVersionRef.current);
-            tagRowVersionRef.current = updatedRowVersion;
+            await apiClient.setRemarkAndStorageArea(tagDetails.id, remarkString, storageAreaString, tagDetails.rowVersion);
+            return Promise.resolve(true);
         } catch (error) {
             console.error('Edit failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
+            return Promise.resolve(false);
         }
-        return Promise.resolve();
     };
 
     const saveRemark = (): void => {
-        if (remarkInputRef.current) {
-            setRemark(remarkInputRef.current.value);
-            saveRemarkAndStorageArea(remarkInputRef.current.value, storageArea);
-        } else {
-            showSnackbarNotification('Something went wrong. Remark was not updated.');
-        }
-        setEditingRemark(false);
+        saveRemarkAndStorageArea(remark, storageArea).then(saveOk => {
+            if (saveOk == true) {
+                setEditingRemark(false);
+                refreshTagDetails();
+            }
+        });
     };
 
     const cancelEditRemark = (): void => {
-        if (remarkInputRef.current) {
-            remarkInputRef.current.value = remark;
-        }
+        setRemark(tagDetails.remark);
         setEditingRemark(false);
     };
 
     const saveStorageArea = (): void => {
-        if (storageAreaInputRef.current) {
-            setStorageArea(storageAreaInputRef.current.value);
-            saveRemarkAndStorageArea(remark, storageAreaInputRef.current.value);
-        } else {
-            showSnackbarNotification('Something went wrong. Storage area was not updated.');
-        }
-        setEditingStorageArea(false);
+        saveRemarkAndStorageArea(remark, storageArea).then(saveOk => {
+            if (saveOk) {
+                setEditingStorageArea(false);
+                refreshTagDetails();
+            }
+        });
     };
 
     const cancelEditStorageArea = (): void => {
-        if (storageAreaInputRef.current) {
-            storageAreaInputRef.current.value = storageArea;
-        }
+        setStorageArea(tagDetails.storageArea);
         setEditingStorageArea(false);
     };
 
@@ -173,7 +164,9 @@ const PreservationTab = ({
                             <Typography variant='caption' style={{ gridColumn: '4', gridRow: '1' }}>Area</Typography>
                             <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>{tagDetails.commPkgNo}</Typography>
                             <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>{tagDetails.mcPkgNo}</Typography>
-                            <Typography variant='body_short' style={{ gridColumn: '3', gridRow: '2' }}>{tagDetails.purchaseOrderNo}</Typography>
+                            <Typography variant='body_short' style={{ gridColumn: '3', gridRow: '2' }}>
+                                {tagDetails.calloffNo ? `${tagDetails.purchaseOrderNo}/${tagDetails.calloffNo}` : tagDetails.purchaseOrderNo}
+                            </Typography>
                             <Typography variant='body_short' style={{ gridColumn: '4', gridRow: '2' }}>{tagDetails.areaCode}</Typography>
                         </GridSecondRow>
                     </div>
@@ -181,88 +174,110 @@ const PreservationTab = ({
             </TagDetailsContainer>
             <TagDetailsInputContainer>
                 <TextFieldContainer>
-                    <TextField
-                        id='remark'
-                        label='Remark'
-                        defaultValue={tagDetails.remark}
-                        inputRef={remarkInputRef}
-                        disabled={!editingRemark}
-                        meta="Optional"
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                            e.keyCode === KEYCODE_ENTER &&
-                                saveRemark();
-                        }}
-                    />
                     {editingRemark ?
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="remarkClearIcon"
-                                variant='ghost_icon'
-                                onClick={cancelEditRemark}>
-                                <ClearIcon fontSize='small' />
-                            </StyledButton>
-                            <StyledButton
-                                data-testid="remarkCheckIcon"
-                                variant='ghost_icon'
-                                onClick={saveRemark}>
-                                <CheckIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
+                        <TextField
+                            id='remark'
+                            label='Remark'
+                            value={remark}
+                            meta="Optional"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setRemark(e.target.value); }}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    saveRemark();
+                            }}
+                        />
                         :
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="remarkEditIcon"
-                                variant='ghost_icon'
-                                onClick={(): void => setEditingRemark(true)}>
-                                <EditOutlinedIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
+                        <div style={{ width: '100%' }}>
+                            <TextFieldLabelReadOnly>
+                                Remark
+                            </TextFieldLabelReadOnly>
+                            <TextFieldReadOnly data-testid='remarkReadOnly'>
+                                {remark}
+                            </TextFieldReadOnly>
+                        </div>
+                    }
+                    { tagDetails.isVoided ? <></> :
+                        editingRemark ?
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="remarkClearIcon"
+                                    variant='ghost_icon'
+                                    onClick={cancelEditRemark}>
+                                    <ClearIcon fontSize='small' />
+                                </StyledButton>
+                                <StyledButton
+                                    data-testid="remarkCheckIcon"
+                                    variant='ghost_icon'
+                                    onClick={saveRemark}>
+                                    <CheckIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
+                            :
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="remarkEditIcon"
+                                    variant='ghost_icon'
+                                    onClick={(): void => setEditingRemark(true)}>
+                                    <EditOutlinedIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
                     }
                 </TextFieldContainer>
-                <TextFieldContainer>
-                    <StyledTextField
-                        id='storageArea'
-                        label='Storage area'
-                        defaultValue={tagDetails.storageArea}
-                        inputRef={storageAreaInputRef}
-                        disabled={!editingStorageArea}
-                        meta="Optional"
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                            e.keyCode === KEYCODE_ENTER &&
-                                saveStorageArea();
-                        }}
-                    />
+                <TextFieldContainer style={{ width: '55%' }}>
                     {editingStorageArea ?
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="storageAreaClearIcon"
-                                variant='ghost_icon'
-                                onClick={cancelEditStorageArea}>
-                                <ClearIcon fontSize='small' />
-                            </StyledButton>
-                            <StyledButton
-                                data-testid="storageAreaCheckIcon"
-                                variant='ghost_icon'
-                                onClick={saveStorageArea}>
-                                <CheckIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
+                        <TextField
+                            id='storageArea'
+                            label='Storage area'
+                            defaultValue={tagDetails.storageArea}
+                            meta="Optional"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setStorageArea(e.target.value); }}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    saveStorageArea();
+                            }}
+                        />
                         :
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="storageAreaEditIcon"
-                                variant='ghost_icon'
-                                onClick={(): void => setEditingStorageArea(true)}>
-                                <EditOutlinedIcon fontSize='small' />
-                            </StyledButton>
-                        </IconContainer>
+                        <div style={{ width: '100%' }}>
+                            <TextFieldLabelReadOnly>
+                                Storage area
+                            </TextFieldLabelReadOnly>
+                            <TextFieldReadOnly data-testid='storageAreaReadOnly'>
+                                {storageArea}
+                            </TextFieldReadOnly>
+                        </div>
+                    }
+                    { tagDetails.isVoided ? <></> :
+                        editingStorageArea ?
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="storageAreaClearIcon"
+                                    variant='ghost_icon'
+                                    onClick={cancelEditStorageArea}>
+                                    <ClearIcon fontSize='small' />
+                                </StyledButton>
+                                <StyledButton
+                                    data-testid="storageAreaCheckIcon"
+                                    variant='ghost_icon'
+                                    onClick={saveStorageArea}>
+                                    <CheckIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
+                            :
+                            <IconContainer>
+                                <StyledButton
+                                    data-testid="storageAreaEditIcon"
+                                    variant='ghost_icon'
+                                    onClick={(): void => setEditingStorageArea(true)}>
+                                    <EditOutlinedIcon fontSize='small' />
+                                </StyledButton>
+                            </IconContainer>
                     }
                 </TextFieldContainer>
             </TagDetailsInputContainer>
             {
                 getRequirementsSection(tagDetails.id)
             }
-        </Container>
+        </Container >
     );
 };
 

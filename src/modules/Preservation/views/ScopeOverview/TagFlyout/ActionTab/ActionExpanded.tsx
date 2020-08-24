@@ -41,16 +41,20 @@ interface ActionDetails {
 
 interface ActionDetailsProps {
     tagId: number;
+    isVoided: boolean;
     actionId: number;
     toggleDetails: () => void;
     getActionList: () => void;
+    setDirty: () => void;
 }
 
 const ActionExpanded = ({
     tagId,
+    isVoided,
     actionId,
     toggleDetails,
-    getActionList
+    getActionList,
+    setDirty
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [actionDetails, setActionDetails] = useState<ActionDetails>();
@@ -80,6 +84,7 @@ const ActionExpanded = ({
         try {
             if (actionDetails) {
                 await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
+                setDirty();
                 getActionList();
                 toggleDetails();
                 showSnackbarNotification('Action is closed.', 5000, true);
@@ -103,14 +108,16 @@ const ActionExpanded = ({
 
     if (showEditMode) {
         return (
-            < CreateOrEditAction
+            <CreateOrEditAction
                 tagId={tagId}
+                isVoided={isVoided}
                 actionId={actionId}
                 title={actionDetails.title}
                 description={actionDetails.description}
                 dueTimeUtc={actionDetails.dueTimeUtc}
                 rowVersion={actionDetails.rowVersion}
                 backToParentView={(): void => { getActionList(); setShowEditMode(false); }}
+                setDirty={setDirty}
             />
         );
     }
@@ -125,7 +132,7 @@ const ActionExpanded = ({
                     </Typography>
                 </Section>
                 {
-                    !actionDetails.isClosed && (
+                    (!isVoided && !actionDetails.isClosed) && (
                         <IconContainer>
                             <StyledButton
                                 data-testid="editIcon"
@@ -198,6 +205,7 @@ const ActionExpanded = ({
                 <Typography variant='caption'>Attachments</Typography>
                 <ActionAttachments
                     tagId={tagId}
+                    isVoided={isVoided}
                     actionId={actionId}
                     enableActions={false}
                 />
@@ -207,7 +215,11 @@ const ActionExpanded = ({
                 !actionDetails.isClosed && (
                     <Section>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button onClick={closeAction}>Close action</Button>
+                            <Button 
+                                disabled={isVoided}
+                                onClick={closeAction}>
+                                Close action
+                            </Button>
                         </div>
                     </Section>
                 )

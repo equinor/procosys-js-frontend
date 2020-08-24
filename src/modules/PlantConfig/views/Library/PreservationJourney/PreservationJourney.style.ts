@@ -8,7 +8,7 @@ export const ButtonSpacer = styled.div`
 export const FormFieldSpacer = styled.div`
     display: flex;
     margin-right: calc(var(--grid-unit) * 2);
-    padding-bottom: calc(var(--grid-unit) * 2);
+    padding-bottom: var(--grid-unit);
     .voidUnvoid svg {
         padding-right: var(--grid-unit);
     }
@@ -30,7 +30,7 @@ export const Container = styled.div`
 
 export const StepsContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto; 
+    grid-template-columns: auto auto auto auto auto; 
     width: fit-content;
     padding: var(--grid-unit);
     align-items:flex-end;
@@ -54,4 +54,18 @@ export const DropdownItem = styled.div`
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba}
     }
+`;
+
+export const ResponsibleDropdownContainer = styled.div`
+    width: 100%;
+    > div {
+        width: 100%;
+    }
+`;
+
+export const Breadcrumbs = styled.section`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--grid-unit);
 `;

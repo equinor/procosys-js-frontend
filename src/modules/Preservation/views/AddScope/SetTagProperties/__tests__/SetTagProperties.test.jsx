@@ -136,8 +136,8 @@ describe('Module: <SetTagProperties />', () => {
         expect(getByText('Requirements are automatically added for each Tag Function. Changes to requirements can be done after adding to scope.')).toBeInTheDocument();
     });
 
-    it('Should render requirements, when add-scope-method is create area tag', () => {
-        const { getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddScopeMethod.CreateAreaTag' />);
+    it('Should render requirements, when add-scope-method is create dummy tag', () => {
+        const { getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddScopeMethod.CreateDummyTag' />);
         expect(getByText('Requirements for all selected tags')).toBeInTheDocument();
     });
 });

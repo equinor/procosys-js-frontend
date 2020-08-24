@@ -55,6 +55,7 @@ export interface RequirementType {
     code: string;
     title: string;
     isVoided: boolean;
+    icon: string;
     sortKey: number;
     requirementDefinitions: RequirementDefinition[];
 }
@@ -67,13 +68,14 @@ export interface RequirementDefinition {
     sortKey: number;
     fields: RequirementField[];
     needsUserInput: boolean;
+    usage: string;
 }
 
 export interface RequirementField {
     id: number;
     label: string;
     isVoided: boolean;
-    sortKey: string;
+    sortKey: number;
     fieldType: string;
     unit: string | null;
     showPrevious: boolean;

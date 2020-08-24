@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Canceler } from 'axios';
 import SelectTags from './SelectTags/SelectTags';
 import SetTagProperties from './SetTagProperties/SetTagProperties';
-import CreateAreaTag from './CreateAreaTag/CreateAreaTag';
+import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
 import Spinner from '../../../../components/Spinner';
 import TagDetails from './TagDetails/TagDetails';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
@@ -18,7 +18,7 @@ import { useProcosysContext } from '@procosys/core/ProcosysContext';
 export enum AddScopeMethod {
     AddTagsManually = 'AddTagsManually',
     AddTagsAutoscope = 'AddTagsAutoscope',
-    CreateAreaTag = 'CreateAreaTag',
+    CreateDummyTag = 'CreateDummyTag',
     MigrateTags = 'MigrateTags',
     Unknown = 'Unknown'
 }
@@ -35,8 +35,8 @@ const AddScope = (): JSX.Element => {
                 return (AddScopeMethod.AddTagsManually);
             case 'selectTagsAutoscope':
                 return (AddScopeMethod.AddTagsAutoscope);
-            case 'createAreaTag':
-                return (AddScopeMethod.CreateAreaTag);
+            case 'createDummyTag':
+                return (AddScopeMethod.CreateDummyTag);
             case 'selectMigrateTags':
                 return (AddScopeMethod.MigrateTags);
             default:
@@ -46,7 +46,7 @@ const AddScope = (): JSX.Element => {
 
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>((): Tag[] => {
-        if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
+        if (addScopeMethod === AddScopeMethod.CreateDummyTag) {
             return [{
                 tagNo: 'type-discipline-area/PO-suffix',
                 description: ''
@@ -65,8 +65,7 @@ const AddScope = (): JSX.Element => {
     const [pO, setPO] = useState<PurchaseOrder | null>();
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
-
-
+    const [isSubmittingScope, setIsSubmittingScope] = useState(false);
 
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
@@ -146,7 +145,7 @@ const AddScope = (): JSX.Element => {
             (async (): Promise<void> => {
                 try {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
-                    setRequirementTypes(response.data);
+                    setRequirementTypes(response);
                 } catch (error) {
                     console.error('Get Requirement Types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
@@ -188,6 +187,7 @@ const AddScope = (): JSX.Element => {
     };
 
     const submit = async (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string): Promise<void> => {
+        setIsSubmittingScope(true);
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
 
@@ -198,7 +198,7 @@ const AddScope = (): JSX.Element => {
                 case AddScopeMethod.AddTagsAutoscope:
                     await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
                     break;
-                case AddScopeMethod.CreateAreaTag:
+                case AddScopeMethod.CreateDummyTag:
                     await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
                 case AddScopeMethod.MigrateTags:
@@ -212,6 +212,7 @@ const AddScope = (): JSX.Element => {
             console.error('Tag preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        setIsSubmittingScope(false);
         return Promise.resolve();
     };
 
@@ -354,10 +355,10 @@ const AddScope = (): JSX.Element => {
                         <TagDetails selectedTags={selectedTags} removeTag={removeSelectedTag} />
                     </SelectedTags>
                 </Container>);
-            } else if (addScopeMethod === AddScopeMethod.CreateAreaTag) {
+            } else if (addScopeMethod === AddScopeMethod.CreateDummyTag) {
                 return (<Container>
                     <LargerComponent>
-                        <CreateAreaTag
+                        <CreateDummyTag
                             nextStep={goToNextStep}
                             setSelectedTags={setSelectedTags}
                             areaType={areaType}
@@ -415,15 +416,16 @@ const AddScope = (): JSX.Element => {
                             previousStep={goToPreviousStep}
                             submitForm={submit}
                             addScopeMethod={addScopeMethod}
+                            isLoading={isSubmittingScope}
                         />
                     </LargerComponent>
                     <Divider />
                     <SelectedTags>
                         <TagDetails
                             selectedTags={selectedTags}
-                            removeTag={addScopeMethod != AddScopeMethod.CreateAreaTag && removeSelectedTag || null}
-                            showMCPkg={addScopeMethod != AddScopeMethod.CreateAreaTag}
-                            collapsed={addScopeMethod != AddScopeMethod.CreateAreaTag} />
+                            removeTag={addScopeMethod != AddScopeMethod.CreateDummyTag && removeSelectedTag || null}
+                            showMCPkg={addScopeMethod != AddScopeMethod.CreateDummyTag}
+                            collapsed={addScopeMethod != AddScopeMethod.CreateDummyTag} />
                     </SelectedTags>
                 </Container>
             );

@@ -206,10 +206,10 @@ const TreeView = ({
     const handleOnClick = (node: NodeData): void => {
         if (dirtyComponents.size > 0) {
             showModalDialog(
-                'Changes you made may not be saved.',
+                'You have modified this work item. You can discard your changes, or cancel to continue editing.',
                 null,
-                '30vw',
-                'Leave',
+                '20vw',
+                'Discard changes',
                 () => {
                     dirtyComponents.clear();
                     selectNode(node);

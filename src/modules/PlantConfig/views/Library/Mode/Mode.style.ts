@@ -30,9 +30,18 @@ export const ButtonContainer = styled.div`
     display: flex;
     width: 100%;
     justify-content: flex-end;
+    .buttonIcon svg {
+        padding-right: var(--grid-unit);
+    }
 `;
 
 export const IconContainer = styled.div`
     display: flex;
 `;
 
+export const Breadcrumbs = styled.section`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--grid-unit);
+`;

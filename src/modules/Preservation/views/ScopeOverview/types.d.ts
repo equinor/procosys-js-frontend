@@ -3,6 +3,7 @@ export interface PreservedTags {
     tags: PreservedTag[];
 }
 export interface PreservedTag {
+    actionStatus: string;
     areaCode: string;
     calloffNo: string;
     commPkgNo: string;
@@ -23,6 +24,7 @@ export interface PreservedTag {
     requirements: Requirement[];
     status: string;
     responsibleCode: string;
+    responsibleDescription: string;
     tagFunctionCode: string;
     tagNo: string;
     tagType?: string;
@@ -32,6 +34,7 @@ export interface PreservedTag {
 export interface Requirement {
     id: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     nextDueTimeUtc: Date;
     nextDueAsYearAndWeek: string;
     nextDueWeeks: number;

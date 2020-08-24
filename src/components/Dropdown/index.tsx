@@ -1,5 +1,6 @@
-import { Container, DropdownButton, IconContainer, DropdownItem, FilterContainer, TopTextContainer } from './style';
-import React, { useRef, useState, useEffect } from 'react';
+import { Container, DropdownButton, DropdownItem, DropdownList, FilterContainer, IconContainer, TopTextContainer } from './style';
+import React, { useEffect, useRef, useState } from 'react';
+
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
@@ -12,6 +13,7 @@ type DropdownProps = {
     label?: string;
     variant?: string;
     meta?: string;
+    maxHeight?: string;
 };
 
 const KEYCODE_ESCAPE = 27;
@@ -25,6 +27,7 @@ const Select: React.FC<DropdownProps> = ({
     label,
     variant,
     meta,
+    maxHeight = '80vh',
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -62,10 +65,10 @@ const Select: React.FC<DropdownProps> = ({
     return (
         <Container ref={containerRef}>
             {(label || meta) &&
-            <TopTextContainer>
-                <div>{label}</div>
-                <div>{meta}</div>
-            </TopTextContainer>
+                <TopTextContainer>
+                    <div>{label}</div>
+                    <div>{meta}</div>
+                </TopTextContainer>
             }
             <DropdownButton
                 onClick={toggleDropdown}
@@ -81,7 +84,8 @@ const Select: React.FC<DropdownProps> = ({
                 <IconContainer>{Icon}</IconContainer>
             </DropdownButton>
             {isOpen && (
-                <ul ref={listRef}
+                <DropdownList ref={listRef}
+                    maxHeight={maxHeight}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && toggleDropdown();
                     }}
@@ -106,12 +110,12 @@ const Select: React.FC<DropdownProps> = ({
                         })
                     )}
                     {(!children || React.Children.count(children) <= 0) && (
-                        <ul style={{boxShadow: 'none'}}>
+                        <ul style={{ boxShadow: 'none' }}>
                             <li data-value={-1}>No items found</li>
                         </ul>
                     )}
 
-                </ul>
+                </DropdownList>
             )}
         </Container>
     );

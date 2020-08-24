@@ -11,7 +11,8 @@ export const ContentContainer = styled.div`
     flex-direction: column;
     overflow-x: hidden;
     width: 100%;
-    margin-top: -16px
+    margin-top: -16px;
+    min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
 `;
 
 export const HeaderContainer = styled.div`
@@ -54,8 +55,12 @@ export const IconBar = styled.div`
     display: flex;
     align-items: center;
 
+    #filterButton {
+        margin-right: 0px;
+    }
+
     button {
-        margin-left: var(--grid-unit);
+        margin-right: var(--grid-unit);
     }
 `;
 

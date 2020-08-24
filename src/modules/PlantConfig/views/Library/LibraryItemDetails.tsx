@@ -3,10 +3,15 @@ import TagFunction from './TagFunction/TagFunction';
 import { LibraryType } from './Library';
 import PreservationJourney from './PreservationJourney/PreservationJourney';
 import Mode from './Mode/Mode';
+import PreservationRequirementType from './PreservationRequirements/PreservationRequirementType';
+import PreservationRequirements from './PreservationRequirements/PreservationRequirements';
+import PreservationRequirementDefinition from './PreservationRequirements/PreservationRequirementDefinition';
+import { Breadcrumbs } from './Library.style';
 
 type LibraryItemProps = {
     libraryType: string;
     libraryItem: string;
+    setSelectedLibraryType: (libraryType: string) => void;
     setDirtyLibraryType: (libraryType: string) => void;
 };
 
@@ -27,12 +32,24 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
                 journeyId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_JOURNEY)}
             />;
+        case LibraryType.PRES_REQUIREMENT:
+            return <PreservationRequirements
+                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
+            />;
         case LibraryType.PRES_REQUIREMENT_TYPE:
-            return <div>req type</div>;
+            return <PreservationRequirementType
+                requirementTypeId={Number(props.libraryItem)}
+                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
+                cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
+            />;
         case LibraryType.PRES_REQUIREMENT_DEFINITION:
-            return <div>def</div>;
+            return <PreservationRequirementDefinition
+                requirementDefinitionId={Number(props.libraryItem)}
+                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
+                cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
+            />;
         default:
-            return <div></div>;
+            return <Breadcrumbs>Library /</Breadcrumbs>;
 
     }
 };

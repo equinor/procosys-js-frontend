@@ -10,6 +10,7 @@ const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.repla
 interface PreservedTagResponse {
     maxAvailable: number;
     tags: [{
+        actionStatus: string;
         areaCode: string;
         calloffNo: string;
         commPkgNo: string;
@@ -31,15 +32,16 @@ interface PreservedTagResponse {
             {
                 id: number;
                 requirementTypeCode: string;
+                requirementTypeIcon: string;
                 nextDueTimeUtc: Date;
                 nextDueAsYearAndWeek: string;
                 nextDueWeeks: number;
                 readyToBePreserved: boolean;
-                rowVersion: string;
             }
         ];
         status: string;
         responsibleCode: string;
+        responsibleDescription: string;
         tagFunctionCode: string;
         tagNo: string;
         tagType: string;
@@ -95,6 +97,7 @@ interface ModeResponse {
     id: number;
     title: string;
     forSupplier: boolean;
+    inUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -107,6 +110,7 @@ interface PresJourneyResponse {
 interface TagDetailsResponse {
     id: number;
     tagNo: string;
+    isVoided: boolean;
     description: string;
     status: string;
     journeyTitle: string;
@@ -114,6 +118,7 @@ interface TagDetailsResponse {
     responsibleName: string;
     commPkgNo: string;
     mcPkgNo: string;
+    calloffNo: string;
     purchaseOrderNo: string;
     areaCode: string;
     readyToBePreserved: boolean;
@@ -137,6 +142,14 @@ interface TagListFilter {
     actionStatus: string | null;
 }
 
+interface SavedScopeFilterResponse {
+    id: number;
+    title: string;
+    defaultFilter: boolean;
+    criteria: string;
+    rowVersion: string;
+}
+
 interface JourneyResponse {
     id: number;
     title: string;
@@ -147,6 +160,7 @@ interface JourneyResponse {
             id: number;
             title: string;
             isVoided: boolean;
+            autoTransferMethod: string;
             mode: {
                 id: number;
                 title: string;
@@ -164,32 +178,34 @@ interface JourneyResponse {
 }
 
 interface RequirementTypeResponse {
-    resultType: string;
-    errors: string[];
-    data: [{
+    id: number;
+    code: string;
+    title: string;
+    isVoided: boolean;
+    icon: string;
+    sortKey: number;
+    rowVersion: string;
+    isInUse: boolean;
+    requirementDefinitions: [{
         id: number;
-        code: string;
         title: string;
         isVoided: boolean;
+        defaultIntervalWeeks: number;
         sortKey: number;
-        requirementDefinitions: [{
-            id: number;
-            title: string;
-            isVoided: boolean;
-            defaultIntervalWeeks: number;
-            sortKey: number;
-            fields: [{
-                id: number;
-                label: string;
-                isVoided: boolean;
-                sortKey: string;
-                fieldType: string;
-                unit: string | null;
-                showPrevious: boolean;
-            }];
-            needsUserInput: boolean;
-        }];
+        usage: string;
+        isInUse: boolean;
         rowVersion: string;
+        fields: [{
+            id: number;
+            label: string;
+            isVoided: boolean;
+            sortKey: number;
+            fieldType: string;
+            unit: string;
+            showPrevious: boolean;
+            rowVersion: string;
+        }];
+        needsUserInput: boolean;
     }];
 }
 
@@ -216,6 +232,17 @@ interface RequirementForUpdate {
     rowVersion: string | undefined;
 }
 
+interface FieldsFormInput {
+    id: number | null;
+    rowVersion: string | null;
+    isVoided: boolean | null;
+    sortKey: number;
+    fieldType: string;
+    label: string;
+    unit: string;
+    showPrevious: boolean;
+}
+
 interface UpdateTagFunctionRequestData {
     registerCode: string;
     tagFunctionCode: string;
@@ -228,6 +255,7 @@ interface TagRequirementsResponse {
     intervalWeeks: number;
     nextDueWeeks: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;
     nextDueTimeUtc: Date;
@@ -266,6 +294,7 @@ interface ActionResponse {
     title: string;
     dueTimeUtc: Date | null;
     isClosed: boolean;
+    attachmentCount: number;
     rowVersion: string;
 }
 
@@ -375,10 +404,15 @@ interface HistoryResponse {
     id: number;
     description: string;
     createdAtUtc: Date;
-    createdById: string;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    };
     eventType: string;
     dueWeeks: number;
-    preservationRecordId: number;
+    tagRequirementId: number;
+    preservationRecordGuid: string;
 }
 
 class PreservationApiError extends Error {
@@ -794,6 +828,93 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Get saved tag list filters
+     */
+    async getSavedTagListFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
+        const endpoint = '/SavedFilters';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<SavedScopeFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+    /**
+     * Add saved tag list filter
+     */
+    async addSavedTagListFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/SavedFilter';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.post(
+                endpoint,
+                {
+                    projectName: projectName,
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    criteria: criteria
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Update saved tag list filter
+    */
+    async updateSavedTagListFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    critieria: criteria,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete saved tag list filter 
+    */
+    async deleteSavedTagListFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
      * Start preservation for the given tags.
      * @param tags  List with tag IDs
      */
@@ -1006,7 +1127,7 @@ class PreservationApiClient extends ApiClient {
     /**
     * Add new step to journey
     */
-    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async addStepToJourney(journeyId: number, title: string, modeId: number, responsibleCode: string, autoTransferMethod: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/AddStep`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1018,6 +1139,7 @@ class PreservationApiClient extends ApiClient {
                     title: title,
                     modeId: modeId,
                     responsibleCode: responsibleCode,
+                    autoTransferMethod: autoTransferMethod,
                 },
                 settings
             );
@@ -1029,7 +1151,7 @@ class PreservationApiClient extends ApiClient {
     /**
       * Update journey step
       */
-    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async updateJourneyStep(journeyId: number, stepId: number, title: string, modeId: number, responsibleCode: string, autoTransferMethod: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1041,6 +1163,7 @@ class PreservationApiClient extends ApiClient {
                     modeId: modeId,
                     responsibleCode: responsibleCode,
                     title: title,
+                    autoTransferMethod: autoTransferMethod,
                     rowVersion: rowVersion,
                 },
                 settings
@@ -1108,6 +1231,21 @@ class PreservationApiClient extends ApiClient {
                     data: { rowVersion: rowVersion }
                 }
             );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Duplicate journey 
+    */
+    async duplicateJourney(journeyId: number, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Journeys/${journeyId}/Duplicate`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(endpoint);
         } catch (error) {
             throw getPreservationApiError(error);
         }
@@ -1399,11 +1537,12 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async getTagRequirements(tagId: number, includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
+    async getTagRequirements(tagId: number, includeVoided = false, includeAllUsages = false, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse[]> {
         const endpoint = `/Tags/${tagId}/Requirements`;
         const settings: AxiosRequestConfig = {
             params: {
                 IncludeVoided: includeVoided,
+                IncludeAllUsages: includeAllUsages
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1502,13 +1641,36 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    async getDownloadUrlForAttachmentOnPreservationRecord(
+        tagId: number,
+        tagRequirementId: number,
+        preservationRecordGuid: string,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+
+        const endpoint = `/Tags/${tagId}/Requirements/${tagRequirementId}/PreservationRecord/${preservationRecordGuid}/Attachment`;
+        const settings: AxiosRequestConfig = {
+            params: {
+                redirect: false
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<string>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
     /**
      * Get all requirement types
      *
      * @param includeVoided Include voided Requirements in result
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse> {
+    async getRequirementTypes(includeVoided = false, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse[]> {
         const endpoint = '/RequirementTypes';
         const settings: AxiosRequestConfig = {
             params: {
@@ -1518,10 +1680,259 @@ class PreservationApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<RequirementTypeResponse>(endpoint, settings);
+            const result = await this.client.get<RequirementTypeResponse[]>(endpoint, settings);
             return result.data;
         }
         catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Get requirement type
+     */
+    async getRequirementType(requirementId: number, setRequestCanceller?: RequestCanceler): Promise<RequirementTypeResponse> {
+        const endpoint = `/RequirementTypes/${requirementId}`;
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<RequirementTypeResponse>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add requirement type 
+     */
+    async addRequirementType(code: string, title: string, icon: string, sortKey: number, setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = '/RequirementTypes';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    code: code,
+                    title: title,
+                    icon: icon,
+                    sortKey: sortKey,
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update requirement type 
+     */
+    async updateRequirementType(requirementTypeId: number, code: string, title: string, icon: string, sortKey: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    code: code,
+                    title: title,
+                    icon: icon,
+                    sortKey: sortKey,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Void requirement type 
+    */
+    async voidRequirementType(requirementTypeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/Void`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+      * Unvoid requirement type 
+      */
+    async unvoidRequirementType(requirementTypeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Delete requirement type 
+     */
+    async deleteRequirementType(requirementTypeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Add requirement definition 
+     */
+    async addRequirementDefinition(requirementTypeId: number, sortKey: number, usage: string, title: string, defaultIntervalWeeks: number, fields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    sortKey,
+                    usage,
+                    title,
+                    defaultIntervalWeeks,
+                    fields
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+     * Update requirement definition 
+     */
+    async updateRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, title: string, defaultIntervalWeeks: number, usage: string, sortKey: number,
+        rowVersion: string, updatedFields: FieldsFormInput[], newFields: FieldsFormInput[], setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    usage: usage,
+                    title: title,
+                    defaultIntervalWeeks: defaultIntervalWeeks,
+                    sortKey: sortKey,
+                    rowVersion: rowVersion,
+                    updatedFields: updatedFields,
+                    newFields: newFields
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Void requirement definition 
+    */
+    async voidRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/Void`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Unvoid requirement definition 
+    */
+    async unvoidRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/Unvoid`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    rowVersion: rowVersion,
+                },
+                settings
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
+    * Delete requirement definition 
+    */
+    async deleteRequirementDefinition(requirementTypeId: number, requirementDefinitionId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
             throw getPreservationApiError(error);
         }
     }
@@ -2044,6 +2455,27 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+    * Delete mode
+    */
+    async deleteMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Modes/${modeId}`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+    /**
     * Void mode
     */
     async voidMode(modeId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
@@ -2111,7 +2543,27 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
+    /**
+     * Get preservation record 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getPreservationRecord(tagId: number, tagRequirementId: number, preservationRecordGuid: string, setRequestCanceller?: RequestCanceler): Promise<TagRequirementsResponse> {
+        const endpoint = `/Tags/${tagId}/Requirements/${tagRequirementId}/PreservationRecord/${preservationRecordGuid}`;
 
+        const settings: AxiosRequestConfig = {
+            params: {}
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<TagRequirementsResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
 }
 
 export default PreservationApiClient;

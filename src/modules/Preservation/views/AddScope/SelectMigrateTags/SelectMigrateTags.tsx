@@ -117,7 +117,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
         <Container>
             <Header>
                 <h1>Migrate preservation scope</h1>
-                <div>{project.description}</div>
+                <div>{project.name}</div>
             </Header>
             <TopContainer>
                 <InnerContainer>
@@ -148,6 +148,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
                     selection: true,
+                    selectionProps: {disableRipple: true},
                     rowStyle: (data): any => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })

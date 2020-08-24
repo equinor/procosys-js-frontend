@@ -4,9 +4,33 @@ import { tokens } from '@equinor/eds-tokens';
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
+    width:100%;
     input + svg {
         width: 24px;
         height: 24px;
+    }
+
+    tbody, thead {
+        .MuiButtonBase-root {
+            :hover {
+                background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+            }
+            > .MuiIconButton-label > svg {
+                fill: ${tokens.colors.interactive.primary__resting.rgba};
+            }
+        }
+
+        .MuiCheckbox-colorSecondary.Mui-checked:hover {
+            background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+        }
+
+        .MuiTouchRipple-root {
+            display: none;
+        }
+
+        td > svg > path {
+            color: #dadada;
+        }
     }
 `;
 

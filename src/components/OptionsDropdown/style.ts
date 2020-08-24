@@ -8,13 +8,12 @@ export const Container = styled.div`
     ul {
         position: absolute;
         margin-top: 0.5rem;
-        margin-left: var(--grid-unit);
         max-height: 300px;
         background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};
-        overflow-y: scroll;
         z-index: 100;
+        white-space: nowrap;
     }
     :hover {
         cursor: pointer;

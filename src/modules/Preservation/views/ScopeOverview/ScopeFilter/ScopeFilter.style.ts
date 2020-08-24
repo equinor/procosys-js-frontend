@@ -35,6 +35,7 @@ export const Collapse = styled.div<FilterProps>`
     `};
     ${({ filterActive }): any => filterActive && css`
         div {
+            font-weight: bold;
             color: ${tokens.colors.interactive.primary__resting.rgba};
         }
         path {

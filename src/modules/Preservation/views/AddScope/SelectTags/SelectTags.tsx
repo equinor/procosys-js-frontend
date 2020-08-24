@@ -82,7 +82,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const rowSelectionChanged = (rowData: TagRow[], row: TagRow): void => {
         // exclude any preserved tags (material-table bug)
 
-        if (rowData.length == 0 && props.scopeTableData.length > 0) {
+        if (rowData.length == 0 && props.scopeTableData && props.scopeTableData.length > 0) {
             removeAllSelectedTagsInScope();
         } else if (rowData.length > 0 && rowData[0].tableData && !row) {
             addAllTagsInScope(rowData);
@@ -121,57 +121,56 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
 
                         )
                     }
-                    <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>
+                    {props.scopeTableData && props.scopeTableData.length > 0 && <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>}
                 </InnerContainer>
                 <ButtonsContainer>
                     <Button onClick={cancel} variant='outlined' >Cancel</Button>
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </ButtonsContainer>
             </TopContainer>
-            <Table
-                columns={tableColumns}
-                data={props.scopeTableData}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    filtering: true,
-                    search: false,
-                    draggable: false,
-                    pageSize: 10,
-                    emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 50, 100],
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    selection: true,
-                    selectionProps: (data: TagRow): any => ({
-                        // Disable and hide selection checkbox for preserved tags.
-                        // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
-                        // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
-                        disabled: data.isPreserved,
-                        style: { display: data.isPreserved && 'none' },
-                        disableRipple: true
-                    }),
-                    rowStyle: (data): any => ({
-                        backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
-                    })
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                onSelectionChange={(rowData, row): void => {
-                    rowSelectionChanged(rowData, row);
-                }}
-                isLoading={props.isLoading}
-                components={{
-                    OverlayLoading: (): JSX.Element => (
-                        <LoadingContainer>
-                            <Loading title="Loading tags" />
-                        </LoadingContainer>
-                    )
-                }}
-            />
+            {props.isLoading &&
+                <LoadingContainer>
+                    <Loading title="Loading tags" />
+                </LoadingContainer>}
+            {
+                props.scopeTableData && props.scopeTableData.length > 0 && !props.isLoading &&
+                <Table
+                    columns={tableColumns}
+                    data={props.scopeTableData}
+                    options={{
+                        toolbar: false,
+                        showTitle: false,
+                        filtering: true,
+                        search: false,
+                        draggable: false,
+                        pageSize: 10,
+                        emptyRowsWhenPaging: false,
+                        pageSizeOptions: [10, 50, 100],
+                        padding: 'dense',
+                        headerStyle: {
+                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                        },
+                        selection: true,
+                        selectionProps: (data: TagRow): any => ({
+                            // Disable and hide selection checkbox for preserved tags.
+                            // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
+                            // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
+                            disabled: data.isPreserved,
+                            style: { display: data.isPreserved && 'none' },
+                            disableRipple: true
+                        }),
+                        rowStyle: (data): any => ({
+                            backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
+                        })
+                    }}
+                    style={{
+                        boxShadow: 'none'
+                    }}
+                    onSelectionChange={(rowData, row): void => {
+                        rowSelectionChanged(rowData, row);
+                    }}
+                />
+            }
         </Container >
     );
 };

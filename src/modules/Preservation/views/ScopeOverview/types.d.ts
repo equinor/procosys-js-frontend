@@ -34,6 +34,7 @@ export interface PreservedTag {
 export interface Requirement {
     id: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     nextDueTimeUtc: Date;
     nextDueAsYearAndWeek: string;
     nextDueWeeks: number;

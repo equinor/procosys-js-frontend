@@ -44,6 +44,7 @@ const Library = (): JSX.Element => {
                 <LibraryItemDetails
                     libraryType={selectedLibraryType}
                     libraryItem={selectedLibraryItem}
+                    setSelectedLibraryType={setSelectedLibraryType}
                     setDirtyLibraryType={setDirtyLibraryType}
                 />
             </LibraryItemContainer>

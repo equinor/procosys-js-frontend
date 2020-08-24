@@ -24,6 +24,7 @@ export interface TagRequirement {
     intervalWeeks: number;
     nextDueWeeks: number;
     requirementTypeCode: string;
+    requirementTypeIcon: string;
     requirementTypeTitle: string;
     requirementDefinitionTitle: string;
     nextDueTimeUtc: Date;

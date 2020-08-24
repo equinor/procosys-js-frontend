@@ -6,16 +6,12 @@ import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Spinner from '@procosys/components/Spinner';
 import PreservationIcon, { preservationIconList, PreservationTypeIcon } from '@procosys/components/PreservationIcon';
+import EdsIcon from '../../../../../components/EdsIcon';
+import { RequirementType } from './types';
 
-interface RequirementTypeItem {
-    id: number;
-    code: string;
-    title: string;
-    icon: string;
-    isVoided: boolean;
-    sortKey: number;
-    rowVersion: string;
-}
+const voidIcon = <EdsIcon name='delete_forever' size={16} />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 
 type PreservationRequirementTypeProps = {
     requirementTypeId: number;
@@ -27,13 +23,13 @@ const baseBreadcrumb = 'Library / Preservation Requirements /';
 
 const PreservationRequirementType = (props: PreservationRequirementTypeProps): JSX.Element => {
 
-    const createNewRequirementType = (): RequirementTypeItem => {
-        return { id: -1, code: '', title: '', icon: '', isVoided: false, sortKey: -1, rowVersion: '' };
+    const createNewRequirementType = (): RequirementType => {
+        return { id: -1, code: '', title: '', icon: '', isVoided: false, sortKey: -1, rowVersion: '', isInUse: false, requirementDefinitions: [] };
     };
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [requirementType, setRequirementType] = useState<RequirementTypeItem | null>(null);
-    const [newRequirementType, setNewRequirementType] = useState<RequirementTypeItem>(createNewRequirementType());
+    const [requirementType, setRequirementType] = useState<RequirementType | null>(null);
+    const [newRequirementType, setNewRequirementType] = useState<RequirementType>(createNewRequirementType());
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [iconList, setIconList] = useState<SelectItem[]>([]);
 
@@ -67,7 +63,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         }
     }, [newRequirementType]);
 
-    const cloneRequirementType = (requirementType: RequirementTypeItem): RequirementTypeItem => {
+    const cloneRequirementType = (requirementType: RequirementType): RequirementType => {
         return JSON.parse(JSON.stringify(requirementType));
     };
 
@@ -76,8 +72,8 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         try {
             await preservationApiClient.getRequirementType(requirementTypeId).then(
                 (response) => {
-                    setRequirementType(response.data);
-                    setNewRequirementType(cloneRequirementType(response.data));
+                    setRequirementType(response);
+                    setNewRequirementType(cloneRequirementType(response));
                 }
             );
         } catch (error) {
@@ -125,6 +121,22 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
             saveNew();
         } else {
             saveUpdated();
+        }
+    };
+
+    const deleteRequirementType = async (): Promise<void> => {
+        if (newRequirementType) {
+            setIsLoading(true);
+            try {
+                await preservationApiClient.deleteRequirementType(newRequirementType.id, newRequirementType.rowVersion);
+                props.setDirtyLibraryType();
+                props.cancel();
+                showSnackbarNotification('Requirement type is deleted.', 5000);
+            } catch (error) {
+                console.error('Error occured when trying to delete requirement type: ', error.message, error.data);
+                showSnackbarNotification(error.message, 5000);
+            }
+            setIsLoading(false);
         }
     };
 
@@ -198,15 +210,23 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement type is voided</Typography>
             }
             <ButtonContainer>
+                {newRequirementType.isVoided && newRequirementType.id != -1 &&
+                    <>
+                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementType} disabled={newRequirementType.isInUse} title={newRequirementType.isInUse ? 'Requirement type that is in use cannot be deleted' : ''}>
+                            {deleteIcon} Delete
+                        </Button>
+                        <ButtonSpacer />
+                    </>
+                }
                 {newRequirementType.isVoided &&
-                    <Button variant="outlined" onClick={unvoidRequirementType}>
-                        Unvoid
+                    <Button className='buttonIcon' variant="outlined" onClick={unvoidRequirementType}>
+                        {unvoidIcon} Unvoid
                     </Button>
                 }
 
-                {!newRequirementType.isVoided &&
-                    <Button variant="outlined" onClick={voidRequirementType}>
-                        Void
+                {!newRequirementType.isVoided && newRequirementType.id != -1 &&
+                    < Button className='buttonIcon' variant="outlined" onClick={voidRequirementType}>
+                        {voidIcon} Void
                     </Button>
                 }
                 <ButtonSpacer />
@@ -274,7 +294,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                     {getIconText()}
                 </SelectInput>
             </InputContainer>
-        </Container>
+        </Container >
     );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, IconContainer, FieldsContainer, FormHeader } from './PreservationRequirements.style';
+import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, IconContainer, FieldsContainer, FormHeader, Breadcrumbs } from './PreservationRequirements.style';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Spinner from '@procosys/components/Spinner';
@@ -32,6 +32,7 @@ interface RequirementDefinitionItem {
     isInUse: boolean;
     rowVersion: string;
     fields: Field[];
+    needsUserInput: boolean;
 }
 
 interface Field {
@@ -196,7 +197,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     icon: reqType.icon,
                                     requirementTypeId: reqType.id,
                                     requirementTypeTitle: reqType.title,
-
                                 };
                                 setRequirementDefinition(requirementDef);
                                 setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
@@ -211,10 +211,10 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 });
             } else {
                 setNewRequirementDefinition({
-                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
+                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
                 });
                 setRequirementDefinition({
-                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: []
+                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
                 });
 
             }
@@ -383,7 +383,10 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     if (isLoading) {
-        return <Spinner large />;
+        return (<Container>
+            <Breadcrumbs>{'Library / Preservation Requirements /'}</Breadcrumbs>
+            <Spinner large />
+        </Container>);
     }
 
     const getSelectedReqTypeText = (): JSX.Element => {
@@ -400,8 +403,22 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         return (<div></div>);
     }
 
+    const getBreadcrumb = (): string => {
+        let breadcrumbString = 'Library / Preservation Requirements / '; 
+        if (newRequirementDefinition.id == -1) {
+            return breadcrumbString;
+        }
+        breadcrumbString += newRequirementDefinition.requirementTypeTitle + ' / ';
+        if (newRequirementDefinition.needsUserInput) {
+            return breadcrumbString + 'With user required input / ' + newRequirementDefinition.title;
+        } else {
+            return breadcrumbString + 'Without user required input / ' + newRequirementDefinition.title;
+        }
+    };
+
     return (
         <Container>
+            <Breadcrumbs>{getBreadcrumb()}</Breadcrumbs>
             {newRequirementDefinition.isVoided &&
                 <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement definition is voided</Typography>
             }

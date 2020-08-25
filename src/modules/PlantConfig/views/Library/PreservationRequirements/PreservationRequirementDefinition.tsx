@@ -392,6 +392,16 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         return true;
     };
 
+    const showDeleteFieldButton = (field: Field): boolean => {
+        if (requirementDefinition) {
+            const origField = requirementDefinition.fields.find((f) => f.id = field.id);
+            if (field.id == null || (origField && origField.isVoided && field.isVoided && !field.isInUse)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     if (isLoading) {
         return (<Container>
             <Breadcrumbs>{'Library / Preservation Requirements /'}</Breadcrumbs>
@@ -619,7 +629,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         </Button>
                                     </>
                                 }
-                                {(field.id == null || (field.isVoided && !field.isInUse)) &&
+                                {showDeleteFieldButton(field) &&
                                     (<Button disabled={newRequirementDefinition.isVoided} variant='ghost' title="Delete" onClick={(): void => deleteField(index)}>
                                         {deleteIcon}
                                     </Button>)

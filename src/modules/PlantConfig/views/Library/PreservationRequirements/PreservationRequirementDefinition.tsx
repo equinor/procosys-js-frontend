@@ -620,7 +620,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     </>
                                 }
                                 {(field.id == null || (field.isVoided && !field.isInUse)) &&
-                                    (<Button variant='ghost' title="Delete" onClick={(): void => deleteField(index)}>
+                                    (<Button disabled={newRequirementDefinition.isVoided} variant='ghost' title="Delete" onClick={(): void => deleteField(index)}>
                                         {deleteIcon}
                                     </Button>)
                                 }

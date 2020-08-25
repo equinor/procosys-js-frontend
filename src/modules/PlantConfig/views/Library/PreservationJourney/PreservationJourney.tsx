@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer, ResponsibleDropdownContainer, Breadcrumbs } from './PreservationJourney.style';
-import EdsIcon from '../../../../../components/EdsIcon';
-import { TextField, Typography, Button } from '@equinor/eds-core-react';
+import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+
 import { Canceler } from 'axios';
-import Spinner from '@procosys/components/Spinner';
-import Dropdown from '../../../../../components/Dropdown';
 import Checkbox from './../../../../../components/Checkbox';
+import Dropdown from '../../../../../components/Dropdown';
+import EdsIcon from '../../../../../components/EdsIcon';
+import Spinner from '@procosys/components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -75,6 +77,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
     const [canSave, setCanSave] = useState<boolean>(false);
     const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const {
         preservationApiClient,
@@ -532,7 +535,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     useEffect(() => {
         if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
             setCanSave(false);
+            unsetDirtyStateFor('PreservationJourneyForm');
             return;
+        } else {
+            setDirtyStateFor('PreservationJourneyForm');
         }
         if (newJourney.title.length < 3) {
             setCanSave(false);

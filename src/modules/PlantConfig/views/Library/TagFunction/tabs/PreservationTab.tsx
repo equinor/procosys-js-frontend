@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { RequirementType } from './types';
-import PreservationApiClient from '@procosys/modules/Preservation/http/PreservationApiClient';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import { useCurrentPlant } from '@procosys/core/PlantContext';
-import { Canceler, AxiosResponse } from 'axios';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import RequirementsWidget from '../../../../../Preservation/components/RequirementsSelector/RequirementsSelector';
+import { ActionContainer, Container, LeftSection, RightSection } from './PreservationTab.style';
+import { AxiosResponse, Canceler } from 'axios';
+import React, { useEffect, useMemo, useState } from 'react';
+
 import { Button } from '@equinor/eds-core-react';
-import { hot } from 'react-hot-loader';
-import { LeftSection, Container, RightSection, ActionContainer } from './PreservationTab.style';
+import PreservationApiClient from '@procosys/modules/Preservation/http/PreservationApiClient';
+import { RequirementType } from './types';
+import RequirementsWidget from '../../../../../Preservation/components/RequirementsSelector/RequirementsSelector';
 import Spinner from '@procosys/components/Spinner';
+import { hot } from 'react-hot-loader';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 interface TagFunction {
     id: number;
@@ -42,6 +44,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     const [tagFunctionDetails, setTagFunctionDetails] = useState<TagFunction>();
     const [unsavedRequirements, setUnsavedRequirements] = useState<RequirementFormInput[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
@@ -108,6 +111,20 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     const onRequirementsChanged = (req: RequirementFormInput[]): void => {
         setUnsavedRequirements(req);
     };
+
+    /**
+     * Update global dirty state
+     */
+    useEffect(() => {
+        if (unsavedRequirements) {
+            setDirtyStateFor('TagFunctionForm');
+        } else {
+            unsetDirtyStateFor('TagFunctionForm');
+        }
+        return (): void => {
+            unsetDirtyStateFor('TagFunctionForm');
+        };
+    }, [unsavedRequirements]);
 
     /**
      * Get all requirement types

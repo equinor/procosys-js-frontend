@@ -25,7 +25,6 @@ import Qs from 'qs';
 import { Typography } from '@equinor/eds-core-react';
 import { Canceler } from '@procosys/http/HttpClient';
 
-
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
         return null;
@@ -100,6 +99,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
+    const [orderDirection, setOrderDirection] = useState<string | null>(null);
+    const [orderByField, setOrderByField] = useState<string | null>(null);
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
 
     const history = useHistory();
@@ -173,6 +174,30 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         }
         return { maxAvailable: 0, tags: [] };
+    };
+
+
+    const exportTagsToExcel = async (): Promise<void> => {
+        try {
+            await apiClient.exportTagsToExcel(project.name, orderByField, orderDirection, tagListFilter).then(
+                (response) => {
+                    const outputFilename = `Preservation tags-${project.name}.xlsx`;
+                    const tempUrl = window.URL.createObjectURL(new Blob([response]));
+                    const tempLink = document.createElement('a');
+                    tempLink.style.display = 'none';
+                    tempLink.href = tempUrl;
+                    tempLink.setAttribute('download', outputFilename);
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    tempLink.remove();
+                }
+            );
+        } catch (error) {
+            console.error('Export tags to excel failed: ', error.message, error.data);
+            if (!error.isCancel) {
+                showSnackbarNotification(error.message);
+            }
+        }
     };
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
@@ -590,8 +615,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <OptionsDropdown
                             text="More options"
                             icon='more_verticle'
-                            variant='ghost'
-                            disabled={selectedTags.length < 1}>
+                            variant='ghost'>
                             <DropdownItem
                                 disabled={selectedTags.length > 1 || voidedTagsSelected}
                                 onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
@@ -617,10 +641,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Unvoid
                             </DropdownItem>
                             <DropdownItem
-                                disabled={true}
-                            >
-                                <EdsIcon name='print' color={tokens.colors.interactive.disabled__border.rgba} />
-                                Print
+                                disabled={false}
+                                onClick={async (): Promise<void> => { exportTagsToExcel(); }}>
+                                Export to Excel
                             </DropdownItem>
                         </OptionsDropdown>
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
@@ -649,6 +672,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setPageSize={setPageSize}
                     shouldSelectFirstPage={resetTablePaging}
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
+                    setOrderByField={setOrderByField}
+                    setOrderDirection={setOrderDirection}
                 />
                 {
                     displayFlyout && (

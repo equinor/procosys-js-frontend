@@ -18,9 +18,6 @@ export const Container = styled.div`
     :hover {
         cursor: pointer;
     }
-    * {
-        color: var(--text--default);
-    }
 `;
 
 export const DropdownList = styled.ul<{ maxHeight?: string }>`
@@ -81,6 +78,9 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
+    div {
+        color: var(--text--default);
+    }
 `;
 
 export const TopTextContainer = styled.div`

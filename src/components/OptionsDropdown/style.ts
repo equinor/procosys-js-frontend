@@ -15,8 +15,8 @@ export const Container = styled.div`
         box-shadow: ${tokens.elevation.raised};
         z-index: 100;
         white-space: nowrap;
-        * {
-            color: var(--text--default);
+        div {
+           color: var(--text--default);
         }
     }
     :hover {

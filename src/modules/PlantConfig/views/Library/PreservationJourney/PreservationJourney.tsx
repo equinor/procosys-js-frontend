@@ -165,7 +165,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code, step.autoTransferMethod);
             return true;
         } catch (error) {
-            console.error('Add journey journey step failed: ', error.message, error.data);
+            console.error('Add journey step failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return false;

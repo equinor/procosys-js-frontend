@@ -33,7 +33,7 @@ describe('Module: <SelectTags />', () => {
     
     it('Should render Next button disabled when no rows are selected', () => {
         const { getByText } = render(<SelectTags selectedTags={[]} />);
-        expect(getByText('Next')).toHaveProperty('disabled', true);
+        expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
     });
 
     it('Should render Next button enabled when rows are selected', () => {
@@ -43,7 +43,7 @@ describe('Module: <SelectTags />', () => {
 
         const { getByText } = render(<SelectTags selectedTags={selectedTags} />);
 
-        expect(getByText('Next')).toHaveProperty('disabled', false);
+        expect(getByText('Next').closest('button')).toHaveProperty('disabled', false);
     });
 
     it('Should render Tag info in table', () => {

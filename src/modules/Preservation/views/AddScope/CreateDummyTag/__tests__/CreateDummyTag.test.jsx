@@ -78,8 +78,8 @@ describe('<CreateDummyTag />', () => {
     it('Next button should be disabled intially.', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag  setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            expect(getByText('Next')).toHaveProperty('disabled', true);
+            const { getByText } = render(<CreateDummyTag setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
         });
     });
 
@@ -108,7 +108,7 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='testDiscipline' suffix='12' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            expect(getByText('Next')).toHaveProperty('disabled', true);
+            expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
         });
     });
 
@@ -116,7 +116,7 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='testDiscipline' description='test description' suffix='12' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            expect(getByText('Next')).toHaveProperty('disabled', true);
+            expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
         });
     });
 
@@ -125,7 +125,7 @@ describe('<CreateDummyTag />', () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
             const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+            await waitFor(() => expect(getByText('Next').closest('button')).toHaveProperty('disabled', false));
         });
     });
 
@@ -134,7 +134,7 @@ describe('<CreateDummyTag />', () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
             const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' purchaseOrder='po' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(getByText('Next')).toHaveProperty('disabled', false));
+            await waitFor(() => expect(getByText('Next').closest('button')).toHaveProperty('disabled', false));
         });
     });
 

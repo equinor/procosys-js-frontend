@@ -162,13 +162,13 @@ describe('Module: <EditTagProperties />', () => {
     it('Should render Save button disabled when tag is not edited', async () => {
         const { getByText, getByTitle } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
-        expect(getByText('Save')).toHaveProperty('disabled', true);
+        expect(getByText('Save').closest('button')).toHaveProperty('disabled', true);
     });
 
     it('Should render Cancel button enabled', async () => {
         const { getByText, getByTitle } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
-        expect(getByText('Cancel')).toHaveProperty('disabled', false);
+        expect(getByText('Cancel').closest('button')).toHaveProperty('disabled', false);
     });
 
     it('Should render with one unvoided requirement when API returns one requirement for tag', async () => {
@@ -216,7 +216,7 @@ describe('Module: <EditTagProperties />', () => {
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
         getByTitle('Void').click();
-        await waitFor(() => expect(getByText('Save')).toHaveProperty('disabled', false));
+        await waitFor(() => expect(getByText('Save').closest('button')).toHaveProperty('disabled', false));
     });
 
 });

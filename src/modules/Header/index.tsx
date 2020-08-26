@@ -265,7 +265,7 @@ const Header: React.FC = (): JSX.Element => {
                         </OptionsDropdown>
                     </MenuItem>
                     <MenuItem className='compact'>
-                        <OptionsDropdown variant={'ghost'} icon='lock' iconSize={24}>
+                        <OptionsDropdown variant={'ghost'} icon='lock'>
                             <a href={`/${params.plant}/Security/User`}>
                                 <DropdownItem>
                                     Users
@@ -291,7 +291,7 @@ const Header: React.FC = (): JSX.Element => {
                     <MenuItem className={'accountButton compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
-                                <EdsIcon name='account_circle' size={24} />
+                                <EdsIcon name='account_circle'/>
                                 {user.name}
                             </Button>
                         </a>

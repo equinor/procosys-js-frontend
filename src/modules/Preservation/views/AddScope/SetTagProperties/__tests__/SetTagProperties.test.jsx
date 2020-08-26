@@ -101,7 +101,7 @@ describe('Module: <SetTagProperties />', () => {
 
     it('Should render Add To Scope button disabled when form is invalid', () => {
         const { getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} />);
-        expect(getByText('Add to scope')).toHaveProperty('disabled', true);
+        expect(getByText('Add to scope').closest('button')).toHaveProperty('disabled', true);
     });
 
     it('Should render no requirement by default', () => {

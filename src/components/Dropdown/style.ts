@@ -78,6 +78,9 @@ export const DropdownItem = styled.li`
     text-align:left;
     font-weight: normal;
     cursor: pointer;
+    div {
+        color: var(--text--default);
+    }
 `;
 
 export const TopTextContainer = styled.div`

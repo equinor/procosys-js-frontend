@@ -21,6 +21,7 @@ export const SubNav = styled.nav`
         display: inline-block;
         padding: 16px;
         text-decoration: none;
+        color: var(--text--default);
         &.active, &:hover {
             background-color: rgba(222,237,238,1);
             border-bottom: 2px solid ${tokens.colors.interactive.primary__resting.rgba};
@@ -47,6 +48,7 @@ export const LogoContainer = styled.div`
         padding-right: 16px;
         border-right: 1px solid #E6E6E6;
         text-decoration: none;
+        color: var(--text--default);
     }
 `;
 
@@ -70,6 +72,7 @@ export const MenuContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
     .compact {
         margin: 0;
     }
@@ -94,11 +97,10 @@ export const MenuItem = styled.div`
     
     a {
         text-decoration: none;
-
     }
+    
     button svg {
-        height: 24px;
-        width: 24px;
+        height: 24px !important;
+        width: 24px !important;
     }
-
 `;

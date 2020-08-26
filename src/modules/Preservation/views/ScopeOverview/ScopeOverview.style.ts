@@ -29,12 +29,12 @@ export const Header = styled.header`
     display: flex;
     align-items: baseline;
 
-    h1 {
-        display: inline-block;
-        margin-right: calc(var(--grid-unit) * 2);
+    > div {	
+        margin-right: calc(var(--grid-unit) * 2);	
     }
 
-    > div {
+    h1 {
+        display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
     }
 
@@ -59,8 +59,8 @@ export const IconBar = styled.div`
         margin-right: 0px;
     }
 
-    button {
-        margin-right: var(--grid-unit);
+    button {	
+        margin-right: var(--grid-unit);	
     }
 `;
 
@@ -72,10 +72,6 @@ export const StyledButton = styled(Button)`
     .iconNextToText {
         margin-right: var(--grid-unit);
         height: calc(var(--grid-unit) * 2);
-    }
-
-    svg path {
-        color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
     }
 `;
 
@@ -124,4 +120,7 @@ export const OldPreservationLink = styled.div`
     color: ${tokens.colors.interactive.primary__resting.rgba};
     text-decoration: underline;
     cursor: pointer;
+    a {
+        color: var(--text--default);
+    }
 `;

@@ -65,7 +65,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
-                {icon && <IconContainer size={iconSize} text={text != ''}><EdsIcon name={icon} size={iconSize} color={disabled ? tokens.colors.interactive.disabled__border.rgba : ''} /></IconContainer>}
+                {icon && <IconContainer size={iconSize}><EdsIcon name={icon} size={iconSize} color={disabled ? tokens.colors.interactive.disabled__border.rgba : ''} /></IconContainer>}
                 {text}
             </DropdownButton>
             {isOpen && (

@@ -80,12 +80,6 @@ export const MenuContainer = styled.div`
     .lastButton {
         margin-right: calc(var(--grid-unit) * 2);
     }
-    
-    .accountButton {
-        svg {
-            margin-right: var(--grid-unit);
-        }
-    }
 `;
 
 export const MenuItem = styled.div`

@@ -617,9 +617,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             icon='more_verticle'
                             variant='ghost'>
                             <DropdownItem
-                                disabled={selectedTags.length > 1 || voidedTagsSelected}
+                                disabled={selectedTags.length != 1 || voidedTagsSelected}
                                 onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
-                                <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
                             </DropdownItem>
                             <DropdownItem

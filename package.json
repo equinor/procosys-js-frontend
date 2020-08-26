@@ -84,7 +84,7 @@
         "@types/qs": "^6.9.4",
         "axios": "^0.20.0",
         "canvas": "^2.6.1",
-        "material-table": "1.61.0",
+        "material-table": "1.62.0",
         "msal": "^1.4.0",
         "qs": "^6.9.4",
         "react": "^16.13.1",

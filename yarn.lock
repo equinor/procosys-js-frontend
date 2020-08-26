@@ -1021,15 +1021,10 @@
   resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.3.0.tgz#3b4b52937eb0eb66ab1ada4ceb6c24ba2bbf7367"
   integrity sha512-XcHPX+/RS40rRekD+C6lzZlm/mijDij7KexqZRJiUsgHKQuYPWbZpjSkF54THEXS4xmSwpB0h24dznEWCPBSDg==
 
-"@equinor/eds-tokens@0.3.0":
+"@equinor/eds-tokens@0.3.0", "@equinor/eds-tokens@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.3.0.tgz#340f0e17b600425ec513938539c347267c703321"
   integrity sha512-Y5Fo/32eGUTT2p73wY7G4saPYvydyjMBO1NnSLbsvnXy5eTu+4vwEyAeeH6qNqB0GUNghLHqtun0XQmqBTSgkA==
-
-"@equinor/eds-tokens@^0.0.1-alpha.5":
-  version "0.0.1-alpha.7"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.0.1-alpha.7.tgz#ca8b61c0083955b53f5fdd696e066913158cbe96"
-  integrity sha512-I/HEZMeeMS5zNarjpVBTGqCXkATJxxwflln+6GzFCvy6hPTC9FmetWzF0Hz1zDHX4rMpsF3jh/mnZ1EQHGx0RA==
 
 "@hot-loader/react-dom@^16.13.0":
   version "16.13.0"

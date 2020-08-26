@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Table from './../Table';
-import { Container, AttachmentLink, AddFile, FormFieldSpacer, StyledButton } from './style';
+import { Container, AttachmentLink, AddFile, StyledButton } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 
@@ -98,7 +98,7 @@ const AttachmentList = ({
                                         variant='ghost'
                                         disabled={disabled}
                                         onClick={handleAddFile}>
-                                        {addIcon} <FormFieldSpacer /> Add file
+                                        {addIcon} Add file
                                     </StyledButton>
                                     <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
                                 </form>

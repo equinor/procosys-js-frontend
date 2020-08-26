@@ -1,11 +1,17 @@
 * {
     font-family: Equinor, sans-serif;
-    color: var(--text--default);
     font-size: 16px;
 }
 body {
     background-color: var(--ui-background--default);
+    color: var(--text--default);
 }
+
+button span svg {
+    height: 16px !important;
+    width: 16px !important;
+}
+
 #procosys-root {
     height: 100vh;
     display: flex;

@@ -34,10 +34,6 @@ export const Header = styled.header`
         margin-right: calc(var(--grid-unit) * 2);
     }
 
-    > div {
-        margin-right: calc(var(--grid-unit) * 2);
-    }
-
     a {
         text-decoration: none;
     }
@@ -58,10 +54,6 @@ export const IconBar = styled.div`
     #filterButton {
         margin-right: 0px;
     }
-
-    button {
-        margin-right: var(--grid-unit);
-    }
 `;
 
 export const StyledButton = styled(Button)`
@@ -70,12 +62,7 @@ export const StyledButton = styled(Button)`
     justify-content: center;
 
     .iconNextToText {
-        margin-right: var(--grid-unit);
         height: calc(var(--grid-unit) * 2);
-    }
-
-    svg path {
-        color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
     }
 `;
 
@@ -124,4 +111,8 @@ export const OldPreservationLink = styled.div`
     color: ${tokens.colors.interactive.primary__resting.rgba};
     text-decoration: underline;
     cursor: pointer;
+`;
+
+export const ButtonSpacer = styled.div`
+    margin-right: calc(var(--grid-unit) * 2);
 `;

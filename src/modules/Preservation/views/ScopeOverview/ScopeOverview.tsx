@@ -3,7 +3,7 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText, OldPreservationLink } from './ScopeOverview.style';
+import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText, OldPreservationLink, ButtonSpacer } from './ScopeOverview.style';
 import Dropdown from '../../../../components/Dropdown';
 import OptionsDropdown from '../../../../components/OptionsDropdown';
 import Flyout from './../../../../components/Flyout';
@@ -535,6 +535,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 );
                             })}
                         </Dropdown>
+                        <ButtonSpacer />
                         <Dropdown text="Add scope">
                             <Link to={'/AddScope/selectTagsManual'}>
                                 <DropdownItem>
@@ -563,6 +564,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             onClick={preservedDialog}
                             disabled={!preservableTagsSelected}>Preserved this week
                         </Button>
+                        <ButtonSpacer />
                         <StyledButton
                             variant='ghost'
                             title='Start preservation for selected tag(s)'
@@ -571,6 +573,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <div className='iconNextToText' ><EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Start
                         </StyledButton>
+                        <ButtonSpacer />
                         <StyledButton
                             variant='ghost'
                             title="Transfer selected tag(s)"
@@ -579,6 +582,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <div className='iconNextToText' ><EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Transfer
                         </StyledButton>
+                        <ButtonSpacer />
                         <StyledButton
                             variant='ghost'
                             title="Complete selected tag(s)"
@@ -587,6 +591,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <div className='iconNextToText' ><EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
                         Complete
                         </StyledButton>
+                        <ButtonSpacer />
                         <OptionsDropdown
                             text="More options"
                             icon='more_verticle'
@@ -623,6 +628,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Print
                             </DropdownItem>
                         </OptionsDropdown>
+                        <ButtonSpacer />
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
                                 <StyledButton

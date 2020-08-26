@@ -92,8 +92,8 @@ export const Tabs = styled.nav`
 
 export const StyledButton = styled(Button)`
     svg {
-        height: 20px;
-        width: 20px;
+        height: 20px !important;
+        width: 20px !important;
     }
 `;
 

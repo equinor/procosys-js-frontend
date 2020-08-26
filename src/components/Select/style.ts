@@ -4,6 +4,10 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div<{ maxHeight?: string }>`
     position: relative;
+    * {
+        color: var(--text--default);
+    }
+    
     ul {
         position: absolute;
         background-color: transparent;

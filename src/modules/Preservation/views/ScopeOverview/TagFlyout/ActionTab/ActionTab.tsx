@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import ActionExpanded from './ActionExpanded';
-import { Collapse, CollapseInfo, ActionContainer, ActionList, Container, AddActionContainer, ButtonSpacer, StyledButton } from './ActionTab.style';
+import { Collapse, CollapseInfo, ActionContainer, ActionList, Container, AddActionContainer, StyledButton } from './ActionTab.style';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EdsIcon from '../../../../../../components/EdsIcon';
@@ -134,7 +134,7 @@ const ActionTab = ({
                             disabled={isVoided}
                             variant='ghost'
                             onClick={(): void => setShowCreateAction(true)}>
-                            {addIcon} <ButtonSpacer /> Add action
+                            {addIcon} Add action
                         </StyledButton>
                     </AddActionContainer>
 

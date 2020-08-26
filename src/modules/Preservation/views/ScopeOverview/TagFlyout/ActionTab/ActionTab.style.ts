@@ -17,10 +17,6 @@ export const AddActionContainer = styled.div`
     cursor: pointer;
 `;
 
-export const ButtonSpacer = styled.div`
-   margin-right: var(--grid-unit);
-`;
-
 export const IconSpacer = styled.div`
    margin-right: calc(var(--grid-unit) * 4);
 `;

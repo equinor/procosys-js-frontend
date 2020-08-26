@@ -14,10 +14,6 @@ export const AddFile = styled.div`
     padding: calc(var(--grid-unit) * 2);
 `;
 
-export const FormFieldSpacer = styled.div`
-    margin-right: var(--grid-unit);
-`;
-
 export const AttachmentLink = styled.div`
     display: flex;
     overflow: hidden;

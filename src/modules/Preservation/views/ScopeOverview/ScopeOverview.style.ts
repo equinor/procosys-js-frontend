@@ -32,7 +32,7 @@ export const Header = styled.header`
     > div {	
         margin-right: calc(var(--grid-unit) * 2);	
     }
-    
+
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
@@ -120,4 +120,7 @@ export const OldPreservationLink = styled.div`
     color: ${tokens.colors.interactive.primary__resting.rgba};
     text-decoration: underline;
     cursor: pointer;
+    a {
+        color: var(--text--default);
+    }
 `;

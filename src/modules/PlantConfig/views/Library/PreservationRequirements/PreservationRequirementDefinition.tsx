@@ -189,9 +189,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     if (reqDef) {
                         try {
                             //Note: We need to fetch the single requirement type, to get the 'inUse' flag. 
-                            const response = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
-                            const singleReqType: RequirementType = response;
+                            const singleReqType: RequirementType = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
                             const singleReqDef = singleReqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
+
                             if (singleReqDef) {
                                 const requirementDef: RequirementDefinitionItem = {
                                     ...singleReqDef,
@@ -199,10 +199,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     requirementTypeId: reqType.id,
                                     requirementTypeTitle: reqType.title,
                                 };
-                                setRequirementDefinition(requirementDef);
+                                setRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
                                 setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
                             }
-
                         } catch (error) {
                             console.error('Get requirement type failed: ', error.message, error.data);
                             showSnackbarNotification(error.message, 5000);
@@ -270,7 +269,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     newFields
                 );
 
-                getRequirementTypes();
+                await getRequirementTypes();
                 showSnackbarNotification('Changes for requirement definition is saved.', 5000);
                 props.setDirtyLibraryType();
             } catch (error) {
@@ -569,7 +568,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             </FormFieldSpacer>
                             <FormFieldSpacer style={{ width: '300px' }}>
                                 <TextField
-                                    id={'label'}
+                                    id={`label_${index}`}
                                     label='Label'
                                     value={field.label}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -583,7 +582,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             {field.fieldType == 'Number' &&
                                 <FormFieldSpacer style={{ width: '100px' }}>
                                     <TextField
-                                        id={'unit'}
+                                        id={`unit_${index}`}
                                         label='Unit'
                                         value={field.unit}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -643,7 +642,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         {voidIcon} Void
                                     </Button>)
                                 }
-
                                 {(field.isVoided) &&
                                     (<Button disabled={newRequirementDefinition.isVoided} className='voidUnvoid' variant='ghost'
                                         onClick={(): void => {
@@ -655,11 +653,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     </Button>)
                                 }
                             </FormFieldSpacer>
-
                         </React.Fragment>
                     );
                 })}
-
             </FieldsContainer >
             <InputContainer>
                 <IconContainer>

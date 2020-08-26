@@ -932,7 +932,7 @@ class PreservationApiClient extends ApiClient {
                 {
                     title: title,
                     defaultFilter: defaultFilter,
-                    critieria: criteria,
+                    criteria: criteria,
                     rowVersion: rowVersion
                 },
                 settings
@@ -1903,6 +1903,7 @@ class PreservationApiClient extends ApiClient {
         const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
+
         try {
             await this.client.put(
                 endpoint,

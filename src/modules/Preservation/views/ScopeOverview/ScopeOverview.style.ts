@@ -29,6 +29,10 @@ export const Header = styled.header`
     display: flex;
     align-items: baseline;
 
+    > div {	
+        margin-right: calc(var(--grid-unit) * 2);	
+    }
+    
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
@@ -54,6 +58,10 @@ export const IconBar = styled.div`
     #filterButton {
         margin-right: 0px;
     }
+
+    button {	
+        margin-right: var(--grid-unit);	
+    }
 `;
 
 export const StyledButton = styled(Button)`
@@ -62,6 +70,7 @@ export const StyledButton = styled(Button)`
     justify-content: center;
 
     .iconNextToText {
+        margin-right: var(--grid-unit);
         height: calc(var(--grid-unit) * 2);
     }
 `;
@@ -111,8 +120,4 @@ export const OldPreservationLink = styled.div`
     color: ${tokens.colors.interactive.primary__resting.rgba};
     text-decoration: underline;
     cursor: pointer;
-`;
-
-export const ButtonSpacer = styled.div`
-    margin-right: calc(var(--grid-unit) * 2);
 `;

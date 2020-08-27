@@ -113,9 +113,19 @@ interface TagDetailsResponse {
     isVoided: boolean;
     description: string;
     status: string;
-    journeyTitle: string;
-    mode: string;
-    responsibleName: string;
+    journey: {
+        id: number;
+        title: string;
+    };
+    mode: {
+        id: number;
+        title: string;
+    };
+    responsible: {
+        id: number;
+        code: string;
+        description: string;
+    };
     commPkgNo: string;
     mcPkgNo: string;
     calloffNo: string;
@@ -255,10 +265,16 @@ interface TagRequirementsResponse {
     id: number;
     intervalWeeks: number;
     nextDueWeeks: number;
-    requirementTypeCode: string;
-    requirementTypeIcon: string;
-    requirementTypeTitle: string;
-    requirementDefinitionTitle: string;
+    requirementType: {
+        id: number;
+        code: string;
+        icon: string;
+        title: string;
+    };
+    requirementDefinition: {
+        id: number;
+        title: string;
+    };
     nextDueTimeUtc: Date;
     nextDueAsYearAndWeek: string;
     readyToBePreserved: boolean;

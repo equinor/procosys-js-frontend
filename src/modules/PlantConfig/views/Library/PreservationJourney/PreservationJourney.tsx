@@ -43,6 +43,7 @@ interface Step {
     isVoided: boolean;
     mode: {
         id: number;
+        title: string;
         rowVersion: string;
     };
     responsible: {
@@ -94,10 +95,16 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 const modes = await preservationApiClient.getModes(false, (cancel: Canceler) => requestCancellor = cancel);
                 const mappedModes: SelectItem[] = [];
-
                 modes.forEach(mode => mappedModes.push({ text: mode.title, value: mode.id, selected: false }));
-                setMappedModes(mappedModes);
 
+                // Update mappedModes with voided modes if they are selected
+                journey && journey.steps.forEach((step) => {
+                    if (!mappedModes.some((mode) => mode.value === step.mode.id)) {
+                        mappedModes.push({ text: step.mode.title, value: step.mode.id, selected: false });
+                    }
+                });
+
+                setMappedModes(mappedModes);
             } catch (error) {
                 console.error('Get Modes failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
@@ -107,7 +114,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, []);
+    }, [journey]);
 
     /**
     * Get responsibles
@@ -421,6 +428,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             isVoided: false,
             mode: {
                 id: -1,
+                title: '',
                 rowVersion: ''
             },
             responsible: {

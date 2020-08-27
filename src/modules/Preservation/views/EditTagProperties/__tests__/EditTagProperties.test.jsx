@@ -87,8 +87,8 @@ const mockRequirements = [{
     requirementDefinitionId: -1,
     requirementId: 12,
     intervalWeeks: 2,
-    requirementTypeTitle: 'Existing req 1',
-    requirementDefinitionTitle: 'req 1 title',
+    requirementType: {title:'Existing req 1'},
+    requirementDefinition: {title:'req 1 title'},
     editingRequirements: true,
     isVoided: false,
     rowVersion: '123vhhj='
@@ -99,9 +99,9 @@ const mockTag = {
     tagNo: 'tag-111',
     description: 'description string',
     status: 'Active',
-    journeyTitle: 'Journey 1',
-    mode: 'FABRICATION-1',
-    responsibleName: 'resp',
+    journey: {title:'Journey 1'},
+    mode: {title:'FABRICATION-1'},
+    responsible: {code:'resp'},
     commPkgNo: 'commPkg',
     mcPkgNo: 'mcPkg',
     purchaseOrderNo: 'pono',
@@ -155,7 +155,7 @@ describe('Module: <EditTagProperties />', () => {
         expect(getByText('Editing ' + mockTag.tagNo)).toBeInTheDocument();
         expect(document.getElementById('Remark').nodeValue == mockTag.remark);
         expect(document.getElementById('StorageArea').nodeValue == mockTag.storageArea);
-        expect(getByText(mockTag.journeyTitle)).toBeInTheDocument();
+        expect(getByText(mockTag.journey.title)).toBeInTheDocument();
         expect(getByText(mockJourneys[0].steps[0].title)).toBeInTheDocument();
     });
 

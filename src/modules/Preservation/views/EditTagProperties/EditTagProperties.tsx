@@ -93,8 +93,8 @@ const EditTagProperties = (): JSX.Element => {
                             requirementDefinitionId: -1,
                             requirementId: itm.id,
                             intervalWeeks: itm.intervalWeeks,
-                            requirementTypeTitle: itm.requirementTypeTitle,
-                            requirementDefinitionTitle: itm.requirementDefinitionTitle,
+                            requirementTypeTitle: itm.requirementType.title,
+                            requirementDefinitionTitle: itm.requirementDefinition.title,
                             editingRequirements: true,
                             isVoided: itm.isVoided,
                             rowVersion: itm.rowVersion
@@ -159,9 +159,9 @@ const EditTagProperties = (): JSX.Element => {
 
     useEffect(() => {
         if (journeys.length > 0 && tag && requirementsFetched) {
-            const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journeyTitle);
+            const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journey.title);
             setJourney(initialJourney);
-            setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode));
+            setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode.title));
             setLoading(false);
         }
     }, [tag, journeys, requirementsFetched]);
@@ -227,7 +227,7 @@ const EditTagProperties = (): JSX.Element => {
      * Check if any changes have been made to journey, step or requirements
      */
     useEffect(() => {
-        if (tag && ((newJourney && newJourney != tag.journeyTitle) || (step && step.mode.title != tag.mode) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
+        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.mode.title != tag.mode.title) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
             setJourneyOrRequirementsEdited(true);
         } else {
             setJourneyOrRequirementsEdited(false);

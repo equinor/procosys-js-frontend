@@ -231,14 +231,14 @@ const Requirements = ({
                             <Section>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography variant='h4'>
-                                        {requirement.requirementTypeTitle}
+                                        {requirement.requirementType.title}
                                     </Typography>
                                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
-                                        <PreservationIcon variant={requirement.requirementTypeIcon} />
+                                        <PreservationIcon variant={requirement.requirementType.icon} />
                                     </div>
                                 </div>
                                 <Typography variant='h6'>
-                                    {requirement.requirementDefinitionTitle}
+                                    {requirement.requirementDefinition.title}
                                 </Typography>
                                 <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)' }}>
                                     <Typography variant='caption'>Interval</Typography>

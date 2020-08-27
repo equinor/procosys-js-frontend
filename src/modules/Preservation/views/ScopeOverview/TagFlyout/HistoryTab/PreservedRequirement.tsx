@@ -120,10 +120,10 @@ const PreservedRequirement = ({
             <Section>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography variant='h4'>
-                        {preservationRecord.requirementTypeTitle}
+                        {preservationRecord.requirementType.title}
                     </Typography>
                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
-                        <PreservationIcon variant={preservationRecord.requirementTypeIcon} />
+                        <PreservationIcon variant={preservationRecord.requirementType.icon} />
                     </div>
                     <div style={{ marginLeft: 'auto' }}>
                         <Button variant='ghost' title='Close' onClick={(): void => close()}>
@@ -132,7 +132,7 @@ const PreservedRequirement = ({
                     </div>
                 </div>
                 <Typography variant='h6'>
-                    {preservationRecord.requirementDefinitionTitle}
+                    {preservationRecord.requirementDefinition.title}
                 </Typography>
                 <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)' }}>
                     <Typography variant='caption'>Interval</Typography>

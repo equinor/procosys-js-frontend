@@ -119,24 +119,28 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     //Fetch req. types, and create select items
     useEffect(() => {
+        if (!requirementDefinition) {
+            return;
+        }
         (async (): Promise<void> => {
             try {
                 const items: SelectItem[] = [];
                 requirementTypes.forEach(requirementType => {
-                    items.push({
-                        text: requirementType.title,
-                        value: requirementType.id,
-                        icon: <PreservationIcon variant={requirementType.icon} />
-                    });
+                    if (!requirementType.isVoided || requirementDefinition.requirementTypeId === requirementType.id) {
+                        items.push({
+                            text: requirementType.title,
+                            value: requirementType.id,
+                            icon: <PreservationIcon variant={requirementType.icon} />
+                        });
+                    }
                 });
                 setRequirementTypeSelectItems(items);
-
             } catch (error) {
                 console.error('Get requirement types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
-    }, [requirementTypes]);
+    }, [requirementTypes, requirementDefinition]);
 
     const isDirty = (): boolean => {
         return JSON.stringify(requirementDefinition) !== JSON.stringify(newRequirementDefinition);
@@ -200,7 +204,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     requirementTypeTitle: reqType.title,
                                 };
                                 setRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
-                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
+                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
                             }
                         } catch (error) {
                             console.error('Get requirement type failed: ', error.message, error.data);
@@ -216,7 +220,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 setRequirementDefinition({
                     id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
                 });
-
             }
 
         })();

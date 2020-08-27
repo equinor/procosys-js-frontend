@@ -161,7 +161,17 @@ const EditTagProperties = (): JSX.Element => {
         if (journeys.length > 0 && tag && requirementsFetched) {
             const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journey.title);
             setJourney(initialJourney);
-            setStep(journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.title === tag.mode.title));
+            let selectedStep: Step | undefined = journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.id === tag.mode.id);
+            if (!selectedStep) {
+                selectedStep = {
+                    id: -1,
+                    isVoided: true,
+                    title: tag.mode.title,
+                    mode: { ...tag.mode, rowVersion: '' },
+                    rowVersion: ''
+                };
+            }
+            setStep(selectedStep);
             setLoading(false);
         }
     }, [tag, journeys, requirementsFetched]);
@@ -197,10 +207,12 @@ const EditTagProperties = (): JSX.Element => {
                     value: itm.id
                 };
             });
+
+            //TODO: MÅ SETTE INN STEP HER, SOM ER DET VALGTE STEPPET, HVIS DET IKKE FINNES I LISTEN 
+
             setMappedSteps(mapped);
         }
     }, [journey]);
-
 
     const setJourneyFromForm = (value: number): void => {
         const j = journeys.find((pJourney: Journey) => pJourney.id === value);
@@ -274,7 +286,6 @@ const EditTagProperties = (): JSX.Element => {
 
         }
     };
-
 
     const save = async (): Promise<void> => {
         setLoading(true);

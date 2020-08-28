@@ -117,6 +117,10 @@ interface TagDetailsResponse {
         id: number;
         title: string;
     };
+    step: {
+        id: number;
+        title: string;
+    };
     mode: {
         id: number;
         title: string;

@@ -157,21 +157,28 @@ const EditTagProperties = (): JSX.Element => {
         };
     }, []);
 
-    useEffect(() => {
-        if (journeys.length > 0 && tag && requirementsFetched) {
-            const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journey.title);
-            setJourney(initialJourney);
-            let selectedStep: Step | undefined = journeys[initialJourney].steps.find((pStep: Step) => pStep.mode.id === tag.mode.id);
+    const setSelectedStep = (journeyIndex: number, stepId: number): void => {
+        if (tag) {
+            let selectedStep: Step | undefined = journeys[journeyIndex].steps.find((pStep: Step) => pStep.id === stepId);
             if (!selectedStep) {
+                //Set dummy step to handle voided step
                 selectedStep = {
-                    id: -1,
+                    id: stepId,
                     isVoided: true,
-                    title: tag.mode.title,
-                    mode: { ...tag.mode, rowVersion: '' },
+                    title: tag.step.title,
+                    mode: { id: -1, title: '', rowVersion: '' },
                     rowVersion: ''
                 };
             }
             setStep(selectedStep);
+        }
+    };
+
+    useEffect(() => {
+        if (journeys.length > 0 && tag && requirementsFetched) {
+            const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journey.title);
+            setJourney(initialJourney);
+            setSelectedStep(initialJourney, tag.step.id);
             setLoading(false);
         }
     }, [tag, journeys, requirementsFetched]);
@@ -208,8 +215,10 @@ const EditTagProperties = (): JSX.Element => {
                 };
             });
 
-            //TODO: MÅ SETTE INN STEP HER, SOM ER DET VALGTE STEPPET, HVIS DET IKKE FINNES I LISTEN 
-
+            //Add missing value (when voided)
+            if (tag && !mapped.some((item) => item.value === tag.step.id)) {
+                mapped.push({ text: tag.step.title, value: tag.step.id });
+            }
             setMappedSteps(mapped);
         }
     }, [journey]);
@@ -221,11 +230,6 @@ const EditTagProperties = (): JSX.Element => {
             setNewJourney(j.title);
         }
     };
-
-    const setStepFromForm = (stepId: number): void => {
-        setStep(journeys[journey].steps.find((pStep: Step) => pStep.id === stepId));
-    };
-
 
     const remarkOrStorageAreaChange = (): void => {
         if (tag && remarkInputRef.current && storageAreaInputRef.current && (remarkInputRef.current.value != tag.remark || storageAreaInputRef.current.value != tag.storageArea)) {
@@ -239,13 +243,12 @@ const EditTagProperties = (): JSX.Element => {
      * Check if any changes have been made to journey, step or requirements
      */
     useEffect(() => {
-        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.mode.title != tag.mode.title) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
+        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
             setJourneyOrRequirementsEdited(true);
         } else {
             setJourneyOrRequirementsEdited(false);
         }
     }, [requirements, step, journey, originalRequirements]);
-
 
     const updateRemarkAndStorageArea = async (): Promise<string> => {
         try {
@@ -260,7 +263,6 @@ const EditTagProperties = (): JSX.Element => {
             throw (showSnackbarNotification(error.message));
         }
     };
-
 
     const updateJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
         try {
@@ -354,7 +356,7 @@ const EditTagProperties = (): JSX.Element => {
                         </InputContainer>
                         <InputContainer>
                             <SelectInput
-                                onChange={setStepFromForm}
+                                onChange={(stepId): void => setSelectedStep(journey, stepId)}
                                 data={mappedSteps}
                                 disabled={poTag}
                                 label={'Preservation step'}

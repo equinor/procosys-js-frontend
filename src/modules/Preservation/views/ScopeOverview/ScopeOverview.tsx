@@ -86,7 +86,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(defaultTagListFilter);
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ ...defaultTagListFilter });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
@@ -511,7 +511,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
 
                 if (filtersUsed > 0) {
-                    const tagFilter = defaultTagListFilter;
+                    const tagFilter = { ...defaultTagListFilter };
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 

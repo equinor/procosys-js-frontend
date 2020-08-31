@@ -27,7 +27,7 @@ const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
-    const { method } = useParams();
+    const { method } = useParams() as any;
 
     const addScopeMethod = useMemo((): AddScopeMethod => {
         switch (method) {

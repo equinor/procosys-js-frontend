@@ -48,7 +48,7 @@ const EditTagProperties = (): JSX.Element => {
 
     const [loading, setLoading] = useState(true);
 
-    const { tagId } = useParams();
+    const { tagId } = useParams() as any;
 
     const [requirementsFetched, setRequirementsFetched] = useState(false);
     const [rowVersion, setRowVersion] = useState<string>('');

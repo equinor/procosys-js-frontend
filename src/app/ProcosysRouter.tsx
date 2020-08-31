@@ -22,8 +22,7 @@ const Page404 = (): JSX.Element => {
 
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
-    const { plant } = useParams();
-
+    const { plant } = useParams() as any;
     return (
         <PlantContextProvider>
             <DirtyContextProvider>

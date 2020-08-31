@@ -14,6 +14,7 @@ import React from 'react';
 const UserGreeting = React.lazy(() => import('./../modules/UserGreeting'));
 const Preservation = React.lazy(() => import('./../modules/Preservation'));
 const PlantConfig = React.lazy(() => import('./../modules/PlantConfig'));
+const CallForPunchOut = React.lazy(() => import('./../modules/CallForPunchOut'));
 
 const Page404 = (): JSX.Element => {
     return <h3>404 - 2</h3>;
@@ -44,6 +45,12 @@ const ProcosysRouter = (): JSX.Element => {
                     path={`${path}/libraryv2`}
                     component={(routeProps: RouteComponentProps): JSX.Element =>
                         LazyRoute(PlantConfig, routeProps)
+                    }
+                />
+                <Route
+                    path={`${path}/callforpunchout`}
+                    component={(routeProps: RouteComponentProps): JSX.Element =>
+                        LazyRoute(CallForPunchOut, routeProps)
                     }
                 />
                 <Route component={Page404} />

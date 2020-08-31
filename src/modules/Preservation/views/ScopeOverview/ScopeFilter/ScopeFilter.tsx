@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Container, Header, Collapse, CollapseInfo, Link, Section } from './ScopeFilter.style';
-import CloseIcon from '@material-ui/icons/Close';
-import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Collapse, CollapseInfo, Container, Header, Link, Section } from './ScopeFilter.style';
+import React, { useEffect, useRef, useState } from 'react';
+
+import AreaIcon from '@procosys/assets/icons/Area';
+import { Canceler } from 'axios';
+import CheckboxFilter from './CheckboxFilter';
+import CloseIcon from '@material-ui/icons/Close';
+import EdsIcon from '@procosys/components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import { TagListFilter } from '../types';
-import CheckboxFilter from './CheckboxFilter';
-import { usePreservationContext } from '../../../context/PreservationContext';
-import { Canceler } from 'axios';
-import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
-import RadioGroupFilter from './RadioGroupFilter';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
-import EdsIcon from '@procosys/components/EdsIcon';
-import AreaIcon from '@procosys/assets/icons/Area';
-import SavedFilters from './SavedFilters';
 import Popover from '@material-ui/core/Popover';
+import RadioGroupFilter from './RadioGroupFilter';
+import SavedFilters from './SavedFilters';
+import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
+import { TagListFilter } from '../types';
+import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../../context/PreservationContext';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
@@ -23,7 +24,6 @@ interface ScopeFilterProps {
     setTagListFilter: (filter: TagListFilter) => void;
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
-    setNumberOfFilters: (activeFilters: number) => void;
     numberOfTags: number | undefined;
 }
 
@@ -132,7 +132,6 @@ const ScopeFilter = ({
     setTagListFilter,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
-    setNumberOfFilters,
     numberOfTags
 }: ScopeFilterProps): JSX.Element => {
 
@@ -327,7 +326,6 @@ const ScopeFilter = ({
             triggerScopeListUpdate();
             const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
             setFilterActive(activeFilters.length > 0);
-            setNumberOfFilters(activeFilters.length);
         };
 
         const timer = setTimeout(() => {
@@ -345,7 +343,6 @@ const ScopeFilter = ({
         triggerScopeListUpdate();
         const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
         setFilterActive(activeFilters.length > 0);
-        setNumberOfFilters(activeFilters.length);
     }, [localTagListFilter.modeIds, localTagListFilter.actionStatus, localTagListFilter.areaCodes, localTagListFilter.disciplineCodes, localTagListFilter.dueFilters, localTagListFilter.journeyIds, localTagListFilter.preservationStatus, localTagListFilter.requirementTypeIds, localTagListFilter.responsibleIds, localTagListFilter.tagFunctionCodes, localTagListFilter.voidedFilter]);
 
     useEffect(() => {

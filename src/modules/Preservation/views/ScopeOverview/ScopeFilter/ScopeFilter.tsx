@@ -279,10 +279,8 @@ const ScopeFilter = ({
     };
 
     useEffect(() => {
-        // On project change - handle reset of filters and refresh scope list (only when filters are active)
-        const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
-
-        if (activeFilters.length > 0 && projectNameRef.current !== project.name) {
+        // On project change - reset filters (triggers scope list update when filters were active)
+        if (projectNameRef.current !== project.name) {
             resetFilter();
         }
 

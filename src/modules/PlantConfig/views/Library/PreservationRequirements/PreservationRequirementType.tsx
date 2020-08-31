@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, Breadcrumbs } from './PreservationRequirements.style';
-import { TextField, Typography, Button } from '@equinor/eds-core-react';
+import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, FormFieldSpacer, InputContainer, SelectText } from './PreservationRequirements.style';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import PreservationIcon, { PreservationTypeIcon, preservationIconList } from '@procosys/components/PreservationIcon';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import Spinner from '@procosys/components/Spinner';
-import PreservationIcon, { preservationIconList, PreservationTypeIcon } from '@procosys/components/PreservationIcon';
+
 import EdsIcon from '../../../../../components/EdsIcon';
 import { RequirementType } from './types';
+import Spinner from '@procosys/components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
 const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
@@ -32,6 +34,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     const [newRequirementType, setNewRequirementType] = useState<RequirementType>(createNewRequirementType());
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [iconList, setIconList] = useState<SelectItem[]>([]);
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const {
         preservationApiClient,
@@ -54,7 +57,9 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     useEffect(() => {
         if (JSON.stringify(requirementType) == JSON.stringify(newRequirementType)) {
             setIsDirty(false);
+            unsetDirtyStateFor('PreservationRequirementType');
         } else {
+            setDirtyStateFor('PreservationRequirementType');
             if (newRequirementType.code && newRequirementType.icon && newRequirementType.sortKey && newRequirementType.title) {
                 setIsDirty(true);
             } else {

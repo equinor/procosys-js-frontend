@@ -28,6 +28,7 @@ interface PreservedTagResponse {
         readyToBeStarted: boolean;
         readyToBeTransferred: boolean;
         readyToBeCompleted: boolean;
+        isInUse: boolean;
         requirements: [
             {
                 id: number;
@@ -1071,6 +1072,29 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+     * Remove given tags
+     * @param tags  List with tag IDs
+     */
+    async remove(tags: PreservedTag[], setRequestCanceller?: RequestCanceler): Promise<void> {
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            for await (const tag of tags) {
+                const endpoint = `/Tags/${tag.id}`;
+                await this.client.delete(
+                    endpoint,
+                    {
+                        data: { rowVersion: tag.rowVersion }
+                    }
+                );
+            }
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
 
     /**
      * Void tag

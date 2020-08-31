@@ -3,9 +3,23 @@ export interface TagDetails {
     tagNo: string;
     description: string;
     status: string;
-    journeyTitle: string;
-    mode: string;
-    responsibleName: string;
+    journey: {
+        id: number;
+        title: string;
+    };
+    step: {
+        id: number;
+        title: string;
+    };
+    mode: {
+        id: number;
+        title: string;
+    };
+    responsible: {
+        id: number;
+        code: string;
+        description: string;
+    };
     commPkgNo: string;
     mcPkgNo: string;
     purchaseOrderNo: string;

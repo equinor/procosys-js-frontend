@@ -151,9 +151,9 @@ const PreservationTab = ({
                             <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Journey</Typography>
                             <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Mode</Typography>
                             <Typography variant='caption' style={{ gridColumn: '3', gridRow: '1' }}>Resp.</Typography>
-                            <Typography variant='body_long' style={{ gridColumn: '1', gridRow: '2' }}>{tagDetails.journeyTitle}</Typography>
-                            <Typography variant='body_long' style={{ gridColumn: '2', gridRow: '2' }}>{tagDetails.mode}</Typography>
-                            <Typography variant='body_long' style={{ gridColumn: '3', gridRow: '2' }}>{tagDetails.responsibleName}</Typography>
+                            <Typography variant='body_long' style={{ gridColumn: '1', gridRow: '2' }}>{tagDetails.journey.title}</Typography>
+                            <Typography variant='body_long' style={{ gridColumn: '2', gridRow: '2' }}>{tagDetails.mode.title}</Typography>
+                            <Typography variant='body_long' style={{ gridColumn: '3', gridRow: '2' }}>{tagDetails.responsible.code}</Typography>
                         </GridFirstRow>
                     </div>
                     <div style={{ marginTop: 'var(--grid-unit)' }}>
@@ -196,7 +196,7 @@ const PreservationTab = ({
                             </TextFieldReadOnly>
                         </div>
                     }
-                    { tagDetails.isVoided ? <></> :
+                    {tagDetails.isVoided ? <></> :
                         editingRemark ?
                             <IconContainer>
                                 <StyledButton
@@ -246,7 +246,7 @@ const PreservationTab = ({
                             </TextFieldReadOnly>
                         </div>
                     }
-                    { tagDetails.isVoided ? <></> :
+                    {tagDetails.isVoided ? <></> :
                         editingStorageArea ?
                             <IconContainer>
                                 <StyledButton

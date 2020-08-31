@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, StepsContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, DropdownItem, IconContainer, ResponsibleDropdownContainer, Breadcrumbs } from './PreservationJourney.style';
-import EdsIcon from '../../../../../components/EdsIcon';
-import { TextField, Typography, Button } from '@equinor/eds-core-react';
+import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+
 import { Canceler } from 'axios';
-import Spinner from '@procosys/components/Spinner';
-import Dropdown from '../../../../../components/Dropdown';
 import Checkbox from './../../../../../components/Checkbox';
+import Dropdown from '../../../../../components/Dropdown';
+import EdsIcon from '../../../../../components/EdsIcon';
+import Spinner from '@procosys/components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -43,6 +45,7 @@ interface Step {
     isVoided: boolean;
     mode: {
         id: number;
+        title: string;
         rowVersion: string;
     };
     responsible: {
@@ -75,6 +78,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
     const [canSave, setCanSave] = useState<boolean>(false);
     const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const {
         preservationApiClient,
@@ -94,10 +98,16 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 const modes = await preservationApiClient.getModes(false, (cancel: Canceler) => requestCancellor = cancel);
                 const mappedModes: SelectItem[] = [];
-
                 modes.forEach(mode => mappedModes.push({ text: mode.title, value: mode.id, selected: false }));
-                setMappedModes(mappedModes);
 
+                // Update mappedModes with voided modes if they are selected
+                journey && journey.steps.forEach((step) => {
+                    if (!mappedModes.some((mode) => mode.value === step.mode.id)) {
+                        mappedModes.push({ text: step.mode.title, value: step.mode.id, selected: false });
+                    }
+                });
+
+                setMappedModes(mappedModes);
             } catch (error) {
                 console.error('Get Modes failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
@@ -107,7 +117,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, []);
+    }, [journey]);
 
     /**
     * Get responsibles
@@ -165,7 +175,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             await preservationApiClient.addStepToJourney(journeyId, step.title, step.mode.id, step.responsible.code, step.autoTransferMethod);
             return true;
         } catch (error) {
-            console.error('Add journey failed: ', error.message, error.data);
+            console.error('Add journey step failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return false;
@@ -212,7 +222,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 try {
                     await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.autoTransferMethod, step.rowVersion);
                 } catch (error) {
-                    console.error('Update journey failed: ', error.message, error.data);
+                    console.error('Update journey step failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
                     return false;
                 }
@@ -417,10 +427,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         const newStep: Step = {
             id: -1,
             title: '',
-            autoTransferMethod: '',
+            autoTransferMethod: AutoTransferMethod.NONE,
             isVoided: false,
             mode: {
                 id: -1,
+                title: '',
                 rowVersion: ''
             },
             responsible: {
@@ -532,7 +543,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     useEffect(() => {
         if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
             setCanSave(false);
+            unsetDirtyStateFor('PreservationJourneyForm');
             return;
+        } else {
+            setDirtyStateFor('PreservationJourneyForm');
         }
         if (newJourney.title.length < 3) {
             setCanSave(false);
@@ -592,7 +606,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }
             <ButtonContainer>
-                {!newJourney.isVoided && newJourney.id != -1 &&
+                {newJourney.isVoided && newJourney.id != -1 &&
                     <Button className='buttonIcon' variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
                         {deleteIcon} Delete
                     </Button>

@@ -6,6 +6,7 @@ import {
     useRouteMatch
 } from 'react-router-dom';
 
+import { DirtyContextProvider } from '../core/DirtyContext';
 import Header from '../modules/Header';
 import LazyRoute from '../components/LazyRoute';
 import { PlantContextProvider } from '../core/PlantContext';
@@ -24,30 +25,31 @@ const ProcosysRouter = (): JSX.Element => {
     const { plant } = useParams() as any;
     return (
         <PlantContextProvider>
-            <Header />
-
-            <Switch key={plant}>
-                <Route
-                    path={path}
-                    exact
-                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                        LazyRoute(UserGreeting, routeProps)
-                    }
-                />
-                <Route
-                    path={`${path}/preservation`}
-                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                        LazyRoute(Preservation, routeProps)
-                    }
-                />
-                <Route
-                    path={`${path}/libraryv2`}
-                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                        LazyRoute(PlantConfig, routeProps)
-                    }
-                />
-                <Route component={Page404} />
-            </Switch>
+            <DirtyContextProvider>
+                <Header />
+                <Switch key={plant}>
+                    <Route
+                        path={path}
+                        exact
+                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                            LazyRoute(UserGreeting, routeProps)
+                        }
+                    />
+                    <Route
+                        path={`${path}/preservation`}
+                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                            LazyRoute(Preservation, routeProps)
+                        }
+                    />
+                    <Route
+                        path={`${path}/libraryv2`}
+                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                            LazyRoute(PlantConfig, routeProps)
+                        }
+                    />
+                    <Route component={Page404} />
+                </Switch>
+            </DirtyContextProvider>
         </PlantContextProvider>
     );
 };

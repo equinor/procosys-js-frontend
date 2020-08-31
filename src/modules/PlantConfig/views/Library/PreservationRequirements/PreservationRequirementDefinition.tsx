@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, IconContainer, FieldsContainer, FormHeader, Breadcrumbs } from './PreservationRequirements.style';
-import { TextField, Typography, Button } from '@equinor/eds-core-react';
+import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, FieldsContainer, FormFieldSpacer, FormHeader, IconContainer, InputContainer, SelectText } from './PreservationRequirements.style';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import Spinner from '@procosys/components/Spinner';
-import PreservationIcon from '@procosys/components/PreservationIcon';
-import EdsIcon from '@procosys/components/EdsIcon';
-import Checkbox from './../../../../../components/Checkbox';
+
 import { Canceler } from 'axios';
+import Checkbox from './../../../../../components/Checkbox';
+import EdsIcon from '@procosys/components/EdsIcon';
+import PreservationIcon from '@procosys/components/PreservationIcon';
 import { RequirementType } from './types';
+import Spinner from '@procosys/components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -75,6 +77,8 @@ type PreservationRequirementDefinitionProps = {
 
 const PreservationRequirementDefinition = (props: PreservationRequirementDefinitionProps): JSX.Element => {
 
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
     const [requirementDefinitionId, setRequirementDefinitionId] = useState<number>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirementTypeSelectItems, setRequirementTypeSelectItems] = useState<SelectItem[]>([]);
@@ -119,24 +123,28 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     //Fetch req. types, and create select items
     useEffect(() => {
+        if (!requirementDefinition) {
+            return;
+        }
         (async (): Promise<void> => {
             try {
                 const items: SelectItem[] = [];
                 requirementTypes.forEach(requirementType => {
-                    items.push({
-                        text: requirementType.title,
-                        value: requirementType.id,
-                        icon: <PreservationIcon variant={requirementType.icon} />
-                    });
+                    if (!requirementType.isVoided || requirementDefinition.requirementTypeId === requirementType.id) {
+                        items.push({
+                            text: requirementType.title,
+                            value: requirementType.id,
+                            icon: <PreservationIcon variant={requirementType.icon} />
+                        });
+                    }
                 });
                 setRequirementTypeSelectItems(items);
-
             } catch (error) {
                 console.error('Get requirement types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
-    }, [requirementTypes]);
+    }, [requirementTypes, requirementDefinition]);
 
     const isDirty = (): boolean => {
         return JSON.stringify(requirementDefinition) !== JSON.stringify(newRequirementDefinition);
@@ -160,7 +168,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             return;
         }
 
-        if (!isDirty()) {
+        const hasUnsavedChanges = isDirty();
+
+        if (!hasUnsavedChanges) {
             setIsDirtyAndValid(false);
         } else if (newRequirementDefinition.sortKey != -1 && newRequirementDefinition.usage && newRequirementDefinition.requirementTypeId != -1
             && newRequirementDefinition.title && newRequirementDefinition.defaultIntervalWeeks != -1) {
@@ -168,6 +178,13 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         } else {
             setIsDirtyAndValid(false);
         }
+
+        if (hasUnsavedChanges) {
+            setDirtyStateFor('PreservationRequirementDefinition');
+        } else {
+            unsetDirtyStateFor('PreservationRequirementDefinition');
+        }
+
     }, [newRequirementDefinition]);
 
     const cloneRequirementDefinition = (reqDef: RequirementDefinitionItem): RequirementDefinitionItem => {
@@ -189,9 +206,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     if (reqDef) {
                         try {
                             //Note: We need to fetch the single requirement type, to get the 'inUse' flag. 
-                            const response = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
-                            const singleReqType: RequirementType = response;
+                            const singleReqType: RequirementType = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
                             const singleReqDef = singleReqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
+
                             if (singleReqDef) {
                                 const requirementDef: RequirementDefinitionItem = {
                                     ...singleReqDef,
@@ -199,10 +216,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     requirementTypeId: reqType.id,
                                     requirementTypeTitle: reqType.title,
                                 };
-                                setRequirementDefinition(requirementDef);
-                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
+                                setRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
+                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
                             }
-
                         } catch (error) {
                             console.error('Get requirement type failed: ', error.message, error.data);
                             showSnackbarNotification(error.message, 5000);
@@ -217,7 +233,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 setRequirementDefinition({
                     id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
                 });
-
             }
 
         })();
@@ -270,7 +285,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     newFields
                 );
 
-                getRequirementTypes();
+                await getRequirementTypes();
                 showSnackbarNotification('Changes for requirement definition is saved.', 5000);
                 props.setDirtyLibraryType();
             } catch (error) {
@@ -390,6 +405,16 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             }
         }
         return true;
+    };
+
+    const showDeleteFieldButton = (field: Field): boolean => {
+        if (requirementDefinition) {
+            const origField = requirementDefinition.fields.find((f) => f.id = field.id);
+            if (field.id == null || (origField && origField.isVoided && field.isVoided && !field.isInUse)) {
+                return true;
+            }
+        }
+        return false;
     };
 
     if (isLoading) {
@@ -559,7 +584,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             </FormFieldSpacer>
                             <FormFieldSpacer style={{ width: '300px' }}>
                                 <TextField
-                                    id={'label'}
+                                    id={`label_${index}`}
                                     label='Label'
                                     value={field.label}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -573,7 +598,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             {field.fieldType == 'Number' &&
                                 <FormFieldSpacer style={{ width: '100px' }}>
                                     <TextField
-                                        id={'unit'}
+                                        id={`unit_${index}`}
                                         label='Unit'
                                         value={field.unit}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -619,7 +644,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         </Button>
                                     </>
                                 }
-                                {(field.id == null || (field.isVoided && !field.isInUse)) &&
+                                {showDeleteFieldButton(field) &&
                                     (<Button disabled={newRequirementDefinition.isVoided} variant='ghost' title="Delete" onClick={(): void => deleteField(index)}>
                                         {deleteIcon}
                                     </Button>)
@@ -633,7 +658,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         {voidIcon} Void
                                     </Button>)
                                 }
-
                                 {(field.isVoided) &&
                                     (<Button disabled={newRequirementDefinition.isVoided} className='voidUnvoid' variant='ghost'
                                         onClick={(): void => {
@@ -645,11 +669,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     </Button>)
                                 }
                             </FormFieldSpacer>
-
                         </React.Fragment>
                     );
                 })}
-
             </FieldsContainer >
             <InputContainer>
                 <IconContainer>

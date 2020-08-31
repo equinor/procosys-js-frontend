@@ -113,9 +113,23 @@ interface TagDetailsResponse {
     isVoided: boolean;
     description: string;
     status: string;
-    journeyTitle: string;
-    mode: string;
-    responsibleName: string;
+    journey: {
+        id: number;
+        title: string;
+    };
+    step: {
+        id: number;
+        title: string;
+    };
+    mode: {
+        id: number;
+        title: string;
+    };
+    responsible: {
+        id: number;
+        code: string;
+        description: string;
+    };
     commPkgNo: string;
     mcPkgNo: string;
     calloffNo: string;
@@ -255,10 +269,16 @@ interface TagRequirementsResponse {
     id: number;
     intervalWeeks: number;
     nextDueWeeks: number;
-    requirementTypeCode: string;
-    requirementTypeIcon: string;
-    requirementTypeTitle: string;
-    requirementDefinitionTitle: string;
+    requirementType: {
+        id: number;
+        code: string;
+        icon: string;
+        title: string;
+    };
+    requirementDefinition: {
+        id: number;
+        title: string;
+    };
     nextDueTimeUtc: Date;
     nextDueAsYearAndWeek: string;
     readyToBePreserved: boolean;
@@ -932,7 +952,7 @@ class PreservationApiClient extends ApiClient {
                 {
                     title: title,
                     defaultFilter: defaultFilter,
-                    critieria: criteria,
+                    criteria: criteria,
                     rowVersion: rowVersion
                 },
                 settings
@@ -1903,6 +1923,7 @@ class PreservationApiClient extends ApiClient {
         const endpoint = `/RequirementTypes/${requirementTypeId}/RequirementDefinitions/${requirementDefinitionId}/`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
+
         try {
             await this.client.put(
                 endpoint,

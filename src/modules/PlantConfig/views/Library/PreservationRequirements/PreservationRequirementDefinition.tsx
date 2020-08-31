@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, FormFieldSpacer, ButtonContainer, ButtonSpacer, SelectText, IconContainer, FieldsContainer, FormHeader, Breadcrumbs } from './PreservationRequirements.style';
-import { TextField, Typography, Button } from '@equinor/eds-core-react';
+import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, FieldsContainer, FormFieldSpacer, FormHeader, IconContainer, InputContainer, SelectText } from './PreservationRequirements.style';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import Spinner from '@procosys/components/Spinner';
-import PreservationIcon from '@procosys/components/PreservationIcon';
-import EdsIcon from '@procosys/components/EdsIcon';
-import Checkbox from './../../../../../components/Checkbox';
+
 import { Canceler } from 'axios';
+import Checkbox from './../../../../../components/Checkbox';
+import EdsIcon from '@procosys/components/EdsIcon';
+import PreservationIcon from '@procosys/components/PreservationIcon';
 import { RequirementType } from './types';
+import Spinner from '@procosys/components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 const upIcon = <EdsIcon name='arrow_up' size={16} />;
@@ -75,6 +77,8 @@ type PreservationRequirementDefinitionProps = {
 
 const PreservationRequirementDefinition = (props: PreservationRequirementDefinitionProps): JSX.Element => {
 
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
     const [requirementDefinitionId, setRequirementDefinitionId] = useState<number>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirementTypeSelectItems, setRequirementTypeSelectItems] = useState<SelectItem[]>([]);
@@ -119,24 +123,28 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     //Fetch req. types, and create select items
     useEffect(() => {
+        if (!requirementDefinition) {
+            return;
+        }
         (async (): Promise<void> => {
             try {
                 const items: SelectItem[] = [];
                 requirementTypes.forEach(requirementType => {
-                    items.push({
-                        text: requirementType.title,
-                        value: requirementType.id,
-                        icon: <PreservationIcon variant={requirementType.icon} />
-                    });
+                    if (!requirementType.isVoided || requirementDefinition.requirementTypeId === requirementType.id) {
+                        items.push({
+                            text: requirementType.title,
+                            value: requirementType.id,
+                            icon: <PreservationIcon variant={requirementType.icon} />
+                        });
+                    }
                 });
                 setRequirementTypeSelectItems(items);
-
             } catch (error) {
                 console.error('Get requirement types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
-    }, [requirementTypes]);
+    }, [requirementTypes, requirementDefinition]);
 
     const isDirty = (): boolean => {
         return JSON.stringify(requirementDefinition) !== JSON.stringify(newRequirementDefinition);
@@ -160,7 +168,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             return;
         }
 
-        if (!isDirty()) {
+        const hasUnsavedChanges = isDirty();
+
+        if (!hasUnsavedChanges) {
             setIsDirtyAndValid(false);
         } else if (newRequirementDefinition.sortKey != -1 && newRequirementDefinition.usage && newRequirementDefinition.requirementTypeId != -1
             && newRequirementDefinition.title && newRequirementDefinition.defaultIntervalWeeks != -1) {
@@ -168,6 +178,13 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         } else {
             setIsDirtyAndValid(false);
         }
+
+        if (hasUnsavedChanges) {
+            setDirtyStateFor('PreservationRequirementDefinition');
+        } else {
+            unsetDirtyStateFor('PreservationRequirementDefinition');
+        }
+
     }, [newRequirementDefinition]);
 
     const cloneRequirementDefinition = (reqDef: RequirementDefinitionItem): RequirementDefinitionItem => {
@@ -200,7 +217,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     requirementTypeTitle: reqType.title,
                                 };
                                 setRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
-                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here! 
+                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
                             }
                         } catch (error) {
                             console.error('Get requirement type failed: ', error.message, error.data);
@@ -216,7 +233,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 setRequirementDefinition({
                     id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
                 });
-
             }
 
         })();

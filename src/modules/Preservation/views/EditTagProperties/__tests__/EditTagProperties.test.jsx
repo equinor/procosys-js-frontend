@@ -100,6 +100,7 @@ const mockTag = {
     description: 'description string',
     status: 'Active',
     journey: {title:'Journey 1'},
+    step: {title: 'stepTitle1'},        
     mode: {title:'FABRICATION-1'},
     responsible: {code:'resp'},
     commPkgNo: 'commPkg',

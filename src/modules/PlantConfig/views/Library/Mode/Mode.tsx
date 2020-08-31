@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { Container, InputContainer, ButtonContainer, ButtonSpacer, IconContainer, Breadcrumbs } from './Mode.style';
-import EdsIcon from '../../../../../components/EdsIcon';
-import { TextField, Typography, Button } from '@equinor/eds-core-react';
-import Spinner from '@procosys/components/Spinner';
+import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, IconContainer, InputContainer } from './Mode.style';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState } from 'react';
+
 import Checkbox from './../../../../../components/Checkbox';
+import EdsIcon from '../../../../../components/EdsIcon';
+import Spinner from '@procosys/components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const addIcon = <EdsIcon name='add' size={16} />;
@@ -39,6 +41,7 @@ const Mode = (props: ModeProps): JSX.Element => {
     const [newMode, setNewMode] = useState<ModeItem>(createNewMode);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const {
         preservationApiClient,
@@ -64,6 +67,17 @@ const Mode = (props: ModeProps): JSX.Element => {
         }
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        if (isDirty) {
+            setDirtyStateFor('ModeForm');
+        } else {
+            unsetDirtyStateFor('ModeForm');
+        }
+        return (): void => {
+            unsetDirtyStateFor('ModeForm');
+        };
+    }, [isDirty]);
 
     useEffect((): void => {
         if (props.modeId) {

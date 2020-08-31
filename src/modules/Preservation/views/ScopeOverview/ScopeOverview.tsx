@@ -1,29 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { Container, ContentContainer, DropdownItem, FilterContainer, FilterDivider, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types';
+import React, { useEffect, useRef, useState } from 'react';
+
 import { Button } from '@equinor/eds-core-react';
-import { showSnackbarNotification } from '../../../../core/services/NotificationService';
-import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText, OldPreservationLink } from './ScopeOverview.style';
-import Dropdown from '../../../../components/Dropdown';
-import OptionsDropdown from '../../../../components/OptionsDropdown';
-import Flyout from './../../../../components/Flyout';
-import TagFlyout from './TagFlyout/TagFlyout';
-import { showModalDialog } from '../../../../core/services/ModalDialogService';
-import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
-import ScopeTable from './ScopeTable';
-import TransferDialog from './TransferDialog';
-import PreservedDialog from './PreservedDialog';
-import StartPreservationDialog from './StartPreservationDialog';
-import ScopeFilter from './ScopeFilter/ScopeFilter';
-import EdsIcon from '../../../../components/EdsIcon';
-import { tokens } from '@equinor/eds-tokens';
+import { Canceler } from '@procosys/http/HttpClient';
 import CompleteDialog from './CompleteDialog';
-import { Tooltip } from '@material-ui/core';
-import VoidDialog from './VoidDialog';
+import Dropdown from '../../../../components/Dropdown';
+import EdsIcon from '../../../../components/EdsIcon';
+import Flyout from './../../../../components/Flyout';
+import OptionsDropdown from '../../../../components/OptionsDropdown';
+import PreservedDialog from './PreservedDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
+import ScopeFilter from './ScopeFilter/ScopeFilter';
+import ScopeTable from './ScopeTable';
+import StartPreservationDialog from './StartPreservationDialog';
+import TagFlyout from './TagFlyout/TagFlyout';
+import { Tooltip } from '@material-ui/core';
+import TransferDialog from './TransferDialog';
 import { Typography } from '@equinor/eds-core-react';
-import { Canceler } from '@procosys/http/HttpClient';
+import VoidDialog from './VoidDialog';
+import { showModalDialog } from '../../../../core/services/ModalDialogService';
+import { showSnackbarNotification } from '../../../../core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {

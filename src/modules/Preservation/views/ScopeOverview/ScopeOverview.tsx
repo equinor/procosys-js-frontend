@@ -4,6 +4,7 @@ import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
+import CacheService from '@procosys/core/CacheService';
 import { Canceler } from '@procosys/http/HttpClient';
 import CompleteDialog from './CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
@@ -43,6 +44,34 @@ export const isTagVoided = (tag: PreservedTag): boolean => {
     return tag.isVoided;
 };
 
+const ScopeOverviewCache = new CacheService('ScopeOverview');
+
+function getCachedFilter(projectId: number): TagListFilter | null {
+    try {
+        const cacheItem = ScopeOverviewCache.getCache(projectId + '-filter');
+        console.log('Cached item: ', cacheItem);
+        if (cacheItem) {
+            return cacheItem.data;
+        }
+    } catch (error) {
+        showSnackbarNotification('An error occured retrieving default filter values');
+        console.error('Error while retrieving cached filter values: ', error);
+    }
+    return null;
+}
+
+function setCachedFilter(projectId: number, filter: TagListFilter): void {
+    try {
+        ScopeOverviewCache.setCache(projectId + '-filter', filter);
+    } catch (error) {
+        showSnackbarNotification('An error occured when saving default filter values');
+        console.error('Error while caching filter values: ', error);
+    }
+}
+
+function deleteCachedFilter(projectId: number): void {
+    ScopeOverviewCache.delete(projectId + '-filter');
+}
 const defaultTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
     commPkgNoStartsWith: null,
@@ -86,7 +115,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ ...defaultTagListFilter });
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(() => {
+        const previousFilter = getCachedFilter(project.id);
+        if (previousFilter) {
+            return {
+                ...defaultTagListFilter,
+                ...previousFilter
+            };
+        }
+        return { ...defaultTagListFilter };
+    });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
@@ -97,7 +135,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [transferableTagsSelected, setTransferableTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
-    const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
@@ -106,6 +143,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const history = useHistory();
     const location = useLocation();
+
+    const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
@@ -132,6 +171,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             // skip refreshing scope list on first render, when default/empty filters are set
             return;
         }
+        setCachedFilter(project.id, tagListFilter);
 
         setResetTablePaging(true);
         refreshScopeList();
@@ -206,17 +246,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
-        setSelectedTags([]);   
+        setSelectedTags([]);
+        deleteCachedFilter(project.id);
 
         if (numberOfFilters > 0) {
             // Reset filters on project change:
             // When the filter is hidden, we reset the selected filters here, which further triggers a refresh of the scope list.
             // When the filter is displayed, the filter reset and scope list refresh is handled by the filter component.
-            setNumberOfFilters(0);
 
             if (!displayFilter) {
-                setTagListFilter(defaultTagListFilter);
-            }                        
+                setTagListFilter({ ...defaultTagListFilter });
+            }
         } else {
             // No filters, regular scope list refresh.
             refreshScopeList();
@@ -530,7 +570,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 
                     setTagListFilter(tagFilter);
-                    setNumberOfFilters(filtersUsed);
                     toggleFilter();
                 }
             } else {
@@ -711,7 +750,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

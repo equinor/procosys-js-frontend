@@ -382,10 +382,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             completeFunc);
     };
 
-    let removableTags: PreservedTag[] = [];
-    let nonRemovableTags: PreservedTag[] = [];
-
-    const remove = async (): Promise<void> => {
+    const remove = async (removableTags: PreservedTag[]): Promise<void> => {
         try {
             await apiClient.remove(removableTags.map(t => ({
                 id: t.id,
@@ -398,12 +395,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             console.error('Remove failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        return Promise.resolve();
     };
 
     const showRemoveDialog = (): void => {
-        removableTags = [];
-        nonRemovableTags = [];
+        const removableTags: PreservedTag[] = [];
+        const nonRemovableTags: PreservedTag[] = [];
 
         selectedTags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
@@ -414,7 +410,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         });
         const removeButton = removableTags.length > 0 ? 'Remove' : null;
-        const removeFunc = removableTags.length > 0 ? remove : null;
+        const removeFunc = removableTags.length > 0 ? (): Promise<void> => remove(removableTags) : null;
 
         showModalDialog(
             'Complete Preservation',

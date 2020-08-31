@@ -355,9 +355,11 @@ const EditTagProperties = (): JSX.Element => {
                 :
                 <Container>
                     <div>
-                        <ErrorContainer>
-                            {validationErrorMessage && (<Typography variant="caption">{validationErrorMessage}</Typography>)}
-                        </ErrorContainer>
+                        {validationErrorMessage &&
+                            <ErrorContainer>
+                                (<Typography variant="caption">{validationErrorMessage}</Typography>)
+                            </ErrorContainer>
+                        }
                         <InputContainer>
                             <SelectInput
                                 maxHeight={'300px'}

@@ -74,7 +74,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     const submitChanges = async (): Promise<void> => {
         const changes = unsavedRequirements || [];
         try {
-            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes, tagFunctionDetails && tagFunctionDetails.rowVersion);
+            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes);
             setUnsavedRequirements(null);
             updateTagFunctionDetails();
             showSnackbarNotification('Tag function requirements saved');

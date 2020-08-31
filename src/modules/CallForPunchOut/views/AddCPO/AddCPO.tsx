@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SelectItem } from '../../../../components/Select';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
+import AddCPOHeader from './AddCPOHeader';
+import { ProgressBarSteps } from '../../types';
+
+export enum CreateStepEnum {
+    GeneralInfo = 'General info',
+    Scope = 'Scope ',
+    Participants = 'Participants',
+    UploadAttachments = 'Upload attachments',
+    SummaryAndCreate = 'Summary & create'
+}
+
 
 const AddCPO = (): JSX.Element => {
     const [poType, setPoType] = useState<SelectItem | undefined>();
@@ -15,16 +26,27 @@ const AddCPO = (): JSX.Element => {
     const [startTime, setStartTime] = useState<string | null>();
     const [endTime, setEndTime] = useState<string | null>();
 
-    const params = useParams<{projectId: any; commPkgId: any}>();
+    const steps: ProgressBarSteps[] = [
+        {title: CreateStepEnum.GeneralInfo, isCompleted: true, isCurrent: false},
+        {title: CreateStepEnum.Scope, isCompleted: true, isCurrent: false},
+        {title: CreateStepEnum.Participants, isCompleted: false, isCurrent: true},
+        {title: CreateStepEnum.UploadAttachments, isCompleted: false, isCurrent: false},
+        {title: CreateStepEnum.SummaryAndCreate, isCompleted: false, isCurrent: false}
+    ];
 
+    const params = useParams<{projectId: any; commPkgId: any}>();
     
     useEffect(() => {
-        if(params.projectId && params.commPkgId) {
+        if (params.projectId && params.commPkgId) {
             setFromMain(true);
         }
     });
 
     return (<>
+        <AddCPOHeader
+            steps={steps}
+            canBeCreated={false}
+        />
         <GeneralInfo
             setPoType={setPoType}
             poType={poType}

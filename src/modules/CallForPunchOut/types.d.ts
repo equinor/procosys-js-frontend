@@ -3,3 +3,9 @@ export type ProjectDetails = {
     name: string;
     description: string;
 }
+
+export type ProgressBarSteps = {
+    title: string;
+    isCompleted: boolean;
+    isCurrent: boolean;
+}

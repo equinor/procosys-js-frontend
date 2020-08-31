@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Header = styled.header`
     display: flex;
@@ -38,4 +39,12 @@ export const SpinnerContainer = styled.div`
     width: 100%;
     position: fixed;
     margin-bottom: 36px;
+`;
+
+export const ErrorContainer = styled.div`
+    p {
+        min-height: 1rem;
+        height: calc(var(--grid-unit) * 2);
+        color: ${tokens.colors.interactive.danger__text.rgba};
+    }    
 `;

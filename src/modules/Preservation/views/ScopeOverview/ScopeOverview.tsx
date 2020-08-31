@@ -24,6 +24,7 @@ import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import { Typography } from '@equinor/eds-core-react';
 import { Canceler } from '@procosys/http/HttpClient';
+import RemoveDialog from './RemoveDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -175,7 +176,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
         return { maxAvailable: 0, tags: [] };
     };
-
 
     const exportTagsToExcel = async (): Promise<void> => {
         try {
@@ -396,6 +396,46 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             completeFunc);
     };
 
+    const remove = async (removableTags: PreservedTag[]): Promise<void> => {
+        try {
+            await apiClient.remove(removableTags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been removed.');
+        } catch (error) {
+            console.error('Remove failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+    const showRemoveDialog = (): void => {
+        const removableTags: PreservedTag[] = [];
+        const nonRemovableTags: PreservedTag[] = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.isVoided && !tag.isInUse) {
+                removableTags.push(newTag);
+            } else {
+                nonRemovableTags.push(newTag);
+            }
+        });
+        const removeButton = removableTags.length > 0 ? 'Remove' : null;
+        const removeFunc = removableTags.length > 0 ? (): Promise<void> => remove(removableTags) : null;
+
+        showModalDialog(
+            'Complete Preservation',
+            <RemoveDialog removableTags={removableTags} nonRemovableTags={nonRemovableTags} />,
+            '80vw',
+            backToListButton,
+            null,
+            removeButton,
+            removeFunc);
+    };
+
     let voidableTags: PreservedTag[] = [];
     let unvoidableTags: PreservedTag[] = [];
 
@@ -428,6 +468,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
         return Promise.resolve();
     };
+
 
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
@@ -637,9 +678,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 Edit
                             </DropdownItem>
                             <DropdownItem
-                                disabled={true}
-                            >
-                                <EdsIcon name='delete_to_trash' color={tokens.colors.interactive.disabled__border.rgba} />
+                                disabled={selectedTags.length === 0}
+                                onClick={(): void => showRemoveDialog()}>
+                                <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Remove
                             </DropdownItem>
                             <DropdownItem

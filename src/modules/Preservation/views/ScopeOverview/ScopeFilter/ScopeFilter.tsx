@@ -136,9 +136,15 @@ const ScopeFilter = ({
     numberOfTags
 }: ScopeFilterProps): JSX.Element => {
 
+    const {
+        project,
+        apiClient,
+    } = usePreservationContext();
+
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
+    const [currentProjectName, setCurrentProjectName] = useState<string>(project.name);
     const [modes, setModes] = useState<CheckboxFilterValue[]>([]);
     const [journeys, setJourneys] = useState<CheckboxFilterValue[]>([]);
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
@@ -153,11 +159,6 @@ const ScopeFilter = ({
 
     const KEYCODE_ENTER = 13;
 
-    const {
-        project,
-        apiClient,
-    } = usePreservationContext();
-
     useEffect(() => {
         let requestCancellor: Canceler;
 
@@ -170,7 +171,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, []);
+    }, [project]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -184,7 +185,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, []);
+    }, [project]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -198,7 +199,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, []);
+    }, [project]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -212,7 +213,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, []);
+    }, [project]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -226,7 +227,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, []);
+    }, [project]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -244,7 +245,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, []);
+    }, [project]);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -264,7 +265,7 @@ const ScopeFilter = ({
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, []);
+    }, [project]);
 
 
     const triggerScopeListUpdate = (): void => {
@@ -276,6 +277,16 @@ const ScopeFilter = ({
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };
+
+    useEffect(() => {
+        // On project change - handle reset of filters and refresh scope list (only when filters are active)
+        const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+
+        if (activeFilters.length > 0 && currentProjectName !== project.name) {
+            resetFilter();
+            setCurrentProjectName(project.name);
+        }
+    }, [project]);
 
     const onCheckboxFilterChange = (tagListFilterParam: TagListFilterParamType, id: string, checked: boolean): void => {
         const newTagListFilter: TagListFilter = { ...localTagListFilter };

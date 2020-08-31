@@ -202,10 +202,24 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
+
         setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
-        refreshScopeList();
-        setSelectedTags([]);
+        setSelectedTags([]);   
+
+        if (numberOfFilters > 0) {
+            // Reset filters on project change:
+            // When the filter is hidden, we reset the selected filters here, which further triggers a refresh of the scope list.
+            // When the filter is displayed, the filter reset and scope list refresh is handled by the filter component.
+            setNumberOfFilters(0);
+
+            if (!displayFilter) {
+                setTagListFilter(defaultTagListFilter);
+            }                        
+        } else {
+            // No filters, regular scope list refresh.
+            refreshScopeList();
+        }
     };
 
     let transferableTags: PreservedTag[];

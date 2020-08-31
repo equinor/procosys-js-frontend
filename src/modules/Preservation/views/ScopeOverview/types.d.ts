@@ -21,6 +21,7 @@ export interface PreservedTag {
     readyToBeStarted: boolean;
     readyToBeTransferred: boolean;
     readyToBeCompleted: boolean;
+    isInUse: boolean;
     requirements: Requirement[];
     status: string;
     responsibleCode: string;

@@ -117,6 +117,10 @@ interface TagDetailsResponse {
         id: number;
         title: string;
     };
+    step: {
+        id: number;
+        title: string;
+    };
     mode: {
         id: number;
         title: string;
@@ -432,7 +436,7 @@ interface HistoryResponse {
     preservationRecordGuid: string;
 }
 
-class PreservationApiError extends Error {
+export class PreservationApiError extends Error {
 
     data: AxiosResponse | null;
     isCancel: boolean;

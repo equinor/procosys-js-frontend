@@ -1,8 +1,8 @@
-import { ButtonContainer, Container, Header, InputContainer, SpinnerContainer } from './EditTagProperties.style';
+import { ButtonContainer, Container, Header, InputContainer, SpinnerContainer, ErrorContainer } from './EditTagProperties.style';
 import { TagDetails, Step, Journey, RequirementType } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
-import { Button } from '@equinor/eds-core-react';
+import { Button, Typography } from '@equinor/eds-core-react';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { TextField } from '@equinor/eds-core-react';
@@ -11,6 +11,7 @@ import RequirementsSelector from '../../components/RequirementsSelector/Requirem
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 import Spinner from '@procosys/components/Spinner';
 import { Canceler } from 'axios';
+import { PreservationApiError } from '../../http/PreservationApiClient';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -45,6 +46,7 @@ const EditTagProperties = (): JSX.Element => {
     const [journeyOrRequirementsEdited, setJourneyOrRequirementsEdited] = useState<boolean>(false);
     const [poTag, setPoTag] = useState<boolean>(false);
     const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
+    const [validationErrorMessage, setValidationErrorMessage] = useState<string | null>();
 
     const [loading, setLoading] = useState(true);
 
@@ -201,6 +203,16 @@ const EditTagProperties = (): JSX.Element => {
         }
     }, [journey]);
 
+    const handleErrorFromBackend = (error: PreservationApiError, errorMessageConsole: string): void => {
+        if (error.data && error.data.status == 400) {
+            console.error(errorMessageConsole, error.message, error.data);
+            setValidationErrorMessage(error.message);
+            throw (showSnackbarNotification('Validation error. Changes are not saved.'));
+        } else {
+            console.error(errorMessageConsole, error.message, error.data);
+            throw (showSnackbarNotification(error.message));
+        }
+    };
 
     const setJourneyFromForm = (value: number): void => {
         const j = journeys.find((pJourney: Journey) => pJourney.id === value);
@@ -244,11 +256,10 @@ const EditTagProperties = (): JSX.Element => {
             }
             return rowVersion;
         } catch (error) {
-            console.error('Error updating remark and storage area', error.message, error.data);
-            throw (showSnackbarNotification(error.message));
+            handleErrorFromBackend(error, 'Error updating remark and storage area');
+            throw (error.message);
         }
     };
-
 
     const updateJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
         try {
@@ -269,9 +280,7 @@ const EditTagProperties = (): JSX.Element => {
                 await apiClient.updateStepAndRequirements(tag.id, step.id, currentRowVersion, updatedRequirements, newRequirements);
             }
         } catch (error) {
-            console.error('Error updating journey, step or requirements', error.message, error.data);
-            throw (showSnackbarNotification(error.message));
-
+            handleErrorFromBackend(error, 'Error updating journey, step or requirements');
         }
     };
 
@@ -331,6 +340,9 @@ const EditTagProperties = (): JSX.Element => {
                 :
                 <Container>
                     <div>
+                        <ErrorContainer>
+                            {validationErrorMessage && (<Typography variant="caption">{validationErrorMessage}</Typography>)}
+                        </ErrorContainer>
                         <InputContainer>
                             <SelectInput
                                 maxHeight={'300px'}

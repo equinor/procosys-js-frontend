@@ -144,7 +144,6 @@ const ScopeFilter = ({
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [localTagListFilter, setLocalTagListFilter] = useState<TagListFilter>({ ...tagListFilter });
 
-    const [currentProjectName, setCurrentProjectName] = useState<string>(project.name);
     const [modes, setModes] = useState<CheckboxFilterValue[]>([]);
     const [journeys, setJourneys] = useState<CheckboxFilterValue[]>([]);
     const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
@@ -153,6 +152,7 @@ const ScopeFilter = ({
     const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
     const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
+    const projectNameRef = useRef<string>(project.name);
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
     const [anchorElement, setAnchorElement] = React.useState(null);
@@ -282,10 +282,11 @@ const ScopeFilter = ({
         // On project change - handle reset of filters and refresh scope list (only when filters are active)
         const activeFilters = Object.values(localTagListFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
 
-        if (activeFilters.length > 0 && currentProjectName !== project.name) {
+        if (activeFilters.length > 0 && projectNameRef.current !== project.name) {
             resetFilter();
-            setCurrentProjectName(project.name);
         }
+
+        projectNameRef.current = project.name;
     }, [project]);
 
     const onCheckboxFilterChange = (tagListFilterParam: TagListFilterParamType, id: string, checked: boolean): void => {

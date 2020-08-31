@@ -64,7 +64,7 @@
         "react-hot-loader": "^4.12.20",
         "sass-extract": "^2.1.0",
         "sass-loader": "^10.0.1",
-        "source-map-loader": "^1.0.2",
+        "source-map-loader": "^1.1.0",
         "style-loader": "^1.2.1",
         "ts-jest": "^26.3.0",
         "ts-loader": "^8.0.3",

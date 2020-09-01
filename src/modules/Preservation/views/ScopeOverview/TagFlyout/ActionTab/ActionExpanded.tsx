@@ -70,7 +70,7 @@ const ActionExpanded = ({
                     setActionDetails(actionDetails);
                 }
             } catch (error) {
-                console.error('Get Journeys failed: ', error.message, error.data);
+                console.error('Get action details failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();

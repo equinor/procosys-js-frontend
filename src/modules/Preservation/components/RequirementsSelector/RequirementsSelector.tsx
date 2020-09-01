@@ -289,7 +289,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             })}
             <ActionContainer>
                 <Button variant='ghost' onClick={addRequirementInput} disabled={props.disabled}>
-                    <EdsIcon name='add' /> Add Requirement
+                    <EdsIcon name='add' /> Add requirement
                 </Button>
             </ActionContainer>
         </>

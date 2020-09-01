@@ -21,7 +21,7 @@ const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
-const baseBreadcrumb = 'Library / Preservation Journeys';
+const baseBreadcrumb = 'Library / Preservation journeys';
 
 enum AutoTransferMethod {
     NONE = 'None',
@@ -110,7 +110,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
                 setMappedModes(mappedModes);
             } catch (error) {
-                console.error('Get Modes failed: ', error.message, error.data);
+                console.error('Get modes failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -134,7 +134,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 responsibles.forEach(resp => mappedResponsibles.push({ text: (resp.code + ' - ' + resp.description), value: resp.code, selected: false }));
                 setMappedResponsibles(mappedResponsibles);
             } catch (error) {
-                console.error('Get Responsibles failed: ', error.message, error.data);
+                console.error('Get responsibles failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -270,7 +270,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         } else {
             if (saveOk) {
                 getJourney(newJourney.id);
-                showSnackbarNotification('Changes for journey is saved.', 5000);
+                showSnackbarNotification('Changes for journey are saved.', 5000);
             }
         }
         setIsLoading(false);
@@ -595,7 +595,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
                 <IconContainer>
                     <Button variant='ghost' onClick={initNewJourney}>
-                        {addIcon} New Preservation Journey
+                        {addIcon} New preservation journey
                     </Button>
                 </IconContainer>
             </Container>);
@@ -646,7 +646,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     label='Title for this journey'
                     value={newJourney.title}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setJourneyTitleValue(e.target.value); }}
-                    placeholder="Write Here"
+                    placeholder="Write here"
                     disabled={newJourney.isVoided}
                 />
             </InputContainer>
@@ -702,7 +702,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                         label="Title for this step"
                                         value={step.title}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setStepTitleValue(e.target.value, index)}
-                                        placeholder="Write Here"
+                                        placeholder="Write here"
                                         disabled={newJourney.isVoided || step.isVoided}
                                     />
                                 </div>

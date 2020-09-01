@@ -15,7 +15,7 @@ const authConfig: Configuration = {
     // }
 };
 
-const defaultLoginScopes = JSON.parse(settings.auth.defaultScopes.replace(/'/g,'"'));
+const defaultLoginScopes = JSON.parse(settings.auth.defaultScopes.replace(/'/g, '"'));
 
 export interface IAuthService {
     /**
@@ -49,7 +49,7 @@ export interface IAuthService {
     getCurrentUser(): AuthUser | null;
 }
 
-class AuthenticationError extends Error {}
+class AuthenticationError extends Error { }
 
 type AccessToken = {
     token: string;
@@ -65,11 +65,11 @@ export default class AuthService implements IAuthService {
     }
 
     login(): void {
-        this.authInstance.loginRedirect({scopes: defaultLoginScopes});
+        this.authInstance.loginRedirect({ scopes: defaultLoginScopes });
     }
 
     aquireConcent(resource: string): void {
-        this.authInstance.loginRedirect({scopes: [resource]});
+        this.authInstance.acquireTokenRedirect({ scopes: [resource] });
     }
 
     logout(): void {
@@ -90,13 +90,13 @@ export default class AuthService implements IAuthService {
     }
 
     async getAccessTokenAsync(resource: string): Promise<AccessToken> {
-        const response = await this.authInstance.acquireTokenSilent({scopes: [resource]});
-        return {token: response.accessToken, expiresAt: response.expiresOn};
+        const response = await this.authInstance.acquireTokenSilent({ scopes: [resource] });
+        return { token: response.accessToken, expiresAt: response.expiresOn };
     }
 
     getCurrentUser(): AuthUser | null {
         const account = this.authInstance.getAccount();
         if (!account) return null;
-        return new AuthUser({username: account.userName, fullname: account.name, id: account.accountIdentifier});
+        return new AuthUser({ username: account.userName, fullname: account.name, id: account.accountIdentifier });
     }
 }

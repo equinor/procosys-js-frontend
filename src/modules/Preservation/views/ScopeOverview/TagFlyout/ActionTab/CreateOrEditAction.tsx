@@ -102,7 +102,6 @@ const CreateOrEditAction = ({
             <InputContainer>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} >
                     <KeyboardDatePicker
-                        clearable
                         label="Due date"
                         value={newDueTimeUtc}
                         onChange={(date: MaterialUiPickersDate): void => setNewDueTimeUtc(date)}

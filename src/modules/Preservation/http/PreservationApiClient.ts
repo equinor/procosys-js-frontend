@@ -1,8 +1,9 @@
+import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+
 import ApiClient from '../../../http/ApiClient';
-import Axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
-import { RequestCanceler } from '../../../http/HttpClient';
 import Qs from 'qs';
+import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
 const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g, '"'));
@@ -1555,13 +1556,12 @@ class PreservationApiClient extends ApiClient {
     }
 
 
-    async updateTagFunction(tagFunctionCode: string, registerCode: string, requirements: RequirementFormInput[], rowVersion?: string): Promise<boolean> {
+    async updateTagFunction(tagFunctionCode: string, registerCode: string, requirements: RequirementFormInput[]): Promise<boolean> {
         const endpoint = '/TagFunctions';
         const data: UpdateTagFunctionRequestData = {
             registerCode: registerCode,
             tagFunctionCode: tagFunctionCode,
-            requirements: requirements,
-            rowVersion: rowVersion || ''
+            requirements: requirements
         };
         try {
             await this.client.put(endpoint, data);

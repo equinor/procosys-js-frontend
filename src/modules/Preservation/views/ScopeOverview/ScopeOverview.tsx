@@ -1,30 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { Container, ContentContainer, DropdownItem, FilterContainer, FilterDivider, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types';
+import React, { useEffect, useRef, useState } from 'react';
+
 import { Button } from '@equinor/eds-core-react';
-import { showSnackbarNotification } from '../../../../core/services/NotificationService';
-import { usePreservationContext } from '../../context/PreservationContext';
-import { Container, DropdownItem, Header, HeaderContainer, IconBar, StyledButton, FilterDivider, ContentContainer, FilterContainer, TooltipText, OldPreservationLink } from './ScopeOverview.style';
-import Dropdown from '../../../../components/Dropdown';
-import OptionsDropdown from '../../../../components/OptionsDropdown';
-import Flyout from './../../../../components/Flyout';
-import TagFlyout from './TagFlyout/TagFlyout';
-import { showModalDialog } from '../../../../core/services/ModalDialogService';
-import { PreservedTag, Requirement, PreservedTags, TagListFilter } from './types';
-import ScopeTable from './ScopeTable';
-import TransferDialog from './TransferDialog';
-import PreservedDialog from './PreservedDialog';
-import StartPreservationDialog from './StartPreservationDialog';
-import ScopeFilter from './ScopeFilter/ScopeFilter';
-import EdsIcon from '../../../../components/EdsIcon';
-import { tokens } from '@equinor/eds-tokens';
+import CacheService from '@procosys/core/CacheService';
+import { Canceler } from '@procosys/http/HttpClient';
 import CompleteDialog from './CompleteDialog';
-import { Tooltip } from '@material-ui/core';
-import VoidDialog from './VoidDialog';
+import Dropdown from '../../../../components/Dropdown';
+import EdsIcon from '../../../../components/EdsIcon';
+import Flyout from './../../../../components/Flyout';
+import OptionsDropdown from '../../../../components/OptionsDropdown';
+import PreservedDialog from './PreservedDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
-import { Typography } from '@equinor/eds-core-react';
-import { Canceler } from '@procosys/http/HttpClient';
 import RemoveDialog from './RemoveDialog';
+import ScopeFilter from './ScopeFilter/ScopeFilter';
+import ScopeTable from './ScopeTable';
+import StartPreservationDialog from './StartPreservationDialog';
+import TagFlyout from './TagFlyout/TagFlyout';
+import { Tooltip } from '@material-ui/core';
+import TransferDialog from './TransferDialog';
+import { Typography } from '@equinor/eds-core-react';
+import VoidDialog from './VoidDialog';
+import { showModalDialog } from '../../../../core/services/ModalDialogService';
+import { showSnackbarNotification } from '../../../../core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -43,7 +45,34 @@ export const isTagVoided = (tag: PreservedTag): boolean => {
     return tag.isVoided;
 };
 
-const defaultTagListFilter: TagListFilter = {
+const ScopeOverviewCache = new CacheService('ScopeOverview');
+
+function getCachedFilter(projectId: number): TagListFilter | null {
+    try {
+        const cacheItem = ScopeOverviewCache.getCache(projectId + '-filter');
+        if (cacheItem) {
+            return cacheItem.data;
+        }
+    } catch (error) {
+        showSnackbarNotification('An error occured retrieving default filter values');
+        console.error('Error while retrieving cached filter values: ', error);
+    }
+    return null;
+}
+
+function setCachedFilter(projectId: number, filter: TagListFilter): void {
+    try {
+        ScopeOverviewCache.setCache(projectId + '-filter', filter);
+    } catch (error) {
+        showSnackbarNotification('An error occured when saving default filter values');
+        console.error('Error while caching filter values: ', error);
+    }
+}
+
+function deleteCachedFilter(projectId: number): void {
+    ScopeOverviewCache.delete(projectId + '-filter');
+}
+const emptyTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
@@ -86,7 +115,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(defaultTagListFilter);
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(() => {
+        const previousFilter = getCachedFilter(project.id);
+        if (previousFilter) {
+            return {
+                ...emptyTagListFilter,
+                ...previousFilter
+            };
+        }
+        return { ...emptyTagListFilter };
+    });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
@@ -97,7 +135,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [transferableTagsSelected, setTransferableTagsSelected] = useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
-    const [numberOfFilters, setNumberOfFilters] = useState<number>(0);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
@@ -106,6 +143,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const history = useHistory();
     const location = useLocation();
+
+    const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
@@ -132,6 +171,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             // skip refreshing scope list on first render, when default/empty filters are set
             return;
         }
+        setCachedFilter(project.id, tagListFilter);
 
         setResetTablePaging(true);
         refreshScopeList();
@@ -205,17 +245,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
-        setSelectedTags([]);   
+        setSelectedTags([]);
+        deleteCachedFilter(project.id);
 
         if (numberOfFilters > 0) {
             // Reset filters on project change:
             // When the filter is hidden, we reset the selected filters here, which further triggers a refresh of the scope list.
             // When the filter is displayed, the filter reset and scope list refresh is handled by the filter component.
-            setNumberOfFilters(0);
 
             if (!displayFilter) {
-                setTagListFilter(defaultTagListFilter);
-            }                        
+                setTagListFilter({ ...emptyTagListFilter });
+            }
         } else {
             // No filters, regular scope list refresh.
             refreshScopeList();
@@ -565,12 +605,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
 
                 if (filtersUsed > 0) {
-                    const tagFilter = defaultTagListFilter;
+                    const tagFilter = { ...emptyTagListFilter };
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 
                     setTagListFilter(tagFilter);
-                    setNumberOfFilters(filtersUsed);
                     toggleFilter();
                 }
             } else {
@@ -751,7 +790,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <FilterContainer>
                             <ScopeFilter onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} setNumberOfFilters={setNumberOfFilters} numberOfTags={numberOfTags} />
+                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} numberOfTags={numberOfTags} />
                         </FilterContainer>
                     </>
                 )

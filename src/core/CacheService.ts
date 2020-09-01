@@ -1,9 +1,9 @@
 type CacheItem = {
-    data: any;
+    data: unknown;
     cachedAt: Date;
 }
 
-class MissingStorageKeyException extends Error {}
+class MissingStorageKeyException extends Error { }
 
 interface ICacheService {
     /**
@@ -18,7 +18,7 @@ interface ICacheService {
      * @param key StorageKey used to retrieve the value later
      * @param data Data to cache
      */
-    setCache(key: string, data: any): void;
+    setCache(key: string, data: unknown): void;
 
     /**
      * Delete data with key
@@ -52,7 +52,7 @@ export default class CacheService implements ICacheService {
         return `${this.cacheKey}:${key}`;
     }
 
-    setCache(key: string, dataToCache: any): void {
+    setCache(key: string, dataToCache: unknown): void {
         if (!key || !key.length) {
             throw MissingStorageKeyException;
         }
@@ -87,7 +87,7 @@ export default class CacheService implements ICacheService {
     }
 
     clear(): void {
-        for(let i = 0; this.storageEngine.length > i; i++) {
+        for (let i = 0; this.storageEngine.length > i; i++) {
             const key = this.storageEngine.key(i);
             if (key && key.startsWith(this.cacheKey)) {
                 this.storageEngine.removeItem(key);

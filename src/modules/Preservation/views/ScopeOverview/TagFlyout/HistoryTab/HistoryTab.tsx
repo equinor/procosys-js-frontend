@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-import React, { useState, useEffect } from 'react';
-import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
-import { usePreservationContext } from '../../../../context/PreservationContext';
-import { Canceler } from 'axios';
-import Spinner from '@procosys/components/Spinner';
 import { Container, DetailsContainer, DueContainer } from './HistoryTab.style';
-import Table from '../../../../../../components/Table';
-import { tokens } from '@equinor/eds-tokens';
-import { getFormattedDate } from '@procosys/core/services/DateService';
+import React, { useEffect, useState } from 'react';
+
+import { Canceler } from 'axios';
 import EdsIcon from '@procosys/components/EdsIcon';
-import { Tooltip } from '@material-ui/core';
 import HistoryDetails from './HistoryDetails';
 import PreservedRequirement from './PreservedRequirement';
+import Spinner from '@procosys/components/Spinner';
+import Table from '../../../../../../components/Table';
+import { Tooltip } from '@material-ui/core';
+import { getFormattedDate } from '@procosys/core/services/DateService';
+import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
+import { usePreservationContext } from '../../../../context/PreservationContext';
 
 interface HistoryLogItem {
     id: number;
@@ -118,7 +118,7 @@ const HistoryTab = ({
                         <EdsIcon name='info_circle' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
                     </DetailsContainer>
                 </Tooltip>
-            );            
+            );
         }
 
         return <div></div>;
@@ -135,15 +135,10 @@ const HistoryTab = ({
             <Container>
                 <Table
                     columns={[
-                        // @ts-ignore
                         { title: 'Date', render: getDateColumn, width: '5%', cellStyle: tableCellStyling },
-                        // @ts-ignore
                         { title: 'User', render: getUserColumn, width: '20%', cellStyle: tableCellStyling },
-                        // @ts-ignore
                         { title: 'Due', render: getDueColumn, width: '1%', cellStyle: tableCellStyling },
-                        // @ts-ignore
                         { title: 'Description', field: 'description', width: '73%', cellStyle: tableCellStyling },
-                        // @ts-ignore
                         { title: '', render: getDetailsColumn, width: '1%', cellStyle: tableCellStyling }
                     ]}
                     data={historyLog}
@@ -163,7 +158,7 @@ const HistoryTab = ({
                             paddingLeft: 'var(--grid-unit)',
                             paddingRight: 'var(--grid-unit)'
                         },
-                        rowStyle: { 
+                        rowStyle: {
                             verticalAlign: 'top'
                         }
                     }}
@@ -180,14 +175,14 @@ const HistoryTab = ({
                     <HistoryDetails close={(): void => closeHistoryDetails()}>
                         {
                             selectedHistoryItem && (
-                                <PreservedRequirement 
+                                <PreservedRequirement
                                     tagId={tagId}
                                     tagRequirementId={selectedHistoryItem.tagRequirementId}
                                     preservationRecordGuid={selectedHistoryItem.preservationRecordGuid}
                                     close={closeHistoryDetails}
-                                />       
+                                />
                             )
-                        }                        
+                        }
                     </HistoryDetails>
                 )
             }

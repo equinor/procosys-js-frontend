@@ -1,7 +1,6 @@
 import { Container, SingleIconContainer, TagLink, TagStatusLabel, Toolbar } from './ScopeTable.style';
 import { PreservedTag, PreservedTags } from './types';
 import { Query, QueryResult } from 'material-table';
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import React, { ReactNode, RefObject } from 'react';
 import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
 
@@ -31,7 +30,7 @@ enum ActionStatus {
     OverDue = 'HasOverDue'
 }
 
-class ScopeTable extends React.Component<ScopeTableProps, {}> {
+class ScopeTable extends React.Component<ScopeTableProps> {
     refObject: React.RefObject<any>;
 
     constructor(props: ScopeTableProps) {
@@ -221,25 +220,15 @@ class ScopeTable extends React.Component<ScopeTableProps, {}> {
                     columns={[
                         { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px', maxWidth: '200px' } },
                         { title: 'Description', render: this.getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '600px' } },
-                        // @ts-ignore Width is not a property of material-table
                         { title: 'Next', render: this.getNextColumn, width: '7%' },
-                        // @ts-ignore
                         { title: 'Due', render: this.getDueColumn, defaultSort: 'asc', width: '5%' },
-                        // @ts-ignore
                         { title: 'Mode', render: this.getMode, width: '8%' },
-                        // @ts-ignore
                         { title: 'PO', render: this.getPOColumn, width: '8%' },
-                        // @ts-ignore
                         { title: 'Area', render: this.getAreaCode, width: '7%' },
-                        // @ts-ignore
                         { title: 'Resp', render: this.getResponsibleColumn, width: '7%', cellStyle: { maxWidth: '150px' } },
-                        // @ts-ignore
                         { title: 'Disc', render: this.getDisciplineCode, width: '5%' },
-                        // @ts-ignore
                         { title: 'Status', render: this.getStatus, width: '7%', customSort: (): any => null, cellStyle: { whiteSpace: 'nowrap' } },
-                        // @ts-ignore
                         { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' },
-                        // @ts-ignore
                         { title: this.getActionsHeader(), render: this.getActionsColumn, sorting: false, width: '2%', cellStyle: { borderLeft: 'solid 1px #dcdcdc' }, headerStyle: { borderLeft: 'solid 1px #dcdcdc' } }
                     ]}
                     data={this.getTagsByQuery}

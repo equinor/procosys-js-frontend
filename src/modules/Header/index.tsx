@@ -98,6 +98,9 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
+                            <a href={`/${params.plant}/CallForPunchOut/AddCPO`}>
+                                <DropdownItem>Invitation for punch-out</DropdownItem>
+                            </a>
                             <a href={`/${params.plant}/Hookup/New`}>
                                 <DropdownItem>Certificate</DropdownItem>
                             </a>

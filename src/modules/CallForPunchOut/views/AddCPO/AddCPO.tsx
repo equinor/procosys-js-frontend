@@ -34,8 +34,8 @@ const AddCPO = (): JSX.Element => {
 
     return (<>
         <GeneralInfo
-            generalInfoDetails={generalInfo}
-            setGeneralInfoDetails={setGeneralInfo}
+            generalInfo={generalInfo}
+            setGeneralInfo={setGeneralInfo}
             fromMain={fromMain}
         />
     </>);

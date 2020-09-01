@@ -13,14 +13,14 @@ const poTypes: SelectItem[] = [
     { text: 'MDP (Multi Discipline Punch)', value: 'MDP' }];
 
 interface GeneralInfoProps {
-    generalInfoDetails: GeneralInfoDetails;
-    setGeneralInfoDetails: (generalInfoDetails: GeneralInfoDetails) => void;
+    generalInfo: GeneralInfoDetails;
+    setGeneralInfo: (generalInfoDetails: GeneralInfoDetails) => void;
     fromMain: boolean;
 }
 
 const GeneralInfo = ({
-    generalInfoDetails,
-    setGeneralInfoDetails,
+    generalInfo,
+    setGeneralInfo,
     fromMain
 }: GeneralInfoProps): JSX.Element => {
     const { procosysApiClient } = useProcosysContext();
@@ -28,7 +28,6 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [isValidForm, setIsValidForm] = useState<boolean>(false);
-    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(generalInfoDetails);
 
     let requestCanceler: Canceler;
     useEffect(() => {
@@ -51,11 +50,9 @@ const GeneralInfo = ({
         if(fromMain) {
             const poType = poTypes.find((p: SelectItem) => p.value === 'DP');
             if (poType) {
-                setGeneralInfo(gi => {
-                    const copy = Object.assign({}, gi);
-                    copy.poType = poType;
-                    return copy;
-                });
+                const copy = Object.assign({}, generalInfo);
+                copy.poType = poType;
+                setGeneralInfo(copy);
             }
         }
     });
@@ -75,21 +72,17 @@ const GeneralInfo = ({
     const setPoTypeForm = (value: string): void => {
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
-            setGeneralInfo(gi => {
-                const copy = Object.assign({}, gi);
-                copy.poType = newPoType;
-                return copy;
-            });
+            const copy = Object.assign({}, generalInfo);
+            copy.poType = newPoType;
+            setGeneralInfo(copy);
         }
     };
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setGeneralInfo(gi => {
-            const copy = Object.assign({}, gi);
-            copy.projectId = filteredProjects[index].id;
-            return copy;
-        });
+        const copy = Object.assign({}, generalInfo);
+        copy.projectId = filteredProjects[index].id;
+        setGeneralInfo(copy);
     };
 
     useEffect(() => {
@@ -141,11 +134,9 @@ const GeneralInfo = ({
                 label='Title'
                 placeholder='Write here'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                    setGeneralInfo(gi => {
-                        const copy = Object.assign({}, gi);
-                        copy.title = e.target.value;
-                        return copy;
-                    }); 
+                    const copy = Object.assign({}, generalInfo);
+                    copy.title = e.target.value;
+                    setGeneralInfo(copy); 
                 }}
             />
             <TextField
@@ -155,14 +146,12 @@ const GeneralInfo = ({
                 meta='Optional'
                 multiline
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                    setGeneralInfo(gi => {
-                        const copy = Object.assign({}, gi);
-                        copy.description = e.target.value;
-                        return copy;
-                    }); 
+                    const copy = Object.assign({}, generalInfo);
+                    copy.description = e.target.value;
+                    setGeneralInfo(copy); 
                 }}
             />
-            <Typography variant='h5'>Date and time for punch round</Typography>
+            <Typography constiant='h5'>Date and time for punch round</Typography>
             <DateTimeContainer>
                 <DateTimeField
                     id='startDate'
@@ -172,11 +161,9 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {
-                            const copy = Object.assign({}, gi);
-                            copy.startDate = e.target.value;
-                            return copy;
-                        }); 
+                        const copy = Object.assign({}, generalInfo);
+                        copy.startDate = e.target.value;
+                        setGeneralInfo(copy); 
                     }}
                 />
                 <DateTimeField
@@ -187,11 +174,9 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {
-                            const copy = Object.assign({}, gi);
-                            copy.startTime = e.target.value;
-                            return copy;
-                        }); 
+                        const copy = Object.assign({}, generalInfo);
+                        copy.startTime = e.target.value;
+                        setGeneralInfo(copy); 
                     }}
                 />
                 <DateTimeField
@@ -202,11 +187,9 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {
-                            const copy = Object.assign({}, gi);
-                            copy.endDate = e.target.value;
-                            return copy;
-                        }); 
+                        const copy = Object.assign({}, generalInfo);
+                        copy.endDate = e.target.value;
+                        setGeneralInfo(copy); 
                     }}
                 />
                 <DateTimeField
@@ -217,11 +200,9 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {
-                            const copy = Object.assign({}, gi);
-                            copy.endTime = e.target.value;
-                            return copy;
-                        }); 
+                        const copy = Object.assign({}, generalInfo);
+                        copy.endTime = e.target.value;
+                        setGeneralInfo(copy); 
                     }}
                 />
             </DateTimeContainer>
@@ -232,23 +213,16 @@ const GeneralInfo = ({
                     label='Location'
                     meta='Optional'
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {
-                            const copy = Object.assign({}, gi);
-                            copy.location = e.target.value;
-                            return copy;
-                        }); 
+                        const copy = Object.assign({}, generalInfo);
+                        copy.location = e.target.value;
+                        setGeneralInfo(copy); 
                     }}
                 />
             </LocationContainer>   
         </FormContainer>
         <ButtonContainer>
-            <Button variant='outlined' disabled>Previous</Button>
-            <Button 
-                disabled={!isValidForm}
-                onClick={setGeneralInfoDetails(generalInfo)}
-            >
-                Next
-            </Button>
+            <Button constiant='outlined' disabled>Previous</Button>
+            <Button disabled={!isValidForm}>Next</Button>
         </ButtonContainer>
     </Container>);
 };

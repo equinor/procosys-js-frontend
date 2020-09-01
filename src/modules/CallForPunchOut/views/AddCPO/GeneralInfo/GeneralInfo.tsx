@@ -3,55 +3,61 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Dropdown from '../../../../../components/Dropdown';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, DateTimeContainer, Container, PoTypeContainer, LocationContainer, FormContainer, ButtonContainer } from './GeneralInfo.style';
-import { useCallForPunchOutContext } from '@procosys/modules/CallForPunchOut/context/CallForPunchOutContext';
-import { ProjectDetails } from '@procosys/modules/CallForPunchOut/types';
+import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/CallForPunchOut/types';
 import { TextField as DateTimeField } from '@material-ui/core';
-
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { Canceler } from '@procosys/http/HttpClient';
 
 const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
     { text: 'MDP (Multi Discipline Punch)', value: 'MDP' }];
 
-type GeneralInfoProps = {
-    setPoType: (poType?: SelectItem) => void;
-    setDescription: (description?: string) => void;
-    setTitle: (title: string) => void;
-    setProjectId: (id: number) => void;
-    setLocation: (location: string) => void;
-    setStartDate: (startDate: string | null) => void;
-    setEndDate: (endDate: string | null) => void;
-    setStartTime: (startTime: string | null) => void;
-    setEndTime: (endTime: string | null) => void;
-    poType?: SelectItem;
-    description?: string | null;
+interface GeneralInfoProps {
+    generalInfoDetails: GeneralInfoDetails;
+    setGeneralInfoDetails: (generalInfoDetails: GeneralInfoDetails) => void;
     fromMain: boolean;
-    title?: string;
-    projectId?: number;
-    location?: string | null;
-    startDate?: string | null;
-    endDate?: string | null;
-    startTime?: string | null;
-    endTime?: string | null;
 }
 
-const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
-    const {availableProjects} = useCallForPunchOutContext();
-    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(availableProjects);
+const GeneralInfo = ({
+    generalInfoDetails,
+    setGeneralInfoDetails,
+    fromMain
+}: GeneralInfoProps): JSX.Element => {
+    const { procosysApiClient } = useProcosysContext();
+    const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
+    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [isValidForm, setIsValidForm] = useState<boolean>(false);
+    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(generalInfoDetails);
 
+    let requestCanceler: Canceler;
+    useEffect(() => {
+        (async (): Promise<void> => {
+            const allProjects = await procosysApiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
+                .then(projects => projects.map((project): ProjectDetails => {
+                    return {
+                        id: project.id,
+                        name: project.name,
+                        description: project.description
+                    };
+                }));
+            setAvailableProjects(allProjects);
+            setFilteredProjects(allProjects);
+        })();
+        return (): void => requestCanceler && requestCanceler();
+    },[]);
 
     useEffect(() => {
-        if(props.fromMain) {
-            props.setPoType(poTypes.find((p: SelectItem) => p.value === 'DP'));
-            if(props.projectId) {
-                props.setProjectId(props.projectId);
+        if(fromMain) {
+            const poType = poTypes.find((p: SelectItem) => p.value === 'DP');
+            if (poType) {
+                setGeneralInfo(gi => {
+                    const copy = Object.assign({}, gi);
+                    copy.poType = poType;
+                    return copy;
+                });
             }
         }
-    });
-
-    useEffect(() => {
-        setFilteredProjects(availableProjects);
     });
 
     useEffect(() => {
@@ -68,24 +74,33 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
 
     const setPoTypeForm = (value: string): void => {
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
-        props.setPoType(newPoType);
+        if (newPoType) {
+            setGeneralInfo(gi => {
+                const copy = Object.assign({}, gi);
+                copy.poType = newPoType;
+                return copy;
+            });
+        }
     };
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        props.setProjectId(filteredProjects[index].id);
+        setGeneralInfo(gi => {
+            const copy = Object.assign({}, gi);
+            copy.projectId = filteredProjects[index].id;
+            return copy;
+        });
     };
 
-    const selectedProject = availableProjects.find(p => p.id == props.projectId);
-
     useEffect(() => {
-        if (props.poType && props.projectId && props.title && props.startDate && props.startTime && props.endDate && props.endTime) {
+        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
             setIsValidForm(true);
         } else {
             setIsValidForm(false);
         }
-    }), [props.poType, props.projectId, props.title, props.startDate, props.startTime, props.endDate, props.endTime];
+    }), [generalInfo];
 
+    const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
 
     return (<Container>
         <FormContainer>
@@ -95,9 +110,9 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                 variant='form'
                 text={selectedProject && selectedProject.description || 'Select'}
                 onFilter={setFilterForProjects}
-                disabled={props.fromMain}
+                disabled={fromMain}
             >
-                {filteredProjects.map((projectItem, index) => {
+                { filteredProjects.map((projectItem, index) => {
                     return (
                         <DropdownItem
                             key={index}
@@ -116,16 +131,22 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                     onChange={setPoTypeForm}
                     data={poTypes}
                     label={'Type of punch round'}
-                    disabled={props.fromMain}
+                    disabled={fromMain}
                 >
-                    {(props.poType && props.poType.text) || 'Select'}
+                    {(generalInfo.poType && generalInfo.poType.text) || 'Select'}
                 </SelectInput>
             </PoTypeContainer>
             <TextField
                 id={'title'}
                 label='Title'
                 placeholder='Write here'
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { props.setTitle(e.target.value); }}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                    setGeneralInfo(gi => {
+                        const copy = Object.assign({}, gi);
+                        copy.title = e.target.value;
+                        return copy;
+                    }); 
+                }}
             />
             <TextField
                 id='description'
@@ -133,6 +154,13 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                 label='Description'
                 meta='Optional'
                 multiline
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                    setGeneralInfo(gi => {
+                        const copy = Object.assign({}, gi);
+                        copy.description = e.target.value;
+                        return copy;
+                    }); 
+                }}
             />
             <Typography variant='h5'>Date and time for punch round</Typography>
             <DateTimeContainer>
@@ -143,8 +171,13 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setStartDate(e.target.value)}
-
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                        setGeneralInfo(gi => {
+                            const copy = Object.assign({}, gi);
+                            copy.startDate = e.target.value;
+                            return copy;
+                        }); 
+                    }}
                 />
                 <DateTimeField
                     id='time'
@@ -153,7 +186,13 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setStartTime(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                        setGeneralInfo(gi => {
+                            const copy = Object.assign({}, gi);
+                            copy.startTime = e.target.value;
+                            return copy;
+                        }); 
+                    }}
                 />
                 <DateTimeField
                     id='endDate'
@@ -162,7 +201,13 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setEndDate(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                        setGeneralInfo(gi => {
+                            const copy = Object.assign({}, gi);
+                            copy.endDate = e.target.value;
+                            return copy;
+                        }); 
+                    }}
                 />
                 <DateTimeField
                     id='time'
@@ -171,7 +216,13 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setEndTime(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                        setGeneralInfo(gi => {
+                            const copy = Object.assign({}, gi);
+                            copy.endTime = e.target.value;
+                            return copy;
+                        }); 
+                    }}
                 />
             </DateTimeContainer>
             <LocationContainer>
@@ -180,12 +231,24 @@ const GeneralInfo = (props: GeneralInfoProps): JSX.Element => {
                     placeholder='Write here'
                     label='Location'
                     meta='Optional'
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
+                        setGeneralInfo(gi => {
+                            const copy = Object.assign({}, gi);
+                            copy.location = e.target.value;
+                            return copy;
+                        }); 
+                    }}
                 />
             </LocationContainer>   
         </FormContainer>
         <ButtonContainer>
             <Button variant='outlined' disabled>Previous</Button>
-            <Button disabled={!isValidForm}>Next</Button>
+            <Button 
+                disabled={!isValidForm}
+                onClick={setGeneralInfoDetails(generalInfo)}
+            >
+                Next
+            </Button>
         </ButtonContainer>
     </Container>);
 };

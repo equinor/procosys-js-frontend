@@ -6,7 +6,7 @@ import withAccessControl from '../../core/security/withAccessControl';
 import AddCPO from './views/AddCPO/AddCPO';
 
 
-const Preservation = (): JSX.Element => {
+const CallForPunchOut = (): JSX.Element => {
 
     const { url } = useRouteMatch();
     return (
@@ -27,8 +27,8 @@ const Preservation = (): JSX.Element => {
                     </Switch>
                 </Router>
             </Container>
-        </CallForPunchOutContextProvider >
+        </CallForPunchOutContextProvider>
     );
 };
 
-export default withAccessControl(Preservation, ['PRESERVATION/READ']);
+export default withAccessControl(CallForPunchOut, ['PRESERVATION/READ']);

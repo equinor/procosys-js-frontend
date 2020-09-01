@@ -288,7 +288,7 @@ const Header: React.FC = (): JSX.Element => {
                             </a>
                         </OptionsDropdown>
                     </MenuItem >
-                    <MenuItem className={'accountButton compact'}>
+                    <MenuItem className={'compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
                                 <EdsIcon name='account_circle'/>

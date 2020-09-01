@@ -24,6 +24,7 @@ import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import { Typography } from '@equinor/eds-core-react';
 import { Canceler } from '@procosys/http/HttpClient';
+import RemoveDialog from './RemoveDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -176,7 +177,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return { maxAvailable: 0, tags: [] };
     };
 
-
     const exportTagsToExcel = async (): Promise<void> => {
         try {
             await apiClient.exportTagsToExcel(project.name, orderByField, orderDirection, tagListFilter).then(
@@ -202,10 +202,24 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
+
         setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
-        refreshScopeList();
-        setSelectedTags([]);
+        setSelectedTags([]);   
+
+        if (numberOfFilters > 0) {
+            // Reset filters on project change:
+            // When the filter is hidden, we reset the selected filters here, which further triggers a refresh of the scope list.
+            // When the filter is displayed, the filter reset and scope list refresh is handled by the filter component.
+            setNumberOfFilters(0);
+
+            if (!displayFilter) {
+                setTagListFilter(defaultTagListFilter);
+            }                        
+        } else {
+            // No filters, regular scope list refresh.
+            refreshScopeList();
+        }
     };
 
     let transferableTags: PreservedTag[];
@@ -382,6 +396,46 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             completeFunc);
     };
 
+    const remove = async (removableTags: PreservedTag[]): Promise<void> => {
+        try {
+            await apiClient.remove(removableTags.map(t => ({
+                id: t.id,
+                rowVersion: t.rowVersion
+            })));
+            refreshScopeList();
+            setSelectedTags([]);
+            showSnackbarNotification('Selected tag(s) have been removed.');
+        } catch (error) {
+            console.error('Remove failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+    const showRemoveDialog = (): void => {
+        const removableTags: PreservedTag[] = [];
+        const nonRemovableTags: PreservedTag[] = [];
+
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.isVoided && !tag.isInUse) {
+                removableTags.push(newTag);
+            } else {
+                nonRemovableTags.push(newTag);
+            }
+        });
+        const removeButton = removableTags.length > 0 ? 'Remove' : null;
+        const removeFunc = removableTags.length > 0 ? (): Promise<void> => remove(removableTags) : null;
+
+        showModalDialog(
+            'Complete Preservation',
+            <RemoveDialog removableTags={removableTags} nonRemovableTags={nonRemovableTags} />,
+            '80vw',
+            backToListButton,
+            null,
+            removeButton,
+            removeFunc);
+    };
+
     let voidableTags: PreservedTag[] = [];
     let unvoidableTags: PreservedTag[] = [];
 
@@ -414,6 +468,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
         return Promise.resolve();
     };
+
 
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
@@ -617,15 +672,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             icon='more_verticle'
                             variant='ghost'>
                             <DropdownItem
-                                disabled={selectedTags.length > 1 || voidedTagsSelected}
+                                disabled={selectedTags.length != 1 || voidedTagsSelected}
                                 onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
-                                <EdsIcon name='edit_text' color={selectedTags.length > 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
                             </DropdownItem>
                             <DropdownItem
-                                disabled={true}
-                            >
-                                <EdsIcon name='delete_to_trash' color={tokens.colors.interactive.disabled__border.rgba} />
+                                disabled={selectedTags.length === 0}
+                                onClick={(): void => showRemoveDialog()}>
+                                <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Remove
                             </DropdownItem>
                             <DropdownItem

@@ -59,7 +59,6 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         try {
             const response = await apiClient.getTagFunction(props.tagFunctionCode, props.registerCode, requestCanceller);
             setTagFunctionDetails(response);
-            setIsLoading(false);
         } catch (error) {
             if (error && error.data) {
                 const serverError = error.data as AxiosResponse;
@@ -69,12 +68,13 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
                 }
             }
         }
+        setIsLoading(false);
     };
 
     const submitChanges = async (): Promise<void> => {
         const changes = unsavedRequirements || [];
         try {
-            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes, tagFunctionDetails && tagFunctionDetails.rowVersion);
+            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes);
             setUnsavedRequirements(null);
             updateTagFunctionDetails();
             showSnackbarNotification('Tag function requirements saved');

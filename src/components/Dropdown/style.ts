@@ -49,6 +49,7 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     width: 100%;
     cursor: pointer;
+    color: var(--text--default);
 
     path {
         ${({ disabled }): any => disabled && css`

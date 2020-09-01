@@ -1,5 +1,5 @@
 type CacheItem = {
-    data: unknown;
+    data: any;
     cachedAt: Date;
 }
 
@@ -18,7 +18,7 @@ interface ICacheService {
      * @param key StorageKey used to retrieve the value later
      * @param data Data to cache
      */
-    setCache(key: string, data: unknown): void;
+    setCache(key: string, data: any): void;
 
     /**
      * Delete data with key
@@ -51,8 +51,8 @@ export default class CacheService implements ICacheService {
         key = key.trim().replace(' ', '_');
         return `${this.cacheKey}:${key}`;
     }
-
-    setCache(key: string, dataToCache: unknown): void {
+    // @ts-ignore: We dont know the type of the cahced item, we could make this a typed function (func<T>)
+    setCache(key: string, dataToCache: any): void {
         if (!key || !key.length) {
             throw MissingStorageKeyException;
         }

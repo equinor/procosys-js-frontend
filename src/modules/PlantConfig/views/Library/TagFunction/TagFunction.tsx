@@ -58,7 +58,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     return (
 
         <Container>
-            <Breadcrumbs>Library / Tag Functions / {tagFunctionData.registerDescription} / {tagFunctionData.code}, {tagFunctionData.description}</Breadcrumbs>
+            <Breadcrumbs>Library / Tag functions / {tagFunctionData.registerDescription} / {tagFunctionData.code}, {tagFunctionData.description}</Breadcrumbs>
             <DetailsSection>
                 <Typography variant="h3">{tagFunctionData.code}, {tagFunctionData.description}</Typography>
                 <InformationContainer>
@@ -66,7 +66,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                         <TextField id="inp_register" value={tagFunctionData.registerDescription} label="Register" disabled />
                     </div>
                     <div className="inputRow">
-                        <TextField id="inp_tag_function" value={tagFunctionData.code} label="Tag Function" disabled />
+                        <TextField id="inp_tag_function" value={tagFunctionData.code} label="Tag function" disabled />
                     </div>
                     <div className="inputRow">
                         <TextField id="inp_description" value={tagFunctionData.description} label="Description" disabled />

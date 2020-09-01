@@ -336,11 +336,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         });
 
-        const startButton = startableTags.length > 0 ? 'Start Preservation' : null;
+        const startButton = startableTags.length > 0 ? 'Start preservation' : null;
         const startFunc = startableTags.length > 0 ? startPreservation : null;
 
         showModalDialog(
-            'Start Preservation',
+            'Start preservation',
             <StartPreservationDialog startableTags={startableTags} nonStartableTags={nonStartableTags} />,
             '80vw',
             backToListButton,
@@ -382,7 +382,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const preservedFunc = preservableTags.length > 0 ? preservedThisWeek : null;
 
         showModalDialog(
-            'Preserved This Week',
+            'Preserved this week',
             <PreservedDialog preservableTags={preservableTags} nonPreservableTags={nonPreservableTags} />,
             '80vw',
             backToListButton,
@@ -427,7 +427,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const completeFunc = completableTags.length > 0 ? complete : null;
 
         showModalDialog(
-            'Complete Preservation',
+            'Complete preservation',
             <CompleteDialog completableTags={completableTags} nonCompletableTags={nonCompletableTags} />,
             '80vw',
             backToListButton,
@@ -467,7 +467,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const removeFunc = removableTags.length > 0 ? (): Promise<void> => remove(removableTags) : null;
 
         showModalDialog(
-            'Complete Preservation',
+            'Complete preservation',
             <RemoveDialog removableTags={removableTags} nonRemovableTags={nonRemovableTags} />,
             '80vw',
             backToListButton,
@@ -662,7 +662,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </Link>
                             <Link to={'/AddScope/selectTagsAutoscope'}>
                                 <DropdownItem>
-                                    Autoscope by Tag Function
+                                    Autoscope by tag function
                                 </DropdownItem>
                             </Link>
                             <Link to={'/AddScope/createDummyTag'}>

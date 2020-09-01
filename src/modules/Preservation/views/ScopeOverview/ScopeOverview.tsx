@@ -72,7 +72,7 @@ function setCachedFilter(projectId: number, filter: TagListFilter): void {
 function deleteCachedFilter(projectId: number): void {
     ScopeOverviewCache.delete(projectId + '-filter');
 }
-const defaultTagListFilter: TagListFilter = {
+const emptyTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
     commPkgNoStartsWith: null,
     mcPkgNoStartsWith: null,
@@ -119,11 +119,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const previousFilter = getCachedFilter(project.id);
         if (previousFilter) {
             return {
-                ...defaultTagListFilter,
+                ...emptyTagListFilter,
                 ...previousFilter
             };
         }
-        return { ...defaultTagListFilter };
+        return { ...emptyTagListFilter };
     });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
@@ -254,7 +254,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             // When the filter is displayed, the filter reset and scope list refresh is handled by the filter component.
 
             if (!displayFilter) {
-                setTagListFilter({ ...defaultTagListFilter });
+                setTagListFilter({ ...emptyTagListFilter });
             }
         } else {
             // No filters, regular scope list refresh.
@@ -605,7 +605,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
 
                 if (filtersUsed > 0) {
-                    const tagFilter = { ...defaultTagListFilter };
+                    const tagFilter = { ...emptyTagListFilter };
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 

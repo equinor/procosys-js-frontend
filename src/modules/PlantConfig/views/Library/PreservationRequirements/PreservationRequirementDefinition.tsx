@@ -78,7 +78,6 @@ type PreservationRequirementDefinitionProps = {
 const PreservationRequirementDefinition = (props: PreservationRequirementDefinitionProps): JSX.Element => {
 
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
     const [requirementDefinitionId, setRequirementDefinitionId] = useState<number>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirementTypeSelectItems, setRequirementTypeSelectItems] = useState<SelectItem[]>([]);
@@ -123,10 +122,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     //Fetch req. types, and create select items
     useEffect(() => {
-        if (!requirementDefinition) {
-            return;
-        }
-        (async (): Promise<void> => {
+        if (requirementDefinition && requirementTypes) {
             try {
                 const items: SelectItem[] = [];
                 requirementTypes.forEach(requirementType => {
@@ -143,7 +139,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 console.error('Get requirement types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
-        })();
+        }
     }, [requirementTypes, requirementDefinition]);
 
     const isDirty = (): boolean => {
@@ -174,6 +170,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             setIsDirtyAndValid(false);
         } else if (newRequirementDefinition.sortKey != -1 && newRequirementDefinition.usage && newRequirementDefinition.requirementTypeId != -1
             && newRequirementDefinition.title && newRequirementDefinition.defaultIntervalWeeks != -1) {
+
             setIsDirtyAndValid(true);
         } else {
             setIsDirtyAndValid(false);
@@ -194,21 +191,15 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     //Find and set the requirement definition
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
-
         (async (): Promise<void> => {
-            if (requirementTypes.length === 0) {
-                return;
-            }
-
-            if (requirementDefinitionId && requirementDefinitionId > -1) {
-                requirementTypes.forEach(async (reqType) => {
+            if (requirementTypes && requirementTypes.length > 0 && requirementDefinitionId && requirementDefinitionId > -1) {
+                for (const reqType of requirementTypes) {
                     const reqDef = reqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
                     if (reqDef) {
                         try {
-                            //Note: We need to fetch the single requirement type, to get the 'inUse' flag. 
+                            //Note: We need to fetch the single requirement type, to get the 'inUse' flag.
                             const singleReqType: RequirementType = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
                             const singleReqDef = singleReqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
-
                             if (singleReqDef) {
                                 const requirementDef: RequirementDefinitionItem = {
                                     ...singleReqDef,
@@ -216,16 +207,15 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     requirementTypeId: reqType.id,
                                     requirementTypeTitle: reqType.title,
                                 };
-                                setRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
+                                setRequirementDefinition(requirementDef);
                                 setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
                             }
                         } catch (error) {
                             console.error('Get requirement type failed: ', error.message, error.data);
                             showSnackbarNotification(error.message, 5000);
                         }
-                        setIsLoading(false);
                     }
-                });
+                }
             } else {
                 setNewRequirementDefinition({
                     id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
@@ -234,13 +224,13 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
                 });
             }
-
         })();
-
         return (): void => {
             requestCancellor && requestCancellor();
         };
+
     }, [requirementDefinitionId, requirementTypes]);
+
 
     const saveNew = async (): Promise<void> => {
         if (newRequirementDefinition) {
@@ -409,7 +399,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     const showDeleteFieldButton = (field: Field): boolean => {
         if (requirementDefinition) {
-            const origField = requirementDefinition.fields.find((f) => f.id = field.id);
+            const origField = requirementDefinition.fields.find((f) => f.id == field.id);
             if (field.id == null || (origField && origField.isVoided && field.isVoided && !field.isInUse)) {
                 return true;
             }

@@ -94,9 +94,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         });
     });
 
-    console.log('start requiDef1:', JSON.parse(JSON.stringify(requirementDefinition)));
-    console.log('start requiDef2:', JSON.parse(JSON.stringify(newRequirementDefinition)));
-
     const {
         preservationApiClient,
     } = usePlantConfigContext();
@@ -146,8 +143,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     }, [requirementTypes, requirementDefinition]);
 
     const isDirty = (): boolean => {
-        console.log('isDiertyrequidef:', JSON.parse(JSON.stringify(requirementDefinition)));
-        console.log('isDiertyrequidefnew:', JSON.parse(JSON.stringify(newRequirementDefinition)));
         return JSON.stringify(requirementDefinition) !== JSON.stringify(newRequirementDefinition);
     };
 
@@ -196,14 +191,11 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     //Find and set the requirement definition
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
-
         (async (): Promise<void> => {
-            console.log('Er i use effekt' + requirementDefinitionId, requirementTypes);
             if (requirementTypes && requirementTypes.length > 0 && requirementDefinitionId && requirementDefinitionId > -1) {
                 for (const reqType of requirementTypes) {
                     const reqDef = reqType.requirementDefinitions.find((def) => def.id === requirementDefinitionId);
                     if (reqDef) {
-                        console.log('Har funnet reqDef: ', JSON.parse(JSON.stringify(reqDef)));
                         try {
                             //Note: We need to fetch the single requirement type, to get the 'inUse' flag.
                             const singleReqType: RequirementType = await preservationApiClient.getRequirementType(reqType.id, (cancel: Canceler) => requestCancellor = cancel);
@@ -215,9 +207,8 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     requirementTypeId: reqType.id,
                                     requirementTypeTitle: reqType.title,
                                 };
-                                console.log('ny ref def item: ', JSON.parse(JSON.stringify(requirementDef)));
-                                setRequirementDefinition(JSON.parse(JSON.stringify(requirementDef))); //must clone here!
-                                setNewRequirementDefinition(JSON.parse(JSON.stringify(requirementDef))); //must clone here!
+                                setRequirementDefinition(requirementDef);
+                                setNewRequirementDefinition(cloneRequirementDefinition(requirementDef)); //must clone here!
                             }
                         } catch (error) {
                             console.error('Get requirement type failed: ', error.message, error.data);
@@ -408,7 +399,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     const showDeleteFieldButton = (field: Field): boolean => {
         if (requirementDefinition) {
-            const origField = requirementDefinition.fields.find((f) => f.id = field.id);
+            const origField = requirementDefinition.fields.find((f) => f.id == field.id);
             if (field.id == null || (origField && origField.isVoided && field.isVoided && !field.isInUse)) {
                 return true;
             }
@@ -449,9 +440,6 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             return breadcrumbString + 'Without user required input / ' + newRequirementDefinition.title;
         }
     };
-
-    console.log('requiDef1:', JSON.parse(JSON.stringify(requirementDefinition)));
-    console.log('requiDef2:', JSON.parse(JSON.stringify(newRequirementDefinition)));
 
     return (
         <Container>

@@ -82,7 +82,7 @@
         "@material-ui/icons": "^4.5.1",
         "@material-ui/pickers": "^3.2.10",
         "@types/qs": "^6.9.4",
-        "axios": "^0.20.0",
+        "axios": "^0.19.2",
         "canvas": "^2.6.1",
         "material-table": "1.62.0",
         "msal": "^1.4.0",

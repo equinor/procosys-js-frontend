@@ -43,6 +43,7 @@ interface Step {
     title: string;
     autoTransferMethod: string;
     isVoided: boolean;
+    isInUse: boolean;
     mode: {
         id: number;
         title: string;
@@ -429,6 +430,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             title: '',
             autoTransferMethod: AutoTransferMethod.NONE,
             isVoided: false,
+            isInUse: false,
             mode: {
                 id: -1,
                 title: '',
@@ -760,7 +762,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                 </Button>
                                             </>
                                         }
-                                        {(step.id == -1 || (journey && !journey.isInUse) && step.isVoided) &&
+                                        {(step.id == -1 || (step.isVoided && !step.isInUse)) &&
                                             (<Button variant='ghost' title="Delete" onClick={(): Promise<void> => deleteStep(step, index)}>
                                                 {deleteIcon}
                                             </Button>)

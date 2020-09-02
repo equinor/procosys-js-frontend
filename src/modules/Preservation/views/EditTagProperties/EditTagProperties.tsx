@@ -128,7 +128,7 @@ const EditTagProperties = (): JSX.Element => {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => requestCancellor = cancel);
                     setRequirementTypes(response);
                 } catch (error) {
-                    console.error('Get Requirement Types failed: ', error.message, error.data);
+                    console.error('Get requirement types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message);
                 }
             }
@@ -149,7 +149,7 @@ const EditTagProperties = (): JSX.Element => {
                 const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(data);
             } catch (error) {
-                console.error('Get Journeys failed: ', error.message, error.data);
+                console.error('Get journeys failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         })();
@@ -386,7 +386,7 @@ const EditTagProperties = (): JSX.Element => {
                                 label='Remark for whole preservation journey'
                                 defaultValue={tag ? tag.remark : ''}
                                 inputRef={remarkInputRef}
-                                placeholder={'Write Here'}
+                                placeholder={'Write here'}
                                 meta='Optional'
                                 onChange={remarkOrStorageAreaChange}
                             />
@@ -397,7 +397,7 @@ const EditTagProperties = (): JSX.Element => {
                                 label='Storage area'
                                 defaultValue={tag ? tag.storageArea : ''}
                                 inputRef={storageAreaInputRef}
-                                placeholder='Write Here'
+                                placeholder='Write here'
                                 meta='Optional'
                                 onChange={remarkOrStorageAreaChange}
                             />

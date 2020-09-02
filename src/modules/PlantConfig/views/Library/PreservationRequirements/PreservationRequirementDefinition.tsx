@@ -276,7 +276,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 );
 
                 await getRequirementTypes();
-                showSnackbarNotification('Changes for requirement definition is saved.', 5000);
+                showSnackbarNotification('Changes for requirement definition are saved.', 5000);
                 props.setDirtyLibraryType();
             } catch (error) {
                 console.error('Update requirement definition failed: ', error.message, error.data);
@@ -311,7 +311,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Requirement definition is voided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to requirement definition: ', error.message, error.data);
+                console.error('Error occured when trying to void requirement definition: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -409,7 +409,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
     if (isLoading) {
         return (<Container>
-            <Breadcrumbs>{'Library / Preservation Requirements /'}</Breadcrumbs>
+            <Breadcrumbs>{'Library / Preservation requirements /'}</Breadcrumbs>
             <Spinner large />
         </Container>);
     }
@@ -429,7 +429,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     }
 
     const getBreadcrumb = (): string => {
-        let breadcrumbString = 'Library / Preservation Requirements / ';
+        let breadcrumbString = 'Library / Preservation requirements / ';
         if (newRequirementDefinition.id == -1) {
             return breadcrumbString;
         }
@@ -485,7 +485,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             newRequirementDefinition.sortKey = Number(e.target.value);
                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                         }}
-                        placeholder='Write Here'
+                        placeholder='Write here'
                         disabled={newRequirementDefinition.isVoided}
                     />
                 </FormFieldSpacer>
@@ -515,7 +515,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
 
                         }}
                         data={requirementTypeSelectItems}
-                        label={'Select Requirement Type'}
+                        label={'Select requirement type'}
                         disabled={newRequirementDefinition.isVoided}
                     >
                         {getSelectedReqTypeText()}
@@ -532,7 +532,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                             newRequirementDefinition.title = e.target.value;
                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                         }}
-                        placeholder='Write Here'
+                        placeholder='Write here'
                         disabled={newRequirementDefinition.isVoided}
                     />
                 </FormFieldSpacer>
@@ -581,7 +581,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                         field.label = e.target.value;
                                         setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                                     }}
-                                    placeholder='Write Here'
+                                    placeholder='Write here'
                                     disabled={newRequirementDefinition.isVoided || field.isVoided}
                                 />
                             </FormFieldSpacer>
@@ -595,7 +595,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                             field.unit = e.target.value;
                                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                                         }}
-                                        placeholder='Write Here'
+                                        placeholder='Write here'
 
                                         disabled={newRequirementDefinition.isVoided || field.isVoided}
                                     />

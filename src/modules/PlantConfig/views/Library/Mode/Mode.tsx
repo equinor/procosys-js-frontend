@@ -128,7 +128,7 @@ const Mode = (props: ModeProps): JSX.Element => {
     useEffect(() => {
         if (isSaved) {
             getMode(newMode.id);
-            showSnackbarNotification('Changes for mode is saved.', 5000);
+            showSnackbarNotification('Changes for mode are saved.', 5000);
             setIsSaved(false);
         }
     }, [isSaved]);
@@ -276,7 +276,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                     label='Title for this mode'
                     value={newMode.title}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setTitleValue(e.target.value); }}
-                    placeholder="Write Here"
+                    placeholder="Write here"
                     disabled={newMode.isVoided}
                 />
             </InputContainer>

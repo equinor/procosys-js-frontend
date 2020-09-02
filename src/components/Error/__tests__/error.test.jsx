@@ -11,6 +11,6 @@ describe('<Error />', () => {
     it('Should not render text node when not using title prop', () => {
         const {container} = render(<Error />);
 
-        expect(container.textContent).toBe('Unknown Error');
+        expect(container.textContent).toBe('Unknown error');
     });
 });

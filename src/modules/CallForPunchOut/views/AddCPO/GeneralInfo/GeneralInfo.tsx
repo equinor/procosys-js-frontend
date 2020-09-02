@@ -50,12 +50,10 @@ const GeneralInfo = ({
         if(fromMain) {
             const poType = poTypes.find((p: SelectItem) => p.value === 'DP');
             if (poType) {
-                const copy = Object.assign({}, generalInfo);
-                copy.poType = poType;
-                setGeneralInfo(copy);
+                setGeneralInfo({...generalInfo, poType: poType});
             }
         }
-    });
+    }, [fromMain]);
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -72,17 +70,13 @@ const GeneralInfo = ({
     const setPoTypeForm = (value: string): void => {
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
-            const copy = Object.assign({}, generalInfo);
-            copy.poType = newPoType;
-            setGeneralInfo(copy);
+            setGeneralInfo({...generalInfo, poType: newPoType});
         }
     };
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        const copy = Object.assign({}, generalInfo);
-        copy.projectId = filteredProjects[index].id;
-        setGeneralInfo(copy);
+        setGeneralInfo({...generalInfo, projectId: filteredProjects[index].id});
     };
 
     useEffect(() => {
@@ -133,10 +127,8 @@ const GeneralInfo = ({
                 id={'title'}
                 label='Title'
                 placeholder='Write here'
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                    const copy = Object.assign({}, generalInfo);
-                    copy.title = e.target.value;
-                    setGeneralInfo(copy); 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                    setGeneralInfo({...generalInfo, title: e.target.value}); 
                 }}
             />
             <TextField
@@ -146,9 +138,7 @@ const GeneralInfo = ({
                 meta='Optional'
                 multiline
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                    const copy = Object.assign({}, generalInfo);
-                    copy.description = e.target.value;
-                    setGeneralInfo(copy); 
+                    setGeneralInfo({...generalInfo, description: e.target.value}); 
                 }}
             />
             <Typography constiant='h5'>Date and time for punch round</Typography>
@@ -161,9 +151,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        const copy = Object.assign({}, generalInfo);
-                        copy.startDate = e.target.value;
-                        setGeneralInfo(copy); 
+                        setGeneralInfo({...generalInfo, startDate: e.target.value}); 
                     }}
                 />
                 <DateTimeField
@@ -174,9 +162,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        const copy = Object.assign({}, generalInfo);
-                        copy.startTime = e.target.value;
-                        setGeneralInfo(copy); 
+                        setGeneralInfo({...generalInfo, startTime: e.target.value}); 
                     }}
                 />
                 <DateTimeField
@@ -187,9 +173,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        const copy = Object.assign({}, generalInfo);
-                        copy.endDate = e.target.value;
-                        setGeneralInfo(copy); 
+                        setGeneralInfo({...generalInfo, endDate: e.target.value}); 
                     }}
                 />
                 <DateTimeField
@@ -200,9 +184,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        const copy = Object.assign({}, generalInfo);
-                        copy.endTime = e.target.value;
-                        setGeneralInfo(copy); 
+                        setGeneralInfo({...generalInfo, endTime: e.target.value}); 
                     }}
                 />
             </DateTimeContainer>
@@ -213,9 +195,7 @@ const GeneralInfo = ({
                     label='Location'
                     meta='Optional'
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        const copy = Object.assign({}, generalInfo);
-                        copy.location = e.target.value;
-                        setGeneralInfo(copy); 
+                        setGeneralInfo({...generalInfo, location: e.target.value}); 
                     }}
                 />
             </LocationContainer>   

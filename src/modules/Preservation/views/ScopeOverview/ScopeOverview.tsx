@@ -219,6 +219,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const exportTagsToExcel = async (): Promise<void> => {
         try {
+            showSnackbarNotification('Exporting filtered tags to Excel...');
             await apiClient.exportTagsToExcel(project.name, orderByField, orderDirection, tagListFilter).then(
                 (response) => {
                     const outputFilename = `Preservation tags-${project.name}.xlsx`;
@@ -232,6 +233,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     tempLink.remove();
                 }
             );
+            showSnackbarNotification('Filtered tags are exported to Excel');
         } catch (error) {
             console.error('Export tags to excel failed: ', error.message, error.data);
             if (!error.isCancel) {
@@ -734,11 +736,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>
-                            <DropdownItem
-                                disabled={false}
-                                onClick={async (): Promise<void> => { exportTagsToExcel(); }}>
-                                Export to Excel
-                            </DropdownItem>
                         </OptionsDropdown>
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
@@ -788,9 +785,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <>
                         <FilterDivider />
                         <FilterContainer>
-                            <ScopeFilter onCloseRequest={(): void => {
-                                setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} numberOfTags={numberOfTags} />
+                            <ScopeFilter
+                                onCloseRequest={(): void => {
+                                    setDisplayFilter(false);
+                                }}
+                                tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                                setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                                selectedSavedFilterTitle={selectedSavedFilterTitle}
+                                numberOfTags={numberOfTags}
+                                exportTagsToExcel={exportTagsToExcel} />
                         </FilterContainer>
                     </>
                 )

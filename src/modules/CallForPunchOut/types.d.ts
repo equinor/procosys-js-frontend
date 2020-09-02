@@ -17,3 +17,13 @@ export type GeneralInfoDetails = {
     endTime: string | null;
     location?: string | null;
 }
+
+export interface CommPkgRow {
+    commPkgNo: string;
+    description: string;
+    commPkgStatus: string;
+    mdpAccepted: boolean;
+    tableData?: {
+        checked: boolean;
+    };
+}

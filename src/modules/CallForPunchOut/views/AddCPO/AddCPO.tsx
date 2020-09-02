@@ -24,13 +24,9 @@ const AddCPO = (): JSX.Element => {
     useEffect(() => {
         if(params.projectId && params.commPkgId) {
             setFromMain(true);
-            setGeneralInfo(gi => {
-                const copy = Object.assign({}, gi);
-                copy.projectId = params.projectId;
-                return copy;
-            });
+            setGeneralInfo(gi => {return {...gi, projectId: params.projectId};});
         }
-    });
+    }, [fromMain]);
 
     return (<>
         <GeneralInfo

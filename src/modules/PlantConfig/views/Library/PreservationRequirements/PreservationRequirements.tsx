@@ -24,7 +24,7 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
     if (nodeType === (NodeTypes.REQUIREMENT)) {
         return (
             <Container>
-                <Breadcrumbs>Library / Preservation Requirements</Breadcrumbs>
+                <Breadcrumbs>Library / Preservation requirements</Breadcrumbs>
                 <IconContainer>
                     <Button variant='ghost' onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_TYPE)}>
                         {addIcon} New requirement type

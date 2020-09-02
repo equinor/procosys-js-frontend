@@ -143,7 +143,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                         label='Title for the filter'
                         value={newFilterTitle}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setNewFilterTitle(e.target.value); }}
-                        placeholder="Write Here"
+                        placeholder="Write here"
                     />
                 </div>
 

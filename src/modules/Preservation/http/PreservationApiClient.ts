@@ -177,6 +177,7 @@ interface JourneyResponse {
             title: string;
             isVoided: boolean;
             autoTransferMethod: string;
+            isInUse: boolean;
             mode: {
                 id: number;
                 title: string;
@@ -1390,15 +1391,13 @@ class PreservationApiClient extends ApiClient {
      */
     async deleteJourneyStep(journeyId: number, stepId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = { data: { rowVersion: rowVersion } };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
             await this.client.delete(
                 endpoint,
-                {
-                    data: { rowVersion: rowVersion }
-                }
+                settings
             );
         } catch (error) {
             throw getPreservationApiError(error);

@@ -31,7 +31,7 @@ const CompleteDialog = ({
     return (<div>
         {nonCompletableTags.length > 0 && (
             <div>
-                <Typography variant="meta">{nonCompletableTags.length} tag(s)  cannot be completed. Tags are not started, already completed or voided.</Typography>
+                <Typography variant="meta">{nonCompletableTags.length} tag(s) cannot be completed. Tags are not started, already completed or voided.</Typography>
                 <DialogTable tags={nonCompletableTags} columns={columns} toolbarText='tag(s) will not be completed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
             </div>
         )}

@@ -21,7 +21,7 @@ type PreservationRequirementTypeProps = {
     cancel: () => void;
 };
 
-const baseBreadcrumb = 'Library / Preservation Requirements /';
+const baseBreadcrumb = 'Library / Preservation requirements /';
 
 const PreservationRequirementType = (props: PreservationRequirementTypeProps): JSX.Element => {
 
@@ -112,7 +112,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         try {
             await preservationApiClient.updateRequirementType(newRequirementType.id, newRequirementType.code, newRequirementType.title, newRequirementType.icon, newRequirementType.sortKey, newRequirementType.rowVersion);
             getRequirementType(newRequirementType.id);
-            showSnackbarNotification('Changes for requirement type is saved.', 5000);
+            showSnackbarNotification('Changes for requirement type are saved.', 5000);
             props.setDirtyLibraryType();
         } catch (error) {
             console.error('Update requirement type failed: ', error.message, error.data);
@@ -162,7 +162,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                 props.setDirtyLibraryType();
                 showSnackbarNotification('Requirement type is voided.', 5000);
             } catch (error) {
-                console.error('Error occured when trying to requirement type: ', error.message, error.data);
+                console.error('Error occured when trying to void requirement type: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -254,7 +254,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                             newRequirementType.sortKey = Number(e.target.value);
                             valueUpdated();
                         }}
-                        placeholder="Write Here"
+                        placeholder="Write here"
                         disabled={newRequirementType.isVoided}
                     />
                 </FormFieldSpacer>
@@ -268,7 +268,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                             newRequirementType.code = e.target.value;
                             valueUpdated();
                         }}
-                        placeholder="Write Here"
+                        placeholder="Write here"
                         disabled={newRequirementType.isVoided}
                     />
                 </FormFieldSpacer>
@@ -281,7 +281,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                             newRequirementType.title = e.target.value;
                             valueUpdated();
                         }}
-                        placeholder="Write Here"
+                        placeholder="Write here"
                         disabled={newRequirementType.isVoided}
                     />
                 </FormFieldSpacer>

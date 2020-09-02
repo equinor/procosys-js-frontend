@@ -127,7 +127,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             });
 
         } catch (error) {
-            console.error('Failed to fetch treenodes for Requirements: ', error.message, error.data);
+            console.error('Failed to fetch treenodes for requirements: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
         return children;
@@ -148,7 +148,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 });
             });
         } catch (error) {
-            console.error('Failed to process Tag Function nodes', error.message, error.data);
+            console.error('Failed to process tag function nodes', error.message, error.data);
             showSnackbarNotification('Failed to process tag function nodes');
         }
 
@@ -180,7 +180,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const rootNodes: TreeViewNode[] = [
         {
             id: LibraryType.TAG_FUNCTION,
-            name: 'Tag Functions',
+            name: 'Tag functions',
             getChildren: getRegisterNodes
         },
         {
@@ -191,7 +191,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         },
         {
             id: LibraryType.PRES_JOURNEY,
-            name: 'Preservation Journeys',
+            name: 'Preservation journeys',
             getChildren: getPresJourneyTreeNodes,
             onClick: (): void => { handleTreeviewClick(LibraryType.PRES_JOURNEY, ''); }
         },

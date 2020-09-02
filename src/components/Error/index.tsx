@@ -23,7 +23,7 @@ const Error = ({title, large = false, medium = false}: ErrorProps): JSX.Element 
         <Container>
             <WarningOutlinedIcon fontSize={size} />
 
-            {(<h1>{title || 'Unknown Error'}</h1>)}
+            {(<h1>{title || 'Unknown error'}</h1>)}
         </Container>
     );
 };

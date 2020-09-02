@@ -14,7 +14,7 @@ const poTypes: SelectItem[] = [
 
 interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
-    setGeneralInfo: (generalInfoDetails: GeneralInfoDetails) => void;
+    setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
 }
 
@@ -50,7 +50,7 @@ const GeneralInfo = ({
         if(fromMain) {
             const poType = poTypes.find((p: SelectItem) => p.value === 'DP');
             if (poType) {
-                setGeneralInfo({...generalInfo, poType: poType});
+                setGeneralInfo(gi => {return {...gi, poType: poType};});
             }
         }
     }, [fromMain]);
@@ -70,13 +70,13 @@ const GeneralInfo = ({
     const setPoTypeForm = (value: string): void => {
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
-            setGeneralInfo({...generalInfo, poType: newPoType});
+            setGeneralInfo(gi => {return {...gi, poType: newPoType};});
         }
     };
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setGeneralInfo({...generalInfo, projectId: filteredProjects[index].id});
+        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id};});
     };
 
     useEffect(() => {
@@ -128,7 +128,7 @@ const GeneralInfo = ({
                 label='Title'
                 placeholder='Write here'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                    setGeneralInfo({...generalInfo, title: e.target.value}); 
+                    setGeneralInfo(gi => {return {...gi, title: e.target.value};}); 
                 }}
             />
             <TextField
@@ -138,7 +138,7 @@ const GeneralInfo = ({
                 meta='Optional'
                 multiline
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                    setGeneralInfo({...generalInfo, description: e.target.value}); 
+                    setGeneralInfo(gi => {return {...gi, description: e.target.value};}); 
                 }}
             />
             <Typography constiant='h5'>Date and time for punch round</Typography>
@@ -151,7 +151,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo({...generalInfo, startDate: e.target.value}); 
+                        setGeneralInfo(gi => {return {...gi, startDate: e.target.value};}); 
                     }}
                 />
                 <DateTimeField
@@ -162,7 +162,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo({...generalInfo, startTime: e.target.value}); 
+                        setGeneralInfo(gi => {return {...gi, startTime: e.target.value};}); 
                     }}
                 />
                 <DateTimeField
@@ -173,7 +173,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo({...generalInfo, endDate: e.target.value}); 
+                        setGeneralInfo(gi => {return {...gi, endDate: e.target.value};}); 
                     }}
                 />
                 <DateTimeField
@@ -184,7 +184,7 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo({...generalInfo, endTime: e.target.value}); 
+                        setGeneralInfo(gi => {return {...gi, endTime: e.target.value};}); 
                     }}
                 />
             </DateTimeContainer>
@@ -195,7 +195,7 @@ const GeneralInfo = ({
                     label='Location'
                     meta='Optional'
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo({...generalInfo, location: e.target.value}); 
+                        setGeneralInfo(gi => {return {...gi, location: e.target.value};}); 
                     }}
                 />
             </LocationContainer>   

@@ -14,6 +14,8 @@ import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
+import ExcelIcon from '../../../../../assets/icons/Excel';
+
 import { TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
@@ -25,6 +27,7 @@ interface ScopeFilterProps {
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
+    exportTagsToExcel: () => void;
 }
 
 interface FilterInput {
@@ -132,7 +135,8 @@ const ScopeFilter = ({
     setTagListFilter,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
-    numberOfTags
+    numberOfTags,
+    exportTagsToExcel
 }: ScopeFilterProps): JSX.Element => {
 
     const {
@@ -363,6 +367,9 @@ const ScopeFilter = ({
             <Header filterActive={filterActive}>
                 <h1>Filter</h1>
                 <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportTagsToExcel}>
+                        <ExcelIcon />
+                    </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
                         setAnchorElement(event.currentTarget);

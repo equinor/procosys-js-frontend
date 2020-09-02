@@ -31,7 +31,7 @@ export const PlantContextProvider: React.FC = ({children}): JSX.Element => {
     const user = useCurrentUser();
     const {procosysApiClient} = useProcosysContext();
     const {history, location} = useRouter();
-    const {plant: plantInPath} = useParams();
+    const {plant: plantInPath} = useParams() as any;
     const [permissions, setPermissions] = useState<string[]>([]);
 
     if (!plantInPath || plantInPath === '') {

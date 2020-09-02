@@ -185,7 +185,7 @@ describe('Module: <EditTagProperties />', () => {
         const { queryAllByText, getByText, getByTitle } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
-        getByText('Add Requirement').click();
+        getByText('Add requirement').click();
         const components = queryAllByText('Requirement');
         expect(expect(components.length).toBe(2));
     });
@@ -195,7 +195,7 @@ describe('Module: <EditTagProperties />', () => {
         const { queryAllByText, getByText, getByTitle } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
-        getByText('Add Requirement').click();
+        getByText('Add requirement').click();
 
         getByTitle('Delete').click();
         const components = queryAllByText('Requirement');

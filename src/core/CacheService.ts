@@ -3,7 +3,7 @@ type CacheItem = {
     cachedAt: Date;
 }
 
-class MissingStorageKeyException extends Error {}
+class MissingStorageKeyException extends Error { }
 
 interface ICacheService {
     /**
@@ -51,7 +51,7 @@ export default class CacheService implements ICacheService {
         key = key.trim().replace(' ', '_');
         return `${this.cacheKey}:${key}`;
     }
-
+    // @ts-ignore: We dont know the type of the cahced item, we could make this a typed function (func<T>)
     setCache(key: string, dataToCache: any): void {
         if (!key || !key.length) {
             throw MissingStorageKeyException;
@@ -87,7 +87,7 @@ export default class CacheService implements ICacheService {
     }
 
     clear(): void {
-        for(let i = 0; this.storageEngine.length > i; i++) {
+        for (let i = 0; this.storageEngine.length > i; i++) {
             const key = this.storageEngine.key(i);
             if (key && key.startsWith(this.cacheKey)) {
                 this.storageEngine.removeItem(key);

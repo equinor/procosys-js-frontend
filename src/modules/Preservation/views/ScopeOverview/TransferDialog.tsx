@@ -20,10 +20,10 @@ const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
 const columns: Column<any>[] = [
     { title: 'Tag nr', field: 'tagNo' },
     { title: 'Description', field: 'description' },
-    { title: 'From Mode', field: 'mode' },
-    { title: 'From Resp', field: 'responsibleCode' },
-    { title: 'To Mode', field: 'nextMode' },
-    { title: 'To Resp', field: 'nextResponsibleCode' },
+    { title: 'From mode', field: 'mode' },
+    { title: 'From resp', field: 'responsibleCode' },
+    { title: 'To mode', field: 'nextMode' },
+    { title: 'To resp', field: 'nextResponsibleCode' },
     { title: 'Status', field: 'status' },
     { title: 'Req type', render: getRequirementIcons }
 ];

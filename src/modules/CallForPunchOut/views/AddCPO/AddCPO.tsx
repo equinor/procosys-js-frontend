@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { SelectItem } from '../../../../components/Select';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import AddCPOHeader from './AddCPOHeader';
-import { ProgressBarSteps } from '../../types';
+import { ProgressBarSteps, GeneralInfoDetails } from '../../types';
 
 export enum CreateStepEnum {
     GeneralInfo = 'General info',
@@ -11,22 +10,25 @@ export enum CreateStepEnum {
     Participants = 'Participants',
     UploadAttachments = 'Upload attachments',
     SummaryAndCreate = 'Summary & create'
-}
+};
 
+const emptyGeneralInfo: GeneralInfoDetails = {
+    projectId: null,
+    poType: null,
+    title: null,
+    description: null,
+    startDate: null,
+    endDate: null,
+    startTime: null,
+    endTime: null,
+    location: null
+};
 
 const AddCPO = (): JSX.Element => {
-    const [poType, setPoType] = useState<SelectItem | undefined>();
-    const [description, setDescription] = useState<string | null>();
-    const [title, setTitle] = useState<string>();
     const [fromMain, setFromMain] = useState<boolean>(false);
-    const [projectId, setProjectId] = useState<number>();
-    const [location, setLocation] = useState<string | null>();
-    const [startDate, setStartDate] = useState<string | null>();
-    const [endDate, setEndDate] = useState<string | null>();
-    const [startTime, setStartTime] = useState<string | null>();
-    const [endTime, setEndTime] = useState<string | null>();
+    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
 
-    const steps: ProgressBarSteps[] = [
+    const steps: ProgressBarSteps[] = [ //TODO: will make steps correct when more components area ready
         {title: CreateStepEnum.GeneralInfo, isCompleted: true, isCurrent: false},
         {title: CreateStepEnum.Scope, isCompleted: true, isCurrent: false},
         {title: CreateStepEnum.Participants, isCompleted: false, isCurrent: true},
@@ -39,8 +41,9 @@ const AddCPO = (): JSX.Element => {
     useEffect(() => {
         if (params.projectId && params.commPkgId) {
             setFromMain(true);
+            setGeneralInfo(gi => {return {...gi, projectId: params.projectId};});
         }
-    });
+    }, [fromMain]);
 
     return (<>
         <AddCPOHeader
@@ -48,25 +51,9 @@ const AddCPO = (): JSX.Element => {
             canBeCreated={false}
         />
         <GeneralInfo
-            setPoType={setPoType}
-            poType={poType}
-            setDescription={setDescription}
-            setTitle={setTitle}
-            setProjectId={setProjectId}
-            setLocation={setLocation}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            setStartTime={setStartTime}
-            setEndTime={setEndTime}
-            description={description}
+            generalInfo={generalInfo}
+            setGeneralInfo={setGeneralInfo}
             fromMain={fromMain}
-            title={title}
-            projectId={projectId}
-            location={location}
-            startDate={startDate}
-            endDate={endDate}
-            startTime={startTime}
-            endTime={endTime}
         />
     </>);
 };

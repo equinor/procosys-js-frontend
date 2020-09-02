@@ -58,7 +58,7 @@ describe('<RequirementsSelector />', () => {
     it('Triggers onChange when item is selected', async () => {
         const mySpy = jest.fn();
         const { getAllByText, getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} onChange={mySpy} />);
-        getByText('Add Requirement').click();
+        getByText('Add requirement').click();
         getAllByText('Select')[0].click();
         getByText('Area preservation').click();
         getByText('By discipline Electrical').click();

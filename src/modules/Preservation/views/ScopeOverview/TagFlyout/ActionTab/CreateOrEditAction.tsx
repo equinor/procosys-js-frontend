@@ -65,7 +65,7 @@ const CreateOrEditAction = ({
                 showSnackbarNotification('New action is created.', 5000, true);
             }
         } catch (error) {
-            console.error('Tag preservation failed: ', error.message, error.data);
+            console.error('Update action failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -84,7 +84,7 @@ const CreateOrEditAction = ({
                     id={'title'}
                     label="Title"
                     inputRef={titleInputRef}
-                    placeholder="Write Here"
+                    placeholder="Write here"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setNewTitle(e.target.value)}
                 />
             </InputContainer>
@@ -95,14 +95,13 @@ const CreateOrEditAction = ({
                     inputRef={descriptionInputRef}
                     multiline
                     rows={4}
-                    placeholder="Write Here"
+                    placeholder="Write here"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setNewDescription(e.target.value)}
                 />
             </InputContainer>
             <InputContainer>
                 <MuiPickersUtilsProvider utils={DateFnsUtils} >
                     <KeyboardDatePicker
-                        clearable
                         label="Due date"
                         value={newDueTimeUtc}
                         onChange={(date: MaterialUiPickersDate): void => setNewDueTimeUtc(date)}

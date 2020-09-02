@@ -46,7 +46,7 @@ const VoidDialog = ({
     const topTable = voiding ? unvoidableTags : voidableTags;
     const bottomTable = voiding ? voidableTags : unvoidableTags;
 
-    const voidingText = `${voidableTags.length} tag(s) will be removed from preservation scope`;
+    const voidingText = `${voidableTags.length} tag(s) will be removed from preservation scope.`;
     const unvoidingText = 'Note that tag(s) have been removed from preservation during the period the tag(s) have been voided. Preservation will be started in the same step of the journey as when they were voided.';
 
     return (<div>

@@ -27,7 +27,7 @@ const AddScope = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
-    const { method } = useParams();
+    const { method } = useParams() as any;
 
     const addScopeMethod = useMemo((): AddScopeMethod => {
         switch (method) {
@@ -125,7 +125,7 @@ const AddScope = (): JSX.Element => {
                 const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(data);
             } catch (error) {
-                console.error('Get Journeys failed: ', error.message, error.data);
+                console.error('Get journeys failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -147,7 +147,7 @@ const AddScope = (): JSX.Element => {
                     const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
                     setRequirementTypes(response);
                 } catch (error) {
-                    console.error('Get Requirement Types failed: ', error.message, error.data);
+                    console.error('Get requirement types failed: ', error.message, error.data);
                     showSnackbarNotification(error.message, 5000);
                 }
             })();

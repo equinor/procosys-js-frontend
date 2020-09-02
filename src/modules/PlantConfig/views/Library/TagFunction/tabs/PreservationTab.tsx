@@ -59,7 +59,6 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         try {
             const response = await apiClient.getTagFunction(props.tagFunctionCode, props.registerCode, requestCanceller);
             setTagFunctionDetails(response);
-            setIsLoading(false);
         } catch (error) {
             if (error && error.data) {
                 const serverError = error.data as AxiosResponse;
@@ -69,18 +68,19 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
                 }
             }
         }
+        setIsLoading(false);
     };
 
     const submitChanges = async (): Promise<void> => {
         const changes = unsavedRequirements || [];
         try {
-            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes, tagFunctionDetails && tagFunctionDetails.rowVersion);
+            await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes);
             setUnsavedRequirements(null);
             updateTagFunctionDetails();
             showSnackbarNotification('Tag function requirements saved');
         } catch (err) {
             console.error('Error when syncing requirements', err.message, err.data);
-            showSnackbarNotification('Failed to update tagfunction requirements: ' + err.message);
+            showSnackbarNotification('Failed to update tag function requirements: ' + err.message);
         }
     };
 
@@ -92,7 +92,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
             showSnackbarNotification('Tag function voided');
         } catch (err) {
             console.error('Error when voiding tag function', err.message, err.data);
-            showSnackbarNotification('Failed to void tagfunction: ' + err.message);
+            showSnackbarNotification('Failed to void tag function: ' + err.message);
         }
     };
 
@@ -136,7 +136,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
                 const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => { requestCancellor = cancel; });
                 setRequirementTypes(response);
             } catch (error) {
-                console.error('Get Requirement Types failed: ', error.message, error.data);
+                console.error('Get requirement types failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         })();

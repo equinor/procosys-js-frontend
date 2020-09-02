@@ -1,8 +1,9 @@
+import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+
 import ApiClient from '../../../http/ApiClient';
-import Axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
-import { RequestCanceler } from '../../../http/HttpClient';
 import Qs from 'qs';
+import { RequestCanceler } from '../../../http/HttpClient';
 
 const Settings = require('../../../../settings.json');
 const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g, '"'));
@@ -28,6 +29,7 @@ interface PreservedTagResponse {
         readyToBeStarted: boolean;
         readyToBeTransferred: boolean;
         readyToBeCompleted: boolean;
+        isInUse: boolean;
         requirements: [
             {
                 id: number;
@@ -175,6 +177,7 @@ interface JourneyResponse {
             title: string;
             isVoided: boolean;
             autoTransferMethod: string;
+            isInUse: boolean;
             mode: {
                 id: number;
                 title: string;
@@ -436,7 +439,7 @@ interface HistoryResponse {
     preservationRecordGuid: string;
 }
 
-class PreservationApiError extends Error {
+export class PreservationApiError extends Error {
 
     data: AxiosResponse | null;
     isCancel: boolean;
@@ -1073,6 +1076,29 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Remove given tags
+     * @param tags  List with tag IDs
+     */
+    async remove(tags: PreservedTag[], setRequestCanceller?: RequestCanceler): Promise<void> {
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            for await (const tag of tags) {
+                const endpoint = `/Tags/${tag.id}`;
+                await this.client.delete(
+                    endpoint,
+                    {
+                        data: { rowVersion: tag.rowVersion }
+                    }
+                );
+            }
+        } catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
+
+    /**
      * Void tag
      * @param tagId tag id of tag to void
      * @param rowVersion row version
@@ -1365,15 +1391,13 @@ class PreservationApiClient extends ApiClient {
      */
     async deleteJourneyStep(journeyId: number, stepId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Journeys/${journeyId}/Steps/${stepId}`;
-        const settings: AxiosRequestConfig = {};
+        const settings: AxiosRequestConfig = { data: { rowVersion: rowVersion } };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
             await this.client.delete(
                 endpoint,
-                {
-                    data: { rowVersion: rowVersion }
-                }
+                settings
             );
         } catch (error) {
             throw getPreservationApiError(error);
@@ -1531,13 +1555,12 @@ class PreservationApiClient extends ApiClient {
     }
 
 
-    async updateTagFunction(tagFunctionCode: string, registerCode: string, requirements: RequirementFormInput[], rowVersion?: string): Promise<boolean> {
+    async updateTagFunction(tagFunctionCode: string, registerCode: string, requirements: RequirementFormInput[]): Promise<boolean> {
         const endpoint = '/TagFunctions';
         const data: UpdateTagFunctionRequestData = {
             registerCode: registerCode,
             tagFunctionCode: tagFunctionCode,
-            requirements: requirements,
-            rowVersion: rowVersion || ''
+            requirements: requirements
         };
         try {
             await this.client.put(endpoint, data);

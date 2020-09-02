@@ -108,7 +108,7 @@ describe('Module: <SetTagProperties />', () => {
 
         const { queryAllByText, getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsManually' />);
         expect(getByText('Requirements for all selected tags')).toBeInTheDocument();
-        getByText('Add Requirement').click();
+        getByText('Add requirement').click();
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(1);
 
@@ -117,7 +117,7 @@ describe('Module: <SetTagProperties />', () => {
     it('Should render requirement input when clicking on button', () => {
 
         const { queryAllByText, getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsManually' />);
-        getByText('Add Requirement').click();
+        getByText('Add requirement').click();
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(1);
     });
@@ -125,7 +125,7 @@ describe('Module: <SetTagProperties />', () => {
     it('Should remove requirement input when clicking on delete', () => {
 
         const { getByText, getByTitle, queryAllByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsManually' />);
-        getByText('Add Requirement').click();
+        getByText('Add requirement').click();
         getByTitle('Delete').click();
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(0);
@@ -133,7 +133,7 @@ describe('Module: <SetTagProperties />', () => {
 
     it('Should render a text instead of requirements, when add-scope-method is autoscope', () => {
         const { getByText } = render(<SetTagProperties journeys={journeys} requirementTypes={requirementTypes} addScopeMethod='AddTagsAutoscope'  />);
-        expect(getByText('Requirements are automatically added for each Tag Function. Changes to requirements can be done after adding to scope.')).toBeInTheDocument();
+        expect(getByText('Requirements are automatically added for each tag function. Changes to requirements can be done after adding to scope.')).toBeInTheDocument();
     });
 
     it('Should render requirements, when add-scope-method is create dummy tag', () => {

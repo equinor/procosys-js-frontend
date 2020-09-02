@@ -23,7 +23,7 @@ export interface PreservationTypeIcon {
 
 export const preservationIconList: Array<PreservationTypeIcon> = [
     { code: 'Area', title: 'Area' },
-    { code: 'Battery', title: 'Electrical Battery' },
+    { code: 'Battery', title: 'Electrical battery' },
     { code: 'Bearings', title: 'Bearings, moving parts' },
     { code: 'Electrical', title: 'Electrical' },
     { code: 'Heating', title: 'Heating thermostat' },

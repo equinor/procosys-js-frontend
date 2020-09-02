@@ -70,7 +70,6 @@ export const StyledButton = styled(Button)`
     justify-content: center;
 
     .iconNextToText {
-        margin-right: var(--grid-unit);
         height: calc(var(--grid-unit) * 2);
     }
 `;
@@ -88,7 +87,7 @@ export const DropdownItem = styled.div<DropdownProps>`
     `}
 
     ${(props): any => props.disabled && css`
-        color: ${tokens.colors.interactive.disabled__border.rgba};
+        color: ${tokens.colors.interactive.disabled__border.rgba} !important;
         cursor: not-allowed;
     `}
 

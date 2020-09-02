@@ -37,7 +37,7 @@ const PreservationTab = ({
             setTagRequirements(requirements);
         }
         catch (error) {
-            console.error(`Get TagRequirements failed: ${error.message}`);
+            console.error(`Get tag requirements failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -56,7 +56,7 @@ const PreservationTab = ({
             showSnackbarNotification('Requirement values saved', 5000, true);
         }
         catch (error) {
-            console.error(`Record TagRequirement values failed: ${error.message}`);
+            console.error(`Record tag requirement values failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
         finally {

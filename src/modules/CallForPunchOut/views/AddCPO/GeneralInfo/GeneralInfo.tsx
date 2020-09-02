@@ -29,8 +29,8 @@ const GeneralInfo = ({
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [isValidForm, setIsValidForm] = useState<boolean>(false);
 
-    let requestCanceler: Canceler;
     useEffect(() => {
+        let requestCanceler: Canceler;
         (async (): Promise<void> => {
             const allProjects = await procosysApiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
                 .then(projects => projects.map((project): ProjectDetails => {
@@ -48,10 +48,7 @@ const GeneralInfo = ({
 
     useEffect(() => {
         if(fromMain) {
-            const poType = poTypes.find((p: SelectItem) => p.value === 'DP');
-            if (poType) {
-                setGeneralInfo(gi => {return {...gi, poType: poType};});
-            }
+            setPoTypeForm('DP');
         }
     }, [fromMain]);
 

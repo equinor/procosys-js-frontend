@@ -14,11 +14,11 @@ import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import ExcelIcon from '../../../../../assets/icons/Excel';
-
 import { TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
+
+const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
@@ -368,7 +368,7 @@ const ScopeFilter = ({
                 <h1>Filter</h1>
                 <div style={{ display: 'flex' }}>
                     <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportTagsToExcel}>
-                        <ExcelIcon />
+                        {ExcelIcon}
                     </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);

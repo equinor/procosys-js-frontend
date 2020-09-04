@@ -18,6 +18,8 @@ import { TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
 
+const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
+
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
@@ -25,6 +27,7 @@ interface ScopeFilterProps {
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
+    exportTagsToExcel: () => void;
 }
 
 interface FilterInput {
@@ -132,7 +135,8 @@ const ScopeFilter = ({
     setTagListFilter,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
-    numberOfTags
+    numberOfTags,
+    exportTagsToExcel
 }: ScopeFilterProps): JSX.Element => {
 
     const {
@@ -363,6 +367,9 @@ const ScopeFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportTagsToExcel}>
+                        {ExcelIcon}
+                    </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
                         setAnchorElement(event.currentTarget);

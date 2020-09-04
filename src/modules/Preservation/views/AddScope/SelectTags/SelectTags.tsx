@@ -1,14 +1,15 @@
-import React from 'react';
-import { tokens } from '@equinor/eds-tokens';
-import { Button, TextField } from '@equinor/eds-core-react';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TagsHeader, TopContainer } from './SelectTags.style';
 import { Tag, TagRow } from '../types';
-import { Container, Header, InnerContainer, Search, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer } from './SelectTags.style';
-import { usePreservationContext } from '../../../context/PreservationContext';
-import Table from '../../../../../components/Table';
-import Loading from '../../../../../components/Loading';
+
 import { AddScopeMethod } from '../AddScope';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import Loading from '../../../../../components/Loading';
+import React from 'react';
+import Table from '../../../../../components/Table';
+import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
+import { usePreservationContext } from '../../../context/PreservationContext';
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -98,7 +99,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
     return (
         <Container>
             <Header>
-                <h1>Add preservation scope</h1>
+                <Typography variant="h1">Add preservation scope</Typography>
                 <div>{project.name}</div>
             </Header>
             <TopContainer>

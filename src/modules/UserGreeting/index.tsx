@@ -1,8 +1,9 @@
-import { Container } from './style';
-import { Button } from '@equinor/eds-core-react';
+import { Button, Typography } from '@equinor/eds-core-react';
 import GraphClient, { ProfileResponse } from '../../http/GraphClient';
 import React, { useEffect, useState } from 'react';
+
 import { Canceler } from 'axios';
+import { Container } from './style';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
@@ -52,11 +53,11 @@ const UserGreeting = (): JSX.Element => {
 
     return (
         <Container>
-            <h1>{user.name}</h1>
-            <h2>{(profileData && profileData.jobTitle) || 'Loading user data'}</h2>
+            <Typography variant="h1">{user.name}</Typography>
+            <Typography variant="h2">{(profileData && profileData.jobTitle) || 'Loading user data'}</Typography>
             {(imageUrl && <img src={imageUrl} />) || 'Loading image'}
             <br />
-            <h1>PLANT: {plant.title}</h1>
+            <Typography variant="h2">PLANT: {plant.title}</Typography>
 
             <Button onClick={(): void => auth.logout()}>Logout</Button>
         </Container>

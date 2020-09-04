@@ -1,18 +1,19 @@
-import { Divider, Container, SelectedTags, LargerComponent } from './AddScope.style';
-import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area, PurchaseOrder, TagMigrationRow } from './types';
-import React, { useEffect, useState, useMemo } from 'react';
+import { Area, Discipline, Journey, PurchaseOrder, Requirement, RequirementType, Tag, TagMigrationRow, TagRow } from './types';
+import { Container, Divider, LargerComponent, SelectedTags } from './AddScope.style';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { Canceler } from 'axios';
-import SelectTags from './SelectTags/SelectTags';
-import SetTagProperties from './SetTagProperties/SetTagProperties';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
-import Spinner from '../../../../components/Spinner';
-import TagDetails from './TagDetails/TagDetails';
-import { showSnackbarNotification } from './../../../../core/services/NotificationService';
-import { useHistory, useParams } from 'react-router-dom';
-import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 import SelectMigrateTags from './SelectMigrateTags/SelectMigrateTags';
+import SelectTags from './SelectTags/SelectTags';
+import SetTagProperties from './SetTagProperties/SetTagProperties';
+import Spinner from '../../../../components/Spinner';
+import TagDetails from './TagDetails/TagDetails';
+import { Typography } from '@equinor/eds-core-react';
+import { showSnackbarNotification } from './../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 export enum AddScopeMethod {
@@ -431,7 +432,7 @@ const AddScope = (): JSX.Element => {
             );
     }
 
-    return <h1>Unknown step</h1>;
+    return <Typography variant="h1">Unknown step</Typography>;
 };
 
 export default AddScope;

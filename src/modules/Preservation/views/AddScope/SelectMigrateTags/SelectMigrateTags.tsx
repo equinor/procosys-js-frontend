@@ -1,16 +1,16 @@
-import React from 'react';
-import { tokens } from '@equinor/eds-tokens';
-import { Button } from '@equinor/eds-core-react';
+import { Button, Typography } from '@equinor/eds-core-react';
+import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, TagsHeader, TopContainer } from './SelectMigrateTags.style';
 import { Tag, TagMigrationRow } from '../types';
-import { Container, Header, InnerContainer, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer, ButtonSeparator } from './SelectMigrateTags.style';
-import { usePreservationContext } from '../../../context/PreservationContext';
-import Table from '../../../../../components/Table';
-import Loading from '../../../../../components/Loading';
-import { AddScopeMethod } from '../AddScope';
-import { useHistory } from 'react-router-dom';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { getFormattedDate } from '@procosys/core/services/DateService';
 
+import { AddScopeMethod } from '../AddScope';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import Loading from '../../../../../components/Loading';
+import React from 'react';
+import Table from '../../../../../components/Table';
+import { getFormattedDate } from '@procosys/core/services/DateService';
+import { tokens } from '@equinor/eds-tokens';
+import { useHistory } from 'react-router-dom';
+import { usePreservationContext } from '../../../context/PreservationContext';
 
 type SelectMigrateTagsProps = {
     selectedTags: Tag[];
@@ -116,7 +116,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     return (
         <Container>
             <Header>
-                <h1>Migrate preservation scope</h1>
+                <Typography variant="h1">Migrate preservation scope</Typography>
                 <div>{project.name}</div>
             </Header>
             <TopContainer>
@@ -148,7 +148,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
                     selection: true,
-                    selectionProps: {disableRipple: true},
+                    selectionProps: { disableRipple: true },
                     rowStyle: (data): any => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })

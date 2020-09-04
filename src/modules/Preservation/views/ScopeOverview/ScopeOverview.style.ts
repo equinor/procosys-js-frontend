@@ -1,17 +1,21 @@
 import styled, { css } from 'styled-components';
-import { tokens } from '@equinor/eds-tokens';
+
 import { Button } from '@equinor/eds-core-react';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
+    margin-left: var(--margin-module--left);
+    margin-right: var(--margin-module--right);
+    height: 100%;
 `;
 
 export const ContentContainer = styled.div`
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
     width: 100%;
-    margin-top: -16px;
+    margin-top: var(--margin-module--top);
+
     min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
 `;
 
@@ -93,16 +97,14 @@ export const DropdownItem = styled.div<DropdownProps>`
 
 `;
 
-export const FilterDivider = styled.div`
-    margin-top: calc(var(--margin-module--top) * -1);
-    margin-bottom: -1000px;
-    margin-right: calc(var(--grid-unit) * 2);
-    margin-left: calc(var(--grid-unit) * 4);
-    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
-`;
-
-export const FilterContainer = styled.div`
+export const FilterContainer = styled.div<{ maxHeight: number }>`
     width: calc(var(--grid-unit) * 44);
+    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    padding-left: calc(var(--grid-unit) * 2);
+    margin-left: calc(var(--grid-unit) * 2);
+    padding-right: calc(var(--grid-unit) * 2);
+    overflow-y: auto;
+    height: ${(props): number => props.maxHeight}px;
 `;
 
 export const TooltipText = styled.span`

@@ -246,6 +246,9 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                             whiteSpace: 'nowrap',
                             fontFamily: 'Equinor',
                         },
+                        // Just a set value for now, this should be more dynamic in the future probably when the library supports more dynamic height of the table. 
+                        maxBodyHeight: '66vh',
+                        // --- 
                         rowStyle: (rowData): any => ({
                             opacity: isTagVoided(rowData) && 0.5,
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,

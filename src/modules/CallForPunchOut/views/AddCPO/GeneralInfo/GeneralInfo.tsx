@@ -16,21 +16,25 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
+    next: () => void;
+    isValid: boolean;
 }
 
 const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
-    fromMain
+    fromMain,
+    next,
+    isValid
 }: GeneralInfoProps): JSX.Element => {
     const { procosysApiClient } = useProcosysContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [isValidForm, setIsValidForm] = useState<boolean>(false);
+   
 
-    let requestCanceler: Canceler;
     useEffect(() => {
+        let requestCanceler: Canceler;
         (async (): Promise<void> => {
             const allProjects = await procosysApiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
                 .then(projects => projects.map((project): ProjectDetails => {
@@ -48,10 +52,7 @@ const GeneralInfo = ({
 
     useEffect(() => {
         if(fromMain) {
-            const poType = poTypes.find((p: SelectItem) => p.value === 'DP');
-            if (poType) {
-                setGeneralInfo(gi => {return {...gi, poType: poType};});
-            }
+            setPoTypeForm('DP');
         }
     }, [fromMain]);
 
@@ -78,14 +79,6 @@ const GeneralInfo = ({
         event.preventDefault();
         setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id};});
     };
-
-    useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
-            setIsValidForm(true);
-        } else {
-            setIsValidForm(false);
-        }
-    }), [generalInfo];
 
     const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
 
@@ -202,7 +195,12 @@ const GeneralInfo = ({
         </FormContainer>
         <ButtonContainer>
             <Button constiant='outlined' disabled>Previous</Button>
-            <Button disabled={!isValidForm}>Next</Button>
+            <Button 
+                //disabled={!isValidForm} 
+                onClick={next}
+            >
+                Next
+            </Button>
         </ButtonContainer>
     </Container>);
 };

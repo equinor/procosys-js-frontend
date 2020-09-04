@@ -50,7 +50,7 @@ const TagFlyout = ({
             setTagDetails(details);
         }
         catch (error) {
-            console.error(`Get TagDetails failed: ${error.message}`);
+            console.error(`Get tag details failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -110,7 +110,7 @@ const TagFlyout = ({
             showSnackbarNotification('Status was set to \'Active\' for this tag.', 5000, true);
         }
         catch (error) {
-            console.error(`Start preservation for Tag failed: ${error.message}`);
+            console.error(`Start preservation for tag failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
         finally {

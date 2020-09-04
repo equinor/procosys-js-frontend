@@ -8,10 +8,14 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { CommPkgRow } from '@procosys/modules/CallForPunchOut/types';
 
 interface SelectScopeProps {
-    //projectId: number;
-    //fromMain: boolean;
+    projectId: number;
+    fromMain: boolean;
+    commPkgId: number | null;
     selectedScope: CommPkgRow[];
     setSelectedScope: (selectedScope: CommPkgRow[]) => void;
+    next: () => void;
+    previous: () => void;
+    isValid: boolean;
 }
 
 const KEYCODE_ENTER = 13;
@@ -45,12 +49,15 @@ const dummyData: CommPkgRow[] = [
 ];
 
 const SelectScope = ({
-    //projectId,
-    //fromMain,
+    projectId,
+    fromMain,
+    commPkgId,
     selectedScope,
-    setSelectedScope
+    setSelectedScope,
+    next,
+    previous,
+    isValid
 }: SelectScopeProps): JSX.Element => {
-    const [isValidForm] = useState<boolean>(false);
     const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
     const [filter, setFilter] = useState<string>('');
@@ -67,13 +74,10 @@ const SelectScope = ({
     },[]);
 
     useEffect(() => {
-        console.log(1);
         if (filter.length <= 0) {
             setFilteredCommPkgs(dummyData);
             return;
         }
-        console.log(2);
-
         setFilteredCommPkgs(availableCommPkgs.filter((c: CommPkgRow) => {
             return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
         }));
@@ -143,8 +147,18 @@ const SelectScope = ({
             <Header>
                 <Typography variant='h2'>Select commissioning packages</Typography>
                 <ButtonsContainer>
-                    <Button variant='outlined'>Previous</Button>
-                    <Button disabled={!isValidForm}>Next</Button>
+                    <Button 
+                        variant='outlined'
+                        onClick={previous}
+                    >
+                        Previous
+                    </Button>
+                    <Button 
+                        disabled={!isValid}
+                        onClick={next}
+                    >
+                        Next
+                    </Button>
                 </ButtonsContainer>
             </Header>
 

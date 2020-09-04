@@ -166,7 +166,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
 
                 setDisciplines(data);
             } catch (error) {
-                console.error('Get Disciplines failed: ', error.message, error.data);
+                console.error('Get disciplines failed: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -325,7 +325,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     return (
         <div>
             <Header>
-                <h1>Create Dummy Tag</h1>
+                <h1>Create dummy tag</h1>
                 <div>{project.name}</div>
             </Header>
             <TopContainer>
@@ -412,7 +412,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     id={'Suffix'}
                     label="Tag number suffix"
                     inputRef={suffixInputRef}
-                    placeholder="Write Here"
+                    placeholder="Write here"
                     helperText="Spaces are not allowed"
                     helperIcon={icon}
                     variant={icon ? 'error' : 'default'}
@@ -427,7 +427,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     label="Description"
                     inputRef={descriptionInputRef}
                     multiline={true}
-                    placeholder="Write Here"
+                    placeholder="Write here"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
                 />
             </InputContainer>

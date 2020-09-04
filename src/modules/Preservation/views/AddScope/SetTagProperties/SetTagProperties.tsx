@@ -152,7 +152,7 @@ const SetTagProperties = ({
                 </Header>
                 <Container>
                     <div>
-                        Missing Journey or Requirement definitions. Please create this first, and try again
+                        Missing journey or requirement definitions. Please create this first, and try again.
                     </div>
                     <ButtonContainer>
                         <Button onClick={previousStep} variant="outlined">
@@ -209,7 +209,7 @@ const SetTagProperties = ({
                             id={'Remark'}
                             label="Remark for whole preservation journey"
                             inputRef={remarkInputRef}
-                            placeholder="Write Here"
+                            placeholder="Write here"
                             helpertext="For example: Check according to predecure 123, or check specifications from supplier"
                             meta="Optional"
                         />
@@ -219,7 +219,7 @@ const SetTagProperties = ({
                             id={'StorageArea'}
                             label="Storage area"
                             inputRef={storageAreaInputRef}
-                            placeholder="Write Here"
+                            placeholder="Write here"
                             helpertext="For example: AR123"
                             meta="Optional"
                         />
@@ -227,7 +227,7 @@ const SetTagProperties = ({
 
                     {
                         addScopeMethod === AddScopeMethod.AddTagsAutoscope && (
-                            <RequirementMessage>Requirements are automatically added for each Tag Function. Changes to requirements can be done after adding to scope.</RequirementMessage>
+                            <RequirementMessage>Requirements are automatically added for each tag function. Changes to requirements can be done after adding to scope.</RequirementMessage>
                         )
                     }
                     {
@@ -250,7 +250,7 @@ const SetTagProperties = ({
                     >
                         {isLoading && (
                             <CenterContent>
-                                <Spinner /> Add to Scope
+                                <Spinner /> Add to scope
                             </CenterContent>
                         )}
                         {!isLoading && ('Add to scope')}

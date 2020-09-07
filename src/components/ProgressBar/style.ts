@@ -3,6 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
+    justify-content: space-between;
 `;
 
 interface StepProps {
@@ -15,6 +16,7 @@ export const StepContainer = styled.div<StepProps>`
     font-weight: bold;
     align-items: center;
     white-space: nowrap;
+    width: 100%;
 
     > div:first-child {
         border-radius: 50%;
@@ -68,7 +70,8 @@ export const StepContainer = styled.div<StepProps>`
     `}
 
     .line {
-        width: 200px;
+        width: 100%;
+        min-width: 5px;
         margin-left: var(--grid-unit);
         margin-right: calc(var(--grid-unit) * 2);
         border-bottom: 1px solid ${tokens.colors.interactive.disabled__border.rgba};

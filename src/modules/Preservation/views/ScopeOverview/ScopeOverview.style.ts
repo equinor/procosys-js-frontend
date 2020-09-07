@@ -10,12 +10,14 @@ export const Container = styled.div`
     height: 100%;
 `;
 
-export const ContentContainer = styled.div`
+export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     display: flex;
+    width: ${({ withSidePanel }): string => {
+        return withSidePanel ? 'calc(100% - 300px)' : '100%';
+    }};
+    overflow: hidden;
     flex-direction: column;
-    width: 100%;
     margin-top: var(--margin-module--top);
-
     min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
 `;
 
@@ -98,7 +100,6 @@ export const DropdownItem = styled.div<DropdownProps>`
 `;
 
 export const FilterContainer = styled.div<{ maxHeight: number }>`
-    width: calc(var(--grid-unit) * 44);
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
     padding-left: calc(var(--grid-unit) * 2);
     margin-left: calc(var(--grid-unit) * 2);

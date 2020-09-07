@@ -644,7 +644,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     return (
         <Container ref={moduleContainerRef}>
-            <ContentContainer>
+            <ContentContainer withSidePanel={displayFilter}>
                 <OldPreservationLink>
                     <Typography variant="caption">
                         <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
@@ -800,19 +800,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </ContentContainer >
             {
                 displayFilter && (
-                    <>
-                        <FilterContainer maxHeight={moduleAreaHeight}>
-                            <ScopeFilter
-                                onCloseRequest={(): void => {
-                                    setDisplayFilter(false);
-                                }}
-                                tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
-                                setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                                selectedSavedFilterTitle={selectedSavedFilterTitle}
-                                numberOfTags={numberOfTags}
-                                exportTagsToExcel={exportTagsToExcel} />
-                        </FilterContainer>
-                    </>
+                    <FilterContainer maxHeight={moduleAreaHeight}>
+                        <ScopeFilter
+                            onCloseRequest={(): void => {
+                                setDisplayFilter(false);
+                            }}
+                            tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            numberOfTags={numberOfTags}
+                            exportTagsToExcel={exportTagsToExcel} />
+                    </FilterContainer>
                 )
             }
         </Container >

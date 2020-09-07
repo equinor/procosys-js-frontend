@@ -7,6 +7,7 @@ import { Container, HeaderContainer, ButtonContainer } from './AddCPOHeader.styl
 type ProgressBarProps = {
     steps: ProgressBarSteps[];
     canBeCreated: boolean;
+    currentStep: number;
 }
 
 const AddCPOHeader = (props: ProgressBarProps): JSX.Element => {
@@ -20,7 +21,7 @@ const AddCPOHeader = (props: ProgressBarProps): JSX.Element => {
                     <Button disabled={!props.canBeCreated}>Create</Button>
                 </ButtonContainer>
             </HeaderContainer>
-            <ProgressBar steps={props.steps} />
+            <ProgressBar steps={props.steps} currentStep={props.currentStep} />
         </Container>
     );
 };

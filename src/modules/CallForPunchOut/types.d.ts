@@ -9,7 +9,6 @@ export type ProjectDetails = {
 export type ProgressBarSteps = {
     title: string;
     isCompleted: boolean;
-    isCurrent: boolean;
 }
 
 export type GeneralInfoDetails = {

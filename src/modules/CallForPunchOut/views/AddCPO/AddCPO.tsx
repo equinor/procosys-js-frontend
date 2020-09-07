@@ -27,13 +27,14 @@ const emptyGeneralInfo: GeneralInfoDetails = {
 const AddCPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
+    const [currentStep, setCurrentStep] = useState<number>(1);
 
-    const steps: ProgressBarSteps[] = [ //TODO: will make steps correct when more components area ready
-        {title: CreateStepEnum.GeneralInfo, isCompleted: true, isCurrent: false},
-        {title: CreateStepEnum.Scope, isCompleted: true, isCurrent: false},
-        {title: CreateStepEnum.Participants, isCompleted: false, isCurrent: true},
-        {title: CreateStepEnum.UploadAttachments, isCompleted: false, isCurrent: false},
-        {title: CreateStepEnum.SummaryAndCreate, isCompleted: false, isCurrent: false}
+    const steps: ProgressBarSteps[] = [
+        {title: CreateStepEnum.GeneralInfo, isCompleted: false},
+        {title: CreateStepEnum.Scope, isCompleted: false},
+        {title: CreateStepEnum.Participants, isCompleted: false},
+        {title: CreateStepEnum.UploadAttachments, isCompleted: false},
+        {title: CreateStepEnum.SummaryAndCreate, isCompleted: false}
     ];
 
     const params = useParams<{projectId: any; commPkgId: any}>();
@@ -49,6 +50,7 @@ const AddCPO = (): JSX.Element => {
         <AddCPOHeader
             steps={steps}
             canBeCreated={false}
+            currentStep={currentStep}
         />
         <GeneralInfo
             generalInfo={generalInfo}

@@ -245,18 +245,18 @@ const Mode = (props: ModeProps): JSX.Element => {
             }
             <ButtonContainer>
                 {newMode.isVoided &&
-                    <Button className='buttonIcon' variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
+                    <Button variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
                         {deleteIcon} Delete
                     </Button>
                 }
                 <ButtonSpacer />
                 {newMode.isVoided &&
-                    <Button className='buttonIcon' variant="outlined" onClick={unvoidMode}>
+                    <Button variant="outlined" onClick={unvoidMode}>
                         {unvoidIcon} Unvoid
                     </Button>
                 }
                 {!newMode.isVoided && newMode.id != -1 &&
-                    <Button className='buttonIcon' variant="outlined" onClick={voidMode}>
+                    <Button variant="outlined" onClick={voidMode}>
                         {voidIcon} Void
                     </Button>
                 }

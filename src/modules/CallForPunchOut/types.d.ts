@@ -6,6 +6,11 @@ export type ProjectDetails = {
     description: string;
 }
 
+export type ProgressBarSteps = {
+    title: string;
+    isCompleted: boolean;
+}
+
 export type GeneralInfoDetails = {
     projectId: number | null;
     poType: SelectItem | null;

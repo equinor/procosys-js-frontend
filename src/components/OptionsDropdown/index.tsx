@@ -22,7 +22,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
     icon,
     children,
     variant,
-    iconSize = 16
+    iconSize = 24
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);

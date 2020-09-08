@@ -14,12 +14,12 @@ import { tokens } from '@equinor/eds-tokens';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
-const addIcon = <EdsIcon name='add' size={16} />;
-const upIcon = <EdsIcon name='arrow_up' size={16} />;
-const downIcon = <EdsIcon name='arrow_down' size={16} />;
-const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const voidIcon = <EdsIcon name='delete_forever' size={16} />;
-const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const addIcon = <EdsIcon name='add'/>;
+const upIcon = <EdsIcon name='arrow_up'/>;
+const downIcon = <EdsIcon name='arrow_down'/>;
+const deleteIcon = <EdsIcon name='delete_to_trash'/>;
+const voidIcon = <EdsIcon name='delete_forever'/>;
+const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
 
 interface RequirementDefinitionItem {
     id: number;
@@ -450,19 +450,19 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             <ButtonContainer>
                 {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
                     <>
-                        <Button className='buttonIcon' variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef()} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
+                        <Button variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef()} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
                             {deleteIcon} Delete
                         </Button>
                         <ButtonSpacer />
                     </>
                 }
                 {newRequirementDefinition.isVoided &&
-                    <Button className='buttonIcon' variant='outlined' onClick={unvoidRequirementDefinition}>
+                    <Button variant='outlined' onClick={unvoidRequirementDefinition}>
                         {unvoidIcon} Unvoid
                     </Button>
                 }
                 {!newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
-                    < Button className='buttonIcon' variant='outlined' onClick={voidRequirementDefinition}>
+                    < Button variant='outlined' onClick={voidRequirementDefinition}>
                         {voidIcon} Void
                     </Button>
                 }
@@ -640,7 +640,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     </Button>)
                                 }
                                 {(!field.isVoided && field.id != null) &&
-                                    (<Button disabled={newRequirementDefinition.isVoided} className='voidUnvoid' variant='ghost'
+                                    (<Button disabled={newRequirementDefinition.isVoided} variant='ghost'
                                         onClick={(): void => {
                                             field.isVoided = true;
                                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
@@ -649,7 +649,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                     </Button>)
                                 }
                                 {(field.isVoided) &&
-                                    (<Button disabled={newRequirementDefinition.isVoided} className='voidUnvoid' variant='ghost'
+                                    (<Button disabled={newRequirementDefinition.isVoided} variant='ghost'
                                         onClick={(): void => {
                                             field.isVoided = false;
                                             setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));

@@ -9,10 +9,10 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
-const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const addIcon = <EdsIcon name='add' size={16} />;
-const voidIcon = <EdsIcon name='delete_forever' size={16} />;
-const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const deleteIcon = <EdsIcon name='delete_to_trash'/>;
+const addIcon = <EdsIcon name='add'/>;
+const voidIcon = <EdsIcon name='delete_forever'/>;
+const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
 const baseBreadcrumb = 'Library / Modes';
 
 interface ModeItem {
@@ -245,18 +245,18 @@ const Mode = (props: ModeProps): JSX.Element => {
             }
             <ButtonContainer>
                 {newMode.isVoided &&
-                    <Button className='buttonIcon' variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
+                    <Button variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
                         {deleteIcon} Delete
                     </Button>
                 }
                 <ButtonSpacer />
                 {newMode.isVoided &&
-                    <Button className='buttonIcon' variant="outlined" onClick={unvoidMode}>
+                    <Button variant="outlined" onClick={unvoidMode}>
                         {unvoidIcon} Unvoid
                     </Button>
                 }
                 {!newMode.isVoided && newMode.id != -1 &&
-                    <Button className='buttonIcon' variant="outlined" onClick={voidMode}>
+                    <Button variant="outlined" onClick={voidMode}>
                         {voidIcon} Void
                     </Button>
                 }

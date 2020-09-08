@@ -3,8 +3,12 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
+`;
+
+export const SelectComponent = styled.div`
+    display: flex;
     flex-direction: column;
-    width:100%;
+    width: 70%;
     input + svg {
         width: 24px;
         height: 24px;
@@ -32,6 +36,20 @@ export const Container = styled.div`
             color: #dadada;
         }
     }
+
+    .controlOverflow {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+`;
+
+export const Divider = styled.div`
+    margin-top: calc(var(--grid-unit) * -3);
+    margin-bottom: -1000px;
+    margin-right: calc(var(--grid-unit) * 2);
+    margin-left: calc(var(--grid-unit) * 5);
+    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
 `;
 
 export const Header = styled.header`
@@ -41,11 +59,6 @@ export const Header = styled.header`
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
     };
-`;
-
-export const InnerContainer = styled.div`
-    display: flex;
-    flex-direction: column;
 `;
 
 export const Search = styled.div`

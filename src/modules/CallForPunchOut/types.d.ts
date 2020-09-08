@@ -27,7 +27,7 @@ export interface CommPkgRow {
     commPkgNo: string;
     description: string;
     commPkgStatus: string;
-    mdpAccepted: boolean;
+    mdpAccepted: string;
     tableData?: {
         checked: boolean;
     };

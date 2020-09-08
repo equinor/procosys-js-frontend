@@ -196,7 +196,7 @@ const GeneralInfo = ({
         <ButtonContainer>
             <Button constiant='outlined' disabled>Previous</Button>
             <Button 
-                //disabled={!isValidForm} 
+                disabled={!isValid} 
                 onClick={next}
             >
                 Next

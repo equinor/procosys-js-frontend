@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { Container, Header, InnerContainer, Search, ButtonsContainer, TopContainer } from './SelectScope.style';
+import { Container, Header, Search, ButtonsContainer, TopContainer, SelectComponent, Divider } from './SelectScope.style';
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { CommPkgRow } from '@procosys/modules/CallForPunchOut/types';
+import SelectedScope from './SelectedScope';
+import { Tooltip } from '@material-ui/core';
+
 
 interface SelectScopeProps {
-    projectId: number;
-    fromMain: boolean;
-    commPkgId: number | null;
     selectedScope: CommPkgRow[];
     setSelectedScope: (selectedScope: CommPkgRow[]) => void;
     next: () => void;
@@ -20,38 +19,31 @@ interface SelectScopeProps {
 
 const KEYCODE_ENTER = 13;
 
-const tableColumns = [
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Comm status', field: 'commPkgStatus' },
-    { title: 'MDP accepted', field: 'mdpAccepted' }
-];
+const today = new Date();
+const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
 
 const dummyData: CommPkgRow[] = [
     {
         commPkgNo: 'Comm pkg 1',
         description: 'Description 1',
         commPkgStatus: 'PB',
-        mdpAccepted: true
+        mdpAccepted: date
     },
     {
         commPkgNo: 'Comm pkg 2',
-        description: 'Description 2',
+        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
         commPkgStatus: 'OK',
-        mdpAccepted: false
+        mdpAccepted: date
     },
     {
         commPkgNo: 'test',
         description: 'Description 3',
         commPkgStatus: 'PA',
-        mdpAccepted: false
+        mdpAccepted: date
     }
 ];
 
 const SelectScope = ({
-    projectId,
-    fromMain,
-    commPkgId,
     selectedScope,
     setSelectedScope,
     next,
@@ -66,7 +58,6 @@ const SelectScope = ({
     useEffect(() => {
         (async (): Promise<void> => {
             const allCommPkgs = dummyData; //TODO: API call for commpkgs
-            console.log(allCommPkgs);
             setAvailableCommPkgs(allCommPkgs);
             setFilteredCommPkgs(allCommPkgs);
         })();
@@ -82,11 +73,6 @@ const SelectScope = ({
             return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
         }));
     }, [filter]);
-
-    useEffect(() => {
-        console.log(filteredCommPkgs);
-
-    }, [filteredCommPkgs]);
 
     const removeAllSelectedCommPkgsInScope = (): void => {
         const commPkgNos: string[] = [];
@@ -119,8 +105,6 @@ const SelectScope = ({
                     setAvailableCommPkgs(copyAvailableCommPkgs);
                 }
             }
-
-            showSnackbarNotification(`Comm pkg ${commPkgNo} has been removed from selection`, 5000);
         }
     };
 
@@ -142,77 +126,94 @@ const SelectScope = ({
         }
     };
 
+
+    const getDescriptionColumn = (commPkg: CommPkgRow): JSX.Element => {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
+                <Tooltip title={commPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <div className='controlOverflow'>{commPkg.description}</div>
+                </Tooltip>
+            </div>
+        );
+    };
+
+    const tableColumns = [
+        { title: 'Comm pkg', field: 'commPkgNo' },
+        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '800px' } },
+        { title: 'Comm status', field: 'commPkgStatus' },
+        { title: 'MDP accepted', field: 'mdpAccepted' }
+    ];
+
     return (     
         <Container>
-            <Header>
-                <Typography variant='h2'>Select commissioning packages</Typography>
-                <ButtonsContainer>
-                    <Button 
-                        variant='outlined'
-                        onClick={previous}
-                    >
-                        Previous
-                    </Button>
-                    <Button 
-                        disabled={!isValid}
-                        onClick={next}
-                    >
-                        Next
-                    </Button>
-                </ButtonsContainer>
-            </Header>
-
-            <TopContainer>
-                <InnerContainer>
+            <SelectComponent>
+                <Header>
+                    <Typography variant='h2'>Select commissioning packages</Typography>
+                    <ButtonsContainer>
+                        <Button 
+                            variant='outlined'
+                            onClick={previous}
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            disabled={!isValid}
+                            onClick={next}
+                        >
+                            Next
+                        </Button>
+                    </ButtonsContainer>
+                </Header>
+                <TopContainer>
                     <Search>
                         <TextField
                             id="search"
                             placeholder="Search comm pkg no"
                             onKeyDown={(e: any): void => {
-                                e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value);
+                                e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value); //TODO: do we need to make a new API call every time we change filter?
                             }}
                             onInput={(e: any): void => {
                                 setFilter(e.currentTarget.value);
                             }}
                         />
                     </Search>
-                </InnerContainer>
-                
-            </TopContainer>
-            {/* {props.isLoading &&
-                <LoadingContainer>
-                    <Loading title="Loading" />
-                </LoadingContainer>} */}
-            {
-                <Table
-                    columns={tableColumns}
-                    data={filteredCommPkgs}
-                    options={{
-                        toolbar: false,
-                        showTitle: false,
-                        search: false,
-                        draggable: false,
-                        pageSize: 10,
-                        emptyRowsWhenPaging: false,
-                        pageSizeOptions: [10, 50, 100],
-                        padding: 'dense',
-                        headerStyle: {
-                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                        },
-                        selection: true,
-                        selectionProps: (): any => ({
-                            disableRipple: true
-                        })
-                    }}
-                    style={{
-                        boxShadow: 'none'
-                    }}
-                    onSelectionChange={(rowData, row): void => {
-                        rowSelectionChanged(rowData, row);
-                    }}
-                />
-            }
-        </Container >
+                </TopContainer>
+                {
+                    <Table
+                        columns={tableColumns}
+                        data={filteredCommPkgs}
+                        options={{
+                            toolbar: false,
+                            showTitle: false,
+                            search: false,
+                            draggable: false,
+                            pageSize: 10,
+                            emptyRowsWhenPaging: false,
+                            pageSizeOptions: [10, 50, 100],
+                            padding: 'dense',
+                            headerStyle: {
+                                backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                            },
+                            selection: true,
+                            selectionProps: (): any => ({
+                                disableRipple: true
+                            }),
+                            rowStyle: (data): any => ({
+                                backgroundColor: data.tableData.checked && '#e6faec'
+                            })
+                        }}
+                        style={{
+                            boxShadow: 'none'
+                        }}
+                        onSelectionChange={(rowData, row): void => {
+                            rowSelectionChanged(rowData, row);
+                        }}
+                    />
+                }
+            </SelectComponent>
+            <Divider />
+            <SelectedScope selectedCommPkgs={selectedScope} removeCommPkg={removeSelectedCommPkg} />
+        </Container>
     );
 };
 

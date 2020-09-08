@@ -12,11 +12,6 @@ type ProgressBarProps = {
 
 const AddCPOHeader = (props: ProgressBarProps): JSX.Element => {
 
-    useEffect(() => {
-        console.log(props.steps);
-        console.log(props.currentStep);
-    }, [props.steps]);
-
     return (
         <Container>
             <HeaderContainer>

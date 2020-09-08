@@ -19,7 +19,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
 
 export enum CreateStepEnum {
     GeneralInfo = 'General info',
-    Scope = 'Scope ',
+    Scope = 'Scope',
     Participants = 'Participants',
     UploadAttachments = 'Upload attachments',
     SummaryAndCreate = 'Summary & create'
@@ -81,6 +81,14 @@ const AddCPO = (): JSX.Element => {
     }, [generalInfo]);
 
     useEffect(() => {
+        if (selectedScope.length > 0) {
+            changeCompletedStatus(true, 1);
+        } else {
+            changeCompletedStatus(false, 1);
+        }
+    }, [selectedScope]);
+
+    useEffect(() => {
         let canBeCreated = true;
         steps.forEach(step => {
             if(!step.isCompleted) {
@@ -96,25 +104,24 @@ const AddCPO = (): JSX.Element => {
             currentStep={currentStep}
             canBeCreated={canCreate}
         />
-        { currentStep == 1 &&
-        <GeneralInfo
-            generalInfo={generalInfo}
-            setGeneralInfo={setGeneralInfo}
-            fromMain={fromMain}
-            next={goToNextStep}
-            isValid={steps[0].isCompleted}
-        /> }
-        { (currentStep == 2 && generalInfo.projectId != null) &&
-        <SelectScope 
-            projectId={generalInfo.projectId}
-            commPkgId={fromMain ? params.commPkgId : null}
-            fromMain={fromMain}
-            selectedScope={selectedScope}
-            setSelectedScope={setSelectedScope}
-            next={goToNextStep}
-            previous={goToPreviousStep}
-            isValid={steps[1].isCompleted}
-        /> }
+        {currentStep == 1 &&
+            <GeneralInfo
+                generalInfo={generalInfo}
+                setGeneralInfo={setGeneralInfo}
+                fromMain={fromMain}
+                next={goToNextStep}
+                isValid={steps[0].isCompleted}
+            /> 
+        } 
+        { currentStep == 2 &&
+            <SelectScope 
+                selectedScope={selectedScope}
+                setSelectedScope={setSelectedScope}
+                next={goToNextStep}
+                previous={goToPreviousStep}
+                isValid={steps[1].isCompleted}
+            /> 
+        }
     </>);
 };
 

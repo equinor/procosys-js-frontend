@@ -1,17 +1,26 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
 `;
 
-export const SelectComponent = styled.div`
+export const SelectComponent = styled.div<{disableSelectAll: boolean}>`
     display: flex;
     flex-direction: column;
     width: 70%;
     input + svg {
         width: 24px;
         height: 24px;
+    }
+
+    thead > tr > th:first-child > span {
+        ${(props): any => props.disableSelectAll && css`
+            pointer-events: none !important;
+            .MuiIconButton-label > svg {
+                fill: ${tokens.colors.interactive.disabled__border.rgba};
+            }
+        `}; 
     }
 
     tbody, thead {
@@ -23,6 +32,10 @@ export const SelectComponent = styled.div`
                 fill: ${tokens.colors.interactive.primary__resting.rgba};
             }
         }
+        .MuiButtonBase-root.Mui-disabled > .MuiIconButton-label > svg {
+                fill: ${tokens.colors.interactive.disabled__border.rgba};
+            }
+
 
         .MuiCheckbox-colorSecondary.Mui-checked:hover {
             background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
@@ -54,7 +67,11 @@ export const Divider = styled.div`
 
 export const Header = styled.header`
     display: flex;
-    align-items: baseline;
+    align-items: center;
+
+    #backButton {
+        margin-right: var(--grid-unit);
+    }
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);

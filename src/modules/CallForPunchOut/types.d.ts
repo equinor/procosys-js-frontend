@@ -26,8 +26,19 @@ export type GeneralInfoDetails = {
 export interface CommPkgRow {
     commPkgNo: string;
     description: string;
-    commPkgStatus: string;
+    status: string;
     mdpAccepted: string;
+    tableData?: {
+        checked: boolean;
+    };
+}
+
+
+export interface McPkgRow {
+    mcPkgNo: string;
+    description: string;
+    m01: string;
+    m02: string;
     tableData?: {
         checked: boolean;
     };

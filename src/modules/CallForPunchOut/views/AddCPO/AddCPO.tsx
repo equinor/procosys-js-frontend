@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
-import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps } from '../../types';
+import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McPkgRow } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
 import AddCPOHeader from './AddCPOHeader';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
-    poType: null,
+    poType: { text: 'DP (Discipline Punch)', value: 'DP' },
     title: null,
     description: null,
     startDate: null,
@@ -36,8 +36,9 @@ const initialSteps: ProgressBarSteps[] = [
 const AddCPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [currentStep, setCurrentStep] = useState<number>(1);
-    const [selectedScope, setSelectedScope] = useState<CommPkgRow[]>([]);
+    const [currentStep, setCurrentStep] = useState<number>(2);
+    const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
+    const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McPkgRow[]>([]);
     const [steps, setSteps] = useState<ProgressBarSteps[]>(initialSteps);
     const [canCreate, setCanCreate] = useState<boolean>(false);
 
@@ -81,12 +82,12 @@ const AddCPO = (): JSX.Element => {
     }, [generalInfo]);
 
     useEffect(() => {
-        if (selectedScope.length > 0) {
+        if (selectedCommPkgScope.length > 0) {
             changeCompletedStatus(true, 1);
         } else {
             changeCompletedStatus(false, 1);
         }
-    }, [selectedScope]);
+    }, [selectedCommPkgScope]);
 
     useEffect(() => {
         let canBeCreated = true;
@@ -113,10 +114,13 @@ const AddCPO = (): JSX.Element => {
                 isValid={steps[0].isCompleted}
             /> 
         } 
-        { currentStep == 2 &&
+        { (currentStep == 2 && generalInfo.poType != null) &&
             <SelectScope 
-                selectedScope={selectedScope}
-                setSelectedScope={setSelectedScope}
+                type={generalInfo.poType.value}
+                selectedCommPkgScope={selectedCommPkgScope}
+                setSelectedCommPkgScope={setSelectedCommPkgScope}
+                selectedMcPkgScope={selectedMcPkgScope}
+                setSelectedMcPkgScope={setSelectedMcPkgScope}
                 next={goToNextStep}
                 previous={goToPreviousStep}
                 isValid={steps[1].isCompleted}

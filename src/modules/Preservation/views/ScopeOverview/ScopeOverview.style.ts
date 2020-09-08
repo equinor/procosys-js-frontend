@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
 
 import { Button } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
@@ -6,14 +6,20 @@ import { tokens } from '@equinor/eds-tokens';
 export const Container = styled.div`
     display: flex;
     margin-left: var(--margin-module--left);
-    margin-right: var(--margin-module--right);
     height: 100%;
 `;
 
 export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     display: flex;
-    width: ${({ withSidePanel }): string => {
-        return withSidePanel ? 'calc(100% - 300px)' : '100%';
+    margin-right: var(--margin-module--right);
+    width: 100%;
+    ${({ withSidePanel }): FlattenSimpleInterpolation | undefined => {
+        if (withSidePanel) {
+            return css`
+                width: calc(100% - 300px);
+                margin-right: var(--grid-unit);
+            `;
+        }
     }};
     overflow: hidden;
     flex-direction: column;
@@ -103,9 +109,11 @@ export const FilterContainer = styled.div<{ maxHeight: number }>`
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
     padding-left: calc(var(--grid-unit) * 2);
     margin-left: calc(var(--grid-unit) * 2);
+    margin-right: var(--grid-unit);
     padding-right: calc(var(--grid-unit) * 2);
     overflow-y: auto;
     height: ${(props): number => props.maxHeight}px;
+    min-width: 300px;
 `;
 
 export const TooltipText = styled.span`

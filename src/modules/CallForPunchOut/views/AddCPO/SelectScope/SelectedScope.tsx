@@ -9,8 +9,8 @@ const {AccordionItem, AccordionHeader, AccordionPanel} = Accordion;
 interface SelectedScopeProps {
     selectedCommPkgs?: CommPkgRow[];
     selectedMcPkgs?: McPkgRow[];
-    removeCommPkg: (commPkgNo: string) => void;
-    removeMcPkg: (mcPkgNo: string) => void;
+    removeCommPkg?: (commPkgNo: string) => void;
+    removeMcPkg?: (mcPkgNo: string) => void;
 }
 
 const SelectedScope = ({
@@ -25,7 +25,7 @@ const SelectedScope = ({
             <AccordionItem key={commPkg.commPkgNo}>
                 <AccordionHeader>
                     {commPkg.commPkgNo}
-                    <Button  variant="ghost_icon" onClick={(): void => removeCommPkg(commPkg.commPkgNo)}>
+                    <Button  variant="ghost_icon" /*onClick={(): void => removeCommPkg(commPkg.commPkgNo)}*/>
                         <EdsIcon name="delete_to_trash"></EdsIcon>
                     </Button>
                 </AccordionHeader>
@@ -66,7 +66,7 @@ const SelectedScope = ({
             <AccordionItem key={mcPkg.mcPkgNo}>
                 <AccordionHeader>
                     {mcPkg.mcPkgNo}
-                    <Button  variant="ghost_icon" onClick={(): void => removeMcPkg(mcPkg.mcPkgNo)}>
+                    <Button  variant="ghost_icon" /*onClick={(): void => removeMcPkg(mcPkg.mcPkgNo)}*/>
                         <EdsIcon name="delete_to_trash"></EdsIcon>
                     </Button>
                 </AccordionHeader>
@@ -113,11 +113,11 @@ const SelectedScope = ({
                     { selectedCommPkgs.map(commPkg => createSectionForCommPkg(commPkg)) }
                 </Accordion>
             }
-            { selectedMcPkgs.length > 0 &&
+            {/* { selectedMcPkgs.length > 0 &&
                 <Accordion>
                     { selectedMcPkgs.map(mcPkg => createSectionForMcPkg(mcPkg)) }
                 </Accordion>
-            }
+            } */}
         </SelectedScopeContainer>
     );
 };

@@ -126,6 +126,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return { ...emptyTagListFilter };
     });
 
+
+
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
     const [unvoidedTagsSelected, setUnvoidedTagsSelected] = useState<boolean>();
@@ -164,7 +166,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 ||
                 p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
         }));
-    }, [filterForProjects]);
+    }, [filterForProjects, availableProjects]);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -242,10 +244,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
-    const changeProject = (event: React.MouseEvent, index: number): void => {
-        event.preventDefault();
+    const changeProject = async (index: number): Promise<void> => {
+        try {
+            await setCurrentProject(filteredProjects[index].id);
+        } catch (error) {
+            console.error('Change project failed. ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
 
-        setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
         setSelectedTags([]);
         deleteCachedFilter(project.id);
@@ -262,6 +268,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             // No filters, regular scope list refresh.
             refreshScopeList();
         }
+    };
+
+    const handleProjectChange = async (event: React.MouseEvent, index: number): Promise<void> => {
+        event.preventDefault();
+        changeProject(index);
     };
 
     let transferableTags: PreservedTag[];
@@ -646,8 +657,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 return (
                                     <DropdownItem
                                         key={index}
-                                        onClick={(event): void =>
-                                            changeProject(event, index)
+                                        onClick={async (event): Promise<void> =>
+                                            handleProjectChange(event, index)
                                         }
                                     >
                                         <div>{projectItem.description}</div>

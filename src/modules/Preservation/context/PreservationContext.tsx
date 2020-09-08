@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Canceler } from '../../../http/HttpClient';
 import Loading from '../../../components/Loading';
@@ -27,10 +27,10 @@ class InvalidProjectException extends Error {
     }
 }
 
-export const PreservationContextProvider: React.FC = ({children}): JSX.Element => {
+export const PreservationContextProvider: React.FC = ({ children }): JSX.Element => {
 
-    const {procosysApiClient, auth} = useProcosysContext();
-    const {plant} = useCurrentPlant();
+    const { procosysApiClient, auth } = useProcosysContext();
+    const { plant } = useCurrentPlant();
     const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
@@ -38,17 +38,19 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
 
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
 
-    const setCurrentProject = (projectId: number): void => {
+    const setCurrentProject = async (projectId: number): Promise<void> => {
         if (!availableProjects || !projectId) {
             return;
         }
-
-        const project = availableProjects.find(el => el.id === projectId);
-        if (project) {
-            setCurrentProjectInContext(project);
-            return;
+        try {
+            const project = await procosysApiClient.getProjectAsync(projectId, (cancelerCallback) => requestCanceler = cancelerCallback);
+            if (project) {
+                setCurrentProjectInContext(project);
+                return;
+            }
+        } catch (error) {
+            throw new InvalidProjectException();
         }
-        throw new InvalidProjectException();
     };
 
     let requestCanceler: Canceler;
@@ -60,18 +62,19 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
                     return {
                         id: project.id,
                         name: project.name,
-                        description: project.description
+                        description: project.description,
+                        isClosed: null
                     };
                 }));
             setAvailableProjects(allProjects);
         })();
         return (): void => requestCanceler && requestCanceler();
-    },[]);
+    }, []);
 
     useEffect(() => {
         preservationApiClient.setCurrentPlant(plant.id);
         libraryApiClient.setCurrentPlant(plant.id);
-    },[plant]);
+    }, [plant]);
 
     useEffect(() => {
         const defaultProject = preservationCache.getDefaultProject();
@@ -93,7 +96,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
         if (!currentProject) return;
         preservationCache.setDefaultProject(currentProject);
 
-    },[currentProject]);
+    }, [currentProject]);
 
     if (!currentProject) {
         return (<Loading title="Loading project information" />);

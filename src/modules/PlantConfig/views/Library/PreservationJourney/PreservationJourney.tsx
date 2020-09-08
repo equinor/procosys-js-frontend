@@ -7,6 +7,7 @@ import { Canceler } from 'axios';
 import Checkbox from './../../../../../components/Checkbox';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
+import { PreservationApiError } from '@procosys/modules/Preservation/http/PreservationApiClient';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
@@ -111,6 +112,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 setMappedModes(mappedModes);
             } catch (error) {
                 console.error('Get modes failed: ', error.message, error.data);
+                if (error instanceof PreservationApiError) {
+                    if (error.isCancel) return;
+                }
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -135,6 +139,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 setMappedResponsibles(mappedResponsibles);
             } catch (error) {
                 console.error('Get responsibles failed: ', error.message, error.data);
+                if (error instanceof PreservationApiError) {
+                    if (error.isCancel) return;
+                }
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -156,6 +163,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             );
         } catch (error) {
             console.error('Get preservation journey failed: ', error.message, error.data);
+            if (error instanceof PreservationApiError) {
+                if (error.isCancel) return;
+            }
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);

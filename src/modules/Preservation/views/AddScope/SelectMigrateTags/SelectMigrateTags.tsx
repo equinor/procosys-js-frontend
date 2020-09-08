@@ -58,7 +58,7 @@ const tableColumns = [
 ];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
-    const { project } = usePreservationContext();
+    const { project, fixedPONumber } = usePreservationContext();
     const history = useHistory();
 
     const removeAllSelectedTagsInScope = (): void => {
@@ -118,6 +118,10 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
             <Header>
                 <h1>Migrate preservation scope</h1>
                 <div>{project.name}</div>
+
+                {fixedPONumber &&
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {fixedPONumber}</div>
+                }
             </Header>
             <TopContainer>
                 <InnerContainer>
@@ -148,7 +152,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
                     selection: true,
-                    selectionProps: {disableRipple: true},
+                    selectionProps: { disableRipple: true },
                     rowStyle: (data): any => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })

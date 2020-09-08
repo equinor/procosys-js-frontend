@@ -28,6 +28,8 @@ import { showSnackbarNotification } from '../../../../core/services/Notification
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
 
+
+
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
         return null;
@@ -107,6 +109,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         availableProjects,
         setCurrentProject,
         apiClient,
+        fixedPONumber,
+        setFixedPONumber
     } = usePreservationContext();
 
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
@@ -567,6 +571,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
+    /** Handle url on the format ...?project=<projectid>&pono='<purchase order no>&calloff=<call off no>*/
     useEffect((): void => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
@@ -611,6 +616,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 
+                    //Set supplier modus if POno is set 
+                    if (supportedFilters.pono) {
+                        let pono = supportedFilters.pono;
+                        if (supportedFilters.calloff) {
+                            pono = pono.concat(`/${supportedFilters.calloff}`);
+                        }
+                        setFixedPONumber(pono);
+                    }
+
                     setTagListFilter(tagFilter);
                     toggleFilter();
                 }
@@ -618,7 +632,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 showSnackbarNotification(`The requested project ${projectName} is not available`);
             }
         }
-
         // clear parameters in browser url
         history.replace('/');
 
@@ -628,11 +641,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         <Container>
             <ContentContainer>
                 <OldPreservationLink>
-                    <Typography variant="caption">
-                        <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                            <a href="OldPreservation">Switch to old system</a>
-                        </Tooltip>
-                    </Typography>
+                    {!fixedPONumber &&
+                        <Typography variant="caption">
+                            <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
+                                <a href="OldPreservation">Switch to old system</a>
+                            </Tooltip>
+                        </Typography>
+                    }
                 </OldPreservationLink>
                 <HeaderContainer>
                     <Header>
@@ -656,6 +671,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 );
                             })}
                         </Dropdown>
+                        {fixedPONumber &&
+                            <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {fixedPONumber}</div>
+                        }
                         <Dropdown text="Add scope">
                             <Link to={'/AddScope/selectTagsManual'}>
                                 <DropdownItem>
@@ -714,7 +732,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             variant='ghost'>
                             <DropdownItem
                                 disabled={selectedTags.length != 1 || voidedTagsSelected}
-                                onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
+                                onClick={(): void => history.push(`/ EditTagProperties / ${selectedTagId}`)}>
                                 <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
                             </DropdownItem>

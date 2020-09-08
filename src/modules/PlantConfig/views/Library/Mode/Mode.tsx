@@ -9,10 +9,10 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
-const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const addIcon = <EdsIcon name='add' size={16} />;
-const voidIcon = <EdsIcon name='delete_forever' size={16} />;
-const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const deleteIcon = <EdsIcon name='delete_to_trash'/>;
+const addIcon = <EdsIcon name='add'/>;
+const voidIcon = <EdsIcon name='delete_forever'/>;
+const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
 const baseBreadcrumb = 'Library / Modes';
 
 interface ModeItem {

@@ -9,9 +9,6 @@ export const FormFieldSpacer = styled.div`
     display: flex;
     margin-right: calc(var(--grid-unit) * 2);
     padding-bottom: var(--grid-unit);
-    .voidUnvoid svg {
-        padding-right: var(--grid-unit);
-    }
 `;
 
 export const InputContainer = styled.div`

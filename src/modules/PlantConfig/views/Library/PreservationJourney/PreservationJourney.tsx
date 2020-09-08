@@ -13,13 +13,13 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
-const addIcon = <EdsIcon name='add' size={16} />;
-const upIcon = <EdsIcon name='arrow_up' size={16} />;
-const downIcon = <EdsIcon name='arrow_down' size={16} />;
-const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const duplicateIcon = <EdsIcon name='copy' size={16} />;
-const voidIcon = <EdsIcon name='delete_forever' size={16} />;
-const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const addIcon = <EdsIcon name='add'/>;
+const upIcon = <EdsIcon name='arrow_up'/>;
+const downIcon = <EdsIcon name='arrow_down'/>;
+const deleteIcon = <EdsIcon name='delete_to_trash'/>;
+const duplicateIcon = <EdsIcon name='copy'/>;
+const voidIcon = <EdsIcon name='delete_forever'/>;
+const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 const baseBreadcrumb = 'Library / Preservation journeys';
@@ -778,13 +778,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             </Button>)
                                         }
                                         {(step.id != -1 && !step.isVoided) &&
-                                            (<Button disabled={canSave} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                            (<Button disabled={canSave} variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
                                                 {voidIcon} Void
                                             </Button>)
                                         }
 
                                         {(step.id != -1 && step.isVoided) &&
-                                            (<Button disabled={canSave} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                            (<Button disabled={canSave} variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
                                                 {unvoidIcon} Unvoid
                                             </Button>)
                                         }

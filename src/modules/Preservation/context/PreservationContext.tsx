@@ -17,8 +17,8 @@ type PreservationContextProps = {
     apiClient: PreservationApiClient;
     libraryApiClient: LibraryApiClient;
     availableProjects: ProjectDetails[];
-    fixedPONumber: string;
-    setFixedPONumber: (pono: string) => void;
+    purchaseOrderNumber: string;
+    setCurrentPurchaseOrderNumber: (pono: string) => void;
 }
 
 class InvalidProjectException extends Error {
@@ -37,7 +37,7 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
-    const [fixedPONumber, setFixedPONumber] = useState<string>('');
+    const [purchaseOrderNumber, setCurrentPurchaseOrderNumber] = useState<string>('');
 
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
 
@@ -109,8 +109,8 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
             setCurrentProject,
             apiClient: preservationApiClient,
             availableProjects,
-            fixedPONumber,
-            setFixedPONumber
+            purchaseOrderNumber: purchaseOrderNumber,
+            setCurrentPurchaseOrderNumber: setCurrentPurchaseOrderNumber
         }}>
             {children}
         </PreservationContext.Provider>

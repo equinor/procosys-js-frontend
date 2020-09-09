@@ -142,7 +142,7 @@ const ScopeFilter = ({
     const {
         project,
         apiClient,
-        fixedPONumber
+        purchaseOrderNumber: purchaseOrderNumber
     } = usePreservationContext();
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
@@ -442,7 +442,7 @@ const ScopeFilter = ({
                                 onChange={(e: any): void => {
                                     setLocalTagListFilter({ ...localTagListFilter, purchaseOrderNoStartsWith: e.target.value });
                                 }}
-                                disabled={fixedPONumber}
+                                disabled={!!purchaseOrderNumber}
                                 value={localTagListFilter.purchaseOrderNoStartsWith || ''}
                                 onKeyDown={(e: any): void => {
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
@@ -453,7 +453,7 @@ const ScopeFilter = ({
                             <TextField
                                 id="callOffNoSearch"
                                 placeholder="Search call off number"
-                                disabled={fixedPONumber.includes('/')}
+                                disabled={purchaseOrderNumber.includes('/')}
                                 onChange={(e: any): void => {
                                     setLocalTagListFilter({ ...localTagListFilter, callOffStartsWith: e.target.value });
                                 }}

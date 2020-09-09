@@ -32,34 +32,35 @@ const getFormattedsStartDate = (tag: TagMigrationRow): string => {
     return getFormattedDate(tag.startDate);
 };
 
-const tableColumns = [
-    { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
-    { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
-    { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
-    { title: 'Due', render: getFormattedDueDate },
-    { title: 'Start date', render: getFormattedsStartDate },
-    { title: 'Storage area', field: 'storageArea' },
-    { title: 'Mode', field: 'modeCode' },
-    {
-        title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
-    },
-    { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
-    {
-        title: 'Preserved',
-        field: 'isPreserved',
-        render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
-    },
-    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'MC pkg', field: 'mcPkgNo' },
-    { title: 'Tag function', field: 'tagFunctionCode' },
-];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
-    const { project, fixedPONumber } = usePreservationContext();
+    const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+
+    const tableColumns = [
+        { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
+        { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
+        { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
+        { title: 'Due', render: getFormattedDueDate },
+        { title: 'Start date', render: getFormattedsStartDate },
+        { title: 'Storage area', field: 'storageArea' },
+        { title: 'Mode', field: 'modeCode' },
+        {
+            title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
+        },
+        { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
+        {
+            title: 'Preserved',
+            field: 'isPreserved',
+            render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
+            filtering: false
+        },
+        { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
+        { title: 'PO', field: 'purchaseOrderTitle', filtering: purchaseOrderNumber ? false : true },
+        { title: 'Comm pkg', field: 'commPkgNo' },
+        { title: 'MC pkg', field: 'mcPkgNo' },
+        { title: 'Tag function', field: 'tagFunctionCode' },
+    ];
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -119,8 +120,8 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                 <h1>Migrate preservation scope</h1>
                 <div>{project.name}</div>
 
-                {fixedPONumber &&
-                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {fixedPONumber}</div>
+                {purchaseOrderNumber &&
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
                 }
             </Header>
             <TopContainer>

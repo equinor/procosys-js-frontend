@@ -25,7 +25,7 @@ const KEYCODE_ENTER = 13;
 
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
-    const { project, fixedPONumber } = usePreservationContext();
+    const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
 
     const tableColumns = [
@@ -33,7 +33,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         { title: 'Description', field: 'description' },
         { title: 'MC pkg', field: 'mcPkgNo' },
         { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-        { title: 'PO', field: 'purchaseOrderTitle', filtering: fixedPONumber ? false : true },
+        { title: 'PO', field: 'purchaseOrderTitle', filtering: purchaseOrderNumber ? false : true },
         { title: 'Comm pkg', field: 'commPkgNo' },
         { title: 'Tag function', field: 'tagFunctionCode' },
         {
@@ -102,8 +102,8 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <h1>Add preservation scope</h1>
                 <div>{project.name}</div>
 
-                {fixedPONumber &&
-                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {fixedPONumber}</div>
+                {purchaseOrderNumber &&
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
                 }
             </Header>
             <TopContainer>

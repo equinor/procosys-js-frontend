@@ -7,14 +7,13 @@ import { CommPkgRow, McPkgRow } from '@procosys/modules/CallForPunchOut/types';
 import SelectedScope from './SelectedScope';
 import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
-import {Container} from './CommPkgTable.style';
+import {Container} from './Table.style';
 
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
-    mcPkgParent: string | null,
-    setMcPkgParent: (commPkgNo: string | null) => void;
+    setCurrentCommPkg: (commPkgNo: string | null) => void;
     type: string;
 }
 
@@ -44,38 +43,15 @@ const dummyData: CommPkgRow[] = [
     }
 ];
 
-const dummyDataMc: McPkgRow[] = [
-    {
-        mcPkgNo: 'Mc pkg 1',
-        description: 'Description 1',
-        m01: date,
-        m02: date
-    },
-    {
-        mcPkgNo: 'Mc pkg 3',
-        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        m01: date,
-        m02: date
-    },
-    {
-        mcPkgNo: 'Mc pkg 3',
-        description: 'Description 3',
-        m01: date,
-        m02: date
-    }
-];
-
 const CommPkgTable = ({
     selectedCommPkgScope,
     setSelectedCommPkgScope,
-    mcPkgParent,
-    setMcPkgParent,
+    setCurrentCommPkg,
     type
 }: CommPkgTableProps): JSX.Element => {
     const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
-    const [filteredMckgs, setFilteredMcPkgs] = useState<McPkgRow[]>(dummyDataMc);
     const [filter, setFilter] = useState<string>('');
 
     let requestCanceler: Canceler;
@@ -108,10 +84,10 @@ const CommPkgTable = ({
     };
 
     const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
-        //if (type != 'DP') {
-        const rowsToAdd = rowData.filter(row => !selectedCommPkgScope.some(commPkg => commPkg.commPkgNo === row.commPkgNo));
-        setSelectedCommPkgScope([...selectedCommPkgScope, ...rowsToAdd]);
-        //}
+        if (type != 'DP') {
+            const rowsToAdd = rowData.filter(row => !selectedCommPkgScope.some(commPkg => commPkg.commPkgNo === row.commPkgNo));
+            setSelectedCommPkgScope([...selectedCommPkgScope, ...rowsToAdd]);
+        }
     };
 
     const removeSelectedCommPkg = (commPkgNo: string): void => {
@@ -133,13 +109,6 @@ const CommPkgTable = ({
             }
         }
     };
-
-
-    useEffect(() => {
-        const test = { navn: 'Elisabeth', barn: { navn: 'Christer'}};
-        const copy = {...test, barn: {...test.barn}};
-
-    },[]);
 
     const handleSingleCommPkg = (row: CommPkgRow): void => {
         if (row.tableData && !row.tableData.checked) {
@@ -170,7 +139,7 @@ const CommPkgTable = ({
     };
 
     const getMcPkgs = (commPkgNo: string): void => {
-        setMcPkgParent(commPkgNo);
+        setCurrentCommPkg(commPkgNo);
     };
 
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
@@ -188,7 +157,7 @@ const CommPkgTable = ({
         { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '800px' } },
         { title: 'Comm status', field: 'status' },
         { title: 'MDP accepted', field: 'mdpAccepted' },
-        { title: '', render: getToMcPkgsColumn, width: '50px' }
+        { title: 'MC', render: getToMcPkgsColumn, width: '50px' }
     ];
 
     return (     

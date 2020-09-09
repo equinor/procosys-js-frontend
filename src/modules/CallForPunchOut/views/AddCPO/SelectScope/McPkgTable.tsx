@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { Container, Header, Search, ButtonsContainer, TopContainer, SelectComponent, Divider } from './SelectScope.style';
+import {Container} from './Table.style';
+
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
@@ -13,6 +14,10 @@ import EdsIcon from '@procosys/components/EdsIcon';
 interface McPkgTableProps {
     selectedMcPkgScope: McPkgRow[];
     setSelectedMcPkgScope: (selectedCommPkgScope: McPkgRow[]) => void;
+    selectedMcScopeParent: string | null;
+    setSelectedMcScopeParent: (commPkg: string | null) => void;
+    currentCommPkg: string | null;
+    enabled: boolean;
 }
 
 const KEYCODE_ENTER = 13;
@@ -45,13 +50,16 @@ const dummyDataMc: McPkgRow[] = [
 const McPkgTable = ({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
+    selectedMcScopeParent,
+    setSelectedMcScopeParent,
+    currentCommPkg,
+    enabled
 }: McPkgTableProps): JSX.Element => {
     const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
     const [filteredMckgs, setFilteredMcPkgs] = useState<McPkgRow[]>(dummyDataMc);
     const [filter, setFilter] = useState<string>('');
-    const [mcPkgParent, setMcPkgParent] = useState<string | null>(null);
 
     // let requestCanceler: Canceler;
     // useEffect(() => {
@@ -144,38 +152,40 @@ const McPkgTable = ({
         { title: 'M-02 date', field: 'm01' }
     ];
 
-    return (     
-        <Table
-            columns={mcTableColumns}
-            data={filteredMckgs}
-            options={{
-                toolbar: false,
-                showTitle: false,
-                search: false,
-                draggable: false,
-                pageSize: 10,
-                emptyRowsWhenPaging: false,
-                pageSizeOptions: [10, 50, 100],
-                padding: 'dense',
-                headerStyle: {
-                    backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                },
-                selection: true,
-                selectionProps: (data: CommPkgRow): any => ({
-                    //disabled: type == 'DP' && selectedCommPkgScope.length > 0 && selectedCommPkgScope[0].commPkgNo != data.commPkgNo,
-                    disableRipple: true,
-                }),
-                rowStyle: (data): any => ({
-                    backgroundColor: data.tableData.checked && '#e6faec'
-                })
-            }}
-            style={{
-                boxShadow: 'none'
-            }}
-            onSelectionChange={(rowData, row): void => {
-                rowSelectionChangedMc(rowData, row);
-            }}
-        />
+    return ( 
+        <Container disableSelectAll={!enabled}>
+            <Table
+                columns={mcTableColumns}
+                data={filteredMckgs}
+                options={{
+                    toolbar: false,
+                    showTitle: false,
+                    search: false,
+                    draggable: false,
+                    pageSize: 10,
+                    emptyRowsWhenPaging: false,
+                    pageSizeOptions: [10, 50, 100],
+                    padding: 'dense',
+                    headerStyle: {
+                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                    },
+                    selection: true,
+                    selectionProps: (): any => ({
+                        disabled: !enabled,
+                        disableRipple: true,
+                    }),
+                    rowStyle: (data): any => ({
+                        backgroundColor: data.tableData.checked && '#e6faec'
+                    })
+                }}
+                style={{
+                    boxShadow: 'none'
+                }}
+                onSelectionChange={(rowData, row): void => {
+                    rowSelectionChangedMc(rowData, row);
+                }}
+            />
+        </Container>
     );
 };
 

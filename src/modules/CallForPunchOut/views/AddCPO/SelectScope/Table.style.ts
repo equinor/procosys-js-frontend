@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div<{disableSelectAll: boolean}>`
+export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boolean}>`
     input + svg {
         width: 24px;
         height: 24px;
@@ -15,6 +15,12 @@ export const Container = styled.div<{disableSelectAll: boolean}>`
             }
         `}; 
     }
+    ${(props): any => props.mcColumn && css`
+        thead > tr > th:last-child {
+            text-align: center;
+        }
+    `};
+
 
     tbody, thead {
         .MuiButtonBase-root {

@@ -157,11 +157,11 @@ const CommPkgTable = ({
         { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '800px' } },
         { title: 'Comm status', field: 'status' },
         { title: 'MDP accepted', field: 'mdpAccepted' },
-        { title: 'MC', render: getToMcPkgsColumn, width: '50px' }
+        { title: 'MC', render: getToMcPkgsColumn, width: '50px', sorting: false}
     ];
 
     return (     
-        <Container disableSelectAll={type == 'DP'}>
+        <Container disableSelectAll={type == 'DP'} mcColumn={type == 'DP'}>
             <Table
                 columns={tableColumns}
                 data={filteredCommPkgs}

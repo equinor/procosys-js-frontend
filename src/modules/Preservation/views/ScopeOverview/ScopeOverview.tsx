@@ -246,7 +246,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = async (index: number): Promise<void> => {
         try {
-            await setCurrentProject(filteredProjects[index].name);
+            await setCurrentProject(filteredProjects[index].id);
         } catch (error) {
             console.error('Change project failed. ', error.message, error.data);
             showSnackbarNotification(error.message);
@@ -603,7 +603,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
             if (project) {
                 // set as current project
-                setCurrentProject(project.name);
+                setCurrentProject(project.id);
 
                 // get and apply supported tag filters
                 let filtersUsed = 0;

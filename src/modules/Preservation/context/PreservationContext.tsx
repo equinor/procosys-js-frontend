@@ -13,7 +13,7 @@ import LibraryApiClient from '@procosys/modules/PlantConfig/http/LibraryApiClien
 const PreservationContext = React.createContext<PreservationContextProps>({} as PreservationContextProps);
 type PreservationContextProps = {
     project: ProjectDetails;
-    setCurrentProject: (projectName: string) => void;
+    setCurrentProject: (projectId: number) => void;
     apiClient: PreservationApiClient;
     libraryApiClient: LibraryApiClient;
     availableProjects: ProjectDetails[];
@@ -38,13 +38,13 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const setCurrentProject = async (projectName: string): Promise<void> => {
-        if (!availableProjects || !projectName) {
+    const setCurrentProject = async (projectId: number): Promise<void> => {
+        if (!availableProjects || !projectId) {
             return;
         }
         setIsLoading(true);
         try {
-            const project = await preservationApiClient.getProject(projectName, (cancelerCallback) => requestCanceler = cancelerCallback);
+            const project = await procosysApiClient.getProjectAsync(projectId, (cancelerCallback) => requestCanceler = cancelerCallback);
             if (project) {
                 setCurrentProjectInContext(project);
             } else {
@@ -83,13 +83,13 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
         const defaultProject = preservationCache.getDefaultProject();
         try {
             if (defaultProject) {
-                setCurrentProject(defaultProject.name);
+                setCurrentProject(defaultProject.id);
                 return;
             }
             throw new InvalidProjectException();
         } catch (error) {
             if (error instanceof InvalidProjectException && availableProjects.length > 0) {
-                setCurrentProject(availableProjects[0].name);
+                setCurrentProject(availableProjects[0].id);
             }
         }
 

@@ -19,6 +19,13 @@ export type ProjectResponse = {
     parentDescription: string;
 }
 
+export type SingleProjectResponse = {
+    id: number;
+    name: string;
+    description: string;
+    isClosed: boolean;
+}
+
 interface TagFunctionResponse {
     id: number;
     code: string;
@@ -111,6 +118,24 @@ class ProCoSysClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as ProjectResponse[];
+    }
+
+    /**
+     * Get project 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getProjectAsync(projectId: number, setRequestCanceller?: RequestCanceler): Promise<SingleProjectResponse> {
+        const endpoint = '/project';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectId
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get(endpoint, settings);
+        return PascalCaseConverter.objectToCamelCase(result.data) as SingleProjectResponse;
     }
 
     /**

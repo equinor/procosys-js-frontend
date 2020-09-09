@@ -1,7 +1,6 @@
 import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
 
 import AddScope from './views/AddScope/AddScope';
-import { Container } from './style';
 import EditTagProperties from './views/EditTagProperties/EditTagProperties';
 import { PreservationContextProvider } from './context/PreservationContext';
 import React from 'react';

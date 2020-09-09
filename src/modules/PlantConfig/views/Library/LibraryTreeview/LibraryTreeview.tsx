@@ -109,14 +109,14 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                             if (withInputNodes.length) {
                                 nodes.push({
                                     id: `header_rt_${requirementType.id}_rd_withInput`,
-                                    name: 'With user required input',
+                                    name: 'Requirements with required user input',
                                     getChildren: () => Promise.resolve(withInputNodes)
                                 });
                             }
                             if (withoutInput.length) {
                                 nodes.push({
                                     id: `header_rt_${requirementType.id}_rd_withoutInput`,
-                                    name: 'Without user required input',
+                                    name: 'Mass update requirements',
                                     getChildren: () => Promise.resolve(withoutInput)
                                 });
                             }

@@ -22,6 +22,7 @@ interface ScopeTableProps {
     setFirstPageSelected: () => void;
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
+    maxHeight?: number;
 }
 
 enum ActionStatus {
@@ -40,7 +41,8 @@ class ScopeTable extends React.Component<ScopeTableProps> {
         this.getTagNoColumn = this.getTagNoColumn.bind(this);
     }
 
-    shouldComponentUpdate(): boolean {
+    shouldComponentUpdate(nextProps: ScopeTableProps): boolean {
+        if (this.props.maxHeight != nextProps.maxHeight) return true;
         return false;
     }
 
@@ -247,7 +249,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                             fontFamily: 'Equinor',
                         },
                         // Just a set value for now, this should be more dynamic in the future probably when the library supports more dynamic height of the table. 
-                        maxBodyHeight: '66vh',
+                        maxBodyHeight: `${this.props.maxHeight}px`,
                         // --- 
                         rowStyle: (rowData): any => ({
                             opacity: isTagVoided(rowData) && 0.5,

@@ -109,7 +109,6 @@ export const FilterContainer = styled.div<{ maxHeight: number }>`
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
     padding-left: calc(var(--grid-unit) * 2);
     margin-left: calc(var(--grid-unit) * 2);
-    margin-right: var(--grid-unit);
     padding-right: calc(var(--grid-unit) * 2);
     overflow-y: auto;
     height: ${(props): number => props.maxHeight}px;

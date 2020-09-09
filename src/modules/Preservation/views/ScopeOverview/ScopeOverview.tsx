@@ -783,6 +783,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
+                    maxHeight={moduleAreaHeight && moduleAreaHeight - 300}
                 />
                 {
                     displayFlyout && (

@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 import HttpClient from './HttpClient';
-import {IAuthService} from '../auth/AuthService';
+import { IAuthService } from '../auth/AuthService';
 
 /**
  * API Client that is setup to talk with protected resources
@@ -26,7 +26,11 @@ export default class ApiClient extends HttpClient {
                 const accessToken = await this.authService.getAccessTokenAsync(resource);
                 config.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
             } catch (authError) {
-                if (['consent_required','interaction_required','login_required'].indexOf(authError.errorCode) !== -1) {
+                if (['login_required'].indexOf(authError.errorCode) !== -1) {
+                    this.authService.login();
+                    return config;
+                }
+                if (['consent_required', 'interaction_required', 'login_required'].indexOf(authError.errorCode) !== -1) {
                     this.authService.aquireConcent(resource);
                     return config;
                 }

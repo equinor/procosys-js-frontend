@@ -1,5 +1,6 @@
-import {Container} from './style';
+import { Container } from './style';
 import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 import WarningOutlinedIcon from '@material-ui/icons/WarningOutlined';
 
 type ErrorProps = {
@@ -14,7 +15,7 @@ type size = 'inherit' | 'default' | 'small' | 'large';
  *
  * @param title Text to display with loading indicator
  */
-const Error = ({title, large = false, medium = false}: ErrorProps): JSX.Element => {
+const Error = ({ title, large = false, medium = false }: ErrorProps): JSX.Element => {
     let size: size = 'small';
 
     size = medium && 'default' || size;
@@ -23,7 +24,7 @@ const Error = ({title, large = false, medium = false}: ErrorProps): JSX.Element 
         <Container>
             <WarningOutlinedIcon fontSize={size} />
 
-            {(<h1>{title || 'Unknown error'}</h1>)}
+            {(<Typography variant="h1">{title || 'Unknown error'}</Typography>)}
         </Container>
     );
 };

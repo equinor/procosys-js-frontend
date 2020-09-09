@@ -435,9 +435,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
         breadcrumbString += newRequirementDefinition.requirementTypeTitle + ' / ';
         if (newRequirementDefinition.needsUserInput) {
-            return breadcrumbString + 'With user required input / ' + newRequirementDefinition.title;
+            return breadcrumbString + 'Requirements with required user input / ' + newRequirementDefinition.title;
         } else {
-            return breadcrumbString + 'Without user required input / ' + newRequirementDefinition.title;
+            return breadcrumbString + 'Mass update requirements / ' + newRequirementDefinition.title;
         }
     };
 

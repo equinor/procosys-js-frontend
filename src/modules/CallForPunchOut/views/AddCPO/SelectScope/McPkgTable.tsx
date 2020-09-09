@@ -1,26 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import {Container} from './Table.style';
-
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
-import { CommPkgRow, McPkgRow } from '@procosys/modules/CallForPunchOut/types';
-import SelectedScope from './SelectedScope';
+import {  McPkgRow, McScope } from '@procosys/modules/CallForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
-import EdsIcon from '@procosys/components/EdsIcon';
 
 
 interface McPkgTableProps {
-    selectedMcPkgScope: McPkgRow[];
-    setSelectedMcPkgScope: (selectedCommPkgScope: McPkgRow[]) => void;
-    selectedMcScopeParent: string | null;
-    setSelectedMcScopeParent: (commPkg: string | null) => void;
-    currentCommPkg: string | null;
+    selectedMcPkgScope: McScope;
+    setSelectedMcPkgScope: (selectedCommPkgScope: McScope) => void;
     enabled: boolean;
+    filter: string;
 }
-
-const KEYCODE_ENTER = 13;
 
 const today = new Date();
 const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
@@ -31,63 +23,71 @@ const dummyDataMc: McPkgRow[] = [
         mcPkgNo: 'Mc pkg 1',
         description: 'Description 1',
         m01: date,
-        m02: date
+        m02: date,
+        discipline: 'E'
     },
     {
-        mcPkgNo: 'Mc pkg 3',
+        mcPkgNo: 'Mc pkg 2',
         description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
         m01: date,
-        m02: date
+        m02: date,
+        discipline: 'J'
     },
     {
         mcPkgNo: 'Mc pkg 3',
         description: 'Description 3',
         m01: date,
-        m02: date
+        m02: date,
+        discipline: 'T'
     }
 ];
 
-const McPkgTable = ({
+const McPkgTable = forwardRef(({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
-    selectedMcScopeParent,
-    setSelectedMcScopeParent,
-    currentCommPkg,
-    enabled
-}: McPkgTableProps): JSX.Element => {
-    const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
-    const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
+    enabled,
+    filter
+}: McPkgTableProps, ref): JSX.Element => {
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
-    const [filteredMckgs, setFilteredMcPkgs] = useState<McPkgRow[]>(dummyDataMc);
-    const [filter, setFilter] = useState<string>('');
+    const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
 
-    // let requestCanceler: Canceler;
-    // useEffect(() => {
-    //     (async (): Promise<void> => {
-    //         const allCommPkgs = dummyData; //TODO: API call for commpkgs
-    //         setAvailableCommPkgs(allCommPkgs);
-    //         setFilteredCommPkgs(allCommPkgs);
-    //     })();
-    //     return (): void => requestCanceler && requestCanceler();
-    // },[]);
+    useEffect(() => {
+        let requestCanceler: Canceler;
+        (async (): Promise<void> => {
+            const allMcPkgs = dummyDataMc; //TODO: API call for mcpkgs
+            setAvailableMcPkgs(allMcPkgs);
+            setFilteredMcPkgs(allMcPkgs);
+        })();
+        return (): void => requestCanceler && requestCanceler();
+    },[]);
 
-    // useEffect(() => {
-    //     if (filter.length <= 0) {
-    //         setFilteredCommPkgs(dummyData);
-    //         return;
-    //     }
-    //     setFilteredCommPkgs(availableCommPkgs.filter((c: CommPkgRow) => {
-    //         return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
-    //     }));
-    // }, [filter]);
+    useEffect(() => {
+        if (filter.length <= 0) {
+            setFilteredMcPkgs(dummyDataMc);
+            return;
+        }
+        setFilteredMcPkgs(availableMcPkgs.filter((mc: McPkgRow) => {
+            return mc.mcPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
+        }));
+    }, [filter]);
 
+    const multipleDisciplines = (selected: McPkgRow[]): boolean => {
+        if(selected.length > 0) {
+            const initialDiscipline = selected[0].discipline;
+            if(selected.some(mc => mc.discipline !== initialDiscipline)) {
+                return true;
+            }
+        }
+        return false;
+    };
 
-    const removeSelectedMcPkg = (mcPkgNo: string): void => {
-        const selectedIndex = selectedMcPkgScope.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
+    const unselectMcPkg = (mcPkgNo: string): void => {
+        const selectedIndex = selectedMcPkgScope.selected.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
         const tableDataIndex = availableMcPkgs.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
         if (selectedIndex > -1) {
             // remove from selected mcPkgs
-            const copy = [...selectedMcPkgScope.slice(0, selectedIndex), ...selectedMcPkgScope.slice(selectedIndex + 1)];
+            const selectedCopy = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
+            const copy = {commPkgNoParent: selectedCopy.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(selectedCopy), selected: selectedCopy};
             setSelectedMcPkgScope(copy);
 
             // remove checked state from table data (needed to reflect change when navigating to "previous" step)
@@ -102,18 +102,25 @@ const McPkgTable = ({
         }
     };
 
+    useImperativeHandle(ref, () => ({
+        removeSelectedMcPkg(mcPkgNo: string): void {
+            unselectMcPkg(mcPkgNo);
+        }
+    }));
 
     const handleSingleMcPkg = (row: McPkgRow): void => {
         if (row.tableData && !row.tableData.checked) {
-            removeSelectedMcPkg(row.mcPkgNo);
+            unselectMcPkg(row.mcPkgNo);
         } else {
-            setSelectedMcPkgScope([...selectedMcPkgScope, row]);
+            const copy = [...selectedMcPkgScope.selected, row];
+            setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(copy), selected: copy});
         }
     };
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
-        const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
-        setSelectedMcPkgScope([...selectedMcPkgScope, ...rowsToAdd]);
+        const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.selected.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
+        const copy = [...selectedMcPkgScope.selected, ...rowsToAdd];
+        setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(copy), selected: copy});
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {
@@ -121,8 +128,8 @@ const McPkgTable = ({
         availableMcPkgs.forEach(m => {
             mcPkgNos.push(m.mcPkgNo);
         });
-        const newSelectedMcPkgs = selectedMcPkgScope.filter(item => !mcPkgNos.includes(item.mcPkgNo));
-        setSelectedMcPkgScope(newSelectedMcPkgs);
+        const newSelectedMcPkgs = selectedMcPkgScope.selected.filter(item => !mcPkgNos.includes(item.mcPkgNo));
+        setSelectedMcPkgScope({commPkgNoParent: null, multipleDisciplines: false, selected: newSelectedMcPkgs});
     };
 
     const rowSelectionChangedMc = (rowData: McPkgRow[], row: McPkgRow): void => {
@@ -156,7 +163,7 @@ const McPkgTable = ({
         <Container disableSelectAll={!enabled}>
             <Table
                 columns={mcTableColumns}
-                data={filteredMckgs}
+                data={filteredMcPkgs}
                 options={{
                     toolbar: false,
                     showTitle: false,
@@ -187,6 +194,6 @@ const McPkgTable = ({
             />
         </Container>
     );
-};
+});
 
 export default McPkgTable;

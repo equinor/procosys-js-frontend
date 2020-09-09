@@ -39,7 +39,14 @@ export interface McPkgRow {
     description: string;
     m01: string;
     m02: string;
+    discipline: string;
     tableData?: {
         checked: boolean;
     };
+}
+
+export interface McScope {
+    commPkgNoParent: string | null;
+    multipleDisciplines: boolean;
+    selected: McPkgRow[];
 }

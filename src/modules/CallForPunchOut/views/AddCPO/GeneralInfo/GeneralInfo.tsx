@@ -18,6 +18,7 @@ interface GeneralInfoProps {
     fromMain: boolean;
     next: () => void;
     isValid: boolean;
+    clearScope: () => void;
 }
 
 const GeneralInfo = ({
@@ -25,7 +26,8 @@ const GeneralInfo = ({
     setGeneralInfo,
     fromMain,
     next,
-    isValid
+    isValid,
+    clearScope
 }: GeneralInfoProps): JSX.Element => {
     const { procosysApiClient } = useProcosysContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
@@ -69,6 +71,7 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
+        clearScope();
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
             setGeneralInfo(gi => {return {...gi, poType: newPoType};});

@@ -22,14 +22,12 @@ export const Divider = styled.div`
 export const Header = styled.header`
     display: flex;
     align-items: center;
-
+    h2 {
+        line-height: calc(var(--grid-unit) * 6);
+    }
     #backButton {
         margin-right: var(--grid-unit);
     }
-
-    h1 {
-        margin-right: calc(var(--grid-unit) * 2);
-    };
 `;
 
 export const Search = styled.div`

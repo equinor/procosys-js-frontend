@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
+import { Button} from '@equinor/eds-core-react';
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
-import { CommPkgRow, McPkgRow } from '@procosys/modules/CallForPunchOut/types';
-import SelectedScope from './SelectedScope';
+import { CommPkgRow } from '@procosys/modules/CallForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
 import {Container} from './Table.style';
@@ -15,6 +14,7 @@ interface CommPkgTableProps {
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
     setCurrentCommPkg: (commPkgNo: string | null) => void;
     type: string;
+    filter: string;
 }
 
 const KEYCODE_ENTER = 13;
@@ -43,16 +43,15 @@ const dummyData: CommPkgRow[] = [
     }
 ];
 
-const CommPkgTable = ({
+const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
     setSelectedCommPkgScope,
     setCurrentCommPkg,
-    type
-}: CommPkgTableProps): JSX.Element => {
+    type,
+    filter
+}: CommPkgTableProps, ref): JSX.Element => {
     const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
-    const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
-    const [filter, setFilter] = useState<string>('');
 
     let requestCanceler: Canceler;
     useEffect(() => {
@@ -90,7 +89,7 @@ const CommPkgTable = ({
         }
     };
 
-    const removeSelectedCommPkg = (commPkgNo: string): void => {
+    const unselectCommPkg = (commPkgNo: string): void => {
         const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
         const tableDataIndex = availableCommPkgs.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
         if (selectedIndex > -1) {
@@ -110,9 +109,15 @@ const CommPkgTable = ({
         }
     };
 
+    useImperativeHandle(ref, () => ({
+        removeSelectedCommPkg(commPkgNo: string): void {
+            unselectCommPkg(commPkgNo);
+        }
+    }));
+
     const handleSingleCommPkg = (row: CommPkgRow): void => {
         if (row.tableData && !row.tableData.checked) {
-            removeSelectedCommPkg(row.commPkgNo);
+            unselectCommPkg(row.commPkgNo);
         } else {
             setSelectedCommPkgScope([...selectedCommPkgScope, row]);
         }
@@ -157,7 +162,7 @@ const CommPkgTable = ({
         { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '800px' } },
         { title: 'Comm status', field: 'status' },
         { title: 'MDP accepted', field: 'mdpAccepted' },
-        { title: 'MC', render: getToMcPkgsColumn, width: '50px', sorting: false}
+        ... type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []
     ];
 
     return (     
@@ -177,9 +182,8 @@ const CommPkgTable = ({
                     headerStyle: {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
-                    selection: true,
+                    selection: type != 'DP',
                     selectionProps: (data: CommPkgRow): any => ({
-                        disabled: type == 'DP' && selectedCommPkgScope.length > 0 && selectedCommPkgScope[0].commPkgNo != data.commPkgNo,
                         disableRipple: true,
                     }),
                     rowStyle: (data): any => ({
@@ -195,6 +199,6 @@ const CommPkgTable = ({
             />
         </Container>
     );
-};
+});
 
 export default CommPkgTable;

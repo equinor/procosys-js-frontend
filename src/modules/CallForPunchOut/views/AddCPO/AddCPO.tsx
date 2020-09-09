@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
-import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McPkgRow } from '../../types';
+import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McPkgRow, McScope } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
 import AddCPOHeader from './AddCPOHeader';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
-    poType: { text: 'DP (Discipline Punch)', value: 'DP' },
+    poType: null,
     title: null,
     description: null,
     startDate: null,
@@ -36,9 +36,13 @@ const initialSteps: ProgressBarSteps[] = [
 const AddCPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [currentStep, setCurrentStep] = useState<number>(2);
+    const [currentStep, setCurrentStep] = useState<number>(1);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
-    const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McPkgRow[]>([]);
+    const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
+        commPkgNoParent: null, 
+        multipleDisciplines: false, 
+        selected: []
+    });
     const [steps, setSteps] = useState<ProgressBarSteps[]>(initialSteps);
     const [canCreate, setCanCreate] = useState<boolean>(false);
 
@@ -99,6 +103,15 @@ const AddCPO = (): JSX.Element => {
         setCanCreate(canBeCreated);
     }, [steps]);
 
+    const clearScope = (): void => {
+        setSelectedMcPkgScope({
+            commPkgNoParent: null, 
+            multipleDisciplines: false, 
+            selected: []
+        });
+        setSelectedCommPkgScope([]);
+    };
+
     return (<>
         <AddCPOHeader
             steps={steps}
@@ -112,6 +125,7 @@ const AddCPO = (): JSX.Element => {
                 fromMain={fromMain}
                 next={goToNextStep}
                 isValid={steps[0].isCompleted}
+                clearScope={clearScope}
             /> 
         } 
         { (currentStep == 2 && generalInfo.poType != null) &&

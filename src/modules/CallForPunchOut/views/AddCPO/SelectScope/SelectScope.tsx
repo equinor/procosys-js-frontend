@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { Container, Header, Search, ButtonsContainer, TopContainer, SelectComponent, Divider } from './SelectScope.style';
-import Table from '@procosys/components/Table';
-import { tokens } from '@equinor/eds-tokens';
-import { Canceler } from '@procosys/http/HttpClient';
-import { CommPkgRow, McPkgRow } from '@procosys/modules/CallForPunchOut/types';
+import { CommPkgRow, McScope } from '@procosys/modules/CallForPunchOut/types';
 import SelectedScope from './SelectedScope';
-import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
 import CommPkgTable from './CommPkgTable';
 import McPkgTable from './McPkgTable';
@@ -16,59 +12,14 @@ interface SelectScopeProps {
     type: string;
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
-    selectedMcPkgScope: McPkgRow[];
-    setSelectedMcPkgScope: (selectedMckgScope: McPkgRow[]) => void;
+    selectedMcPkgScope: McScope;
+    setSelectedMcPkgScope: (selectedMckgScope: McScope) => void;
     next: () => void;
     previous: () => void;
     isValid: boolean;
 }
 
 const KEYCODE_ENTER = 13;
-
-const today = new Date();
-const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
-
-const dummyData: CommPkgRow[] = [
-    {
-        commPkgNo: 'Comm pkg 1',
-        description: 'Description 1',
-        status: 'PB',
-        mdpAccepted: date
-    },
-    {
-        commPkgNo: 'Comm pkg 2',
-        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        status: 'OK',
-        mdpAccepted: date
-    },
-    {
-        commPkgNo: 'test',
-        description: 'Description 3',
-        status: 'PA',
-        mdpAccepted: date
-    }
-];
-
-const dummyDataMc: McPkgRow[] = [
-    {
-        mcPkgNo: 'Mc pkg 1',
-        description: 'Description 1',
-        m01: date,
-        m02: date
-    },
-    {
-        mcPkgNo: 'Mc pkg 3',
-        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        m01: date,
-        m02: date
-    },
-    {
-        mcPkgNo: 'Mc pkg 3',
-        description: 'Description 3',
-        m01: date,
-        m02: date
-    }
-];
 
 const SelectScope = ({
     type,
@@ -80,38 +31,20 @@ const SelectScope = ({
     previous,
     isValid
 }: SelectScopeProps): JSX.Element => {
-    const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
-    const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
-    const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
-    const [filteredMckgs, setFilteredMcPkgs] = useState<McPkgRow[]>(dummyDataMc);
     const [filter, setFilter] = useState<string>('');
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
-    const [selectedMcScopeParent, setSelectedMcScopeParent] = useState<string | null>(null);
-    const [dpCommPkg, setDpCommPkg] = useState<CommPkgRow | null>(null);
-
-    let requestCanceler: Canceler;
-    useEffect(() => {
-        (async (): Promise<void> => {
-            const allCommPkgs = dummyData; //TODO: API call for commpkgs
-            setAvailableCommPkgs(allCommPkgs);
-            setFilteredCommPkgs(allCommPkgs);
-        })();
-        return (): void => requestCanceler && requestCanceler();
-    },[]);
-
-    useEffect(() => {
-        if (filter.length <= 0) {
-            setFilteredCommPkgs(dummyData);
-            return;
-        }
-        setFilteredCommPkgs(availableCommPkgs.filter((c: CommPkgRow) => {
-            return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
-        }));
-    }, [filter]);
+    const commPkgRef = useRef<any>();
+    const mcPkgRef = useRef<any>();
+    const filterInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setFilter('');
+        if (filterInputRef.current) {
+            filterInputRef.current.value = '';
+        }
     }, [currentCommPkg]);
+
+    
 
     return (     
         <Container>
@@ -147,6 +80,8 @@ const SelectScope = ({
                         <TextField
                             id="search"
                             placeholder="Search"
+                            defaultValue=''
+                            inputRef={filterInputRef}
                             onKeyDown={(e: any): void => {
                                 e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value); //TODO: do we need to make a new API call every time we change filter?
                             }}
@@ -159,29 +94,30 @@ const SelectScope = ({
                 
                 { currentCommPkg == null &&
                     <CommPkgTable 
+                        ref={commPkgRef}
                         selectedCommPkgScope={selectedCommPkgScope}
                         setSelectedCommPkgScope={setSelectedCommPkgScope}
                         setCurrentCommPkg={setCurrentCommPkg}
                         type={type}
+                        filter={filter}
                     />
                 }
                 { (currentCommPkg != null && type=='DP') &&
                     <McPkgTable 
                         selectedMcPkgScope={selectedMcPkgScope}
                         setSelectedMcPkgScope={setSelectedMcPkgScope}
-                        selectedMcScopeParent={selectedMcScopeParent}
-                        setSelectedMcScopeParent={setSelectedMcScopeParent}
-                        currentCommPkg={currentCommPkg}
-                        enabled={selectedCommPkgScope.length == 0 || currentCommPkg == selectedCommPkgScope[0].commPkgNo}
+                        enabled={selectedCommPkgScope.length == 0 || currentCommPkg == selectedMcPkgScope.commPkgNoParent}
+                        filter={filter}
                     />
                 }
             </SelectComponent>
             <Divider />
             <SelectedScope 
                 selectedCommPkgs={selectedCommPkgScope} 
-                //removeCommPkg={removeSelectedCommPkg} 
-                selectedMcPkgs={selectedMcPkgScope} 
-                //removeMcPkg={removeSelectedMcPkg} 
+                removeCommPkg={(commPkgNo: string): void => commPkgRef.current.removeSelectedCommPkg(commPkgNo)}
+                selectedMcPkgs={selectedMcPkgScope.selected} 
+                removeMcPkg={(mcPkgNo: string): void => mcPkgRef.current.removeSelectedCommPkg(mcPkgNo)}
+                multipleDisciplines={selectedMcPkgScope.multipleDisciplines}
             />
         </Container>
     );

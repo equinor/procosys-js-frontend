@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Canceler } from '../../../http/HttpClient';
 import Loading from '../../../components/Loading';
@@ -17,6 +17,8 @@ type PreservationContextProps = {
     apiClient: PreservationApiClient;
     libraryApiClient: LibraryApiClient;
     availableProjects: ProjectDetails[];
+    purchaseOrderNumber: string;
+    setCurrentPurchaseOrderNumber: (pono: string) => void;
 }
 
 class InvalidProjectException extends Error {
@@ -27,14 +29,15 @@ class InvalidProjectException extends Error {
     }
 }
 
-export const PreservationContextProvider: React.FC = ({children}): JSX.Element => {
+export const PreservationContextProvider: React.FC = ({ children }): JSX.Element => {
 
-    const {procosysApiClient, auth} = useProcosysContext();
-    const {plant} = useCurrentPlant();
+    const { procosysApiClient, auth } = useProcosysContext();
+    const { plant } = useCurrentPlant();
     const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
+    const [purchaseOrderNumber, setCurrentPurchaseOrderNumber] = useState<string>('');
 
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
 
@@ -66,12 +69,12 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
             setAvailableProjects(allProjects);
         })();
         return (): void => requestCanceler && requestCanceler();
-    },[]);
+    }, []);
 
     useEffect(() => {
         preservationApiClient.setCurrentPlant(plant.id);
         libraryApiClient.setCurrentPlant(plant.id);
-    },[plant]);
+    }, [plant]);
 
     useEffect(() => {
         const defaultProject = preservationCache.getDefaultProject();
@@ -93,7 +96,7 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
         if (!currentProject) return;
         preservationCache.setDefaultProject(currentProject);
 
-    },[currentProject]);
+    }, [currentProject]);
 
     if (!currentProject) {
         return (<Loading title="Loading project information" />);
@@ -103,8 +106,11 @@ export const PreservationContextProvider: React.FC = ({children}): JSX.Element =
         <PreservationContext.Provider value={{
             project: currentProject,
             libraryApiClient: libraryApiClient,
-            setCurrentProject, apiClient: preservationApiClient,
-            availableProjects
+            setCurrentProject,
+            apiClient: preservationApiClient,
+            availableProjects,
+            purchaseOrderNumber: purchaseOrderNumber,
+            setCurrentPurchaseOrderNumber: setCurrentPurchaseOrderNumber
         }}>
             {children}
         </PreservationContext.Provider>

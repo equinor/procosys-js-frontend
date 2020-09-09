@@ -30,9 +30,6 @@ export const ButtonContainer = styled.div`
     display: flex;
     width: 100%;
     justify-content: flex-end;
-    .buttonIcon svg {
-        padding-right: var(--grid-unit);
-    }
 `;
 
 export const IconContainer = styled.div`

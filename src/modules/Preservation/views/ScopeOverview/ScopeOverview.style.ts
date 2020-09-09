@@ -68,10 +68,6 @@ export const StyledButton = styled(Button)`
     display: flex;
     align-items: center;
     justify-content: center;
-
-    .iconNextToText {
-        height: calc(var(--grid-unit) * 2);
-    }
 `;
 
 interface DropdownProps {

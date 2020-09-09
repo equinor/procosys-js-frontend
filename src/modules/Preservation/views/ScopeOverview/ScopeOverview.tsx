@@ -689,7 +689,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={!startableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Start
                         </StyledButton>
                         <StyledButton
@@ -697,7 +697,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={!transferableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -705,7 +705,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
                             disabled={!completableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Complete
                         </StyledButton>
                         <OptionsDropdown

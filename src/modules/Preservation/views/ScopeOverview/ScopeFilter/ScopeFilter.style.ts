@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -16,6 +17,7 @@ export const Header = styled.header<FilterProps>`
     justify-content: space-between;
     padding-bottom: calc(var(--grid-unit) * 4);
     margin-left: var(--grid-unit);
+    margin-top: var(--margin-module--top);
 
     ${({ filterActive }): any => filterActive && css`
         h1 {

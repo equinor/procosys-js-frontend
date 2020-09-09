@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import { Container, Header, HeaderActions, HeaderNotification, NotificationIcon, StatusLabel, StyledButton, Tabs, TagNoContainer } from './TagFlyout.style';
+import React, { useEffect, useState } from 'react';
 
-import { Container, Header, Tabs, StatusLabel, HeaderActions, HeaderNotification, NotificationIcon, StyledButton, TagNoContainer } from './TagFlyout.style';
-import PreservationTab from './PreservationTab/PreservationTab';
 import ActionTab from './ActionTab/ActionTab';
-import CloseIcon from '@material-ui/icons/Close';
-import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
-import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import { Typography } from '@equinor/eds-core-react';
-import { usePreservationContext } from '../../../context/PreservationContext';
-import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
-import { TagDetails } from './types';
-import Spinner from '../../../../../components/Spinner';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
-import HistoryTab from './HistoryTab/HistoryTab';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from 'axios';
+import CloseIcon from '@material-ui/icons/Close';
+import HistoryTab from './HistoryTab/HistoryTab';
+import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
+import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
+import PreservationTab from './PreservationTab/PreservationTab';
+import Spinner from '../../../../../components/Spinner';
+import { TagDetails } from './types';
+import { Typography } from '@equinor/eds-core-react';
+import { showSnackbarNotification } from './../../../../../core/services/NotificationService';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
+import { usePreservationContext } from '../../../context/PreservationContext';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 enum PreservationStatus {
     NotStarted = 'Not started',
@@ -62,10 +62,10 @@ const TagFlyout = ({
         (async (): Promise<void> => {
             if (tagDetails && isStandardTag()) {
                 try {
-                    const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name,  (cancel: Canceler) => requestCancellor = cancel);
+                    const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name, (cancel: Canceler) => requestCancellor = cancel);
                     if (tag.length > 0) {
                         setMainTagId(tag[0].id);
-                    } 
+                    }
                 } catch (error) {
                     console.error(`Getting tag id failed: ${error.message}`);
                     showSnackbarNotification(error.message);
@@ -176,9 +176,9 @@ const TagFlyout = ({
             }
             <Header>
                 <TagNoContainer isStandardTag={isStandardTag()} onClick={goToTag}>
-                    <h1>
+                    <Typography variant="h1">
                         {tagDetails ? tagDetails.tagNo : '-'}
-                    </h1>
+                    </Typography>
                 </TagNoContainer>
                 <HeaderActions>
                     {(!isVoided && preservationIsStarted) &&
@@ -193,7 +193,7 @@ const TagFlyout = ({
                             )}
                             {!isPreservingTag && ('Preserved this week')}
                         </StyledButton>}
-                    { (!isVoided && preservationIsNotStarted) &&
+                    {(!isVoided && preservationIsNotStarted) &&
                         <StyledButton
                             variant='ghost'
                             title='Start preservation'

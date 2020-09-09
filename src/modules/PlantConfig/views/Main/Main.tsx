@@ -1,5 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 
 const MainView = (): JSX.Element => {
 
@@ -7,7 +8,7 @@ const MainView = (): JSX.Element => {
 
     return (
         <div>
-            <h1>Plant Configuration</h1>
+            <Typography variant="h1">Plant Configuration</Typography>
             <Link
                 to={'/Library/root/NotSelected/_'}
             >

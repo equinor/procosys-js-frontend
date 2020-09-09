@@ -1,4 +1,4 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, FilterDivider, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
+import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -148,6 +148,24 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
+
+    const moduleContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
+
+    const updateModuleAreaHeightReference = (): void => {
+        if (!moduleContainerRef.current) return;
+        setModuleAreaHeight(moduleContainerRef.current.clientHeight);
+    };
+
+    useEffect(() => {
+        updateModuleAreaHeightReference();
+        window.addEventListener('resize', updateModuleAreaHeightReference);
+
+        return (): void => {
+            window.removeEventListener('resize', updateModuleAreaHeightReference);
+        };
+
+    }, [moduleContainerRef, displayFilter]);
 
     const refreshScopeList = (): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current();
@@ -625,8 +643,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     }, [location]);
 
     return (
-        <Container>
-            <ContentContainer>
+        <Container ref={moduleContainerRef}>
+            <ContentContainer withSidePanel={displayFilter}>
                 <OldPreservationLink>
                     <Typography variant="caption">
                         <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
@@ -636,7 +654,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 </OldPreservationLink>
                 <HeaderContainer>
                     <Header>
-                        <h1>Preservation tags</h1>
+                        <Typography variant="h1">Preservation tags</Typography>
                         <Dropdown
                             maxHeight='300px'
                             text={project.name}
@@ -765,6 +783,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
+                    maxHeight={moduleAreaHeight && moduleAreaHeight - 300}
                 />
                 {
                     displayFlyout && (
@@ -782,20 +801,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </ContentContainer >
             {
                 displayFilter && (
-                    <>
-                        <FilterDivider />
-                        <FilterContainer>
-                            <ScopeFilter
-                                onCloseRequest={(): void => {
-                                    setDisplayFilter(false);
-                                }}
-                                tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
-                                setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                                selectedSavedFilterTitle={selectedSavedFilterTitle}
-                                numberOfTags={numberOfTags}
-                                exportTagsToExcel={exportTagsToExcel} />
-                        </FilterContainer>
-                    </>
+                    <FilterContainer maxHeight={moduleAreaHeight}>
+                        <ScopeFilter
+                            onCloseRequest={(): void => {
+                                setDisplayFilter(false);
+                            }}
+                            tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            numberOfTags={numberOfTags}
+                            exportTagsToExcel={exportTagsToExcel} />
+                    </FilterContainer>
                 )
             }
         </Container >

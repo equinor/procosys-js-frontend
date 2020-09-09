@@ -365,7 +365,7 @@ const ScopeFilter = ({
     return (
         <Container>
             <Header filterActive={filterActive}>
-                <h1>Filter</h1>
+                <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
                     <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportTagsToExcel}>
                         {ExcelIcon}

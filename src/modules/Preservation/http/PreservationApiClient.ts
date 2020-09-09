@@ -439,6 +439,13 @@ interface HistoryResponse {
     preservationRecordGuid: string;
 }
 
+interface ProjectResponse {
+    id: number;
+    name: string;
+    description: string;
+    isClosed: boolean;
+}
+
 export class PreservationApiError extends Error {
 
     data: AxiosResponse | null;
@@ -2655,6 +2662,27 @@ class PreservationApiClient extends ApiClient {
             throw getPreservationApiError(error);
         }
     }
+
+    /**
+     * Get project 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async getProject(projectName: string, setRequestCanceller?: RequestCanceler): Promise<ProjectResponse> {
+        const endpoint = `/Projects/${projectName}`;
+
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get<ProjectResponse>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw getPreservationApiError(error);
+        }
+    }
+
 }
+
 
 export default PreservationApiClient;

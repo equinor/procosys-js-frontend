@@ -246,7 +246,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const changeProject = async (index: number): Promise<void> => {
         try {
-            await setCurrentProject(filteredProjects[index].id);
+            await setCurrentProject(filteredProjects[index].name);
         } catch (error) {
             console.error('Change project failed. ', error.message, error.data);
             showSnackbarNotification(error.message);
@@ -588,6 +588,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             return;
         }
 
+        if (!filteredProjects || filteredProjects.length == 0) {
+            return;
+        }
+
         // parse querystring
         const qsParameters = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
@@ -599,7 +603,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
             if (project) {
                 // set as current project
-                setCurrentProject(project.id);
+                setCurrentProject(project.name);
 
                 // get and apply supported tag filters
                 let filtersUsed = 0;
@@ -633,7 +637,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         // clear parameters in browser url
         history.replace('/');
 
-    }, [location]);
+    }, [location, filteredProjects]);
 
     return (
         <Container>

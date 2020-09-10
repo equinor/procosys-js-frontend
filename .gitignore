@@ -48,5 +48,5 @@ typings/
 # Sensitive files
 settings.json
 
-#VS Code files
+#VS Code folder
 .vscode/

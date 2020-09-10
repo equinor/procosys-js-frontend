@@ -18,6 +18,12 @@ export const InputContainer = styled.div`
 `;
 
 export const Container = styled.div`
+    display: flex;
+    flex-direction: column;    
+    padding: var(--margin-module--top) var(--margin-module--right);
+`;
+
+export const ContentContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
     margin-top: calc(var(--grid-unit) * 3);

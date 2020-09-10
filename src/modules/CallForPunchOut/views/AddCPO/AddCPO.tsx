@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
-import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McPkgRow, McScope } from '../../types';
+import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
 import AddCPOHeader from './AddCPOHeader';
+import { Container } from './AddCPO.style';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
-    poType: null,
+    poType: { text: 'DP (Discipline Punch)', value: 'DP' },
     title: null,
     description: null,
     startDate: null,
@@ -36,7 +37,7 @@ const initialSteps: ProgressBarSteps[] = [
 const AddCPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [currentStep, setCurrentStep] = useState<number>(1);
+    const [currentStep, setCurrentStep] = useState<number>(2);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 
@@ -112,7 +113,7 @@ const AddCPO = (): JSX.Element => {
         setSelectedCommPkgScope([]);
     };
 
-    return (<>
+    return (<Container>
         <AddCPOHeader
             steps={steps}
             currentStep={currentStep}
@@ -140,7 +141,7 @@ const AddCPO = (): JSX.Element => {
                 isValid={steps[1].isCompleted}
             /> 
         }
-    </>);
+    </Container>);
 };
 
 export default AddCPO;

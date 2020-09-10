@@ -159,7 +159,7 @@ const CommPkgTable = forwardRef(({
 
     const tableColumns = [
         { title: 'Comm pkg', field: 'commPkgNo' },
-        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '800px' } },
+        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
         { title: 'Comm status', field: 'status' },
         { title: 'MDP accepted', field: 'mdpAccepted' },
         ... type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []

@@ -104,6 +104,7 @@ const SelectScope = ({
                 }
                 { (currentCommPkg != null && type=='DP') &&
                     <McPkgTable 
+                        ref={mcPkgRef}
                         selectedMcPkgScope={selectedMcPkgScope}
                         setSelectedMcPkgScope={setSelectedMcPkgScope}
                         enabled={selectedCommPkgScope.length == 0 || currentCommPkg == selectedMcPkgScope.commPkgNoParent}
@@ -111,12 +112,11 @@ const SelectScope = ({
                     />
                 }
             </SelectComponent>
-            <Divider />
             <SelectedScope 
                 selectedCommPkgs={selectedCommPkgScope} 
                 removeCommPkg={(commPkgNo: string): void => commPkgRef.current.removeSelectedCommPkg(commPkgNo)}
                 selectedMcPkgs={selectedMcPkgScope.selected} 
-                removeMcPkg={(mcPkgNo: string): void => mcPkgRef.current.removeSelectedCommPkg(mcPkgNo)}
+                removeMcPkg={(mcPkgNo: string): void => mcPkgRef.current.removeSelectedMcPkg(mcPkgNo)}
                 multipleDisciplines={selectedMcPkgScope.multipleDisciplines}
             />
         </Container>

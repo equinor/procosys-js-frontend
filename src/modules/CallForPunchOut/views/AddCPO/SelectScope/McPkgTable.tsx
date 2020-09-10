@@ -154,7 +154,7 @@ const McPkgTable = forwardRef(({
 
     const mcTableColumns = [
         { title: 'Mc pkg', field: 'mcPkgNo' },
-        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '800px' } },
+        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
         { title: 'M-01 date', field: 'm01' },
         { title: 'M-02 date', field: 'm01' }
     ];

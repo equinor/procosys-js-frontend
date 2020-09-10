@@ -2,9 +2,12 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const SelectedScopeContainer = styled.div`
-    margin-left: var(--grid-unit);
-    margin-bottom: calc(var(--grid-unit) * 4);
     width: 30%;
+    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    margin-top: calc(var(--grid-unit) * -3);
+    margin-left: calc(var(--grid-unit) * 5);
+    padding-top: calc(var(--grid-unit) * 3);
+    padding-left: calc(var(--grid-unit) * 2);
 `;
 
 export const AccordionContent = styled.div`

@@ -28,8 +28,6 @@ import { showSnackbarNotification } from '../../../../core/services/Notification
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
 
-
-
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
         return null;
@@ -801,7 +799,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
-                    maxHeight={moduleAreaHeight && moduleAreaHeight - 300}
+                    maxHeight={moduleAreaHeight}
                 />
                 {
                     displayFlyout && (

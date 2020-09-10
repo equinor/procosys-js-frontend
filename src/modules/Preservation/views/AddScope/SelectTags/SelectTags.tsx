@@ -115,9 +115,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                                 <TextField
                                     id="tagSearch"
                                     placeholder="Search by tag number"
-                                    helperText="Type the start of a tag number and press enter to load tags"
+                                    helperText="Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required."
                                     onKeyDown={(e: any): void => {
-                                        e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
+                                        e.keyCode === KEYCODE_ENTER && e.currentTarget.value.length > 1 && props.searchTags(e.currentTarget.value);
                                     }}
                                     onInput={(e: any): void => {
                                         e.currentTarget.value.length === 0 && props.searchTags(null);

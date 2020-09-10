@@ -28,7 +28,7 @@ interface ScopeTableProps {
 enum ActionStatus {
     Closed = 'HasClosed',
     Open = 'HasOpen',
-    OverDue = 'HasOverDue'
+    OverDue = 'HasOverdue'
 }
 
 class ScopeTable extends React.Component<ScopeTableProps> {

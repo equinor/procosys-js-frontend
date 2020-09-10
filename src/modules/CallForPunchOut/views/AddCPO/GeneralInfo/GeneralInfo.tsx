@@ -32,8 +32,7 @@ const GeneralInfo = ({
     const { procosysApiClient } = useProcosysContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
-    const [filterForProjects, setFilterForProjects] = useState<string>('');
-   
+    const [filterForProjects, setFilterForProjects] = useState<string>('');   
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -123,6 +122,7 @@ const GeneralInfo = ({
                 id={'title'}
                 label='Title'
                 placeholder='Write here'
+                defaultValue={generalInfo.title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setGeneralInfo(gi => {return {...gi, title: e.target.value};}); 
                 }}
@@ -132,6 +132,7 @@ const GeneralInfo = ({
                 placeholder='Write here'
                 label='Description'
                 meta='Optional'
+                defaultValue={generalInfo.description}
                 multiline
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
                     setGeneralInfo(gi => {return {...gi, description: e.target.value};}); 
@@ -143,6 +144,7 @@ const GeneralInfo = ({
                     id='startDate'
                     label='From'
                     type='date'
+                    defaultValue={generalInfo.startDate}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -154,6 +156,7 @@ const GeneralInfo = ({
                     id='time'
                     label='Time'
                     type='time'
+                    defaultValue={generalInfo.startTime}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -165,6 +168,7 @@ const GeneralInfo = ({
                     id='endDate'
                     label='To'
                     type='date'
+                    defaultValue={generalInfo.endDate}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -176,6 +180,7 @@ const GeneralInfo = ({
                     id='time'
                     label='Time'
                     type='time'
+                    defaultValue={generalInfo.endTime}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -190,6 +195,7 @@ const GeneralInfo = ({
                     placeholder='Write here'
                     label='Location'
                     meta='Optional'
+                    defaultValue={generalInfo.location}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
                         setGeneralInfo(gi => {return {...gi, location: e.target.value};}); 
                     }}

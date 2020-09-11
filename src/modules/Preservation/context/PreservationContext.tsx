@@ -17,6 +17,8 @@ type PreservationContextProps = {
     apiClient: PreservationApiClient;
     libraryApiClient: LibraryApiClient;
     availableProjects: ProjectDetails[];
+    purchaseOrderNumber: string;
+    setCurrentPurchaseOrderNumber: (pono: string) => void;
 }
 
 class InvalidProjectException extends Error {
@@ -35,25 +37,19 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
+    const [purchaseOrderNumber, setCurrentPurchaseOrderNumber] = useState<string>('');
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const setCurrentProject = async (projectId: number): Promise<void> => {
+    const setCurrentProject = (projectId: number): void => {
         if (!availableProjects || !projectId) {
             return;
         }
-        setIsLoading(true);
-        try {
-            const project = await procosysApiClient.getProjectAsync(projectId, (cancelerCallback) => requestCanceler = cancelerCallback);
-            if (project) {
-                setCurrentProjectInContext(project);
-            } else {
-                throw new InvalidProjectException();
-            }
-        } catch (error) {
+        const project = availableProjects.find(el => el.id === projectId);
+        if (project) {
+            setCurrentProjectInContext(project);
+        } else {
             throw new InvalidProjectException();
         }
-        setIsLoading(false);
     };
 
     let requestCanceler: Canceler;
@@ -65,8 +61,7 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
                     return {
                         id: project.id,
                         name: project.name,
-                        description: project.description,
-                        isClosed: null
+                        description: project.description
                     };
                 }));
             setAvailableProjects(allProjects);
@@ -92,35 +87,30 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
                 setCurrentProject(availableProjects[0].id);
             }
         }
-
     }, [availableProjects]);
 
     useEffect(() => {
         if (!currentProject) return;
         preservationCache.setDefaultProject(currentProject);
-
     }, [currentProject]);
 
-    if (isLoading) {
+    if (!currentProject) {
         return (<Loading title="Loading project information" />);
     }
 
-    if (currentProject) {
-        return (
-            <PreservationContext.Provider value={{
-                project: currentProject,
-                libraryApiClient: libraryApiClient,
-                setCurrentProject,
-                apiClient: preservationApiClient,
-                availableProjects,
-            }}>
-                {children}
-            </PreservationContext.Provider>
-        );
-    };
-
-    return (<></>);
-
+    return (
+        <PreservationContext.Provider value={{
+            project: currentProject,
+            libraryApiClient: libraryApiClient,
+            setCurrentProject,
+            apiClient: preservationApiClient,
+            availableProjects,
+            purchaseOrderNumber: purchaseOrderNumber,
+            setCurrentPurchaseOrderNumber: setCurrentPurchaseOrderNumber
+        }}>
+            {children}
+        </PreservationContext.Provider>
+    );
 };
 
 PreservationContextProvider.propTypes = {

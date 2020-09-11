@@ -1,4 +1,4 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, FilterDivider, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
+import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -107,6 +107,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         availableProjects,
         setCurrentProject,
         apiClient,
+        purchaseOrderNumber: purchaseOrderNumber,
+        setCurrentPurchaseOrderNumber: setCurrentPurchaseOrderNumber
     } = usePreservationContext();
 
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
@@ -125,8 +127,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
         return { ...emptyTagListFilter };
     });
-
-
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
@@ -151,6 +151,24 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
 
+    const moduleContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
+
+    const updateModuleAreaHeightReference = (): void => {
+        if (!moduleContainerRef.current) return;
+        setModuleAreaHeight(moduleContainerRef.current.clientHeight);
+    };
+
+    useEffect(() => {
+        updateModuleAreaHeightReference();
+        window.addEventListener('resize', updateModuleAreaHeightReference);
+
+        return (): void => {
+            window.removeEventListener('resize', updateModuleAreaHeightReference);
+        };
+
+    }, [moduleContainerRef, displayFilter]);
+
     const refreshScopeList = (): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current();
     };
@@ -166,7 +184,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             return p.name.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1 ||
                 p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
         }));
-    }, [filterForProjects, availableProjects]);
+    }, [filterForProjects]);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -244,14 +262,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
-    const changeProject = async (index: number): Promise<void> => {
-        try {
-            await setCurrentProject(filteredProjects[index].id);
-        } catch (error) {
-            console.error('Change project failed. ', error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
+    const changeProject = (event: React.MouseEvent, index: number): void => {
+        event.preventDefault();
 
+        setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
         setSelectedTags([]);
         deleteCachedFilter(project.id);
@@ -268,11 +282,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             // No filters, regular scope list refresh.
             refreshScopeList();
         }
-    };
-
-    const handleProjectChange = async (event: React.MouseEvent, index: number): Promise<void> => {
-        event.preventDefault();
-        changeProject(index);
     };
 
     let transferableTags: PreservedTag[];
@@ -578,6 +587,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
+    /** Handle url on the format ...?project=<projectid>&pono=<purchase order no>&calloff=<call off no>*/
     useEffect((): void => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
@@ -585,10 +595,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         if (location.search === '') {
             // querystring is empty
-            return;
-        }
-
-        if (!filteredProjects || filteredProjects.length == 0) {
             return;
         }
 
@@ -626,6 +632,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 
+                    //Set supplier modus if POno is set 
+                    if (supportedFilters.pono) {
+                        let pono = supportedFilters.pono;
+                        if (supportedFilters.calloff) {
+                            pono = pono.concat(`/${supportedFilters.calloff}`);
+                        }
+                        setCurrentPurchaseOrderNumber(pono);
+                    }
+
                     setTagListFilter(tagFilter);
                     toggleFilter();
                 }
@@ -633,25 +648,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 showSnackbarNotification(`The requested project ${projectName} is not available`);
             }
         }
-
         // clear parameters in browser url
         history.replace('/');
 
-    }, [location, filteredProjects]);
+    }, [location]);
 
     return (
-        <Container>
-            <ContentContainer>
+        <Container ref={moduleContainerRef}>
+            <ContentContainer withSidePanel={displayFilter}>
                 <OldPreservationLink>
-                    <Typography variant="caption">
-                        <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                            <a href="OldPreservation">Switch to old system</a>
-                        </Tooltip>
-                    </Typography>
+                    {!purchaseOrderNumber &&
+                        <Typography variant="caption">
+                            <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
+                                <a href="OldPreservation">Switch to old system</a>
+                            </Tooltip>
+                        </Typography>
+                    }
                 </OldPreservationLink>
                 <HeaderContainer>
                     <Header>
-                        <h1>Preservation tags</h1>
+                        <Typography variant="h1">Preservation tags</Typography>
                         <Dropdown
                             maxHeight='300px'
                             text={project.name}
@@ -661,9 +677,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 return (
                                     <DropdownItem
                                         key={index}
-                                        onClick={async (event): Promise<void> =>
-                                            handleProjectChange(event, index)
-                                        }
+                                        onClick={(event): void => changeProject(event, index)}
                                     >
                                         <div>{projectItem.description}</div>
                                         <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
@@ -671,6 +685,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 );
                             })}
                         </Dropdown>
+                        {purchaseOrderNumber &&
+                            <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                        }
                         <Dropdown text="Add scope">
                             <Link to={'/AddScope/selectTagsManual'}>
                                 <DropdownItem>
@@ -704,7 +721,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={!startableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Start
                         </StyledButton>
                         <StyledButton
@@ -712,7 +729,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={!transferableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -720,7 +737,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
                             disabled={!completableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Complete
                         </StyledButton>
                         <OptionsDropdown
@@ -780,6 +797,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
+                    maxHeight={moduleAreaHeight}
                 />
                 {
                     displayFlyout && (
@@ -797,20 +815,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             </ContentContainer >
             {
                 displayFilter && (
-                    <>
-                        <FilterDivider />
-                        <FilterContainer>
-                            <ScopeFilter
-                                onCloseRequest={(): void => {
-                                    setDisplayFilter(false);
-                                }}
-                                tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
-                                setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                                selectedSavedFilterTitle={selectedSavedFilterTitle}
-                                numberOfTags={numberOfTags}
-                                exportTagsToExcel={exportTagsToExcel} />
-                        </FilterContainer>
-                    </>
+                    <FilterContainer maxHeight={moduleAreaHeight}>
+                        <ScopeFilter
+                            onCloseRequest={(): void => {
+                                setDisplayFilter(false);
+                            }}
+                            tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            numberOfTags={numberOfTags}
+                            exportTagsToExcel={exportTagsToExcel} />
+                    </FilterContainer>
                 )
             }
         </Container >

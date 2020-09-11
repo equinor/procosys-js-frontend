@@ -1,17 +1,18 @@
-import { ButtonContainer, Container, Header, InputContainer, SpinnerContainer, ErrorContainer } from './EditTagProperties.style';
-import { TagDetails, Step, Journey, RequirementType } from './types';
+import { Button, Typography } from '@equinor/eds-core-react';
+import { ButtonContainer, Container, ErrorContainer, Header, InputContainer, SpinnerContainer } from './EditTagProperties.style';
+import { Journey, RequirementType, Step, TagDetails } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
-import { Button, Typography } from '@equinor/eds-core-react';
-import { usePreservationContext } from '../../context/PreservationContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { TextField } from '@equinor/eds-core-react';
-import { useParams, useHistory } from 'react-router-dom';
-import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
-import { showModalDialog } from '@procosys/core/services/ModalDialogService';
-import Spinner from '@procosys/components/Spinner';
+import { useHistory, useParams } from 'react-router-dom';
+
 import { Canceler } from 'axios';
 import { PreservationApiError } from '../../http/PreservationApiClient';
+import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
+import Spinner from '@procosys/components/Spinner';
+import { TextField } from '@equinor/eds-core-react';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -345,7 +346,7 @@ const EditTagProperties = (): JSX.Element => {
     return (
         <div>
             <Header>
-                <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing'}</h1>
+                <Typography variant="h1">{tag ? `Editing ${tag.tagNo}` : 'Editing'}</Typography>
                 <div>{project.name}</div>
             </Header>
             {loading ?

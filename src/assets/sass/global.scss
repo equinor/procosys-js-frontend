@@ -5,11 +5,7 @@
 body {
     background-color: var(--ui-background--default);
     color: var(--text--default);
-}
-
-button span svg {
-    height: 16px !important;
-    width: 16px !important;
+    height: 100vh;
 }
 
 #procosys-root {

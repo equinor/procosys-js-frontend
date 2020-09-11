@@ -1,18 +1,19 @@
-import { Divider, Container, SelectedTags, LargerComponent } from './AddScope.style';
-import { Journey, Requirement, RequirementType, Tag, TagRow, Discipline, Area, PurchaseOrder, TagMigrationRow } from './types';
-import React, { useEffect, useState, useMemo } from 'react';
+import { Area, Discipline, Journey, PurchaseOrder, Requirement, RequirementType, Tag, TagMigrationRow, TagRow } from './types';
+import { Container, Divider, LargerComponent, SelectedTags } from './AddScope.style';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { Canceler } from 'axios';
-import SelectTags from './SelectTags/SelectTags';
-import SetTagProperties from './SetTagProperties/SetTagProperties';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
-import Spinner from '../../../../components/Spinner';
-import TagDetails from './TagDetails/TagDetails';
-import { showSnackbarNotification } from './../../../../core/services/NotificationService';
-import { useHistory, useParams } from 'react-router-dom';
-import { usePreservationContext } from '../../context/PreservationContext';
 import { SelectItem } from '../../../../components/Select';
 import SelectMigrateTags from './SelectMigrateTags/SelectMigrateTags';
+import SelectTags from './SelectTags/SelectTags';
+import SetTagProperties from './SetTagProperties/SetTagProperties';
+import Spinner from '../../../../components/Spinner';
+import TagDetails from './TagDetails/TagDetails';
+import { Typography } from '@equinor/eds-core-react';
+import { showSnackbarNotification } from './../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 export enum AddScopeMethod {
@@ -24,7 +25,7 @@ export enum AddScopeMethod {
 }
 
 const AddScope = (): JSX.Element => {
-    const { apiClient, project } = usePreservationContext();
+    const { apiClient, project, purchaseOrderNumber } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
     const { method } = useParams() as any;
@@ -67,17 +68,23 @@ const AddScope = (): JSX.Element => {
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
     const [isSubmittingScope, setIsSubmittingScope] = useState(false);
 
+    const filterOnPurchaseOrderNumber = (tags: any[]): any[] => {
+        return tags.filter((r) => !purchaseOrderNumber || purchaseOrderNumber == r.purchaseOrderTitle);
+    };
+
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
         try {
             let result: TagRow[] = [];
             result = await apiClient.getTagsByTagFunctionForAddPreservationScope(project.name);
 
-            if (result.length === 0) {
+            const filteredTags = filterOnPurchaseOrderNumber(result);
+
+            if (filteredTags.length === 0) {
                 showSnackbarNotification('No tags for autoscoping was found.', 5000);
             }
             setSelectedTags([]);
-            setScopeTableData(result);
+            setScopeTableData(filteredTags);
         } catch (error) {
             console.error('Search tags for autoscoping failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -91,11 +98,13 @@ const AddScope = (): JSX.Element => {
             let result: TagMigrationRow[] = [];
             result = await apiClient.getTagsForMigration(project.name);
 
-            if (result.length === 0) {
+            const filteredTags = filterOnPurchaseOrderNumber(result);
+
+            if (filteredTags.length === 0) {
                 showSnackbarNotification('No tags for migration was found.', 5000);
             }
             setSelectedTags([]);
-            setMigrationTableData(result);
+            setMigrationTableData(filteredTags);
         } catch (error) {
             console.error('Fetching tags for migration failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -227,7 +236,7 @@ const AddScope = (): JSX.Element => {
                     showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
                 }
             }
-            const res = result.map((r): TagRow => {
+            const filteredTags = filterOnPurchaseOrderNumber(result).map((r): TagRow => {
                 return {
                     tagNo: r.tagNo,
                     description: r.description,
@@ -240,7 +249,7 @@ const AddScope = (): JSX.Element => {
                     tableData: { checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1 }
                 };
             });
-            setScopeTableData(res);
+            setScopeTableData(filteredTags);
         } catch (error) {
             console.error('Search tags failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -431,7 +440,7 @@ const AddScope = (): JSX.Element => {
             );
     }
 
-    return <h1>Unknown step</h1>;
+    return <Typography variant="h1">Unknown step</Typography>;
 };
 
 export default AddScope;

@@ -49,7 +49,7 @@ export const InnerContainer = styled.div`
 `;
 
 export const Search = styled.div`
-    display: flex;
+    display: flex;    
     flex: 1;
     padding-bottom: calc(var(--grid-unit) * 3);
     input {

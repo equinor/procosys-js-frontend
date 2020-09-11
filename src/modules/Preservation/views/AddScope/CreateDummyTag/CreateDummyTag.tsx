@@ -1,15 +1,16 @@
-import { Container, FormFieldSpacer, ButtonsContainer, Header, InputContainer, DropdownItem, TopContainer, SuffixTextField, ErrorContainer } from './CreateDummyTag.style';
+import { Area, CheckAreaTagNo, Discipline, PurchaseOrder, Tag } from '../types';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { ButtonsContainer, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { usePreservationContext } from '../../../context/PreservationContext';
-import { Tag, Discipline, Area, CheckAreaTagNo, PurchaseOrder } from '../types';
+
 import { Canceler } from 'axios';
-import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { useHistory } from 'react-router-dom';
+import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
@@ -325,7 +326,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     return (
         <div>
             <Header>
-                <h1>Create dummy tag</h1>
+                <Typography variant="h1">Create dummy tag</Typography>
                 <div>{project.name}</div>
             </Header>
             <TopContainer>

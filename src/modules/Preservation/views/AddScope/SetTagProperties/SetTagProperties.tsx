@@ -2,13 +2,14 @@ import { ButtonContainer, CenterContent, Container, Header, InputContainer, Requ
 import { Journey, Requirement, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import { Button } from '@equinor/eds-core-react';
-import Spinner from '../../../../../components/Spinner';
-import { usePreservationContext } from '../../../context/PreservationContext';
+import { TextField, Typography } from '@equinor/eds-core-react';
+
 import { AddScopeMethod } from '../AddScope';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { TextField } from '@equinor/eds-core-react';
+import { Button } from '@equinor/eds-core-react';
 import RequirementsSelector from '@procosys/modules/Preservation/components/RequirementsSelector/RequirementsSelector';
+import Spinner from '../../../../../components/Spinner';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { usePreservationContext } from '../../../context/PreservationContext';
 
 type SetTagPropertiesProps = {
     areaType: string;
@@ -147,7 +148,7 @@ const SetTagProperties = ({
         return (
             <div>
                 <Header>
-                    <h1>Add preservation scope</h1>
+                    <Typography variant="h1">Add preservation scope</Typography>
                     <div>{project.name}</div>
                 </Header>
                 <Container>
@@ -170,13 +171,13 @@ const SetTagProperties = ({
 
                 {
                     addScopeMethod === AddScopeMethod.MigrateTags && (
-                        <h1>Migrate preservation scope</h1>
+                        <Typography variant="h1">Migrate preservation scope</Typography>
                     )
                 }
 
                 {
                     addScopeMethod !== AddScopeMethod.MigrateTags && (
-                        <h1>Add preservation scope</h1>
+                        <Typography variant="h1">Add preservation scope</Typography>
                     )
                 }
 

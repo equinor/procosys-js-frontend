@@ -92,9 +92,4 @@ export const MenuItem = styled.div`
     a {
         text-decoration: none;
     }
-    
-    button svg {
-        height: 24px !important;
-        width: 24px !important;
-    }
 `;

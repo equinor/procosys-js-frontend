@@ -85,12 +85,12 @@ describe('Module: <SelectTags />', () => {
 
     it('Should not render search field when add-scope-method is autoscope.', () => {
         const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsAutoscope' />);
-        expect(queryByText('Type the start of a tag number and press enter to load tags')).not.toBeInTheDocument();
+        expect(queryByText('Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.')).not.toBeInTheDocument();
     });
 
     it('Should render search field when add-scope-method is manually', () => {
         const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsManually' />);
-        expect(queryByText('Type the start of a tag number and press enter to load tags')).toBeInTheDocument();
+        expect(queryByText('Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.')).toBeInTheDocument();
     });
 
 });

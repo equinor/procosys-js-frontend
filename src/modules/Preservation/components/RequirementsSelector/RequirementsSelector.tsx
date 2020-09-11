@@ -83,7 +83,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             const hasMatchingRequirement = props.requirements.some(
                 oldReq => {
                     return (oldReq.requirementDefinitionId === req.requirementDefinitionId
-                        && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided);
+                        && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided && oldReq.requirementId === req.requirementId);
                 });
             return !hasMatchingRequirement;
         }) || requirements.length !== props.requirements.length;
@@ -102,6 +102,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                     rowVersion: req.rowVersion
                 });
             });
+
             props.onChange(filtered);
         }
     }, [requirements]);

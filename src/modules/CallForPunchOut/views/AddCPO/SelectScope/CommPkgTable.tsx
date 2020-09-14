@@ -94,8 +94,8 @@ const CommPkgTable = forwardRef(({
         const tableDataIndex = availableCommPkgs.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
         if (selectedIndex > -1) {
             // remove from selected commPkgs
-            const copy = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
-            setSelectedCommPkgScope(copy);
+            const newSelectedCommPkgScope = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
+            setSelectedCommPkgScope(newSelectedCommPkgScope);
 
             // remove checked state from table data (needed to reflect change when navigating to "previous" step)
             const copyAvailableCommPkgs = [...availableCommPkgs];

@@ -86,9 +86,9 @@ const McPkgTable = forwardRef(({
         const tableDataIndex = availableMcPkgs.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
         if (selectedIndex > -1) {
             // remove from selected mcPkgs
-            const selectedCopy = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
-            const copy = {commPkgNoParent: selectedCopy.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(selectedCopy), selected: selectedCopy};
-            setSelectedMcPkgScope(copy);
+            const newSelected = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
+            const newSelectedMcPkgScope = {commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected};
+            setSelectedMcPkgScope(newSelectedMcPkgScope);
 
             // remove checked state from table data (needed to reflect change when navigating to "previous" step)
             const copyAvailableMcPkgs = [...availableMcPkgs];
@@ -112,15 +112,15 @@ const McPkgTable = forwardRef(({
         if (row.tableData && !row.tableData.checked) {
             unselectMcPkg(row.mcPkgNo);
         } else {
-            const copy = [...selectedMcPkgScope.selected, row];
-            setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(copy), selected: copy});
+            const newSelected = [...selectedMcPkgScope.selected, row];
+            setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
         }
     };
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
         const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.selected.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
-        const copy = [...selectedMcPkgScope.selected, ...rowsToAdd];
-        setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(copy), selected: copy});
+        const newSelected = [...selectedMcPkgScope.selected, ...rowsToAdd];
+        setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {

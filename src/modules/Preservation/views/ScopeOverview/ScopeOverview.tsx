@@ -28,8 +28,6 @@ import { showSnackbarNotification } from '../../../../core/services/Notification
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../context/PreservationContext';
 
-
-
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
         return null;
@@ -100,6 +98,14 @@ interface SupportedQueryStringFilters {
     calloff: string | null;
 }
 
+export interface SavedFilter {
+    id: number;
+    title: string;
+    criteria: string;
+    defaultFilter: boolean;
+    rowVersion: string;
+}
+
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -119,16 +125,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(() => {
-        const previousFilter = getCachedFilter(project.id);
-        if (previousFilter) {
-            return {
-                ...emptyTagListFilter,
-                ...previousFilter
-            };
-        }
-        return { ...emptyTagListFilter };
-    });
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ ...emptyTagListFilter });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
@@ -144,6 +141,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
     const [orderByField, setOrderByField] = useState<string | null>(null);
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
+    const [savedFilters, setSavedFilters] = useState<SavedFilter[] | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -155,6 +153,48 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
+
+    const getSavedFilters = async (): Promise<void> => {
+        try {
+            const response = await apiClient.getSavedTagListFilters(project.name);
+            setSavedFilters(response);
+        } catch (error) {
+            console.error('Get saved filters failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
+
+    useEffect((): void => {
+        getSavedFilters();
+    }, []);
+
+    useEffect((): void => {
+        if (savedFilters) {
+            const previousFilter = getCachedFilter(project.id);
+            if (previousFilter) {
+                setTagListFilter({
+                    ...previousFilter
+                });
+            } else {
+                const defaultFilter = getDefaultFilter();
+                if (defaultFilter) {
+                    setTagListFilter({
+                        ...defaultFilter
+                    });
+                }
+            };
+        }
+    }, [savedFilters, project]);
+
+    const getDefaultFilter = (): TagListFilter | null => {
+        if (savedFilters) {
+            const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
+            if (defaultFilter) {
+                return JSON.parse(defaultFilter.criteria);
+            }
+        };
+        return null;
+    };
 
     const updateModuleAreaHeightReference = (): void => {
         if (!moduleContainerRef.current) return;
@@ -222,20 +262,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const cancelerRef = useRef<Canceler | null>();
 
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
-        try {
-            cancelerRef.current && cancelerRef.current();
-            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
-                (response) => {
-                    setNumberOfTags(response.maxAvailable);
-                    return response;
+        if (savedFilters) {  //to avoid getting tags before we have set previous-/default filter
+            try {
+                cancelerRef.current && cancelerRef.current();
+                return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
+                    (response) => {
+                        setNumberOfTags(response.maxAvailable);
+                        return response;
+                    }
+                );
+            } catch (error) {
+                console.error('Get tags failed: ', error.message, error.data);
+                if (!error.isCancel) {
+                    showSnackbarNotification(error.message);
                 }
-            );
-        } catch (error) {
-            console.error('Get tags failed: ', error.message, error.data);
-            if (!error.isCancel) {
-                showSnackbarNotification(error.message);
             }
-        }
+        };
+
         return { maxAvailable: 0, tags: [] };
     };
 
@@ -818,13 +861,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
             </ContentContainer >
             {
-                displayFilter && (
+                displayFilter && savedFilters && (
                     <FilterContainer maxHeight={moduleAreaHeight}>
                         <ScopeFilter
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}
                             tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                            savedFilters={savedFilters}
+                            refreshSavedFilters={getSavedFilters}
                             setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                             selectedSavedFilterTitle={selectedSavedFilterTitle}
                             numberOfTags={numberOfTags}

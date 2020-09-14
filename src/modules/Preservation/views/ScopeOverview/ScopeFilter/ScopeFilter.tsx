@@ -17,6 +17,7 @@ import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 import { TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import { SavedFilter } from '../ScopeOverview';
 
 const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
 
@@ -24,6 +25,8 @@ interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+    savedFilters: SavedFilter[];
+    refreshSavedFilters: () => void;
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
@@ -133,6 +136,8 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
+    savedFilters,
+    refreshSavedFilters,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
     numberOfTags,
@@ -396,7 +401,10 @@ const ScopeFilter = ({
                 }}
                 onClose={(): void => setShowSavedFilters(false)}
             >
-                <SavedFilters tagListFilter={tagListFilter}
+                <SavedFilters
+                    savedFilters={savedFilters}
+                    refreshSavedFilters={refreshSavedFilters}
+                    tagListFilter={tagListFilter}
                     selectedSavedFilterTitle={selectedSavedFilterTitle}
                     setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                     setTagListFilter={setLocalTagListFilter}

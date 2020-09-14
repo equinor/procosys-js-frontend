@@ -1,17 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div`
-    padding: var(--margin-module--top) var(--margin-module--right);
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    h1 {
-        font-size: 36px;
-    }
-    overflow-y: scroll;
-`;
-
 export const ClosedProjectContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -25,7 +14,7 @@ export const ClosedProjectContainer = styled.div`
     background: ${tokens.colors.ui.background__warning.rgba};
 `;
 
-export const IconSpacer = styled.div`
+export const TextSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 4);
 `;
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { usePreservationContext } from './context/PreservationContext';
-import { ClosedProjectContainer, IconSpacer } from './style';
+import { ClosedProjectContainer, TextSpacer } from './style';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import { useProcosysContext } from '../../core/ProcosysContext';
@@ -10,8 +10,6 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 const CloseProjectWarning = (): JSX.Element | null => {
     const { procosysApiClient } = useProcosysContext();
     const { project } = usePreservationContext();
-
-    const warningIcon = <EdsIcon name='warning_outlined' color={tokens.colors.interactive.warning__resting.rgba} size={24} />;
 
     const [isProjectClosed, setIsProjectClosed] = useState<boolean>(false);
 
@@ -30,12 +28,17 @@ const CloseProjectWarning = (): JSX.Element | null => {
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();
+
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
     }, [project.id]);
 
     if (isProjectClosed) {
         return (
             <ClosedProjectContainer>
-                {warningIcon} <IconSpacer /> Selected project {project.name} is closed.
+                <EdsIcon name='warning_outlined' color={tokens.colors.interactive.warning__resting.rgba} size={24} />
+                <TextSpacer>Selected project {project.name} is closed.</TextSpacer>
             </ClosedProjectContainer>
         );
     }

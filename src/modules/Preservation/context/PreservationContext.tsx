@@ -38,20 +38,18 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
 
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [purchaseOrderNumber, setCurrentPurchaseOrderNumber] = useState<string>('');
-
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
 
     const setCurrentProject = (projectId: number): void => {
         if (!availableProjects || !projectId) {
             return;
         }
-
         const project = availableProjects.find(el => el.id === projectId);
         if (project) {
             setCurrentProjectInContext(project);
-            return;
+        } else {
+            throw new InvalidProjectException();
         }
-        throw new InvalidProjectException();
     };
 
     let requestCanceler: Canceler;
@@ -89,13 +87,11 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
                 setCurrentProject(availableProjects[0].id);
             }
         }
-
     }, [availableProjects]);
 
     useEffect(() => {
         if (!currentProject) return;
         preservationCache.setDefaultProject(currentProject);
-
     }, [currentProject]);
 
     if (!currentProject) {

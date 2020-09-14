@@ -14,10 +14,9 @@ import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import { TagListFilter } from '../types';
+import { SavedTagListFilter, TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import { SavedFilter } from '../ScopeOverview';
 
 const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
 
@@ -25,8 +24,8 @@ interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
-    savedFilters: SavedFilter[];
-    refreshSavedFilters: () => void;
+    savedTagListFilters: SavedTagListFilter[];
+    refreshSavedTagListFilters: () => void;
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
@@ -136,8 +135,8 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
-    savedFilters,
-    refreshSavedFilters,
+    savedTagListFilters: savedTagListFilters,
+    refreshSavedTagListFilters: refreshSavedTagListFilters,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
     numberOfTags,
@@ -402,8 +401,8 @@ const ScopeFilter = ({
                 onClose={(): void => setShowSavedFilters(false)}
             >
                 <SavedFilters
-                    savedFilters={savedFilters}
-                    refreshSavedFilters={refreshSavedFilters}
+                    savedTagListFilters={savedTagListFilters}
+                    refreshSavedTagListFilters={refreshSavedTagListFilters}
                     tagListFilter={tagListFilter}
                     selectedSavedFilterTitle={selectedSavedFilterTitle}
                     setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}

@@ -3,20 +3,18 @@ import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import Checkbox from '../../../../../components/Checkbox';
 import { ListContainer, Container, Header, Divider, Link, Row } from './SavedFilters.style';
-import Spinner from '@procosys/components/Spinner';
-import { TagListFilter } from '../types';
+import { SavedTagListFilter, TagListFilter } from '../types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import CloseIcon from '@material-ui/icons/Close';
 import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
-import { SavedFilter } from '../ScopeOverview';
 
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const defaultTrueIcon = <EdsIcon name='star_filled' size={16} />;
 const defaultFalseIcon = <EdsIcon name='star_outlined' size={16} />;
 
 interface SavedFiltersProps {
-    savedFilters: SavedFilter[];
-    refreshSavedFilters: () => void;
+    savedTagListFilters: SavedTagListFilter[];
+    refreshSavedTagListFilters: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (tagListFilter: TagListFilter) => void;
     selectedSavedFilterTitle: string | null;
@@ -38,20 +36,20 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     //Set selected filter to null, if filter values are changed
     useEffect((): void => {
-        if (props.savedFilters && props.selectedSavedFilterTitle) {
-            const selectedFilterIndex = props.savedFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
+        if (props.savedTagListFilters && props.selectedSavedFilterTitle) {
+            const selectedFilterIndex = props.savedTagListFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
             setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != JSON.stringify(props.savedFilters[selectedFilterIndex].criteria)) {
+            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != JSON.stringify(props.savedTagListFilters[selectedFilterIndex].criteria)) {
                 props.setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }
         }
-    }, [props.savedFilters, props.tagListFilter]);
+    }, [props.savedTagListFilters, props.tagListFilter]);
 
     const onSaveFilter = async (): Promise<void> => {
         try {
             await apiClient.addSavedTagListFilter(project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.tagListFilter));
-            props.refreshSavedFilters();
+            props.refreshSavedTagListFilters();
             showSnackbarNotification('Filter is saved.', 5000);
             setSaveFilterMode(false);
         } catch (error) {
@@ -62,10 +60,10 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onDeleteFilter = async (index: number): Promise<void> => {
         try {
-            const filter = props.savedFilters && props.savedFilters[index];
+            const filter = props.savedTagListFilters && props.savedTagListFilters[index];
             if (filter) {
                 await apiClient.deleteSavedTagListFilter(filter.id, filter.rowVersion);
-                props.refreshSavedFilters();
+                props.refreshSavedTagListFilters();
                 showSnackbarNotification('Filter is deleted.', 5000);
             }
         } catch (error) {
@@ -74,10 +72,10 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         }
     };
 
-    const updateSavedFilter = async (filter: SavedFilter): Promise<void> => {
+    const updateSavedFilter = async (filter: SavedTagListFilter): Promise<void> => {
         try {
             await apiClient.updateSavedTagListFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
-            props.refreshSavedFilters();
+            props.refreshSavedTagListFilters();
             showSnackbarNotification('Filter is updated.', 5000);
         } catch (error) {
             console.error('Update scope filter failed: ', error.message, error.data);
@@ -86,19 +84,19 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     };
 
     const onSetDefaultValue = async (defaultValue: boolean, index: number): Promise<void> => {
-        if (props.savedFilters) {
-            const filter = props.savedFilters[index];
+        if (props.savedTagListFilters) {
+            const filter = props.savedTagListFilters[index];
             filter.defaultFilter = defaultValue;
             updateSavedFilter(filter);
             showSnackbarNotification('Filter is no longer default.', 5000);
-            props.refreshSavedFilters();
+            props.refreshSavedTagListFilters();
         }
     };
 
     const onSelectFilter = (index: number): void => {
-        if (props.savedFilters) {
-            props.setSelectedSavedFilterTitle(props.savedFilters[index].title);
-            props.setTagListFilter(JSON.parse(props.savedFilters[index].criteria));
+        if (props.savedTagListFilters) {
+            props.setSelectedSavedFilterTitle(props.savedTagListFilters[index].title);
+            props.setTagListFilter(JSON.parse(props.savedTagListFilters[index].criteria));
             props.onCloseRequest();
         }
     };
@@ -157,7 +155,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
             </div>
 
             <ListContainer>
-                {props.savedFilters && props.savedFilters.map((filter, index) => {
+                {props.savedTagListFilters && props.savedTagListFilters.map((filter, index) => {
                     return (
                         <React.Fragment key={`filter._${index}`}>
                             <Row isSelectedFilter={index == selectedFilterIndex} >

@@ -1,6 +1,6 @@
 import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types';
+import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -98,14 +98,6 @@ interface SupportedQueryStringFilters {
     calloff: string | null;
 }
 
-export interface SavedFilter {
-    id: number;
-    title: string;
-    criteria: string;
-    defaultFilter: boolean;
-    rowVersion: string;
-}
-
 const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
@@ -141,7 +133,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
     const [orderByField, setOrderByField] = useState<string | null>(null);
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
-    const [savedFilters, setSavedFilters] = useState<SavedFilter[] | null>(null);
+    const [savedTagListFilters, setSavedTagListFilters] = useState<SavedTagListFilter[] | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -154,10 +146,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
 
-    const getSavedFilters = async (): Promise<void> => {
+    const getSavedTagListFilters = async (): Promise<void> => {
         try {
             const response = await apiClient.getSavedTagListFilters(project.name);
-            setSavedFilters(response);
+            setSavedTagListFilters(response);
         } catch (error) {
             console.error('Get saved filters failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -165,11 +157,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     useEffect((): void => {
-        getSavedFilters();
+        getSavedTagListFilters();
     }, []);
 
     useEffect((): void => {
-        if (savedFilters) {
+        if (savedTagListFilters) {
             const previousFilter = getCachedFilter(project.id);
             if (previousFilter) {
                 setTagListFilter({
@@ -184,11 +176,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
             };
         }
-    }, [savedFilters, project]);
+    }, [savedTagListFilters, project]);
 
     const getDefaultFilter = (): TagListFilter | null => {
-        if (savedFilters) {
-            const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
+        if (savedTagListFilters) {
+            const defaultFilter = savedTagListFilters.find((filter) => filter.defaultFilter);
             if (defaultFilter) {
                 return JSON.parse(defaultFilter.criteria);
             }
@@ -262,7 +254,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const cancelerRef = useRef<Canceler | null>();
 
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
-        if (savedFilters) {  //to avoid getting tags before we have set previous-/default filter
+        if (savedTagListFilters) {  //to avoid getting tags before we have set previous-/default filter
             try {
                 cancelerRef.current && cancelerRef.current();
                 return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
@@ -861,15 +853,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
             </ContentContainer >
             {
-                displayFilter && savedFilters && (
+                displayFilter && savedTagListFilters && (
                     <FilterContainer maxHeight={moduleAreaHeight}>
                         <ScopeFilter
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}
                             tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
-                            savedFilters={savedFilters}
-                            refreshSavedFilters={getSavedFilters}
+                            savedTagListFilters={savedTagListFilters}
+                            refreshSavedTagListFilters={getSavedTagListFilters}
                             setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                             selectedSavedFilterTitle={selectedSavedFilterTitle}
                             numberOfTags={numberOfTags}

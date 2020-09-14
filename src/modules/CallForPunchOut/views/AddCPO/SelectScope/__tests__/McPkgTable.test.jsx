@@ -12,6 +12,8 @@ describe('<McPkgTable />', () => {
         expect(getByText('M-02 date')).toBeInTheDocument();
     });
 
-    //TODO: add more tests
+    test.todo('Should be able to remove mc packages from selected scope');
+    test.todo('Should render with selected mc pkgs');
+    test.todo('Should be able to add mc packages to selected scope');
 
 });

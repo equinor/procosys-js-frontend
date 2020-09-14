@@ -22,6 +22,8 @@ describe('<CommPkgTable />', () => {
         expect(getByText('MC')).toBeInTheDocument();
     });
 
-    //TODO: add more tests
+    test.todo('Should be able to remove comm packages from selected scope');
+    test.todo('Should render with selected comm pkgs');
+    test.todo('Should be able to add comm packages to selected scope');
 
 });

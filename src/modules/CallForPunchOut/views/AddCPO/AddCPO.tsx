@@ -75,22 +75,26 @@ const AddCPO = (): JSX.Element => {
     };
 
     const changeCompletedStatus = (isValid: boolean, step: number): void => {
-        setSteps(s => { return [...s.slice(step - 1, step), {...s[step], isCompleted: isValid,}, ...s.slice(step + 1)];});
+        setSteps(currentSteps => {
+            const updatedSteps = [...currentSteps];
+            updatedSteps[step - 1].isCompleted = isValid;
+            return updatedSteps;
+        });
     };
 
     useEffect(() => {
         if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
-            changeCompletedStatus(true, 0);
+            changeCompletedStatus(true, 1);
         } else {
-            changeCompletedStatus(false, 0);
+            changeCompletedStatus(false, 1);
         }
     }, [generalInfo]);
 
     useEffect(() => {
         if (selectedCommPkgScope.length > 0) {
-            changeCompletedStatus(true, 1);
+            changeCompletedStatus(true, 2);
         } else {
-            changeCompletedStatus(false, 1);
+            changeCompletedStatus(false, 2);
         }
     }, [selectedCommPkgScope]);
 

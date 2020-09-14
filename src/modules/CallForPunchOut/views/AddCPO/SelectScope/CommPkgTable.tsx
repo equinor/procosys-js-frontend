@@ -17,8 +17,6 @@ interface CommPkgTableProps {
     filter: string;
 }
 
-const KEYCODE_ENTER = 13;
-
 const today = new Date();
 const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
 
@@ -135,7 +133,7 @@ const CommPkgTable = forwardRef(({
 
     const getDescriptionColumn = (commPkg: CommPkgRow): JSX.Element => {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
+            <div className='tableCell'>
                 <Tooltip title={commPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
                     <div className='controlOverflow'>{commPkg.description}</div>
                 </Tooltip>
@@ -149,7 +147,7 @@ const CommPkgTable = forwardRef(({
 
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit', justifyContent: 'flex-end' }}>
+            <div className='tableCell goToMcCol'>
                 <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg.commPkgNo)}> 
                     <EdsIcon name='chevron_right'/>
                 </Button>
@@ -186,7 +184,7 @@ const CommPkgTable = forwardRef(({
                     selectionProps: (data: CommPkgRow): any => ({
                         disableRipple: true,
                     }),
-                    rowStyle: (data): any => ({
+                    rowStyle: (data): React.CSSProperties => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })
                 }}

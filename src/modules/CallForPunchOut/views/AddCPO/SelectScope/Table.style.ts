@@ -54,4 +54,13 @@ export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boole
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+
+    .tableCell {
+        display: flex;
+        align-items: center;
+    }
+
+    .goToMcCol {
+        justify-content: flex-end;
+    }
 `;

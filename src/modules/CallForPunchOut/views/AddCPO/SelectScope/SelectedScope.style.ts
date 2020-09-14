@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const SelectedScopeContainer = styled.div`
-    width: 30%;
+    flex: 1;
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
     margin-top: calc(var(--grid-unit) * -3);
     margin-left: calc(var(--grid-unit) * 5);

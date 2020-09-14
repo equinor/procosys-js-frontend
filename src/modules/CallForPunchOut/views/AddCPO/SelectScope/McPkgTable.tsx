@@ -144,7 +144,7 @@ const McPkgTable = forwardRef(({
 
     const getDescriptionColumn = (mcPkg: McPkgRow): JSX.Element => {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
+            <div className='tableCell'>
                 <Tooltip title={mcPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
                     <div className='controlOverflow'>{mcPkg.description}</div>
                 </Tooltip>
@@ -181,7 +181,7 @@ const McPkgTable = forwardRef(({
                         disabled: !enabled,
                         disableRipple: true,
                     }),
-                    rowStyle: (data): any => ({
+                    rowStyle: (data): React.CSSProperties => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })
                 }}

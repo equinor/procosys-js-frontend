@@ -8,7 +8,7 @@ export const Container = styled.div`
 export const SelectComponent = styled.div`
     display: flex;
     flex-direction: column;
-    width: 70%;
+    flex: 2;
 `;
 
 export const Header = styled.header`
@@ -48,17 +48,4 @@ export const TopContainer = styled.div`
     flex-direction: row;
     margin: calc(var(--grid-unit) * 3) 0;
     align-items: center;
-`;
-
-export const TagsHeader = styled.div`
-    font-weight: bold;
-`;
-
-export const LoadingContainer = styled.div`
-    background-color: ${tokens.colors.ui.background__default.rgba};
-    height: 100%;
-
-    h1 {
-        font-size: calc(var(--grid-unit) * 3);
-    }
 `;

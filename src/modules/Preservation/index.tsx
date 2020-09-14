@@ -6,12 +6,15 @@ import { PreservationContextProvider } from './context/PreservationContext';
 import React from 'react';
 import ScopeOverview from './views/ScopeOverview/ScopeOverview';
 import withAccessControl from '../../core/security/withAccessControl';
+import ClosedProjectWarning from './ClosedProjectWarning';
 
 const Preservation = (): JSX.Element => {
 
     const { url } = useRouteMatch();
+
     return (
         <PreservationContextProvider>
+            <ClosedProjectWarning />
             <Router basename={url}>
                 <Switch>
                     <Route

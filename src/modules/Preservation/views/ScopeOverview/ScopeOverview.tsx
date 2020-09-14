@@ -677,9 +677,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 return (
                                     <DropdownItem
                                         key={index}
-                                        onClick={(event): void =>
-                                            changeProject(event, index)
-                                        }
+                                        onClick={(event): void => changeProject(event, index)}
                                     >
                                         <div>{projectItem.description}</div>
                                         <div style={{ fontSize: '12px' }}>{projectItem.name}</div>

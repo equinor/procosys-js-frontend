@@ -61,3 +61,11 @@ export interface TagListFilter {
     responsibleIds: string[] | null;
     areaCodes: string[] | null;
 }
+
+export interface SavedTagListFilter {
+    id: number;
+    title: string;
+    criteria: string;
+    defaultFilter: boolean;
+    rowVersion: string;
+}

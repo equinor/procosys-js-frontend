@@ -225,6 +225,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
                 (response) => {
                     setNumberOfTags(response.maxAvailable);
+                    setSelectedTags([]);
                     return response;
                 }
             );
@@ -234,6 +235,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 showSnackbarNotification(error.message);
             }
         }
+        setSelectedTags([]);
         return { maxAvailable: 0, tags: [] };
     };
 

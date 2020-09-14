@@ -195,7 +195,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setResetTablePaging(true);
         refreshScopeList();
-        setSelectedTags([]);
     }, [tagListFilter]);
 
     useEffect(() => {
@@ -269,7 +268,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
-        setSelectedTags([]);
         deleteCachedFilter(project.id);
 
         if (numberOfFilters > 0) {
@@ -296,7 +294,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
             console.error('Transfer failed: ', error.message, error.data);
@@ -339,7 +336,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.startPreservation(startableTags.map(t => t.id));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
         } catch (error) {
             console.error('Start preservation failed: ', error.message, error.data);
@@ -380,7 +376,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.preserve(preservableTags.map(t => t.id));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been preserved for this week.');
         } catch (error) {
             console.error('Preserve failed: ', error.message, error.data);
@@ -426,7 +421,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
         } catch (error) {
             console.error('Complete failed: ', error.message, error.data);
@@ -467,7 +461,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been removed.');
         } catch (error) {
             console.error('Remove failed: ', error.message, error.data);
@@ -509,7 +502,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 await apiClient.voidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been voided.');
         } catch (error) {
             console.error('Voiding failed: ', error.message, error.data);
@@ -524,7 +516,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 await apiClient.unvoidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been unvoided.');
         } catch (error) {
             console.error('Unvoid failed: ', error.message, error.data);

@@ -4,8 +4,7 @@ import { IAuthService } from '../auth/AuthService';
 import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
 
-const Settings = require('../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g, '"'));
+import {ProCoSysSettings} from '../core/ProCoSysSettings';
 
 export type PlantResponse = {
     id: string;
@@ -49,11 +48,11 @@ interface TagIdResponse {
 class ProCoSysClient extends ApiClient {
 
     constructor(authService: IAuthService) {
-        super(authService, scopes.join(' '), Settings.externalResources.procosysApi.url);
+        super(authService, ProCoSysSettings.main.scopes.join(' '), ProCoSysSettings.main.url);
         this.client.interceptors.request.use((config) => {
             config.params = {
                 ...config.params,
-                'api-version': Settings.externalResources.procosysApi.version
+                'api-version': ProCoSysSettings.main.version
             };
             return config;
         }, (error) => Promise.reject(error));

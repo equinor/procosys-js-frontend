@@ -101,8 +101,10 @@ const ActionTab = ({
                     <CollapseInfo isClosed={action.isClosed} isExpanded={isExpanded}>
                         {action.title}
                     </CollapseInfo>
-                    {showNotificationIcon() && notificationIcon}
-                    {showAttachmentIcon() && attachmentIcon}
+                    <div style={{ whiteSpace: 'nowrap' }}>
+                        {showNotificationIcon() && notificationIcon}
+                        {showAttachmentIcon() && attachmentIcon}
+                    </div>
                 </Collapse>
                 {
                     isExpanded && (

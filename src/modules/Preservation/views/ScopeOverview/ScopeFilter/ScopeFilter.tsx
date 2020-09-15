@@ -136,13 +136,13 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
-    savedTagListFilters: savedTagListFilters,
-    refreshSavedTagListFilters: refreshSavedTagListFilters,
+    savedTagListFilters,
+    refreshSavedTagListFilters,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
     numberOfTags,
     exportTagsToExcel,
-    triggerFilterValuesRefresh: triggerFilterValuesRefresh
+    triggerFilterValuesRefresh
 }: ScopeFilterProps): JSX.Element => {
 
     const {

@@ -2,10 +2,12 @@ import {
     Route,
     RouteComponentProps,
     Switch,
+    useHistory,
     useParams,
     useRouteMatch
 } from 'react-router-dom';
 
+import AppInsightsAnalytics from '@procosys/core/services/Analytics/AppInsightsAnalytics';
 import { DirtyContextProvider } from '../core/DirtyContext';
 import Header from '../modules/Header';
 import LazyRoute from '../components/LazyRoute';
@@ -25,6 +27,9 @@ const Page404 = (): JSX.Element => {
 const ProcosysRouter = (): JSX.Element => {
     const { path } = useRouteMatch();
     const { plant } = useParams() as any;
+    const history = useHistory();
+    const Analytics = new AppInsightsAnalytics(history);
+
     return (
         <PlantContextProvider>
             <DirtyContextProvider>

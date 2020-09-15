@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import AddCPOHeader from './AddCPOHeader';
-import { ProgressBarSteps, GeneralInfoDetails } from '../../types';
+import { ProgressBarSteps, GeneralInfoDetails, Participant } from '../../types';
+import Participants from './Participants/Participants';
+import { SelectItem } from '@procosys/components/Select';
 
 export enum CreateStepEnum {
     GeneralInfo = 'General info',
@@ -24,10 +26,25 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     location: null
 };
 
+
+const initialParticipants: Participant[] = [
+    {
+        organization: 'Contractor',
+        person: null,
+        role: null
+    },
+    {
+        organization: 'Construction company',
+        person: null,
+        role: null
+    }
+];
+
 const AddCPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [currentStep, setCurrentStep] = useState<number>(1);
+    const [currentStep, setCurrentStep] = useState<number>(3);
+    const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
 
     const steps: ProgressBarSteps[] = [
         {title: CreateStepEnum.GeneralInfo, isCompleted: false},
@@ -52,10 +69,15 @@ const AddCPO = (): JSX.Element => {
             canBeCreated={false}
             currentStep={currentStep}
         />
-        <GeneralInfo
+        {/* <GeneralInfo
             generalInfo={generalInfo}
             setGeneralInfo={setGeneralInfo}
             fromMain={fromMain}
+        /> */}
+        <Participants 
+            participants={participants}
+            setParticipants={setParticipants}
+            isValid={false}
         />
     </>);
 };

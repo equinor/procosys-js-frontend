@@ -22,3 +22,21 @@ export type GeneralInfoDetails = {
     endTime: string | null;
     location?: string | null;
 }
+
+export type Person = {
+    id: number;
+    name: string;
+    cc: boolean;
+}
+
+export type RoleParticipant = {
+    id: number;
+    roleName: string;
+    persons: Person[] | null;
+}
+
+export type Participant = {
+    organization: string;
+    person: Person | null;
+    role: RoleParticipant | null;
+}

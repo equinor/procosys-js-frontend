@@ -145,7 +145,7 @@ export const CascadingItem = styled.ul`
 `;
 
 
-export const ItemContent = styled.div<{iconPadding?: boolean}>`
+export const ItemContent = styled.div`
     display: flex;
     align-items: center;
     padding: calc(var(--grid-unit) * 2);
@@ -158,17 +158,11 @@ export const ItemContent = styled.div<{iconPadding?: boolean}>`
         background-color: ${tokens.colors.ui.background__light.rgba};
     }
 
-    ${(props): any => props.iconPadding && css`
-        svg:first-of-type {
-            padding-right: calc(var(--grid-unit) * 2);
-        }
-    `}
-
     label > span {
         padding: 0px;
     }
 
-    .arrowIcon {
+    svg {
         margin-left: auto;
     }
     .MuiFormGroup-root {
@@ -183,7 +177,16 @@ interface TitleContentProps {
 
 export const TitleContent = styled.div<TitleContentProps>`
     display: flex;
-    align-items: center;
+    flex-direction: column;
+
+    > div {
+        display: flex;
+    }
+    > div:first-child {
+        margin-bottom: calc(var(--grid-unit) * 2);
+    }
+
+    /* align-items: center; */
     padding: var(--grid-unit) calc(var(--grid-unit) * 2);
     border: 0;
     font-weight: normal;
@@ -203,4 +206,18 @@ export const Label = styled.div<LabelProps>`
     ${(props): any => props.isVoided && css`
         color: ${tokens.colors.interactive.disabled__text.rgba};
     `}
+`;
+
+export const FilterContainer = styled.li`
+    overflow-x: hidden;
+    input {
+        width: 100%;
+        padding: calc(var(--grid-unit)*2);
+        border: none;
+        border-bottom: 1px solid #EFEFEF;
+        &:focus {
+            outline: none;
+        }
+    }
+
 `;

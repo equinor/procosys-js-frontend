@@ -1,12 +1,14 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent, FilterContainer } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { useClickOutsideNotifier } from './../../hooks';
+import { useClickOutsideNotifier } from '../../hooks';
 //import { Radio } from '@equinor/eds-core-react';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
+import { SelectItem } from '../Select';
+import { Participant } from '@procosys/modules/CallForPunchOut/types';
+import { SelectableItemProps } from '../Select/style';
+import EdsIcon from '../EdsIcon';
 
-export type SelectItem = {
+export type ParticipantItem = {
     text: string;
     value: any;
     selected?: boolean;
@@ -15,27 +17,36 @@ export type SelectItem = {
     title?: boolean;
     radioButtons?: boolean;
     radioOption?: string;
-    inRole?: boolean;
 };
+
 
 type SelectProps = {
     data: SelectItem[];
+    roles: SelectItem[];
+    persons: SelectItem[];
     disabled?: boolean;
     onChange?: (newValue: any) => void;
+    onPersonChange?: (newValue: any) => void;
     children: ReactNode;
     label?: string;
     isVoided?: boolean;
     maxHeight?: string;
     onRadioChange?: (itmValue: string, value: string) => void;
+    onFilter?: (input: string) => void;
 };
 
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
-const Select = ({
+const ParticipantPicker = ({
     disabled = false,
     data = [],
+    roles = [],
+    persons = [],
     onChange = (): void => {
+        /*eslint-disable-line no-empty */
+    },
+    onPersonChange = (): void => {
         /*eslint-disable-line no-empty */
     },
     children,
@@ -45,6 +56,7 @@ const Select = ({
     onRadioChange = (): void => {
         /*eslint-disable-line no-empty */
     },
+    onFilter
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -58,9 +70,12 @@ const Select = ({
         setIsOpen(!isOpen);
     };
 
-    const selectItem = (value: any): void => {
-        console.log('failed...');
-        onChange(value);
+    const selectItem = (value: any, inRole: boolean): void => {
+        if(inRole) {
+            onChange(value);
+        } else {
+            onPersonChange(value);
+        }
         setIsOpen(false);
     };
 
@@ -81,7 +96,11 @@ const Select = ({
         }
     }, [isOpen]);
 
-    const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
+    // const getRadioOptions = (itm : SelectItem): JSX.Element => {
+    // };
+
+
+    const createNodesForItems = (items: SelectItem[], inRole: boolean): JSX.Element[] => {
         return items.map((itm, index) => {
             if(itm.title) {
                 return <TitleItem
@@ -89,12 +108,15 @@ const Select = ({
                     tabIndex={0}
                 >
                     <TitleContent borderTop={index > 0} >
-                        {itm.text}
+                        <div>{itm.text}</div>
+                        <div>
+                            <div>To</div>
+                            <div>CC</div>
+                        </div>
                     </TitleContent>
                 </TitleItem>;
             }
-            if(!itm.children && itm.radioButtons) {
-                //console.log('itm', itm, 'option', itm.radioOption);
+            if(!itm.children && itm.radioButtons && itm.inRole) {
                 return (<SelectableItem
                     key={index}
                     role="option"
@@ -112,7 +134,6 @@ const Select = ({
                     </ItemContent>
                 </SelectableItem>);
             }
-
             if (!itm.children) {
                 return (<SelectableItem
                     key={index}
@@ -122,20 +143,18 @@ const Select = ({
                     data-value={itm.value}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ENTER &&
-                            selectItem(itm.value);
+                            selectItem(itm.value, inRole);
                     }}
                     onClick={(): void => {
-                        selectItem(itm.value);
+                        selectItem(itm.value, inRole);
                     }}
                     data-selected={!!itm.selected}
                 >
-                    <ItemContent iconPadding={itm.icon ? true : false}>
-                        {itm.icon || null}
+                    <ItemContent>
                         {itm.text}
                     </ItemContent>
                 </SelectableItem>);
             }
-
             return (<SelectableItem
                 key={index}
                 role="option"
@@ -149,13 +168,12 @@ const Select = ({
                 }}
                 data-selected={!!itm.selected}
             >
-                <ItemContent iconPadding={itm.icon ? true : false}>
-                    {itm.icon || null}
+                <ItemContent>
                     {itm.text}
-                    <KeyboardArrowRightIcon className='arrowIcon' />
+                    <EdsIcon name='chevron_right'/>
                 </ItemContent>
                 <CascadingItem>
-                    {createNodesForItems(itm.children)}
+                    {createNodesForItems(itm.children, true)}
                 </CascadingItem>
             </SelectableItem>);
         });
@@ -176,7 +194,7 @@ const Select = ({
                 {children}
 
                 <DropdownIcon voided={isVoided} disabled={disabled} >
-                    <KeyboardArrowDownIcon />
+                    <EdsIcon name='chevron_down' />
                 </DropdownIcon>
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
@@ -186,7 +204,13 @@ const Select = ({
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
-                    {createNodesForItems(data)}
+                    {onFilter && (
+                        <FilterContainer>
+                            <input autoFocus type="text" onKeyUp={(e): void => onFilter(e.currentTarget.value)} placeholder="Filter" />
+                        </FilterContainer>
+                    )}
+                    {createNodesForItems(roles, true)}
+                    {createNodesForItems(persons, false)}
                 </ul>
             )}
             {isOpen && data.length <= 0 && !disabled && (
@@ -198,4 +222,4 @@ const Select = ({
     );
 };
 
-export default Select;
+export default ParticipantPicker;

@@ -100,7 +100,7 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Document</DropdownItem>
                             </a>
                             { (ProCoSysSettings.ipo.enabled) &&
-                                <a href={`/${params.plant}/CallForPunchOut/AddCPO`}>
+                                <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </a>
                             }

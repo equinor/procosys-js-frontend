@@ -487,6 +487,9 @@ function getPreservationApiError(error: AxiosError): PreservationApiError {
     if (error.response.status == 404) {
         return new PreservationApiError(error.response.data, error.response);
     }
+    if (error.response.status == 403) {
+        return new PreservationApiError('You are not authorized to perform this operation.', error.response);
+    }
     if (error.response.status == 400) {
         try {
             // input and business validation errors

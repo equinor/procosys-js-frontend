@@ -134,6 +134,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [orderByField, setOrderByField] = useState<string | null>(null);
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
     const [savedTagListFilters, setSavedTagListFilters] = useState<SavedTagListFilter[] | null>(null);
+    const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
 
     const history = useHistory();
     const location = useLocation();
@@ -319,6 +320,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
+    const refreshFilterValues = (): void => {
+        setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
+    };
+
     let transferableTags: PreservedTag[];
     let nonTransferableTags: PreservedTag[];
 
@@ -329,6 +334,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
             console.error('Transfer failed: ', error.message, error.data);
@@ -371,6 +377,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.startPreservation(startableTags.map(t => t.id));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
         } catch (error) {
             console.error('Start preservation failed: ', error.message, error.data);
@@ -456,6 +463,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification('Selected tag(s) have been completed.');
         } catch (error) {
             console.error('Complete failed: ', error.message, error.data);
@@ -496,6 +504,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification('Selected tag(s) have been removed.');
         } catch (error) {
             console.error('Remove failed: ', error.message, error.data);
@@ -845,6 +854,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 displayFilter && savedTagListFilters && (
                     <FilterContainer maxHeight={moduleAreaHeight}>
                         <ScopeFilter
+                            triggerFilterValuesRefresh={triggerFilterValuesRefresh}
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}

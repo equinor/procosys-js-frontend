@@ -1,4 +1,4 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent, FilterContainer } from './style';
+import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent, FilterContainer, Info } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import { useClickOutsideNotifier } from '../../hooks';
 //import { Radio } from '@equinor/eds-core-react';
@@ -21,7 +21,6 @@ export type ParticipantItem = {
 
 
 type SelectProps = {
-    data: SelectItem[];
     roles: SelectItem[];
     persons: SelectItem[];
     disabled?: boolean;
@@ -32,7 +31,7 @@ type SelectProps = {
     isVoided?: boolean;
     maxHeight?: string;
     onRadioChange?: (itmValue: string, value: string) => void;
-    onFilter?: (input: string) => void;
+    onFilter: (input: string) => void;
 };
 
 const KEYCODE_ENTER = 13;
@@ -40,7 +39,6 @@ const KEYCODE_ESCAPE = 27;
 
 const ParticipantPicker = ({
     disabled = false,
-    data = [],
     roles = [],
     persons = [],
     onChange = (): void => {
@@ -61,6 +59,8 @@ const ParticipantPicker = ({
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
+    const filterInputRef = useRef<HTMLInputElement>(null);
+    const [activeFilter, setActiveFilter] = useState<boolean>(false);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -79,6 +79,14 @@ const ParticipantPicker = ({
         setIsOpen(false);
     };
 
+    const filter = (e: string): void => {
+        onFilter(e);
+        if(e.length > 0) {
+            setActiveFilter(true);
+        } else {
+            setActiveFilter(false);
+        }
+    };
     /**
      * Open dropdown to the left:
      * When there is not enough space on the right-hand side of the viewport, relative to the dropdown.
@@ -197,25 +205,26 @@ const ParticipantPicker = ({
                     <EdsIcon name='chevron_down' />
                 </DropdownIcon>
             </DropdownButton>
-            {isOpen && data.length > 0 && !disabled && (
+            {isOpen && !disabled && (
                 <ul ref={listRef}
                     className='container'
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
-                    {onFilter && (
-                        <FilterContainer>
-                            <input autoFocus type="text" onKeyUp={(e): void => onFilter(e.currentTarget.value)} placeholder="Filter" />
-                        </FilterContainer>
-                    )}
+                    
+                    <FilterContainer>
+                        <input 
+                            autoFocus 
+                            type="text" 
+                            onKeyUp={(e): void => filter(e.currentTarget.value)} 
+                            placeholder="Filter" 
+                        />
+                    </FilterContainer>
+                    {(activeFilter && persons.length < 1 && roles.length < 1 ) && <li data-value={-1}><Info>No items found</Info></li> }
+                    {!activeFilter && <li data-value={-1}><Info>Search to see results</Info></li> }
                     {createNodesForItems(roles, true)}
                     {createNodesForItems(persons, false)}
-                </ul>
-            )}
-            {isOpen && data.length <= 0 && !disabled && (
-                <ul style={{ boxShadow: 'none' }}>
-                    <li data-value={-1}>No items found</li>
                 </ul>
             )}
         </Container>

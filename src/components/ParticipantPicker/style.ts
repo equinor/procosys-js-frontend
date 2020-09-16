@@ -144,6 +144,9 @@ export const CascadingItem = styled.ul`
     }
 `;
 
+export const Info = styled.div`
+    background-color: ${tokens.colors.ui.background__default.rgba};
+`;
 
 export const ItemContent = styled.div`
     display: flex;

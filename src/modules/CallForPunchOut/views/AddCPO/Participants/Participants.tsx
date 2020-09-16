@@ -132,8 +132,9 @@ const Participants = ({
     setParticipants,
     isValid
 }: ParticipantsProps): JSX.Element => {
-    const [availableRoles, setAvailableRoles] = useState<SelectItem[]>(testRoles);
-    const [availablePersons, setAvailablePersons] = useState<SelectItem[]>(testPart);
+    const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
+    const [availablePersons, setAvailablePersons] = useState<SelectItem[]>([]);
+    const [filter, setFilter] = useState<string>('');
 
     const setOrganization = (value: string, index: number): void => {
         setParticipants(p => {
@@ -141,7 +142,6 @@ const Participants = ({
             participantsCopy[index].organization = value;
             return participantsCopy;
         });
-
     };
 
     const deleteParticipant = (index: number): void => {
@@ -205,7 +205,7 @@ const Participants = ({
         if (role) {
             setParticipants(p => {
                 const participantsCopy = [...p];
-                participantsCopy[index].role = {id: 123, roleName: role.text, persons: []};
+                participantsCopy[index].role = {id: 123, roleName: role.text, persons: null};
                 participantsCopy[index].person = null;
                 return participantsCopy;
             });
@@ -299,9 +299,17 @@ const Participants = ({
         console.log(participants);
     }, [participants]);
 
-    const onFilter = (): void => {
-        //TODO: filter
-    };
+    useEffect(() => {
+        if(filter.length > 0) {
+            setAvailablePersons(testPart.filter(p => p.text.toLocaleLowerCase().startsWith(filter.toLocaleLowerCase())));
+            setAvailableRoles(testRoles.filter(r => r.text.toLocaleLowerCase().startsWith(filter.toLocaleLowerCase())));
+        } else {
+            setAvailablePersons([]);
+            setAvailableRoles([]);
+        }
+    }, [filter]);
+
+    
 
     return (<Container>
         <FormContainer>
@@ -321,11 +329,10 @@ const Participants = ({
                                 onChange={(value): void => setRoleOnParticipant(value, index)}
                                 onPersonChange={(value): void => setPersonOnParticipant(value, index)}
                                 onRadioChange={(itmValue, value): void => updateRadioButtonParticipants(itmValue, value, index)}
-                                onFilter={onFilter}
-                                data={availableRoles.concat(availablePersons)}
                                 roles={availableRoles}
                                 persons={availablePersons}
                                 label={'Person/role'}
+                                onFilter={setFilter}
                             >
                                 {p.role || p.person ? getPersonRoleText(index) : 'Search to select' }
                             </ParticipantPicker>

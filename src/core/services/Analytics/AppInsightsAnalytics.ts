@@ -25,7 +25,7 @@ class AppInsightsAnalytics {
         this._service.loadAppInsights();
     };
 
-    trackUserAction(name: string, data: ICustomProperties): void {
+    trackUserAction(name: string, data?: ICustomProperties): void {
         this._service.trackEvent({ name: name }, data);
     }
 

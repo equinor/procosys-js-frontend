@@ -24,16 +24,10 @@ export default class ApiClient extends HttpClient {
             if (!this.authService) throw 'Missing authService initialization in API client';
             try {
                 const accessToken = await this.authService.getAccessTokenAsync(resource);
+                if (!accessToken) throw 'Failed to get AccessToken';
                 config.headers.common['Authorization'] = 'Bearer ' + accessToken.token;
             } catch (authError) {
-                if (['login_required'].indexOf(authError.errorCode) !== -1) {
-                    this.authService.login();
-                    return config;
-                }
-                if (['consent_required', 'interaction_required', 'login_required'].indexOf(authError.errorCode) !== -1) {
-                    this.authService.aquireConcent(resource);
-                    return config;
-                }
+                console.error('Failed to aquire token', authError);
                 throw authError;
             }
 

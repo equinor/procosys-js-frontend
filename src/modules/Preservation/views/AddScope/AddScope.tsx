@@ -25,7 +25,7 @@ export enum AddScopeMethod {
 }
 
 const AddScope = (): JSX.Element => {
-    const { apiClient, project } = usePreservationContext();
+    const { apiClient, project, purchaseOrderNumber } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
     const { method } = useParams() as any;
@@ -68,17 +68,23 @@ const AddScope = (): JSX.Element => {
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
     const [isSubmittingScope, setIsSubmittingScope] = useState(false);
 
+    const filterOnPurchaseOrderNumber = (tags: any[]): any[] => {
+        return tags.filter((r) => !purchaseOrderNumber || purchaseOrderNumber == r.purchaseOrderTitle);
+    };
+
     const getTagsForAutoscoping = async (): Promise<void> => {
         setIsLoading(true);
         try {
             let result: TagRow[] = [];
             result = await apiClient.getTagsByTagFunctionForAddPreservationScope(project.name);
 
-            if (result.length === 0) {
+            const filteredTags = filterOnPurchaseOrderNumber(result);
+
+            if (filteredTags.length === 0) {
                 showSnackbarNotification('No tags for autoscoping was found.', 5000);
             }
             setSelectedTags([]);
-            setScopeTableData(result);
+            setScopeTableData(filteredTags);
         } catch (error) {
             console.error('Search tags for autoscoping failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -92,11 +98,13 @@ const AddScope = (): JSX.Element => {
             let result: TagMigrationRow[] = [];
             result = await apiClient.getTagsForMigration(project.name);
 
-            if (result.length === 0) {
+            const filteredTags = filterOnPurchaseOrderNumber(result);
+
+            if (filteredTags.length === 0) {
                 showSnackbarNotification('No tags for migration was found.', 5000);
             }
             setSelectedTags([]);
-            setMigrationTableData(result);
+            setMigrationTableData(filteredTags);
         } catch (error) {
             console.error('Fetching tags for migration failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -228,7 +236,7 @@ const AddScope = (): JSX.Element => {
                     showSnackbarNotification(`No tag number starting with "${tagNo}" found`, 5000);
                 }
             }
-            const res = result.map((r): TagRow => {
+            const filteredTags = filterOnPurchaseOrderNumber(result).map((r): TagRow => {
                 return {
                     tagNo: r.tagNo,
                     description: r.description,
@@ -241,7 +249,7 @@ const AddScope = (): JSX.Element => {
                     tableData: { checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1 }
                 };
             });
-            setScopeTableData(res);
+            setScopeTableData(filteredTags);
         } catch (error) {
             console.error('Search tags failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);

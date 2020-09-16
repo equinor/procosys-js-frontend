@@ -4,8 +4,7 @@ import { IAuthService } from '../auth/AuthService';
 import PascalCaseConverter from '../util/PascalCaseConverter';
 import { RequestCanceler } from './HttpClient';
 
-const Settings = require('../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g, '"'));
+import {ProCoSysSettings} from '../core/ProCoSysSettings';
 
 export type PlantResponse = {
     id: string;
@@ -17,6 +16,13 @@ export type ProjectResponse = {
     name: string;
     description: string;
     parentDescription: string;
+}
+
+export type SingleProjectResponse = {
+    id: number;
+    name: string;
+    description: string;
+    isClosed: boolean;
 }
 
 interface TagFunctionResponse {
@@ -42,11 +48,11 @@ interface TagIdResponse {
 class ProCoSysClient extends ApiClient {
 
     constructor(authService: IAuthService) {
-        super(authService, scopes.join(' '), Settings.externalResources.procosysApi.url);
+        super(authService, ProCoSysSettings.main.scopes.join(' '), ProCoSysSettings.main.url);
         this.client.interceptors.request.use((config) => {
             config.params = {
                 ...config.params,
-                'api-version': Settings.externalResources.procosysApi.version
+                'api-version': ProCoSysSettings.main.version
             };
             return config;
         }, (error) => Promise.reject(error));
@@ -111,6 +117,24 @@ class ProCoSysClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
         return PascalCaseConverter.objectToCamelCase(result.data) as ProjectResponse[];
+    }
+
+    /**
+     * Get project 
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getProjectAsync(projectId: number, setRequestCanceller?: RequestCanceler): Promise<SingleProjectResponse> {
+        const endpoint = '/project';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectId
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        const result = await this.client.get(endpoint, settings);
+        return PascalCaseConverter.objectToCamelCase(result.data) as SingleProjectResponse;
     }
 
     /**

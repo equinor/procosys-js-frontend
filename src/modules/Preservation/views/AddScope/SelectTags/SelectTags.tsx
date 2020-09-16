@@ -24,25 +24,26 @@ type SelectTagsProps = {
 
 const KEYCODE_ENTER = 13;
 
-const tableColumns = [
-    { title: 'Tag no', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'MC pkg', field: 'mcPkgNo' },
-    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'Tag function', field: 'tagFunctionCode' },
-    {
-        title: 'Preserved',
-        field: 'isPreserved',
-        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
-    },
-];
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
-    const { project } = usePreservationContext();
+    const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+
+    const tableColumns = [
+        { title: 'Tag no', field: 'tagNo' },
+        { title: 'Description', field: 'description' },
+        { title: 'MC pkg', field: 'mcPkgNo' },
+        { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
+        { title: 'PO', field: 'purchaseOrderTitle', filtering: purchaseOrderNumber ? false : true },
+        { title: 'Comm pkg', field: 'commPkgNo' },
+        { title: 'Tag function', field: 'tagFunctionCode' },
+        {
+            title: 'Preserved',
+            field: 'isPreserved',
+            render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
+            filtering: false
+        },
+    ];
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -101,6 +102,10 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             <Header>
                 <Typography variant="h1">Add preservation scope</Typography>
                 <div>{project.name}</div>
+
+                {purchaseOrderNumber &&
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                }
             </Header>
             <TopContainer>
                 <InnerContainer>
@@ -110,16 +115,15 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                                 <TextField
                                     id="tagSearch"
                                     placeholder="Search by tag number"
-                                    helperText="Type the start of a tag number and press enter to load tags"
+                                    helperText="Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required."
                                     onKeyDown={(e: any): void => {
-                                        e.keyCode === KEYCODE_ENTER && props.searchTags(e.currentTarget.value);
+                                        e.keyCode === KEYCODE_ENTER && e.currentTarget.value.length > 1 && props.searchTags(e.currentTarget.value);
                                     }}
                                     onInput={(e: any): void => {
                                         e.currentTarget.value.length === 0 && props.searchTags(null);
                                     }}
                                 />
                             </Search>
-
                         )
                     }
                     {props.scopeTableData && props.scopeTableData.length > 0 && <TagsHeader>Select the tags that should be added to the preservation scope and click &apos;next&apos;</TagsHeader>}
@@ -129,12 +133,14 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </ButtonsContainer>
             </TopContainer>
-            {props.isLoading &&
+            {
+                props.isLoading &&
                 <LoadingContainer>
                     <Loading title="Loading tags" />
-                </LoadingContainer>}
+                </LoadingContainer>
+            }
             {
-                props.scopeTableData && props.scopeTableData.length > 0 && !props.isLoading &&
+                !props.isLoading &&
                 <Table
                     columns={tableColumns}
                     data={props.scopeTableData}

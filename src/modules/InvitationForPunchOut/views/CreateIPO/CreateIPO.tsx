@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
-import AddCPOHeader from './AddCPOHeader';
-import { Container } from './AddCPO.style';
+import CreateIPOHeader from './CreateIPOHeader';
+import { Container } from './CreateIPO.style';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -34,7 +34,7 @@ const initialSteps: ProgressBarSteps[] = [
     {title: CreateStepEnum.SummaryAndCreate, isCompleted: false}
 ];
 
-const AddCPO = (): JSX.Element => {
+const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [currentStep, setCurrentStep] = useState<number>(2);
@@ -118,7 +118,7 @@ const AddCPO = (): JSX.Element => {
     };
 
     return (<Container>
-        <AddCPOHeader
+        <CreateIPOHeader
             steps={steps}
             currentStep={currentStep}
             canBeCreated={canCreate}
@@ -148,4 +148,4 @@ const AddCPO = (): JSX.Element => {
     </Container>);
 };
 
-export default AddCPO;
+export default CreateIPO;

@@ -28,7 +28,7 @@ interface ScopeTableProps {
 enum ActionStatus {
     Closed = 'HasClosed',
     Open = 'HasOpen',
-    OverDue = 'HasOverDue'
+    OverDue = 'HasOverdue'
 }
 
 class ScopeTable extends React.Component<ScopeTableProps> {
@@ -42,7 +42,6 @@ class ScopeTable extends React.Component<ScopeTableProps> {
     }
 
     shouldComponentUpdate(nextProps: ScopeTableProps): boolean {
-        if (this.props.maxHeight != nextProps.maxHeight) return true;
         return false;
     }
 

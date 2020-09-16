@@ -3,7 +3,7 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Dropdown from '../../../../../components/Dropdown';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, DateTimeContainer, Container, PoTypeContainer, LocationContainer, FormContainer, ButtonContainer } from './GeneralInfo.style';
-import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/CallForPunchOut/types';
+import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { TextField as DateTimeField } from '@material-ui/core';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from '@procosys/http/HttpClient';

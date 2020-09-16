@@ -16,7 +16,7 @@ describe('<ErrorBoundary />', () => {
     console.error = jest.fn();
     it('Renders error with default message', () => {
         const { getByText } = render(<ErrorBoundary><FaultyComponent /></ErrorBoundary>);
-        expect(getByText('Sorry, an unexpected error occured')).toBeInTheDocument();
+        expect(getByText('An unexpected error occured')).toBeInTheDocument();
     });
 
     it('Renders error with custom error message', () => {
@@ -24,7 +24,7 @@ describe('<ErrorBoundary />', () => {
         expect(getByText('My custom error')).toBeInTheDocument();
     });
 
-    it('Renders error with custom error message', () => {
+    it('Renders component without error', () => {
         const { getByText } = render(<ErrorBoundary><SuccessfullComponent /></ErrorBoundary>);
         expect(getByText('Hello')).toBeInTheDocument();
     });

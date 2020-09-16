@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { DirtyContextProvider } from '../core/DirtyContext';
+import ErrorBoundary from '@procosys/components/ErrorBoundary';
 import Header from '../modules/Header';
 import LazyRoute from '../components/LazyRoute';
 import { PlantContextProvider } from '../core/PlantContext';
@@ -36,7 +37,7 @@ const ProcosysRouter = (): JSX.Element => {
                                 path={path}
                                 exact
                                 component={(routeProps: RouteComponentProps): JSX.Element =>
-                                    LazyRoute(UserGreeting, routeProps)
+                                    <ErrorBoundary>{LazyRoute(UserGreeting, routeProps)}</ErrorBoundary>
                                 }
                             />
                             <Route

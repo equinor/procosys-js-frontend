@@ -5,4 +5,5 @@ export const ErrorBoundaryContainer = styled.div`
     justify-content: center;
     align-items: center;
     flex: 1;
+    flex-direction: column;
 `;

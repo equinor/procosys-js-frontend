@@ -32,7 +32,13 @@ class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
         if (this.state.hasError) {
             return (
                 <ErrorBoundaryContainer>
-                    <Typography variant="h1">{!this.props.message ? 'Sorry, an unexpected error occured' : this.props.message}</Typography>
+                    <Typography variant="h1">{!this.props.message ? 'An unexpected error occured' : this.props.message}</Typography>
+                    {!this.props.message && (
+                        <>
+                            <Typography variant="h4">Please try to <a href="#" onClick={(): void => window.location.reload()}>refresh</a> the page, and see if the error persists.</Typography>
+                            <Typography variant="h6">The incident has been logged, contact support if the error is not resolved.</Typography>
+                        </>
+                    )}
                 </ErrorBoundaryContainer>);
         }
 

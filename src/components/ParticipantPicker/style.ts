@@ -170,8 +170,7 @@ export const ItemContent = styled.div`
     }
     .MuiFormGroup-root {
         flex-direction: row;
-    }
-    
+    }    
 `;
 
 interface TitleContentProps {
@@ -188,6 +187,9 @@ export const TitleContent = styled.div<TitleContentProps>`
     > div:first-child {
         margin-bottom: calc(var(--grid-unit) * 2);
     }
+    div {
+        margin-left: 0px;
+    }
 
     /* align-items: center; */
     padding: var(--grid-unit) calc(var(--grid-unit) * 2);
@@ -198,6 +200,17 @@ export const TitleContent = styled.div<TitleContentProps>`
     ${(props): any => props.borderTop && css`
         border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
     `}
+
+    .toCc {
+        > div:first-child {
+            margin-left: var(--grid-unit);
+            width: 32px;
+        }
+        > div:last-child {
+            width: 32px;
+            margin-left: 4px;
+        }
+    }
 `;
 
 interface LabelProps {

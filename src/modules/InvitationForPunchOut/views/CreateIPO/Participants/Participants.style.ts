@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Tooltip } from '@equinor/eds-core-react';
 
 interface DropdownProps {
     disabled?: boolean;
@@ -48,8 +49,14 @@ export const InputContainer = styled.div`
     > div:nth-child(2), > div:nth-child(1) {
         width: 300px;
     }
+    .controlOverflow {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 `;
 
 export const AddParticipantContainer = styled.div`
     max-width: 300px;
 `;
+

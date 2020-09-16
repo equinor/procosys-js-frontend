@@ -7,6 +7,8 @@ import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import ParticipantPicker from '@procosys/components/ParticipantPicker';
+import { Tooltip } from '@material-ui/core';
+
 
 const Organizations: SelectItem[] = [
     { text: 'Commissioning', value: 'Commissioning' },
@@ -29,18 +31,7 @@ const testRoles: SelectItem[] = [
         value: 'r_Electro',
         children: [
             {
-                text: 'Send to group',
-                value: 'r_Electro',
-                inRole: true
-            },
-            {
-                text: 'Send to following persons in group',
-                title: true,
-                value: '',
-                inRole: true
-            },
-            {
-                text: 'Elisabeth',
+                text: 'Elisabeth Bratli',
                 value: 'p_Elisabeth',
                 radioButtons: true,
                 radioOption: '1',
@@ -67,15 +58,6 @@ const testRoles: SelectItem[] = [
         text: 'Auto',
         value: 'r_auto',
         children: [
-            {
-                text: 'Send to group',
-                value: 'r_auto',
-            },
-            {
-                text: 'Send to following persons in group',
-                title: true,
-                value: '',
-            },
             {
                 text: 'Christine',
                 value: 'p_Christine',
@@ -331,7 +313,11 @@ const Participants = ({
                                 label={'Person/role'}
                                 onFilter={setFilter}
                             >
-                                {p.role || p.person ? getPersonRoleText(index) : 'Search to select' }
+                                <Tooltip title={p.role || p.person ? getPersonRoleText(index) : ''} arrow={true} enterDelay={200} enterNextDelay={100} disableHoverListener={!p.role && !p.person}>
+                                    <div className='controlOverflow'>
+                                        {p.role || p.person ? getPersonRoleText(index) : 'Search to select' }
+                                    </div>
+                                </Tooltip>
                             </ParticipantPicker>
                             {index > 1 &&
                                     <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>

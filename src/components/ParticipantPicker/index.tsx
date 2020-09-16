@@ -1,7 +1,6 @@
 import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent, FilterContainer, Info } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import { useClickOutsideNotifier } from '../../hooks';
-//import { Radio } from '@equinor/eds-core-react';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import { SelectItem } from '../Select';
 import { Participant } from '@procosys/modules/InvitationForPunchOut/types';
@@ -104,44 +103,67 @@ const ParticipantPicker = ({
         }
     }, [isOpen]);
 
-    // const getRadioOptions = (itm : SelectItem): JSX.Element => {
-    // };
+
+    const createChildNodes = (parentItem: SelectItem, items: SelectItem[]): JSX.Element[] => {
+        const groupOption = (<SelectableItem
+            key={0 + parentItem.value}
+            role="option"
+            selected={!!parentItem.selected}
+            tabIndex={0}
+            data-value={parentItem.value}
+            onKeyDown={(e): void => {
+                e.keyCode === KEYCODE_ENTER &&
+                    selectItem(parentItem.value, true);
+            }}
+            onClick={(): void => {
+                selectItem(parentItem.value, true);
+            }}
+            data-selected={!!parentItem.selected}
+        >
+            <ItemContent>
+                Send to group
+            </ItemContent>
+        </SelectableItem>);
+
+        const initial = (
+            <TitleItem
+                key={-1}
+                tabIndex={0}
+            >
+                <TitleContent borderTop={true} >
+                    <div>Send to following persons in group</div>
+                    <div className='toCc'>
+                        <div>To</div>
+                        <div>CC</div>
+                    </div>
+                </TitleContent>
+            </TitleItem>);
+
+        const radioOptions = items.map((itm, index) => {
+            return (<SelectableItem
+                key={index}
+                role="option"
+                selected={!!itm.selected}
+                tabIndex={0}
+                data-value={itm.value}
+                data-selected={!!itm.selected}
+            >
+                <ItemContent>
+                    <RadioGroup value={'radio'} name={'test'}>
+                        <FormControlLabel key={itm.value + '1'} name={itm.value} value={'1'} label={''} checked={itm.radioOption == '1'} control={<Radio onClick={(): void => onRadioChange(itm.value, '1')} />} />
+                        <FormControlLabel key={itm.value + '2'} name={itm.value} value={'2'} label={''} checked={itm.radioOption == '2'} control={<Radio onClick={(): void => onRadioChange(itm.value, '2')} />} />
+                    </RadioGroup>
+                    {itm.text}
+                </ItemContent>
+            </SelectableItem>);
+        });
+
+        return [groupOption, initial].concat(radioOptions);
+    };
 
 
     const createNodesForItems = (items: SelectItem[], inRole: boolean): JSX.Element[] => {
         return items.map((itm, index) => {
-            if(itm.title) {
-                return <TitleItem
-                    key={index}
-                    tabIndex={0}
-                >
-                    <TitleContent borderTop={index > 0} >
-                        <div>{itm.text}</div>
-                        <div>
-                            <div>To</div>
-                            <div>CC</div>
-                        </div>
-                    </TitleContent>
-                </TitleItem>;
-            }
-            if(!itm.children && itm.radioButtons && itm.inRole) {
-                return (<SelectableItem
-                    key={index}
-                    role="option"
-                    selected={!!itm.selected}
-                    tabIndex={0}
-                    data-value={itm.value}
-                    data-selected={!!itm.selected}
-                >
-                    <ItemContent>
-                        <RadioGroup value={itm.radioOption} name={'test'}>
-                            <FormControlLabel key={itm.value + '1'} name={itm.value} value={'1'} label={''} checked={itm.radioOption == '1'} control={<Radio onClick={(): void => onRadioChange(itm.value, '1')} />} />
-                            <FormControlLabel key={itm.value + '2'} name={itm.value} value={'2'} label={''} checked={itm.radioOption == '2'} control={<Radio onClick={(): void => onRadioChange(itm.value, '2')} />} />
-                        </RadioGroup>
-                        {itm.text}
-                    </ItemContent>
-                </SelectableItem>);
-            }
             if (!itm.children) {
                 return (<SelectableItem
                     key={index}
@@ -163,6 +185,7 @@ const ParticipantPicker = ({
                     </ItemContent>
                 </SelectableItem>);
             }
+            
             return (<SelectableItem
                 key={index}
                 role="option"
@@ -181,7 +204,7 @@ const ParticipantPicker = ({
                     <EdsIcon name='chevron_right'/>
                 </ItemContent>
                 <CascadingItem>
-                    {createNodesForItems(itm.children, true)}
+                    {createChildNodes(itm, itm.children)}
                 </CascadingItem>
             </SelectableItem>);
         });

@@ -2,11 +2,9 @@ import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
+import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
 import Qs from 'qs';
-
-const Settings = require('../../../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.libraryApi.scope.replace(/'/g,'"'));
 
 export interface AreaResponse {
     code: string;
@@ -57,8 +55,8 @@ class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            scopes.join(' '),
-            Settings.externalResources.libraryApi.url
+            ProCoSysSettings.library.scopes.join(' '),
+            ProCoSysSettings.library.url
         );
         this.client.interceptors.request.use(
             config => {

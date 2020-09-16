@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
-import AddCPOHeader from './AddCPOHeader';
+import CreateIPOHeader from './CreateIPOHeader';
 import { ProgressBarSteps, GeneralInfoDetails } from '../../types';
 
 export enum CreateStepEnum {
@@ -24,7 +24,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     location: null
 };
 
-const AddCPO = (): JSX.Element => {
+const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [currentStep, setCurrentStep] = useState<number>(1);
@@ -47,7 +47,7 @@ const AddCPO = (): JSX.Element => {
     }, [fromMain]);
 
     return (<>
-        <AddCPOHeader
+        <CreateIPOHeader
             steps={steps}
             canBeCreated={false}
             currentStep={currentStep}
@@ -60,4 +60,4 @@ const AddCPO = (): JSX.Element => {
     </>);
 };
 
-export default AddCPO;
+export default CreateIPO;

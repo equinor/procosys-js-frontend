@@ -4,7 +4,7 @@ import { useClickOutsideNotifier } from '../../hooks';
 //import { Radio } from '@equinor/eds-core-react';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import { SelectItem } from '../Select';
-import { Participant } from '@procosys/modules/CallForPunchOut/types';
+import { Participant } from '@procosys/modules/InvitationForPunchOut/types';
 import { SelectableItemProps } from '../Select/style';
 import EdsIcon from '../EdsIcon';
 

@@ -4,9 +4,7 @@ import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
-
-const Settings = require('../../../../settings.json');
-const scopes = JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g, '"'));
+import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -526,8 +524,8 @@ class PreservationApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            scopes.join(' '),
-            Settings.externalResources.preservationApi.url
+            ProCoSysSettings.preservation.scopes.join(' '),
+            ProCoSysSettings.preservation.url
         );
         this.client.interceptors.request.use(
             config => {

@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import Dropdown from '../../../../../components/Dropdown';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, Container, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
-import { ProjectDetails, GeneralInfoDetails, Participant } from '@procosys/modules/CallForPunchOut/types';
-import { TextField as DateTimeField } from '@material-ui/core';
+import { Participant } from '@procosys/modules/InvitationForPunchOut/types';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import ParticipantPicker from '@procosys/components/ParticipantPicker';
-//import SearchableSelect from '@procosys/components/SearchableSelect';
 
 const Organizations: SelectItem[] = [
     { text: 'Commissioning', value: 'Commissioning' },

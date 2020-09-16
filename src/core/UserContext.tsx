@@ -42,6 +42,7 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
             const plantResponse = await procosysApiClient.getAllPlantsForUserAsync((c) => {plantRequestCanceler = c;});
             setPlants(plantResponse);
         } catch (error) {
+            console.error(error);
             setErrorEncountered(true);
         }
 

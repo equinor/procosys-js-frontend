@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Typography } from '@equinor/eds-core-react';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { ProgressBarSteps } from '../../types';
-import { Container, HeaderContainer, ButtonContainer } from './AddCPOHeader.style';
+import { Container, HeaderContainer, ButtonContainer } from './CreateIPOHeader.style';
 
 type ProgressBarProps = {
     steps: ProgressBarSteps[];
@@ -10,7 +10,7 @@ type ProgressBarProps = {
     currentStep: number;
 }
 
-const AddCPOHeader = (props: ProgressBarProps): JSX.Element => {
+const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
 
     return (
         <Container>
@@ -26,4 +26,4 @@ const AddCPOHeader = (props: ProgressBarProps): JSX.Element => {
     );
 };
 
-export default AddCPOHeader;
+export default CreateIPOHeader;

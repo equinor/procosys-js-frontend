@@ -18,6 +18,7 @@ import OptionsDropdown from '../../components/OptionsDropdown';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
+import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
 
 type PlantItem = {
     text: string;
@@ -98,6 +99,11 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
+                            { (ProCoSysSettings.ipo.enabled) &&
+                                <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
+                                    <DropdownItem>Invitation for punch-out</DropdownItem>
+                                </a>
+                            }
                             <a href={`/${params.plant}/Hookup/New`}>
                                 <DropdownItem>Certificate</DropdownItem>
                             </a>

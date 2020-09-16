@@ -1,23 +1,23 @@
 import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
 import { Container } from './style';
-import { CallForPunchOutContextProvider } from './context/CallForPunchOutContext';
+import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
 import withAccessControl from '../../core/security/withAccessControl';
-import AddCPO from './views/AddCPO/AddCPO';
+import CreateIPO from './views/CreateIPO/CreateIPO';
 
 
-const CallForPunchOut = (): JSX.Element => {
+const InvitationForPunchOut = (): JSX.Element => {
 
     const { url } = useRouteMatch();
     return (
-        <CallForPunchOutContextProvider>
+        <InvitationForPunchOutContextProvider>
             <Container>
                 <Router basename={url}>
                     <Switch>
                         <Route
-                            path={'/AddCPO/:projectId?/:commPkgId?'}
+                            path={'/CreateIPO/:projectId?/:commPkgId?'}
                             exact
-                            component={AddCPO}
+                            component={CreateIPO}
                         />
                         <Route
                             component={(): JSX.Element =>
@@ -27,8 +27,8 @@ const CallForPunchOut = (): JSX.Element => {
                     </Switch>
                 </Router>
             </Container>
-        </CallForPunchOutContextProvider>
+        </InvitationForPunchOutContextProvider>
     );
 };
 
-export default withAccessControl(CallForPunchOut, ['PRESERVATION/READ']);
+export default withAccessControl(InvitationForPunchOut, ['PRESERVATION/READ']);

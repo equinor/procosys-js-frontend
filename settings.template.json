@@ -4,6 +4,13 @@
         "authority": "",
         "defaultScopes": "[]"
     },
+    "enabledFeatures": {
+        "ipo": "false",
+        "library": "true",
+        "preserveration": "true",
+        "graph": "true",
+        "main": "true"
+    },
     "externalResources": {
         "procosysApi": {
             "url": "",
@@ -16,6 +23,11 @@
             "version": ""
         },
         "preservationApi": {
+            "url": "",
+            "scope": "[]",
+            "version": ""
+        },
+        "ipoApi": {
             "url": "",
             "scope": "[]",
             "version": ""

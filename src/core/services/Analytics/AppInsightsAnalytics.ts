@@ -29,7 +29,13 @@ class AppInsightsAnalytics implements IAnalytics {
         this._service.trackEvent({ name: name }, data);
     }
 
-    trackException(data: IExceptionTelemetry): void {
+    trackException(exception: Error, id?: string): void {
+        const data: IExceptionTelemetry = {
+            exception: exception
+        };
+        if (id) {
+            data.id = id;
+        }
         this._service.trackException(data);
     }
 }

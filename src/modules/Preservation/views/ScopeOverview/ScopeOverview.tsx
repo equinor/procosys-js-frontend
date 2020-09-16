@@ -694,7 +694,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const navigateToOldPreservation = (): void => {
         analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
-        window.location.href = 'www.vg.no';
+        window.location.href = './OldPreservation';
     };
 
     return (

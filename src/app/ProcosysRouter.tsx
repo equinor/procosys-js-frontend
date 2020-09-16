@@ -10,6 +10,7 @@ import { DirtyContextProvider } from '../core/DirtyContext';
 import Header from '../modules/Header';
 import LazyRoute from '../components/LazyRoute';
 import { PlantContextProvider } from '../core/PlantContext';
+import { ProCoSysRootLayout } from './index.style';
 import React from 'react';
 
 const UserGreeting = React.lazy(() => import('./../modules/UserGreeting'));
@@ -27,35 +28,39 @@ const ProcosysRouter = (): JSX.Element => {
     return (
         <PlantContextProvider>
             <DirtyContextProvider>
-                <Header />
-                <Switch key={plant}>
-                    <Route
-                        path={path}
-                        exact
-                        component={(routeProps: RouteComponentProps): JSX.Element =>
-                            LazyRoute(UserGreeting, routeProps)
-                        }
-                    />
-                    <Route
-                        path={`${path}/preservation`}
-                        component={(routeProps: RouteComponentProps): JSX.Element =>
-                            LazyRoute(Preservation, routeProps)
-                        }
-                    />
-                    <Route
-                        path={`${path}/libraryv2`}
-                        component={(routeProps: RouteComponentProps): JSX.Element =>
-                            LazyRoute(PlantConfig, routeProps)
-                        }
-                    />
-                    <Route
-                        path={`${path}/callforpunchout`}
-                        component={(routeProps: RouteComponentProps): JSX.Element =>
-                            LazyRoute(CallForPunchOut, routeProps)
-                        }
-                    />
-                    <Route component={Page404} />
-                </Switch>
+                <ProCoSysRootLayout>
+                    <Header />
+                    <div id="root-content">
+                        <Switch key={plant}>
+                            <Route
+                                path={path}
+                                exact
+                                component={(routeProps: RouteComponentProps): JSX.Element =>
+                                    LazyRoute(UserGreeting, routeProps)
+                                }
+                            />
+                            <Route
+                                path={`${path}/preservation`}
+                                component={(routeProps: RouteComponentProps): JSX.Element =>
+                                    LazyRoute(Preservation, routeProps)
+                                }
+                            />
+                            <Route
+                                path={`${path}/libraryv2`}
+                                component={(routeProps: RouteComponentProps): JSX.Element =>
+                                    LazyRoute(PlantConfig, routeProps)
+                                }
+                            />
+                            <Route
+                                path={`${path}/callforpunchout`}
+                                component={(routeProps: RouteComponentProps): JSX.Element =>
+                                    LazyRoute(CallForPunchOut, routeProps)
+                                }
+                            />
+                            <Route component={Page404} />
+                        </Switch>
+                    </div>
+                </ProCoSysRootLayout>
             </DirtyContextProvider>
         </PlantContextProvider>
     );

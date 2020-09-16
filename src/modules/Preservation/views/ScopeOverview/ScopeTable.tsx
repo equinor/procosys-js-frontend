@@ -22,12 +22,13 @@ interface ScopeTableProps {
     setFirstPageSelected: () => void;
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
+    maxHeight?: number;
 }
 
 enum ActionStatus {
     Closed = 'HasClosed',
     Open = 'HasOpen',
-    OverDue = 'HasOverDue'
+    OverDue = 'HasOverdue'
 }
 
 class ScopeTable extends React.Component<ScopeTableProps> {
@@ -40,7 +41,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
         this.getTagNoColumn = this.getTagNoColumn.bind(this);
     }
 
-    shouldComponentUpdate(): boolean {
+    shouldComponentUpdate(nextProps: ScopeTableProps): boolean {
         return false;
     }
 
@@ -246,6 +247,9 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                             whiteSpace: 'nowrap',
                             fontFamily: 'Equinor',
                         },
+                        // Just a set value for now, this should be more dynamic in the future probably when the library supports more dynamic height of the table. 
+                        maxBodyHeight: `${this.props.maxHeight}px`,
+                        // --- 
                         rowStyle: (rowData): any => ({
                             opacity: isTagVoided(rowData) && 0.5,
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,

@@ -1,16 +1,16 @@
-import React from 'react';
-import { tokens } from '@equinor/eds-tokens';
-import { Button } from '@equinor/eds-core-react';
+import { Button, Typography } from '@equinor/eds-core-react';
+import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, TagsHeader, TopContainer } from './SelectMigrateTags.style';
 import { Tag, TagMigrationRow } from '../types';
-import { Container, Header, InnerContainer, ButtonsContainer, TopContainer, TagsHeader, LoadingContainer, ButtonSeparator } from './SelectMigrateTags.style';
-import { usePreservationContext } from '../../../context/PreservationContext';
-import Table from '../../../../../components/Table';
-import Loading from '../../../../../components/Loading';
-import { AddScopeMethod } from '../AddScope';
-import { useHistory } from 'react-router-dom';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { getFormattedDate } from '@procosys/core/services/DateService';
 
+import { AddScopeMethod } from '../AddScope';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import Loading from '../../../../../components/Loading';
+import React from 'react';
+import Table from '../../../../../components/Table';
+import { getFormattedDate } from '@procosys/core/services/DateService';
+import { tokens } from '@equinor/eds-tokens';
+import { useHistory } from 'react-router-dom';
+import { usePreservationContext } from '../../../context/PreservationContext';
 
 type SelectMigrateTagsProps = {
     selectedTags: Tag[];
@@ -32,34 +32,35 @@ const getFormattedsStartDate = (tag: TagMigrationRow): string => {
     return getFormattedDate(tag.startDate);
 };
 
-const tableColumns = [
-    { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
-    { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
-    { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
-    { title: 'Due', render: getFormattedDueDate },
-    { title: 'Start date', render: getFormattedsStartDate },
-    { title: 'Storage area', field: 'storageArea' },
-    { title: 'Mode', field: 'modeCode' },
-    {
-        title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
-    },
-    { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
-    {
-        title: 'Preserved',
-        field: 'isPreserved',
-        render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
-    },
-    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'MC pkg', field: 'mcPkgNo' },
-    { title: 'Tag function', field: 'tagFunctionCode' },
-];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
-    const { project } = usePreservationContext();
+    const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+
+    const tableColumns = [
+        { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
+        { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
+        { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
+        { title: 'Due', render: getFormattedDueDate },
+        { title: 'Start date', render: getFormattedsStartDate },
+        { title: 'Storage area', field: 'storageArea' },
+        { title: 'Mode', field: 'modeCode' },
+        {
+            title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
+        },
+        { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
+        {
+            title: 'Preserved',
+            field: 'isPreserved',
+            render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
+            filtering: false
+        },
+        { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
+        { title: 'PO', field: 'purchaseOrderTitle', filtering: purchaseOrderNumber ? false : true },
+        { title: 'Comm pkg', field: 'commPkgNo' },
+        { title: 'MC pkg', field: 'mcPkgNo' },
+        { title: 'Tag function', field: 'tagFunctionCode' },
+    ];
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -116,8 +117,12 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     return (
         <Container>
             <Header>
-                <h1>Migrate preservation scope</h1>
+                <Typography variant="h1">Migrate preservation scope</Typography>
                 <div>{project.name}</div>
+
+                {purchaseOrderNumber &&
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                }
             </Header>
             <TopContainer>
                 <InnerContainer>
@@ -148,7 +153,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
                     selection: true,
-                    selectionProps: {disableRipple: true},
+                    selectionProps: { disableRipple: true },
                     rowStyle: (data): any => ({
                         backgroundColor: data.tableData.checked && '#e6faec'
                     })

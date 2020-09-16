@@ -14,17 +14,22 @@ import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import { TagListFilter } from '../types';
+import { SavedTagListFilter, TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
+
+const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
     tagListFilter: TagListFilter;
     setTagListFilter: (filter: TagListFilter) => void;
+    savedTagListFilters: SavedTagListFilter[];
+    refreshSavedTagListFilters: () => void;
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
+    exportTagsToExcel: () => void;
 }
 
 interface FilterInput {
@@ -130,14 +135,18 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
+    savedTagListFilters: savedTagListFilters,
+    refreshSavedTagListFilters: refreshSavedTagListFilters,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
-    numberOfTags
+    numberOfTags,
+    exportTagsToExcel
 }: ScopeFilterProps): JSX.Element => {
 
     const {
         project,
         apiClient,
+        purchaseOrderNumber: purchaseOrderNumber
     } = usePreservationContext();
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
@@ -361,8 +370,11 @@ const ScopeFilter = ({
     return (
         <Container>
             <Header filterActive={filterActive}>
-                <h1>Filter</h1>
+                <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportTagsToExcel}>
+                        {ExcelIcon}
+                    </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
                         setAnchorElement(event.currentTarget);
@@ -388,7 +400,10 @@ const ScopeFilter = ({
                 }}
                 onClose={(): void => setShowSavedFilters(false)}
             >
-                <SavedFilters tagListFilter={tagListFilter}
+                <SavedFilters
+                    savedTagListFilters={savedTagListFilters}
+                    refreshSavedTagListFilters={refreshSavedTagListFilters}
+                    tagListFilter={tagListFilter}
                     selectedSavedFilterTitle={selectedSavedFilterTitle}
                     setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                     setTagListFilter={setLocalTagListFilter}
@@ -434,6 +449,7 @@ const ScopeFilter = ({
                                 onChange={(e: any): void => {
                                     setLocalTagListFilter({ ...localTagListFilter, purchaseOrderNoStartsWith: e.target.value });
                                 }}
+                                disabled={!!purchaseOrderNumber}
                                 value={localTagListFilter.purchaseOrderNoStartsWith || ''}
                                 onKeyDown={(e: any): void => {
                                     e.keyCode === KEYCODE_ENTER && triggerScopeListUpdate();
@@ -444,6 +460,7 @@ const ScopeFilter = ({
                             <TextField
                                 id="callOffNoSearch"
                                 placeholder="Search call off number"
+                                disabled={purchaseOrderNumber.includes('/')}
                                 onChange={(e: any): void => {
                                     setLocalTagListFilter({ ...localTagListFilter, callOffStartsWith: e.target.value });
                                 }}

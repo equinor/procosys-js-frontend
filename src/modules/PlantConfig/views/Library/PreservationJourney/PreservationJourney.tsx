@@ -7,18 +7,19 @@ import { Canceler } from 'axios';
 import Checkbox from './../../../../../components/Checkbox';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
+import { PreservationApiError } from '@procosys/modules/Preservation/http/PreservationApiClient';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
-const addIcon = <EdsIcon name='add' size={16} />;
-const upIcon = <EdsIcon name='arrow_up' size={16} />;
-const downIcon = <EdsIcon name='arrow_down' size={16} />;
-const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
-const duplicateIcon = <EdsIcon name='copy' size={16} />;
-const voidIcon = <EdsIcon name='delete_forever' size={16} />;
-const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
+const addIcon = <EdsIcon name='add'/>;
+const upIcon = <EdsIcon name='arrow_up'/>;
+const downIcon = <EdsIcon name='arrow_down'/>;
+const deleteIcon = <EdsIcon name='delete_to_trash'/>;
+const duplicateIcon = <EdsIcon name='copy'/>;
+const voidIcon = <EdsIcon name='delete_forever'/>;
+const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 const baseBreadcrumb = 'Library / Preservation journeys';
@@ -111,6 +112,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 setMappedModes(mappedModes);
             } catch (error) {
                 console.error('Get modes failed: ', error.message, error.data);
+                if (error instanceof PreservationApiError) {
+                    if (error.isCancel) return;
+                }
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -135,6 +139,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 setMappedResponsibles(mappedResponsibles);
             } catch (error) {
                 console.error('Get responsibles failed: ', error.message, error.data);
+                if (error instanceof PreservationApiError) {
+                    if (error.isCancel) return;
+                }
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);
@@ -156,6 +163,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             );
         } catch (error) {
             console.error('Get preservation journey failed: ', error.message, error.data);
+            if (error instanceof PreservationApiError) {
+                if (error.isCancel) return;
+            }
             showSnackbarNotification(error.message, 5000);
         }
         setIsLoading(false);
@@ -609,24 +619,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             }
             <ButtonContainer>
                 {newJourney.isVoided && newJourney.id != -1 &&
-                    <Button className='buttonIcon' variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
+                    <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
                         {deleteIcon} Delete
                     </Button>
                 }
                 <ButtonSpacer />
                 {!newJourney.isVoided && newJourney.id != -1 &&
-                    < Button className='buttonIcon' variant="outlined" onClick={duplicateJourney}>
+                    < Button  variant="outlined" onClick={duplicateJourney}>
                         {duplicateIcon} Duplicate
                     </Button>
                 }
                 <ButtonSpacer />
                 {newJourney.isVoided &&
-                    <Button className='buttonIcon' variant="outlined" onClick={unvoidJourney}>
+                    <Button variant="outlined" onClick={unvoidJourney}>
                         {unvoidIcon} Unvoid
                     </Button>
                 }
                 {!newJourney.isVoided && newJourney.id != -1 &&
-                    <Button className='buttonIcon' variant="outlined" onClick={voidJourney}>
+                    <Button variant="outlined" onClick={voidJourney}>
                         {voidIcon} Void
                     </Button>
                 }
@@ -768,13 +778,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             </Button>)
                                         }
                                         {(step.id != -1 && !step.isVoided) &&
-                                            (<Button disabled={canSave} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
+                                            (<Button disabled={canSave} variant='ghost' onClick={(): Promise<void> => voidStep(step)}>
                                                 {voidIcon} Void
                                             </Button>)
                                         }
 
                                         {(step.id != -1 && step.isVoided) &&
-                                            (<Button disabled={canSave} className='voidUnvoid' variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
+                                            (<Button disabled={canSave} variant='ghost' onClick={(): Promise<void> => unvoidStep(step)}>
                                                 {unvoidIcon} Unvoid
                                             </Button>)
                                         }

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection, Header, TagContainer, TagList } from './TagDetails.style';
+import React, { useEffect, useState } from 'react';
 
-import { Tag } from '../types';
-import { Header, TagList, TagContainer, Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection } from './TagDetails.style';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { Tag } from '../types';
+import { Typography } from '@equinor/eds-core-react';
 
 interface TagDetailsProps {
     selectedTags: Tag[];
@@ -53,7 +54,7 @@ const TagDetails = ({
                     <CollapseInfo>
                         {tag.tagNo}
                     </CollapseInfo>
-                    { removeTag &&
+                    {removeTag &&
                         <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
                             <DeleteOutlineIcon />
                         </IconButton>
@@ -66,7 +67,7 @@ const TagDetails = ({
                                 <ExpandHeader>Tag description</ExpandHeader>
                                 <div>{tag.description}</div>
                             </ExpandSection>
-                            { showMCPkg &&
+                            {showMCPkg &&
                                 <ExpandSection>
                                     <ExpandHeader>MC pkg</ExpandHeader>
                                     <div>{tag.mcPkgNo}</div>
@@ -82,7 +83,7 @@ const TagDetails = ({
     return (
         <div>
             <Header>
-                <h1>Selected tag(s)</h1>
+                <Typography variant="h1">Selected tag(s)</Typography>
             </Header>
             <div>
                 {selectedTags.length} tag(s) selected

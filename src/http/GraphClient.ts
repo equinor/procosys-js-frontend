@@ -3,10 +3,10 @@ import { AxiosRequestConfig } from 'axios';
 import {IAuthService} from '../auth/AuthService';
 import {RequestCanceler} from './HttpClient';
 
-const Settings = require('../../settings.json');
+import {ProCoSysSettings} from '../core/ProCoSysSettings';
 
-const RESOURCE_ID = JSON.parse(Settings.externalResources.graphApi.scope.replace(/'/g,'"')).join(' ');
-const BASE_URL = `${Settings.externalResources.graphApi.url}${Settings.externalResources.graphApi.version}`;
+const RESOURCE_ID = ProCoSysSettings.graph.scopes.join(' ');
+const BASE_URL = `${ProCoSysSettings.graph.url}${ProCoSysSettings.graph.version}`;
 
 export type ProfileResponse = {
     displayName: string;

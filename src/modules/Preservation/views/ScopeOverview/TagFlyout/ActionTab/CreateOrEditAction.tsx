@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
-import { Container, Header, InputContainer, ButtonContainer, ButtonSpacer, AttachmentsContainer } from './CreateOrEditAction.style';
-import { usePreservationContext } from '../../../../context/PreservationContext';
+import { AttachmentsContainer, ButtonContainer, ButtonSpacer, Container, Header, InputContainer } from './CreateOrEditAction.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import React, { useEffect, useRef, useState } from 'react';
+
 import ActionAttachments from './ActionAttachments';
+import DateFnsUtils from '@date-io/date-fns';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../../../context/PreservationContext';
 
 interface ActionTabProps {
     tagId: number;
@@ -75,7 +76,7 @@ const CreateOrEditAction = ({
 
             {!actionId &&
                 <Header>
-                    <h1>Create Action</h1>
+                    <Typography variant="h1">Create Action</Typography>
                 </Header>
             }
 

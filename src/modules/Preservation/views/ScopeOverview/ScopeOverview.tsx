@@ -1,6 +1,6 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, FilterDivider, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
+import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { PreservedTag, PreservedTags, Requirement, TagListFilter } from './types';
+import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -107,6 +107,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         availableProjects,
         setCurrentProject,
         apiClient,
+        purchaseOrderNumber: purchaseOrderNumber,
+        setCurrentPurchaseOrderNumber: setCurrentPurchaseOrderNumber
     } = usePreservationContext();
 
     const [selectedTags, setSelectedTags] = useState<PreservedTag[]>([]);
@@ -115,16 +117,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
-    const [tagListFilter, setTagListFilter] = useState<TagListFilter>(() => {
-        const previousFilter = getCachedFilter(project.id);
-        if (previousFilter) {
-            return {
-                ...emptyTagListFilter,
-                ...previousFilter
-            };
-        }
-        return { ...emptyTagListFilter };
-    });
+    const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ ...emptyTagListFilter });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
     const [voidedTagsSelected, setVoidedTagsSelected] = useState<boolean>();
@@ -140,6 +133,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
     const [orderByField, setOrderByField] = useState<string | null>(null);
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
+    const [savedTagListFilters, setSavedTagListFilters] = useState<SavedTagListFilter[] | null>(null);
 
     const history = useHistory();
     const location = useLocation();
@@ -148,6 +142,66 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const refreshScopeListCallback = useRef<() => void>();
     const isFirstRender = useRef<boolean>(true);
+
+    const moduleContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
+
+    const getSavedTagListFilters = async (): Promise<void> => {
+        try {
+            const response = await apiClient.getSavedTagListFilters(project.name);
+            setSavedTagListFilters(response);
+        } catch (error) {
+            console.error('Get saved filters failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
+
+    useEffect((): void => {
+        getSavedTagListFilters();
+    }, []);
+
+    useEffect((): void => {
+        if (savedTagListFilters) {
+            const previousFilter = getCachedFilter(project.id);
+            if (previousFilter) {
+                setTagListFilter({
+                    ...previousFilter
+                });
+            } else {
+                const defaultFilter = getDefaultFilter();
+                if (defaultFilter) {
+                    setTagListFilter({
+                        ...defaultFilter
+                    });
+                }
+            };
+        }
+    }, [savedTagListFilters, project]);
+
+    const getDefaultFilter = (): TagListFilter | null => {
+        if (savedTagListFilters) {
+            const defaultFilter = savedTagListFilters.find((filter) => filter.defaultFilter);
+            if (defaultFilter) {
+                return JSON.parse(defaultFilter.criteria);
+            }
+        };
+        return null;
+    };
+
+    const updateModuleAreaHeightReference = (): void => {
+        if (!moduleContainerRef.current) return;
+        setModuleAreaHeight(moduleContainerRef.current.clientHeight);
+    };
+
+    useEffect(() => {
+        updateModuleAreaHeightReference();
+        window.addEventListener('resize', updateModuleAreaHeightReference);
+
+        return (): void => {
+            window.removeEventListener('resize', updateModuleAreaHeightReference);
+        };
+
+    }, [moduleContainerRef, displayFilter]);
 
     const refreshScopeList = (): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current();
@@ -175,7 +229,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setResetTablePaging(true);
         refreshScopeList();
-        setSelectedTags([]);
     }, [tagListFilter]);
 
     useEffect(() => {
@@ -196,29 +249,33 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeListCallback.current = callback;
     };
 
-
     const cancelerRef = useRef<Canceler | null>();
 
     const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
-        try {
-            cancelerRef.current && cancelerRef.current();
-            return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
-                (response) => {
-                    setNumberOfTags(response.maxAvailable);
-                    return response;
+        if (savedTagListFilters) {  //to avoid getting tags before we have set previous-/default filter
+            try {
+                cancelerRef.current && cancelerRef.current();
+                return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
+                    (response) => {
+                        setNumberOfTags(response.maxAvailable);
+                        setSelectedTags([]);
+                        return response;
+                    }
+                );
+            } catch (error) {
+                console.error('Get tags failed: ', error.message, error.data);
+                if (!error.isCancel) {
+                    showSnackbarNotification(error.message);
                 }
-            );
-        } catch (error) {
-            console.error('Get tags failed: ', error.message, error.data);
-            if (!error.isCancel) {
-                showSnackbarNotification(error.message);
             }
-        }
+        };
+        setSelectedTags([]);
         return { maxAvailable: 0, tags: [] };
     };
 
     const exportTagsToExcel = async (): Promise<void> => {
         try {
+            showSnackbarNotification('Exporting filtered tags to Excel...');
             await apiClient.exportTagsToExcel(project.name, orderByField, orderDirection, tagListFilter).then(
                 (response) => {
                     const outputFilename = `Preservation tags-${project.name}.xlsx`;
@@ -232,6 +289,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     tempLink.remove();
                 }
             );
+            showSnackbarNotification('Filtered tags are exported to Excel');
         } catch (error) {
             console.error('Export tags to excel failed: ', error.message, error.data);
             if (!error.isCancel) {
@@ -245,7 +303,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
-        setSelectedTags([]);
         deleteCachedFilter(project.id);
 
         if (numberOfFilters > 0) {
@@ -272,7 +329,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
             console.error('Transfer failed: ', error.message, error.data);
@@ -315,7 +371,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.startPreservation(startableTags.map(t => t.id));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
         } catch (error) {
             console.error('Start preservation failed: ', error.message, error.data);
@@ -356,7 +411,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.preserve(preservableTags.map(t => t.id));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been preserved for this week.');
         } catch (error) {
             console.error('Preserve failed: ', error.message, error.data);
@@ -402,7 +456,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been completed.');
         } catch (error) {
             console.error('Complete failed: ', error.message, error.data);
@@ -443,7 +496,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been removed.');
         } catch (error) {
             console.error('Remove failed: ', error.message, error.data);
@@ -485,7 +537,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 await apiClient.voidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been voided.');
         } catch (error) {
             console.error('Voiding failed: ', error.message, error.data);
@@ -500,7 +551,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 await apiClient.unvoidTag(tag.id, tag.rowVersion);
             }
             refreshScopeList();
-            setSelectedTags([]);
             showSnackbarNotification('Selected tag(s) have been unvoided.');
         } catch (error) {
             console.error('Unvoid failed: ', error.message, error.data);
@@ -565,6 +615,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
+    /** Handle url on the format ...?project=<projectid>&pono=<purchase order no>&calloff=<call off no>*/
     useEffect((): void => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
@@ -609,6 +660,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     tagFilter.purchaseOrderNoStartsWith = supportedFilters.pono;
                     tagFilter.callOffStartsWith = supportedFilters.calloff;
 
+                    //Set supplier modus if POno is set 
+                    if (supportedFilters.pono) {
+                        let pono = supportedFilters.pono;
+                        if (supportedFilters.calloff) {
+                            pono = pono.concat(`/${supportedFilters.calloff}`);
+                        }
+                        setCurrentPurchaseOrderNumber(pono);
+                    }
+
                     setTagListFilter(tagFilter);
                     toggleFilter();
                 }
@@ -616,25 +676,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 showSnackbarNotification(`The requested project ${projectName} is not available`);
             }
         }
-
         // clear parameters in browser url
         history.replace('/');
 
     }, [location]);
 
     return (
-        <Container>
-            <ContentContainer>
+        <Container ref={moduleContainerRef}>
+            <ContentContainer withSidePanel={displayFilter}>
                 <OldPreservationLink>
-                    <Typography variant="caption">
-                        <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                            <a href="OldPreservation">Switch to old system</a>
-                        </Tooltip>
-                    </Typography>
+                    {!purchaseOrderNumber &&
+                        <Typography variant="caption">
+                            <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
+                                <a href="OldPreservation">Switch to old system</a>
+                            </Tooltip>
+                        </Typography>
+                    }
                 </OldPreservationLink>
                 <HeaderContainer>
                     <Header>
-                        <h1>Preservation tags</h1>
+                        <Typography variant="h1">Preservation tags</Typography>
                         <Dropdown
                             maxHeight='300px'
                             text={project.name}
@@ -644,9 +705,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 return (
                                     <DropdownItem
                                         key={index}
-                                        onClick={(event): void =>
-                                            changeProject(event, index)
-                                        }
+                                        onClick={(event): void => changeProject(event, index)}
                                     >
                                         <div>{projectItem.description}</div>
                                         <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
@@ -654,6 +713,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 );
                             })}
                         </Dropdown>
+                        {purchaseOrderNumber &&
+                            <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                        }
                         <Dropdown text="Add scope">
                             <Link to={'/AddScope/selectTagsManual'}>
                                 <DropdownItem>
@@ -687,7 +749,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title='Start preservation for selected tag(s)'
                             onClick={startPreservationDialog}
                             disabled={!startableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Start
                         </StyledButton>
                         <StyledButton
@@ -695,7 +757,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Transfer selected tag(s)"
                             onClick={transferDialog}
                             disabled={!transferableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Transfer
                         </StyledButton>
                         <StyledButton
@@ -703,7 +765,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             title="Complete selected tag(s)"
                             onClick={showCompleteDialog}
                             disabled={!completableTagsSelected}>
-                            <div className='iconNextToText' ><EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} /></div>
+                            <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Complete
                         </StyledButton>
                         <OptionsDropdown
@@ -734,11 +796,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
                             </DropdownItem>
-                            <DropdownItem
-                                disabled={false}
-                                onClick={async (): Promise<void> => { exportTagsToExcel(); }}>
-                                Export to Excel
-                            </DropdownItem>
                         </OptionsDropdown>
                         <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                             <div>
@@ -768,6 +825,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
+                    maxHeight={moduleAreaHeight}
                 />
                 {
                     displayFlyout && (
@@ -784,15 +842,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
             </ContentContainer >
             {
-                displayFilter && (
-                    <>
-                        <FilterDivider />
-                        <FilterContainer>
-                            <ScopeFilter onCloseRequest={(): void => {
+                displayFilter && savedTagListFilters && (
+                    <FilterContainer maxHeight={moduleAreaHeight}>
+                        <ScopeFilter
+                            onCloseRequest={(): void => {
                                 setDisplayFilter(false);
-                            }} tagListFilter={tagListFilter} setTagListFilter={setTagListFilter} setSelectedSavedFilterTitle={setSelectedSavedFilterTitle} selectedSavedFilterTitle={selectedSavedFilterTitle} numberOfTags={numberOfTags} />
-                        </FilterContainer>
-                    </>
+                            }}
+                            tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                            savedTagListFilters={savedTagListFilters}
+                            refreshSavedTagListFilters={getSavedTagListFilters}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            numberOfTags={numberOfTags}
+                            exportTagsToExcel={exportTagsToExcel} />
+                    </FilterContainer>
                 )
             }
         </Container >

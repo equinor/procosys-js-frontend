@@ -1,17 +1,18 @@
-import { ButtonContainer, Container, Header, InputContainer, SpinnerContainer, ErrorContainer } from './EditTagProperties.style';
-import { TagDetails, Step, Journey, RequirementType } from './types';
+import { Button, Typography } from '@equinor/eds-core-react';
+import { ButtonContainer, Container, ErrorContainer, Header, InputContainer, SpinnerContainer, ContentContainer } from './EditTagProperties.style';
+import { Journey, RequirementType, Step, TagDetails } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
-import { Button, Typography } from '@equinor/eds-core-react';
-import { usePreservationContext } from '../../context/PreservationContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { TextField } from '@equinor/eds-core-react';
-import { useParams, useHistory } from 'react-router-dom';
-import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
-import { showModalDialog } from '@procosys/core/services/ModalDialogService';
-import Spinner from '@procosys/components/Spinner';
+import { useHistory, useParams } from 'react-router-dom';
+
 import { Canceler } from 'axios';
 import { PreservationApiError } from '../../http/PreservationApiClient';
+import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
+import Spinner from '@procosys/components/Spinner';
+import { TextField } from '@equinor/eds-core-react';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { usePreservationContext } from '../../context/PreservationContext';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -56,7 +57,7 @@ const EditTagProperties = (): JSX.Element => {
     const [rowVersion, setRowVersion] = useState<string>('');
 
     /**
-     * Get Journeys
+     * Get tag details
      */
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -146,7 +147,7 @@ const EditTagProperties = (): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await apiClient.getJourneys(false, (cancel: Canceler) => requestCancellor = cancel);
+                const data = await apiClient.getJourneys(true, (cancel: Canceler) => requestCancellor = cancel);
                 setJourneys(data);
             } catch (error) {
                 console.error('Get journeys failed: ', error.message, error.data);
@@ -189,15 +190,22 @@ const EditTagProperties = (): JSX.Element => {
      * Map journeys into menu elements
      */
     useEffect(() => {
-        const mapped = journeys.map((itm: Journey) => {
+        const mapped = journeys.filter((journey) => !journey.isVoided).map((itm: Journey) => {
             return {
                 text: itm.title,
                 value: itm.id
             };
         });
+
+        //Add missing voided journey if applicable
+        if (tag && !mapped.some((journey) => journey.text == tag.journey.title)) {
+            const j = journeys.find((pJourney: Journey) => pJourney.id === tag.journey.id);
+            if (j) {
+                mapped.push({ text: j.title, value: j.id });
+            }
+        }
         setMappedJourneys(mapped);
     }, [journeys]);
-
 
     /**
      * Map Journey steps into menu elements
@@ -343,83 +351,84 @@ const EditTagProperties = (): JSX.Element => {
     };
 
     return (
-        <div>
+        <Container>
             <Header>
-                <h1>{tag ? `Editing ${tag.tagNo}` : 'Editing'}</h1>
+                <Typography variant="h1">{tag ? `Editing ${tag.tagNo}` : 'Editing'}</Typography>
                 <div>{project.name}</div>
             </Header>
-            {loading ?
-                <SpinnerContainer>
-                    <Spinner large />
-                </SpinnerContainer>
-                :
-                <Container>
-                    <div>
-                        {validationErrorMessage &&
-                            <ErrorContainer>
-                                (<Typography variant="caption">{validationErrorMessage}</Typography>)
-                            </ErrorContainer>
-                        }
-                        <InputContainer>
-                            <SelectInput
-                                maxHeight={'300px'}
-                                onChange={setJourneyFromForm}
-                                data={mappedJourneys}
-                                label={'Preservation journey for selected tag'}
+            {
+                loading ?
+                    <SpinnerContainer>
+                        <Spinner large />
+                    </SpinnerContainer>
+                    :
+                    <ContentContainer>
+                        <div>
+                            {validationErrorMessage &&
+                                <ErrorContainer>
+                                    (<Typography variant="caption">{validationErrorMessage}</Typography>)
+                                </ErrorContainer>
+                            }
+                            <InputContainer>
+                                <SelectInput
+                                    maxHeight={'300px'}
+                                    onChange={setJourneyFromForm}
+                                    data={mappedJourneys}
+                                    label={'Preservation journey for selected tag'}
+                                >
+                                    {(journey > -1 && journeys[journey].title) || 'Select journey'}
+                                </SelectInput>
+                            </InputContainer>
+                            <InputContainer>
+                                <SelectInput
+                                    onChange={(stepId): void => setSelectedStep(journey, stepId)}
+                                    data={mappedSteps}
+                                    disabled={poTag}
+                                    label={'Preservation step'}
+                                >
+                                    {(step && step.title) || 'Select step'}
+                                </SelectInput>
+                            </InputContainer>
+                            <InputContainer style={{ maxWidth: '480px' }}>
+                                <TextField
+                                    id={'Remark'}
+                                    label='Remark for whole preservation journey'
+                                    defaultValue={tag ? tag.remark : ''}
+                                    inputRef={remarkInputRef}
+                                    placeholder={'Write here'}
+                                    meta='Optional'
+                                    onChange={remarkOrStorageAreaChange}
+                                />
+                            </InputContainer>
+                            <InputContainer style={{ maxWidth: '150px' }}>
+                                <TextField
+                                    id={'StorageArea'}
+                                    label='Storage area'
+                                    defaultValue={tag ? tag.storageArea : ''}
+                                    inputRef={storageAreaInputRef}
+                                    placeholder='Write here'
+                                    meta='Optional'
+                                    onChange={remarkOrStorageAreaChange}
+                                />
+                            </InputContainer>
+                            <h2>Requirements for all selected tags</h2>
+                            <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)} />
+                        </div>
+                        <ButtonContainer>
+                            <Button onClick={cancel} variant="outlined">
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={saveDialog}
+                                color="primary"
+                                disabled={((!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
                             >
-                                {(journey > -1 && journeys[journey].title) || 'Select journey'}
-                            </SelectInput>
-                        </InputContainer>
-                        <InputContainer>
-                            <SelectInput
-                                onChange={(stepId): void => setSelectedStep(journey, stepId)}
-                                data={mappedSteps}
-                                disabled={poTag}
-                                label={'Preservation step'}
-                            >
-                                {(step && step.title) || 'Select step'}
-                            </SelectInput>
-                        </InputContainer>
-                        <InputContainer style={{ maxWidth: '480px' }}>
-                            <TextField
-                                id={'Remark'}
-                                label='Remark for whole preservation journey'
-                                defaultValue={tag ? tag.remark : ''}
-                                inputRef={remarkInputRef}
-                                placeholder={'Write here'}
-                                meta='Optional'
-                                onChange={remarkOrStorageAreaChange}
-                            />
-                        </InputContainer>
-                        <InputContainer style={{ maxWidth: '150px' }}>
-                            <TextField
-                                id={'StorageArea'}
-                                label='Storage area'
-                                defaultValue={tag ? tag.storageArea : ''}
-                                inputRef={storageAreaInputRef}
-                                placeholder='Write here'
-                                meta='Optional'
-                                onChange={remarkOrStorageAreaChange}
-                            />
-                        </InputContainer>
-                        <h2>Requirements for all selected tags</h2>
-                        <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)} />
-                    </div>
-                    <ButtonContainer>
-                        <Button onClick={cancel} variant="outlined">
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={saveDialog}
-                            color="primary"
-                            disabled={((!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
-                        >
-                            Save
-                        </Button>
-                    </ButtonContainer>
-                </Container>
+                                Save
+                            </Button>
+                        </ButtonContainer>
+                    </ContentContainer>
             }
-        </div>
+        </Container >
 
     );
 };

@@ -23,41 +23,41 @@ export class ProCoSysSettings {
     static auth = {
         clientId: Settings.auth.clientId,
         authority: Settings.auth.authority,
-        defaultScopes: Settings.auth.defaultScopes
+        defaultScopes: JSON.parse(Settings.auth.defaultScopes.replace(/'/g, '"'))
     };
 
     static ipo : Feature =  {
         scopes: JSON.parse(Settings.externalResources.ipoApi.scope.replace(/'/g, '"')),
         url: Settings.externalResources.ipoApi.url,
         version: Settings.externalResources.ipoApi.version,
-        enabled: (Settings.features.ipoEnabled == 'true'),
+        enabled: (Settings.enabledFeatures.ipo == 'true'),
     };
 
     static library : Feature =  {
         scopes: JSON.parse(Settings.externalResources.libraryApi.scope.replace(/'/g, '"')),
         url: Settings.externalResources.libraryApi.url,
         version: Settings.externalResources.libraryApi.version,
-        enabled: (Settings.features.libraryEnabled == 'true'),
+        enabled: (Settings.enabledFeatures.library == 'true'),
     };
 
     static preservation : Feature =  {
         scopes: JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g, '"')),
         url: Settings.externalResources.preservationApi.url,
         version: Settings.externalResources.preservationApi.version,
-        enabled: (Settings.features.preservationEnabled == 'true'),
+        enabled: (Settings.enabledFeatures.preservation == 'true'),
     };
 
     static main : Feature =  {
         scopes: JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g, '"')),
         url: Settings.externalResources.procosysApi.url,
         version: Settings.externalResources.procosysApi.version,
-        enabled: (Settings.features.mainEnabled == 'true'),
+        enabled: (Settings.enabledFeatures.main == 'true'),
     };
 
     static graph : Feature =  {
         scopes: JSON.parse(Settings.externalResources.graphApi.scope.replace(/'/g, '"')),
         url: Settings.externalResources.graphApi.url,
         version: Settings.externalResources.graphApi.version,
-        enabled: (Settings.features.graphEnabled == 'true'),
+        enabled: (Settings.enabledFeatures.graph == 'true'),
     };
 }

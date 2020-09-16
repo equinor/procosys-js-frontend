@@ -14,7 +14,7 @@ const authConfig: Configuration = {
     // }
 };
 
-const defaultLoginScopes = JSON.parse(ProCoSysSettings.auth.defaultScopes.replace(/'/g, '"'));
+const defaultLoginScopes = ProCoSysSettings.auth.defaultScopes;
 
 export interface IAuthService {
     /**

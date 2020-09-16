@@ -4,12 +4,12 @@
         "authority": "",
         "defaultScopes": "[]"
     },
-    "features": {
-        "ipoEnabled": "false",
-        "libraryEnabled": "true",
-        "preserverationEnabled": "true",
-        "graphEnabled": "true",
-        "mainEnabled": "true"
+    "enabledFeatures": {
+        "ipo": "false",
+        "library": "true",
+        "preserveration": "true",
+        "graph": "true",
+        "main": "true"
     },
     "externalResources": {
         "procosysApi": {

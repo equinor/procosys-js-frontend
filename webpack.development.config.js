@@ -29,7 +29,7 @@ module.exports = {
                 exclude: [
                     // these packages have problems with their sourcemaps
                     path.resolve(__dirname, 'node_modules/react-double-scrollbar'),
-                  ],
+                ],
             },
             {
                 test: /\.(scss|css)$/,
@@ -80,9 +80,13 @@ module.exports = {
     optimization: {
         splitChunks: {
             chunks: 'all'
-        }
+        },
+        minimize: false
     },
     plugins: [
+        new webpack.DefinePlugin({
+            __DEV__: JSON.stringify(true)
+        }),
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',

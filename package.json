@@ -11,8 +11,8 @@
         "url": "git+https://github.com/equinor/procosys-js-frontend.git"
     },
     "scripts": {
-        "start": "webpack-dev-server --hot",
-        "build": "webpack",
+        "start": "webpack-dev-server --config webpack.development.config.js --hot",
+        "build": "webpack --config webpack.production.config.js",
         "test": "jest",
         "test-watch": "jest --watch",
         "lint": "./node_modules/.bin/eslint",

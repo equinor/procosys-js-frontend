@@ -8,6 +8,7 @@ import {
 
 import { AnalyticsContextProvider } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { DirtyContextProvider } from '../core/DirtyContext';
+import ErrorBoundary from '@procosys/components/ErrorBoundary';
 import Header from '../modules/Header';
 import LazyRoute from '../components/LazyRoute';
 import { PlantContextProvider } from '../core/PlantContext';

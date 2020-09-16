@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Typography, Accordion } from '@equinor/eds-core-react';
 import { SelectedScopeContainer, AccordionContent, TextContainer } from './SelectedScope.style';
-import { CommPkgRow, McPkgRow } from '@procosys/modules/CallForPunchOut/types';
+import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 const {AccordionItem, AccordionHeader, AccordionPanel} = Accordion;

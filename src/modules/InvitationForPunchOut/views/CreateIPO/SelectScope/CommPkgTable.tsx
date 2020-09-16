@@ -3,7 +3,7 @@ import { Button} from '@equinor/eds-core-react';
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
-import { CommPkgRow } from '@procosys/modules/CallForPunchOut/types';
+import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
 import {Container} from './Table.style';

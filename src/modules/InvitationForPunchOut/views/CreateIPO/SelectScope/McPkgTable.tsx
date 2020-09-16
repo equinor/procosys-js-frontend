@@ -3,7 +3,7 @@ import {Container} from './Table.style';
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
-import {  McPkgRow, McScope } from '@procosys/modules/CallForPunchOut/types';
+import {  McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
 
 

@@ -8,7 +8,7 @@ import { Container } from './CreateIPO.style';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
-    poType: { text: 'DP (Discipline Punch)', value: 'DP' },
+    poType: null,
     title: null,
     description: null,
     startDate: null,

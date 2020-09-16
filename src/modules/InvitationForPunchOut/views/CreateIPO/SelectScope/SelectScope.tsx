@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { Container, Header, Search, ButtonsContainer, TopContainer, SelectComponent } from './SelectScope.style';
-import { CommPkgRow, McScope } from '@procosys/modules/CallForPunchOut/types';
+import { CommPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import SelectedScope from './SelectedScope';
 import EdsIcon from '@procosys/components/EdsIcon';
 import CommPkgTable from './CommPkgTable';

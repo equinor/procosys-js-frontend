@@ -3,11 +3,11 @@ import * as H from 'history';
 import { ICustomProperties, IExceptionTelemetry } from './types';
 
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import IAnalytics from './IAnalytics';
+import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
-const instrumentationKey = require('../../../../settings.json').instrumentationKey;
-
-class AppInsightsAnalytics {
+class AppInsightsAnalytics implements IAnalytics {
 
     _service: ApplicationInsights;
 
@@ -15,7 +15,7 @@ class AppInsightsAnalytics {
         const reactPlugin = new ReactPlugin();
         this._service = new ApplicationInsights({
             config: {
-                instrumentationKey: instrumentationKey,
+                instrumentationKey: ProCoSysSettings.instrumentationKey,
                 extensions: [reactPlugin],
                 extensionConfig: {
                     [reactPlugin.identifier]: { history: history }

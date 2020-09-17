@@ -15,7 +15,7 @@ export const InvitationForPunchOutContextProvider: React.FC = ({ children }): JS
     const { plant } = useCurrentPlant();
     const invitationForPunchOutApiClient = useMemo(() => new InvitationForPunchOutApiClient(auth), [auth]);
 
-    useEffect(() => {
+    useMemo(() => {
         invitationForPunchOutApiClient.setCurrentPlant(plant.id);
     }, [plant]);
 

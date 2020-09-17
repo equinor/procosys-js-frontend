@@ -52,12 +52,6 @@ const GeneralInfo = ({
     },[]);
 
     useEffect(() => {
-        if(fromMain) {
-            setPoTypeForm('DP');
-        }
-    }, [fromMain]);
-
-    useEffect(() => {
         if (filterForProjects.length <= 0) {
             setFilteredProjects(availableProjects);
             return;
@@ -70,7 +64,9 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
-        clearScope();
+        if(!fromMain) {
+            clearScope();
+        }
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
             setGeneralInfo(gi => {return {...gi, poType: newPoType};});
@@ -98,7 +94,7 @@ const GeneralInfo = ({
                     return (
                         <DropdownItem
                             key={index}
-                            onClick={(event): void =>
+                            onClick={(event: React.MouseEvent): void =>
                                 setProjectForm(event, index)
                             }
                         >
@@ -113,7 +109,6 @@ const GeneralInfo = ({
                     onChange={setPoTypeForm}
                     data={poTypes}
                     label={'Type of punch round'}
-                    disabled={fromMain}
                 >
                     {(generalInfo.poType && generalInfo.poType.text) || 'Select'}
                 </SelectInput>

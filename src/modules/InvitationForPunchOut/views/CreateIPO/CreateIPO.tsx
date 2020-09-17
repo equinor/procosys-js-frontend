@@ -37,7 +37,7 @@ const initialSteps: ProgressBarSteps[] = [
 const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [currentStep, setCurrentStep] = useState<number>(2);
+    const [currentStep, setCurrentStep] = useState<number>(1);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 

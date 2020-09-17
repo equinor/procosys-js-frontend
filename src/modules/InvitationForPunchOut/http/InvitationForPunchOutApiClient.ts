@@ -5,7 +5,6 @@ import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 
-
 export type ProjectResponse = {
     id: number;
     name: string;

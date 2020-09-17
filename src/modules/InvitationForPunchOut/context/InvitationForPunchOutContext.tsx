@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import propTypes from 'prop-types';
 import InvitationForPunchOutApiClient from '../http/InvitationForPunchOutApiClient';
 import { useCurrentPlant } from '../../../core/PlantContext';

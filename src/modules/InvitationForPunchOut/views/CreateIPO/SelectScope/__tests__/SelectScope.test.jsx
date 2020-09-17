@@ -37,7 +37,7 @@ describe('<SelectScope />', () => {
         expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
     });
 
-    it('Renders with disabled next button when not empty scope', async () => {
+    it('Renders with enabled next button when not empty scope', async () => {
         var propFunc = jest.fn();
         const { getByText } = render(<SelectScope selectedMcPkgScope={propFunc} selectedCommPkgScope={mockScope} isValid={true}/>);
         expect(getByText('Next').closest('button')).toHaveProperty('disabled', false);

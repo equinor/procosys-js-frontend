@@ -149,7 +149,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
 
-    const getSavedTagListFilters = async (): Promise<void> => {
+    const updateSavedTagListFilters = async (): Promise<void> => {
         try {
             const response = await apiClient.getSavedTagListFilters(project.name);
             setSavedTagListFilters(response);
@@ -160,32 +160,37 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     useEffect((): void => {
-        getSavedTagListFilters();
-    }, []);
+        if (project) {
+            updateSavedTagListFilters();
+        }
+    }, [project]);
 
     useEffect((): void => {
-        if (savedTagListFilters) {
-            const previousFilter = getCachedFilter(project.id);
-            if (previousFilter) {
+        const previousFilter = getCachedFilter(project.id);
+        if (previousFilter) {
+            setTagListFilter({
+                ...previousFilter
+            });
+        } else if (savedTagListFilters) {
+            const defaultFilter = getDefaultFilter();
+            if (defaultFilter) {
                 setTagListFilter({
-                    ...previousFilter
+                    ...defaultFilter
                 });
-            } else {
-                const defaultFilter = getDefaultFilter();
-                if (defaultFilter) {
-                    setTagListFilter({
-                        ...defaultFilter
-                    });
-                }
-            };
-        }
+            }
+        };
     }, [savedTagListFilters, project]);
 
     const getDefaultFilter = (): TagListFilter | null => {
         if (savedTagListFilters) {
             const defaultFilter = savedTagListFilters.find((filter) => filter.defaultFilter);
             if (defaultFilter) {
-                return JSON.parse(defaultFilter.criteria);
+                try {
+                    return JSON.parse(defaultFilter.criteria);
+                } catch (error) {
+                    console.error('Failed to parse default filter');
+                    analytics.trackException(error);
+                }
             }
         };
         return null;
@@ -867,7 +872,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             }}
                             tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
                             savedTagListFilters={savedTagListFilters}
-                            refreshSavedTagListFilters={getSavedTagListFilters}
+                            refreshSavedTagListFilters={updateSavedTagListFilters}
                             setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                             selectedSavedFilterTitle={selectedSavedFilterTitle}
                             numberOfTags={numberOfTags}

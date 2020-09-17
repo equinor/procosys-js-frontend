@@ -17,6 +17,7 @@ interface SelectScopeProps {
     next: () => void;
     previous: () => void;
     isValid: boolean;
+    commPkgId: number;
 }
 
 const KEYCODE_ENTER = 13;
@@ -29,7 +30,8 @@ const SelectScope = ({
     setSelectedMcPkgScope,
     next,
     previous,
-    isValid
+    isValid,
+    commPkgId
 }: SelectScopeProps): JSX.Element => {
     const [filter, setFilter] = useState<string>('');
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
@@ -44,7 +46,11 @@ const SelectScope = ({
         }
     }, [currentCommPkg]);
 
-    
+    useEffect(() => {
+        if(commPkgId) {
+            //coming from main
+        }
+    }, []);
 
     return (     
         <Container>
@@ -92,7 +98,7 @@ const SelectScope = ({
                     </Search>
                 </TopContainer>
                 
-                { currentCommPkg == null &&
+                { (currentCommPkg == null && commPkgId == null) &&
                     <CommPkgTable 
                         ref={commPkgRef}
                         selectedCommPkgScope={selectedCommPkgScope}
@@ -102,7 +108,7 @@ const SelectScope = ({
                         filter={filter}
                     />
                 }
-                { (currentCommPkg != null && type=='DP') &&
+                { ((currentCommPkg != null && type=='DP') || commPkgId) &&
                     <McPkgTable 
                         ref={mcPkgRef}
                         selectedMcPkgScope={selectedMcPkgScope}

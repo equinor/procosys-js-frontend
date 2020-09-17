@@ -136,6 +136,7 @@ const CreateIPO = (): JSX.Element => {
         { (currentStep == 2 && generalInfo.poType != null) &&
             <SelectScope 
                 type={generalInfo.poType.value}
+                commPkgId={params.commPkgId ? params.commPkgId : null}
                 selectedCommPkgScope={selectedCommPkgScope}
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}

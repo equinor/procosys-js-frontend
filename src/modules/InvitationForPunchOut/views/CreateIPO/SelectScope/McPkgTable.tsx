@@ -59,7 +59,7 @@ const McPkgTable = forwardRef(({
             setFilteredMcPkgs(allMcPkgs);
         })();
         return (): void => requestCanceler && requestCanceler();
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (filter.length <= 0) {

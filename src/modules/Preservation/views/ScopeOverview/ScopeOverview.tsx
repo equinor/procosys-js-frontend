@@ -26,6 +26,7 @@ import VoidDialog from './VoidDialog';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -138,6 +139,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const history = useHistory();
     const location = useLocation();
+    const analytics = useAnalytics();
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
@@ -690,6 +692,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     }, [location]);
 
+    const navigateToOldPreservation = (): void => {
+        analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
+        window.location.href = './OldPreservation';
+    };
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -697,7 +704,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     {!purchaseOrderNumber &&
                         <Typography variant="caption">
                             <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                                <a href="OldPreservation">Switch to old system</a>
+                                <Button variant="ghost" onClick={navigateToOldPreservation}>Switch to old system</Button>
                             </Tooltip>
                         </Typography>
                     }

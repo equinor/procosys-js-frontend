@@ -177,8 +177,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 setTagListFilter({
                     ...defaultFilter
                 });
+            } else {
+                refreshScopeList();
             }
-        };
+        }
     }, [savedTagListFilters, project]);
 
     const getDefaultFilter = (): TagListFilter | null => {

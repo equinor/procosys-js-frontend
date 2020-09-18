@@ -450,6 +450,23 @@ export class PreservationApiError extends Error {
     }
 }
 
+/**
+ * Wraps the data return in a promise and delays the response.
+ *
+ * @param data Any data that is to be returned by the promise
+ * @param fail Should the promise be rejected? Default: false
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function DelayData(data: any, fail = false): Promise<any> {
+    return new Promise((resolve, reject) => {
+        if (fail) {
+            setTimeout(() => reject(data), 3000);
+        } else {
+            setTimeout(() => resolve(data), 3000);
+        }
+    });
+}
+
 function getPreservationApiError(error: AxiosError): PreservationApiError {
     if (Axios.isCancel(error)) {
         const cancelledError = new PreservationApiError('The request was cancelled');

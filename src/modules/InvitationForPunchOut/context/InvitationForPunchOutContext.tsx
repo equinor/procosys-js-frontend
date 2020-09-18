@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import propTypes from 'prop-types';
+import InvitationForPunchOutApiClient from '../http/InvitationForPunchOutApiClient';
+import { useCurrentPlant } from '../../../core/PlantContext';
+import { useProcosysContext } from '../../../core/ProcosysContext';
 
 type InvitationForPunchOutContextProps = {
+    apiClient: InvitationForPunchOutApiClient;
 }
 
 const InvitationForPunchOutContext = React.createContext<InvitationForPunchOutContextProps>({} as InvitationForPunchOutContextProps);
 
 export const InvitationForPunchOutContextProvider: React.FC = ({ children }): JSX.Element => {
+    const { auth } = useProcosysContext();
+    const { plant } = useCurrentPlant();
+    const invitationForPunchOutApiClient = useMemo(() => new InvitationForPunchOutApiClient(auth), [auth]);
+
+    useMemo(() => {
+        invitationForPunchOutApiClient.setCurrentPlant(plant.id);
+    }, [plant]);
+
     return (
-        <InvitationForPunchOutContext.Provider value={{}}>
+        <InvitationForPunchOutContext.Provider value={{
+            apiClient: invitationForPunchOutApiClient
+        }}>
             {children}
         </InvitationForPunchOutContext.Provider>
     );

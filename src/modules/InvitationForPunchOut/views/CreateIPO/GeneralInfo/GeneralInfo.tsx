@@ -5,7 +5,7 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, DateTimeContainer, Container, PoTypeContainer, LocationContainer, FormContainer, ButtonContainer } from './GeneralInfo.style';
 import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { TextField as DateTimeField } from '@material-ui/core';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import { Canceler } from '@procosys/http/HttpClient';
 
 const poTypes: SelectItem[] = [
@@ -29,7 +29,7 @@ const GeneralInfo = ({
     isValid,
     clearScope
 }: GeneralInfoProps): JSX.Element => {
-    const { procosysApiClient } = useProcosysContext();
+    const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');   
@@ -37,7 +37,7 @@ const GeneralInfo = ({
     useEffect(() => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
-            const allProjects = await procosysApiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
+            const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
                 .then(projects => projects.map((project): ProjectDetails => {
                     return {
                         id: project.id,

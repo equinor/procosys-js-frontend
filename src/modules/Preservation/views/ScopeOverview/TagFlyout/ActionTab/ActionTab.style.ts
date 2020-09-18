@@ -68,9 +68,6 @@ export const CollapseInfo = styled.div<{ isExpanded: boolean; isClosed: boolean 
     padding-right: calc(var(--grid-unit) * 2);
     padding-bottom: calc(var(--grid-unit) + 4px);
     padding-left: calc(var(--grid-unit) * 2);    
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
 
     ${(props): any => props.isExpanded && !props.isClosed && css`
         color:${tokens.colors.interactive.primary__resting.rgba};

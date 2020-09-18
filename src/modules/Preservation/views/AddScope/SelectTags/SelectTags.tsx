@@ -11,6 +11,22 @@ import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 
+const tableColumns = [
+    { title: 'Tag no', field: 'tagNo' },
+    { title: 'Description', field: 'description' },
+    { title: 'MC pkg', field: 'mcPkgNo' },
+    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
+    { title: 'PO', field: 'purchaseOrderTitle' },
+    { title: 'Comm pkg', field: 'commPkgNo' },
+    { title: 'Tag function', field: 'tagFunctionCode' },
+    {
+        title: 'Preserved',
+        field: 'isPreserved',
+        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
+        filtering: false
+    },
+];
+
 type SelectTagsProps = {
     selectedTags: Tag[];
     scopeTableData: TagRow[];
@@ -28,22 +44,6 @@ const KEYCODE_ENTER = 13;
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
-
-    const tableColumns = [
-        { title: 'Tag no', field: 'tagNo' },
-        { title: 'Description', field: 'description' },
-        { title: 'MC pkg', field: 'mcPkgNo' },
-        { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-        { title: 'PO', field: 'purchaseOrderTitle', filtering: purchaseOrderNumber ? false : true },
-        { title: 'Comm pkg', field: 'commPkgNo' },
-        { title: 'Tag function', field: 'tagFunctionCode' },
-        {
-            title: 'Preserved',
-            field: 'isPreserved',
-            render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
-            filtering: false
-        },
-    ];
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];

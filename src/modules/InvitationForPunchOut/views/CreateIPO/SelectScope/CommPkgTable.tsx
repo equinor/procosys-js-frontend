@@ -7,6 +7,8 @@ import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
 import {Container} from './Table.style';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 
 interface CommPkgTableProps {
@@ -15,61 +17,79 @@ interface CommPkgTableProps {
     setCurrentCommPkg: (commPkgNo: string | null) => void;
     type: string;
     filter: string;
+    projectId: number;
 }
 
 const today = new Date();
 const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
 
-const dummyData: CommPkgRow[] = [
-    {
-        commPkgNo: 'Comm pkg 1',
-        description: 'Description 1',
-        status: 'PB',
-        mdpAccepted: date
-    },
-    {
-        commPkgNo: 'Comm pkg 2',
-        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        status: 'OK',
-        mdpAccepted: date
-    },
-    {
-        commPkgNo: 'test',
-        description: 'Description 3',
-        status: 'PA',
-        mdpAccepted: date
-    }
-];
+// const dummyData: CommPkgRow[] = [
+//     {
+//         commPkgNo: 'Comm pkg 1',
+//         description: 'Description 1',
+//         status: 'PB',
+//         mdpAccepted: date
+//     },
+//     {
+//         commPkgNo: 'Comm pkg 2',
+//         description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
+//         status: 'OK',
+//         mdpAccepted: date
+//     },
+//     {
+//         commPkgNo: 'test',
+//         description: 'Description 3',
+//         status: 'PA',
+//         mdpAccepted: date
+//     }
+// ];
 
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
     setSelectedCommPkgScope,
     setCurrentCommPkg,
     type,
-    filter
+    filter,
+    projectId
 }: CommPkgTableProps, ref): JSX.Element => {
+    const { apiClient } = useInvitationForPunchOutContext();
     const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
 
-    let requestCanceler: Canceler;
-    useEffect(() => {
-        (async (): Promise<void> => {
-            const allCommPkgs = dummyData; //TODO: API call for commpkgs
-            setAvailableCommPkgs(allCommPkgs);
-            setFilteredCommPkgs(allCommPkgs);
-        })();
-        return (): void => requestCanceler && requestCanceler();
-    },[]);
+
+    const getFilteredCommPkgs = async (): Promise<void> => {
+        try {
+            const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectId, '1')
+                .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
+                    return {
+                        commPkgNo: commPkg.commPkgNo,
+                        description: commPkg.description,
+                        status: commPkg.status,
+                        tableData: {
+                            checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+                        }
+                    };
+                }));
+            setFilteredCommPkgs(filteredCommPkgs);
+            console.log(filteredCommPkgs);
+        } catch (error) {
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
 
     useEffect(() => {
-        if (filter.length <= 0) {
-            setFilteredCommPkgs(dummyData);
-            return;
-        }
-        setFilteredCommPkgs(availableCommPkgs.filter((c: CommPkgRow) => {
-            return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
-        }));
-    }, [filter]);
+        getFilteredCommPkgs();
+    }, []);
+
+    // useEffect(() => {
+    //     if (filter.length <= 0) {
+    //         setFilteredCommPkgs(dummyData);
+    //         return;
+    //     }
+    //     setFilteredCommPkgs(availableCommPkgs.filter((c: CommPkgRow) => {
+    //         return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
+    //     }));
+    // }, [filter]);
 
     const removeAllSelectedCommPkgsInScope = (): void => {
         const commPkgNos: string[] = [];
@@ -159,7 +179,6 @@ const CommPkgTable = forwardRef(({
         { title: 'Comm pkg', field: 'commPkgNo' },
         { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
         { title: 'Comm status', field: 'status' },
-        { title: 'MDP accepted', field: 'mdpAccepted' },
         ... type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []
     ];
 

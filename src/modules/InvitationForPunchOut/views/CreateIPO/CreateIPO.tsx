@@ -133,7 +133,7 @@ const CreateIPO = (): JSX.Element => {
                 clearScope={clearScope}
             /> 
         } 
-        { (currentStep == 2 && generalInfo.poType != null) &&
+        { (currentStep == 2 && generalInfo.poType != null && generalInfo.projectId != null) &&
             <SelectScope 
                 type={generalInfo.poType.value}
                 commPkgId={params.commPkgId ? params.commPkgId : null}
@@ -144,6 +144,7 @@ const CreateIPO = (): JSX.Element => {
                 next={goToNextStep}
                 previous={goToPreviousStep}
                 isValid={steps[1].isCompleted}
+                projectId={generalInfo.projectId}
             /> 
         }
     </Container>);

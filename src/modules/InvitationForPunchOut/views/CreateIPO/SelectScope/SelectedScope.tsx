@@ -64,9 +64,6 @@ const SelectedScope = ({
                             <Typography variant='caption'>
                                 MDP accepted date
                             </Typography>
-                            <Typography variant='body_long'>
-                                {commPkg.mdpAccepted ? commPkg.mdpAccepted : '-' }
-                            </Typography>
                         </div>
                     </AccordionContent>
                 </AccordionPanel>

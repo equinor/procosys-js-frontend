@@ -18,6 +18,7 @@ interface SelectScopeProps {
     previous: () => void;
     isValid: boolean;
     commPkgId: number;
+    projectId: number;
 }
 
 const KEYCODE_ENTER = 13;
@@ -31,7 +32,8 @@ const SelectScope = ({
     next,
     previous,
     isValid,
-    commPkgId
+    commPkgId,
+    projectId
 }: SelectScopeProps): JSX.Element => {
     const [filter, setFilter] = useState<string>('');
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
@@ -106,6 +108,7 @@ const SelectScope = ({
                         setCurrentCommPkg={setCurrentCommPkg}
                         type={type}
                         filter={filter}
+                        projectId={projectId}
                     />
                 }
                 { ((currentCommPkg != null && type=='DP') || commPkgId) &&

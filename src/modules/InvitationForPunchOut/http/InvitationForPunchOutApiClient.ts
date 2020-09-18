@@ -11,6 +11,13 @@ export type ProjectResponse = {
     description: string;
 }
 
+export interface CommPkgResponse {
+    id: number;
+    commPkgNo: string;
+    description: string;
+    status: string;
+}
+
 /**
  * API for interacting with data in InvitationForPunchOut API.
  */
@@ -74,4 +81,22 @@ class InvitationForPunchOutApiClient extends ApiClient {
         const result = await this.client.get<ProjectResponse[]>(endpoint,settings);
         return result.data;
     }
+
+    /**
+     * Get comm pkgs starting with comm pkg no in project
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getCommPkgsAsync(projectId: number, startWith: string, setRequestCanceller?: RequestCanceler): Promise<CommPkgResponse[]> {
+        const endpoint = '/CommPkgs';
+        const settings: AxiosRequestConfig = {params: {
+            projectId: projectId,
+            startWithCommPkgNo: startWith
+        },};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
+        return result.data;
+    }
+    
 } export default InvitationForPunchOutApiClient;

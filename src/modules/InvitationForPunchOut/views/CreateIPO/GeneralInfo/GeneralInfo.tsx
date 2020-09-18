@@ -16,18 +16,23 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
+    next: () => void;
+    isValid: boolean;
+    clearScope: () => void;
 }
 
 const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
-    fromMain
+    fromMain,
+    next,
+    isValid,
+    clearScope
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
-    const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [isValidForm, setIsValidForm] = useState<boolean>(false);
+    const [filterForProjects, setFilterForProjects] = useState<string>('');   
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -65,6 +70,7 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
+        clearScope();
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
             setGeneralInfo(gi => {return {...gi, poType: newPoType};});
@@ -75,14 +81,6 @@ const GeneralInfo = ({
         event.preventDefault();
         setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id};});
     };
-
-    useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
-            setIsValidForm(true);
-        } else {
-            setIsValidForm(false);
-        }
-    }), [generalInfo];
 
     const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
 
@@ -124,6 +122,7 @@ const GeneralInfo = ({
                 id={'title'}
                 label='Title'
                 placeholder='Write here'
+                defaultValue={generalInfo.title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setGeneralInfo(gi => {return {...gi, title: e.target.value};}); 
                 }}
@@ -133,6 +132,7 @@ const GeneralInfo = ({
                 placeholder='Write here'
                 label='Description'
                 meta='Optional'
+                defaultValue={generalInfo.description}
                 multiline
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
                     setGeneralInfo(gi => {return {...gi, description: e.target.value};}); 
@@ -144,6 +144,7 @@ const GeneralInfo = ({
                     id='startDate'
                     label='From'
                     type='date'
+                    defaultValue={generalInfo.startDate}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -155,6 +156,7 @@ const GeneralInfo = ({
                     id='time'
                     label='Time'
                     type='time'
+                    defaultValue={generalInfo.startTime}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -166,6 +168,7 @@ const GeneralInfo = ({
                     id='endDate'
                     label='To'
                     type='date'
+                    defaultValue={generalInfo.endDate}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -177,6 +180,7 @@ const GeneralInfo = ({
                     id='time'
                     label='Time'
                     type='time'
+                    defaultValue={generalInfo.endTime}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -191,6 +195,7 @@ const GeneralInfo = ({
                     placeholder='Write here'
                     label='Location'
                     meta='Optional'
+                    defaultValue={generalInfo.location}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
                         setGeneralInfo(gi => {return {...gi, location: e.target.value};}); 
                     }}
@@ -199,7 +204,12 @@ const GeneralInfo = ({
         </FormContainer>
         <ButtonContainer>
             <Button constiant='outlined' disabled>Previous</Button>
-            <Button disabled={!isValidForm}>Next</Button>
+            <Button 
+                disabled={!isValid} 
+                onClick={next}
+            >
+                Next
+            </Button>
         </ButtonContainer>
     </Container>);
 };

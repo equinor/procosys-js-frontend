@@ -22,3 +22,31 @@ export type GeneralInfoDetails = {
     endTime: string | null;
     location?: string | null;
 }
+
+export interface CommPkgRow {
+    commPkgNo: string;
+    description: string;
+    status: string;
+    mdpAccepted: string;
+    tableData?: {
+        checked: boolean;
+    };
+}
+
+
+export interface McPkgRow {
+    mcPkgNo: string;
+    description: string;
+    m01: string;
+    m02: string;
+    discipline: string;
+    tableData?: {
+        checked: boolean;
+    };
+}
+
+export interface McScope {
+    commPkgNoParent: string | null;
+    multipleDisciplines: boolean;
+    selected: McPkgRow[];
+}

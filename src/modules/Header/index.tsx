@@ -44,7 +44,6 @@ const Header: React.FC = (): JSX.Element => {
         setCurrentPlant(filteredPlants[plantIndex].value as string);
     };
 
-
     useEffect(() => {
         if (filterForPlants.length <= 0) {
             setFilteredPlants(allPlants);
@@ -297,7 +296,7 @@ const Header: React.FC = (): JSX.Element => {
                     <MenuItem className={'compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
-                                <EdsIcon name='account_circle'/>
+                                <EdsIcon name='account_circle' />
                                 {user.name}
                             </Button>
                         </a>
@@ -325,12 +324,19 @@ const Header: React.FC = (): JSX.Element => {
                 <a href={`/${params.plant}/Documents`}>Document</a>
                 <a href={`/${params.plant}/Notification`}>Notification</a>
                 <a href={`/${params.plant}/Hookup`}>Hookup</a>
-                <NavLink
-                    activeClassName={'active'}
-                    to={`/${params.plant}/libraryv2`}
-                >
-                    Plant Configuration
-                </NavLink>
+                {__DEV__ && (
+                    <NavLink
+                        activeClassName={'active'}
+                        to={`/${params.plant}/libraryv2`}
+                    >
+                        Plant Configuration
+                    </NavLink>
+                )}
+                {!__DEV__ && (
+                    <a href={`/${params.plant}/PlantConfig`}>
+                        Plant Configuration
+                    </a>
+                )}
             </SubNav>
         </div>
     );

@@ -89,7 +89,7 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                             <EdsIcon
                                 name="account_circle"
                                 color="grey"
-                                size={58}
+                                size={48}
                             />
                             <div>
                                 <Typography variant="body_long_bold">{organizer.company}</Typography>
@@ -105,7 +105,7 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                     <FlexContainer padding="calc(var(--grid-unit) * 2)">
                         <Typography variant="h5">Response from participants</Typography>
                     </FlexContainer>
-                    <FlexContainer padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    <FlexContainer data-testid="attending" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
                         <Typography variant="body_long_bold">Attending</Typography>
                         {attending.map(p => {
                             return (
@@ -117,7 +117,7 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         }
                         )}
                     </FlexContainer>
-                    <FlexContainer padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    <FlexContainer data-testid="tentative" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
                         <Typography variant="body_long_bold">Tentative</Typography>
                         {tentative.map(p => {
                             return (
@@ -129,7 +129,7 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         }
                         )}
                     </FlexContainer>
-                    <FlexContainer padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    <FlexContainer data-testid="not_responded" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
                         <Typography variant="body_long_bold">Not responded</Typography>
                         {notResponded.map(p => {
                             return (
@@ -141,7 +141,7 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         }
                         )}
                     </FlexContainer>
-                    <FlexContainer padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    <FlexContainer data-testid="declined" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
                         <Typography variant="body_long_bold">Declined</Typography>
                         {declined.map(p => {
                             return (

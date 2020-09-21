@@ -2,47 +2,47 @@ import { Participant, ResponseType } from './index';
 
 export const participants: Participant[] = [
     {
-        name: 'Adwa Addw dwa Akndw',
-        email: 'kjhasd@lkjasd.com',
-        company: 'EQUI',
+        name: 'Jan Erik Hagevold',
+        email: 'jehag@equinor.com',
+        company: 'Bouvet ASA',
         response: ResponseType.ATTENDING
     },
     {
-        name: 'Jan Erik Hagevold',
-        email: 'jehag@equinor.com',
-        company: 'EQUI',
+        name: 'Elisabeth Bratli',
+        email: 'elibra@equinor.com',
+        company: 'Bouvet ASA',
         response: ResponseType.TENTATIVE
     },
     {
-        name: 'Pkjabw Odwalk',
-        email: 'lkjawc@equinor.com',
-        company: 'EQUI',
+        name: 'Jan Inge Dalsbø',
+        email: 'jdalsb@equinor.com',
+        company: 'Bouvet ASA',
         response: ResponseType.TENTATIVE
     },
     {
-        name: 'Jan Erik Hagevold',
-        email: 'jcklwaclakjj@equinor.com',
-        company: 'EQUI',
+        name: 'Pål Eie',
+        email: 'paeie@equinor.com',
+        company: 'Bouvet ASA',
         response: ResponseType.NOT_RESPONDED
     },
     {
-        name: 'Jan Erik Hagevold',
-        email: 'wwwwwwww@equinor.com',
-        company: 'EQUI',
+        name: 'Christer Nordbø',
+        email: 'cnordb@equinor.com',
+        company: 'Bouvet ASA',
         response: ResponseType.DECLINED
     },
     {
-        name: 'Jan Erik Hagevold',
-        email: 'clclclcwajjk@equinor.com',
-        company: 'EQUI',
-        response: ResponseType.DECLINED
+        name: 'Nora Lykke Strøm Larsen',
+        email: 'norl@equinor.com',
+        company: 'Bouvet ASA',
+        response: ResponseType.TENTATIVE
     },
 ];
 
 export const organizer: Participant = {
-    name: 'Organizer Name',
-    email: 'aslkncv@equinor.com',
-    company: 'ASPD'
+    name: 'Christine Emberland Smith',
+    email: 'csm@equinor.com',
+    company: 'Bouvet ASA'
 };
 
 

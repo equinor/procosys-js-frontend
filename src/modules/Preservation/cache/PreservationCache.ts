@@ -1,4 +1,4 @@
-import CacheService from '../../../core/CacheService';
+import CacheService from '../../../core/services/CacheService';
 import { ProjectDetails } from '../types';
 
 enum storageKeys {

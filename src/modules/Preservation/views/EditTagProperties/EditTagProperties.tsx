@@ -6,7 +6,7 @@ import SelectInput, { SelectItem } from '../../../../components/Select';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { Canceler } from 'axios';
-import { PreservationApiError } from '../../http/PreservationApiClient';
+import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 import RequirementsSelector from '../../components/RequirementsSelector/RequirementsSelector';
 import Spinner from '@procosys/components/Spinner';
 import { TextField } from '@equinor/eds-core-react';
@@ -233,7 +233,7 @@ const EditTagProperties = (): JSX.Element => {
         }
     }, [journey]);
 
-    const handleErrorFromBackend = (error: PreservationApiError, errorMessageConsole: string): void => {
+    const handleErrorFromBackend = (error: ProCoSysApiError, errorMessageConsole: string): void => {
         if (error.data && error.data.status == 400) {
             console.error(errorMessageConsole, error.message, error.data);
             setValidationErrorMessage(error.message);

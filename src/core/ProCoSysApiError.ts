@@ -10,7 +10,7 @@ interface ErrorResponse {
 
 export enum ErrorType {
     Preservation = 'PerservationApiError',
-    IpoError = 'IpoApiError',
+    Ipo = 'IpoApiError',
     Unknown = ' Unknown'
 };
 

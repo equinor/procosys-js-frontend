@@ -4,6 +4,7 @@ import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
+import {createProCoSysApiError, ErrorType} from '../../../core/ProCoSysApiError';
 
 export type ProjectResponse = {
     id: number;
@@ -71,7 +72,11 @@ class InvitationForPunchOutApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
-        const result = await this.client.get<ProjectResponse[]>(endpoint,settings);
-        return result.data;
+        try {
+            const result = await this.client.get<ProjectResponse[]>(endpoint,settings);
+            return result.data;
+        } catch (error) {
+            throw createProCoSysApiError(ErrorType.Ipo, error);
+        }
     }
 } export default InvitationForPunchOutApiClient;

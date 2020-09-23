@@ -30,6 +30,7 @@ interface ScopeFilterProps {
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
     exportTagsToExcel: () => void;
+    triggerFilterValuesRefresh: number;
 }
 
 interface FilterInput {
@@ -135,12 +136,13 @@ const ScopeFilter = ({
     onCloseRequest,
     tagListFilter,
     setTagListFilter,
-    savedTagListFilters: savedTagListFilters,
-    refreshSavedTagListFilters: refreshSavedTagListFilters,
+    savedTagListFilters,
+    refreshSavedTagListFilters,
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
     numberOfTags,
-    exportTagsToExcel
+    exportTagsToExcel,
+    triggerFilterValuesRefresh
 }: ScopeFilterProps): JSX.Element => {
 
     const {
@@ -179,7 +181,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -193,7 +195,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -207,7 +209,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -221,7 +223,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -235,7 +237,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -253,7 +255,7 @@ const ScopeFilter = ({
             }
         })();
         return (): void => requestCancellor && requestCancellor();
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -273,7 +275,7 @@ const ScopeFilter = ({
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, [project]);
+    }, [project, triggerFilterValuesRefresh]);
 
 
     const triggerScopeListUpdate = (): void => {

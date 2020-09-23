@@ -4,7 +4,7 @@ import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFi
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
-import CacheService from '@procosys/core/CacheService';
+import CacheService from '@procosys/core/services/CacheService';
 import { Canceler } from '@procosys/http/HttpClient';
 import CompleteDialog from './CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
@@ -26,6 +26,7 @@ import VoidDialog from './VoidDialog';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -134,9 +135,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [orderByField, setOrderByField] = useState<string | null>(null);
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
     const [savedTagListFilters, setSavedTagListFilters] = useState<SavedTagListFilter[] | null>(null);
+    const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
 
     const history = useHistory();
     const location = useLocation();
+    const analytics = useAnalytics();
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
@@ -146,7 +149,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
 
-    const getSavedTagListFilters = async (): Promise<void> => {
+    const updateSavedTagListFilters = async (): Promise<void> => {
         try {
             const response = await apiClient.getSavedTagListFilters(project.name);
             setSavedTagListFilters(response);
@@ -157,24 +160,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     useEffect((): void => {
-        getSavedTagListFilters();
-    }, []);
+        if (project) {
+            updateSavedTagListFilters();
+        }
+    }, [project]);
 
     useEffect((): void => {
-        if (savedTagListFilters) {
-            const previousFilter = getCachedFilter(project.id);
-            if (previousFilter) {
+        const previousFilter = getCachedFilter(project.id);
+        if (previousFilter) {
+            setTagListFilter({
+                ...previousFilter
+            });
+        } else if (savedTagListFilters) {
+            const defaultFilter = getDefaultFilter();
+            if (defaultFilter) {
                 setTagListFilter({
-                    ...previousFilter
+                    ...defaultFilter
                 });
             } else {
-                const defaultFilter = getDefaultFilter();
-                if (defaultFilter) {
-                    setTagListFilter({
-                        ...defaultFilter
-                    });
-                }
-            };
+                refreshScopeList();
+            }
         }
     }, [savedTagListFilters, project]);
 
@@ -182,7 +187,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         if (savedTagListFilters) {
             const defaultFilter = savedTagListFilters.find((filter) => filter.defaultFilter);
             if (defaultFilter) {
-                return JSON.parse(defaultFilter.criteria);
+                try {
+                    return JSON.parse(defaultFilter.criteria);
+                } catch (error) {
+                    console.error('Failed to parse default filter');
+                    analytics.trackException(error);
+                }
             }
         };
         return null;
@@ -319,6 +329,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
+    const refreshFilterValues = (): void => {
+        setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
+    };
+
     let transferableTags: PreservedTag[];
     let nonTransferableTags: PreservedTag[];
 
@@ -329,6 +343,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification(`${transferableTags.length} tag(s) have been successfully transferred.`);
         } catch (error) {
             console.error('Transfer failed: ', error.message, error.data);
@@ -371,6 +386,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             await apiClient.startPreservation(startableTags.map(t => t.id));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification('Status was set to \'Active\' for selected tag(s).');
         } catch (error) {
             console.error('Start preservation failed: ', error.message, error.data);
@@ -456,6 +472,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification('Selected tag(s) have been completed.');
         } catch (error) {
             console.error('Complete failed: ', error.message, error.data);
@@ -496,6 +513,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 rowVersion: t.rowVersion
             })));
             refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification('Selected tag(s) have been removed.');
         } catch (error) {
             console.error('Remove failed: ', error.message, error.data);
@@ -681,6 +699,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     }, [location]);
 
+    const navigateToOldPreservation = (): void => {
+        analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
+        window.location.href = './OldPreservation';
+    };
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -688,7 +711,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     {!purchaseOrderNumber &&
                         <Typography variant="caption">
                             <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                                <a href="OldPreservation">Switch to old system</a>
+                                <Button variant="ghost" onClick={navigateToOldPreservation}>Switch to old system</Button>
                             </Tooltip>
                         </Typography>
                     }
@@ -845,12 +868,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 displayFilter && savedTagListFilters && (
                     <FilterContainer maxHeight={moduleAreaHeight}>
                         <ScopeFilter
+                            triggerFilterValuesRefresh={triggerFilterValuesRefresh}
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}
                             tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
                             savedTagListFilters={savedTagListFilters}
-                            refreshSavedTagListFilters={getSavedTagListFilters}
+                            refreshSavedTagListFilters={updateSavedTagListFilters}
                             setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                             selectedSavedFilterTitle={selectedSavedFilterTitle}
                             numberOfTags={numberOfTags}

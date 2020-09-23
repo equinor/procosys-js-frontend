@@ -1,11 +1,11 @@
 import '../assets/sass/procosys-styles.scss';
-import {hot} from 'react-hot-loader';
 
 import ProcosysContext, { createProcosysContext } from '../core/ProcosysContext';
 import React, { useRef } from 'react';
 
 import App from './index';
 import { IAuthService } from 'src/auth/AuthService';
+import { hot } from 'react-hot-loader';
 
 type AppProps = {
     authService: IAuthService;

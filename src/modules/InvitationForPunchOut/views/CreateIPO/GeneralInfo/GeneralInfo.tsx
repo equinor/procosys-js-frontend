@@ -5,7 +5,7 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, DateTimeContainer, Container, PoTypeContainer, LocationContainer, FormContainer, ButtonContainer } from './GeneralInfo.style';
 import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { TextField as DateTimeField } from '@material-ui/core';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import { Canceler } from '@procosys/http/HttpClient';
 
 const poTypes: SelectItem[] = [
@@ -16,23 +16,28 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
+    next: () => void;
+    isValid: boolean;
+    clearScope: () => void;
 }
 
 const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
-    fromMain
+    fromMain,
+    next,
+    isValid,
+    clearScope
 }: GeneralInfoProps): JSX.Element => {
-    const { procosysApiClient } = useProcosysContext();
+    const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
-    const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [isValidForm, setIsValidForm] = useState<boolean>(false);
+    const [filterForProjects, setFilterForProjects] = useState<string>('');   
 
     useEffect(() => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
-            const allProjects = await procosysApiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
+            const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
                 .then(projects => projects.map((project): ProjectDetails => {
                     return {
                         id: project.id,
@@ -47,12 +52,6 @@ const GeneralInfo = ({
     },[]);
 
     useEffect(() => {
-        if(fromMain) {
-            setPoTypeForm('DP');
-        }
-    }, [fromMain]);
-
-    useEffect(() => {
         if (filterForProjects.length <= 0) {
             setFilteredProjects(availableProjects);
             return;
@@ -65,6 +64,9 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
+        if(!fromMain) {
+            clearScope();
+        }
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
             setGeneralInfo(gi => {return {...gi, poType: newPoType};});
@@ -73,18 +75,16 @@ const GeneralInfo = ({
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id};});
+        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name};});
     };
 
-    useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
-            setIsValidForm(true);
-        } else {
-            setIsValidForm(false);
-        }
-    }), [generalInfo];
-
     const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
+
+    useEffect(() => {
+        if (selectedProject) {
+            setGeneralInfo(gi => {return {...gi, projectName: selectedProject.name};});
+        }
+    }, [selectedProject]);
 
     return (<Container>
         <FormContainer>
@@ -100,7 +100,7 @@ const GeneralInfo = ({
                     return (
                         <DropdownItem
                             key={index}
-                            onClick={(event): void =>
+                            onClick={(event: React.MouseEvent): void =>
                                 setProjectForm(event, index)
                             }
                         >
@@ -115,7 +115,6 @@ const GeneralInfo = ({
                     onChange={setPoTypeForm}
                     data={poTypes}
                     label={'Type of punch round'}
-                    disabled={fromMain}
                 >
                     {(generalInfo.poType && generalInfo.poType.text) || 'Select'}
                 </SelectInput>
@@ -124,6 +123,7 @@ const GeneralInfo = ({
                 id={'title'}
                 label='Title'
                 placeholder='Write here'
+                defaultValue={generalInfo.title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setGeneralInfo(gi => {return {...gi, title: e.target.value};}); 
                 }}
@@ -133,6 +133,7 @@ const GeneralInfo = ({
                 placeholder='Write here'
                 label='Description'
                 meta='Optional'
+                defaultValue={generalInfo.description}
                 multiline
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
                     setGeneralInfo(gi => {return {...gi, description: e.target.value};}); 
@@ -144,6 +145,7 @@ const GeneralInfo = ({
                     id='startDate'
                     label='From'
                     type='date'
+                    defaultValue={generalInfo.startDate}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -155,6 +157,7 @@ const GeneralInfo = ({
                     id='time'
                     label='Time'
                     type='time'
+                    defaultValue={generalInfo.startTime}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -166,6 +169,7 @@ const GeneralInfo = ({
                     id='endDate'
                     label='To'
                     type='date'
+                    defaultValue={generalInfo.endDate}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -177,6 +181,7 @@ const GeneralInfo = ({
                     id='time'
                     label='Time'
                     type='time'
+                    defaultValue={generalInfo.endTime}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -191,6 +196,7 @@ const GeneralInfo = ({
                     placeholder='Write here'
                     label='Location'
                     meta='Optional'
+                    defaultValue={generalInfo.location}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
                         setGeneralInfo(gi => {return {...gi, location: e.target.value};}); 
                     }}
@@ -199,7 +205,12 @@ const GeneralInfo = ({
         </FormContainer>
         <ButtonContainer>
             <Button constiant='outlined' disabled>Previous</Button>
-            <Button disabled={!isValidForm}>Next</Button>
+            <Button 
+                disabled={!isValid} 
+                onClick={next}
+            >
+                Next
+            </Button>
         </ButtonContainer>
     </Container>);
 };

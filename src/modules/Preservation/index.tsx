@@ -1,12 +1,13 @@
+import React, { ReactElement } from 'react';
 import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
 
 import AddScope from './views/AddScope/AddScope';
+import ClosedProjectWarning from './ClosedProjectWarning';
 import EditTagProperties from './views/EditTagProperties/EditTagProperties';
+import ErrorBoundary from '@procosys/components/ErrorBoundary';
 import { PreservationContextProvider } from './context/PreservationContext';
-import React from 'react';
 import ScopeOverview from './views/ScopeOverview/ScopeOverview';
 import withAccessControl from '../../core/security/withAccessControl';
-import ClosedProjectWarning from './ClosedProjectWarning';
 
 const Preservation = (): JSX.Element => {
 
@@ -20,17 +21,17 @@ const Preservation = (): JSX.Element => {
                     <Route
                         path={'/AddScope/:method'}
                         exact
-                        component={AddScope}
+                        component={(): ReactElement => (<ErrorBoundary><AddScope /></ErrorBoundary>)}
                     />
                     <Route
                         path={'/'}
                         exact
-                        component={ScopeOverview}
+                        component={(): ReactElement => (<ErrorBoundary><ScopeOverview /></ErrorBoundary>)}
                     />
                     <Route
                         path={'/EditTagProperties/:tagId'}
                         exact
-                        component={EditTagProperties}
+                        component={(): ReactElement => (<ErrorBoundary><EditTagProperties /></ErrorBoundary>)}
                     />
                     <Route
                         component={(): JSX.Element =>

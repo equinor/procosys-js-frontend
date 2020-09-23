@@ -4,7 +4,7 @@ import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFi
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
-import CacheService from '@procosys/core/CacheService';
+import CacheService from '@procosys/core/services/CacheService';
 import { Canceler } from '@procosys/http/HttpClient';
 import CompleteDialog from './CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
@@ -177,8 +177,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 setTagListFilter({
                     ...defaultFilter
                 });
+            } else {
+                refreshScopeList();
             }
-        };
+        }
     }, [savedTagListFilters, project]);
 
     const getDefaultFilter = (): TagListFilter | null => {

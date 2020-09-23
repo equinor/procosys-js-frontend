@@ -32,35 +32,34 @@ const getFormattedsStartDate = (tag: TagMigrationRow): string => {
     return getFormattedDate(tag.startDate);
 };
 
+const tableColumns = [
+    { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
+    { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
+    { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
+    { title: 'Due', render: getFormattedDueDate },
+    { title: 'Start date', render: getFormattedsStartDate },
+    { title: 'Storage area', field: 'storageArea' },
+    { title: 'Mode', field: 'modeCode' },
+    {
+        title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
+    },
+    { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
+    {
+        title: 'Preserved',
+        field: 'isPreserved',
+        render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
+        filtering: false
+    },
+    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
+    { title: 'PO', field: 'purchaseOrderTitle' },
+    { title: 'Comm pkg', field: 'commPkgNo' },
+    { title: 'MC pkg', field: 'mcPkgNo' },
+    { title: 'Tag function', field: 'tagFunctionCode' },
+];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
-
-    const tableColumns = [
-        { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
-        { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
-        { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
-        { title: 'Due', render: getFormattedDueDate },
-        { title: 'Start date', render: getFormattedsStartDate },
-        { title: 'Storage area', field: 'storageArea' },
-        { title: 'Mode', field: 'modeCode' },
-        {
-            title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
-        },
-        { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
-        {
-            title: 'Preserved',
-            field: 'isPreserved',
-            render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
-            filtering: false
-        },
-        { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-        { title: 'PO', field: 'purchaseOrderTitle', filtering: purchaseOrderNumber ? false : true },
-        { title: 'Comm pkg', field: 'commPkgNo' },
-        { title: 'MC pkg', field: 'mcPkgNo' },
-        { title: 'Tag function', field: 'tagFunctionCode' },
-    ];
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -73,6 +72,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
 
     const addAllTagsInScope = (rowData: TagMigrationRow[]): void => {
         const allRows = rowData
+            .filter(row => !row.isPreserved)
             .map(row => {
                 return {
                     tagId: row.id,
@@ -153,9 +153,16 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                     },
                     selection: true,
-                    selectionProps: { disableRipple: true },
+                    selectionProps: (data: TagMigrationRow): any => ({
+                        // Disable and hide selection checkbox for preserved tags.
+                        // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
+                        // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
+                        disabled: data.isPreserved,
+                        style: { display: data.isPreserved && 'none' },
+                        disableRipple: true
+                    }),
                     rowStyle: (data): any => ({
-                        backgroundColor: data.tableData.checked && '#e6faec'
+                        backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
                     })
                 }}
                 style={{

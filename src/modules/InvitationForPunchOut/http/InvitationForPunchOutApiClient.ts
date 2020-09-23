@@ -19,6 +19,19 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
+export interface CommPkgResponse {
+    id: number;
+    commPkgNo: string;
+    description: string;
+    status: string;
+}
+
+export interface McPkgResponse {
+    id: number;
+    mcPkgNo: string;
+    description: string;
+}
+
 /**
  * API for interacting with data in InvitationForPunchOut API.
  */
@@ -86,4 +99,39 @@ class InvitationForPunchOutApiClient extends ApiClient {
             throw new IpoApiError(error);
         }
     }
+
+    /**
+     * Get comm pkgs starting with comm pkg no in project
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getCommPkgsAsync(projectId: number, startWith: string, setRequestCanceller?: RequestCanceler): Promise<CommPkgResponse[]> {
+        const endpoint = '/CommPkgs';
+        const settings: AxiosRequestConfig = {params: {
+            projectId: projectId,
+            startsWithCommPkgNo: startWith
+        },};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
+        return result.data;
+    }
+
+    /**
+     * Get mc pkgs under a comm pgk in project
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getMcPkgsAsync(projectName: string, commPkgNo: string, setRequestCanceller?: RequestCanceler): Promise<McPkgResponse[]> {
+        const endpoint = '/McPkgs';
+        const settings: AxiosRequestConfig = {params: {
+            projectName: projectName,
+            CommPkgNo: commPkgNo
+        },};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        const result = await this.client.get<McPkgResponse[]>(endpoint, settings);
+        return result.data;
+    }
+
 } export default InvitationForPunchOutApiClient;

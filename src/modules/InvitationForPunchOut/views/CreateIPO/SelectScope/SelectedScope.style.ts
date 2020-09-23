@@ -3,9 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const SelectedScopeContainer = styled.div`
     flex: 1;
-    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
     margin-top: calc(var(--grid-unit) * -3);
-    margin-left: calc(var(--grid-unit) * 5);
     padding-top: calc(var(--grid-unit) * 3);
     padding-left: calc(var(--grid-unit) * 2);
 `;
@@ -32,8 +30,8 @@ export const AccordionContent = styled.div`
 export const TextContainer = styled.div`
     display: flex;
     justify-content: space-between;
-
     width: 100%;
+
     > p {
         margin: calc(var(--grid-unit) * 2) 0;
     }

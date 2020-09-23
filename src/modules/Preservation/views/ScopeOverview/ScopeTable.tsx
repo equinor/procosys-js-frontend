@@ -32,7 +32,7 @@ enum ActionStatus {
 }
 
 class ScopeTable extends React.Component<ScopeTableProps> {
-    refObject: React.RefObject<any>;
+    refObject: RefObject<any>;
 
     constructor(props: ScopeTableProps) {
         super(props);

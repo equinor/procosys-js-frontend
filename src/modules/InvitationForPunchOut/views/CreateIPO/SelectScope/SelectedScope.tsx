@@ -62,10 +62,7 @@ const SelectedScope = ({
                         </div>
                         <div>
                             <Typography variant='caption'>
-                                MDP accepted date
-                            </Typography>
-                            <Typography variant='body_long'>
-                                {commPkg.mdpAccepted ? commPkg.mdpAccepted : '-' }
+                                Some test info
                             </Typography>
                         </div>
                     </AccordionContent>
@@ -98,7 +95,7 @@ const SelectedScope = ({
                                 M-01 date
                             </Typography>
                             <Typography variant='body_long'>
-                                {mcPkg.m01 ? mcPkg.m01 : '-' }
+                                -
                             </Typography>
                         </div>
                         <div>
@@ -106,7 +103,7 @@ const SelectedScope = ({
                                 M-02 date
                             </Typography>
                             <Typography variant='body_long'>
-                                {mcPkg.m02 ? mcPkg.m02 : '-' }
+                                -
                             </Typography>
                         </div>
                     </AccordionContent>
@@ -120,7 +117,7 @@ const SelectedScope = ({
             <Typography variant='h2'>Selected scope</Typography>
             <TextContainer>
                 <Typography variant='body_long'>
-                    {numberOfPackagesSelected()} packages(s) selected 
+                    {numberOfPackagesSelected()} package(s) selected 
                 </Typography>
                 {multipleDisciplines && multipleDisciplinesWarning}
             </TextContainer>

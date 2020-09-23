@@ -1,79 +1,69 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
-import { Button} from '@equinor/eds-core-react';
+import { Button, TextField } from '@equinor/eds-core-react';
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
 import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
-import {Container} from './Table.style';
-
+import { Container, TopContainer, Search } from './Table.style';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import Loading from '@procosys/components/Loading';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
     setCurrentCommPkg: (commPkgNo: string | null) => void;
     type: string;
-    filter: string;
+    projectId: number;
 }
 
-const today = new Date();
-const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
-
-const dummyData: CommPkgRow[] = [
-    {
-        commPkgNo: 'Comm pkg 1',
-        description: 'Description 1',
-        status: 'PB',
-        mdpAccepted: date
-    },
-    {
-        commPkgNo: 'Comm pkg 2',
-        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        status: 'OK',
-        mdpAccepted: date
-    },
-    {
-        commPkgNo: 'test',
-        description: 'Description 3',
-        status: 'PA',
-        mdpAccepted: date
-    }
-];
+const KEYCODE_ENTER = 13;
 
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
     setSelectedCommPkgScope,
     setCurrentCommPkg,
     type,
-    filter
+    projectId
 }: CommPkgTableProps, ref): JSX.Element => {
-    const [availableCommPkgs, setAvailableCommPkgs] = useState<CommPkgRow[]>([]);
+    const { apiClient } = useInvitationForPunchOutContext();
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
-
-    let requestCanceler: Canceler;
-    useEffect(() => {
-        (async (): Promise<void> => {
-            const allCommPkgs = dummyData; //TODO: API call for commpkgs
-            setAvailableCommPkgs(allCommPkgs);
-            setFilteredCommPkgs(allCommPkgs);
-        })();
-        return (): void => requestCanceler && requestCanceler();
-    },[]);
+    const [filter, setFilter] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        if (filter.length <= 0) {
-            setFilteredCommPkgs(dummyData);
-            return;
+        if(filter != '') {
+            let requestCanceler: Canceler;
+            setIsLoading(true);
+            try {
+                (async (): Promise<void> => {
+                    const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectId, filter)
+                        .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
+                            return {
+                                commPkgNo: commPkg.commPkgNo,
+                                description: commPkg.description,
+                                status: commPkg.status,
+                                tableData: {
+                                    checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+                                }
+                            };
+                        }));
+                    setFilteredCommPkgs(filteredCommPkgs);
+                    setIsLoading(false);
+                })();
+                return (): void => requestCanceler && requestCanceler();
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+            setIsLoading(false);
         }
-        setFilteredCommPkgs(availableCommPkgs.filter((c: CommPkgRow) => {
-            return c.commPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
-        }));
     }, [filter]);
 
     const removeAllSelectedCommPkgsInScope = (): void => {
         const commPkgNos: string[] = [];
-        availableCommPkgs.forEach(c => {
+        filteredCommPkgs.forEach(c => {
             commPkgNos.push(c.commPkgNo);
         });
         const newSelectedCommPkgs = selectedCommPkgScope.filter(item => !commPkgNos.includes(item.commPkgNo));
@@ -89,19 +79,19 @@ const CommPkgTable = forwardRef(({
 
     const unselectCommPkg = (commPkgNo: string): void => {
         const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
-        const tableDataIndex = availableCommPkgs.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
+        const tableDataIndex = filteredCommPkgs.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
         if (selectedIndex > -1) {
             // remove from selected commPkgs
             const newSelectedCommPkgScope = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
             setSelectedCommPkgScope(newSelectedCommPkgScope);
 
             // remove checked state from table data (needed to reflect change when navigating to "previous" step)
-            const copyAvailableCommPkgs = [...availableCommPkgs];
+            const copyAvailableCommPkgs = [...filteredCommPkgs];
             if (tableDataIndex > -1) {
                 const commPkgToUncheck = copyAvailableCommPkgs[tableDataIndex];
                 if (commPkgToUncheck.tableData) {
                     commPkgToUncheck.tableData.checked = false;
-                    setAvailableCommPkgs(copyAvailableCommPkgs);
+                    setFilteredCommPkgs(copyAvailableCommPkgs);
                 }
             }
         }
@@ -122,7 +112,7 @@ const CommPkgTable = forwardRef(({
     };
 
     const rowSelectionChanged = (rowData: CommPkgRow[], row: CommPkgRow): void => {
-        if (rowData.length == 0 && availableCommPkgs.length > 0) {
+        if (rowData.length == 0 && filteredCommPkgs.length > 0) {
             removeAllSelectedCommPkgsInScope();
         } else if (rowData.length > 0 && rowData[0].tableData && !row) {
             addAllCommPkgsInScope(rowData);
@@ -159,42 +149,59 @@ const CommPkgTable = forwardRef(({
         { title: 'Comm pkg', field: 'commPkgNo' },
         { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
         { title: 'Comm status', field: 'status' },
-        { title: 'MDP accepted', field: 'mdpAccepted' },
         ... type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []
     ];
 
     return (     
         <Container disableSelectAll={type == 'DP'} mcColumn={type == 'DP'}>
-            <Table
-                columns={tableColumns}
-                data={filteredCommPkgs}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    search: false,
-                    draggable: false,
-                    pageSize: 10,
-                    emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 50, 100],
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    selection: type != 'DP',
-                    selectionProps: (data: CommPkgRow): any => ({
-                        disableRipple: true,
-                    }),
-                    rowStyle: (data): React.CSSProperties => ({
-                        backgroundColor: data.tableData.checked && '#e6faec'
-                    })
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                onSelectionChange={(rowData, row): void => {
-                    rowSelectionChanged(rowData, row);
-                }}
-            />
+            <TopContainer>
+                <Search>
+                    <TextField
+                        id="search"
+                        placeholder="Search"
+                        helperText="Search for comm pkg no, then press enter."
+                        defaultValue=''
+                        onKeyDown={(e: any): void => {
+                            e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value);
+                        }}
+                    />
+                </Search>
+            </TopContainer>
+            {
+                isLoading && <Loading title="Loading commissioning packages" />
+            }
+            { !isLoading && filter != '' &&
+                <Table
+                    columns={tableColumns}
+                    data={filteredCommPkgs}
+                    options={{
+                        toolbar: false,
+                        showTitle: false,
+                        search: false,
+                        draggable: false,
+                        pageSize: 10,
+                        emptyRowsWhenPaging: false,
+                        pageSizeOptions: [10, 50, 100],
+                        padding: 'dense',
+                        headerStyle: {
+                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                        },
+                        selection: type != 'DP',
+                        selectionProps: (data: CommPkgRow): any => ({
+                            disableRipple: true,
+                        }),
+                        rowStyle: (data): React.CSSProperties => ({
+                            backgroundColor: data.tableData.checked && '#e6faec'
+                        })
+                    }}
+                    style={{
+                        boxShadow: 'none'
+                    }}
+                    onSelectionChange={(rowData, row): void => {
+                        rowSelectionChanged(rowData, row);
+                    }}
+                />
+            }
         </Container>
     );
 });

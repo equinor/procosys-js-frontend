@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -22,15 +21,6 @@ export const Header = styled.header`
     }
 `;
 
-export const Search = styled.div`
-    display: flex;
-    flex: 1;
-    padding-bottom: calc(var(--grid-unit) * 3);
-    input {
-        max-width: 500px;
-    }
-`;
-
 export const ButtonsContainer = styled.div`
     display: flex;
     flex: 1;
@@ -41,11 +31,4 @@ export const ButtonsContainer = styled.div`
     button:last-of-type {
         margin-left: calc(var(--grid-unit) * 2);
     }
-`;
-
-export const TopContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    margin: calc(var(--grid-unit) * 3) 0;
-    align-items: center;
 `;

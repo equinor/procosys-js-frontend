@@ -1,69 +1,71 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
-import {Container} from './Table.style';
+import { Container, TopContainer, Search } from './Table.style';
 import Table from '@procosys/components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { Canceler } from '@procosys/http/HttpClient';
-import {  McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
+import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import { Tooltip } from '@material-ui/core';
-
+import { TextField } from '@equinor/eds-core-react';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import Loading from '@procosys/components/Loading';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: (selectedCommPkgScope: McScope) => void;
-    enabled: boolean;
-    filter: string;
+    projectName: string;
+    commPkgNo: string;
 }
 
-const today = new Date();
-const date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
-
-
-const dummyDataMc: McPkgRow[] = [
-    {
-        mcPkgNo: 'Mc pkg 1',
-        description: 'Description 1',
-        m01: date,
-        m02: date,
-        discipline: 'E'
-    },
-    {
-        mcPkgNo: 'Mc pkg 2',
-        description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        m01: date,
-        m02: date,
-        discipline: 'J'
-    },
-    {
-        mcPkgNo: 'Mc pkg 3',
-        description: 'Description 3',
-        m01: date,
-        m02: date,
-        discipline: 'T'
-    }
-];
+const KEYCODE_ENTER = 13;
 
 const McPkgTable = forwardRef(({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
-    enabled,
-    filter
+    projectName,
+    commPkgNo
 }: McPkgTableProps, ref): JSX.Element => {
+    const { apiClient } = useInvitationForPunchOutContext();
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
     const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
+    const [filter, setFilter] = useState<string>('');
+    const [enabled, setEnabled] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        let requestCanceler: Canceler;
-        (async (): Promise<void> => {
-            const allMcPkgs = dummyDataMc; //TODO: API call for mcpkgs
-            setAvailableMcPkgs(allMcPkgs);
-            setFilteredMcPkgs(allMcPkgs);
-        })();
-        return (): void => requestCanceler && requestCanceler();
+        if(selectedMcPkgScope.selected.length < 1 || selectedMcPkgScope.commPkgNoParent == commPkgNo || selectedMcPkgScope.commPkgNoParent == null) {
+            setEnabled(true);
+        }
+    }, [selectedMcPkgScope]);
+
+    useEffect(() => {
+        try {
+            let requestCanceler: Canceler;
+            (async (): Promise<void> => {
+                const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkgNo)
+                    .then(mcPkgs => mcPkgs.map((mcPkg): McPkgRow => {
+                        return {
+                            mcPkgNo: mcPkg.mcPkgNo,
+                            description: mcPkg.description,
+                            discipline: 'E',
+                            tableData: {
+                                checked: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
+                            }
+                        };
+                    }));
+                setAvailableMcPkgs(availableMcPkgs);
+                setFilteredMcPkgs(availableMcPkgs);
+                setIsLoading(false);
+            })();
+            return (): void => requestCanceler && requestCanceler();
+        } catch (error) {
+            showSnackbarNotification(error.message);
+        }
     }, []);
 
     useEffect(() => {
         if (filter.length <= 0) {
-            setFilteredMcPkgs(dummyDataMc);
+            setFilteredMcPkgs(availableMcPkgs);
             return;
         }
         setFilteredMcPkgs(availableMcPkgs.filter((mc: McPkgRow) => {
@@ -113,14 +115,14 @@ const McPkgTable = forwardRef(({
             unselectMcPkg(row.mcPkgNo);
         } else {
             const newSelected = [...selectedMcPkgScope.selected, row];
-            setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
+            setSelectedMcPkgScope({commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
         }
     };
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
         const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.selected.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
         const newSelected = [...selectedMcPkgScope.selected, ...rowsToAdd];
-        setSelectedMcPkgScope({commPkgNoParent: selectedMcPkgScope.commPkgNoParent, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
+        setSelectedMcPkgScope({commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {
@@ -154,44 +156,63 @@ const McPkgTable = forwardRef(({
 
     const mcTableColumns = [
         { title: 'Mc pkg', field: 'mcPkgNo' },
-        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
-        { title: 'M-01 date', field: 'm01' },
-        { title: 'M-02 date', field: 'm01' }
+        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } }
     ];
 
     return ( 
         <Container disableSelectAll={!enabled}>
-            <Table
-                columns={mcTableColumns}
-                data={filteredMcPkgs}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    search: false,
-                    draggable: false,
-                    pageSize: 10,
-                    emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 50, 100],
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    selection: true,
-                    selectionProps: (): any => ({
-                        disabled: !enabled,
-                        disableRipple: true,
-                    }),
-                    rowStyle: (data): React.CSSProperties => ({
-                        backgroundColor: data.tableData.checked && '#e6faec'
-                    })
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                onSelectionChange={(rowData, row): void => {
-                    rowSelectionChangedMc(rowData, row);
-                }}
-            />
+            <TopContainer>
+                <Search>
+                    <TextField
+                        id="search"
+                        placeholder="Search"
+                        helperText="Search for mc pkg no."
+                        defaultValue=''
+                        onKeyDown={(e: any): void => {
+                            e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value);
+                        }}
+                        onInput={(e: any): void => {
+                            setFilter(e.currentTarget.value);
+                        }}
+                    />
+                </Search>
+            </TopContainer>
+            {
+                isLoading && <Loading title="Loading MC packages" />
+            }
+            { !isLoading &&
+                <Table
+                    columns={mcTableColumns}
+                    data={filteredMcPkgs}
+                    options={{
+                        toolbar: false,
+                        showTitle: false,
+                        search: false,
+                        draggable: false,
+                        pageSize: 10,
+                        emptyRowsWhenPaging: false,
+                        pageSizeOptions: [10, 50, 100],
+                        padding: 'dense',
+                        headerStyle: {
+                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                        },
+                        selection: true,
+                        selectionProps: (): any => ({
+                            disabled: !enabled,
+                            disableRipple: true,
+                        }),
+                        rowStyle: (data): React.CSSProperties => ({
+                            backgroundColor: data.tableData.checked && '#e6faec'
+                        })
+                    }}
+                    style={{
+                        boxShadow: 'none'
+                    }}
+                    onSelectionChange={(rowData, row): void => {
+                        rowSelectionChangedMc(rowData, row);
+                    }}
+                />
+            }
         </Container>
     );
 });

@@ -13,6 +13,7 @@ export type ProgressBarSteps = {
 
 export type GeneralInfoDetails = {
     projectId: number | null;
+    projectName: string | null;
     poType: SelectItem | null;
     title: string | null;
     description?: string | null;
@@ -36,8 +37,6 @@ export interface CommPkgRow {
 export interface McPkgRow {
     mcPkgNo: string;
     description: string;
-    m01: string;
-    m02: string;
     discipline: string;
     tableData?: {
         checked: boolean;

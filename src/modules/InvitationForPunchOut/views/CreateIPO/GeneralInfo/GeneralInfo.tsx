@@ -75,10 +75,16 @@ const GeneralInfo = ({
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id};});
+        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name};});
     };
 
     const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
+
+    useEffect(() => {
+        if (selectedProject) {
+            setGeneralInfo(gi => {return {...gi, projectName: selectedProject.name};});
+        }
+    }, [selectedProject]);
 
     return (<Container>
         <FormContainer>

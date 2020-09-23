@@ -64,3 +64,19 @@ export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boole
         justify-content: flex-end;
     }
 `;
+
+export const Search = styled.div`
+    display: flex;
+    flex: 1;
+    padding-bottom: calc(var(--grid-unit) * 3);
+    input {
+        max-width: 500px;
+    }
+`;
+
+export const TopContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin: calc(var(--grid-unit) * 3) 0;
+    align-items: center;
+`;

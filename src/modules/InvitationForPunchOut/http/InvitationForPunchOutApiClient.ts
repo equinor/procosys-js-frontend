@@ -113,8 +113,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
         },};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
-        const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
-        return result.data;
+        try {
+            const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
     }
 
     /**
@@ -130,8 +134,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
         },};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
-        const result = await this.client.get<McPkgResponse[]>(endpoint, settings);
-        return result.data;
+        try {
+            const result = await this.client.get<McPkgResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
     }
 
 } export default InvitationForPunchOutApiClient;

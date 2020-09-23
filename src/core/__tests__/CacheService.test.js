@@ -1,4 +1,4 @@
-import CacheService from '../CacheService';
+import CacheService from '../services/CacheService';
 
 describe('Caching Service', () => {
 

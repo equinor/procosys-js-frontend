@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Typography } from '@equinor/eds-core-react';
-import { Container, Header, ButtonsContainer, SelectComponent } from './SelectScope.style';
+import { Container, Header, ButtonsContainer, SelectComponent, Divider } from './SelectScope.style';
 import { CommPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import SelectedScope from './SelectedScope';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -97,6 +97,7 @@ const SelectScope = ({
                     />
                 }
             </SelectComponent>
+            <Divider />
             <SelectedScope 
                 selectedCommPkgs={selectedCommPkgScope} 
                 removeCommPkg={(commPkgNo: string): void => commPkgRef.current.removeSelectedCommPkg(commPkgNo)}

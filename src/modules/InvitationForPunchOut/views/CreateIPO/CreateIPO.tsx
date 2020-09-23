@@ -51,9 +51,7 @@ const CreateIPO = (): JSX.Element => {
     const params = useParams<{projectId: any; commPkgNo: any}>();
     
     useEffect(() => {
-        console.log(params);
         if (params.projectId && params.commPkgNo) {
-            console.log(params);
             setFromMain(true);
             setGeneralInfo(gi => {return {...gi, projectId: params.projectId};});
         }

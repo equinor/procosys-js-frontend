@@ -1,11 +1,11 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosError } from 'axios';
 
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
-import {createProCoSysApiError, ErrorType} from '../../../core/ProCoSysApiError';
+import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -438,6 +438,14 @@ interface HistoryResponse {
     preservationRecordGuid: string;
 }
 
+export class PreservationApiError extends ProCoSysApiError {
+    constructor(error: AxiosError)
+    {
+        super(error);
+        this.name = 'PreservationApiError';
+    }
+}
+
 /**
  * API for interacting with data in ProCoSys.
  */
@@ -503,7 +511,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -521,7 +529,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -561,7 +569,7 @@ class PreservationApiClient extends ApiClient {
                 storageArea
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -601,7 +609,7 @@ class PreservationApiClient extends ApiClient {
                 storageArea
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -638,7 +646,7 @@ class PreservationApiClient extends ApiClient {
                 storageArea
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -692,7 +700,7 @@ class PreservationApiClient extends ApiClient {
                 storageArea
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -722,7 +730,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -769,7 +777,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -812,7 +820,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -834,7 +842,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
     /**
@@ -857,7 +865,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -881,7 +889,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -900,7 +908,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -915,7 +923,7 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(endpoint, tags, settings);
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -926,7 +934,7 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(endpoint, null, settings);
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -941,7 +949,7 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(endpoint, tags, settings);
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -952,7 +960,7 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(endpoint, null, settings);
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -963,7 +971,7 @@ class PreservationApiClient extends ApiClient {
             await this.client.post(endpoint, null, settings);
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -977,7 +985,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(endpoint, tags, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -991,7 +999,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(endpoint, tags, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1013,7 +1021,7 @@ class PreservationApiClient extends ApiClient {
                 );
             }
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1029,7 +1037,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(endpoint, { rowVersion: rowVersion }, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1044,7 +1052,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(endpoint, { rowVersion: rowVersion }, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1067,7 +1075,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1089,7 +1097,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1111,7 +1119,7 @@ class PreservationApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1133,7 +1141,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1157,7 +1165,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1182,7 +1190,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1204,7 +1212,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1225,7 +1233,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1245,7 +1253,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1260,7 +1268,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(endpoint);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1281,7 +1289,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1302,7 +1310,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1320,7 +1328,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1347,7 +1355,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1369,7 +1377,7 @@ class PreservationApiClient extends ApiClient {
             const result = await this.client.get<ResponsibleEntity[]>(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1391,7 +1399,7 @@ class PreservationApiClient extends ApiClient {
             const result = await this.client.get<AreaFilterEntity[]>(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1420,7 +1428,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1446,7 +1454,7 @@ class PreservationApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
     /**
@@ -1469,7 +1477,7 @@ class PreservationApiClient extends ApiClient {
             const result = await this.client.get<TagFunctionResponse>(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
 
     }
@@ -1486,7 +1494,7 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(endpoint, data);
             return true;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1499,7 +1507,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.put(endpoint, data);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1529,7 +1537,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1543,7 +1551,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1562,7 +1570,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1582,7 +1590,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1606,7 +1614,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.post(endpoint, formData, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1624,7 +1632,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1647,7 +1655,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1670,7 +1678,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1694,7 +1702,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1716,7 +1724,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1741,7 +1749,7 @@ class PreservationApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1766,7 +1774,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1788,7 +1796,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1809,7 +1817,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1828,7 +1836,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1854,7 +1862,7 @@ class PreservationApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1882,7 +1890,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1904,7 +1912,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1925,7 +1933,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1944,7 +1952,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1968,7 +1976,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -1992,7 +2000,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2016,7 +2024,7 @@ class PreservationApiClient extends ApiClient {
                 dueTimeUtc: dueTimeUtc,
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2043,7 +2051,7 @@ class PreservationApiClient extends ApiClient {
                 rowVersion: rowVersion
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2064,7 +2072,7 @@ class PreservationApiClient extends ApiClient {
                 rowVersion: rowVersion
             });
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2082,7 +2090,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2110,7 +2118,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.post(endpoint, formData, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2135,7 +2143,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2161,7 +2169,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2184,7 +2192,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2207,7 +2215,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2230,7 +2238,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2253,7 +2261,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2276,7 +2284,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2293,7 +2301,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2320,7 +2328,7 @@ class PreservationApiClient extends ApiClient {
         try {
             await this.client.post(endpoint, formData, settings);
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2344,7 +2352,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2365,7 +2373,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2392,7 +2400,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2415,7 +2423,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2438,7 +2446,7 @@ class PreservationApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2461,7 +2469,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2482,7 +2490,7 @@ class PreservationApiClient extends ApiClient {
                 }
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2504,7 +2512,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2525,7 +2533,7 @@ class PreservationApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2550,7 +2558,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 
@@ -2572,7 +2580,7 @@ class PreservationApiClient extends ApiClient {
             return result.data;
         }
         catch (error) {
-            throw createProCoSysApiError(ErrorType.Preservation, error);
+            throw new PreservationApiError(error);
         }
     }
 }

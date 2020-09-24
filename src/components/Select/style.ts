@@ -4,36 +4,45 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div<{ maxHeight?: string }>`
     position: relative;
+
     ul {
         position: absolute;
         background-color: transparent;
         border-radius: 4px;
         z-index: 100;
         white-space: nowrap;
+
+
         ${(props): any => props.maxHeight && css`
             max-height: ${props.maxHeight};
             overflow-y: auto;
             box-shadow: ${tokens.elevation.raised};
         `}
         
+
         li div {
             box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
         }
+
         li:first-child > div {
             border-radius: 4px 4px 0px 0px;
             box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
         }
+
         li:only-child > div {
             box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
             border-radius: 4px;
         }
+
         li:last-child > div {
             border-radius: 0px 0px 4px 4px;
         }
+
         > div:hover, li[data-selected="true"] > div {
             background-color: ${tokens.colors.ui.background__light.rgba};
         }
     }
+
     ul.container {
         margin-top: 0.5rem;
     }
@@ -95,12 +104,14 @@ export type SelectableItemProps = {
 export const SelectableItem = styled.li<SelectableItemProps>`
     position: relative;
     background-color: transparent;
+
     :first-child {
         background-color: ${(props): any =>
         props.selected
             ? tokens.colors.ui.background__light.rgba
             : 'transparent'};
     }
+
     :hover > ul {
         display: block;
     }
@@ -134,7 +145,6 @@ export const CascadingItem = styled.ul`
     }
 `;
 
-
 export const ItemContent = styled.div`
     display: flex;
     align-items: center;
@@ -143,12 +153,15 @@ export const ItemContent = styled.div`
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
     cursor: pointer;
+
     :hover {
         background-color: ${tokens.colors.ui.background__light.rgba};
     }
+
     svg:first-of-type {
         padding-right: calc(var(--grid-unit) * 2);
     }
+    
     .arrowIcon {
         margin-left: auto;
     }

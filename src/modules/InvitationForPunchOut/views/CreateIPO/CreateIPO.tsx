@@ -25,11 +25,13 @@ const emptyGeneralInfo: GeneralInfoDetails = {
 const initialParticipants: Participant[] = [
     {
         organization: 'Contractor',
+        type: 'Functional role',
         person: null,
         role: null
     },
     {
         organization: 'Construction company',
+        type: 'Functional role',
         person: null,
         role: null
     }

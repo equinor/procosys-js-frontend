@@ -38,6 +38,7 @@ export type RoleParticipant = {
 
 export type Participant = {
     organization: string;
+    type: string;
     person: Person | null;
     role: RoleParticipant | null;
 }

@@ -6,6 +6,8 @@ import CreateIPOHeader from './CreateIPOHeader';
 import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope, Participant } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
 import { Container } from './CreateIPO.style';
+import Attachments from './Attachments/Attachments';
+import Summary from './Summary/Summary';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -73,6 +75,12 @@ const CreateIPO = (): JSX.Element => {
     }, [fromMain]);
 
     const goToNextStep = (): void => {
+        if(currentStep > 3) {
+            changeCompletedStatus(true, currentStep);
+            if(currentStep == 4) {
+                changeCompletedStatus(true, 5);
+            }
+        }
         setCurrentStep(currentStep => {
             if (currentStep >= 5) {
                 return currentStep;
@@ -166,9 +174,26 @@ const CreateIPO = (): JSX.Element => {
         }
         { currentStep == 3 && 
             <Participants 
+                next={goToNextStep}
+                previous={goToPreviousStep}
                 participants={participants}
                 setParticipants={setParticipants}
-                isValid={false}
+                isValid={true}
+            />
+        }
+        { currentStep == 4 && 
+            <Attachments 
+                next={goToNextStep}
+                previous={goToPreviousStep}
+            />
+        }
+        { currentStep == 5 && 
+            <Summary 
+                previous={goToPreviousStep}
+                generalInfo={generalInfo}
+                mcScope={selectedMcPkgScope.selected}
+                commPkgScope={selectedCommPkgScope}
+                participants={participants}
             />
         }
     </Container>);

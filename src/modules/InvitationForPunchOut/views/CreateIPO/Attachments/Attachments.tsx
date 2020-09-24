@@ -1,23 +1,16 @@
 import React from 'react';
 import { Button } from '@equinor/eds-core-react';
-import { Container, FormContainer, ButtonContainer } from './Participants.style';
-import { Participant } from '@procosys/modules/InvitationForPunchOut/types';
+import { Container, FormContainer, ButtonContainer } from './Attachments.style';
 
-interface ParticipantsProps {
-    participants: Participant[];
-    setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
-    isValid: boolean;
+interface AttachmentsProps {
     next: () => void;
     previous: () => void;
 }
 
-const Participants = ({
-    participants,
-    setParticipants,
-    isValid,
+const Attachments = ({
     next,
     previous
-}: ParticipantsProps): JSX.Element => {
+}: AttachmentsProps): JSX.Element => {
 
     return (<Container>
         <FormContainer>
@@ -31,7 +24,6 @@ const Participants = ({
                 Previous
             </Button>
             <Button
-                disabled={!isValid}
                 onClick={next}
             >
                 Next
@@ -40,4 +32,4 @@ const Participants = ({
     </Container>);
 };
 
-export default Participants;
+export default Attachments;

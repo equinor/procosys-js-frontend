@@ -1,14 +1,22 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosError } from 'axios';
 
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
+import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
 
 export type ProjectResponse = {
     id: number;
     name: string;
     description: string;
+}
+export class IpoApiError extends ProCoSysApiError {
+    constructor(error: AxiosError)
+    {
+        super(error);
+        this.name = 'IpoApiError';
+    }
 }
 
 export interface CommPkgResponse {
@@ -84,8 +92,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
-        const result = await this.client.get<ProjectResponse[]>(endpoint,settings);
-        return result.data;
+        try {
+            const result = await this.client.get<ProjectResponse[]>(endpoint,settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
     }
 
     /**
@@ -101,8 +113,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
         },};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
-        const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
-        return result.data;
+        try {
+            const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
     }
 
     /**
@@ -118,8 +134,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
         },};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
-        const result = await this.client.get<McPkgResponse[]>(endpoint, settings);
-        return result.data;
+        try {
+            const result = await this.client.get<McPkgResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
     }
 
 } export default InvitationForPunchOutApiClient;

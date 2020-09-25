@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+import Dropdown from '../../../../../components/Dropdown';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, Container, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
-import { Participant } from '@procosys/modules/InvitationForPunchOut/types';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import { Canceler } from '@procosys/http/HttpClient';
+import { Participant, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import ParticipantPicker from '@procosys/components/ParticipantPicker';
+import ParticipantPicker, { ParticipantItem } from '../../../../../components/ParticipantPicker';
 
 const Organizations: SelectItem[] = [
     { text: 'Commissioning', value: 'Commissioning' },
@@ -18,7 +17,7 @@ const Organizations: SelectItem[] = [
 ];
 
 const ParticipantType: SelectItem[] = [
-    { text: 'Functional role', value: 'FunctionalRole' },
+    { text: 'Functional role', value: 'Functional role' },
     { text: 'Person', value: 'Person' },
 ];
 
@@ -30,102 +29,18 @@ interface ParticipantsProps {
     isValid: boolean;
 }
 
-const testRoles: SelectItem[] = [
-    {
-        text: 'Electro',
-        value: 'r_Electro',
-        children: [
-            {
-                text: 'Send to group',
-                value: 'r_Electro',
-                inRole: true
-            },
-            {
-                text: 'Send to following persons in group',
-                title: true,
-                value: '',
-                inRole: true
-            },
-            {
-                text: 'Elisabeth',
-                value: 'p_Elisabeth',
-                radioButtons: true,
-                radioOption: '1',
-                inRole: true
-            },
-            {
-                text: 'Lykke',
-                value: 'p_Lykke',
-                radioButtons: true,
-                radioOption: '1',
-                inRole: true
-
-            },
-            {
-                text: 'Kjetil',
-                value: 'p_Kjetild',
-                radioButtons: true,
-                radioOption: '2',
-                inRole: true
-            },
-        ]
-    },
-    {
-        text: 'Auto',
-        value: 'r_auto',
-        children: [
-            {
-                text: 'Send to group',
-                value: 'r_auto',
-            },
-            {
-                text: 'Send to following persons in group',
-                title: true,
-                value: '',
-            },
-            {
-                text: 'Christine',
-                value: 'p_Christine',
-                radioButtons: true,
-                radioOption: '0',
-                inRole: true
-            },
-            {
-                text: 'Christer Nordbø',
-                value: 'p_Christer_Nordbø',
-                radioButtons: true,
-                radioOption: '0',
-                inRole: true
-            },
-            {
-                text: 'Jan Inge',
-                value: 'p_Jan_Inge',
-                radioButtons: true,
-                radioOption: '0',
-                inRole: true
-            },
-        ]
-    }
-];
-
 const testPart: SelectItem[] = [
     {
         text: 'Pål',
-        value: 'p_Pål',
-        radioButtons: true,
-        radioOption: '0',
+        value: 'p_Pål'
     },
     {
         text: 'Stein',
         value: 'p_Stein',
-        radioButtons: true,
-        radioOption: '0',
     },
     {
         text: 'Henning',
         value: 'p_Henning',
-        radioButtons: true,
-        radioOption: '0',
     },
 
 ];
@@ -138,9 +53,66 @@ const Participants = ({
     setParticipants,
     isValid
 }: ParticipantsProps): JSX.Element => {
-    const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
-    const [availablePersons, setAvailablePersons] = useState<SelectItem[]>([]);
+
+    const testRoles: ParticipantItem[] = [
+        {
+            text: 'Electro',
+            value: 'r_Electro',
+            sendToPersonalEmail: false,
+            children: [
+                {
+                    text: 'Elisabeth',
+                    value: 'p_Elisabeth',
+                    radioButtons: true,
+                    radioOption: '0',
+                },
+                {
+                    text: 'Lykke',
+                    value: 'p_Lykke',
+                    radioButtons: true,
+                    radioOption: '0',
+    
+                },
+                {
+                    text: 'Kjetil',
+                    value: 'p_Kjetild',
+                    radioButtons: true,
+                    radioOption: '0',
+                },
+            ]
+        },
+        {
+            text: 'Auto',
+            value: 'r_auto',
+            sendToPersonalEmail: true,
+            children: [
+                {
+                    text: 'Christine',
+                    value: 'p_Christine'
+                },
+                {
+                    text: 'Christer Nordbø',
+                    value: 'p_Christer_Nordbø'
+                },
+                {
+                    text: 'Jan Inge',
+                    value: 'p_Jan_Inge'
+                },
+            ]
+        }
+    ];
+
+ 
+
+    const [availableRoles, setAvailableRoles] = useState<ParticipantItem[]>(testRoles);
+    const [availablePersons, setAvailablePersons] = useState<SelectItem[]>(testPart);
+    const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>(testPart);
     const [filter, setFilter] = useState<string>('');
+
+    const getRolesCopy = (): ParticipantItem[] => {
+        return JSON.parse(JSON.stringify(testRoles));
+    };
+    
 
     const setOrganization = (value: string, index: number): void => {
         setParticipants(p => {
@@ -154,6 +126,8 @@ const Participants = ({
         setParticipants(p => {
             const participantsCopy = [...p];
             participantsCopy[index].type = value;
+            participantsCopy[index].role = null;
+            participantsCopy[index].person = null;
             return participantsCopy;
         });
     };
@@ -215,98 +189,25 @@ const Participants = ({
     };
 
 
-    const setRoleOnParticipant = (value: string, index: number): void => {
-        const role = availableRoles.find(c => c.value == value);
-        if (role) {
-            setParticipants(p => {
-                const participantsCopy = [...p];
-                participantsCopy[index].role = {id: 123, roleName: role.text, persons: null};
-                participantsCopy[index].person = null;
-                return participantsCopy;
-            });
-        }
+    const setRoleOnParticipant = (value: RoleParticipant, index: number): void => {
+        setParticipants(p => {
+            const participantsCopy = [...p];
+            participantsCopy[index].role = value;
+            participantsCopy[index].person = null;
+            return participantsCopy;
+        });
     };
 
-    const getNewValue = (value: string, currentValue: string): string => {
-        switch (value) {
-            case currentValue:
-                return '0';
-            case '1':
-                return '1';
-            case '2':
-                return '2';
-            default:
-                return '0';
-        }
-    };
-
-    const setPersonOnParticipant = (itmValue: string, index: number): void => {
-        const person = availablePersons.find(p => p.value == itmValue);
+    const setPersonOnParticipant = (event: React.MouseEvent, personIndex: number, participantIndex: number): void => {
+        event.preventDefault();
+        const person = availablePersons[personIndex];
         if (person) {
             setParticipants(p => {
                 const participantsCopy = [...p];
-                participantsCopy[index].role = null;
-                participantsCopy[index].person = {id: 123, name: person.text, cc: false};
+                participantsCopy[participantIndex].role = null;
+                participantsCopy[participantIndex].person = {id: 123, name: person.text, cc: false};
                 return participantsCopy;
             });
-        }
-    };
-
-    const updateRadioButtonParticipants = (itmValue: string, value: string, index: number): void => {
-        const role = availableRoles.find(r => {
-            if (r.children) {
-                const person = r.children.find(c => c.value == itmValue);
-                return person;
-            }
-        });
-        const roleIndex = availableRoles.findIndex(r => {
-            if (r.children) {
-                const person = r.children.find(c => c.value == itmValue);
-                return person;
-            }
-        });
-
-        if (role && role.children && roleIndex > -1) {
-            const person = role.children.find(c => c.value == itmValue);
-            const personIndex = role.children.findIndex(c => c.value == itmValue);
-
-            if (person && personIndex > -1 && person.radioOption) {
-                const newValue = getNewValue(value, person.radioOption);
-                setAvailableRoles(ar => {
-                    const copyR = [...ar];
-                    copyR.forEach((r, i) => {
-                        if (r.children && i != roleIndex) {
-                            r.children.forEach(person => {
-                                person.radioOption = '0';
-                            });
-                        }
-                        if (r.children && i == roleIndex) {
-                            person.radioOption = newValue;
-                        }
-                    });
-                    return copyR;
-                });
-
-                const radioCheckedPersons = role.children.filter(p => p.radioOption && p.radioOption != '0');
-                const rolePeople = radioCheckedPersons.map(r => {
-                    return {
-                        id: r.value,
-                        name: r.text,
-                        cc: r.radioOption == '2'
-                    };
-                });
-
-                setParticipants(p => {
-                    const participantsCopy = [...p];
-                    participantsCopy[index].role = {
-                        id: 123,
-                        roleName: role.text,
-                        persons: rolePeople
-                    };
-                    participantsCopy[index].person = null;
-                    return participantsCopy;
-                });
-            }
         }
     };
 
@@ -317,14 +218,10 @@ const Participants = ({
     useEffect(() => {
         if(filter.length > 0) {
             setAvailablePersons(testPart.filter(p => p.text.toLocaleLowerCase().startsWith(filter.toLocaleLowerCase())));
-            setAvailableRoles(testRoles.filter(r => r.text.toLocaleLowerCase().startsWith(filter.toLocaleLowerCase())));
         } else {
-            setAvailablePersons([]);
-            setAvailableRoles([]);
+            // setAvailablePersons([]);
         }
     }, [filter]);
-
-    
 
     return (<Container>
         <FormContainer>
@@ -347,26 +244,35 @@ const Participants = ({
                             >
                                 {p.type}
                             </SelectInput>
-                            { p.type == ParticipantType[0].text &&
-                                <SelectInput
-                                    onChange={(value): void => setType(value, index)}
-                                    data={ParticipantType}
-                                    label={'Type'}
-                                >
-                                    {p.type}
-                                </SelectInput>
-                            }
                             { p.type == ParticipantType[1].text &&
+                                <Dropdown
+                                    label={'Person'}
+                                    maxHeight='300px'
+                                    variant='form'
+                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                    text={(participants[index].person && participants[index].person!.name) || 'Select'}
+                                >
+                                    { availablePersons.map((person, i) => {
+                                        return (
+                                            <DropdownItem
+                                                key={i}
+                                                onClick={(event: React.MouseEvent): void =>
+                                                    setPersonOnParticipant(event, i, index)
+                                                }
+                                            >
+                                                <div>{person.text}</div>
+                                            </DropdownItem>
+                                        );
+                                    })}
+                                </Dropdown>
+                            }
+                            { p.type == ParticipantType[0].text &&
                                 <ParticipantPicker
                                     onChange={(value): void => setRoleOnParticipant(value, index)}
-                                    onPersonChange={(value): void => setPersonOnParticipant(value, index)}
-                                    onRadioChange={(itmValue, value): void => updateRadioButtonParticipants(itmValue, value, index)}
-                                    roles={availableRoles}
-                                    persons={availablePersons}
-                                    label={'Person/role'}
-                                    onFilter={setFilter}
+                                    roles={getRolesCopy()}
+                                    label={'Role'}
                                 >
-                                    {p.role || p.person ? getPersonRoleText(index) : 'Search to select' }
+                                    {p.role ? getPersonRoleText(index) : 'Search to select' }
                                 </ParticipantPicker>
                             }
                             { index > 1 &&
@@ -386,7 +292,7 @@ const Participants = ({
         </FormContainer>
         <ButtonContainer>
             <Button
-                constiant='outlined'
+                variant='outlined'
                 onClick={previous}
             >
                 Previous

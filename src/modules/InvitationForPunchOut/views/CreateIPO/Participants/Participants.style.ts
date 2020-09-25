@@ -45,8 +45,11 @@ export const InputContainer = styled.div`
         margin-right: calc(var(--grid-unit) * 2);
     }
 
-    > div:nth-child(2), > div:nth-child(1) {
+    > div:nth-child(3), > div:nth-child(1) {
         width: 300px;
+    }
+    > div:nth-child(2) {
+        width: 150px;
     }
 `;
 

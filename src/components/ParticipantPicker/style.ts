@@ -49,7 +49,6 @@ export const Container = styled.div<{ maxHeight?: string }>`
 
 interface IconProps {
     disabled: boolean;
-    voided: boolean;
 }
 
 
@@ -65,23 +64,13 @@ export const DropdownIcon = styled.div<IconProps>`
         `}
     }
     min-height: calc(var(--grid-unit) * 3);
-    ${({voided}): any => voided && css`
-        svg {
-            display: none;
-        }
-    `}
 `;
 
 interface DropdownButtonProps {
     readonly isOpen: boolean;
-    isVoided?: boolean;
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    ${(props): any => props.isVoided && css`
-        cursor: not-allowed;
-        color: ${tokens.colors.interactive.disabled__text.rgba};
-    `}
     border: none;
     display: flex;
     width: 100%;
@@ -170,6 +159,7 @@ export const ItemContent = styled.div`
     }
     .MuiFormGroup-root {
         flex-direction: row;
+        margin-left: 0px;
     }    
 `;
 
@@ -213,19 +203,13 @@ export const TitleContent = styled.div<TitleContentProps>`
     }
 `;
 
-interface LabelProps {
-    isVoided: boolean;
-}
-
-export const Label = styled.div<LabelProps>`
+export const Label = styled.div`
     font-size: 12px;
-    ${(props): any => props.isVoided && css`
-        color: ${tokens.colors.interactive.disabled__text.rgba};
-    `}
 `;
 
 export const FilterContainer = styled.li`
     overflow-x: hidden;
+    box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
     input {
         width: 100%;
         padding: calc(var(--grid-unit)*2);

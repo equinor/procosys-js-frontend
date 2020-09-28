@@ -1,6 +1,6 @@
 import { Container, SingleIconContainer, TagLink, TagStatusLabel, Toolbar } from './ScopeTable.style';
 import { PreservedTag, PreservedTags } from './types';
-import { Query, QueryResult } from 'material-table';
+import { MTableBody, MTablePagination, Query, QueryResult } from 'material-table';
 import React, { ReactNode, RefObject } from 'react';
 import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
 
@@ -241,15 +241,12 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                         padding: 'dense',
                         pageSize: this.props.pageSize,
                         emptyRowsWhenPaging: false,
-                        pageSizeOptions: [10, 50, 100, 500, 1000],
+                        pageSizeOptions: [10, 25, 100, 500, 1000],
                         headerStyle: {
                             backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                             whiteSpace: 'nowrap',
                             fontFamily: 'Equinor',
                         },
-                        // Just a set value for now, this should be more dynamic in the future probably when the library supports more dynamic height of the table. 
-                        maxBodyHeight: `${this.props.maxHeight}px`,
-                        // --- 
                         rowStyle: (rowData): any => ({
                             opacity: isTagVoided(rowData) && 0.5,
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,

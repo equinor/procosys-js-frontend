@@ -1,4 +1,4 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
+import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StickyHeader, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -117,7 +117,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
-    const [pageSize, setPageSize] = useState<number>(50);
+    const [pageSize, setPageSize] = useState<number>(25);
     const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ ...emptyTagListFilter });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
@@ -707,162 +707,165 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
-                <OldPreservationLink>
-                    {!purchaseOrderNumber &&
-                        <Typography variant="caption">
-                            <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                                <Button variant="ghost" onClick={navigateToOldPreservation}>Switch to old system</Button>
-                            </Tooltip>
-                        </Typography>
-                    }
-                </OldPreservationLink>
-                <HeaderContainer>
-                    <Header>
-                        <Typography variant="h1">Preservation tags</Typography>
-                        <Dropdown
-                            maxHeight='300px'
-                            text={project.name}
-                            onFilter={setFilterForProjects}
-                        >
-                            {filteredProjects.map((projectItem, index) => {
-                                return (
-                                    <DropdownItem
-                                        key={index}
-                                        onClick={(event): void => changeProject(event, index)}
-                                    >
-                                        <div>{projectItem.description}</div>
-                                        <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
-                                    </DropdownItem>
-                                );
-                            })}
-                        </Dropdown>
-                        {purchaseOrderNumber &&
-                            <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                <StickyHeader>
+                    <OldPreservationLink>
+                        {!purchaseOrderNumber &&
+                            <Typography variant="caption">
+                                <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
+                                    <Button variant="ghost" onClick={navigateToOldPreservation}>Switch to old system</Button>
+                                </Tooltip>
+                            </Typography>
                         }
-                        <Dropdown text="Add scope">
-                            <Link to={'/AddScope/selectTagsManual'}>
-                                <DropdownItem>
-                                    Add tags manually
-                                </DropdownItem>
-                            </Link>
-                            <Link to={'/AddScope/selectTagsAutoscope'}>
-                                <DropdownItem>
-                                    Autoscope by tag function
-                                </DropdownItem>
-                            </Link>
-                            <Link to={'/AddScope/createDummyTag'}>
-                                <DropdownItem>
-                                    Create dummy tag
-                                </DropdownItem>
-                            </Link>
-                            <Link to={'/AddScope/selectMigrateTags'}>
-                                <DropdownItem>
-                                    Migrate tags from old (temporary)
-                                </DropdownItem>
-                            </Link>
-                        </Dropdown>
-                    </Header>
-                    <IconBar>
-                        <Button
-                            onClick={preservedDialog}
-                            disabled={!preservableTagsSelected}>Preserved this week
-                        </Button>
-                        <StyledButton
-                            variant='ghost'
-                            title='Start preservation for selected tag(s)'
-                            onClick={startPreservationDialog}
-                            disabled={!startableTagsSelected}>
-                            <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                    </OldPreservationLink>
+                    <HeaderContainer>
+                        <Header>
+                            <Typography variant="h1">Preservation tags</Typography>
+                            <Dropdown
+                                maxHeight='300px'
+                                text={project.name}
+                                onFilter={setFilterForProjects}
+                            >
+                                {filteredProjects.map((projectItem, index) => {
+                                    return (
+                                        <DropdownItem
+                                            key={index}
+                                            onClick={(event): void => changeProject(event, index)}
+                                        >
+                                            <div>{projectItem.description}</div>
+                                            <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>
+                            {purchaseOrderNumber &&
+                                <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                            }
+                            <Dropdown text="Add scope">
+                                <Link to={'/AddScope/selectTagsManual'}>
+                                    <DropdownItem>
+                                        Add tags manually
+                                    </DropdownItem>
+                                </Link>
+                                <Link to={'/AddScope/selectTagsAutoscope'}>
+                                    <DropdownItem>
+                                        Autoscope by tag function
+                                    </DropdownItem>
+                                </Link>
+                                <Link to={'/AddScope/createDummyTag'}>
+                                    <DropdownItem>
+                                        Create dummy tag
+                                    </DropdownItem>
+                                </Link>
+                                <Link to={'/AddScope/selectMigrateTags'}>
+                                    <DropdownItem>
+                                        Migrate tags from old (temporary)
+                                    </DropdownItem>
+                                </Link>
+                            </Dropdown>
+                        </Header>
+                        <IconBar>
+                            <Button
+                                onClick={preservedDialog}
+                                disabled={!preservableTagsSelected}>Preserved this week
+                            </Button>
+                            <StyledButton
+                                variant='ghost'
+                                title='Start preservation for selected tag(s)'
+                                onClick={startPreservationDialog}
+                                disabled={!startableTagsSelected}>
+                                <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Start
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            title="Transfer selected tag(s)"
-                            onClick={transferDialog}
-                            disabled={!transferableTagsSelected}>
-                            <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost'
+                                title="Transfer selected tag(s)"
+                                onClick={transferDialog}
+                                disabled={!transferableTagsSelected}>
+                                <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Transfer
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            title="Complete selected tag(s)"
-                            onClick={showCompleteDialog}
-                            disabled={!completableTagsSelected}>
-                            <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost'
+                                title="Complete selected tag(s)"
+                                onClick={showCompleteDialog}
+                                disabled={!completableTagsSelected}>
+                                <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
                         Complete
-                        </StyledButton>
-                        <OptionsDropdown
-                            text="More options"
-                            icon='more_verticle'
-                            variant='ghost'>
-                            <DropdownItem
-                                disabled={selectedTags.length != 1 || voidedTagsSelected}
-                                onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
-                                <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                            </StyledButton>
+                            <OptionsDropdown
+                                text="More options"
+                                icon='more_verticle'
+                                variant='ghost'>
+                                <DropdownItem
+                                    disabled={selectedTags.length != 1 || voidedTagsSelected}
+                                    onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
+                                    <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Edit
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={selectedTags.length === 0}
-                                onClick={(): void => showRemoveDialog()}>
-                                <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={selectedTags.length === 0}
+                                    onClick={(): void => showRemoveDialog()}>
+                                    <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Remove
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={!unvoidedTagsSelected}
-                                onClick={(): void => showVoidDialog(true)}>
-                                <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={!unvoidedTagsSelected}
+                                    onClick={(): void => showVoidDialog(true)}>
+                                    <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Void
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={!voidedTagsSelected}
-                                onClick={(): void => showVoidDialog(false)}>
-                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={!voidedTagsSelected}
+                                    onClick={(): void => showVoidDialog(false)}>
+                                    <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Unvoid
-                            </DropdownItem>
-                        </OptionsDropdown>
-                        <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
-                            <div>
-                                <StyledButton
-                                    id='filterButton'
-                                    variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
-                                    onClick={(): void => {
-                                        toggleFilter();
-                                    }}
-                                >
-                                    <EdsIcon name='filter_list' />
-                                </StyledButton>
-                            </div>
-                        </Tooltip>
-                    </IconBar>
-                </HeaderContainer>
+                                </DropdownItem>
+                            </OptionsDropdown>
+                            <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
+                                <div>
+                                    <StyledButton
+                                        id='filterButton'
+                                        variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
+                                        onClick={(): void => {
+                                            toggleFilter();
+                                        }}
+                                    >
+                                        <EdsIcon name='filter_list' />
+                                    </StyledButton>
+                                </div>
+                            </Tooltip>
+                        </IconBar>
+                    </HeaderContainer>
+                </StickyHeader>
 
-                <ScopeTable
-                    getTags={getTags}
-                    data-testId='scopeTable'
-                    setSelectedTags={setSelectedTags}
-                    showTagDetails={openFlyout}
-                    setRefreshScopeListCallback={setRefreshScopeListCallback}
-                    pageSize={pageSize}
-                    setPageSize={setPageSize}
-                    shouldSelectFirstPage={resetTablePaging}
-                    setFirstPageSelected={(): void => setResetTablePaging(false)}
-                    setOrderByField={setOrderByField}
-                    setOrderDirection={setOrderDirection}
-                    maxHeight={moduleAreaHeight}
-                />
-                {
-                    displayFlyout && (
-                        <Flyout
-                            close={closeFlyout}>
-                            <TagFlyout
-                                tagId={flyoutTagId}
-                                close={closeFlyout}
-                                setDirty={(): void => setScopeIsDirty(true)}
-                            />
-                        </Flyout>
-                    )
-                }
-
+                <div style={{ marginTop: '100px' }}>
+                    <ScopeTable
+                        getTags={getTags}
+                        data-testId='scopeTable'
+                        setSelectedTags={setSelectedTags}
+                        showTagDetails={openFlyout}
+                        setRefreshScopeListCallback={setRefreshScopeListCallback}
+                        pageSize={pageSize}
+                        setPageSize={setPageSize}
+                        shouldSelectFirstPage={resetTablePaging}
+                        setFirstPageSelected={(): void => setResetTablePaging(false)}
+                        setOrderByField={setOrderByField}
+                        setOrderDirection={setOrderDirection}
+                        maxHeight={moduleAreaHeight}
+                    />
+                    {
+                        displayFlyout && (
+                            <Flyout
+                                close={closeFlyout}>
+                                <TagFlyout
+                                    tagId={flyoutTagId}
+                                    close={closeFlyout}
+                                    setDirty={(): void => setScopeIsDirty(true)}
+                                />
+                            </Flyout>
+                        )
+                    }
+                </div>
             </ContentContainer >
             {
                 displayFilter && savedTagListFilters && (

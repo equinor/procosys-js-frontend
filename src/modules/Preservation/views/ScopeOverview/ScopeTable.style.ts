@@ -36,37 +36,41 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 `;
 
 export const Container = styled.div`
-    input + svg {
-        width: 24px;
-        height: 24px;
-        
-    }
+input + svg {
+    width: 24px;
+    height: 24px;
+    
+}
 
-    tbody, thead {
-        .MuiButtonBase-root {
-            :hover {
-                background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
-            }
-            > .MuiIconButton-label > svg {
-                fill: ${tokens.colors.interactive.primary__resting.rgba};
-            }
-        }
+div > div > div > div[style] {
+    overflow-y: hidden !important; /* This is to remove the scrollbar in table that makes it seem like the page is lagging when user is scrolling  */
+}
 
-        .MuiCheckbox-colorSecondary.Mui-checked:hover {
+tbody, thead {
+    .MuiButtonBase-root {
+        :hover {
             background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
         }
-
-        .MuiTouchRipple-root {
-            display: none;
+        > .MuiIconButton-label > svg {
+            fill: ${tokens.colors.interactive.primary__resting.rgba};
         }
     }
 
-    .controlOverflow {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        color: inherit;
+    .MuiCheckbox-colorSecondary.Mui-checked:hover {
+        background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
     }
+
+    .MuiTouchRipple-root {
+        display: none;
+    }
+}
+
+.controlOverflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: inherit;
+}
 `;
 
 export const SingleIconContainer = styled.div`

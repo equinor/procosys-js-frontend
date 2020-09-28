@@ -9,6 +9,16 @@ export const Container = styled.div`
     height: 100%;
 `;
 
+export const StickyHeader = styled.div`
+   display: flex;
+   flex-direction: column;
+   position: fixed;
+   background: white;
+   overflow: visible;
+   z-index:100;
+   padding-bottom:50px;
+   `;
+
 export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     display: flex;
     margin-right: var(--margin-module--right);
@@ -21,7 +31,7 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
             `;
         }
     }};
-    overflow: hidden;
+    overflow-y: scroll; 
     flex-direction: column;
     margin-top: var(--margin-module--top);
     min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
@@ -31,9 +41,8 @@ export const HeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-
     > div {
-        margin-bottom: var(--grid-unit);
+        margin-bottom: var(--grid-unit)*4;
     }
 `;
 

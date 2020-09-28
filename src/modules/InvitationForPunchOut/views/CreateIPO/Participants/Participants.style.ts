@@ -47,6 +47,11 @@ export const InputContainer = styled.div`
 
     > div:nth-child(3), > div:nth-child(1) {
         width: 300px;
+        .overflowControl {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
     > div:nth-child(2) {
         width: 150px;

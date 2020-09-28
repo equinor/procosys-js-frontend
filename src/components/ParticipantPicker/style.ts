@@ -137,19 +137,21 @@ export const Info = styled.div`
     background-color: ${tokens.colors.ui.background__default.rgba};
 `;
 
-export const ItemContent = styled.div`
+export const ItemContent = styled.div<{ readOnlyItem: boolean }>`
     display: flex;
     align-items: center;
     padding: calc(var(--grid-unit) * 2);
     border: 0;
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
-    cursor: pointer;
 
-    :hover {
-        background-color: ${tokens.colors.ui.background__light.rgba};
-    }
-
+    ${(props): any => !props.readOnlyItem && css`
+        cursor: pointer;
+        :hover {
+            background-color: ${tokens.colors.ui.background__light.rgba};
+        }
+    `}
+ 
     label > span {
         padding: 0px;
     }
@@ -165,6 +167,7 @@ export const ItemContent = styled.div`
 
 interface TitleContentProps {
     readonly borderTop: boolean;
+    marginBottom?: boolean;
 }
 
 export const TitleContent = styled.div<TitleContentProps>`
@@ -174,9 +177,13 @@ export const TitleContent = styled.div<TitleContentProps>`
     > div {
         display: flex;
     }
-    > div:first-child {
-        margin-bottom: calc(var(--grid-unit) * 2);
-    }
+
+    ${(props): any => props.marginBottom && css`
+        > div:first-child {
+            margin-bottom: calc(var(--grid-unit) * 2);
+        }
+    `}
+    
     div {
         margin-left: 0px;
     }

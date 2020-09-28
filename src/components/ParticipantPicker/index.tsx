@@ -89,9 +89,10 @@ const ParticipantPicker = ({
         setIsOpen(false);
     };
 
-    const filterRoles = (filter: string): void => {
-        if(filter.length > 0) {
-            setFilteredRoles(allRoles.filter(r => r.text.toLocaleLowerCase().startsWith(filter.toLocaleLowerCase())));
+    const filterRoles = (input: string): void => {
+        setFilter(input);
+        if(input.length > 0) {
+            setFilteredRoles(allRoles.filter(r => r.text.toLocaleLowerCase().startsWith(input.toLocaleLowerCase())));
         } else {
             setFilteredRoles(allRoles);
         }
@@ -200,7 +201,7 @@ const ParticipantPicker = ({
             }}
             data-selected={!!parentItem.selected}
         >
-            <ItemContent>
+            <ItemContent  readOnlyItem={false}>
                 Send to group
             </ItemContent>
         </SelectableItem>);
@@ -211,7 +212,7 @@ const ParticipantPicker = ({
                 tabIndex={0}
             >
                 { !parentItem.sendToPersonalEmail &&
-                    <TitleContent borderTop={true} >
+                    <TitleContent borderTop={true} marginBottom={true} >
                         <div>Additionally, send to following persons in group</div>
                         <div className='toCc'>
                             <div>To</div>
@@ -235,7 +236,7 @@ const ParticipantPicker = ({
                 data-value={itm.value}
                 data-selected={!!itm.selected}
             >
-                <ItemContent>
+                <ItemContent readOnlyItem={parentItem.sendToPersonalEmail ? true : false}>
                     { !parentItem.sendToPersonalEmail &&
                         <RadioGroup value={'radio'} name={'radioGroup'}>
                             <FormControlLabel key={itm.value + '1'} name={itm.value} value={'1'} label={''} checked={itm.radioOption == '1'} control={<Radio onClick={(): void => updateRadioButtonParticipants(itm.value, '1')} />} />
@@ -270,7 +271,7 @@ const ParticipantPicker = ({
                 }}
                 data-selected={!!itm.selected}
             >
-                <ItemContent>
+                <ItemContent readOnlyItem={false}>
                     {itm.text}
                     <EdsIcon name='chevron_right'/>
                 </ItemContent>

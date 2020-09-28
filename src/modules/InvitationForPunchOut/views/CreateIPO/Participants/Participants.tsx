@@ -6,6 +6,9 @@ import { DropdownItem, Container, FormContainer, ButtonContainer, InputContainer
 import { Participant, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import ParticipantPicker, { ParticipantItem } from '../../../../../components/ParticipantPicker';
+import { Canceler } from '@procosys/http/HttpClient';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { Tooltip } from '@material-ui/core';
 
 const Organizations: SelectItem[] = [
     { text: 'Commissioning', value: 'Commissioning' },
@@ -35,16 +38,63 @@ const testPart: SelectItem[] = [
         value: 'p_Pål'
     },
     {
-        text: 'Stein',
-        value: 'p_Stein',
+        text: 'Kristen',
+        value: 'p_Kristen',
     },
     {
-        text: 'Henning',
-        value: 'p_Henning',
+        text: 'Cato',
+        value: 'p_Cato',
     },
 
 ];
 
+const testRoles: ParticipantItem[] = [
+    {
+        text: 'Electro',
+        value: 'r_Electro',
+        sendToPersonalEmail: false,
+        children: [
+            {
+                text: 'Elisabeth Bratli',
+                value: 'p_Elisabeth',
+                radioButtons: true,
+                radioOption: '0',
+            },
+            {
+                text: 'Lykke',
+                value: 'p_Lykke',
+                radioButtons: true,
+                radioOption: '0',
+
+            },
+            {
+                text: 'Kjetil',
+                value: 'p_Kjetild',
+                radioButtons: true,
+                radioOption: '0',
+            },
+        ]
+    },
+    {
+        text: 'Auto',
+        value: 'r_auto',
+        sendToPersonalEmail: true,
+        children: [
+            {
+                text: 'Christine',
+                value: 'p_Christine'
+            },
+            {
+                text: 'Christer Nordbø',
+                value: 'p_Christer_Nordbø'
+            },
+            {
+                text: 'Jan Inge',
+                value: 'p_Jan_Inge'
+            },
+        ]
+    }
+];
 
 const Participants = ({
     next,
@@ -53,66 +103,68 @@ const Participants = ({
     setParticipants,
     isValid
 }: ParticipantsProps): JSX.Element => {
+    const [availableRoles, setAvailableRoles] = useState<ParticipantItem[]>([]);
+    const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
+    const [personFilter, setPersonsFilter] = useState<string>('');
 
-    const testRoles: ParticipantItem[] = [
-        {
-            text: 'Electro',
-            value: 'r_Electro',
-            sendToPersonalEmail: false,
-            children: [
-                {
-                    text: 'Elisabeth',
-                    value: 'p_Elisabeth',
-                    radioButtons: true,
-                    radioOption: '0',
-                },
-                {
-                    text: 'Lykke',
-                    value: 'p_Lykke',
-                    radioButtons: true,
-                    radioOption: '0',
-    
-                },
-                {
-                    text: 'Kjetil',
-                    value: 'p_Kjetild',
-                    radioButtons: true,
-                    radioOption: '0',
-                },
-            ]
-        },
-        {
-            text: 'Auto',
-            value: 'r_auto',
-            sendToPersonalEmail: true,
-            children: [
-                {
-                    text: 'Christine',
-                    value: 'p_Christine'
-                },
-                {
-                    text: 'Christer Nordbø',
-                    value: 'p_Christer_Nordbø'
-                },
-                {
-                    text: 'Jan Inge',
-                    value: 'p_Jan_Inge'
-                },
-            ]
+    useEffect(() => {
+        //let requestCanceler: Canceler;
+        try {
+            // (async (): Promise<void> => {
+            //     const filteredPersonsResponse = await apiClient.getCommPkgsAsync(projectId, filter)
+            //         .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
+            //             return {
+            //                 commPkgNo: commPkg.commPkgNo,
+            //                 description: commPkg.description,
+            //                 status: commPkg.status,
+            //                 tableData: {
+            //                     checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+            //                 }
+            //             };
+            //         }));
+            setAvailableRoles(testRoles);
+            //})();
+            //return (): void => requestCanceler && requestCanceler();
+        } catch (error) {
+            showSnackbarNotification(error.message);
         }
-    ];
+    }, []);
 
- 
-
-    const [availableRoles, setAvailableRoles] = useState<ParticipantItem[]>(testRoles);
-    const [availablePersons, setAvailablePersons] = useState<SelectItem[]>(testPart);
-    const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>(testPart);
-    const [filter, setFilter] = useState<string>('');
+    useEffect(() => {
+        if(personFilter != '') {
+            //let requestCanceler: Canceler;
+            try {
+                // (async (): Promise<void> => {
+                //     const filteredPersonsResponse = await apiClient.getCommPkgsAsync(projectId, filter)
+                //         .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
+                //             return {
+                //                 commPkgNo: commPkg.commPkgNo,
+                //                 description: commPkg.description,
+                //                 status: commPkg.status,
+                //                 tableData: {
+                //                     checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+                //                 }
+                //             };
+                //         }));
+                setFilteredPersons(testPart);
+                //})();
+                //return (): void => requestCanceler && requestCanceler();
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+        } else {
+            setFilteredPersons([]);
+        }
+    }, [personFilter]);
 
     const getRolesCopy = (): ParticipantItem[] => {
-        return JSON.parse(JSON.stringify(testRoles));
+        console.log('testRoles: ', availableRoles);
+        return JSON.parse(JSON.stringify(availableRoles));
     };
-    
+
+    useEffect(() => {
+        console.log(availableRoles);
+    }, [availableRoles]);
 
     const setOrganization = (value: string, index: number): void => {
         setParticipants(p => {
@@ -200,7 +252,7 @@ const Participants = ({
 
     const setPersonOnParticipant = (event: React.MouseEvent, personIndex: number, participantIndex: number): void => {
         event.preventDefault();
-        const person = availablePersons[personIndex];
+        const person = filteredPersons[personIndex];
         if (person) {
             setParticipants(p => {
                 const participantsCopy = [...p];
@@ -210,18 +262,6 @@ const Participants = ({
             });
         }
     };
-
-    useEffect(() => {
-        console.log(participants);
-    }, [participants]);
-
-    useEffect(() => {
-        if(filter.length > 0) {
-            setAvailablePersons(testPart.filter(p => p.text.toLocaleLowerCase().startsWith(filter.toLocaleLowerCase())));
-        } else {
-            // setAvailablePersons([]);
-        }
-    }, [filter]);
 
     return (<Container>
         <FormContainer>
@@ -249,10 +289,11 @@ const Participants = ({
                                     label={'Person'}
                                     maxHeight='300px'
                                     variant='form'
+                                    onFilter={(input: string): void => setPersonsFilter(input)}
                                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                     text={(participants[index].person && participants[index].person!.name) || 'Select'}
                                 >
-                                    { availablePersons.map((person, i) => {
+                                    { filteredPersons.map((person, i) => {
                                         return (
                                             <DropdownItem
                                                 key={i}
@@ -272,7 +313,13 @@ const Participants = ({
                                     roles={getRolesCopy()}
                                     label={'Role'}
                                 >
-                                    {p.role ? getPersonRoleText(index) : 'Search to select' }
+                                    {p.role ? 
+                                        <Tooltip title={getPersonRoleText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
+                                            <div className='overflowControl'>
+                                                {getPersonRoleText(index)}
+                                            </div>
+                                        </Tooltip>
+                                        : 'Search to select' }
                                 </ParticipantPicker>
                             }
                             { index > 1 &&

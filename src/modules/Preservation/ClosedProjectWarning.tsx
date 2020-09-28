@@ -14,6 +14,8 @@ const CloseProjectWarning = (): JSX.Element | null => {
     const [isProjectClosed, setIsProjectClosed] = useState<boolean>(false);
 
     useEffect(() => {
+        if (project.id === -1) return;
+
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {

@@ -44,6 +44,12 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
         if (!availableProjects || !projectId) {
             return;
         }
+
+        if (availableProjects.length === 0) {
+            setCurrentProjectInContext({ id: -1, name: 'No projects available', description: 'No projects available' });
+            return;
+        }
+
         const project = availableProjects.find(el => el.id === projectId);
         if (project) {
             setCurrentProjectInContext(project);

@@ -160,12 +160,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     useEffect((): void => {
-        if (project) {
+        if (project && project.id != -1) {
             updateSavedTagListFilters();
         }
     }, [project]);
 
     useEffect((): void => {
+        if (project && project.id === -1) return;
+
         const previousFilter = getCachedFilter(project.id);
         if (previousFilter) {
             setTagListFilter({
@@ -720,6 +722,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <Header>
                         <Typography variant="h1">Preservation tags</Typography>
                         <Dropdown
+                            disabled={project.id === -1}
                             maxHeight='300px'
                             text={project.name}
                             onFilter={setFilterForProjects}
@@ -739,7 +742,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         {purchaseOrderNumber &&
                             <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
                         }
-                        <Dropdown text="Add scope">
+                        <Dropdown disabled={project.id === -1} text="Add scope">
                             <Link to={'/AddScope/selectTagsManual'}>
                                 <DropdownItem>
                                     Add tags manually

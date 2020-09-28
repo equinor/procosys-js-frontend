@@ -36,7 +36,7 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
     const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
 
-    const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
+    const [availableProjects, setAvailableProjects] = useState<ProjectDetails[] | null>(null);
     const [purchaseOrderNumber, setCurrentPurchaseOrderNumber] = useState<string>('');
     const [currentProject, setCurrentProjectInContext] = useState<ProjectDetails>();
 
@@ -89,7 +89,7 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
             }
             throw new InvalidProjectException();
         } catch (error) {
-            if (error instanceof InvalidProjectException && availableProjects.length > 0) {
+            if (error instanceof InvalidProjectException && availableProjects && availableProjects.length > 0) {
                 setCurrentProject(availableProjects[0].id);
             }
         }
@@ -100,7 +100,7 @@ export const PreservationContextProvider: React.FC = ({ children }): JSX.Element
         preservationCache.setDefaultProject(currentProject);
     }, [currentProject]);
 
-    if (!currentProject) {
+    if (!currentProject || !availableProjects) {
         return (<Loading title="Loading project information" />);
     }
 

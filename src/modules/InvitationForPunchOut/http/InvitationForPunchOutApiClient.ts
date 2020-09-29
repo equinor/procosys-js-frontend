@@ -6,17 +6,18 @@ import { RequestCanceler } from '../../../http/HttpClient';
 import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
 
-export type ProjectResponse = {
-    id: number;
-    name: string;
-    description: string;
-}
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError)
     {
         super(error);
         this.name = 'IpoApiError';
     }
+}
+
+export type ProjectResponse = {
+    id: number;
+    name: string;
+    description: string;
 }
 
 export interface CommPkgResponse {
@@ -30,6 +31,22 @@ export interface McPkgResponse {
     id: number;
     mcPkgNo: string;
     description: string;
+}
+
+export interface FunctionalRoleResponse {
+    code: string;
+    description: string;
+    email: string;
+    informationalEmail: string;
+    usePersonalEmail: boolean;
+    persons: [
+        {
+            azureOid: string;
+            firstName: string;
+            lastName: string;
+            email: string;
+        }
+    ];
 }
 
 /**
@@ -136,6 +153,24 @@ class InvitationForPunchOutApiClient extends ApiClient {
         
         try {
             const result = await this.client.get<McPkgResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get functional roles for IPO
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getFunctionalRolesAsync(setRequestCanceller?: RequestCanceler): Promise<FunctionalRoleResponse[]> {
+        const endpoint = '/FunctionalRoles';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<FunctionalRoleResponse[]>(endpoint, settings);
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

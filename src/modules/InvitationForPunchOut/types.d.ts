@@ -25,15 +25,21 @@ export type GeneralInfoDetails = {
 }
 
 export type Person = {
-    id: number;
-    name: string;
-    cc: boolean;
+    azureOid: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    radioOption?: string;
 }
 
 export type RoleParticipant = {
-    id: number;
-    roleName: string;
-    persons: Person[] | null;
+    code: string;
+    description: string;
+    email: string;
+    informationalEmail: string;
+    usePersonalEmail: boolean;
+    notify: boolean;
+    persons: Person[];
 }
 
 export type Participant = {

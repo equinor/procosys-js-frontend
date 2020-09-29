@@ -156,9 +156,14 @@ const CreateIPO = (): JSX.Element => {
         setSelectedCommPkgScope([]);
     };
 
-    // useEffect(() => {
-    //     console.log(participants);
-    // }, [participants]);
+    useEffect(() => {
+        const incompleteParticipantRows = participants.filter(p => !p.organization || (!p.role && !p.person));
+        if (incompleteParticipantRows.length > 0) {
+            changeCompletedStatus(false, 3);
+        } else {
+            changeCompletedStatus(true, 3);
+        }
+    }, [participants]);
 
     return (<Container>
         <CreateIPOHeader
@@ -197,7 +202,7 @@ const CreateIPO = (): JSX.Element => {
                 previous={goToPreviousStep}
                 participants={participants}
                 setParticipants={setParticipants}
-                isValid={true}
+                isValid={steps[2].isCompleted}
             />
         }
         { currentStep == 4 && 
@@ -210,7 +215,7 @@ const CreateIPO = (): JSX.Element => {
             <Summary 
                 previous={goToPreviousStep}
                 generalInfo={generalInfo}
-                mcScope={selectedMcPkgScope.selected}
+                mcPkgScope={selectedMcPkgScope.selected}
                 commPkgScope={selectedCommPkgScope}
                 participants={participants}
             />

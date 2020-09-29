@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div<{ maxHeight?: string }>`
+export const Container = styled.div`
     position: relative;
 
     ul {
@@ -11,14 +11,6 @@ export const Container = styled.div<{ maxHeight?: string }>`
         border-radius: 4px;
         z-index: 100;
         white-space: nowrap;
-
-
-        ${(props): any => props.maxHeight && css`
-            max-height: ${props.maxHeight};
-            overflow-y: auto;
-            box-shadow: ${tokens.elevation.raised};
-        `}
-
         
         li > div {
             box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
@@ -78,28 +70,25 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     background-color: ${tokens.colors.ui.background__light.rgba};
     border-bottom: 1px solid black;
-    ${(props): any =>
-        props.isOpen &&
-        css`
-            background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-        `}
+    ${(props): any => props.isOpen && css`
+        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+    `}
 `;
 
 export type SelectableItemProps = {
-    selected: boolean;
     hideItems?: boolean;
+    readOnlyItem?: boolean
 };
 
 export const SelectableItem = styled.li<SelectableItemProps>`
     position: relative;
     background-color: transparent;
-
-    :first-child {
-        background-color: ${(props): any =>
-        props.selected
-            ? tokens.colors.ui.background__light.rgba
-            : 'transparent'};
-    }
+    
+    ${(props): any => props.readOnlyItem && css`
+        &:focus {
+            outline: none;
+        }
+    `}
 
     :hover > ul {
         display: block;
@@ -117,10 +106,6 @@ export const TitleItem = styled.li`
         outline: none;
     }
 `;
-
-SelectableItem.defaultProps = {
-    selected: false,
-};
 
 export const CascadingItem = styled.ul`
     display: none;
@@ -188,7 +173,6 @@ export const ItemContent = styled.div<{ readOnlyItem: boolean; greenText?: boole
     ${(props): any => props.greenText && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};
     `}
-
 `;
 
 interface TitleContentProps {
@@ -222,7 +206,6 @@ export const TitleContent = styled.div<TitleContentProps>`
         margin-left: 0px;
     }
 
-    /* align-items: center; */
     padding: var(--grid-unit) calc(var(--grid-unit) * 2);
     border: 0;
     font-weight: normal;

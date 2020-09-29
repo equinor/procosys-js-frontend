@@ -3,7 +3,7 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Dropdown from '../../../../../components/Dropdown';
 import { Button } from '@equinor/eds-core-react';
 import { DropdownItem, Container, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
-import { Participant, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
+import { Participant, RoleParticipant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import RoleSelector from '../../../components/RoleSelector';
 import { Canceler } from '@procosys/http/HttpClient';
@@ -35,28 +35,34 @@ interface ParticipantsProps {
 
 const testPart: SelectItem[] = [
     {
-        text: 'Pål',
-        value: 'p_Pål'
+        text: 'Pål Eie',
+        value: 'p_Pål',
+        name: 'Eie, Pål',
+        email: 'test@gmail.com'
     },
     {
-        text: 'Pernille',
-        value: 'p_Pernille'
-    },
-    {
-        text: 'Kristen',
+        text: 'Kristen Equinor',
         value: 'p_Kristen',
+        name: 'Equinor, Kristen',
+        email: 'test1@gmail.com'
     },
     {
-        text: 'Kjetil',
+        text: 'Kjetil Falnes',
         value: 'p_Kjetil',
+        name: 'Falnes, Kjetil',
+        email: 'test2@gmail.com'
     },
     {
-        text: 'Cato',
+        text: 'Cato Dahl',
         value: 'p_Cato',
+        name: 'Dahl, Cato',
+        email: 'test3@gmail.com'
     },
     {
         text: 'Christine',
         value: 'p_Christine',
+        name: 'Emberland, Christine',
+        email: 'test4@gmail.com'
     },
 
 ];
@@ -107,23 +113,8 @@ const Participants = ({
 
     useEffect(() => {
         if(personFilter != '') {
-            //let requestCanceler: Canceler;
             try {
-                // (async (): Promise<void> => {
-                //     const filteredPersonsResponse = await apiClient.getCommPkgsAsync(projectId, filter)
-                //         .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
-                //             return {
-                //                 commPkgNo: commPkg.commPkgNo,
-                //                 description: commPkg.description,
-                //                 status: commPkg.status,
-                //                 tableData: {
-                //                     checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
-                //                 }
-                //             };
-                //         }));
                 setFilteredPersons(testPart.filter(r => r.text.toLocaleLowerCase().startsWith(personFilter.toLocaleLowerCase())));
-                //})();
-                //return (): void => requestCanceler && requestCanceler();
             } catch (error) {
                 showSnackbarNotification(error.message);
             }
@@ -162,37 +153,38 @@ const Participants = ({
         });
     };
 
-    const getPersonRoleText = (index: number): string => {
+    const nameCombiner = (firstName: string, lastName: string): string => {
+        return firstName + ' ' + lastName;
+    };
+
+    const personsInRoleText = (textToDisplay: string, persons: Person[]): string => {
+        persons.forEach((p, i) => {
+            textToDisplay += nameCombiner(p.firstName, p.lastName);
+            if (i + 1 < persons.length) {
+                textToDisplay += ', ';
+            }
+        });
+        return textToDisplay;
+    };
+
+    const getDisplayText = (index: number): string => {
         const participant = participants[index];
         if (participant.person) {
-            return participant.person.firstName + ' ' + participant.person.lastName;
+            return nameCombiner(participant.person.firstName, participant.person.lastName);
         } else if (participant.role) {
             let textToDisplay = participant.role.code;
-            if (participant.role.persons) {
+            if (participant.role.persons.length > 0) {
                 textToDisplay += ' - ';
                 const cc = participant.role.persons.filter(p => p.radioOption == 'cc');
                 const to = participant.role.persons.filter(p => p.radioOption == 'to');
                 if (to.length > 0) {
-                    textToDisplay += 'To: ';
-                    to.forEach((p, i) => {
-                        textToDisplay += p.firstName + ' ' + p.lastName;
-                        if(cc.length == 0) {
-                            if (i + 1 < to.length) {
-                                textToDisplay += ', ';
-                            }
-                        } else {
-                            textToDisplay += ', ';
-                        }
-                    });
+                    textToDisplay += personsInRoleText('To: ', to);
+                    if(cc.length > 0) {
+                        textToDisplay += '. ';
+                    }
                 }
                 if (cc.length > 0) {
-                    textToDisplay += 'CC: ';
-                    cc.forEach((p, i) => {
-                        textToDisplay += p.firstName + ' ' + p.lastName;
-                        if(i + 1 < cc.length) {
-                            textToDisplay += ', ';
-                        }
-                    });
+                    textToDisplay += personsInRoleText('CC: ', cc);
                 }
             }
             return textToDisplay;
@@ -210,7 +202,6 @@ const Participants = ({
         setParticipants([...participants, newParticipant]);
     };
 
-
     const setRoleOnParticipant = (value: RoleParticipant, index: number): void => {
         setParticipants(p => {
             const participantsCopy = [...p];
@@ -223,14 +214,20 @@ const Participants = ({
     const setPersonOnParticipant = (event: React.MouseEvent, personIndex: number, participantIndex: number): void => {
         event.preventDefault();
         const person = filteredPersons[personIndex];
-        // if (person) {
-        //     setParticipants(p => {
-        //         const participantsCopy = [...p];
-        //         participantsCopy[participantIndex].role = null;
-        //         participantsCopy[participantIndex].person = {id: 123, firstName: person.text, cc: false};
-        //         return participantsCopy;
-        //     });
-        // }
+        if (person && person.name) {
+            const name = person.name.split(', ');
+            setParticipants(p => {
+                const participantsCopy = [...p];
+                participantsCopy[participantIndex].role = null;
+                participantsCopy[participantIndex].person = {
+                    azureOid: person.value, 
+                    firstName: name[1], 
+                    lastName: name[0], 
+                    email: person.email ? person.email : ''
+                };
+                return participantsCopy;
+            });
+        }
     };
 
     return (<Container>
@@ -260,8 +257,7 @@ const Participants = ({
                                     maxHeight='300px'
                                     variant='form'
                                     onFilter={(input: string): void => setPersonsFilter(input)}
-                                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                    text={(participants[index].person && (participants[index].person!.firstName + ' ' + participants[index].person!.lastName)) || 'Search to select'}
+                                    text={p.person ? getDisplayText(index) : 'Search to select'}
                                 >
                                     { filteredPersons.map((person, i) => {
                                         return (
@@ -284,9 +280,9 @@ const Participants = ({
                                     label={'Role'}
                                 >
                                     {p.role ? 
-                                        <Tooltip title={getPersonRoleText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
+                                        <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
                                             <div className='overflowControl'>
-                                                {getPersonRoleText(index)}
+                                                {getDisplayText(index)}
                                             </div>
                                         </Tooltip>
                                         : 'Select' }

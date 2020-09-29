@@ -87,6 +87,7 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
 
 export type SelectableItemProps = {
     selected: boolean;
+    hideItems?: boolean;
 };
 
 export const SelectableItem = styled.li<SelectableItemProps>`
@@ -103,12 +104,18 @@ export const SelectableItem = styled.li<SelectableItemProps>`
     :hover > ul {
         display: block;
     }
+
+    ${(props): any => props.hideItems && css`
+        display: none;
+    `}
 `;
 
 export const TitleItem = styled.li`
     position: relative;
     background-color: transparent;
-    font-size: 12px;
+    &:focus {
+        outline: none;
+    }
 `;
 
 SelectableItem.defaultProps = {
@@ -120,7 +127,6 @@ export const CascadingItem = styled.ul`
     background-color: transparent;
     left: 100%;
     top: -1px;
-    max-width: 264px;
     border: none;
     width: max-content;
     align-items: center;
@@ -137,7 +143,7 @@ export const Info = styled.div`
     background-color: ${tokens.colors.ui.background__default.rgba};
 `;
 
-export const ItemContent = styled.div<{ readOnlyItem: boolean }>`
+export const ItemContent = styled.div<{ readOnlyItem: boolean; greenText?: boolean }>`
     display: flex;
     align-items: center;
     padding: calc(var(--grid-unit) * 2);
@@ -159,15 +165,37 @@ export const ItemContent = styled.div<{ readOnlyItem: boolean }>`
     svg {
         margin-left: auto;
     }
-    .MuiFormGroup-root {
-        flex-direction: row;
+    .radioButtons {
+        display: flex;
+        > div {
+            display: flex;
+            justify-content: center;
+            width: calc(var(--grid-unit) * 4);
+        }
+        margin-right: var(--grid-unit);
         margin-left: 0px;
-    }    
+        .MuiButtonBase-root {
+            width: calc(var(--grid-unit) * 3);
+        }
+        label {
+            justify-content: center;
+        }
+        div, span, label {
+            padding: 0px;
+            margin: 0px;
+        }
+    }
+    ${(props): any => props.greenText && css`
+        color: ${tokens.colors.interactive.primary__resting.rgba};
+    `}
+
 `;
 
 interface TitleContentProps {
     readonly borderTop: boolean;
     marginBottom?: boolean;
+    hideToCc?: boolean;
+    disabled?: boolean;
 }
 
 export const TitleContent = styled.div<TitleContentProps>`
@@ -181,6 +209,12 @@ export const TitleContent = styled.div<TitleContentProps>`
     ${(props): any => props.marginBottom && css`
         > div:first-child {
             margin-bottom: calc(var(--grid-unit) * 2);
+        }
+    `}
+
+    ${(props): any => props.hideToCc && css`
+        .toCc {
+            display: none;
         }
     `}
     
@@ -198,14 +232,22 @@ export const TitleContent = styled.div<TitleContentProps>`
         border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
     `}
 
-    .toCc {
-        > div:first-child {
-            margin-left: var(--grid-unit);
-            width: 32px;
+    ${(props): any => props.disabled && css`
+        p {
+            color: ${tokens.colors.interactive.disabled__text.rgba};
         }
-        > div:last-child {
-            width: 32px;
-            margin-left: 4px;
+    `}
+
+    .toCc {
+        margin-top: var(--grid-unit);
+        label, div, span {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        > p {
+            width: calc(var(--grid-unit) * 4);
+            text-align: center;
         }
     }
 `;
@@ -226,5 +268,4 @@ export const FilterContainer = styled.li`
             outline: none;
         }
     }
-
 `;

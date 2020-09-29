@@ -1,25 +1,37 @@
 import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent, FilterContainer, Info } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import { useClickOutsideNotifier } from '../../hooks';
-import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
-import { SelectItem } from '../Select';
-import { Participant, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
-import { SelectableItemProps } from '../Select/style';
+import { Radio, withStyles, RadioProps } from '@material-ui/core';
+import { RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '../EdsIcon';
+import Checkbox from '../Checkbox';
+import { Typography } from '@equinor/eds-core-react';
+import { tokens } from '@equinor/eds-tokens';
 
-export type ParticipantItem = {
+const GreenRadio = withStyles({
+    root: {
+        color: tokens.colors.interactive.primary__resting.rgba,
+        '&$checked': {
+            color: tokens.colors.interactive.primary__resting.rgba,
+        },
+    },
+    checked: {},
+})((props: RadioProps) => <Radio color="default" {...props} />);
+
+export type RoleItem = {
     text: string;
     value: any;
     sendToPersonalEmail?: boolean,
     selected?: boolean;
-    children?: ParticipantItem[];
-    title?: boolean;
+    children?: RoleItem[];
     radioButtons?: boolean;
     radioOption?: string;
+    showRadioOptions?: boolean;
+    notify?: boolean;
 };
 
-type SelectProps = {
-    roles: ParticipantItem[];
+type RoleSelectorProps = {
+    roles: RoleItem[];
     disabled?: boolean;
     onChange?: (newValue: any) => void;
     children: ReactNode;
@@ -30,7 +42,7 @@ type SelectProps = {
 const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
-const ParticipantPicker = ({
+const RoleSelector = ({
     disabled = false,
     roles,
     onChange = (): void => {
@@ -38,14 +50,22 @@ const ParticipantPicker = ({
     },
     children,
     label,
-    maxHeight,
-}: SelectProps): JSX.Element => {
+    maxHeight
+}: RoleSelectorProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     const [filter, setFilter] = useState<string>('');
-    const [allRoles, setAllRoles] = useState<ParticipantItem[]>(roles);
-    const [filteredRoles, setFilteredRoles] = useState<ParticipantItem[]>(roles);
+    const [allRoles, setAllRoles] = useState<RoleItem[]>(roles);
+    const [filteredRoles, setFilteredRoles] = useState<RoleItem[]>(roles);
+    const [pickedRoleValue, setPickedRoleValue] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (roles.length != allRoles.length) {
+            setAllRoles(roles);
+            setFilteredRoles(roles);
+        }
+    }, [roles]);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -55,8 +75,23 @@ const ParticipantPicker = ({
         setIsOpen(!isOpen);
     };
 
-    const selectItem = (value: any, sendToPersonalEmail: boolean): void => {
-        onChange(value);
+    const clearOtherRoles = (roleIndex: number): void => {
+        setAllRoles(ar => {
+            const copyR = [...ar];
+            copyR.forEach((r, i) => {
+                if (r.children && i != roleIndex) {
+                    r.notify = false;
+                    r.children.forEach(person => {
+                        person.radioOption = '0';
+                    });
+                }
+            });
+            return copyR;
+        });
+    };
+
+    const selectItem = (value: any, sendToPersonalEmail: boolean, roleIndex: number): void => {
+        setPickedRoleValue(value);
         if(sendToPersonalEmail) {
             const role = allRoles.find(c => c.value == value);
             if (role) {
@@ -83,6 +118,7 @@ const ParticipantPicker = ({
                     roleName: role.text,
                     persons: rolePeople.length > 0 ? rolePeople : null
                 };
+                clearOtherRoles(roleIndex);
                 onChange(selectedRole);
             }
         }
@@ -127,7 +163,7 @@ const ParticipantPicker = ({
         }
     };
 
-    const updateRadioButtonParticipants = (itmValue: string, value: string): void => {
+    const updateRadioButtonParticipants = (itmValue: string, value: string, parentValue: string): void => {
         const role = allRoles.find(r => {
             if (r.children) {
                 const person = r.children.find(c => c.value == itmValue);
@@ -179,57 +215,80 @@ const ParticipantPicker = ({
                     persons: rolePeople.length > 0 ? rolePeople : null
 
                 };
-
-                onChange(selectedRole);
+                if (parentValue == pickedRoleValue) {
+                    onChange(selectedRole);
+                }
             }
         }
     };
 
-    const createChildNodes = (parentItem: ParticipantItem, items: ParticipantItem[]): JSX.Element[] => {
+    const showPersons = (notify: boolean, index: number): void => {
+        setFilteredRoles(r => {
+            const copy = [...r];
+            copy[index].notify = notify;
+            return copy;
+        });
+    };
+
+    const createChildNodes = (parentItem: RoleItem, parentIndex: number, items: RoleItem[]): JSX.Element[] => {
         const groupOption = (<SelectableItem
-            key={0 + parentItem.value}
+            key={-1}
             role="option"
             selected={!!parentItem.selected}
             tabIndex={0}
             data-value={parentItem.value}
             onKeyDown={(e): void => {
                 e.keyCode === KEYCODE_ENTER &&
-                    selectItem(parentItem.value, parentItem.sendToPersonalEmail ? true : false);
+                    selectItem(parentItem.value, parentItem.sendToPersonalEmail ? true : false, parentIndex);
             }}
             onClick={(): void => {
-                selectItem(parentItem.value, parentItem.sendToPersonalEmail ? true : false);
+                selectItem(parentItem.value, parentItem.sendToPersonalEmail ? true : false, parentIndex);
             }}
             data-selected={!!parentItem.selected}
         >
-            <ItemContent  readOnlyItem={false}>
-                Send to group
+            <ItemContent  readOnlyItem={false} greenText={true}>
+                Add functional role to invitation
             </ItemContent>
         </SelectableItem>);
 
-        const initial = (
+        const info = (
             <TitleItem
-                key={-1}
+                key={0}
                 tabIndex={0}
             >
                 { !parentItem.sendToPersonalEmail &&
-                    <TitleContent borderTop={true} marginBottom={true} >
-                        <div>Additionally, send to following persons in group</div>
+                    <TitleContent
+                        borderTop={true}
+                        marginBottom={true}
+                        hideToCc={!parentItem.notify}
+                        disabled={items.length < 1}
+                    >
+                        <Checkbox 
+                            disabled={items.length < 1}
+                            checked={parentItem.notify}
+                            onChange={(checked: boolean): void => {
+                                showPersons(checked, parentIndex);
+                            }}
+                        >
+                            <Typography variant="body_short" italic>Additionally, notify individuals</Typography>
+                        </Checkbox>
                         <div className='toCc'>
-                            <div>To</div>
-                            <div>CC</div>
+                            <Typography variant="body_short" >To</Typography>
+                            <Typography variant="body_short" >CC</Typography>
                         </div>
                     </TitleContent>
                 }
                 { parentItem.sendToPersonalEmail &&
                     <TitleContent borderTop={true} >
-                        <div>The following persons are in the group</div>
+                        <Typography variant="body_short" italic>The following persons are in the role</Typography>
                     </TitleContent>
                 }
             </TitleItem>);
 
         const personsInRole = items.map((itm, index) => {
             return (<SelectableItem
-                key={index}
+                hideItems={!parentItem.notify && !parentItem.sendToPersonalEmail}
+                key={index + 1}
                 role="option"
                 selected={!!itm.selected}
                 tabIndex={0}
@@ -238,21 +297,37 @@ const ParticipantPicker = ({
             >
                 <ItemContent readOnlyItem={parentItem.sendToPersonalEmail ? true : false}>
                     { !parentItem.sendToPersonalEmail &&
-                        <RadioGroup value={'radio'} name={'radioGroup'}>
-                            <FormControlLabel key={itm.value + '1'} name={itm.value} value={'1'} label={''} checked={itm.radioOption == '1'} control={<Radio onClick={(): void => updateRadioButtonParticipants(itm.value, '1')} />} />
-                            <FormControlLabel key={itm.value + '2'} name={itm.value} value={'2'} label={''} checked={itm.radioOption == '2'} control={<Radio onClick={(): void => updateRadioButtonParticipants(itm.value, '2')} />} />
-                        </RadioGroup>
+                        <div className='radioButtons'>
+                            <div>
+                                <GreenRadio
+                                    checked={itm.radioOption == '1'}
+                                    onClick={(): void => updateRadioButtonParticipants(itm.value, '1', parentItem.value)}
+                                    value="1"
+                                    name="to"
+                                />
+                            </div>
+                            <div>
+                                <GreenRadio
+                                    checked={itm.radioOption == '2'}
+                                    onClick={(): void => updateRadioButtonParticipants(itm.value, '2', parentItem.value)}
+                                    value="2"
+                                    name="cc"
+                                />
+                            </div>
+                        </div>
                     }
                     {itm.text}
                 </ItemContent>
             </SelectableItem>);
         });
 
-        return [groupOption, initial].concat(personsInRole);
+        if (parentItem.sendToPersonalEmail) {
+            return [groupOption, info].concat(personsInRole);
+        }
+        return [info].concat(personsInRole).concat(groupOption);
     };
 
-
-    const createNodesForItems = (items: ParticipantItem[]): JSX.Element[] => {
+    const createNodesForItems = (items: RoleItem[]): JSX.Element[] => {
         return items.map((itm, index) => {
             if (!itm.children) {
                 return (<> </>);
@@ -264,11 +339,6 @@ const ParticipantPicker = ({
                 selected={!!itm.selected}
                 data-value={itm.value}
                 tabIndex={0}
-                onKeyDown={(e): void => {
-                    if (e.keyCode === KEYCODE_ENTER) {
-                        // We should do something to support keyboard navigation
-                    }
-                }}
                 data-selected={!!itm.selected}
             >
                 <ItemContent readOnlyItem={false}>
@@ -276,7 +346,7 @@ const ParticipantPicker = ({
                     <EdsIcon name='chevron_right'/>
                 </ItemContent>
                 <CascadingItem>
-                    {createChildNodes(itm, itm.children)}
+                    {createChildNodes(itm, index, itm.children)}
                 </CascadingItem>
             </SelectableItem>);
         });
@@ -306,7 +376,6 @@ const ParticipantPicker = ({
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}
                 >
-                    
                     <FilterContainer>
                         <input 
                             autoFocus 
@@ -323,4 +392,4 @@ const ParticipantPicker = ({
     );
 };
 
-export default ParticipantPicker;
+export default RoleSelector;

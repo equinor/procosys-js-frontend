@@ -5,7 +5,7 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, Container, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
 import { Participant, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import ParticipantPicker, { ParticipantItem } from '../../../../../components/ParticipantPicker';
+import RoleSelector, { RoleItem } from '../../../../../components/RoleSelector';
 import { Canceler } from '@procosys/http/HttpClient';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { Tooltip } from '@material-ui/core';
@@ -38,17 +38,29 @@ const testPart: SelectItem[] = [
         value: 'p_Pål'
     },
     {
+        text: 'Pernille',
+        value: 'p_Pernille'
+    },
+    {
         text: 'Kristen',
         value: 'p_Kristen',
+    },
+    {
+        text: 'Kjetil',
+        value: 'p_Kjetil',
     },
     {
         text: 'Cato',
         value: 'p_Cato',
     },
+    {
+        text: 'Christine',
+        value: 'p_Christine',
+    },
 
 ];
 
-const testRoles: ParticipantItem[] = [
+const testRoles: RoleItem[] = [
     {
         text: 'Electro',
         value: 'r_Electro',
@@ -70,6 +82,38 @@ const testRoles: ParticipantItem[] = [
             {
                 text: 'Kjetil',
                 value: 'p_Kjetild',
+                radioButtons: true,
+                radioOption: '0',
+            },
+        ]
+    },
+    {
+        text: 'Electro no kids',
+        value: 'r_ElectroNoKids',
+        sendToPersonalEmail: false,
+        children: []
+    },
+    {
+        text: 'Electro 2',
+        value: 'r_Electro2',
+        sendToPersonalEmail: false,
+        children: [
+            {
+                text: 'Elisabeth Bratli 2',
+                value: 'p_Elisabeth2',
+                radioButtons: true,
+                radioOption: '0',
+            },
+            {
+                text: 'Lykke 2',
+                value: 'p_Lykke2',
+                radioButtons: true,
+                radioOption: '0',
+
+            },
+            {
+                text: 'Kjetil 2',
+                value: 'p_Kjetild2',
                 radioButtons: true,
                 radioOption: '0',
             },
@@ -103,14 +147,18 @@ const Participants = ({
     setParticipants,
     isValid
 }: ParticipantsProps): JSX.Element => {
-    const [availableRoles, setAvailableRoles] = useState<ParticipantItem[]>([]);
+    const [availableRoles, setAvailableRoles] = useState<RoleItem[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
     const [personFilter, setPersonsFilter] = useState<string>('');
 
     useEffect(() => {
         //let requestCanceler: Canceler;
         try {
-            // (async (): Promise<void> => {
+            (async (): Promise<void> => {
+                console.log('setting roles...');
+            });
+            setAvailableRoles(testRoles);
+
             //     const filteredPersonsResponse = await apiClient.getCommPkgsAsync(projectId, filter)
             //         .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
             //             return {
@@ -122,7 +170,7 @@ const Participants = ({
             //                 }
             //             };
             //         }));
-            setAvailableRoles(testRoles);
+            //setAvailableRoles(testRoles);
             //})();
             //return (): void => requestCanceler && requestCanceler();
         } catch (error) {
@@ -146,7 +194,7 @@ const Participants = ({
                 //                 }
                 //             };
                 //         }));
-                setFilteredPersons(testPart);
+                setFilteredPersons(testPart.filter(r => r.text.toLocaleLowerCase().startsWith(personFilter.toLocaleLowerCase())));
                 //})();
                 //return (): void => requestCanceler && requestCanceler();
             } catch (error) {
@@ -157,14 +205,9 @@ const Participants = ({
         }
     }, [personFilter]);
 
-    const getRolesCopy = (): ParticipantItem[] => {
-        console.log('testRoles: ', availableRoles);
+    const getRolesCopy = (): RoleItem[] => {
         return JSON.parse(JSON.stringify(availableRoles));
     };
-
-    useEffect(() => {
-        console.log(availableRoles);
-    }, [availableRoles]);
 
     const setOrganization = (value: string, index: number): void => {
         setParticipants(p => {
@@ -291,7 +334,7 @@ const Participants = ({
                                     variant='form'
                                     onFilter={(input: string): void => setPersonsFilter(input)}
                                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                                    text={(participants[index].person && participants[index].person!.name) || 'Select'}
+                                    text={(participants[index].person && participants[index].person!.name) || 'Search to select'}
                                 >
                                     { filteredPersons.map((person, i) => {
                                         return (
@@ -308,7 +351,7 @@ const Participants = ({
                                 </Dropdown>
                             }
                             { p.type == ParticipantType[0].text &&
-                                <ParticipantPicker
+                                <RoleSelector
                                     onChange={(value): void => setRoleOnParticipant(value, index)}
                                     roles={getRolesCopy()}
                                     label={'Role'}
@@ -319,8 +362,8 @@ const Participants = ({
                                                 {getPersonRoleText(index)}
                                             </div>
                                         </Tooltip>
-                                        : 'Search to select' }
-                                </ParticipantPicker>
+                                        : 'Select' }
+                                </RoleSelector>
                             }
                             { index > 1 &&
                                     <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>

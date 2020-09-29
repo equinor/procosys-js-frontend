@@ -22,6 +22,19 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     location: 'the usual spot'
 };
 
+// const emptyGeneralInfo: GeneralInfoDetails = {
+//     projectId: null,
+//     projectName: null,
+//     poType: null,
+//     title: null,
+//     description: null,
+//     startDate: null,
+//     endDate: null,
+//     startTime: null,
+//     endTime: null,
+//     location: null
+// };
+
 const initialParticipants: Participant[] = [
     {
         organization: 'Contractor',
@@ -142,6 +155,10 @@ const CreateIPO = (): JSX.Element => {
         });
         setSelectedCommPkgScope([]);
     };
+
+    // useEffect(() => {
+    //     console.log(participants);
+    // }, [participants]);
 
     return (<Container>
         <CreateIPOHeader

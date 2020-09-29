@@ -24,6 +24,24 @@ export type GeneralInfoDetails = {
     location?: string | null;
 }
 
+export type Person = {
+    id: number;
+    name: string;
+    cc: boolean;
+}
+
+export type RoleParticipant = {
+    id: number;
+    roleName: string;
+    persons: Person[] | null;
+}
+
+export type Participant = {
+    organization: string;
+    person: Person | null;
+    role: RoleParticipant | null;
+}
+
 export interface CommPkgRow {
     commPkgNo: string;
     description: string;
@@ -32,7 +50,6 @@ export interface CommPkgRow {
         checked: boolean;
     };
 }
-
 
 export interface McPkgRow {
     mcPkgNo: string;

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
-import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope } from '../../types';
-import SelectScope from './SelectScope/SelectScope';
+import Participants from './Participants/Participants';
 import CreateIPOHeader from './CreateIPOHeader';
+import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope, Participant } from '../../types';
+import SelectScope from './SelectScope/SelectScope';
 import { Container } from './CreateIPO.style';
+import Attachments from './Attachments/Attachments';
+import Summary from './Summary/Summary';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -18,6 +21,19 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     endTime: null,
     location: null
 };
+
+const initialParticipants: Participant[] = [
+    {
+        organization: 'Contractor',
+        person: null,
+        role: null
+    },
+    {
+        organization: 'Construction company',
+        person: null,
+        role: null
+    }
+];
 
 export enum CreateStepEnum {
     GeneralInfo = 'General info',
@@ -38,6 +54,7 @@ const initialSteps: ProgressBarSteps[] = [
 const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
+    const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
@@ -58,6 +75,12 @@ const CreateIPO = (): JSX.Element => {
     }, [fromMain]);
 
     const goToNextStep = (): void => {
+        if(currentStep > 3) {
+            changeCompletedStatus(true, currentStep);
+            if(currentStep == 4) {
+                changeCompletedStatus(true, 5);
+            }
+        }
         setCurrentStep(currentStep => {
             if (currentStep >= 5) {
                 return currentStep;
@@ -148,6 +171,30 @@ const CreateIPO = (): JSX.Element => {
                 projectId={generalInfo.projectId}
                 projectName={generalInfo.projectName}
             /> 
+        }
+        { currentStep == 3 && 
+            <Participants 
+                next={goToNextStep}
+                previous={goToPreviousStep}
+                participants={participants}
+                setParticipants={setParticipants}
+                isValid={true}
+            />
+        }
+        { currentStep == 4 && 
+            <Attachments 
+                next={goToNextStep}
+                previous={goToPreviousStep}
+            />
+        }
+        { currentStep == 5 && 
+            <Summary 
+                previous={goToPreviousStep}
+                generalInfo={generalInfo}
+                mcScope={selectedMcPkgScope.selected}
+                commPkgScope={selectedCommPkgScope}
+                participants={participants}
+            />
         }
     </Container>);
 };

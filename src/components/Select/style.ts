@@ -18,8 +18,8 @@ export const Container = styled.div<{ maxHeight?: string }>`
             overflow-y: auto;
             box-shadow: ${tokens.elevation.raised};
         `}
-
         
+
         li div {
             box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
         }
@@ -28,6 +28,7 @@ export const Container = styled.div<{ maxHeight?: string }>`
             border-radius: 4px 4px 0px 0px;
             box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
         }
+
         li:only-child > div {
             box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
             border-radius: 4px;
@@ -144,7 +145,6 @@ export const CascadingItem = styled.ul`
     }
 `;
 
-
 export const ItemContent = styled.div`
     display: flex;
     align-items: center;
@@ -161,7 +161,7 @@ export const ItemContent = styled.div`
     svg:first-of-type {
         padding-right: calc(var(--grid-unit) * 2);
     }
-
+    
     .arrowIcon {
         margin-left: auto;
     }

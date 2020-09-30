@@ -40,10 +40,12 @@ const TreeView = ({
     resetDirtyNode
 }: TreeViewProps): JSX.Element => {
 
+
+
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
     const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
-
+    const [pathToExpandTree, setPathToExpandTree] = useState<(string | number)[]>();
 
     const getNodeChildCountAndCollapse = (parentNodeId: string | number): number => {
         let childCount = 0;
@@ -125,7 +127,25 @@ const TreeView = ({
         setTreeData(newTreeData);
     };
 
+    /** Find path to selected node, recusively */
+    const getPathToSelectedNode = (nodeId: string | number, path: (string | number)[]): (string | number)[] => {
+        const node = treeData.find(data => data.id === nodeId);
+
+        if (node && node.parentId) {
+            path.unshift(node.parentId);
+            getPathToSelectedNode(node.parentId, path);
+        }
+        return path;
+    };
+
     const refreshNode = async (node: NodeData): Promise<void> => {
+        //Find path to selected node, to get tree expanded after refresh
+        let pathToSelectedNode;
+        if (selectedNodeId) {
+            pathToSelectedNode = getPathToSelectedNode(selectedNodeId, []);
+            setPathToExpandTree(pathToSelectedNode);
+        }
+
         const refreshingNodeId = node.id;
         const refreshingNodeIndex = treeData.findIndex(data => data.id === refreshingNodeId);
 
@@ -246,6 +266,26 @@ const TreeView = ({
             }
         }
     }, [dirtyNodeId]);
+
+    useEffect(() => {
+        (async (): Promise<void> => {
+            if (pathToExpandTree) {
+                for (const nodeId of pathToExpandTree) {
+                    const node = treeData.find(node => node.id === nodeId);
+                    if (node && !node.isExpanded) {
+                        await expandNode(node);
+                    }
+                }
+                setPathToExpandTree([]);
+            }
+            if (selectedNodeId) {
+                const selected = treeData.filter((node) => node.id === selectedNodeId);
+                if (selected.length > 0) {
+                    selected[0].isSelected = true;
+                }
+            }
+        })();
+    }, [treeData]);
 
     return (
         <TreeContainer>

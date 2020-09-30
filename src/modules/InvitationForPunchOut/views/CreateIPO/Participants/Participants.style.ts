@@ -29,6 +29,22 @@ export const FormContainer = styled.div`
     flex-direction: column;
 `;
 
+export const ParticipantRowsContainer = styled.div`
+    display: grid;
+    grid-template-columns: auto auto auto auto; 
+    width: fit-content;
+    padding: var(--grid-unit);
+    align-items: flex-end;
+    > div {
+        display: flex;
+        margin-right: calc(var(--grid-unit) * 2);
+        padding-bottom: var(--grid-unit);
+        > * {
+            width: 100%;
+        }
+    }
+`;
+
 export const ButtonContainer = styled.div`
     display: flex;
     justify-content: flex-end;
@@ -46,7 +62,7 @@ export const InputContainer = styled.div`
     }
 
     > div:nth-child(3), > div:nth-child(1) {
-        width: 300px;
+        /* width: 300px; */
         .overflowControl {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -54,7 +70,7 @@ export const InputContainer = styled.div`
         }
     }
     > div:nth-child(2) {
-        width: 150px;
+        /* width: 150px; */
     }
 `;
 

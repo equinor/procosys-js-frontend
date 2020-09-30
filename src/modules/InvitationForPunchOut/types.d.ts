@@ -45,6 +45,7 @@ export type RoleParticipant = {
 export type Participant = {
     organization: string;
     type: string;
+    externalEmail: string | null;
     person: Person | null;
     role: RoleParticipant | null;
 }

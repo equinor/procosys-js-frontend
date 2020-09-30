@@ -9,29 +9,44 @@ import { Container } from './CreateIPO.style';
 import Attachments from './Attachments/Attachments';
 import Summary from './Summary/Summary';
 
-const emptyGeneralInfo: GeneralInfoDetails = {
-    projectId: null,
-    projectName: null,
-    poType: null,
-    title: null,
-    description: null,
-    startDate: null,
-    endDate: null,
-    startTime: null,
-    endTime: null,
-    location: null
+// const emptyGeneralInfo: GeneralInfoDetails = {
+//     projectId: null,
+//     projectName: null,
+//     poType: null,
+//     title: null,
+//     description: null,
+//     startDate: null,
+//     endDate: null,
+//     startTime: null,
+//     endTime: null,
+//     location: null
+// };
+
+const emptyGeneralInfo = {
+    projectId: 50,
+    projectName: 'OSEBERG_C',
+    poType: { text: 'DP (Discipline Punch)', value: 'DP' },
+    title: 'test title',
+    description: 'decription is looooong and we need to add some info here okay. A description describing the PO, with general info, scope, attachments, participants, and a lot more! Maybe we will add even more as we go, we will find out.',
+    startDate: '2020-09-01',
+    endDate: '2020-09-02',
+    startTime: '10:30',
+    endTime: '11:30',
+    location: 'the usual spot'
 };
 
 const initialParticipants: Participant[] = [
     {
         organization: 'Contractor',
         type: 'Functional role',
+        externalEmail: null,
         person: null,
         role: null
     },
     {
         organization: 'Construction company',
         type: 'Functional role',
+        externalEmail: null,
         person: null,
         role: null
     }
@@ -57,7 +72,7 @@ const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
-    const [currentStep, setCurrentStep] = useState<number>(1);
+    const [currentStep, setCurrentStep] = useState<number>(3);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 

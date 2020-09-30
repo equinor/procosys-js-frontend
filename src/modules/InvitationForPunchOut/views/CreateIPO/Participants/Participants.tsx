@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Dropdown from '../../../../../components/Dropdown';
-import { Button } from '@equinor/eds-core-react';
-import { DropdownItem, Container, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
+import { Button, TextField } from '@equinor/eds-core-react';
+import { DropdownItem, Container, ParticipantRowsContainer, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
 import { Participant, RoleParticipant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import RoleSelector from '../../../components/RoleSelector';
@@ -18,6 +18,7 @@ const Organizations: SelectItem[] = [
     { text: 'Operation', value: 'Operation' },
     { text: 'Technical integrity', value: 'Technical integrity' },
     { text: 'Supplier', value: 'Supplier' },
+    { text: 'Guest user (external)', value: 'Guest user (external)'}
 ];
 
 const ParticipantType: SelectItem[] = [
@@ -133,6 +134,9 @@ const Participants = ({
             participantsCopy[index].organization = value;
             return participantsCopy;
         });
+        if(value == Organizations[6].value) {
+            setType('Person', index);
+        }
     };
 
     const setType = (value: string, index: number): void => {
@@ -196,6 +200,7 @@ const Participants = ({
         const newParticipant: Participant = {
             organization: '',
             type: 'Functional role',
+            externalEmail: null,
             person: null,
             role: null
         };
@@ -232,71 +237,92 @@ const Participants = ({
 
     return (<Container>
         <FormContainer>
-            {participants.map((p, index) => {
-                return (
-                    <React.Fragment key={`participant_${index}`}>
-                        <InputContainer key={`role_${index}`}>
-                            <SelectInput
-                                onChange={(value): void => setOrganization(value, index)}
-                                data={Organizations}
-                                label={'Organization'}
-                                disabled={index < 2}
-                            >
-                                {p.organization || 'Select'}
-                            </SelectInput>
-                            <SelectInput
-                                onChange={(value): void => setType(value, index)}
-                                data={ParticipantType}
-                                label={'Type'}
-                            >
-                                {p.type}
-                            </SelectInput>
-                            { p.type == ParticipantType[1].text &&
-                                <Dropdown
-                                    label={'Person'}
-                                    maxHeight='300px'
-                                    variant='form'
-                                    onFilter={(input: string): void => setPersonsFilter(input)}
-                                    text={p.person ? getDisplayText(index) : 'Search to select'}
+            <ParticipantRowsContainer>
+                {participants.map((p, index) => {
+                    return (
+                        <React.Fragment key={`participant_${index}`}>
+                            {/* <InputContainer key={`role_${index}`}> */}
+                            <div>
+                                <SelectInput
+                                    onChange={(value): void => setOrganization(value, index)}
+                                    data={Organizations}
+                                    label={'Organization'}
+                                    disabled={index < 2}
                                 >
-                                    { filteredPersons.map((person, i) => {
-                                        return (
-                                            <DropdownItem
-                                                key={i}
-                                                onClick={(event: React.MouseEvent): void =>
-                                                    setPersonOnParticipant(event, i, index)
-                                                }
-                                            >
-                                                <div>{person.text}</div>
-                                            </DropdownItem>
-                                        );
-                                    })}
-                                </Dropdown>
+                                    {p.organization || 'Select'}
+                                </SelectInput>
+                            </div>
+                            <div style={{ minWidth: '150px' }}>
+                                <SelectInput
+                                    onChange={(value): void => setType(value, index)}
+                                    data={ParticipantType}
+                                    label={'Type'}
+                                    disabled={p.organization == Organizations[6].value}
+                                >
+                                    {p.type}
+                                </SelectInput>
+                            </div>
+                            { p.organization == Organizations[6].value &&
+                            <div>
+                                <TextField
+                                    placeholder='Email'
+                                    label='e-mail address'
+                                />
+                            </div>
+                            }
+                            { p.type == ParticipantType[1].text && p.organization != Organizations[6].value &&
+                        <div>
+                            <Dropdown
+                                label={'Person'}
+                                maxHeight='300px'
+                                variant='form'
+                                onFilter={(input: string): void => setPersonsFilter(input)}
+                                text={p.person ? getDisplayText(index) : 'Search to select'}
+                            >
+                                { filteredPersons.map((person, i) => {
+                                    return (
+                                        <DropdownItem
+                                            key={i}
+                                            onClick={(event: React.MouseEvent): void =>
+                                                setPersonOnParticipant(event, i, index)
+                                            }
+                                        >
+                                            <div>{person.text}</div>
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>
+                        </div>
                             }
                             { p.type == ParticipantType[0].text &&
-                                <RoleSelector
-                                    onChange={(value): void => setRoleOnParticipant(value, index)}
-                                    roles={getRolesCopy()}
-                                    label={'Role'}
-                                >
-                                    {p.role ? 
-                                        <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
-                                            <div className='overflowControl'>
-                                                {getDisplayText(index)}
-                                            </div>
-                                        </Tooltip>
-                                        : 'Select' }
-                                </RoleSelector>
+                        <div>
+                            <RoleSelector
+                                onChange={(value): void => setRoleOnParticipant(value, index)}
+                                roles={getRolesCopy()}
+                                label={'Role'}
+                            >
+                                {p.role ? 
+                                    <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
+                                        <div className='overflowControl'>
+                                            {getDisplayText(index)}
+                                        </div>
+                                    </Tooltip>
+                                    : 'Select' }
+                            </RoleSelector>
+                        </div>
                             }
-                            { index > 1 &&
+                            <div>
+                                { index > 1 &&
                                     <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>
                                         <EdsIcon name='delete_to_trash' />
                                     </Button>
-                            }
-                        </InputContainer>
-                    </React.Fragment>
-                );
-            })}
+                                }
+                            </div>
+                            {/* </InputContainer> */}
+                        </React.Fragment>
+                    );
+                })}
+            </ParticipantRowsContainer>
             <AddParticipantContainer>
                 <Button variant='ghost' onClick={addParticipant}>
                     <EdsIcon name='add' /> Add organization

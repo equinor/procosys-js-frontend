@@ -47,7 +47,7 @@ const McPkgTable = forwardRef(({
                         return {
                             mcPkgNo: mcPkg.mcPkgNo,
                             description: mcPkg.description,
-                            discipline: 'E',
+                            discipline: mcPkg.disciplineCode,
                             tableData: {
                                 checked: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
                             }

@@ -30,6 +30,7 @@ export interface McPkgResponse {
     id: number;
     mcPkgNo: string;
     description: string;
+    disciplineCode: string;
 }
 
 /**

@@ -51,7 +51,22 @@ const RoleSelector = ({
     useEffect(() => {
         if (roles.length != allRoles.length) {
             setAllRoles(roles);
-            setFilteredRoles(roles);
+            if(selectedRole && selectedRole.notify) {
+                const index = roles.findIndex(r => r.code == selectedRole.code);
+                setFilteredRoles(() => {
+                    const rolesCopy = [...roles];
+                    rolesCopy[index].notify = true;
+                    rolesCopy[index].persons.forEach(p => {
+                        const person = selectedRole.persons.find(pers => pers.email == p.email);
+                        if (person) {
+                            p.radioOption = person.radioOption;
+                        }
+                    });
+                    return rolesCopy;
+                });
+            } else {
+                setFilteredRoles(roles);
+            }
         }
     }, [roles]);
 
@@ -67,7 +82,7 @@ const RoleSelector = ({
         setAllRoles(ar => {
             const copyR = [...ar];
             copyR.forEach((r, i) => {
-                if (i != roleIndex) {
+                if (i != roleIndex && r.usePersonalEmail) {
                     r.notify = false;
                     r.persons.forEach(person => {
                         person.radioOption = null;

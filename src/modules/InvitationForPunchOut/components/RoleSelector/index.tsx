@@ -19,6 +19,7 @@ const GreenRadio = withStyles({
 })((props: RadioProps) => <Radio color="default" {...props} />);
 
 type RoleSelectorProps = {
+    selectedRole?: RoleParticipant | null;
     roles: RoleParticipant[];
     disabled?: boolean;
     onChange?: (newValue: any) => void;
@@ -30,6 +31,7 @@ const KEYCODE_ENTER = 13;
 const KEYCODE_ESCAPE = 27;
 
 const RoleSelector = ({
+    selectedRole,
     disabled = false,
     roles,
     onChange = (): void => {
@@ -68,7 +70,7 @@ const RoleSelector = ({
                 if (i != roleIndex) {
                     r.notify = false;
                     r.persons.forEach(person => {
-                        person.radioOption = '0';
+                        person.radioOption = null;
                     });
                 }
             });
@@ -82,7 +84,7 @@ const RoleSelector = ({
         if(role.usePersonalEmail) {
             onChange({...role});
         } else {
-            const radioCheckedPersons = role.persons.filter(p => p.radioOption != '0');
+            const radioCheckedPersons = role.persons.filter(p => p.radioOption);
             const selectedRole = {...role, persons: radioCheckedPersons};
             onChange(selectedRole);
         }
@@ -114,42 +116,40 @@ const RoleSelector = ({
         }
     }, [isOpen]);
 
-    const getNewValue = (value: string, currentValue: string): string => {
+    const getNewValue = (value: string, currentValue: string | null): string | null => {
         switch (value) {
             case currentValue:
-                return '0';
+                return null;
             case 'to':
                 return 'to';
             case 'cc':
                 return 'cc';
             default:
-                return '0';
+                return null;
         }
     };
 
     const updateRadioButtonParticipants = (person: Person, radioValue: string, role: RoleParticipant, roleIndex: number): void => {
-        if (person.radioOption) {
-            const newValue = getNewValue(radioValue, person.radioOption);
-            setAllRoles(ar => {
-                const copyR = [...ar];
-                copyR.forEach((r, i) => {
-                    if (i != roleIndex) {
-                        r.persons.forEach(person => {
-                            person.radioOption = '0';
-                        });
-                    }
-                    if (i == roleIndex) {
-                        person.radioOption = newValue;
-                    }
-                });
-                return copyR;
+        const newValue = getNewValue(radioValue, person.radioOption);
+        setAllRoles(ar => {
+            const copyR = [...ar];
+            copyR.forEach((r, i) => {
+                if (i != roleIndex) {
+                    r.persons.forEach(person => {
+                        person.radioOption = null;
+                    });
+                }
+                if (i == roleIndex) {
+                    person.radioOption = newValue;
+                }
             });
+            return copyR;
+        });
 
-            if (role.code == pickedRoleValue) {
-                const radioCheckedPersons = role.persons.filter(p => p.radioOption != '0');
-                const selectedRole = {...role, persons: radioCheckedPersons};
-                onChange(selectedRole);
-            }
+        if (role.code == pickedRoleValue) {
+            const radioCheckedPersons = role.persons.filter(p => p.radioOption);
+            const selectedRole = {...role, persons: radioCheckedPersons};
+            onChange(selectedRole);
         }
     };
 
@@ -157,11 +157,76 @@ const RoleSelector = ({
         setFilteredRoles(r => {
             const copy = [...r];
             copy[index].notify = notify;
+            if(!notify) {
+                copy[index].persons.forEach(p => {
+                    p.radioOption = null;
+                });
+            }
             return copy;
         });
+        if(!notify) {
+            const selectedRole = {...filteredRoles[index], persons: []};
+            onChange(selectedRole);
+        }
     };
 
     const createChildNodes = (parentItem: RoleParticipant, parentIndex: number, items: Person[]): JSX.Element[] => {
+        const info = (
+            <TitleItem
+                key={0}
+                tabIndex={0}
+            >
+                <TitleContent
+                    borderTop={true}
+                    marginBottom={true}
+                    hideToCc={!parentItem.notify}
+                >
+                    <Checkbox 
+                        checked={parentItem.notify}
+                        onChange={(checked: boolean): void => {
+                            showPersons(checked, parentIndex);
+                        }}
+                    >
+                        <Typography variant="body_short" italic>Additionally, notify individuals</Typography>
+                    </Checkbox>
+                    <div className='toCc'>
+                        <Typography variant="body_short" >To</Typography>
+                        <Typography variant="body_short" >CC</Typography>
+                    </div>
+                </TitleContent>
+            </TitleItem>);
+
+        const personsInRole = items.map((person, index) => {
+            return (<SelectableItem
+                hideItems={!parentItem.notify}
+                key={index + 1}
+                role="option"
+                tabIndex={0}
+            >
+                <ItemContent readOnlyItem={false}>
+                    <div className='radioButtons'>
+                        <div>
+                            <GreenRadio
+                                checked={person.radioOption == 'to'}
+                                onClick={(): void => updateRadioButtonParticipants(person, 'to', parentItem, parentIndex)}
+                                value="to"
+                                name="to"
+                            />
+                        </div>
+                        <div>
+                            <GreenRadio
+                                checked={person.radioOption == 'cc'}
+                                onClick={(): void => updateRadioButtonParticipants(person, 'cc', parentItem, parentIndex)}
+                                value="cc"
+                                name="cc"
+                            />
+                        </div>
+                    </div>
+                    {person.firstName + ' ' + person.lastName}
+                </ItemContent>
+            </SelectableItem>);
+        });
+
         const groupOption = (<SelectableItem
             key={-1}
             role="option"
@@ -175,87 +240,37 @@ const RoleSelector = ({
                 selectItem(parentItem, parentIndex);
             }}
         >
-            <ItemContent  readOnlyItem={false} greenText={true}>
+            <ItemContent readOnlyItem={false} greenText={true}>
                 Add functional role to invitation
             </ItemContent>
         </SelectableItem>);
 
-        const info = (
-            <TitleItem
-                key={0}
-                tabIndex={0}
-            >
-                { !parentItem.usePersonalEmail &&
-                    <TitleContent
-                        borderTop={true}
-                        marginBottom={true}
-                        hideToCc={!parentItem.notify}
-                        disabled={items.length < 1}
-                    >
-                        <Checkbox 
-                            disabled={items.length < 1}
-                            checked={parentItem.notify}
-                            onChange={(checked: boolean): void => {
-                                showPersons(checked, parentIndex);
-                            }}
-                        >
-                            <Typography variant="body_short" italic>Additionally, notify individuals</Typography>
-                        </Checkbox>
-                        <div className='toCc'>
-                            <Typography variant="body_short" >To</Typography>
-                            <Typography variant="body_short" >CC</Typography>
-                        </div>
-                    </TitleContent>
-                }
-                { parentItem.usePersonalEmail &&
-                    <TitleContent borderTop={true} >
-                        <Typography variant="body_short" italic>The following persons are in the role</Typography>
-                    </TitleContent>
-                }
-            </TitleItem>);
-
-        const personsInRole = items.map((person, index) => {
-            return (<SelectableItem
-                hideItems={!parentItem.notify && !parentItem.usePersonalEmail}
-                key={index + 1}
-                role="option"
-                tabIndex={0}
-                readOnlyItem={parentItem.usePersonalEmail ? true : false}
-            >
-                <ItemContent readOnlyItem={parentItem.usePersonalEmail ? true : false}>
-                    { !parentItem.usePersonalEmail &&
-                        <div className='radioButtons'>
-                            <div>
-                                <GreenRadio
-                                    checked={person.radioOption == 'to'}
-                                    onClick={(): void => updateRadioButtonParticipants(person, 'to', parentItem, parentIndex)}
-                                    value="to"
-                                    name="to"
-                                />
-                            </div>
-                            <div>
-                                <GreenRadio
-                                    checked={person.radioOption == 'cc'}
-                                    onClick={(): void => updateRadioButtonParticipants(person, 'cc', parentItem, parentIndex)}
-                                    value="cc"
-                                    name="cc"
-                                />
-                            </div>
-                        </div>
-                    }
-                    {person.firstName + ' ' + person.lastName}
-                </ItemContent>
-            </SelectableItem>);
-        });
-
-        if (parentItem.usePersonalEmail) {
-            return [groupOption, info].concat(personsInRole);
-        }
         return [info].concat(personsInRole).concat(groupOption);
     };
 
     const createNodesForItems = (items: RoleParticipant[]): JSX.Element[] => {
         return items.map((itm, index) => {
+            if (itm.persons.length < 1 || itm.usePersonalEmail) {
+                return (<SelectableItem
+                    key={index}
+                    role="option"
+                    tabIndex={0}
+                    onKeyDown={(e): void => {
+                        e.keyCode === KEYCODE_ENTER &&
+                            selectItem(itm, index);
+                    }}
+                    onClick={(): void => {
+                        selectItem(itm, index);
+                    }}
+                >
+                    <ItemContent readOnlyItem={false}>
+                        <div>
+                            <Typography>{itm.code}</Typography>
+                            <Typography style={{ fontSize: '12px', marginTop: '8px' }}>{itm.description}</Typography>
+                        </div>
+                    </ItemContent>
+                </SelectableItem>);
+            }
             return (<SelectableItem
                 key={index}
                 role="option"

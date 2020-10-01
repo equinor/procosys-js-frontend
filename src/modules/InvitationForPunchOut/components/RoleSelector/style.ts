@@ -77,18 +77,11 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
 
 export type SelectableItemProps = {
     hideItems?: boolean;
-    readOnlyItem?: boolean
 };
 
 export const SelectableItem = styled.li<SelectableItemProps>`
     position: relative;
     background-color: transparent;
-    
-    ${(props): any => props.readOnlyItem && css`
-        &:focus {
-            outline: none;
-        }
-    `}
 
     :hover > ul {
         display: block;
@@ -179,7 +172,6 @@ interface TitleContentProps {
     readonly borderTop: boolean;
     marginBottom?: boolean;
     hideToCc?: boolean;
-    disabled?: boolean;
 }
 
 export const TitleContent = styled.div<TitleContentProps>`
@@ -213,12 +205,6 @@ export const TitleContent = styled.div<TitleContentProps>`
     margin-left: var(--grid-unit);
     ${(props): any => props.borderTop && css`
         border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
-    `}
-
-    ${(props): any => props.disabled && css`
-        p {
-            color: ${tokens.colors.interactive.disabled__text.rgba};
-        }
     `}
 
     .toCc {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import Dropdown from '../../../../../components/Dropdown';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { DropdownItem, Container, ParticipantRowsContainer, FormContainer, ButtonContainer, InputContainer, AddParticipantContainer } from './Participants.style';
+import { DropdownItem, Container, ParticipantRowsContainer, FormContainer, ButtonContainer, AddParticipantContainer } from './Participants.style';
 import { Participant, RoleParticipant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import RoleSelector from '../../../components/RoleSelector';
@@ -99,7 +99,7 @@ const Participants = ({
                                     firstName: p.firstName,
                                     lastName: p.lastName,
                                     email: p.email,
-                                    radioOption: '0',
+                                    radioOption: role.usePersonalEmail ? 'to' : null,
                                 };
                             })
                         };
@@ -137,6 +137,17 @@ const Participants = ({
         if(value == Organizations[6].value) {
             setType('Person', index);
         }
+    };
+
+    const setExternalEmail = (value: string, index: number): void => {
+        console.log(value);
+        setParticipants(p => {
+            const participantsCopy = [...p];
+            participantsCopy[index].role = null;
+            participantsCopy[index].person = null;
+            participantsCopy[index].externalEmail = value;
+            return participantsCopy;
+        });
     };
 
     const setType = (value: string, index: number): void => {
@@ -212,6 +223,7 @@ const Participants = ({
             const participantsCopy = [...p];
             participantsCopy[index].role = value;
             participantsCopy[index].person = null;
+            participantsCopy[index].externalEmail = null;
             return participantsCopy;
         });
     };
@@ -224,11 +236,13 @@ const Participants = ({
             setParticipants(p => {
                 const participantsCopy = [...p];
                 participantsCopy[participantIndex].role = null;
+                participantsCopy[participantIndex].externalEmail = null;
                 participantsCopy[participantIndex].person = {
                     azureOid: person.value, 
-                    firstName: name[1], 
-                    lastName: name[0], 
-                    email: person.email ? person.email : ''
+                    firstName: name[1],
+                    lastName: name[0],
+                    email: person.email ? person.email : '',
+                    radioOption: null
                 };
                 return participantsCopy;
             });
@@ -241,7 +255,6 @@ const Participants = ({
                 {participants.map((p, index) => {
                     return (
                         <React.Fragment key={`participant_${index}`}>
-                            {/* <InputContainer key={`role_${index}`}> */}
                             <div>
                                 <SelectInput
                                     onChange={(value): void => setOrganization(value, index)}
@@ -252,7 +265,7 @@ const Participants = ({
                                     {p.organization || 'Select'}
                                 </SelectInput>
                             </div>
-                            <div style={{ minWidth: '150px' }}>
+                            <div>
                                 <SelectInput
                                     onChange={(value): void => setType(value, index)}
                                     data={ParticipantType}
@@ -263,62 +276,67 @@ const Participants = ({
                                 </SelectInput>
                             </div>
                             { p.organization == Organizations[6].value &&
-                            <div>
-                                <TextField
-                                    placeholder='Email'
-                                    label='e-mail address'
-                                />
-                            </div>
+                                <div>
+                                    <TextField
+                                        id={'guestEmail'}
+                                        placeholder='Email'
+                                        label='e-mail address'
+                                        value={p.externalEmail ? p.externalEmail : ''}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setExternalEmail(e.target.value, index)} 
+                                    />
+                                </div>
                             }
                             { p.type == ParticipantType[1].text && p.organization != Organizations[6].value &&
-                        <div>
-                            <Dropdown
-                                label={'Person'}
-                                maxHeight='300px'
-                                variant='form'
-                                onFilter={(input: string): void => setPersonsFilter(input)}
-                                text={p.person ? getDisplayText(index) : 'Search to select'}
-                            >
-                                { filteredPersons.map((person, i) => {
-                                    return (
-                                        <DropdownItem
-                                            key={i}
-                                            onClick={(event: React.MouseEvent): void =>
-                                                setPersonOnParticipant(event, i, index)
-                                            }
-                                        >
-                                            <div>{person.text}</div>
-                                        </DropdownItem>
-                                    );
-                                })}
-                            </Dropdown>
-                        </div>
+                                <div>
+                                    <Dropdown
+                                        label={'Person'}
+                                        maxHeight='300px'
+                                        variant='form'
+                                        onFilter={(input: string): void => setPersonsFilter(input)}
+                                        text={p.person ? getDisplayText(index) : 'Search to select'}
+                                    >
+                                        { filteredPersons.map((person, i) => {
+                                            return (
+                                                <DropdownItem
+                                                    key={i}
+                                                    onClick={(event: React.MouseEvent): void =>
+                                                        setPersonOnParticipant(event, i, index)
+                                                    }
+                                                >
+                                                    <div>{person.text}</div>
+                                                </DropdownItem>
+                                            );
+                                        })}
+                                    </Dropdown>
+                                </div>
                             }
                             { p.type == ParticipantType[0].text &&
-                        <div>
-                            <RoleSelector
-                                onChange={(value): void => setRoleOnParticipant(value, index)}
-                                roles={getRolesCopy()}
-                                label={'Role'}
-                            >
-                                {p.role ? 
-                                    <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
-                                        <div className='overflowControl'>
-                                            {getDisplayText(index)}
-                                        </div>
-                                    </Tooltip>
-                                    : 'Select' }
-                            </RoleSelector>
-                        </div>
+                                <div>
+                                    <RoleSelector
+                                        selectedRole={p.role}
+                                        onChange={(value): void => setRoleOnParticipant(value, index)}
+                                        roles={getRolesCopy()}
+                                        label={'Role'}
+                                    >
+                                        {p.role ? 
+                                            <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
+                                                <div className='overflowControl'>
+                                                    {getDisplayText(index)}
+                                                </div>
+                                            </Tooltip>
+                                            : 'Select' }
+                                    </RoleSelector>
+                                </div>
                             }
                             <div>
                                 { index > 1 &&
+                                <>
                                     <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>
                                         <EdsIcon name='delete_to_trash' />
                                     </Button>
+                                </>
                                 }
                             </div>
-                            {/* </InputContainer> */}
                         </React.Fragment>
                     );
                 })}

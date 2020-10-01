@@ -31,7 +31,7 @@ export const FormContainer = styled.div`
 
 export const ParticipantRowsContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto; 
+    grid-template-columns: 250px 180px 300px auto; 
     width: fit-content;
     padding: var(--grid-unit);
     align-items: flex-end;
@@ -43,6 +43,11 @@ export const ParticipantRowsContainer = styled.div`
             width: 100%;
         }
     }
+    .overflowControl {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 `;
 
 export const ButtonContainer = styled.div`
@@ -51,26 +56,6 @@ export const ButtonContainer = styled.div`
     width: 100%;
     button:last-of-type {
         margin-left: calc(var(--grid-unit) * 2);
-    }
-`;
-
-export const InputContainer = styled.div`
-    display: flex;
-    margin-bottom: calc(var(--grid-unit) *2);
-    > div {
-        margin-right: calc(var(--grid-unit) * 2);
-    }
-
-    > div:nth-child(3), > div:nth-child(1) {
-        /* width: 300px; */
-        .overflowControl {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-    > div:nth-child(2) {
-        /* width: 150px; */
     }
 `;
 

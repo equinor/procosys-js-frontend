@@ -93,6 +93,11 @@ const Summary = ({
                         {participant.person.firstName + ' ' + participant.person.lastName}
                     </Cell>
                 }
+                { participant.externalEmail &&
+                    <Cell>
+                        {participant.externalEmail}
+                    </Cell>
+                }
             </Row>);
     };
 

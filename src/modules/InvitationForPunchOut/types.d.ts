@@ -29,7 +29,7 @@ export type Person = {
     firstName: string;
     lastName: string;
     email: string;
-    radioOption?: string;
+    radioOption: string | null;
 }
 
 export type RoleParticipant = {

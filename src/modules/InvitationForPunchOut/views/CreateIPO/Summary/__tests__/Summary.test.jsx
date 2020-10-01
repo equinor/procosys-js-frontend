@@ -37,11 +37,13 @@ const mockMcPkgs = [
 const participants = [
     {
         organization: 'Contractor',
+        externalEmail: null,
         person: null,
         role: null
     },
     {
         organization: 'Construction company',
+        externalEmail: null,
         person: null,
         role: null
     }
@@ -50,17 +52,17 @@ const participants = [
 describe('Module: <Summary />', () => {
     
     it('Should render Next button disabled', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
+        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
         expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
     });
 
     it('Should render Previous button enabled', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
+        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
         expect(getByText('Previous').closest('button')).toHaveProperty('disabled', false);
     });
 
     it('Should render headers', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
+        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
         expect(getByText('General info')).toBeInTheDocument();
         expect(getByText('Date and time for punch round')).toBeInTheDocument();
         expect(getByText('Reports added')).toBeInTheDocument();
@@ -69,7 +71,7 @@ describe('Module: <Summary />', () => {
     });
 
     it('Should render general info', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
+        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
         expect(getByText(generalInfo.projectName)).toBeInTheDocument();
         expect(getByText(generalInfo.poType.text)).toBeInTheDocument();
         expect(getByText(generalInfo.title)).toBeInTheDocument();
@@ -82,7 +84,7 @@ describe('Module: <Summary />', () => {
     });
 
     it('Should render scope', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
+        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} />);
         expect(getByText(mockMcPkgs[0].mcPkgNo)).toBeInTheDocument();
         expect(getByText(mockMcPkgs[1].mcPkgNo)).toBeInTheDocument();
         expect(getByText(mockMcPkgs[0].description)).toBeInTheDocument();

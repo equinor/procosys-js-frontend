@@ -279,9 +279,9 @@ const TreeView = ({
                 setPathToExpandTree([]);
             }
             if (selectedNodeId) {
-                const selected = treeData.filter((node) => node.id === selectedNodeId);
-                if (selected.length > 0) {
-                    selected[0].isSelected = true;
+                const selected = treeData.find((node) => node.id === selectedNodeId);
+                if (selected) {
+                    selected.isSelected = true;
                 }
             }
         })();

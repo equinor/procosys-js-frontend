@@ -45,7 +45,7 @@ const Summary = ({
         </Row>);
     };
 
-    const getmcPkgScope = (mcPkg: McPkgRow): JSX.Element => {
+    const getMcPkgScope = (mcPkg: McPkgRow): JSX.Element => {
         return (
             <Row key={mcPkg.mcPkgNo}>
                 <Cell>{mcPkg.mcPkgNo}</Cell>
@@ -179,7 +179,7 @@ const Summary = ({
                         { getHeaders() }
                     </Head>
                     <Body>
-                        { mcPkgScope.length > 0 && mcPkgScope.map(mcPkg => getmcPkgScope(mcPkg)) }
+                        { mcPkgScope.length > 0 && mcPkgScope.map(mcPkg => getMcPkgScope(mcPkg)) }
                         { commPkgScope.length > 0 && commPkgScope.map(commPkg => getCommPkgScope(commPkg)) }
                     </Body>
                 </Table>

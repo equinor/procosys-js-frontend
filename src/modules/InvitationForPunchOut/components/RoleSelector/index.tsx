@@ -79,17 +79,17 @@ const RoleSelector = ({
     };
 
     const clearOtherRoles = (roleIndex: number): void => {
-        setAllRoles(ar => {
-            const copyR = [...ar];
-            copyR.forEach((r, i) => {
-                if (i != roleIndex && r.usePersonalEmail) {
-                    r.notify = false;
-                    r.persons.forEach(person => {
+        setAllRoles(allRoles => {
+            const allRolesCopy = [...allRoles];
+            allRolesCopy.forEach((role, i) => {
+                if (i != roleIndex && !role.usePersonalEmail) {
+                    role.notify = false;
+                    role.persons.forEach(person => {
                         person.radioOption = null;
                     });
                 }
             });
-            return copyR;
+            return allRolesCopy;
         });
     };
 
@@ -109,7 +109,7 @@ const RoleSelector = ({
     const filterRoles = (input: string): void => {
         setFilter(input);
         if(input.length > 0) {
-            setFilteredRoles(allRoles.filter(r => r.code.toLocaleLowerCase().startsWith(input.toLocaleLowerCase())));
+            setFilteredRoles(allRoles.filter(role => role.code.toLocaleLowerCase().startsWith(input.toLocaleLowerCase())));
         } else {
             setFilteredRoles(allRoles);
         }
@@ -146,11 +146,11 @@ const RoleSelector = ({
 
     const updateRadioButtonParticipants = (person: Person, radioValue: string, role: RoleParticipant, roleIndex: number): void => {
         const newValue = getNewValue(radioValue, person.radioOption);
-        setAllRoles(ar => {
-            const copyR = [...ar];
-            copyR.forEach((r, i) => {
+        setAllRoles(allRoles => {
+            const allRolesCopy = [...allRoles];
+            allRolesCopy.forEach((role, i) => {
                 if (i != roleIndex) {
-                    r.persons.forEach(person => {
+                    role.persons.forEach(person => {
                         person.radioOption = null;
                     });
                 }
@@ -158,7 +158,7 @@ const RoleSelector = ({
                     person.radioOption = newValue;
                 }
             });
-            return copyR;
+            return allRolesCopy;
         });
 
         if (role.code == pickedRoleValue) {

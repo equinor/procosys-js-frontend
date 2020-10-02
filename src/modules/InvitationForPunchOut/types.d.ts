@@ -6,7 +6,7 @@ export type ProjectDetails = {
     description: string;
 }
 
-export type ProgressBarSteps = {
+export type Step = {
     title: string;
     isCompleted: boolean;
 }

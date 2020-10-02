@@ -1,4 +1,4 @@
-import { BadgeContainer, Card, CardDetail, Container, FlexContainer, InlineContainer, StatusContainer } from './style';
+import { BadgeContainer, Card, CardDetail, Container, HeaderContainer, InlineContainer, OutlookInformationHeaderContainer, OutlookInformationStatusContainer, ParticipantContainer, ParticipantListContainer, StatusContainer } from './style';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -68,21 +68,21 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
     return (
         <Flyout close={close}>
             <Container>
-                <FlexContainer padding="calc(var(--grid-unit) * 2)">
+                <OutlookInformationHeaderContainer>
                     <Typography variant="h2">Outlook Information</Typography>
-                    <Button variant='ghost' title='Close' onClick={close}>
+                    <Button variant="ghost" title='Close' onClick={close}>
                         <EdsIcon name="close" />
                     </Button>
-                </FlexContainer>
+                </OutlookInformationHeaderContainer>
                 <StatusContainer>
-                    <FlexContainer padding="var(--grid-unit) 0">
+                    <OutlookInformationStatusContainer>
                         <InlineContainer>
                             <Typography variant="h6">Status:</Typography>
                             <EdsIcon name="microsoft_outlook" color="green" />
                             <Typography>{status}</Typography>
                         </InlineContainer>
                         <Button onClick={disableOutlook} variant="outlined" variantColor="green" title="Disable outlook">Disable outlook</Button>
-                    </FlexContainer>
+                    </OutlookInformationStatusContainer>
                     <Typography variant="h6">Organizer</Typography>
                     <Card>
                         <CardDetail>
@@ -101,11 +101,11 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         </CardDetail>
                     </Card>
                 </StatusContainer>
-                <FlexContainer padding="calc(var(--grid-unit) * 2)" direction="column">
-                    <FlexContainer padding="calc(var(--grid-unit) * 2)">
+                <ParticipantListContainer>
+                    <HeaderContainer>
                         <Typography variant="h5">Response from participants</Typography>
-                    </FlexContainer>
-                    <FlexContainer data-testid="attending" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    </HeaderContainer>
+                    <ParticipantContainer data-testid="attending" >
                         <Typography variant="body_long_bold">Attending</Typography>
                         {attending.map(p => {
                             return (
@@ -116,8 +116,8 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                             );
                         }
                         )}
-                    </FlexContainer>
-                    <FlexContainer data-testid="tentative" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    </ParticipantContainer>
+                    <ParticipantContainer data-testid="tentative">
                         <Typography variant="body_long_bold">Tentative</Typography>
                         {tentative.map(p => {
                             return (
@@ -128,8 +128,8 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                             );
                         }
                         )}
-                    </FlexContainer>
-                    <FlexContainer data-testid="not_responded" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    </ParticipantContainer>
+                    <ParticipantContainer data-testid="not_responded">
                         <Typography variant="body_long_bold">Not responded</Typography>
                         {notResponded.map(p => {
                             return (
@@ -140,8 +140,8 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                             );
                         }
                         )}
-                    </FlexContainer>
-                    <FlexContainer data-testid="declined" padding="var(--grid-unit) calc(var(--grid-unit) * 2)" direction="column">
+                    </ParticipantContainer>
+                    <ParticipantContainer data-testid="declined">
                         <Typography variant="body_long_bold">Declined</Typography>
                         {declined.map(p => {
                             return (
@@ -152,8 +152,8 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                             );
                         }
                         )}
-                    </FlexContainer>
-                </FlexContainer>
+                    </ParticipantContainer>
+                </ParticipantListContainer>
             </Container >
         </Flyout>
     );

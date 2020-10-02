@@ -2,16 +2,6 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-type FlexContainerProps = {
-    width?: string;
-    padding?: string;
-    direction?: string;
-}
-
-type InlineContainerProps = {
-    margin?: string;
-}
-
 type BadgeContainerProps = {
     iconBackground?: string;
     iconBorder?: boolean;
@@ -19,6 +9,7 @@ type BadgeContainerProps = {
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
+    width: inherit;
 `;
 
 export const StatusContainer = styled.div`
@@ -28,39 +19,54 @@ export const StatusContainer = styled.div`
     padding: calc(var(--grid-unit) * 2) var(--margin-module--right) calc(var(--grid-unit) * 4) var(--margin-module--right);
 `;
 
-export const FlexContainer = styled.div<FlexContainerProps>`
+export const HeaderContainer = styled.div`
     display: flex;
     align-items: baseline;
     justify-content: space-between; 
-    ${(props): any => props.width ? css`
-        width: ${props.width};
-    ` : css`
-        width: "100%";
-    `}
-    ${(props): any => props.padding ? css`
-        padding: ${props.padding};
-    ` : css`
-        padding: 0;
-    `}
-    ${(props): any => props.direction ? css`
-        flex-direction: ${props.direction};
-    ` : css`
-        flex-direction: "row";
-    `}
+    padding: var(--grid-unit) calc(var(--grid-unit) * 2);
+    width: 100%;
 `;
 
-export const InlineContainer = styled.div<InlineContainerProps>`
+export const OutlookInformationHeaderContainer = styled.div`
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between; 
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 4) calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2);
+`;
+
+
+export const OutlookInformationStatusContainer = styled.div`
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between; 
+    padding: calc(var(--grid-unit)) 0;
+    width: 100%;
+`;
+
+export const ParticipantListContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: space-between; 
+    width: 100%;
+    padding: calc(var(--grid-unit) * 2);
+`;
+
+export const ParticipantContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: space-between; 
+    width: 100%;
+    padding: var(--grid-unit) calc(var(--grid-unit) * 2);
+`;
+
+export const InlineContainer = styled.div`
     display: inline-flex;
     justify-content: flex-start;
     align-items: center;
     gap: var(--grid-unit);
-
-
-    ${(props): any => props.margin ? css`
-        margin: ${props.margin};
-    ` : css`
-        margin: 0;
-    `}
+    margin: 0;
 `;
 
 export const BadgeContainer = styled.div<BadgeContainerProps>`
@@ -68,12 +74,12 @@ export const BadgeContainer = styled.div<BadgeContainerProps>`
     justify-content: flex-start;
     align-items: center;
     gap: var(--grid-unit);
-    margin: var(--grid-unit);
+    margin: calc(var(--grid-unit) * 2) var(--grid-unit);
     
     > :first-child {
         border-radius: 50%;
-        height: 16px;
-        width: 16px;
+        height: calc(var(--grid-unit) * 2);
+        width: calc(var(--grid-unit) * 2);
         min-width: 16px;
         padding: 2px;
         text-align: center;
@@ -94,11 +100,11 @@ export const BadgeContainer = styled.div<BadgeContainerProps>`
     `}
 `;
 
-export const HeaderContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: calc(var(--grid - unit) * 2);
-`;
+// export const HeaderContainer = styled.div`
+//     display: flex;
+//     justify-content: space-between;
+//     padding: calc(var(--grid - unit) * 2);
+// `;
 
 
 

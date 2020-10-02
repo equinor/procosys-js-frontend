@@ -15,14 +15,13 @@ interface ScopeTableProps {
     getTags: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
     setSelectedTags: (tags: PreservedTag[]) => void;
     showTagDetails: (tag: PreservedTag) => void;
-    setRefreshScopeListCallback: (callback: () => void) => void;
+    setRefreshScopeListCallback: (callback: (maxHeight: number) => void) => void;
     pageSize: number;
     setPageSize: (pageSize: number) => void;
     shouldSelectFirstPage: boolean;
     setFirstPageSelected: () => void;
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
-    maxHeight?: number;
 }
 
 enum ActionStatus {
@@ -46,9 +45,10 @@ class ScopeTable extends React.Component<ScopeTableProps> {
     }
 
     componentDidMount(): void {
-        this.props.setRefreshScopeListCallback(() => {
+        this.props.setRefreshScopeListCallback((maxHeight: number) => {
             if (this.refObject.current) {
-                this.refObject.current.onQueryChange();
+                this.refObject.current.props.options.maxBodyHeight = maxHeight;
+                this.refObject.current.onSearchChangeDebounce();
             }
         });
     }
@@ -217,7 +217,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
         return (
             <Container>
                 <Table
-                    tableRef={this.refObject} //reference will be used by parent, to trigger rendering
+                    tableRef={this.refObject} //reference will be used by xparent, to trigger rendering
                     columns={[
                         { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px', maxWidth: '200px' } },
                         { title: 'Description', render: this.getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '600px' } },
@@ -237,6 +237,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                         showTitle: false,
                         draggable: false,
                         selection: true,
+                        debounceInterval: 200,
                         selectionProps: { disableRipple: true },
                         padding: 'dense',
                         pageSize: this.props.pageSize,
@@ -247,9 +248,6 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                             whiteSpace: 'nowrap',
                             fontFamily: 'Equinor',
                         },
-                        // Just a set value for now, this should be more dynamic in the future probably when the library supports more dynamic height of the table. 
-                        maxBodyHeight: `${this.props.maxHeight}px`,
-                        // --- 
                         rowStyle: (rowData): any => ({
                             opacity: isTagVoided(rowData) && 0.5,
                             color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,

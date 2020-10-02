@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, Typography } from '@equinor/eds-core-react';
 import ProgressBar from '@procosys/components/ProgressBar';
-import { ProgressBarSteps } from '../../types';
+import { Step } from '../../types';
 import { Container, HeaderContainer, ButtonContainer } from './CreateIPOHeader.style';
 
 type ProgressBarProps = {
-    steps: ProgressBarSteps[];
+    steps: Step[];
     canBeCreated: boolean;
     currentStep: number;
 }

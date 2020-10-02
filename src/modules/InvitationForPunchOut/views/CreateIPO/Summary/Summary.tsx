@@ -1,14 +1,14 @@
 import React from 'react';
 import { Button, Typography, Table } from '@equinor/eds-core-react';
 import { Container, FormContainer, ButtonContainer, Section, Subsection, TableSection } from './Summary.style';
-import { GeneralInfoDetails, CommPkgRow, McPkgRow, Participant } from '@procosys/modules/InvitationForPunchOut/types';
+import { GeneralInfoDetails, CommPkgRow, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 
 const { Body, Row, Cell, Head } = Table;
 
 interface SummaryProps {
     previous: () => void;
     generalInfo: GeneralInfoDetails;
-    mcScope: McPkgRow[];
+    mcPkgScope: McPkgRow[];
     commPkgScope: CommPkgRow[];
     participants: Participant[];
 }
@@ -16,13 +16,13 @@ interface SummaryProps {
 const Summary = ({
     previous,
     generalInfo,
-    mcScope,
+    mcPkgScope,
     commPkgScope,
     participants
 }: SummaryProps): JSX.Element => {
 
     const getHeaders = (): JSX.Element => {
-        if (mcScope.length > 0) {
+        if (mcPkgScope.length > 0) {
             return (<Row>
                 <Cell as="th" scope="col">
                     Mc pkg no
@@ -45,7 +45,7 @@ const Summary = ({
         </Row>);
     };
 
-    const getMcScope = (mcPkg: McPkgRow): JSX.Element => {
+    const getMcPkgScope = (mcPkg: McPkgRow): JSX.Element => {
         return (
             <Row key={mcPkg.mcPkgNo}>
                 <Cell>{mcPkg.mcPkgNo}</Cell>
@@ -62,11 +62,42 @@ const Summary = ({
             </Row>);
     };
 
+    const getNotifiedPersons = (persons: Person[], value: string): string => {
+        const filtered = persons.filter(p => p.radioOption == value.toLocaleLowerCase());
+        let notifyString = '';
+        if (filtered.length > 0) {
+            notifyString += value + ': ';
+            filtered.forEach((t, i) => {
+                notifyString += t.firstName + ' ' + t.lastName;
+                if (i < filtered.length - 1) {
+                    notifyString += ', ';
+                }
+            });
+        }
+        return notifyString;
+    };
+
     const getParticipants = (participant: Participant, index: number): JSX.Element => {
         return (
             <Row key={index}>
                 <Cell>{participant.organization}</Cell>
-                <Cell>{'Test Name'}</Cell>
+                { participant.role &&
+                    <Cell>
+                        <div>{participant.role.code + ' - ' + participant.role.description}</div>
+                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
+                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                    </Cell>
+                }
+                { participant.person &&
+                    <Cell>
+                        {participant.person.firstName + ' ' + participant.person.lastName}
+                    </Cell>
+                }
+                { participant.externalEmail &&
+                    <Cell>
+                        {participant.externalEmail}
+                    </Cell>
+                }
             </Row>);
     };
 
@@ -148,7 +179,7 @@ const Summary = ({
                         { getHeaders() }
                     </Head>
                     <Body>
-                        { mcScope.length > 0 && mcScope.map(mcPkg => getMcScope(mcPkg)) }
+                        { mcPkgScope.length > 0 && mcPkgScope.map(mcPkg => getMcPkgScope(mcPkg)) }
                         { commPkgScope.length > 0 && commPkgScope.map(commPkg => getCommPkgScope(commPkg)) }
                     </Body>
                 </Table>

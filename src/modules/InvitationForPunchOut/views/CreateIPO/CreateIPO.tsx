@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Participants from './Participants/Participants';
 import CreateIPOHeader from './CreateIPOHeader';
-import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope, Participant } from '../../types';
+import { GeneralInfoDetails, CommPkgRow, Step, McScope, Participant } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
 import { Container } from './CreateIPO.style';
 import Attachments from './Attachments/Attachments';
@@ -25,44 +25,48 @@ const emptyGeneralInfo: GeneralInfoDetails = {
 const initialParticipants: Participant[] = [
     {
         organization: 'Contractor',
+        type: 'Functional role',
+        externalEmail: null,
         person: null,
         role: null
     },
     {
         organization: 'Construction company',
+        type: 'Functional role',
+        externalEmail: null,
         person: null,
         role: null
     }
 ];
 
-export enum CreateStepEnum {
-    GeneralInfo = 'General info',
-    Scope = 'Scope',
-    Participants = 'Participants',
-    UploadAttachments = 'Upload attachments',
-    SummaryAndCreate = 'Summary & create'
+enum StepsEnum {
+    GeneralInfo = 1,
+    Scope = 2,
+    Participants = 3,
+    UploadAttachments = 4,
+    SummaryAndCreate = 5
 };
 
-const initialSteps: ProgressBarSteps[] = [
-    {title: CreateStepEnum.GeneralInfo, isCompleted: false},
-    {title: CreateStepEnum.Scope, isCompleted: false},
-    {title: CreateStepEnum.Participants, isCompleted: false},
-    {title: CreateStepEnum.UploadAttachments, isCompleted: false},
-    {title: CreateStepEnum.SummaryAndCreate, isCompleted: false}
+const initialSteps: Step[] = [
+    {title: 'General info', isCompleted: false},
+    {title: 'Scope', isCompleted: false},
+    {title: 'Participants', isCompleted: false},
+    {title: 'Upload attachments', isCompleted: false},
+    {title: 'Summary & create', isCompleted: false}
 ];
 
 const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
-    const [currentStep, setCurrentStep] = useState<number>(1);
+    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 
         multipleDisciplines: false, 
         selected: []
     });
-    const [steps, setSteps] = useState<ProgressBarSteps[]>(initialSteps);
+    const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [canCreate, setCanCreate] = useState<boolean>(false);
 
     const params = useParams<{projectId: any; commPkgNo: any}>();
@@ -75,14 +79,14 @@ const CreateIPO = (): JSX.Element => {
     }, [fromMain]);
 
     const goToNextStep = (): void => {
-        if(currentStep > 3) {
+        if(currentStep > StepsEnum.Participants) {
             changeCompletedStatus(true, currentStep);
-            if(currentStep == 4) {
-                changeCompletedStatus(true, 5);
+            if(currentStep == StepsEnum.UploadAttachments) {
+                changeCompletedStatus(true, StepsEnum.SummaryAndCreate);
             }
         }
         setCurrentStep(currentStep => {
-            if (currentStep >= 5) {
+            if (currentStep >= StepsEnum.SummaryAndCreate) {
                 return currentStep;
             }
             return currentStep + 1;
@@ -91,7 +95,7 @@ const CreateIPO = (): JSX.Element => {
 
     const goToPreviousStep = (): void => {
         setCurrentStep(currentStep => {
-            if (currentStep >= 2) {
+            if (currentStep >= StepsEnum.Scope) {
                 return currentStep - 1;
             }
             return currentStep;
@@ -108,17 +112,17 @@ const CreateIPO = (): JSX.Element => {
 
     useEffect(() => {
         if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
-            changeCompletedStatus(true, 1);
+            changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
-            changeCompletedStatus(false, 1);
+            changeCompletedStatus(false, StepsEnum.GeneralInfo);
         }
     }, [generalInfo]);
 
     useEffect(() => {
         if (selectedCommPkgScope.length > 0 || selectedMcPkgScope.selected.length > 0) {
-            changeCompletedStatus(true, 2);
+            changeCompletedStatus(true, StepsEnum.Scope);
         } else {
-            changeCompletedStatus(false, 2);
+            changeCompletedStatus(false, StepsEnum.Scope);
         }
     }, [selectedCommPkgScope, selectedMcPkgScope]);
 
@@ -141,13 +145,23 @@ const CreateIPO = (): JSX.Element => {
         setSelectedCommPkgScope([]);
     };
 
+    useEffect(() => {
+        const incompleteParticipantRows = participants.filter(p => !p.organization || (!p.role && !p.person && !p.externalEmail));
+        console.log(incompleteParticipantRows);
+        if (incompleteParticipantRows.length > 0) {
+            changeCompletedStatus(false, StepsEnum.Participants);
+        } else {
+            changeCompletedStatus(true, StepsEnum.Participants);
+        }
+    }, [participants]);
+
     return (<Container>
         <CreateIPOHeader
             steps={steps}
             currentStep={currentStep}
             canBeCreated={canCreate}
         />
-        {currentStep == 1 &&
+        {currentStep == StepsEnum.GeneralInfo &&
             <GeneralInfo
                 generalInfo={generalInfo}
                 setGeneralInfo={setGeneralInfo}
@@ -157,7 +171,7 @@ const CreateIPO = (): JSX.Element => {
                 clearScope={clearScope}
             /> 
         } 
-        { (currentStep == 2 && generalInfo.poType != null && generalInfo.projectId != null && generalInfo.projectName != null) &&
+        { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectId != null && generalInfo.projectName != null) &&
             <SelectScope 
                 type={generalInfo.poType.value}
                 commPkgNo={params.commPkgNo ? params.commPkgNo : null}
@@ -172,26 +186,26 @@ const CreateIPO = (): JSX.Element => {
                 projectName={generalInfo.projectName}
             /> 
         }
-        { currentStep == 3 && 
+        { currentStep == StepsEnum.Participants && 
             <Participants 
                 next={goToNextStep}
                 previous={goToPreviousStep}
                 participants={participants}
                 setParticipants={setParticipants}
-                isValid={true}
+                isValid={steps[2].isCompleted}
             />
         }
-        { currentStep == 4 && 
+        { currentStep == StepsEnum.UploadAttachments && 
             <Attachments 
                 next={goToNextStep}
                 previous={goToPreviousStep}
             />
         }
-        { currentStep == 5 && 
+        { currentStep == StepsEnum.SummaryAndCreate && 
             <Summary 
                 previous={goToPreviousStep}
                 generalInfo={generalInfo}
-                mcScope={selectedMcPkgScope.selected}
+                mcPkgScope={selectedMcPkgScope.selected}
                 commPkgScope={selectedCommPkgScope}
                 participants={participants}
             />

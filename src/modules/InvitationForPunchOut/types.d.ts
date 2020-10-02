@@ -6,7 +6,7 @@ export type ProjectDetails = {
     description: string;
 }
 
-export type ProgressBarSteps = {
+export type Step = {
     title: string;
     isCompleted: boolean;
 }
@@ -25,19 +25,27 @@ export type GeneralInfoDetails = {
 }
 
 export type Person = {
-    id: number;
-    name: string;
-    cc: boolean;
+    azureOid: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    radioOption: string | null;
 }
 
 export type RoleParticipant = {
-    id: number;
-    roleName: string;
-    persons: Person[] | null;
+    code: string;
+    description: string;
+    email: string;
+    informationalEmail: string;
+    usePersonalEmail: boolean;
+    notify: boolean;
+    persons: Person[];
 }
 
 export type Participant = {
     organization: string;
+    type: string;
+    externalEmail: string | null;
     person: Person | null;
     role: RoleParticipant | null;
 }

@@ -52,7 +52,7 @@ const initialSteps: Step[] = [
     {title: 'Scope', isCompleted: false},
     {title: 'Participants', isCompleted: false},
     {title: 'Upload attachments', isCompleted: false},
-    {title: 'Summary  create', isCompleted: false}
+    {title: 'Summary & create', isCompleted: false}
 ];
 
 const CreateIPO = (): JSX.Element => {

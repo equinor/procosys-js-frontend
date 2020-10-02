@@ -59,7 +59,7 @@ const ActionExpanded = ({
     const { apiClient } = usePreservationContext();
     const [actionDetails, setActionDetails] = useState<ActionDetails>();
     const [showEditMode, setShowEditMode] = useState<boolean>(false);
-
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -81,6 +81,7 @@ const ActionExpanded = ({
     }, [showEditMode]);
 
     const closeAction = async (): Promise<void> => {
+        setIsLoading(true);
         try {
             if (actionDetails) {
                 await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
@@ -93,6 +94,7 @@ const ActionExpanded = ({
             console.error('Closing action failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
+        setIsLoading(false);
     };
 
     const getDateField = (date: Date | null): string => {
@@ -102,7 +104,7 @@ const ActionExpanded = ({
         return getFormattedDate(date);
     };
 
-    if (!actionDetails) {
+    if (!actionDetails || isLoading) {
         return (<Spinner />);
     }
 
@@ -215,7 +217,7 @@ const ActionExpanded = ({
                 !actionDetails.isClosed && (
                     <Section>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button 
+                            <Button
                                 disabled={isVoided}
                                 onClick={closeAction}>
                                 Close action

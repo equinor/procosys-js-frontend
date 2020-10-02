@@ -24,11 +24,10 @@ export const PlantConfigContextProvider: React.FC = ({ children }): JSX.Element 
         preservationApiClient.setCurrentPlant(plant.id);
     }, [plant]);
 
-
     return (
         <PlantConfigContext.Provider value={{
             libraryApiClient: libraryApiClient,
-            preservationApiClient: preservationApiClient
+            preservationApiClient: preservationApiClient,
         }}>
             {children}
         </PlantConfigContext.Provider>

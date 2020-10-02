@@ -13,6 +13,7 @@ export type ProgressBarSteps = {
 
 export type GeneralInfoDetails = {
     projectId: number | null;
+    projectName: string | null;
     poType: SelectItem | null;
     title: string | null;
     description?: string | null;
@@ -23,22 +24,36 @@ export type GeneralInfoDetails = {
     location?: string | null;
 }
 
+export type Person = {
+    id: number;
+    name: string;
+    cc: boolean;
+}
+
+export type RoleParticipant = {
+    id: number;
+    roleName: string;
+    persons: Person[] | null;
+}
+
+export type Participant = {
+    organization: string;
+    person: Person | null;
+    role: RoleParticipant | null;
+}
+
 export interface CommPkgRow {
     commPkgNo: string;
     description: string;
     status: string;
-    mdpAccepted: string;
     tableData?: {
         checked: boolean;
     };
 }
 
-
 export interface McPkgRow {
     mcPkgNo: string;
     description: string;
-    m01: string;
-    m02: string;
     discipline: string;
     tableData?: {
         checked: boolean;

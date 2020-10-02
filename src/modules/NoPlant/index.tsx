@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import CacheService from '../../core/CacheService';
+import CacheService from '../../core/services/CacheService';
 import { Container } from './style';
 import { Redirect } from 'react-router-dom';
 import Spinner from '../../components/Spinner';

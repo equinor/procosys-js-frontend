@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Axios from 'axios';
-import CacheService from './CacheService';
+import CacheService from './services/CacheService';
 import { Canceler } from '../http/HttpClient';
 import ErrorComponent from '../components/Error';
 import Loading from '../components/Loading';

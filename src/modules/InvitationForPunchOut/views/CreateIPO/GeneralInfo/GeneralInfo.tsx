@@ -5,7 +5,7 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { DropdownItem, DateTimeContainer, Container, PoTypeContainer, LocationContainer, FormContainer, ButtonContainer } from './GeneralInfo.style';
 import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { TextField as DateTimeField } from '@material-ui/core';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import { Canceler } from '@procosys/http/HttpClient';
 
 const poTypes: SelectItem[] = [
@@ -29,7 +29,7 @@ const GeneralInfo = ({
     isValid,
     clearScope
 }: GeneralInfoProps): JSX.Element => {
-    const { procosysApiClient } = useProcosysContext();
+    const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');   
@@ -37,7 +37,7 @@ const GeneralInfo = ({
     useEffect(() => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
-            const allProjects = await procosysApiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
+            const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
                 .then(projects => projects.map((project): ProjectDetails => {
                     return {
                         id: project.id,
@@ -52,12 +52,6 @@ const GeneralInfo = ({
     },[]);
 
     useEffect(() => {
-        if(fromMain) {
-            setPoTypeForm('DP');
-        }
-    }, [fromMain]);
-
-    useEffect(() => {
         if (filterForProjects.length <= 0) {
             setFilteredProjects(availableProjects);
             return;
@@ -70,7 +64,9 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
-        clearScope();
+        if(!fromMain) {
+            clearScope();
+        }
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
             setGeneralInfo(gi => {return {...gi, poType: newPoType};});
@@ -79,10 +75,16 @@ const GeneralInfo = ({
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id};});
+        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name};});
     };
 
     const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
+
+    useEffect(() => {
+        if (selectedProject) {
+            setGeneralInfo(gi => {return {...gi, projectName: selectedProject.name};});
+        }
+    }, [selectedProject]);
 
     return (<Container>
         <FormContainer>
@@ -98,7 +100,7 @@ const GeneralInfo = ({
                     return (
                         <DropdownItem
                             key={index}
-                            onClick={(event): void =>
+                            onClick={(event: React.MouseEvent): void =>
                                 setProjectForm(event, index)
                             }
                         >
@@ -113,7 +115,6 @@ const GeneralInfo = ({
                     onChange={setPoTypeForm}
                     data={poTypes}
                     label={'Type of punch round'}
-                    disabled={fromMain}
                 >
                     {(generalInfo.poType && generalInfo.poType.text) || 'Select'}
                 </SelectInput>

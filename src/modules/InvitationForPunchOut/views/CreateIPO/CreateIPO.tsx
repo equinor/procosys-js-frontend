@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
-import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope } from '../../types';
-import SelectScope from './SelectScope/SelectScope';
+import Participants from './Participants/Participants';
 import CreateIPOHeader from './CreateIPOHeader';
+import { GeneralInfoDetails, CommPkgRow, ProgressBarSteps, McScope, Participant } from '../../types';
+import SelectScope from './SelectScope/SelectScope';
 import { Container } from './CreateIPO.style';
+import Attachments from './Attachments/Attachments';
+import Summary from './Summary/Summary';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
+    projectName: null,
     poType: null,
     title: null,
     description: null,
@@ -17,6 +21,19 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     endTime: null,
     location: null
 };
+
+const initialParticipants: Participant[] = [
+    {
+        organization: 'Contractor',
+        person: null,
+        role: null
+    },
+    {
+        organization: 'Construction company',
+        person: null,
+        role: null
+    }
+];
 
 export enum CreateStepEnum {
     GeneralInfo = 'General info',
@@ -37,7 +54,8 @@ const initialSteps: ProgressBarSteps[] = [
 const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [currentStep, setCurrentStep] = useState<number>(2);
+    const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
+    const [currentStep, setCurrentStep] = useState<number>(1);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 
@@ -47,16 +65,22 @@ const CreateIPO = (): JSX.Element => {
     const [steps, setSteps] = useState<ProgressBarSteps[]>(initialSteps);
     const [canCreate, setCanCreate] = useState<boolean>(false);
 
-    const params = useParams<{projectId: any; commPkgId: any}>();
+    const params = useParams<{projectId: any; commPkgNo: any}>();
     
     useEffect(() => {
-        if (params.projectId && params.commPkgId) {
+        if (params.projectId && params.commPkgNo) {
             setFromMain(true);
             setGeneralInfo(gi => {return {...gi, projectId: params.projectId};});
         }
     }, [fromMain]);
 
     const goToNextStep = (): void => {
+        if(currentStep > 3) {
+            changeCompletedStatus(true, currentStep);
+            if(currentStep == 4) {
+                changeCompletedStatus(true, 5);
+            }
+        }
         setCurrentStep(currentStep => {
             if (currentStep >= 5) {
                 return currentStep;
@@ -91,12 +115,12 @@ const CreateIPO = (): JSX.Element => {
     }, [generalInfo]);
 
     useEffect(() => {
-        if (selectedCommPkgScope.length > 0) {
+        if (selectedCommPkgScope.length > 0 || selectedMcPkgScope.selected.length > 0) {
             changeCompletedStatus(true, 2);
         } else {
             changeCompletedStatus(false, 2);
         }
-    }, [selectedCommPkgScope]);
+    }, [selectedCommPkgScope, selectedMcPkgScope]);
 
     useEffect(() => {
         let canBeCreated = true;
@@ -133,9 +157,10 @@ const CreateIPO = (): JSX.Element => {
                 clearScope={clearScope}
             /> 
         } 
-        { (currentStep == 2 && generalInfo.poType != null) &&
+        { (currentStep == 2 && generalInfo.poType != null && generalInfo.projectId != null && generalInfo.projectName != null) &&
             <SelectScope 
                 type={generalInfo.poType.value}
+                commPkgNo={params.commPkgNo ? params.commPkgNo : null}
                 selectedCommPkgScope={selectedCommPkgScope}
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}
@@ -143,7 +168,33 @@ const CreateIPO = (): JSX.Element => {
                 next={goToNextStep}
                 previous={goToPreviousStep}
                 isValid={steps[1].isCompleted}
+                projectId={generalInfo.projectId}
+                projectName={generalInfo.projectName}
             /> 
+        }
+        { currentStep == 3 && 
+            <Participants 
+                next={goToNextStep}
+                previous={goToPreviousStep}
+                participants={participants}
+                setParticipants={setParticipants}
+                isValid={true}
+            />
+        }
+        { currentStep == 4 && 
+            <Attachments 
+                next={goToNextStep}
+                previous={goToPreviousStep}
+            />
+        }
+        { currentStep == 5 && 
+            <Summary 
+                previous={goToPreviousStep}
+                generalInfo={generalInfo}
+                mcScope={selectedMcPkgScope.selected}
+                commPkgScope={selectedCommPkgScope}
+                participants={participants}
+            />
         }
     </Container>);
 };

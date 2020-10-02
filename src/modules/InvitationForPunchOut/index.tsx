@@ -2,12 +2,11 @@ import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-rou
 import { Container } from './style';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
-import withAccessControl from '../../core/security/withAccessControl';
 import CreateIPO from './views/CreateIPO/CreateIPO';
+import withFeatureFlag from '../../core/features/withFeatureFlag';
 
 
 const InvitationForPunchOut = (): JSX.Element => {
-
     const { url } = useRouteMatch();
     return (
         <InvitationForPunchOutContextProvider>
@@ -15,7 +14,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                 <Router basename={url}>
                     <Switch>
                         <Route
-                            path={'/CreateIPO/:projectId?/:commPkgId?'}
+                            path={'/CreateIPO/:projectId?/:commPkgNo?'}
                             exact
                             component={CreateIPO}
                         />
@@ -31,4 +30,4 @@ const InvitationForPunchOut = (): JSX.Element => {
     );
 };
 
-export default withAccessControl(InvitationForPunchOut, ['PRESERVATION/READ']);
+export default withFeatureFlag(InvitationForPunchOut, ['IPO']);

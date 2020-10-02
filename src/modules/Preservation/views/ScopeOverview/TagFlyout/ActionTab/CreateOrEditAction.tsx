@@ -8,6 +8,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
+import Spinner from '@procosys/components/Spinner';
 
 interface ActionTabProps {
     tagId: number;
@@ -38,6 +39,7 @@ const CreateOrEditAction = ({
     const [newTitle, setNewTitle] = useState<string>(title ? title : '');
     const [newDescription, setNewDescription] = useState<string>(description ? description : '');
     const [newDueTimeUtc, setNewDueTimeUtc] = useState<Date | null>(dueTimeUtc ? dueTimeUtc : null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const titleInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +52,7 @@ const CreateOrEditAction = ({
     }, []);
 
     const saveAction = async (): Promise<void> => {
+        setIsLoading(true);
         try {
             if (actionId) {
                 if (rowVersion) {
@@ -69,7 +72,12 @@ const CreateOrEditAction = ({
             console.error('Update action failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
         }
+        setIsLoading(false);
     };
+
+    if (isLoading) {
+        return (<Spinner />);
+    }
 
     return (
         <Container>

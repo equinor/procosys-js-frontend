@@ -143,11 +143,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
-    const refreshScopeListCallback = useRef<() => void>();
+    const refreshScopeListCallback = useRef<(maxHeight: number) => void>();
     const isFirstRender = useRef<boolean>(true);
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
-    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(500);
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
 
     const updateSavedTagListFilters = async (): Promise<void> => {
         try {
@@ -216,7 +216,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     }, [moduleContainerRef, displayFilter]);
 
     const refreshScopeList = (): void => {
-        refreshScopeListCallback.current && refreshScopeListCallback.current();
+        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - 300);
     };
 
     useEffect(() => {
@@ -231,6 +231,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 p.description.toLowerCase().indexOf(filterForProjects.toLowerCase()) > -1;
         }));
     }, [filterForProjects]);
+
+    useEffect(() => {
+        refreshScopeList();
+    }, [moduleAreaHeight]);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -257,7 +261,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     }, [selectedTags]);
 
-    const setRefreshScopeListCallback = (callback: () => void): void => {
+    const setRefreshScopeListCallback = (callback: (maxHeight: number) => void): void => {
         refreshScopeListCallback.current = callback;
     };
 
@@ -838,7 +842,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         </Tooltip>
                     </IconBar>
                 </HeaderContainer>
-
                 <ScopeTable
                     getTags={getTags}
                     data-testId='scopeTable'
@@ -851,7 +854,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
-                    maxHeight={moduleAreaHeight}
                 />
                 {
                     displayFlyout && (

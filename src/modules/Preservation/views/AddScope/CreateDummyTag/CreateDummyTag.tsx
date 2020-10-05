@@ -51,7 +51,7 @@ type CreateDummyTagProps = {
 }
 
 const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
-    const { apiClient, libraryApiClient, project } = usePreservationContext();
+    const { apiClient, libraryApiClient, project, purchaseOrderNumber } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
 
     const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>([]);
@@ -132,8 +132,10 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         props.setArea(null);
     };
 
-    const changePO = (event: React.MouseEvent, poIndex: number): void => {
-        event.preventDefault();
+    const changePO = (event: React.MouseEvent | null, poIndex: number): void => {
+        if (event) {
+            event.preventDefault();
+        }
         const newPO = {
             title: filteredPOs[poIndex].value,
             description: filteredPOs[poIndex].text
@@ -157,6 +159,20 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         }
         setFilteredPOs(allPOs.filter((p: POItem) => p.text.toLowerCase().indexOf(filterForPOs.toLowerCase()) > -1));
     }, [filterForPOs, allPOs]);
+
+    useEffect(() => {
+        if (purchaseOrderNumber) {
+            props.setAreaType(areaTypes.find((areaType) => areaType.value === 'PoArea'));
+
+            const poIndex = filteredPOs.findIndex((po) => po.value === purchaseOrderNumber);
+            if (poIndex > -1) {
+                changePO(null, poIndex);
+            } else {
+                showSnackbarNotification('Error occured. Purchase order number not found in list.', 5000);
+            }
+        }
+    }, [purchaseOrderNumber, filteredPOs]);
+
 
     /** Get disciplines from api */
     useEffect(() => {
@@ -328,6 +344,10 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             <Header>
                 <Typography variant="h1">Create dummy tag</Typography>
                 <div>{project.name}</div>
+                {purchaseOrderNumber &&
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                }
+
             </Header>
             <TopContainer>
                 <ErrorContainer>
@@ -340,6 +360,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                 onChange={setAreaTypeForm}
                                 data={areaTypes}
                                 label={'Dummy type'}
+                                disabled={purchaseOrderNumber ? true : false}
                             >
                                 {(props.areaType && props.areaType.text) || 'Select'}
                             </SelectInput>
@@ -356,6 +377,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                         <FormFieldSpacer>
                             {(props.areaType && props.areaType.value == 'PoArea') ?
                                 <Dropdown
+                                    disabled={purchaseOrderNumber ? true : false}
                                     label={'PO/Calloff'}
                                     variant='form'
                                     text={(props.purchaseOrder && props.purchaseOrder.description) || 'Type to select'}

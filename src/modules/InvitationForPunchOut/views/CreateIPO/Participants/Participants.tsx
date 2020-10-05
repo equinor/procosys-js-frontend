@@ -198,7 +198,7 @@ const Participants = ({
             return nameCombiner(participant.person.firstName, participant.person.lastName);
         } else if (participant.role) {
             let textToDisplay = participant.role.code;
-            if (participant.role.persons.length > 0) {
+            if (participant.role.persons.length > 0 && !participant.role.usePersonalEmail) {
                 textToDisplay += ' - ';
                 const cc = participant.role.persons.filter(p => p.radioOption == 'cc');
                 const to = participant.role.persons.filter(p => p.radioOption == 'to');

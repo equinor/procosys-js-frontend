@@ -169,6 +169,10 @@ const Summary = ({
                             <Cell>{'MC84'}</Cell>
                             <Cell>{'Punch list'}</Cell>
                         </Row>
+                        <Row key={'CDP06'}>
+                            <Cell>{'CDP06'}</Cell>
+                            <Cell>{'Concession Deviation Permit'}</Cell>
+                        </Row>
                     </Body>
                 </Table>
             </TableSection>

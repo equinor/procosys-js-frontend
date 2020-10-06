@@ -161,7 +161,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     }, [filterForPOs, allPOs]);
 
     useEffect(() => {
-        if (purchaseOrderNumber) {
+        if (purchaseOrderNumber && filteredPOs && filteredPOs.length > 0) {
             props.setAreaType(areaTypes.find((areaType) => areaType.value === 'PoArea'));
 
             const poIndex = filteredPOs.findIndex((po) => po.value === purchaseOrderNumber);
@@ -172,7 +172,6 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             }
         }
     }, [purchaseOrderNumber, filteredPOs]);
-
 
     /** Get disciplines from api */
     useEffect(() => {

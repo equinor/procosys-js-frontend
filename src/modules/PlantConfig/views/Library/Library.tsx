@@ -1,11 +1,11 @@
-import { hot } from 'react-hot-loader';
+import { Container, Divider, LibraryItemContainer } from './Library.style';
 import React, { useEffect, useState } from 'react';
+
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
+import { hot } from 'react-hot-loader';
 import { useRouteMatch } from 'react-router-dom';
-import { Container, Divider, LibraryItemContainer } from './Library.style';
-
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -22,6 +22,7 @@ const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
+    const [forceUpdate, setForceUpdate] = useState<boolean>(false);
 
     const match = useRouteMatch();
     const params: any = match.params;
@@ -33,6 +34,7 @@ const Library = (): JSX.Element => {
     return (
         <Container>
             <LibraryTreeview
+                setForceUpdate={setForceUpdate}
                 setSelectedLibraryType={setSelectedLibraryType}
                 setSelectedLibraryItem={setSelectedLibraryItem}
                 dirtyLibraryType={dirtyLibraryType}
@@ -42,6 +44,7 @@ const Library = (): JSX.Element => {
             <Divider />
             <LibraryItemContainer addPaddingRight={selectedLibraryType != LibraryType.TAG_FUNCTION}>
                 <LibraryItemDetails
+                    forceUpdate={forceUpdate}
                     libraryType={selectedLibraryType}
                     libraryItem={selectedLibraryItem}
                     setSelectedLibraryType={setSelectedLibraryType}

@@ -1,11 +1,13 @@
-import React from 'react';
-import { LibraryType } from '../Library';
 import TreeView, { TreeViewNode } from '../../../../../components/TreeView';
-import { usePlantConfigContext } from '../../../context/PlantConfigContext';
-import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+
 import { Container } from './LibraryTreeview.style';
+import { LibraryType } from '../Library';
+import React from 'react';
+import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+import { usePlantConfigContext } from '../../../context/PlantConfigContext';
 
 type LibraryTreeviewProps = {
+    setForceUpdate: React.Dispatch<React.SetStateAction<boolean>>;
     setSelectedLibraryType: (libraryType: string) => void;
     setSelectedLibraryItem: (libraryItem: string) => void;
     dirtyLibraryType: string;
@@ -20,6 +22,9 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     } = usePlantConfigContext();
 
     const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string): void => {
+        if (libraryType === LibraryType.PRES_REQUIREMENT) {
+            props.setForceUpdate(f => !f);
+        }
         props.setSelectedLibraryType(libraryType);
         props.setSelectedLibraryItem(libraryItem);
     };

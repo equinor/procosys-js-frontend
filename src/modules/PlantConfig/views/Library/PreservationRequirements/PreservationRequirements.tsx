@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Container, IconContainer, Breadcrumbs } from './PreservationRequirements.style';
-import EdsIcon from '../../../../../components/EdsIcon';
+import { Breadcrumbs, Container, IconContainer } from './PreservationRequirements.style';
+import React, { useEffect, useState } from 'react';
+
 import { Button } from '@equinor/eds-core-react';
-import PreservationRequirementType from './PreservationRequirementType';
+import EdsIcon from '../../../../../components/EdsIcon';
 import PreservationRequirementDefinition from './PreservationRequirementDefinition';
+import PreservationRequirementType from './PreservationRequirementType';
 
 const addIcon = <EdsIcon name='add' size={16} />;
 
 type PreservationRequirementsProps = {
+    forceUpdate: boolean;
     setDirtyLibraryType: () => void;
 };
 
@@ -20,6 +22,10 @@ enum NodeTypes {
 const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Element => {
 
     const [nodeType, setNodeType] = useState<NodeTypes>(NodeTypes.REQUIREMENT);
+
+    useEffect(() => {
+        setNodeType(NodeTypes.REQUIREMENT);
+    }, [props.forceUpdate]);
 
     if (nodeType === (NodeTypes.REQUIREMENT)) {
         return (

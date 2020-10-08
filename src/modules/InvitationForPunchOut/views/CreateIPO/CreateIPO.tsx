@@ -59,6 +59,7 @@ const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
+    const [attachments, setAttachments] = useState<File[]>([]);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
@@ -147,7 +148,6 @@ const CreateIPO = (): JSX.Element => {
 
     useEffect(() => {
         const incompleteParticipantRows = participants.filter(p => !p.organization || (!p.role && !p.person && !p.externalEmail));
-        console.log(incompleteParticipantRows);
         if (incompleteParticipantRows.length > 0) {
             changeCompletedStatus(false, StepsEnum.Participants);
         } else {
@@ -199,6 +199,8 @@ const CreateIPO = (): JSX.Element => {
             <Attachments 
                 next={goToNextStep}
                 previous={goToPreviousStep}
+                attachments={attachments}
+                setAttachments={setAttachments}
             />
         }
         { currentStep == StepsEnum.SummaryAndCreate && 
@@ -208,6 +210,7 @@ const CreateIPO = (): JSX.Element => {
                 mcPkgScope={selectedMcPkgScope.selected}
                 commPkgScope={selectedCommPkgScope}
                 participants={participants}
+                attachments={attachments}
             />
         }
     </Container>);

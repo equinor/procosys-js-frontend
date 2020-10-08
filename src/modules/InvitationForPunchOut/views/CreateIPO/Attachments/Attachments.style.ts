@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -8,6 +9,10 @@ export const Container = styled.div`
 export const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
+    width: 100%;
+    > * {
+        margin-bottom: calc(var(--grid-unit) * 3);
+    }
 `;
 
 export const ButtonContainer = styled.div`
@@ -17,4 +22,17 @@ export const ButtonContainer = styled.div`
     button:last-of-type {
         margin-left: calc(var(--grid-unit) * 2);
     }
+`;
+
+export const AddAttachmentContainer = styled.div`
+    max-width: 300px;
+`;
+
+export const DragAndDropContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 500px;
+    height: 200px;
+    background-color: ${tokens.colors.ui.background__light.rgba};
 `;

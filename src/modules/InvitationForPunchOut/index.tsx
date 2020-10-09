@@ -3,6 +3,7 @@ import { Container } from './style';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
 import CreateIPO from './views/CreateIPO/CreateIPO';
+import ViewIPO from './views/ViewIPO/index';
 import withFeatureFlag from '../../core/features/withFeatureFlag';
 
 
@@ -17,6 +18,11 @@ const InvitationForPunchOut = (): JSX.Element => {
                             path={'/CreateIPO/:projectId?/:commPkgNo?'}
                             exact
                             component={CreateIPO}
+                        />
+                        <Route
+                            path={'/:ipoId'}
+                            exact
+                            component={ViewIPO}
                         />
                         <Route
                             component={(): JSX.Element =>

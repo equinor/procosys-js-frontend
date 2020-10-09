@@ -103,13 +103,11 @@ const Summary = ({
             </Row>);
     };
 
-    const getAttachments = (attachment: File, index: number): JSX.Element => {
-        return (
-            <Row key={index}>
-                <Cell>{attachment.name}</Cell>
-            </Row>
-        );
-    };
+    const attachmentList = attachments.map((attachment, index) => (
+        <Row key={index}>
+            <Cell>{attachment.name}</Cell>
+        </Row>
+    ));
 
     return (<Container>
         <FormContainer>
@@ -228,7 +226,7 @@ const Summary = ({
                             </Row>
                         </Head>
                         <Body>
-                            { attachments.map((attachment, i) => getAttachments(attachment, i)) }
+                            { attachmentList }
                         </Body>
                     </Table>
                 </TableSection>

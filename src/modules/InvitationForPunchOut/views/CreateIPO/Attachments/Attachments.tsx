@@ -49,8 +49,7 @@ const Attachments = ({
     
     const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
-        const files = [...event.dataTransfer.files];
-        setAttachments([...attachments].concat(files));
+        setAttachments(attachments.concat([...event.dataTransfer.files]));
     };
 
     return (<Container>

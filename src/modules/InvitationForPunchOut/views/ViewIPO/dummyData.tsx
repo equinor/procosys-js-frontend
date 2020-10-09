@@ -1,4 +1,4 @@
-import { Participant, ResponseType } from './index';
+import { Participant, ResponseType } from './OutlookInfo/index';
 
 export const participants: Participant[] = [
     {

@@ -1,5 +1,5 @@
 # build environment
-FROM node:14.9.0 as build
+FROM node:14.11.0 as build
 WORKDIR /app
 COPY . /app
 RUN yarn install

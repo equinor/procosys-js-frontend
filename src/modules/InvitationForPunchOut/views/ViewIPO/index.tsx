@@ -40,7 +40,7 @@ const ViewIPO = (): JSX.Element => {
                 <Tab>Scope</Tab>
                 <Tab>Attachments</Tab>
                 <Tab>Log</Tab>
-                <Tab className='extraTab'>{''}</Tab>
+                <Tab className='emptyTab'>{''}</Tab>
             </TabList>
             <TabPanels>
                 <TabPanel>General</TabPanel>

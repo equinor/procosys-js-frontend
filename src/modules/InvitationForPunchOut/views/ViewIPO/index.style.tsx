@@ -8,7 +8,7 @@ export const Container = styled.div`
         div:first-child {
             grid-template-columns: auto auto auto auto 1fr;
         }
-        .extraTab {
+        .emptyTab {
             pointer-events: none;
         }
     

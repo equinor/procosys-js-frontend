@@ -32,8 +32,9 @@ const Attachments = ({
     };
 
     const removeAttachment = (index: number): void => {
-        const newAttachmentsList = [...attachments.splice(index, 1)]; //todo: this is not necessary, but without anything here delete is not working
-        setAttachments([...attachments]);
+        const attachmentsCopy = [...attachments];
+        attachmentsCopy.splice(index, 1);
+        setAttachments(attachmentsCopy);
     };
 
     const getAttachmentName = (attachment: File): JSX.Element => {

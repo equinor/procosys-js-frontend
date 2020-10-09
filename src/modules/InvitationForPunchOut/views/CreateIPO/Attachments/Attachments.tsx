@@ -99,7 +99,7 @@ const Attachments = ({
                 actions={[
                     {
                         icon: (): JSX.Element => <EdsIcon name='delete_to_trash' />,
-                        tooltip: 'Delete User',
+                        tooltip: 'Remove attachment',
                         onClick: (_, rowData): void => removeAttachment(rowData.tableData.id)
                     }
                 ]}

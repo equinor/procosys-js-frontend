@@ -155,6 +155,16 @@ const CreateIPO = (): JSX.Element => {
         }
     }, [participants]);
 
+    const removeAttachment = (index: number) => {
+        const attachmentsCopy = [...attachments];
+        attachmentsCopy.splice(index, 1);
+        setAttachments(attachmentsCopy);
+    };
+
+    const addAttachments = (files: File[]) => {
+        setAttachments(attachments.concat(files));
+    };
+
     return (<Container>
         <CreateIPOHeader
             steps={steps}
@@ -200,7 +210,8 @@ const CreateIPO = (): JSX.Element => {
                 next={goToNextStep}
                 previous={goToPreviousStep}
                 attachments={attachments}
-                setAttachments={setAttachments}
+                addAttachments={addAttachments}
+                removeAttachment={removeAttachment}
             />
         }
         { currentStep == StepsEnum.SummaryAndCreate && 

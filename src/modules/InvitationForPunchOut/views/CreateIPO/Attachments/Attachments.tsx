@@ -9,32 +9,28 @@ interface AttachmentsProps {
     next: () => void;
     previous: () => void;
     attachments: File[];
-    setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+    removeAttachment: (index: number) => void;
+    addAttachments: (attachments: File[]) => void;
 }
 
 const Attachments = ({
     next,
     previous,
     attachments,
-    setAttachments
+    removeAttachment,
+    addAttachments
 }: AttachmentsProps): JSX.Element => {
     const inputFileRef = useRef<HTMLInputElement>(null);
 
     const handleSubmitFile = (e: any): void => {
         e.preventDefault();
-        setAttachments([...attachments, e.target.files[0]]);
+        addAttachments([e.target.files[0]]);
     };
 
     const handleAddFile = (): void => {
         if (inputFileRef.current) {
             inputFileRef.current.click();
         }
-    };
-
-    const removeAttachment = (index: number): void => {
-        const attachmentsCopy = [...attachments];
-        attachmentsCopy.splice(index, 1);
-        setAttachments(attachmentsCopy);
     };
 
     const getAttachmentName = (attachment: File): JSX.Element => {
@@ -49,7 +45,7 @@ const Attachments = ({
     
     const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
-        setAttachments(attachments.concat([...event.dataTransfer.files]));
+        addAttachments([...event.dataTransfer.files]);
     };
 
     return (<Container>

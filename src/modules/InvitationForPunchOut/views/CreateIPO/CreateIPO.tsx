@@ -156,13 +156,13 @@ const CreateIPO = (): JSX.Element => {
     }, [participants]);
 
     const removeAttachment = (index: number) => {
-        const attachmentsCopy = [...attachments];
-        attachmentsCopy.splice(index, 1);
-        setAttachments(attachmentsCopy);
+        setAttachments(currentAttachments =>
+            [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
+        );
     };
 
     const addAttachments = (files: File[]) => {
-        setAttachments(attachments.concat(files));
+        setAttachments(currentAttachments => currentAttachments.concat(files));
     };
 
     return (<Container>

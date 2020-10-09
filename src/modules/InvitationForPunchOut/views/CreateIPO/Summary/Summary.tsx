@@ -214,7 +214,7 @@ const Summary = ({
                     </Body>
                 </Table>
             </TableSection>
-            { attachments.length > 0 && 
+            { attachmentList.length > 0 && 
                 <TableSection>
                     <Typography variant="h5">Attachments</Typography>
                     <Table>

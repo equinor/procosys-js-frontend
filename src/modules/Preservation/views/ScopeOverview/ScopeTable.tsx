@@ -38,6 +38,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
         this.refObject = React.createRef();
         this.getTagsByQuery = this.getTagsByQuery.bind(this);
         this.getTagNoColumn = this.getTagNoColumn.bind(this);
+        this.getRequirementColumn = this.getRequirementColumn.bind(this);
     }
 
     shouldComponentUpdate(nextProps: ScopeTableProps): boolean {
@@ -102,7 +103,11 @@ class ScopeTable extends React.Component<ScopeTableProps> {
 
     getRequirementColumn(tag: PreservedTag): JSX.Element {
         return (
-            <RequirementIcons tag={tag} />
+            <div
+                style={{ cursor: 'pointer' }}
+                onClick={(): void => this.props.showTagDetails(tag)} >
+                <RequirementIcons tag={tag} />
+            </ div>
         );
     }
 

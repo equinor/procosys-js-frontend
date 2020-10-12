@@ -11,6 +11,7 @@ interface SummaryProps {
     mcPkgScope: McPkgRow[];
     commPkgScope: CommPkgRow[];
     participants: Participant[];
+    attachments: File[];
 }
 
 const Summary = ({
@@ -18,7 +19,8 @@ const Summary = ({
     generalInfo,
     mcPkgScope,
     commPkgScope,
-    participants
+    participants,
+    attachments
 }: SummaryProps): JSX.Element => {
 
     const getHeaders = (): JSX.Element => {
@@ -100,6 +102,12 @@ const Summary = ({
                 }
             </Row>);
     };
+
+    const attachmentList = attachments.map((attachment, index) => (
+        <Row key={index}>
+            <Cell>{attachment.name}</Cell>
+        </Row>
+    ));
 
     return (<Container>
         <FormContainer>
@@ -206,9 +214,23 @@ const Summary = ({
                     </Body>
                 </Table>
             </TableSection>
-            <TableSection>
-                <Typography variant="h5">Attachments</Typography>
-            </TableSection>
+            { attachmentList.length > 0 && 
+                <TableSection>
+                    <Typography variant="h5">Attachments</Typography>
+                    <Table>
+                        <Head>
+                            <Row>
+                                <Cell as="th" scope="col">
+                                    Title
+                                </Cell>
+                            </Row>
+                        </Head>
+                        <Body>
+                            { attachmentList }
+                        </Body>
+                    </Table>
+                </TableSection>
+            }
         </FormContainer>
         <ButtonContainer>
             <Button 

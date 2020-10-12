@@ -169,7 +169,7 @@ const EditTagProperties = (): JSX.Element => {
                     id: stepId,
                     isVoided: true,
                     title: tag.step.title,
-                    mode: { id: -1, title: '', rowVersion: '' },
+                    mode: { id: -1, title: '', rowVersion: '', forSupplier: false },
                     rowVersion: ''
                 };
             }
@@ -190,46 +190,61 @@ const EditTagProperties = (): JSX.Element => {
      * Map journeys into menu elements
      */
     useEffect(() => {
-        const mapped = journeys.filter((journey) => !journey.isVoided).map((itm: Journey) => {
-            return {
-                text: itm.title,
-                value: itm.id
-            };
-        });
+        const validJourneys: SelectItem[] = [];
+        if (tag) {
+            journeys.forEach((journey) => {
+                if ((journey.id == tag.journey.id)   //If journey is currently set, include even if it is not currently valid
+                    || (!journey.isVoided
+                        && (!poTag || (poTag && journey.steps.some((step) => step.mode.forSupplier)))) // If PO tag, only include if a supplier step exists
+                ) {
 
-        //Add missing voided journey if applicable
-        if (tag && !mapped.some((journey) => journey.text == tag.journey.title)) {
-            const j = journeys.find((pJourney: Journey) => pJourney.id === tag.journey.id);
-            if (j) {
-                mapped.push({ text: j.title, value: j.id });
-            }
+                    validJourneys.push({
+                        text: journey.title,
+                        value: journey.id
+                    });
+                }
+            });
+            setMappedJourneys(validJourneys);
         }
-        setMappedJourneys(mapped);
-    }, [journeys]);
+
+    }, [journeys, tag]);
+
 
     /**
-     * Map Journey steps into menu elements
+     * Map Journey steps into menu elements, and set step if necessary. 
      */
     useEffect(() => {
         if (newJourney) {
             setStep(null);
         }
-        if (journeys.length > 0 && journeys[journey]) {
-            const mapped = journeys[journey].steps.map((itm: Step) => {
-                if (poTag && itm.mode.title.toUpperCase() == 'SUPPLIER') {
-                    setStep(itm);
+
+        //Map steps to menu elements
+        if (tag && journeys.length > 0 && journeys[journey]) {
+            const validSteps: SelectItem[] = [];
+            journeys[journey].steps.forEach((step) => {
+                if ((tag.step.id == step.id)   //If step is currently set, include even if it is not currently valid
+                    || (!step.isVoided
+                        && (!poTag || (poTag && step.mode.forSupplier))) //for PO tags, only supplier step can be choosen
+                ) {
+                    validSteps.push({
+                        text: step.title,
+                        value: step.id
+                    });
                 }
-                return {
-                    text: itm.title,
-                    value: itm.id
-                };
             });
 
-            //Add missing value (when voided)
-            if (tag && !mapped.some((item) => item.value === tag.step.id)) {
-                mapped.push({ text: tag.step.title, value: tag.step.id });
+            setMappedSteps(validSteps);
+
+            // If purchase order tag, set current step to the supplier step (the only valid state)
+            if (poTag) {
+                const stepForSupplier = journeys[journey].steps.find((step) => step.mode.forSupplier);
+                if (!stepForSupplier) {
+                    showSnackbarNotification('Warning: Selected journey does not have a supplier step.', 5000);
+                } else {
+                    setStep(stepForSupplier);
+                }
             }
-            setMappedSteps(mapped);
+
         }
     }, [journey]);
 

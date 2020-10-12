@@ -13,13 +13,13 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 
-const addIcon = <EdsIcon name='add'/>;
-const upIcon = <EdsIcon name='arrow_up'/>;
-const downIcon = <EdsIcon name='arrow_down'/>;
-const deleteIcon = <EdsIcon name='delete_to_trash'/>;
-const duplicateIcon = <EdsIcon name='copy'/>;
-const voidIcon = <EdsIcon name='delete_forever'/>;
-const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
+const addIcon = <EdsIcon name='add' />;
+const upIcon = <EdsIcon name='arrow_up' />;
+const downIcon = <EdsIcon name='arrow_down' />;
+const deleteIcon = <EdsIcon name='delete_to_trash' />;
+const duplicateIcon = <EdsIcon name='copy' />;
+const voidIcon = <EdsIcon name='delete_forever' />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 const baseBreadcrumb = 'Library / Preservation journeys';
@@ -45,11 +45,7 @@ interface Step {
     autoTransferMethod: string;
     isVoided: boolean;
     isInUse: boolean;
-    mode: {
-        id: number;
-        title: string;
-        rowVersion: string;
-    };
+    mode: Mode;
     responsible: {
         code: string;
         title: string;
@@ -58,7 +54,13 @@ interface Step {
     rowVersion: string;
 }
 
-
+interface Mode {
+    id: number;
+    title: string;
+    forSupplier: boolean;
+    isVoided: boolean;
+    rowVersion: string;
+}
 
 type PreservationJourneyProps = {
     journeyId: number;
@@ -76,6 +78,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [journey, setJourney] = useState<Journey | null>(null);
     const [newJourney, setNewJourney] = useState<Journey>(createNewJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
+    const [modes, setModes] = useState<Mode[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
     const [filteredResponsibles, setFilteredResponsibles] = useState<SelectItem[]>([]);
     const [canSave, setCanSave] = useState<boolean>(false);
@@ -108,7 +111,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         mappedModes.push({ text: step.mode.title, value: step.mode.id, selected: false });
                     }
                 });
-
+                setModes(modes);
                 setMappedModes(mappedModes);
             } catch (error) {
                 console.error('Get modes failed: ', error.message, error.data);
@@ -444,7 +447,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             mode: {
                 id: -1,
                 title: '',
-                rowVersion: ''
+                rowVersion: '',
+                isVoided: false,
+                forSupplier: false
             },
             responsible: {
                 code: '',
@@ -576,8 +581,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 breakFunction = true;
                 return;
             }
-            const mode = mappedModes.find(mode => mode.value == step.mode.id);
-            if (i != 0 && mode && mode.text == 'SUPPLIER') {
+            const mode = modes.find(mode => mode.id == step.mode.id);
+
+            if (i != 0 && mode && mode.forSupplier) {
                 setCanSave(false);
                 breakFunction = true;
                 return;
@@ -625,7 +631,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 }
                 <ButtonSpacer />
                 {!newJourney.isVoided && newJourney.id != -1 &&
-                    < Button  variant="outlined" onClick={duplicateJourney}>
+                    < Button variant="outlined" onClick={duplicateJourney}>
                         {duplicateIcon} Duplicate
                     </Button>
                 }

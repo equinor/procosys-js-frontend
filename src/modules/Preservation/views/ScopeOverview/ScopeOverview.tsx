@@ -28,6 +28,7 @@ import { showSnackbarNotification } from '../../../../core/services/Notification
 import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { usePreservationContext } from '../../context/PreservationContext';
+import Spinner from '@procosys/components/Spinner';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -136,6 +137,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
     const [savedTagListFilters, setSavedTagListFilters] = useState<SavedTagListFilter[] | null>(null);
     const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const history = useHistory();
     const location = useLocation();
@@ -150,6 +152,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
 
     const updateSavedTagListFilters = async (): Promise<void> => {
+        setIsLoading(true);
         try {
             const response = await apiClient.getSavedTagListFilters(project.name);
             setSavedTagListFilters(response);
@@ -157,6 +160,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             console.error('Get saved filters failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
+        setIsLoading(false);
     };
 
     useEffect((): void => {
@@ -842,19 +846,28 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         </Tooltip>
                     </IconBar>
                 </HeaderContainer>
-                <ScopeTable
-                    getTags={getTags}
-                    data-testId='scopeTable'
-                    setSelectedTags={setSelectedTags}
-                    showTagDetails={openFlyout}
-                    setRefreshScopeListCallback={setRefreshScopeListCallback}
-                    pageSize={pageSize}
-                    setPageSize={setPageSize}
-                    shouldSelectFirstPage={resetTablePaging}
-                    setFirstPageSelected={(): void => setResetTablePaging(false)}
-                    setOrderByField={setOrderByField}
-                    setOrderDirection={setOrderDirection}
-                />
+                {
+                    isLoading && (
+                        <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
+                    )
+                }
+                {
+                    !isLoading && (
+                        <ScopeTable
+                            getTags={getTags}
+                            data-testId='scopeTable'
+                            setSelectedTags={setSelectedTags}
+                            showTagDetails={openFlyout}
+                            setRefreshScopeListCallback={setRefreshScopeListCallback}
+                            pageSize={pageSize}
+                            setPageSize={setPageSize}
+                            shouldSelectFirstPage={resetTablePaging}
+                            setFirstPageSelected={(): void => setResetTablePaging(false)}
+                            setOrderByField={setOrderByField}
+                            setOrderDirection={setOrderDirection}
+                        />
+                    )
+                }
                 {
                     displayFlyout && (
                         <Flyout

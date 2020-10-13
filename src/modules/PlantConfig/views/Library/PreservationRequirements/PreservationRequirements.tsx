@@ -9,7 +9,7 @@ import PreservationRequirementType from './PreservationRequirementType';
 const addIcon = <EdsIcon name='add' size={16} />;
 
 type PreservationRequirementsProps = {
-    forceUpdate: boolean;
+    forceUpdate: number;
     setDirtyLibraryType: () => void;
 };
 

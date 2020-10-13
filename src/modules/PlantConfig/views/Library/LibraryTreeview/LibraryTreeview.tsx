@@ -7,7 +7,7 @@ import { showSnackbarNotification } from '../../../../../core/services/Notificat
 import { usePlantConfigContext } from '../../../context/PlantConfigContext';
 
 type LibraryTreeviewProps = {
-    setForceUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+    forceUpdate: React.DispatchWithoutAction;
     setSelectedLibraryType: (libraryType: string) => void;
     setSelectedLibraryItem: (libraryItem: string) => void;
     dirtyLibraryType: string;
@@ -22,9 +22,14 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     } = usePlantConfigContext();
 
     const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string): void => {
-        if (libraryType === LibraryType.PRES_REQUIREMENT) {
-            props.setForceUpdate(f => !f);
+        if (libraryType === LibraryType.PRES_REQUIREMENT || libraryType === LibraryType.PRES_JOURNEY || libraryType === LibraryType.MODE || libraryType === LibraryType.TAG_FUNCTION) {
+            if (!libraryItem) {
+                props.forceUpdate();
+                console.log('FORCE UPDATE');
+            }
         }
+        console.log(libraryType);
+        console.log(libraryItem);
         props.setSelectedLibraryType(libraryType);
         props.setSelectedLibraryItem(libraryItem);
     };

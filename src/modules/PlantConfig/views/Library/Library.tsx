@@ -1,5 +1,5 @@
 import { Container, Divider, LibraryItemContainer } from './Library.style';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
@@ -22,19 +22,19 @@ const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
-    const [forceUpdate, setForceUpdate] = useState<boolean>(false);
+    const [update, forceUpdate] = useReducer(x => x + 1, 0);
 
     const match = useRouteMatch();
     const params: any = match.params;
 
     useEffect(() => {
-        setSelectedLibraryType(params.libraryType);
+        params.libraryType && setSelectedLibraryType(params.libraryType);
     }, []);
 
     return (
         <Container>
             <LibraryTreeview
-                setForceUpdate={setForceUpdate}
+                forceUpdate={forceUpdate}
                 setSelectedLibraryType={setSelectedLibraryType}
                 setSelectedLibraryItem={setSelectedLibraryItem}
                 dirtyLibraryType={dirtyLibraryType}
@@ -44,10 +44,11 @@ const Library = (): JSX.Element => {
             <Divider />
             <LibraryItemContainer addPaddingRight={selectedLibraryType != LibraryType.TAG_FUNCTION}>
                 <LibraryItemDetails
-                    forceUpdate={forceUpdate}
+                    forceUpdate={update}
                     libraryType={selectedLibraryType}
                     libraryItem={selectedLibraryItem}
                     setSelectedLibraryType={setSelectedLibraryType}
+                    setSelectedLibraryItem={setSelectedLibraryItem}
                     setDirtyLibraryType={setDirtyLibraryType}
                 />
             </LibraryItemContainer>

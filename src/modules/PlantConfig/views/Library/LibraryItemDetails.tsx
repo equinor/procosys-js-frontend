@@ -10,10 +10,11 @@ import PreservationRequirements from './PreservationRequirements/PreservationReq
 import TagFunction from './TagFunction/TagFunction';
 
 type LibraryItemProps = {
-    forceUpdate: boolean;
+    forceUpdate: number;
     libraryType: string;
     libraryItem: string;
     setSelectedLibraryType: (libraryType: string) => void;
+    setSelectedLibraryItem: (libraryItem: string) => void;
     setDirtyLibraryType: (libraryType: string) => void;
 };
 
@@ -26,11 +27,13 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
         }
         case LibraryType.MODE:
             return <Mode
+                forceUpdate={props.forceUpdate}
                 modeId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.MODE)}
             />;
         case LibraryType.PRES_JOURNEY:
             return <PreservationJourney
+                forceUpdate={props.forceUpdate}
                 journeyId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_JOURNEY)}
             />;

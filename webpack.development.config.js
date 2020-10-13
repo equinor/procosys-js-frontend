@@ -11,9 +11,6 @@ module.exports = {
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
                 loader: 'file-loader',
-                options: {
-                    name: 'src/assets/icons/[name].svg'
-                }
             },
             {
                 test: /\.(ts|tsx)$/,

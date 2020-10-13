@@ -22,14 +22,9 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     } = usePlantConfigContext();
 
     const handleTreeviewClick = (libraryType: LibraryType, libraryItem: string): void => {
-        if (libraryType === LibraryType.PRES_REQUIREMENT || libraryType === LibraryType.PRES_JOURNEY || libraryType === LibraryType.MODE || libraryType === LibraryType.TAG_FUNCTION) {
-            if (!libraryItem) {
-                props.forceUpdate();
-                console.log('FORCE UPDATE');
-            }
+        if (!libraryItem) {
+            props.forceUpdate();
         }
-        console.log(libraryType);
-        console.log(libraryItem);
         props.setSelectedLibraryType(libraryType);
         props.setSelectedLibraryItem(libraryItem);
     };

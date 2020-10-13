@@ -22,7 +22,7 @@ const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
-    const [update, forceUpdate] = useReducer(x => x + 1, 0);
+    const [update, forceUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
 
     const match = useRouteMatch();
     const params: any = match.params;

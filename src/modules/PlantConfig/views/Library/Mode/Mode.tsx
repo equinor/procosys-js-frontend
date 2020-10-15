@@ -26,6 +26,7 @@ interface ModeItem {
 
 type ModeProps = {
     modeId: number;
+    forceUpdate: number;
     setDirtyLibraryType: () => void;
 };
 
@@ -42,6 +43,10 @@ const Mode = (props: ModeProps): JSX.Element => {
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+    useEffect(() => {
+        setIsEditMode(false);
+    }, [props.forceUpdate]);
 
     const {
         preservationApiClient,

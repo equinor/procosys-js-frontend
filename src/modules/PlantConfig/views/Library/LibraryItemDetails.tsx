@@ -1,17 +1,20 @@
-import React from 'react';
-import TagFunction from './TagFunction/TagFunction';
+import React, { useEffect } from 'react';
+
+import { Breadcrumbs } from './Library.style';
 import { LibraryType } from './Library';
-import PreservationJourney from './PreservationJourney/PreservationJourney';
 import Mode from './Mode/Mode';
+import PreservationJourney from './PreservationJourney/PreservationJourney';
+import PreservationRequirementDefinition from './PreservationRequirements/PreservationRequirementDefinition';
 import PreservationRequirementType from './PreservationRequirements/PreservationRequirementType';
 import PreservationRequirements from './PreservationRequirements/PreservationRequirements';
-import PreservationRequirementDefinition from './PreservationRequirements/PreservationRequirementDefinition';
-import { Breadcrumbs } from './Library.style';
+import TagFunction from './TagFunction/TagFunction';
 
 type LibraryItemProps = {
+    forceUpdate: number;
     libraryType: string;
     libraryItem: string;
     setSelectedLibraryType: (libraryType: string) => void;
+    setSelectedLibraryItem: (libraryItem: string) => void;
     setDirtyLibraryType: (libraryType: string) => void;
 };
 
@@ -24,16 +27,19 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
         }
         case LibraryType.MODE:
             return <Mode
+                forceUpdate={props.forceUpdate}
                 modeId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.MODE)}
             />;
         case LibraryType.PRES_JOURNEY:
             return <PreservationJourney
+                forceUpdate={props.forceUpdate}
                 journeyId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_JOURNEY)}
             />;
         case LibraryType.PRES_REQUIREMENT:
             return <PreservationRequirements
+                forceUpdate={props.forceUpdate}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
             />;
         case LibraryType.PRES_REQUIREMENT_TYPE:

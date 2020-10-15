@@ -1,11 +1,11 @@
-import { hot } from 'react-hot-loader';
-import React, { useEffect, useState } from 'react';
+import { Container, Divider, LibraryItemContainer } from './Library.style';
+import React, { useEffect, useReducer, useState } from 'react';
+
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
+import { hot } from 'react-hot-loader';
 import { useRouteMatch } from 'react-router-dom';
-import { Container, Divider, LibraryItemContainer } from './Library.style';
-
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -22,17 +22,19 @@ const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
+    const [update, forceUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
 
     const match = useRouteMatch();
     const params: any = match.params;
 
     useEffect(() => {
-        setSelectedLibraryType(params.libraryType);
+        params.libraryType && setSelectedLibraryType(params.libraryType);
     }, []);
 
     return (
         <Container>
             <LibraryTreeview
+                forceUpdate={forceUpdate}
                 setSelectedLibraryType={setSelectedLibraryType}
                 setSelectedLibraryItem={setSelectedLibraryItem}
                 dirtyLibraryType={dirtyLibraryType}
@@ -42,9 +44,11 @@ const Library = (): JSX.Element => {
             <Divider />
             <LibraryItemContainer addPaddingRight={selectedLibraryType != LibraryType.TAG_FUNCTION}>
                 <LibraryItemDetails
+                    forceUpdate={update}
                     libraryType={selectedLibraryType}
                     libraryItem={selectedLibraryItem}
                     setSelectedLibraryType={setSelectedLibraryType}
+                    setSelectedLibraryItem={setSelectedLibraryItem}
                     setDirtyLibraryType={setDirtyLibraryType}
                 />
             </LibraryItemContainer>

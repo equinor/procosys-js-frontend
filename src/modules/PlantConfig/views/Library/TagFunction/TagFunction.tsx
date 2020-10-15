@@ -1,13 +1,13 @@
-import { hot } from 'react-hot-loader';
-
-import React, {useState, useEffect} from 'react';
-import { DetailsSection, Container, SpinnerContainer, InformationContainer, TabBar, TabBarButton, TabBarFiller, Breadcrumbs, Section } from './TagFunction.style';
+import { Breadcrumbs, Container, DetailsSection, InformationContainer, Section, SpinnerContainer, TabBar, TabBarButton, TabBarFiller } from './TagFunction.style';
+import React, {useEffect, useState} from 'react';
 import { TextField, Typography } from '@equinor/eds-core-react';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
+
 import { Canceler } from 'axios';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import Spinner from '@procosys/components/Spinner';
 import PreservationTab from './tabs/PreservationTab';
+import Spinner from '@procosys/components/Spinner';
+import { hot } from 'react-hot-loader';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 type TagFunctionProps = {
     tagFunctionCode: string;

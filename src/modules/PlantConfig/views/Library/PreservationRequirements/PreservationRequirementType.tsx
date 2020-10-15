@@ -140,8 +140,8 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
             } catch (error) {
                 console.error('Error occured when trying to delete requirement type: ', error.message, error.data);
                 showSnackbarNotification(error.message, 5000);
+                setIsLoading(false);
             }
-            setIsLoading(false);
         }
     };
 

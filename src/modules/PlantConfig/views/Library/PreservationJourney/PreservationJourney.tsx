@@ -61,6 +61,7 @@ interface Step {
 
 
 type PreservationJourneyProps = {
+    forceUpdate: number;
     journeyId: number;
     setDirtyLibraryType: () => void;
 };
@@ -81,6 +82,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [canSave, setCanSave] = useState<boolean>(false);
     const [filterForResponsibles, setFilterForResponsibles] = useState<string>('');
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+    useEffect(() => {
+        setIsEditMode(false);
+    }, [props.forceUpdate]);
+
 
     const {
         preservationApiClient,

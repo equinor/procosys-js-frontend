@@ -166,7 +166,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getFunctionalRolesAsync(setRequestCanceller?: RequestCanceler): Promise<FunctionalRoleResponse[]> {
-        const endpoint = '/FunctionalRoles';
+        const endpoint = '/FunctionalRoles/ByClassification/IPO';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         

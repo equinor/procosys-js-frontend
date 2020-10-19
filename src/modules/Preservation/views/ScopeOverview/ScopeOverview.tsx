@@ -851,23 +851,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
                     )
                 }
-                {
-                    !isLoading && (
-                        <ScopeTable
-                            getTags={getTags}
-                            data-testId='scopeTable'
-                            setSelectedTags={setSelectedTags}
-                            showTagDetails={openFlyout}
-                            setRefreshScopeListCallback={setRefreshScopeListCallback}
-                            pageSize={pageSize}
-                            setPageSize={setPageSize}
-                            shouldSelectFirstPage={resetTablePaging}
-                            setFirstPageSelected={(): void => setResetTablePaging(false)}
-                            setOrderByField={setOrderByField}
-                            setOrderDirection={setOrderDirection}
-                        />
-                    )
-                }
+
+                <ScopeTable
+                    getTags={getTags}
+                    data-testId='scopeTable'
+                    setSelectedTags={setSelectedTags}
+                    showTagDetails={openFlyout}
+                    setRefreshScopeListCallback={setRefreshScopeListCallback}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    shouldSelectFirstPage={resetTablePaging}
+                    setFirstPageSelected={(): void => setResetTablePaging(false)}
+                    setOrderByField={setOrderByField}
+                    setOrderDirection={setOrderDirection}
+                />
+
+
                 {
                     displayFlyout && (
                         <Flyout

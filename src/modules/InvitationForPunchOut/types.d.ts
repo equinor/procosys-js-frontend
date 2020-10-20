@@ -43,8 +43,9 @@ export type RoleParticipant = {
 }
 
 export type Participant = {
-    organization: string;
+    organization: SelectItem;
     type: string;
+    sortKey: number;
     externalEmail: string | null;
     person: Person | null;
     role: RoleParticipant | null;

@@ -11,7 +11,7 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
-enum OrganizationsEnum {
+export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
     ConstructionCompany = 'Construction Company',
     Contractor = 'Contractor',
@@ -23,12 +23,12 @@ enum OrganizationsEnum {
 
 const Organizations: SelectItem[] = [
     { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
-    { text: OrganizationsEnum.ConstructionCompany, value: OrganizationsEnum.ConstructionCompany },
+    { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
     { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
     { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
-    { text: OrganizationsEnum.TechnicalIntegrity, value: OrganizationsEnum.TechnicalIntegrity },
+    { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
     { text: OrganizationsEnum.Supplier, value: OrganizationsEnum.Supplier },
-    { text: OrganizationsEnum.External, value: OrganizationsEnum.External }
+    { text: OrganizationsEnum.External, value: 'External' }
 ];
 
 const ParticipantType: SelectItem[] = [
@@ -46,8 +46,8 @@ interface ParticipantsProps {
 
 const testPart: SelectItem[] = [
     {
-        text: 'Pål Eie',
-        value: 'p_Pål',
+        text: 'Elisabeth',
+        value: '4d954980-22bb-45e6-a5dc-94af280096c7',
         name: 'Eie, Pål',
         email: 'test@gmail.com'
     },
@@ -139,13 +139,16 @@ const Participants = ({
     };
 
     const setOrganization = (value: string, index: number): void => {
-        setParticipants(p => {
-            const participantsCopy = [...p];
-            participantsCopy[index].organization = value;
-            return participantsCopy;
-        });
-        if(value == OrganizationsEnum.External) {
-            setType('Person', index);
+        const organization = Organizations.find((o: SelectItem) => o.value === value);
+        if (organization) {
+            setParticipants(p => {
+                const participantsCopy = [...p];
+                participantsCopy[index].organization = organization;
+                return participantsCopy;
+            });
+            if(value == OrganizationsEnum.External) {
+                setType('Person', index);
+            }
         }
     };
 
@@ -219,8 +222,9 @@ const Participants = ({
 
     const addParticipant = (): void => {
         const newParticipant: Participant = {
-            organization: '',
+            organization: Organizations[0],
             type: 'Functional role',
+            sortKey: 3,
             externalEmail: null,
             person: null,
             role: null
@@ -272,7 +276,7 @@ const Participants = ({
                                     label={'Organization'}
                                     disabled={index < 2}
                                 >
-                                    {p.organization || 'Select'}
+                                    {p.organization.text || 'Select'}
                                 </SelectInput>
                             </div>
                             <div>
@@ -280,12 +284,12 @@ const Participants = ({
                                     onChange={(value): void => setType(value, index)}
                                     data={ParticipantType}
                                     label={'Type'}
-                                    disabled={p.organization == OrganizationsEnum.External}
+                                    disabled={p.organization.text == OrganizationsEnum.External}
                                 >
                                     {p.type}
                                 </SelectInput>
                             </div>
-                            { p.organization == OrganizationsEnum.External &&
+                            { p.organization.text == OrganizationsEnum.External &&
                                 <div>
                                     <TextField
                                         id={'guestEmail'}
@@ -296,7 +300,7 @@ const Participants = ({
                                     />
                                 </div>
                             }
-                            { p.type == ParticipantType[1].text && p.organization != OrganizationsEnum.External &&
+                            { p.type == ParticipantType[1].text && p.organization.text != OrganizationsEnum.External &&
                                 <div>
                                     <Dropdown
                                         label={'Person'}

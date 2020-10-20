@@ -3,11 +3,15 @@ import { useParams } from 'react-router-dom';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Participants from './Participants/Participants';
 import CreateIPOHeader from './CreateIPOHeader';
-import { GeneralInfoDetails, CommPkgRow, Step, McScope, Participant } from '../../types';
+import { GeneralInfoDetails, CommPkgRow, Step, McScope, Participant, RoleParticipant } from '../../types';
 import SelectScope from './SelectScope/SelectScope';
 import { Container } from './CreateIPO.style';
 import Attachments from './Attachments/Attachments';
 import Summary from './Summary/Summary';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
+import { PersonDto, FunctionalRoleDto } from '../../http/InvitationForPunchOutApiClient';
+import { OrganizationsEnum } from './Participants/Participants';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -24,15 +28,17 @@ const emptyGeneralInfo: GeneralInfoDetails = {
 
 const initialParticipants: Participant[] = [
     {
-        organization: 'Contractor',
+        organization: { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
         type: 'Functional role',
+        sortKey: 0,
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: 'Construction company',
+        organization: { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
         type: 'Functional role',
+        sortKey: 1,
         externalEmail: null,
         person: null,
         role: null
@@ -71,7 +77,99 @@ const CreateIPO = (): JSX.Element => {
     const [canCreate, setCanCreate] = useState<boolean>(false);
 
     const params = useParams<{projectId: any; commPkgNo: any}>();
-    
+    const { apiClient } = useInvitationForPunchOutContext();
+
+    const getPerson = (participant: Participant): PersonDto | null => {
+        if (!participant.person) {
+            return null;
+        }
+        return {
+            azureOid: participant.person.azureOid,
+            firstName: participant.person.firstName,
+            lastName: participant.person.lastName,
+            email: participant.person.email,
+            required: participant.person.radioOption == 'to'
+        };
+    };
+
+    const getPersons = (role: RoleParticipant): PersonDto[] | null => {
+        if(!role.persons || role.persons.length == 0) {
+            return null;
+        }
+        return role.persons.map(p => {
+            return {
+                azureOid: p.azureOid,
+                firstName: p.firstName,
+                lastName: p.lastName,
+                email: p.email,
+                required: p.radioOption == 'to' || role.usePersonalEmail
+            };
+        });
+    };
+
+    const getFunctionalRole = (participant: Participant): FunctionalRoleDto | null => {
+        if (!participant.role) {
+            return null;
+        }
+        return {
+            code: participant.role.code,
+            email: participant.role.email,
+            usePersonalEmail: participant.role.usePersonalEmail,
+            persons: getPersons(participant.role)
+        };
+    };
+
+    const createNewIpo = async (): Promise<void> => {
+        if (generalInfo.title && generalInfo.projectName && generalInfo.poType) {
+            try {
+                const commPkgScope = selectedCommPkgScope.map(c => {
+                    return {
+                        commPkgNo: c.commPkgNo,
+                        description: c.description,
+                        status: c.status
+                    };
+                });
+                const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
+                let mcPkgScope = null;
+                if (commPkgNoContainingMcScope) {
+                    mcPkgScope = selectedMcPkgScope.selected.map(mc => {
+                        return {
+                            mcPkgNo: mc.mcPkgNo,
+                            description: mc.description,
+                            commPkgNo: commPkgNoContainingMcScope
+                        };
+                    });
+                }
+
+                const ipoParticipants = participants.map(p => {
+                    return {
+                        organization: p.organization.value,
+                        sortKey: p.sortKey,
+                        externalEmail: p.externalEmail,
+                        person: getPerson(p),
+                        functionalRole: getFunctionalRole(p)
+                    };
+                });
+
+                await apiClient.createIpo(
+                    generalInfo.title, 
+                    generalInfo.projectName,
+                    generalInfo.poType.value,
+                    new Date(generalInfo.startDate + ' ' + generalInfo.startTime + ' GMT'),
+                    new Date(generalInfo.startDate + ' ' + generalInfo.endTime + ' GMT'),
+                    generalInfo.description ? generalInfo.description : null,
+                    generalInfo.location ? generalInfo.location : null,
+                    ipoParticipants,
+                    mcPkgScope, 
+                    commPkgScope
+                );
+            } catch (error) {
+                console.error('Create IPO failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+        }
+    };
+
     useEffect(() => {
         if (params.projectId && params.commPkgNo) {
             setFromMain(true);
@@ -155,13 +253,13 @@ const CreateIPO = (): JSX.Element => {
         }
     }, [participants]);
 
-    const removeAttachment = (index: number) => {
+    const removeAttachment = (index: number): void => {
         setAttachments(currentAttachments =>
             [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
         );
     };
 
-    const addAttachments = (files: File[]) => {
+    const addAttachments = (files: File[]): void => {
         setAttachments(currentAttachments => currentAttachments.concat(files));
     };
 
@@ -170,6 +268,7 @@ const CreateIPO = (): JSX.Element => {
             steps={steps}
             currentStep={currentStep}
             canBeCreated={canCreate}
+            createNewIpo={createNewIpo}
         />
         {currentStep == StepsEnum.GeneralInfo &&
             <GeneralInfo

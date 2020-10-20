@@ -53,9 +53,9 @@ const Participants = ({
     setParticipants,
     isValid
 }: ParticipantsProps): JSX.Element => {
-    const [filter, setFilter] = useState<SelectItem>({text: '', value: -1}); //filter string and index of participant
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
+    const [personsFilter, setPersonsFilter] = useState<SelectItem>({text: '', value: -1}); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
 
     useEffect(() => {
@@ -300,12 +300,12 @@ const Participants = ({
 
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
-            if (filter.value == 0) {
-                getContractorPersons(filter.text);
-            } else if (filter.value == 1) {
-                getConstructionPersons(filter.text);
+            if (personsFilter.value == 0) {
+                getContractorPersons(personsFilter.text);
+            } else if (personsFilter.value == 1) {
+                getConstructionPersons(personsFilter.text);
             } else {
-                getPersons(filter.text);
+                getPersons(personsFilter.text);
             }
         };
 
@@ -316,7 +316,7 @@ const Participants = ({
         return (): void => {
             clearTimeout(timer);
         };
-    }, [filter]);
+    }, [personsFilter]);
 
     return (<Container>
         <FormContainer>
@@ -361,7 +361,7 @@ const Participants = ({
                                         label={'Person'}
                                         maxHeight='300px'
                                         variant='form'
-                                        onFilter={(input: string): void => setFilter({text: input, value: index})}
+                                        onFilter={(input: string): void => setPersonsFilter({text: input, value: index})}
                                         text={p.person ? getDisplayText(index) : 'Search to select'}
                                     >
                                         { filteredPersons.map((person, i) => {

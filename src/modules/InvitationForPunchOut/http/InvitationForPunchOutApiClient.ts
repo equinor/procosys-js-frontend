@@ -34,20 +34,21 @@ export interface McPkgResponse {
     disciplineCode: string;
 }
 
+export interface PersonResponse {
+    azureOid: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
 export interface FunctionalRoleResponse {
     code: string;
     description: string;
     email: string;
     informationalEmail: string;
     usePersonalEmail: boolean;
-    persons: [
-        {
-            azureOid: string;
-            firstName: string;
-            lastName: string;
-            email: string;
-        }
-    ];
+    persons: PersonResponse[];
 }
 
 /**
@@ -172,6 +173,66 @@ class InvitationForPunchOutApiClient extends ApiClient {
         
         try {
             const result = await this.client.get<FunctionalRoleResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get persons with the user group MC_CONTRACTOR_MLA
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getContractorPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByUserGroup/Contractor';
+        const settings: AxiosRequestConfig = {params: {
+            searchString: searchString
+        }};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get persons with the user group MC_CONTRACTOR_MLA
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getConstructionPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByUserGroup/Construction';
+        const settings: AxiosRequestConfig = {params: {
+            searchString: searchString
+        }};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get persons in PCS
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons';
+        const settings: AxiosRequestConfig = {params: {
+            searchString: searchString
+        }};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

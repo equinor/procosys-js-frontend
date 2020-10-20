@@ -153,7 +153,6 @@ const Participants = ({
     };
 
     const setExternalEmail = (value: string, index: number): void => {
-        console.log(value);
         setParticipants(p => {
             const participantsCopy = [...p];
             participantsCopy[index].role = null;
@@ -224,7 +223,6 @@ const Participants = ({
         const newParticipant: Participant = {
             organization: Organizations[0],
             type: 'Functional role',
-            sortKey: 3,
             externalEmail: null,
             person: null,
             role: null

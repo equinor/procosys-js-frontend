@@ -10,8 +10,10 @@ import Attachments from './Attachments/Attachments';
 import Summary from './Summary/Summary';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-import { PersonDto, FunctionalRoleDto } from '../../http/InvitationForPunchOutApiClient';
+import { PersonDto, FunctionalRoleDto, CommPkgDto, McPkgDto, ParticipantDto } from '../../http/InvitationForPunchOutApiClient';
 import { OrganizationsEnum } from './Participants/Participants';
+import Loading from '@procosys/components/Loading';
+import useRouter from '@procosys/hooks/useRouter';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -30,7 +32,6 @@ const initialParticipants: Participant[] = [
     {
         organization: { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
         type: 'Functional role',
-        sortKey: 0,
         externalEmail: null,
         person: null,
         role: null
@@ -38,7 +39,6 @@ const initialParticipants: Participant[] = [
     {
         organization: { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
         type: 'Functional role',
-        sortKey: 1,
         externalEmail: null,
         person: null,
         role: null
@@ -75,9 +75,11 @@ const CreateIPO = (): JSX.Element => {
     });
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [canCreate, setCanCreate] = useState<boolean>(false);
+    const [isCreating, setIsCreating] = useState<boolean>(false);
 
     const params = useParams<{projectId: any; commPkgNo: any}>();
     const { apiClient } = useInvitationForPunchOutContext();
+    const { history } = useRouter();
 
     const getPerson = (participant: Participant): PersonDto | null => {
         if (!participant.person) {
@@ -119,39 +121,52 @@ const CreateIPO = (): JSX.Element => {
         };
     };
 
+    const getCommPkgScope = (): CommPkgDto[] => {
+        return selectedCommPkgScope.map(c => {
+            return {
+                commPkgNo: c.commPkgNo,
+                description: c.description,
+                status: c.status
+            };
+        });
+    };
+
+    const getMcScope = (): McPkgDto[] | null => {
+        const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
+        let mcPkgScope = null;
+        if (commPkgNoContainingMcScope) {
+            mcPkgScope = selectedMcPkgScope.selected.map(mc => {
+                return {
+                    mcPkgNo: mc.mcPkgNo,
+                    description: mc.description,
+                    commPkgNo: commPkgNoContainingMcScope
+                };
+            });
+        }
+        return mcPkgScope;
+    };
+
+    const getParticipants = (): ParticipantDto[] => {
+        return participants.map((p, i) => {
+            return {
+                organization: p.organization.value,
+                sortKey: i,
+                externalEmail: p.externalEmail,
+                person: getPerson(p),
+                functionalRole: getFunctionalRole(p)
+            };
+        });
+    };
+
     const createNewIpo = async (): Promise<void> => {
+        setIsCreating(true);
         if (generalInfo.title && generalInfo.projectName && generalInfo.poType) {
             try {
-                const commPkgScope = selectedCommPkgScope.map(c => {
-                    return {
-                        commPkgNo: c.commPkgNo,
-                        description: c.description,
-                        status: c.status
-                    };
-                });
-                const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
-                let mcPkgScope = null;
-                if (commPkgNoContainingMcScope) {
-                    mcPkgScope = selectedMcPkgScope.selected.map(mc => {
-                        return {
-                            mcPkgNo: mc.mcPkgNo,
-                            description: mc.description,
-                            commPkgNo: commPkgNoContainingMcScope
-                        };
-                    });
-                }
+                const commPkgScope = getCommPkgScope();
+                const mcPkgScope = getMcScope();
+                const ipoParticipants = getParticipants();
 
-                const ipoParticipants = participants.map(p => {
-                    return {
-                        organization: p.organization.value,
-                        sortKey: p.sortKey,
-                        externalEmail: p.externalEmail,
-                        person: getPerson(p),
-                        functionalRole: getFunctionalRole(p)
-                    };
-                });
-
-                await apiClient.createIpo(
+                const newIpoId = await apiClient.createIpo(
                     generalInfo.title, 
                     generalInfo.projectName,
                     generalInfo.poType.value,
@@ -163,7 +178,11 @@ const CreateIPO = (): JSX.Element => {
                     mcPkgScope, 
                     commPkgScope
                 );
+                //TODO: save attachments
+                setIsCreating(false);
+                history.push('/' + newIpoId);
             } catch (error) {
+                setIsCreating(false);
                 console.error('Create IPO failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
@@ -261,6 +280,14 @@ const CreateIPO = (): JSX.Element => {
 
     const addAttachments = (files: File[]): void => {
         setAttachments(currentAttachments => currentAttachments.concat(files));
+    };
+
+    if (isCreating) {
+        return (
+            <Container>
+                <Loading title="Creating new IPO" />
+            </Container>
+        );
     };
 
     return (<Container>

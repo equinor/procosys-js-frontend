@@ -230,7 +230,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
         participants: ParticipantDto[],
         mcPkgScope: McPkgDto[] | null,
         commPkgScope: CommPkgDto[] | null,
-        setRequestCanceller?: RequestCanceler): Promise<void> {
+        setRequestCanceller?: RequestCanceler): Promise<number> {
         const endpoint = '/invitations';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);

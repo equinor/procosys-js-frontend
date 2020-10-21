@@ -5,7 +5,6 @@ import { IAuthService } from '../../../auth/AuthService';
 import { RequestCanceler } from '../../../http/HttpClient';
 import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
-import { Participant } from '../types';
 
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError)
@@ -15,40 +14,41 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
-export type ProjectResponse = {
+type ProjectResponse = {
     id: number;
     name: string;
     description: string;
 }
 
-export interface CommPkgResponse {
+interface CommPkgResponse {
     id: number;
     commPkgNo: string;
     description: string;
     status: string;
 }
 
-export interface McPkgResponse {
+interface McPkgResponse {
     id: number;
     mcPkgNo: string;
     description: string;
     disciplineCode: string;
 }
 
-export interface FunctionalRoleResponse {
+interface PersonResponse {
+    azureOid: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
+interface FunctionalRoleResponse {
     code: string;
     description: string;
     email: string;
     informationalEmail: string;
     usePersonalEmail: boolean;
-    persons: [
-        {
-            azureOid: string;
-            firstName: string;
-            lastName: string;
-            email: string;
-        }
-    ];
+    persons: PersonResponse[];
 }
 
 export type PersonDto = {
@@ -252,6 +252,66 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 },
                 settings
             );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get persons with the user group MC_CONTRACTOR_MLA
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getContractorPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByUserGroup/Contractor';
+        const settings: AxiosRequestConfig = {params: {
+            searchString: searchString
+        }};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get persons with the user group MC_CONTRACTOR_MLA
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getConstructionPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByUserGroup/Construction';
+        const settings: AxiosRequestConfig = {params: {
+            searchString: searchString
+        }};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get persons in PCS
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons';
+        const settings: AxiosRequestConfig = {params: {
+            searchString: searchString
+        }};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

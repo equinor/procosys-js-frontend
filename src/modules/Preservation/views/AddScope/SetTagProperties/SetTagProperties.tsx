@@ -90,7 +90,7 @@ const SetTagProperties = ({
         setStep(null);
         if (journeys.length > 0 && journeys[journey]) {
             const mapped = journeys[journey].steps.map((itm: Step) => {
-                if (areaType == 'PoArea' && itm.mode.title.toUpperCase() == 'SUPPLIER') {
+                if (areaType == 'PoArea' && itm.mode.forSupplier) {
                     setStep(itm);
                 }
                 return {

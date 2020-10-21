@@ -4,8 +4,8 @@ import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
-import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
-import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
+import { ProCoSysSettings } from '../../../core/ProCoSysSettings';
+import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -180,9 +180,13 @@ interface JourneyResponse {
             mode: {
                 id: number;
                 title: string;
+                isVoided: boolean,
+                forSupplier: boolean,
+                inUse: boolean,
                 rowVersion: string;
             };
             responsible: {
+                id: number;
                 code: string;
                 title: string;
                 rowVersion: string;
@@ -439,8 +443,7 @@ interface HistoryResponse {
 }
 
 export class PreservationApiError extends ProCoSysApiError {
-    constructor(error: AxiosError)
-    {
+    constructor(error: AxiosError) {
         super(error);
         this.name = 'PreservationApiError';
     }

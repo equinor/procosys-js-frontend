@@ -71,6 +71,7 @@ export interface Step {
 export interface Mode {
     id: number;
     title: string;
+    forSupplier: boolean;
     rowVersion: string;
 }
 

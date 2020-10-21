@@ -13,7 +13,7 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 
 const WAIT_INTERVAL = 300;
 
-enum OrganizationsEnum {
+export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
     ConstructionCompany = 'Construction Company',
     Contractor = 'Contractor',

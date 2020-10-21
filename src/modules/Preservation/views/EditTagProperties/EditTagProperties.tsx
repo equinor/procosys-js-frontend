@@ -381,7 +381,7 @@ const EditTagProperties = (): JSX.Element => {
                         <div>
                             {validationErrorMessage &&
                                 <ErrorContainer>
-                                    (<Typography variant="caption">{validationErrorMessage}</Typography>)
+                                    <Typography variant="caption">{validationErrorMessage}</Typography>
                                 </ErrorContainer>
                             }
                             <InputContainer>

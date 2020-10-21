@@ -43,7 +43,7 @@ export type RoleParticipant = {
 }
 
 export type Participant = {
-    organization: string;
+    organization: SelectItem;
     type: string;
     externalEmail: string | null;
     person: Person | null;

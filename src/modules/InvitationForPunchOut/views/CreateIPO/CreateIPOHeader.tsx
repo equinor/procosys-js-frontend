@@ -8,6 +8,7 @@ type ProgressBarProps = {
     steps: Step[];
     canBeCreated: boolean;
     currentStep: number;
+    createNewIpo: () => void;
 }
 
 const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
@@ -18,7 +19,12 @@ const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 <Typography variant="h2">Create invitation for punch-out</Typography>
                 <ButtonContainer>
                     <Button variant='outlined'>Cancel</Button>
-                    <Button disabled={!props.canBeCreated}>Create</Button>
+                    <Button
+                        disabled={!props.canBeCreated}
+                        onClick={props.createNewIpo}
+                    >
+                        Create
+                    </Button>
                 </ButtonContainer>
             </HeaderContainer>
             <ProgressBar steps={props.steps} currentStep={props.currentStep} />

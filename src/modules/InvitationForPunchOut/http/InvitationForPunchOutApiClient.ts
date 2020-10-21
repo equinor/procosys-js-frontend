@@ -14,27 +14,27 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
-export type ProjectResponse = {
+type ProjectResponse = {
     id: number;
     name: string;
     description: string;
 }
 
-export interface CommPkgResponse {
+interface CommPkgResponse {
     id: number;
     commPkgNo: string;
     description: string;
     status: string;
 }
 
-export interface McPkgResponse {
+interface McPkgResponse {
     id: number;
     mcPkgNo: string;
     description: string;
     disciplineCode: string;
 }
 
-export interface PersonResponse {
+interface PersonResponse {
     azureOid: string;
     userName: string;
     firstName: string;
@@ -42,13 +42,48 @@ export interface PersonResponse {
     email: string;
 }
 
-export interface FunctionalRoleResponse {
+interface FunctionalRoleResponse {
     code: string;
     description: string;
     email: string;
     informationalEmail: string;
     usePersonalEmail: boolean;
     persons: PersonResponse[];
+}
+
+export type PersonDto = {
+    azureOid: string | null;
+    firstName: string;
+    lastName: string;
+    email: string;
+    required: boolean;
+}
+
+export type FunctionalRoleDto = {
+    code: string;
+    email: string | null;
+    usePersonalEmail: boolean;
+    persons: PersonDto[] | null;  
+}
+
+export type ParticipantDto = {
+    organization: string;
+    sortKey: number;
+    externalEmail: string | null;
+    person: PersonDto | null;
+    functionalRole: FunctionalRoleDto | null;
+}
+
+export type McPkgDto = {
+    mcPkgNo: string;
+    description: string;
+    commPkgNo: string;
+}
+
+export type CommPkgDto = {
+    commPkgNo: string;
+    description: string;
+    status: string;
 }
 
 /**
@@ -173,6 +208,50 @@ class InvitationForPunchOutApiClient extends ApiClient {
         
         try {
             const result = await this.client.get<FunctionalRoleResponse[]>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Create IPO
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async createIpo(
+        title: string,
+        projectName: string,
+        type: string,
+        startTime: Date,
+        endTime: Date,
+        description: string | null,
+        location: string | null,
+        participants: ParticipantDto[],
+        mcPkgScope: McPkgDto[] | null,
+        commPkgScope: CommPkgDto[] | null,
+        setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = '/invitations';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    title: title,
+                    description: description,
+                    location: location,
+                    startTime: startTime,
+                    endTime: endTime,
+                    projectName: projectName,
+                    type: type,
+                    participants: participants,
+                    mcPkgScope: mcPkgScope,
+                    commPkgScope: commPkgScope
+                },
+                settings
+            );
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

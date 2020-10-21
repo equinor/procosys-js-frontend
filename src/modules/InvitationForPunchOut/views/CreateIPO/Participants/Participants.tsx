@@ -15,7 +15,7 @@ const WAIT_INTERVAL = 300;
 
 export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
-    ConstructionCompany = 'Construction Company',
+    ConstructionCompany = 'Construction company',
     Contractor = 'Contractor',
     Operation = 'Operation',
     TechnicalIntegrity = 'Technical integrity',

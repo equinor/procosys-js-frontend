@@ -11,6 +11,8 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
+const WAIT_INTERVAL = 300;
+
 enum OrganizationsEnum {
     Commissioning = 'Commissioning',
     ConstructionCompany = 'Construction Company',
@@ -44,40 +46,6 @@ interface ParticipantsProps {
     isValid: boolean;
 }
 
-const testPart: SelectItem[] = [
-    {
-        text: 'Pål Eie',
-        value: 'p_Pål',
-        name: 'Eie, Pål',
-        email: 'test@gmail.com'
-    },
-    {
-        text: 'Kristen Equinor',
-        value: 'p_Kristen',
-        name: 'Equinor, Kristen',
-        email: 'test1@gmail.com'
-    },
-    {
-        text: 'Kjetil Falnes',
-        value: 'p_Kjetil',
-        name: 'Falnes, Kjetil',
-        email: 'test2@gmail.com'
-    },
-    {
-        text: 'Cato Dahl',
-        value: 'p_Cato',
-        name: 'Dahl, Cato',
-        email: 'test3@gmail.com'
-    },
-    {
-        text: 'Christine',
-        value: 'p_Christine',
-        name: 'Emberland, Christine',
-        email: 'test4@gmail.com'
-    },
-
-];
-
 const Participants = ({
     next,
     previous,
@@ -87,7 +55,7 @@ const Participants = ({
 }: ParticipantsProps): JSX.Element => {
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
-    const [personFilter, setPersonsFilter] = useState<string>('');
+    const [personsFilter, setPersonsFilter] = useState<SelectItem>({text: '', value: -1}); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
 
     useEffect(() => {
@@ -122,17 +90,93 @@ const Participants = ({
         }
     }, []);
 
-    useEffect(() => {
-        if(personFilter != '') {
+    const nameCombiner = (firstName: string, lastName: string): string => {
+        return firstName + ' ' + lastName;
+    };
+
+    const getContractorPersons = (input: string): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        if(input != '') {
             try {
-                setFilteredPersons(testPart.filter(r => r.text.toLocaleLowerCase().startsWith(personFilter.toLocaleLowerCase())));
+                (async (): Promise<void> => {
+                    const constractorPersons = await apiClient.getContractorPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                        .then(persons => persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(person.firstName, person.lastName),
+                                value: person.azureOid,
+                                name: person.lastName + ', ' + person.firstName,
+                                email: person.email
+                            };
+                        })
+                        );
+                    setFilteredPersons(constractorPersons);
+                })();
             } catch (error) {
                 showSnackbarNotification(error.message);
             }
         } else {
             setFilteredPersons([]);
         }
-    }, [personFilter]);
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
+
+    const getConstructionPersons = (input: string): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        if(input != '') {
+            try {
+                (async (): Promise<void> => {
+                    const constructionPersons = await apiClient.getConstructionPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                        .then(persons => persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(person.firstName, person.lastName),
+                                value: person.azureOid,
+                                name: person.lastName + ', ' + person.firstName,
+                                email: person.email
+                            };
+                        })
+                        );
+                    setFilteredPersons(constructionPersons);
+                })();
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+        } else {
+            setFilteredPersons([]);
+        }
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
+
+    const getPersons = (input: string): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        if(input != '') {
+            try {
+                (async (): Promise<void> => {
+                    const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                        .then(persons => persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(person.firstName, person.lastName),
+                                value: person.azureOid,
+                                name: person.lastName + ', ' + person.firstName,
+                                email: person.email
+                            };
+                        })
+                        );
+                    setFilteredPersons(persons);
+                })();
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+        } else {
+            setFilteredPersons([]);
+        }
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
 
     const getRolesCopy = (): RoleParticipant[] => {
         return JSON.parse(JSON.stringify(availableRoles));
@@ -150,7 +194,6 @@ const Participants = ({
     };
 
     const setExternalEmail = (value: string, index: number): void => {
-        console.log(value);
         setParticipants(p => {
             const participantsCopy = [...p];
             participantsCopy[index].role = null;
@@ -176,10 +219,6 @@ const Participants = ({
             participantsCopy.splice(index, 1);
             return participantsCopy;
         });
-    };
-
-    const nameCombiner = (firstName: string, lastName: string): string => {
-        return firstName + ' ' + lastName;
     };
 
     const personsInRoleText = (textToDisplay: string, persons: Person[]): string => {
@@ -259,6 +298,26 @@ const Participants = ({
         }
     };
 
+    useEffect(() => {
+        const handleFilterChange = async (): Promise<void> => {
+            if (personsFilter.value == 0) {
+                getContractorPersons(personsFilter.text);
+            } else if (personsFilter.value == 1) {
+                getConstructionPersons(personsFilter.text);
+            } else {
+                getPersons(personsFilter.text);
+            }
+        };
+
+        const timer = setTimeout(() => {
+            handleFilterChange();
+        }, WAIT_INTERVAL);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
+    }, [personsFilter]);
+
     return (<Container>
         <FormContainer>
             <ParticipantRowsContainer>
@@ -302,7 +361,7 @@ const Participants = ({
                                         label={'Person'}
                                         maxHeight='300px'
                                         variant='form'
-                                        onFilter={(input: string): void => setPersonsFilter(input)}
+                                        onFilter={(input: string): void => setPersonsFilter({text: input, value: index})}
                                         text={p.person ? getDisplayText(index) : 'Search to select'}
                                     >
                                         { filteredPersons.map((person, i) => {

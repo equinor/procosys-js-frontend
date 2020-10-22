@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+
 import { Container } from './index.style';
-import { Tabs } from '@equinor/eds-core-react';
+import GeneralInfo from './GeneralInfo';
 import { Step } from '../../types';
+import { Tabs } from '@equinor/eds-core-react';
 import ViewIPOHeader from './ViewIPOHeader';
+import { generalInfo } from '../ViewIPO/GeneralInfo/dummyData';
+import { useParams } from 'react-router-dom';
+
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
 
 const initialSteps: Step[] = [
@@ -22,7 +26,7 @@ const ViewIPO = (): JSX.Element => {
     const params = useParams<{ipoId: any}>();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Sent);
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(0);
 
     const handleChange = (index: number): void => {
         setActiveTab(index);
@@ -43,7 +47,7 @@ const ViewIPO = (): JSX.Element => {
                 <Tab className='emptyTab'>{''}</Tab>
             </TabList>
             <TabPanels>
-                <TabPanel>General</TabPanel>
+                <TabPanel><GeneralInfo /></TabPanel>
                 <TabPanel>Scope</TabPanel>
                 <TabPanel>Attachments</TabPanel>
                 <TabPanel>Log</TabPanel>

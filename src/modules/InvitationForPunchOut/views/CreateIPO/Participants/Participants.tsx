@@ -11,9 +11,11 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
-enum OrganizationsEnum {
+const WAIT_INTERVAL = 300;
+
+export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
-    ConstructionCompany = 'Construction Company',
+    ConstructionCompany = 'Construction company',
     Contractor = 'Contractor',
     Operation = 'Operation',
     TechnicalIntegrity = 'Technical integrity',
@@ -23,12 +25,12 @@ enum OrganizationsEnum {
 
 const Organizations: SelectItem[] = [
     { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
-    { text: OrganizationsEnum.ConstructionCompany, value: OrganizationsEnum.ConstructionCompany },
+    { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
     { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
     { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
-    { text: OrganizationsEnum.TechnicalIntegrity, value: OrganizationsEnum.TechnicalIntegrity },
+    { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
     { text: OrganizationsEnum.Supplier, value: OrganizationsEnum.Supplier },
-    { text: OrganizationsEnum.External, value: OrganizationsEnum.External }
+    { text: OrganizationsEnum.External, value: 'External' }
 ];
 
 const ParticipantType: SelectItem[] = [
@@ -44,40 +46,6 @@ interface ParticipantsProps {
     isValid: boolean;
 }
 
-const testPart: SelectItem[] = [
-    {
-        text: 'Pål Eie',
-        value: 'p_Pål',
-        name: 'Eie, Pål',
-        email: 'test@gmail.com'
-    },
-    {
-        text: 'Kristen Equinor',
-        value: 'p_Kristen',
-        name: 'Equinor, Kristen',
-        email: 'test1@gmail.com'
-    },
-    {
-        text: 'Kjetil Falnes',
-        value: 'p_Kjetil',
-        name: 'Falnes, Kjetil',
-        email: 'test2@gmail.com'
-    },
-    {
-        text: 'Cato Dahl',
-        value: 'p_Cato',
-        name: 'Dahl, Cato',
-        email: 'test3@gmail.com'
-    },
-    {
-        text: 'Christine',
-        value: 'p_Christine',
-        name: 'Emberland, Christine',
-        email: 'test4@gmail.com'
-    },
-
-];
-
 const Participants = ({
     next,
     previous,
@@ -87,7 +55,7 @@ const Participants = ({
 }: ParticipantsProps): JSX.Element => {
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
-    const [personFilter, setPersonsFilter] = useState<string>('');
+    const [personsFilter, setPersonsFilter] = useState<SelectItem>({text: '', value: -1}); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
 
     useEffect(() => {
@@ -122,35 +90,113 @@ const Participants = ({
         }
     }, []);
 
-    useEffect(() => {
-        if(personFilter != '') {
+    const nameCombiner = (firstName: string, lastName: string): string => {
+        return firstName + ' ' + lastName;
+    };
+
+    const getContractorPersons = (input: string): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        if(input != '') {
             try {
-                setFilteredPersons(testPart.filter(r => r.text.toLocaleLowerCase().startsWith(personFilter.toLocaleLowerCase())));
+                (async (): Promise<void> => {
+                    const constractorPersons = await apiClient.getContractorPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                        .then(persons => persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(person.firstName, person.lastName),
+                                value: person.azureOid,
+                                name: person.lastName + ', ' + person.firstName,
+                                email: person.email
+                            };
+                        })
+                        );
+                    setFilteredPersons(constractorPersons);
+                })();
             } catch (error) {
                 showSnackbarNotification(error.message);
             }
         } else {
             setFilteredPersons([]);
         }
-    }, [personFilter]);
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
+
+    const getConstructionPersons = (input: string): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        if(input != '') {
+            try {
+                (async (): Promise<void> => {
+                    const constructionPersons = await apiClient.getConstructionPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                        .then(persons => persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(person.firstName, person.lastName),
+                                value: person.azureOid,
+                                name: person.lastName + ', ' + person.firstName,
+                                email: person.email
+                            };
+                        })
+                        );
+                    setFilteredPersons(constructionPersons);
+                })();
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+        } else {
+            setFilteredPersons([]);
+        }
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
+
+    const getPersons = (input: string): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        if(input != '') {
+            try {
+                (async (): Promise<void> => {
+                    const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                        .then(persons => persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(person.firstName, person.lastName),
+                                value: person.azureOid,
+                                name: person.lastName + ', ' + person.firstName,
+                                email: person.email
+                            };
+                        })
+                        );
+                    setFilteredPersons(persons);
+                })();
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+        } else {
+            setFilteredPersons([]);
+        }
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
 
     const getRolesCopy = (): RoleParticipant[] => {
         return JSON.parse(JSON.stringify(availableRoles));
     };
 
     const setOrganization = (value: string, index: number): void => {
-        setParticipants(p => {
-            const participantsCopy = [...p];
-            participantsCopy[index].organization = value;
-            return participantsCopy;
-        });
-        if(value == OrganizationsEnum.External) {
-            setType('Person', index);
+        const organization = Organizations.find((o: SelectItem) => o.value === value);
+        if (organization) {
+            setParticipants(p => {
+                const participantsCopy = [...p];
+                participantsCopy[index].organization = organization;
+                return participantsCopy;
+            });
+            if(value == OrganizationsEnum.External) {
+                setType('Person', index);
+            }
         }
     };
 
     const setExternalEmail = (value: string, index: number): void => {
-        console.log(value);
         setParticipants(p => {
             const participantsCopy = [...p];
             participantsCopy[index].role = null;
@@ -176,10 +222,6 @@ const Participants = ({
             participantsCopy.splice(index, 1);
             return participantsCopy;
         });
-    };
-
-    const nameCombiner = (firstName: string, lastName: string): string => {
-        return firstName + ' ' + lastName;
     };
 
     const personsInRoleText = (textToDisplay: string, persons: Person[]): string => {
@@ -219,7 +261,7 @@ const Participants = ({
 
     const addParticipant = (): void => {
         const newParticipant: Participant = {
-            organization: '',
+            organization: Organizations[0],
             type: 'Functional role',
             externalEmail: null,
             person: null,
@@ -259,6 +301,26 @@ const Participants = ({
         }
     };
 
+    useEffect(() => {
+        const handleFilterChange = async (): Promise<void> => {
+            if (personsFilter.value == 0) {
+                getContractorPersons(personsFilter.text);
+            } else if (personsFilter.value == 1) {
+                getConstructionPersons(personsFilter.text);
+            } else {
+                getPersons(personsFilter.text);
+            }
+        };
+
+        const timer = setTimeout(() => {
+            handleFilterChange();
+        }, WAIT_INTERVAL);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
+    }, [personsFilter]);
+
     return (<Container>
         <FormContainer>
             <ParticipantRowsContainer>
@@ -272,7 +334,7 @@ const Participants = ({
                                     label={'Organization'}
                                     disabled={index < 2}
                                 >
-                                    {p.organization || 'Select'}
+                                    {p.organization.text || 'Select'}
                                 </SelectInput>
                             </div>
                             <div>
@@ -280,12 +342,12 @@ const Participants = ({
                                     onChange={(value): void => setType(value, index)}
                                     data={ParticipantType}
                                     label={'Type'}
-                                    disabled={p.organization == OrganizationsEnum.External}
+                                    disabled={p.organization.text == OrganizationsEnum.External}
                                 >
                                     {p.type}
                                 </SelectInput>
                             </div>
-                            { p.organization == OrganizationsEnum.External &&
+                            { p.organization.text == OrganizationsEnum.External &&
                                 <div>
                                     <TextField
                                         id={'guestEmail'}
@@ -296,13 +358,13 @@ const Participants = ({
                                     />
                                 </div>
                             }
-                            { p.type == ParticipantType[1].text && p.organization != OrganizationsEnum.External &&
+                            { p.type == ParticipantType[1].text && p.organization.text != OrganizationsEnum.External &&
                                 <div>
                                     <Dropdown
                                         label={'Person'}
                                         maxHeight='300px'
                                         variant='form'
-                                        onFilter={(input: string): void => setPersonsFilter(input)}
+                                        onFilter={(input: string): void => setPersonsFilter({text: input, value: index})}
                                         text={p.person ? getDisplayText(index) : 'Search to select'}
                                     >
                                         { filteredPersons.map((person, i) => {

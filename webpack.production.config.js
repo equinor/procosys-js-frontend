@@ -89,6 +89,7 @@ module.exports = {
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',
+            favicon: 'src/assets/icons/ProCoSys_favicon16x16.png',
             meta: {
                 viewport: 'width=device-width, initial-scale=1'
             }

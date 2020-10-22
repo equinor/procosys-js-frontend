@@ -34,9 +34,9 @@ export const IconContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 16px;
+    padding: 10px 0 10px 10px;
     color: #ee3c3c;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 1000;
 `;
 

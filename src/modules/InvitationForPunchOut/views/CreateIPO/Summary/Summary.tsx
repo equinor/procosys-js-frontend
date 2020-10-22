@@ -82,7 +82,7 @@ const Summary = ({
     const getParticipants = (participant: Participant, index: number): JSX.Element => {
         return (
             <Row key={index}>
-                <Cell>{participant.organization}</Cell>
+                <Cell>{participant.organization.text}</Cell>
                 { participant.role &&
                     <Cell>
                         <div>{participant.role.code + ' - ' + participant.role.description}</div>

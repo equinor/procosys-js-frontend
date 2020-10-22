@@ -42,7 +42,7 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'v2-assets/fonts/'
+                            outputPath: 'fonts/'
                         }
                     }
                 ]
@@ -64,11 +64,11 @@ module.exports = {
     },
     output: {
         // `filename` provides a template for naming your bundles (remember to use `[name]`)
-        filename: 'v2-assets/[name].[hash].bundle.js',
+        filename: '[name].[hash].bundle.js',
         // `chunkFilename` provides a template for naming code-split bundles (optional)
-        chunkFilename: 'v2-assets/[name].[hash].chunk.js',
-        path: path.resolve(__dirname, 'build'),
-        publicPath: '/'
+        chunkFilename: '[name].[hash].chunk.js',
+        path: path.resolve(__dirname, 'build/v2-assets/'),
+        publicPath: 'v2-assets/'
     },
     devServer: {
         //contentBase: path.join(__dirname, 'build/'),
@@ -89,6 +89,7 @@ module.exports = {
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',
+            filename: '../index.html',
             favicon: 'src/assets/icons/ProCoSys_favicon16x16.png',
             meta: {
                 viewport: 'width=device-width, initial-scale=1'

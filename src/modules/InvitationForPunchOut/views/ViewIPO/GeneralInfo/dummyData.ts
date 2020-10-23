@@ -12,6 +12,7 @@ export const generalInfo: GeneralInfoType = {
     },
     participants: [
         {
+            id: '0',
             name: 'Anne ASPH',
             role: 'Contractor',
             response: ResponseType.ATTENDING,

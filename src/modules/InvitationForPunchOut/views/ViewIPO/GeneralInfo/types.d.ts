@@ -6,6 +6,7 @@ export enum ResponseType {
 }
 
 export type Participant = {
+    id?: string;
     name: string;
     role: string;
     response: ResponseType;

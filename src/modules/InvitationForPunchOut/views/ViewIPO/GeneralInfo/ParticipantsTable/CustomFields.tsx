@@ -1,4 +1,4 @@
-import { Switch, TextField, withStyles } from '@material-ui/core';
+import { Switch, TextField, Tooltip, withStyles } from '@material-ui/core';
 
 export const CustomSwitch = withStyles({
     switchBase: {
@@ -22,3 +22,12 @@ export const CustomTextField = withStyles({
         width: '100%'
     }
 })(TextField);
+
+export const CustomTooltip = withStyles({
+    tooltip: {
+        backgroundColor: '#000',
+        width: '191px',
+        textAlign: 'center'
+    }
+})(Tooltip);
+

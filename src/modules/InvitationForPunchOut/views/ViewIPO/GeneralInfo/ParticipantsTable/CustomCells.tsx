@@ -18,16 +18,6 @@ export const AttendedEditCell = ({status, onChange}: AttendedProps): JSX.Element
         </div>
     );
 };
-export const AttendedReadCell = ({status}: Pick<AttendedProps, 'status'>): JSX.Element => {
-    return (
-        <div style={{display: 'flex', alignItems: 'center'}}>
-            <CustomSwitch checked={status} />
-            <Typography variant='body2'>
-                {status ? 'Attended' : 'Did not attend'}
-            </Typography>
-        </div>
-    );
-};
 
 
 interface NotesCellProps {
@@ -42,8 +32,3 @@ export const NotesEditCell = ({value, onChange, index}: NotesCellProps): JSX.Ele
     );
 };
 
-export const NotesReadCell = ({value}: Pick<NotesCellProps, 'value'>): JSX.Element => {
-    return (
-        <CustomTextField disabled value={value} />
-    );
-};

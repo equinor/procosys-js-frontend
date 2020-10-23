@@ -32,12 +32,13 @@ export const AttendedReadCell = ({status}: Pick<AttendedProps, 'status'>): JSX.E
 
 interface NotesCellProps {
     value: string;
-    onChange: (e: any) => void;
+    onChange: (e: any, index: number) => void;
+    index: number;
 }
 
-export const NotesEditCell = ({value, onChange}: NotesCellProps): JSX.Element => {
+export const NotesEditCell = ({value, onChange, index}: NotesCellProps): JSX.Element => {
     return (
-        <CustomTextField value={value} onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => onChange(e.target.value)} />
+        <CustomTextField value={value} onChange={(e: any): void => onChange(e, index)} />
     );
 };
 

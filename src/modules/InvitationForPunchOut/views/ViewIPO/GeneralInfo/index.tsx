@@ -96,16 +96,6 @@ const GeneralInfo = (): JSX.Element => {
                 </ProjectInfoDetail> */}
             </ProjectInfoContainer>
             <ParticipantsTable participants={participantList} setParticipants={setParticipantList} editable={editMode} />
-            <ButtonsContainer>
-                <CustomTooltip title={tooltipText} arrow>
-                    <Button>Punch round completed</Button>
-                </CustomTooltip>
-                {editMode ? (
-                    <Button onClick={(): void => setEditMode(val => !val)}><EdsIcon name="save" />Save</Button>
-                ) : (
-                    <Button onClick={(): void => setEditMode(val => !val)} variant="outlined"><EdsIcon name="edit"/>Edit</Button>
-                )}
-            </ButtonsContainer>
         </Container>
     );
 };

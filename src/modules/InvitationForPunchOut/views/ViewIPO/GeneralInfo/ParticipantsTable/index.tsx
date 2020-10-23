@@ -1,6 +1,6 @@
 import { AttendedEditCell, AttendedReadCell, NotesEditCell, NotesReadCell } from './CustomCells';
 import MaterialTable, { Icons } from 'material-table';
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Participant } from '../types';
@@ -20,7 +20,6 @@ interface Props {
 }
 
 const ParticipantsTable = ({participants, setParticipants, editable}: Props): JSX.Element => {
-    const [data, setData] = useState<Participant[]>([]);
     const [columns] = useState<any>(
         [
             { title: 'Attendance list', field: 'role', width: '12%', editable: 'never'},
@@ -29,11 +28,7 @@ const ParticipantsTable = ({participants, setParticipants, editable}: Props): JS
             { 
                 title: 'Attended', field: 'attended', width: '12%', editable: 'always', type: 'boolean',
                 render: (rowData: any): any => <AttendedReadCell status={rowData.attended}/>, 
-                editComponent: (data: any): any => {
-                    return (
-                        <AttendedEditCell status={data.value} onChange={data.onChange} />
-                    );
-                }
+                editComponent: (data: any): any => <AttendedEditCell status={data.value} onChange={data.onChange} />
             },
             { 
                 title: 'Note/Comment', field: 'notes', width: '28%', editable: 'always',
@@ -44,10 +39,6 @@ const ParticipantsTable = ({participants, setParticipants, editable}: Props): JS
             { title: 'Signed at', field: 'signedAt', width: '12%', render: (rowData: any): any => rowData.signedAt ? rowData.signedAt : '-', editable: 'never'},
         ]
     );
-
-    useEffect(() => {
-        setData(participants);
-    }, [participants]);
 
     return (
         <MaterialTable 
@@ -66,7 +57,7 @@ const ParticipantsTable = ({participants, setParticipants, editable}: Props): JS
                 onBulkUpdate: (changes: any): Promise<any> =>
                     new Promise((resolve) => {
                         setTimeout(() => {
-                            const updateData = [...data];
+                            const updateData = [...participants];
                             for (const index in changes) {
                                 // eslint-disable-next-line no-prototype-builtins
                                 if (changes.hasOwnProperty(index)) {
@@ -81,7 +72,7 @@ const ParticipantsTable = ({participants, setParticipants, editable}: Props): JS
                     })     
             }}
             columns={columns} 
-            data={data} />);
+            data={participants} />);
 };
 
 export default ParticipantsTable;

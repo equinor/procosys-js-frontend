@@ -7,9 +7,7 @@ import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Participant } from './types';
 import ParticipantsTable from './ParticipantsTable';
-import Spinner from '@procosys/components/Spinner';
 import { generalInfo } from './dummyData';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 const CustomTooltip = withStyles({
     tooltip: {
@@ -26,31 +24,13 @@ const tooltipText = <div>Punch round has been completed<br />and any punches hav
 const GeneralInfo = (): JSX.Element => {
     const [participantList, setParticipantList] = useState<Participant[]>([]);
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         // TODO: Get data
         setParticipantList(generalInfo.participants);
     }, []);
 
-
-    const handleSetEditMode = (): void => {
-        if (editMode) {
-            setLoading(true);
-            try {
-                setTimeout(() => {
-                    setLoading(false);
-                    setEditMode(false);
-                    showSnackbarNotification('Saved successfully', 3000);
-                }, 2000);
-            } catch (error) {
-                setLoading(false);
-                showSnackbarNotification(error.message, 3000);
-            }
-        } else {
-            setEditMode(true);
-        }
-    };
+    // TODO: Determine edit permissions
 
     return (
         <Container>
@@ -121,13 +101,9 @@ const GeneralInfo = (): JSX.Element => {
                     <Button>Punch round completed</Button>
                 </CustomTooltip>
                 {editMode ? (
-                    loading ? (
-                        <Button disabled><Spinner />Save</Button>
-                    ) : (
-                        <Button onClick={handleSetEditMode}><EdsIcon name="save" />Save</Button>
-                    )
+                    <Button onClick={(): void => setEditMode(val => !val)}><EdsIcon name="save" />Save</Button>
                 ) : (
-                    <Button onClick={handleSetEditMode} variant="outlined"><EdsIcon name="edit"/>Edit</Button>
+                    <Button onClick={(): void => setEditMode(val => !val)} variant="outlined"><EdsIcon name="edit"/>Edit</Button>
                 )}
             </ButtonsContainer>
         </Container>

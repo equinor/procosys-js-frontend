@@ -1,82 +1,55 @@
-import { Checkbox, Typography } from '@material-ui/core';
-import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
+import { ButtonsContainer, Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
 import React, { useEffect, useState } from 'react';
+import { Tooltip, Typography, withStyles } from '@material-ui/core';
+import { getFormatDate, getFormatTime } from './utils';
 
+import { Button } from '@equinor/eds-core-react';
+import EdsIcon from '@procosys/components/EdsIcon';
+import { Participant } from './types';
 import ParticipantsTable from './ParticipantsTable';
-import { ResponseType } from '../OutlookInfo';
+import Spinner from '@procosys/components/Spinner';
 import { generalInfo } from './dummyData';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
-export type Participant = {
-    id: string;
-    name: string;
-    role: string;
-    response: ResponseType;
-    attended: boolean;
-    notes: string;
-    signedBy?: string;
-    signedAt?: Date;
-};
-        
-export type GeneralInfoType = {
-    project: string;
-    type: string;
-    title: string;
-    description: string;
-    punchRoundTime: {
-        from: Date;
-        to: Date;
-    },
-    participants: Participant[];
-    meetingPoint: string;
-    invitationSent: boolean;
-}
+const CustomTooltip = withStyles({
+    tooltip: {
+        backgroundColor: '#000',
+        width: '191px',
+        textAlign: 'center'
+    }
+})(Tooltip);
+
+
+const tooltipText = <div>Punch round has been completed<br />and any punches have been added.<br />Set contractor final punch<br />actual date (M01)</div>;
 
 
 const GeneralInfo = (): JSX.Element => {
-
     const [participantList, setParticipantList] = useState<Participant[]>([]);
+    const [editMode, setEditMode] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         // TODO: Get data
         setParticipantList(generalInfo.participants);
     }, []);
 
-    const getFormatDate = (date: Date): string => {
-        if (date === null) {
-            return '';
+
+    const handleSetEditMode = (): void => {
+        if (editMode) {
+            setLoading(true);
+            try {
+                setTimeout(() => {
+                    setLoading(false);
+                    setEditMode(false);
+                    showSnackbarNotification('Saved successfully', 3000);
+                }, 2000);
+            } catch (error) {
+                setLoading(false);
+                showSnackbarNotification(error.message, 3000);
+            }
+        } else {
+            setEditMode(true);
         }
-        const newDate = new Date(date);
-        const d = newDate.getDate();
-        const m = newDate.getMonth() + 1;
-        const y = newDate.getFullYear();
-        return '' + (d <= 9 ? '0' + d : d) + '/' + (m <= 9 ? '0' + m : m) + '/' + y;
-    };
-
-    const getFormatTime = (date: Date): string => {
-        if (date === null) {
-            return '';
-        }
-        const newDate = new Date(date);
-        const h = newDate.getHours();
-        const min = newDate.getMinutes();
-        return '' + (h <= 9 ? '0' + h : h) + ':' + (min <= 9 ? '0' + min : min);
-    };
-
-    const handleSetAttended = (id: string): void => {
-        const index = participantList.findIndex(p => p.id === id);
-        const pList = [...participantList];
-        pList[index].attended = !pList[index].attended;
-        setParticipantList(pList);
-        // TODO: Sync data
-    };
-
-    const handleSetNotes = (e: any, id: string): void => {
-        const text = e.target.value;
-        const index = participantList.findIndex(p => p.id === id);
-        const pList = [...participantList];
-        pList[index].notes = text;;
-        setParticipantList(pList);
-        // TODO: Sync data
     };
 
     return (
@@ -142,7 +115,21 @@ const GeneralInfo = (): JSX.Element => {
                     </DetailContainer>
                 </ProjectInfoDetail> */}
             </ProjectInfoContainer>
-            <ParticipantsTable participants={participantList} handleSetAttended={handleSetAttended} handleSetNotes={handleSetNotes} />
+            <ParticipantsTable participants={participantList} setParticipants={setParticipantList} editable={editMode} />
+            <ButtonsContainer>
+                <CustomTooltip title={tooltipText} arrow>
+                    <Button>Punch round completed</Button>
+                </CustomTooltip>
+                {editMode ? (
+                    loading ? (
+                        <Button disabled><Spinner />Save</Button>
+                    ) : (
+                        <Button onClick={handleSetEditMode}><EdsIcon name="save" />Save</Button>
+                    )
+                ) : (
+                    <Button onClick={handleSetEditMode} variant="outlined"><EdsIcon name="edit"/>Edit</Button>
+                )}
+            </ButtonsContainer>
         </Container>
     );
 };

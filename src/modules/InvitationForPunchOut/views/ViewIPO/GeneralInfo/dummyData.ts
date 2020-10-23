@@ -1,4 +1,4 @@
-import { GeneralInfoType } from '.';
+import { GeneralInfoType } from './types';
 import { ResponseType } from '../OutlookInfo';
 
 export const generalInfo: GeneralInfoType = {
@@ -12,7 +12,6 @@ export const generalInfo: GeneralInfoType = {
     },
     participants: [
         {
-            id: '1',
             name: 'Anne ASPH',
             role: 'Contractor',
             response: ResponseType.ATTENDING,
@@ -22,7 +21,6 @@ export const generalInfo: GeneralInfoType = {
             signedAt: undefined
         },
         {
-            id: '2',
             name: 'Ole OCT',
             role: 'Constr. Comp.',
             response: ResponseType.ATTENDING,
@@ -32,7 +30,6 @@ export const generalInfo: GeneralInfoType = {
             signedAt: undefined
         },
         {
-            id: '3',
             name: 'Chris Commissioning',
             role: 'Commissioning',
             response: ResponseType.TENTATIVE,
@@ -42,7 +39,6 @@ export const generalInfo: GeneralInfoType = {
             signedAt: undefined
         },
         {
-            id: '4',
             name: 'Ola Operation',
             role: 'Operation',
             response: ResponseType.NOT_RESPONDED,
@@ -52,7 +48,6 @@ export const generalInfo: GeneralInfoType = {
             signedAt: undefined
         },
         {
-            id: '5',
             name: 'Sven Supplier',
             role: 'Supplier',
             response: ResponseType.DECLINED,

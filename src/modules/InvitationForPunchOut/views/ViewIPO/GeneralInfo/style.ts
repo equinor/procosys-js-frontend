@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+    position: relative;
     margin: var(--margin-module--top) var(--margin-module--right);
 `;
 
@@ -29,4 +30,13 @@ export const DateTimeItem = styled.div`
     justify-content: space-between;
     height: var(--margin-module-top);
     margin: 0 calc(var(--grid-unit) * 4) 0 0;
+`;
+
+export const ButtonsContainer = styled.div`
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
 `;

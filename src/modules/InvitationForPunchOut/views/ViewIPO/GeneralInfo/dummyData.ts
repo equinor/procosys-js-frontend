@@ -4,7 +4,7 @@ import { ResponseType } from '../OutlookInfo';
 export const generalInfo: GeneralInfoType = {
     project: 'L/0265C.001, Johan Sverdrup Field Development',
     type: 'MDP',
-    title: 'RC160 Tilpasse support og bytte pakningen på Nivågless R+43LG0131',
+    title: 'RC160 Tilpasse support og bytte pakningen på Nivåglass R-43LG0131',
     description: 'This is a description that describes what we are going to check in the MDP and who is responsible. Also this describes something about previous punches, so the text goes over three lines, and can become longer if necessary.',
     punchRoundTime: {
         from: new Date(2020, 10, 25, 9, 0, 0),

@@ -1,9 +1,4 @@
-export enum ResponseType {
-    ATTENDING = 'Attending',
-    TENTATIVE = 'Tentative',
-    NOT_RESPONDED = 'Not responded',
-    DECLINED = 'Declined'
-}
+export type ResponseType = 'Attending' | 'Tentative' | 'Not responded' |'Declined';
 
 export type Participant = {
     id?: string;

@@ -95,7 +95,7 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
                     </Row>
                 </Head>
                 <Body>
-                    {data && data.length > 0 && participants.map((participant: Participant, index: number) => (
+                    {data && data.length > 0 && data.map((participant: Participant, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{participant.role}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{participant.name}</Cell>

@@ -1,5 +1,4 @@
 import { GeneralInfoType } from './types';
-import { ResponseType } from '../OutlookInfo';
 
 export const generalInfo: GeneralInfoType = {
     project: 'L/0265C.001, Johan Sverdrup Field Development',
@@ -15,7 +14,7 @@ export const generalInfo: GeneralInfoType = {
             id: '0',
             name: 'Anne ASPH',
             role: 'Contractor',
-            response: ResponseType.ATTENDING,
+            response: 'Attending',
             attended: true,
             notes: '',
             signedBy: undefined,
@@ -24,7 +23,7 @@ export const generalInfo: GeneralInfoType = {
         {
             name: 'Ole OCT',
             role: 'Constr. Comp.',
-            response: ResponseType.ATTENDING,
+            response: 'Attending',
             attended: true,
             notes: 'Any comment',
             signedBy: undefined,
@@ -33,7 +32,7 @@ export const generalInfo: GeneralInfoType = {
         {
             name: 'Chris Commissioning',
             role: 'Commissioning',
-            response: ResponseType.TENTATIVE,
+            response: 'Tentative',
             attended: false,
             notes: '',
             signedBy: undefined,
@@ -42,7 +41,7 @@ export const generalInfo: GeneralInfoType = {
         {
             name: 'Ola Operation',
             role: 'Operation',
-            response: ResponseType.NOT_RESPONDED,
+            response: 'Not responded',
             attended: false,
             notes: '',
             signedBy: undefined,
@@ -51,7 +50,7 @@ export const generalInfo: GeneralInfoType = {
         {
             name: 'Sven Supplier',
             role: 'Supplier',
-            response: ResponseType.DECLINED,
+            response: 'Declined',
             attended: false,
             notes: '',
             signedBy: undefined,

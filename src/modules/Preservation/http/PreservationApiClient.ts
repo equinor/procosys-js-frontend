@@ -518,12 +518,13 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateStepAndRequirements(tagId: number, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             const result = await this.client.put(endpoint, {
+                description,
                 stepId,
                 newRequirements,
                 updatedRequirements,

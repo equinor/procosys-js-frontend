@@ -1,10 +1,10 @@
+import { CompletedType, Participant } from './types';
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
 import React, { useEffect, useState } from 'react';
 import { getFormatDate, getFormatTime } from './utils';
 
-import { Participant } from './types';
 import ParticipantsTable from './ParticipantsTable';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@equinor/eds-core-react';
 import { generalInfo } from './dummyData';
 
 const GeneralInfo = (): JSX.Element => {
@@ -15,7 +15,7 @@ const GeneralInfo = (): JSX.Element => {
         setParticipantList(generalInfo.participants);
     }, []);
 
-    const completePunchOut = async (data: Participant[]): Promise<any> => {
+    const completePunchOut = async (data: Participant[], index: number): Promise<any> => {
         // eslint-disable-next-line no-useless-catch
         await new Promise((resolve, reject) => {
             try { 
@@ -31,60 +31,59 @@ const GeneralInfo = (): JSX.Element => {
     return (
         <Container>
             <HeaderContainer>
-                <Typography variant="h6">General generalInfo</Typography>
+                <Typography variant="h5">General info</Typography>
             </HeaderContainer>
             <ProjectInfoContainer>
                 <ProjectInfoDetail>
-                    <Typography variant="caption">Selected project</Typography>
-                    <Typography variant="body1">{generalInfo.project}</Typography>
+                    <Typography variant="meta">Selected project</Typography>
+                    <Typography variant="body_long">{generalInfo.project}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="caption">Type</Typography>
-                    <Typography variant="body1">{generalInfo.type}</Typography>
+                    <Typography variant="meta">Type</Typography>
+                    <Typography variant="body_long">{generalInfo.type}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="caption">Title</Typography>
-                    <Typography variant="body1">{generalInfo.title}</Typography>
+                    <Typography variant="meta">Title</Typography>
+                    <Typography variant="body_long">{generalInfo.title}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="caption">Description</Typography>
-                    <Typography variant="body1">{generalInfo.description}</Typography>
+                    <Typography variant="meta">Description</Typography>
+                    <Typography variant="body_long">{generalInfo.description}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>
-                <Typography variant="h6">Date and time for punch round</Typography>
+                <Typography variant="h5">Date and time for punch round</Typography>
             </HeaderContainer>
             <ProjectInfoContainer>
                 <ProjectInfoDetail>
                     <DetailContainer>
                         <DateTimeItem>
-                            <Typography variant="caption">From</Typography>
-                            <Typography variant="body1">{getFormatDate(generalInfo.punchRoundTime.from)}</Typography>
+                            <Typography variant="meta">From</Typography>
+                            <Typography variant="body_long">{getFormatDate(generalInfo.punchRoundTime.from)}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography variant="caption">Time</Typography>
-                            <Typography variant="body1">{getFormatTime(generalInfo.punchRoundTime.from)}</Typography>
+                            <Typography variant="meta">Time</Typography>
+                            <Typography variant="body_long">{getFormatTime(generalInfo.punchRoundTime.from)}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography variant="caption">To</Typography>
-                            <Typography variant="body1">{getFormatDate(generalInfo.punchRoundTime.to)}</Typography>
+                            <Typography variant="meta">To</Typography>
+                            <Typography variant="body_long">{getFormatDate(generalInfo.punchRoundTime.to)}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography variant="caption">Time</Typography>
-                            <Typography variant="body1">{getFormatTime(generalInfo.punchRoundTime.to)}</Typography>
+                            <Typography variant="meta">Time</Typography>
+                            <Typography variant="body_long">{getFormatTime(generalInfo.punchRoundTime.to)}</Typography>
                         </DateTimeItem>
                     </DetailContainer>
                 </ProjectInfoDetail>
-            </ProjectInfoContainer>
-            <HeaderContainer>
-                <Typography variant="h6">Participants</Typography>
-            </HeaderContainer>
-            <ProjectInfoContainer>
                 <ProjectInfoDetail>
-                    <Typography variant="caption">Meeting point</Typography>
-                    <Typography variant="body1">{generalInfo.meetingPoint}</Typography>
+                    <Typography variant="meta">Location</Typography>
+                    <Typography variant="body_long">{generalInfo.location}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
+            <HeaderContainer>
+                <Typography variant="h5">Participants</Typography>
+            </HeaderContainer>
+            <br />
             <ParticipantsTable participants={participantList} completePunchOut={completePunchOut} />
         </Container>
     );

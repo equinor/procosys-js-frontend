@@ -1,10 +1,8 @@
-import { AttendedEditCell, NotesEditCell } from './CustomCells';
+import { AttendedEditCell, CustomTooltip, NotesEditCell } from './CustomCells';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import React, { useEffect, useRef, useState } from 'react';
-import { getFormatDate, getFormatTime } from '../utils';
 
 import { Button } from '@equinor/eds-core-react';
-import { CustomTooltip } from './CustomFields';
 import { Participant } from '../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
@@ -15,7 +13,7 @@ const tooltipText = <div>Punch round has been completed<br />and any punches hav
 
 interface Props {
     participants: Participant[];
-    completePunchOut: (participants: Participant[]) => Promise<any>;
+    completePunchOut: (participants: Participant[], index: number) => Promise<any>;
 }
 
 const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element => {
@@ -27,11 +25,11 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
         setData(participants);
     }, [participants]);
 
-    const getSignedProperty = (id: string | undefined, signedBy: string | undefined, handleCompletePunchOut: (index: number) => void): JSX.Element => {
+    const getSignedProperty = (participant: Participant, handleCompletePunchOut: (index: number) => void): JSX.Element => {
+        if (participant.completed) {
+            return <span>{participant.name}</span>;
         // TODO: Determine participant permission for current user
-        if (signedBy) {
-            return <span>{signedBy}</span>;
-        } else if (id === '0') {
+        } else if (participant.id === '0') {
             return (
                 <CustomTooltip title={tooltipText} arrow>
                     <Button tooltip={tooltipText} ref={btnRef} onClick={handleCompletePunchOut}>Complete punch out</Button>
@@ -49,8 +47,8 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
         }
         try {
             const updateData = [...data];
-            updateData[index] = { ...updateData[index], signedBy: updateData[index].name, signedAt: new Date()};
-            await completePunchOut(updateData);
+            updateData[index] = { ...updateData[index], completed: true};
+            await completePunchOut(updateData, index);
         } catch (error) {
             if (btnRef.current) {
                 btnRef.current.removeAttribute('disabled');
@@ -89,9 +87,8 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Representative </Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Outlook response</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Attended</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Note/Comment</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Notes</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Signed by</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Signed at</Cell>
                     </Row>
                 </Head>
                 <Body>
@@ -103,14 +100,11 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                 <AttendedEditCell status={participant.attended} onChange={(): void => handleEditAttended(index)} />
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', width: '40%'}}>
+                            <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
                                 <NotesEditCell value={participant.notes} onChange={handleEditNotes} index={index} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                {getSignedProperty(participant.id, participant.signedBy, () => handleCompletePunchOut(index))}
-                            </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                {participant.signedAt ? `${getFormatDate(participant.signedAt)} ${getFormatTime(participant.signedAt)}` : '-'}
+                                {getSignedProperty(participant, () => handleCompletePunchOut(index))}
                             </Cell>
                         </Row>
                     ))}

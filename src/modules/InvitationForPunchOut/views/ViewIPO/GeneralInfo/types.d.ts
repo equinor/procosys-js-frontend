@@ -1,14 +1,13 @@
 export type ResponseType = 'Attending' | 'Tentative' | 'Not responded' |'Declined';
 
 export type Participant = {
-    id?: string;
+    id: string;
     name: string;
     role: string;
     response: ResponseType;
     attended: boolean;
     notes: string;
-    signedBy?: string;
-    signedAt?: Date;
+    completed?: boolean;
 };
         
 export type GeneralInfoType = {
@@ -21,6 +20,14 @@ export type GeneralInfoType = {
         to: Date;
     },
     participants: Participant[];
-    meetingPoint: string;
-    invitationSent: boolean;
+    location: string;
+    completedAt?: Date;
+    completedBy?: string;
+    acceptedAt?: Date;
+    acceptedBy?: string;
+}
+
+export type CompletedType = {
+    completedBy: string;
+    completedAt: Date;
 }

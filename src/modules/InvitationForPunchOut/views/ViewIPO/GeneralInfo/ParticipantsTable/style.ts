@@ -9,6 +9,9 @@ export const Container = styled.div`
 
 export const CustomTable = styled.table`
     position: relative;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
     width: 100%;
 `;
 

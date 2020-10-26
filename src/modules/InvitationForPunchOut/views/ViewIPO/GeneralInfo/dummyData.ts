@@ -17,47 +17,40 @@ export const generalInfo: GeneralInfoType = {
             response: 'Attending',
             attended: true,
             notes: '',
-            signedBy: undefined,
-            signedAt: undefined
         },
         {
+            id: '1',
             name: 'Ole OCT',
             role: 'Constr. Comp.',
             response: 'Attending',
             attended: true,
             notes: 'Any comment',
-            signedBy: undefined,
-            signedAt: undefined
         },
         {
+            id: '2',
             name: 'Chris Commissioning',
             role: 'Commissioning',
             response: 'Tentative',
             attended: false,
             notes: '',
-            signedBy: undefined,
-            signedAt: undefined
         },
         {
+            id: '3',
             name: 'Ola Operation',
             role: 'Operation',
             response: 'Not responded',
             attended: false,
             notes: '',
-            signedBy: undefined,
-            signedAt: undefined
         },
         {
+            id: '4',
             name: 'Sven Supplier',
             role: 'Supplier',
             response: 'Declined',
             attended: false,
             notes: '',
-            signedBy: undefined,
-            signedAt: undefined
         },
 
     ],
-    meetingPoint: 'In front of area ABC',
-    invitationSent: true
+    location: 'In front of area ABC',
 };

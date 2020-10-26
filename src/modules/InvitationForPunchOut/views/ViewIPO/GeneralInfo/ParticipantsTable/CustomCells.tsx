@@ -1,8 +1,16 @@
-import { CustomSwitch, CustomTextField } from './CustomFields';
+import { Switch, TextField } from '@equinor/eds-core-react';
+import { Tooltip, withStyles } from '@material-ui/core';
 
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@equinor/eds-core-react';
 
+export const CustomTooltip = withStyles({
+    tooltip: {
+        backgroundColor: '#000',
+        width: '191px',
+        textAlign: 'center'
+    }
+})(Tooltip);
 interface AttendedProps {
     status: boolean;
     onChange: (e: any) => void;
@@ -11,8 +19,8 @@ interface AttendedProps {
 export const AttendedEditCell = ({status, onChange}: AttendedProps): JSX.Element => {
     return (
         <div style={{display: 'flex', alignItems: 'center'}}>
-            <CustomSwitch checked={status} onChange={(): void => onChange(!status)}/>
-            <Typography variant='body2'>
+            <Switch default checked={status} onChange={(): void => onChange(!status)}/>
+            <Typography variant='body_long'>
                 {status ? 'Attended' : 'Did not attend'}
             </Typography>
         </div>
@@ -28,7 +36,7 @@ interface NotesCellProps {
 
 export const NotesEditCell = ({value, onChange, index}: NotesCellProps): JSX.Element => {
     return (
-        <CustomTextField value={value} onChange={(e: any): void => onChange(e, index)} />
+        <TextField value={value} onChange={(e: any): void => onChange(e, index)} />
     );
 };
 

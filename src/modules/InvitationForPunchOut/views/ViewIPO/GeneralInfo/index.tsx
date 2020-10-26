@@ -15,6 +15,19 @@ const GeneralInfo = (): JSX.Element => {
         setParticipantList(generalInfo.participants);
     }, []);
 
+    const completePunchOut = async (data: Participant[]): Promise<any> => {
+        // eslint-disable-next-line no-useless-catch
+        await new Promise((resolve, reject) => {
+            try { 
+                // TODO: await api complete punch out
+                setParticipantList(data);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
     return (
         <Container>
             <HeaderContainer>
@@ -72,7 +85,7 @@ const GeneralInfo = (): JSX.Element => {
                     <Typography variant="body1">{generalInfo.meetingPoint}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
-            <ParticipantsTable participants={participantList} setParticipants={setParticipantList} />
+            <ParticipantsTable participants={participantList} completePunchOut={completePunchOut} />
         </Container>
     );
 };

@@ -15,10 +15,10 @@ const tooltipText = <div>Punch round has been completed<br />and any punches hav
 
 interface Props {
     participants: Participant[];
-    setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
+    completePunchOut: (participants: Participant[]) => Promise<any>;
 }
 
-const ParticipantsTable = ({participants, setParticipants}: Props): JSX.Element => {
+const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element => {
     const [data, setData] = useState<Participant[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const btnRef = useRef<HTMLButtonElement>();
@@ -43,31 +43,23 @@ const ParticipantsTable = ({participants, setParticipants}: Props): JSX.Element 
     };
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
-        new Promise<any>((resolve, reject) => {
-            setLoading(true);
+        setLoading(true);
+        if (btnRef.current) {
+            btnRef.current.setAttribute('disabled', 'disabled');
+        }
+        try {
+            const updateData = [...data];
+            updateData[index] = { ...updateData[index], signedBy: updateData[index].name, signedAt: new Date()};
+            await completePunchOut(updateData);
+        } catch (error) {
             if (btnRef.current) {
-                btnRef.current.setAttribute('disabled', 'disabled');
+                btnRef.current.removeAttribute('disabled');
             }
-            try {
-                // TODO: Await sync data
-            } catch (error) {
-                if (btnRef.current) {
-                    btnRef.current.removeAttribute('disabled');
-                }
-                showSnackbarNotification(error.message, 2000, true);
-                setLoading(false);
-                reject();
-            }
-            // TODO: Remove fake timeout
-            setTimeout(() => {
-                const updateData = [...data];
-                updateData[index] = { ...updateData[index], signedBy: updateData[index].name, signedAt: new Date()};
-                setParticipants([...updateData]);
-                setLoading(false);
-                showSnackbarNotification('Punch out completed', 2000, true);
-            }, 2000);
-            resolve();
-        });
+            showSnackbarNotification(error.message, 2000, true);
+            setLoading(false);
+        }     
+        showSnackbarNotification('Punch out completed', 2000, true);
+        setLoading(false);
     };
 
     const handleEditAttended = (index: number): void => {

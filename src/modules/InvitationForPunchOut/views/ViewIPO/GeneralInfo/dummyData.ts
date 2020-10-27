@@ -11,7 +11,7 @@ export const generalInfo: GeneralInfoType = {
     },
     participants: [
         {
-            id: '0',
+            id: 0,
             name: 'Anne ASPH',
             role: 'Contractor',
             response: 'Attending',
@@ -19,7 +19,7 @@ export const generalInfo: GeneralInfoType = {
             notes: '',
         },
         {
-            id: '1',
+            id: 1,
             name: 'Ole OCT',
             role: 'Constr. Comp.',
             response: 'Attending',
@@ -27,7 +27,7 @@ export const generalInfo: GeneralInfoType = {
             notes: 'Any comment',
         },
         {
-            id: '2',
+            id: 2,
             name: 'Chris Commissioning',
             role: 'Commissioning',
             response: 'Tentative',
@@ -35,7 +35,7 @@ export const generalInfo: GeneralInfoType = {
             notes: '',
         },
         {
-            id: '3',
+            id: 3,
             name: 'Ola Operation',
             role: 'Operation',
             response: 'Not responded',
@@ -43,7 +43,7 @@ export const generalInfo: GeneralInfoType = {
             notes: '',
         },
         {
-            id: '4',
+            id: 4,
             name: 'Sven Supplier',
             role: 'Supplier',
             response: 'Declined',

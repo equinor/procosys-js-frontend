@@ -1,7 +1,7 @@
 export type ResponseType = 'Attending' | 'Tentative' | 'Not responded' |'Declined';
 
 export type Participant = {
-    id: string;
+    id: number;
     name: string;
     role: string;
     response: ResponseType;
@@ -28,6 +28,6 @@ export type GeneralInfoType = {
 }
 
 export type CompletedType = {
-    completedBy: string;
-    completedAt: Date;
+    completedBy?: string;
+    completedAt?: Date;
 }

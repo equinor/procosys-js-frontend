@@ -1,8 +1,7 @@
-import { Switch, TextField } from '@equinor/eds-core-react';
+import { Switch, TextField, Typography } from '@equinor/eds-core-react';
 import { Tooltip, withStyles } from '@material-ui/core';
 
 import React from 'react';
-import { Typography } from '@equinor/eds-core-react';
 
 export const CustomTooltip = withStyles({
     tooltip: {
@@ -11,6 +10,7 @@ export const CustomTooltip = withStyles({
         textAlign: 'center'
     }
 })(Tooltip);
+
 interface AttendedProps {
     status: boolean;
     onChange: (e: any) => void;

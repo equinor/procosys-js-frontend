@@ -1,9 +1,10 @@
 import { AttendedEditCell, CustomTooltip, NotesEditCell } from './CustomCells';
+import { CompletedType, Participant } from '../types';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { getFormatDate, getFormatTime } from '../utils';
 
 import { Button } from '@equinor/eds-core-react';
-import { Participant } from '../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -13,10 +14,11 @@ const tooltipText = <div>Punch round has been completed<br />and any punches hav
 
 interface Props {
     participants: Participant[];
+    completed: CompletedType;
     completePunchOut: (participants: Participant[], index: number) => Promise<any>;
 }
 
-const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element => {
+const ParticipantsTable = ({participants, completed, completePunchOut}: Props): JSX.Element => {
     const [data, setData] = useState<Participant[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const btnRef = useRef<HTMLButtonElement>();
@@ -25,11 +27,11 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
         setData(participants);
     }, [participants]);
 
-    const getSignedProperty = (participant: Participant, handleCompletePunchOut: (index: number) => void): JSX.Element => {
-        if (participant.completed) {
-            return <span>{participant.name}</span>;
+    const getSignedProperty = useCallback((participant: Participant, handleCompletePunchOut: (index: number) => void): JSX.Element => {
+        if (completed.completedBy && completed.completedBy === participant.name) {
+            return <span>{completed.completedBy}</span>;
         // TODO: Determine participant permission for current user
-        } else if (participant.id === '0') {
+        } else if (participant.id === 0) {
             return (
                 <CustomTooltip title={tooltipText} arrow>
                     <Button tooltip={tooltipText} ref={btnRef} onClick={handleCompletePunchOut}>Complete punch out</Button>
@@ -38,7 +40,7 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
         } else {
             return <span>-</span>;
         }
-    };
+    }, [completed]);
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
         setLoading(true);
@@ -89,6 +91,7 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Attended</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Notes</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Signed by</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Signed at</Cell>
                     </Row>
                 </Head>
                 <Body>
@@ -105,6 +108,11 @@ const ParticipantsTable = ({participants, completePunchOut}: Props): JSX.Element
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index))}
+                            </Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
+                                {(completed.completedAt && completed.completedBy === participant.name)  
+                                    ? `${getFormatDate(completed.completedAt)} ${getFormatTime(completed.completedAt)}` 
+                                    : '-'}
                             </Cell>
                         </Row>
                     ))}

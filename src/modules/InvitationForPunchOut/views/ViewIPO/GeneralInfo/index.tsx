@@ -9,10 +9,15 @@ import { generalInfo } from './dummyData';
 
 const GeneralInfo = (): JSX.Element => {
     const [participantList, setParticipantList] = useState<Participant[]>([]);
+    const [completed, setCompleted] = useState<CompletedType>({});
 
     useEffect(() => {
         // TODO: Get IPO data
         setParticipantList(generalInfo.participants);
+        setCompleted({
+            completedBy: generalInfo.completedBy,
+            completedAt: generalInfo.completedAt
+        });
     }, []);
 
     const completePunchOut = async (data: Participant[], index: number): Promise<any> => {
@@ -20,6 +25,16 @@ const GeneralInfo = (): JSX.Element => {
         await new Promise((resolve, reject) => {
             try { 
                 // TODO: await api complete punch out
+                // {
+                //     ...generalInfo,
+                //     participants: data,
+                //     completedBy: data[index].name,
+                //     completedAt: new Date()
+                // }
+                setCompleted({
+                    completedBy: data[index].name,
+                    completedAt: new Date()
+                });
                 setParticipantList(data);
                 resolve();
             } catch (error) {
@@ -84,7 +99,7 @@ const GeneralInfo = (): JSX.Element => {
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={participantList} completePunchOut={completePunchOut} />
+            <ParticipantsTable participants={participantList} completed={completed} completePunchOut={completePunchOut} />
         </Container>
     );
 };

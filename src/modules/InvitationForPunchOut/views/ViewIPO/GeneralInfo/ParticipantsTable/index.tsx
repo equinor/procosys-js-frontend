@@ -1,10 +1,10 @@
-import { AttendedEditCell, CustomTooltip, NotesEditCell } from './CustomCells';
+import { AttendedEditCell, CustomTooltip } from './CustomCells';
+import { Button, TextField } from '@equinor/eds-core-react';
 import { CompletedType, Participant } from '../types';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { getFormatDate, getFormatTime } from '../utils';
 
-import { Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -104,7 +104,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                                 <AttendedEditCell status={participant.attended} onChange={(): void => handleEditAttended(index)} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
-                                <NotesEditCell value={participant.notes} onChange={handleEditNotes} index={index} />
+                                <TextField value={participant.notes} onChange={(e: any): void => handleEditNotes(e, index)} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index))}

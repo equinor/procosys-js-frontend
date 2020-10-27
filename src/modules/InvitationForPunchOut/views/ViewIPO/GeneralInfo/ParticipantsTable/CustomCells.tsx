@@ -1,4 +1,4 @@
-import { Switch, TextField, Typography } from '@equinor/eds-core-react';
+import { Switch, Typography } from '@equinor/eds-core-react';
 import { Tooltip, withStyles } from '@material-ui/core';
 
 import React from 'react';
@@ -24,19 +24,6 @@ export const AttendedEditCell = ({status, onChange}: AttendedProps): JSX.Element
                 {status ? 'Attended' : 'Did not attend'}
             </Typography>
         </div>
-    );
-};
-
-
-interface NotesCellProps {
-    value: string;
-    onChange: (e: any, index: number) => void;
-    index: number;
-}
-
-export const NotesEditCell = ({value, onChange, index}: NotesCellProps): JSX.Element => {
-    return (
-        <TextField value={value} onChange={(e: any): void => onChange(e, index)} />
     );
 };
 

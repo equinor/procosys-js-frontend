@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
@@ -41,7 +41,6 @@ const timeItems: SelectItem[] = [
 const directionItems: SelectItem[] = [
     { text: 'Earlier', value: 'Earlier' },
     { text: 'Later', value: 'Later' }];
-
 
 const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
 
@@ -103,10 +102,13 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
         <Scrim>
             <DialogContainer width={'80vw'}>
                 <Title>
-                    <Typography variant='h6'>Reschedule</Typography>
+                    <Typography variant='h6'>Reschedule preservation</Typography>
                 </Title>
                 <Divider />
                 <Content>
+                    <Typography variant='body_short' bold style={{ marginTop: 'var(--grid-unit)' }}>
+                        Selected {reschedulableTags.length + nonReschedulableTags.length} tag(s)
+                    </Typography>
                     {
                         reschedulableTags.length > 0 && (
                             <InputContainer>
@@ -143,7 +145,6 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
                             </InputContainer>
                         )
                     }
-
                     {
                         nonReschedulableTags.length > 0 && (
                             <div>
@@ -161,7 +162,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
 
                 <ButtonContainer>
                     <Button onClick={(): void => { props.setShowTagReschedule(false); }}>
-                        Back to list
+                        Cancel
                     </Button>
                     <ButtonSpacer />
                     {

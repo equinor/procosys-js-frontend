@@ -21,3 +21,6 @@ core:
 
 configuration:
 - ./*
+
+dependencies:
+- any: ['./package.json','./yarn.lock']

@@ -14,9 +14,9 @@ import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
 
 interface RescheduleDialogProps {
-    selectedTags: PreservedTag[];
-    setShowTagReschedule: (showTagReschedule: boolean) => void;
-    refreshScopeList: () => void;
+    tags: PreservedTag[];
+    open: boolean;
+    onClose: () => void;
 }
 
 const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
@@ -42,7 +42,7 @@ const directionItems: SelectItem[] = [
     { text: 'Earlier', value: 'Earlier' },
     { text: 'Later', value: 'Later' }];
 
-const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
+const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     const [directionItem, setDirectionItem] = useState<SelectItem>();
     const [timeItem, setTimeItem] = useState<SelectItem>();
@@ -66,8 +66,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
                 showSnackbarNotification('Tags have not been rescheduled. Time, direction and comment is required.');
             }
             setShowSpinner(false);
-            props.refreshScopeList();
-            props.setShowTagReschedule(false);
+            props.onClose();
         } catch (error) {
             console.error('Reschedule failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
@@ -80,7 +79,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
         const reschedulableTags: PreservedTag[] = [];
         const nonReschedulableTags: PreservedTag[] = [];
 
-        props.selectedTags.map((tag) => {
+        props.tags.map((tag) => {
             const newTag: PreservedTag = { ...tag };
             if (tag.readyToBeRescheduled && !tag.isVoided) {
                 reschedulableTags.push(newTag);
@@ -90,13 +89,17 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
         });
         setReschedulableTags(reschedulableTags);
         setNonReschedulableTags(nonReschedulableTags);
-    }, [props.selectedTags]);
+    }, [props.tags]);
 
 
     /** Set canReschedule */
     useEffect((): void => {
         setCanReschedule((timeItem && timeItem.text && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
     }, [timeItem, directionItem, comment]);
+
+    if (!props.open) {
+        return null;
+    }
 
     return (
         <Scrim>
@@ -114,15 +117,17 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
                             <InputContainer>
                                 <FormFieldSpacer>
                                     <SelectInput
+                                        title='time'
                                         onChange={(value): void => setTimeItem(timeItems.find((p: SelectItem) => p.value === value))}
                                         data={timeItems}
-                                        label={'Time'}
+                                        label='Time'
                                     >
                                         {timeItem && timeItem.text || 'Select'}
                                     </SelectInput>
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
                                     <SelectInput
+                                        title='direction'
                                         onChange={(value): void => setDirectionItem(directionItems.find((p: SelectItem) => p.value === value))}
                                         data={directionItems}
                                         label={'Direction'}
@@ -154,14 +159,14 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element => {
                     }
                     {
                         reschedulableTags.length > 0 && (
-                            <DialogTable tags={reschedulableTags} columns={columns} toolbarText='tag(s) will be resceduled' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                            <DialogTable tags={reschedulableTags} columns={columns} toolbarText='tag(s) will be rescheduled' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
                         )
                     }
 
                 </Content >
 
                 <ButtonContainer>
-                    <Button onClick={(): void => { props.setShowTagReschedule(false); }}>
+                    <Button onClick={props.onClose}>
                         Cancel
                     </Button>
                     <ButtonSpacer />

@@ -1,7 +1,7 @@
 import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import CacheService from '@procosys/core/services/CacheService';
@@ -139,7 +139,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [savedTagListFilters, setSavedTagListFilters] = useState<SavedTagListFilter[] | null>(null);
     const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showTagReschedule, setShowTagReschedule] = useState<boolean>(false);
+    const [showTagRescheduleDialog, setShowTagRescheduleDialog] = useState<boolean>(false);
 
     const history = useHistory();
     const location = useLocation();
@@ -717,6 +717,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         window.location.href = './OldPreservation';
     };
 
+    const closeReschededuleDialog = (): void => {
+        setShowTagRescheduleDialog(false);
+        refreshScopeList();
+    };
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -817,7 +822,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </DropdownItem>
                             <DropdownItem
                                 disabled={selectedTags.length === 0}
-                                onClick={(): void => setShowTagReschedule(true)}>
+                                onClick={(): void => setShowTagRescheduleDialog(true)}>
                                 <EdsIcon name='calendar_date_range' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                 Reschedule
                             </DropdownItem>
@@ -908,7 +913,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </FilterContainer>
                 )
             }
-            { showTagReschedule && <RescheduleDialog selectedTags={selectedTags} setShowTagReschedule={setShowTagReschedule} refreshScopeList={refreshScopeList} />}
+            <RescheduleDialog open={showTagRescheduleDialog} tags={selectedTags} onClose={closeReschededuleDialog} />
         </Container >
     );
 };

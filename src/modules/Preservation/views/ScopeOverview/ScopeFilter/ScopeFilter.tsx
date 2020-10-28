@@ -58,6 +58,14 @@ const dueDates: FilterInput[] =
         {
             id: 'NextWeek',
             title: 'Next week',
+        },
+        {
+            id: 'WeekPlusTwo',
+            title: 'In 2 weeks',
+        },
+        {
+            id: 'WeekPlusThree',
+            title: 'In 3 weeks',
         }
     ];
 

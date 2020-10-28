@@ -27,6 +27,7 @@ export interface TagDetails {
     readyToBePreserved: boolean;
     remark: string;
     storageArea: string;
+    tagType: string;
     rowVersion: string;
 }
 

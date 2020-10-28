@@ -37,6 +37,7 @@ const EditTagProperties = (): JSX.Element => {
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [step, setStep] = useState<Step | null>();
 
+    const tagDescriptionInputRef = useRef<HTMLInputElement>(null);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,7 +45,7 @@ const EditTagProperties = (): JSX.Element => {
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
     const [remarkOrStorageAreaEdited, setRemarkOrStorageAreaEdited] = useState<boolean>(false);
-    const [journeyOrRequirementsEdited, setJourneyOrRequirementsEdited] = useState<boolean>(false);
+    const [tagJourneyOrRequirementsEdited, setTagJourneyOrRequirementsEdited] = useState<boolean>(false);
     const [poTag, setPoTag] = useState<boolean>(false);
     const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
     const [validationErrorMessage, setValidationErrorMessage] = useState<string | null>();
@@ -55,6 +56,8 @@ const EditTagProperties = (): JSX.Element => {
 
     const [requirementsFetched, setRequirementsFetched] = useState(false);
     const [rowVersion, setRowVersion] = useState<string>('');
+
+    const dummyTagTypes = ['PreArea', 'SiteArea', 'PoArea'];
 
     /**
      * Get tag details
@@ -275,14 +278,22 @@ const EditTagProperties = (): JSX.Element => {
         }
     };
 
+    const tagDescriptionChange = (): void => {
+        if (tag && tagDescriptionInputRef.current && tagDescriptionInputRef.current.value != tag.description) {
+            setTagJourneyOrRequirementsEdited(true);
+        } else {
+            setTagJourneyOrRequirementsEdited(false);
+        }
+    };
+
     /**
      * Check if any changes have been made to journey, step or requirements
      */
     useEffect(() => {
         if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
-            setJourneyOrRequirementsEdited(true);
+            setTagJourneyOrRequirementsEdited(true);
         } else {
-            setJourneyOrRequirementsEdited(false);
+            setTagJourneyOrRequirementsEdited(false);
         }
     }, [requirements, step, journey, originalRequirements]);
 
@@ -300,9 +311,9 @@ const EditTagProperties = (): JSX.Element => {
         }
     };
 
-    const updateJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
+    const updateTagJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
         try {
-            if (tag && step) {
+            if (tag && step && tagDescriptionInputRef.current) {
                 let newRequirements: RequirementFormInput[] = [];
                 const numberOfNewReq = requirements.length - originalRequirements.length;
                 if (requirements.length > originalRequirements.length) {
@@ -316,7 +327,7 @@ const EditTagProperties = (): JSX.Element => {
                         rowVersion: req.rowVersion
                     };
                 });
-                await apiClient.updateStepAndRequirements(tag.id, step.id, currentRowVersion, updatedRequirements, newRequirements);
+                await apiClient.updateTagStepAndRequirements(tag.id, tagDescriptionInputRef.current.value, step.id, currentRowVersion, updatedRequirements, newRequirements);
             }
         } catch (error) {
             handleErrorFromBackend(error, 'Error updating journey, step or requirements');
@@ -334,9 +345,9 @@ const EditTagProperties = (): JSX.Element => {
                 throw ('error');
             }
         }
-        if (journeyOrRequirementsEdited) {
+        if (tagJourneyOrRequirementsEdited) {
             try {
-                await updateJourneyAndRequirements(currentRowVersion);
+                await updateTagJourneyAndRequirements(currentRowVersion);
             } catch (error) {
                 setLoading(false);
                 throw ('error');
@@ -384,6 +395,17 @@ const EditTagProperties = (): JSX.Element => {
                                     <Typography variant="caption">{validationErrorMessage}</Typography>
                                 </ErrorContainer>
                             }
+                            <InputContainer style={{ maxWidth: '480px' }}>
+                                <TextField
+                                    id={'Description'}
+                                    label='Tag description'
+                                    defaultValue={tag ? tag.description : ''}
+                                    inputRef={tagDescriptionInputRef}
+                                    disabled={tag && !dummyTagTypes.includes(tag.tagType)}
+                                    placeholder={'Write here'}
+                                    onChange={tagDescriptionChange}
+                                />
+                            </InputContainer>
                             <InputContainer>
                                 <SelectInput
                                     maxHeight={'300px'}
@@ -436,7 +458,7 @@ const EditTagProperties = (): JSX.Element => {
                             <Button
                                 onClick={saveDialog}
                                 color="primary"
-                                disabled={((!journeyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
+                                disabled={((!tagJourneyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
                             >
                                 Save
                             </Button>

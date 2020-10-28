@@ -9,8 +9,8 @@ plantConfig:
 header:
 - src/modules/Header/**
 core:
-- src/core/**/*
+- src/core/**
 missing-test:
-- any: ["!src/**/__tests__/**"]
+- !src/**/__tests__/**
 configuration:
 - ./*

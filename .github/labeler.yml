@@ -23,4 +23,5 @@ configuration:
 - ./*
 
 dependencies:
-- any: ['package.json','yarn.lock']
+- package.json
+- yarn.lock

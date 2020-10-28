@@ -72,6 +72,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     };
 
     const submitChanges = async (): Promise<void> => {
+        setIsLoading(true);
         const changes = unsavedRequirements || [];
         try {
             await apiClient.updateTagFunction(props.tagFunctionCode, props.registerCode, changes);
@@ -82,6 +83,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
             console.error('Error when syncing requirements', err.message, err.data);
             showSnackbarNotification('Failed to update tag function requirements: ' + err.message);
         }
+        setIsLoading(false);
     };
 
     const voidTagFunction = async (): Promise<void> => {
@@ -181,7 +183,9 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
                 {isVoided && (<Button variant="outlined" onClick={unvoidTagFunction}>Unvoid</Button>)}
                 {!isVoided && (<Button variant="outlined" onClick={voidTagFunction}>Void</Button>)}
 
-                <Button disabled={!unsavedRequirements} onClick={submitChanges}>Save</Button>
+                <Button disabled={!unsavedRequirements} onClick={submitChanges}>
+                    Save
+                </Button>
             </ActionContainer>
         </RightSection>
     </Container>);

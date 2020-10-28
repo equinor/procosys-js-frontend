@@ -13,4 +13,4 @@ core:
 missing-test:
 - !src/**/__tests__/**/*
 configuration:
-- !./*
+- ./*

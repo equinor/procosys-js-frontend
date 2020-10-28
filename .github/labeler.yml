@@ -1,0 +1,14 @@
+docker:
+- .docker/**/*
+preservation:
+- src/modules/Preservation/**/*
+invitation-for-punchout:
+- src/modules/InvitationForPunchOut/**/*
+plantConfig:
+- src/modules/PlantConfig/**/*
+header:
+- src/modules/Header/**/*
+core:
+- src/core/**/*
+missing-test:
+- !src/**/*.test.*

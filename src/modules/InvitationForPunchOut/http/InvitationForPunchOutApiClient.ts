@@ -86,11 +86,6 @@ export type CommPkgDto = {
     status: string;
 }
 
-export type AttachmentDto = {
-    file: string;
-    overwriteIfExists: boolean;
-}
-
 /**
  * API for interacting with data in InvitationForPunchOut API.
  */

@@ -11,6 +11,6 @@ header:
 core:
 - src/core/**/*
 missing-test:
-- any: ['!src/**/__tests__/**']
+- any: ["!src/**/__tests__/**"]
 configuration:
 - ./*

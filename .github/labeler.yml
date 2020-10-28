@@ -1,13 +1,13 @@
 docker:
-- .docker/**/*
+- .docker/**
 preservation:
-- src/modules/Preservation/**/*
+- src/modules/Preservation/**
 invitation-for-punchout:
-- src/modules/InvitationForPunchOut/**/*
+- src/modules/InvitationForPunchOut/**
 plantConfig:
-- src/modules/PlantConfig/**/*
+- src/modules/PlantConfig/**
 header:
-- src/modules/Header/**/*
+- src/modules/Header/**
 core:
 - src/core/**/*
 missing-test:

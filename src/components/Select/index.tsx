@@ -23,6 +23,7 @@ type SelectProps = {
     label?: string;
     isVoided?: boolean;
     maxHeight?: string;
+    title?: string;
 };
 
 const KEYCODE_ENTER = 13;
@@ -37,7 +38,8 @@ const Select = ({
     children,
     label,
     isVoided = false,
-    maxHeight
+    maxHeight,
+    title
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +77,7 @@ const Select = ({
 
     const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
         return items.map((itm, index) => {
-            if(itm.title) {
+            if (itm.title) {
                 return <TitleItem
                     key={index}
                     tabIndex={0}
@@ -138,6 +140,7 @@ const Select = ({
         <Container ref={containerRef} maxHeight={maxHeight}>
             <Label isVoided={isVoided}>{label}</Label>
             <DropdownButton
+                title={title}
                 isVoided={isVoided}
                 onClick={toggleDropdown}
                 disabled={disabled}

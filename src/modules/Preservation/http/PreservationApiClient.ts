@@ -28,6 +28,7 @@ interface PreservedTagResponse {
         readyToBeStarted: boolean;
         readyToBeTransferred: boolean;
         readyToBeCompleted: boolean;
+        readyToBeRescheduled: boolean;
         isInUse: boolean;
         requirements: [
             {
@@ -1008,6 +1009,23 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Reschedule given tags
+     * @param tags  List with tag IDs
+     * @param weeks  Weeks to add or subract
+     * @param weeks  Direction of rescheduling (Earlier or Later)
+     * @param comment  Comment
+     */
+    async reschedule(tags: PreservedTag[], weeks: number, direction: string, comment: string): Promise<void> {
+        const endpoint = '/Tags/Reschedule';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, { tags: tags, weeks: weeks, direction: direction, comment: comment }, settings);
+        } catch (error) {
+            throw new PreservationApiError(error);
+        }
+    }
+
+    /**
      * Remove given tags
      * @param tags  List with tag IDs
      */
@@ -1028,7 +1046,6 @@ class PreservationApiClient extends ApiClient {
             throw new PreservationApiError(error);
         }
     }
-
 
     /**
      * Void tag

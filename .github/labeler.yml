@@ -17,7 +17,7 @@ core:
 - src/core/**
 
 "missing test":
-- !src/**/__tests__/**
+- "!src/**/__tests__/**"
 
 configuration:
 - ./*

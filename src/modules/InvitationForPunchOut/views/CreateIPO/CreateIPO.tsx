@@ -67,7 +67,7 @@ const CreateIPO = (): JSX.Element => {
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
     const [attachments, setAttachments] = useState<File[]>([]);
-    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.UploadAttachments);
+    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 

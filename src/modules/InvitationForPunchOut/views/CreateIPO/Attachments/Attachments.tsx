@@ -1,9 +1,12 @@
-import React, { useRef } from 'react';
+import { AddAttachmentContainer, ButtonContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
 import { Button, Typography } from '@equinor/eds-core-react';
-import { Container, FormContainer, ButtonContainer, AddAttachmentContainer, DragAndDropContainer } from './Attachments.style';
+import React, { useRef } from 'react';
+
 import EdsIcon from '@procosys/components/EdsIcon';
-import { tokens } from '@equinor/eds-tokens';
 import Table from '@procosys/components/Table';
+import fileTypeValidator from '@procosys/util/FileTypeValidator';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
 
 interface AttachmentsProps {
     next: () => void;
@@ -24,7 +27,12 @@ const Attachments = ({
 
     const handleSubmitFile = (e: any): void => {
         e.preventDefault();
-        addAttachments([e.target.files[0]]);
+        try {
+            fileTypeValidator(e.target.files[0].name);
+            addAttachments([e.target.files[0]]);
+        } catch (error) {
+            showSnackbarNotification(error.message);
+        }
     };
 
     const handleAddFile = (): void => {
@@ -45,7 +53,15 @@ const Attachments = ({
     
     const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
-        addAttachments([...event.dataTransfer.files]);
+        const files = event.dataTransfer.files;
+        Array.from(files).forEach(file => {
+            try {
+                fileTypeValidator(file.name);
+                addAttachments([file]);
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+        });
     };
 
     return (<Container>

@@ -3,7 +3,6 @@ import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, 
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
-import { Button } from '@material-ui/core';
 import { Container } from './CreateIPO.style';
 import CreateIPOHeader from './CreateIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
@@ -68,7 +67,7 @@ const CreateIPO = (): JSX.Element => {
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
     const [attachments, setAttachments] = useState<File[]>([]);
-    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
+    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.UploadAttachments);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null, 
@@ -162,7 +161,12 @@ const CreateIPO = (): JSX.Element => {
 
     const uploadAllAttachments = async (ipoId: number): Promise<any> => {
         attachments.forEach(async attachment => {
-            await apiClient.uploadAttachment(ipoId, attachment, true);
+            try {
+                await apiClient.uploadAttachment(ipoId, attachment, true);
+            } catch (error) {
+                console.error('Upload attchment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
         });
     };
 

@@ -3,9 +3,9 @@ import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
-// import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import Spinner from '@procosys/components/Spinner';
 import Table from '@procosys/components/Table';
+import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
@@ -47,14 +47,14 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         e.preventDefault();
         setLoading(true);
         const file = e.target.files[0];
-        // try {
-        //     fileTypeValidator(file.name);
-        //     const id = await apiClient.uploadAttachment(ipoId, file, true);
-        //     await getAttachments();
-        // } catch (error) {
-        //     console.error('Upload attchment failed: ', error.message, error.data);
-        //     showSnackbarNotification(error.message);
-        // }
+        try {
+            fileTypeValidator(file.name);
+            const id = await apiClient.uploadAttachment(ipoId, file, true);
+            await getAttachments();
+        } catch (error) {
+            console.error('Upload attchment failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
         setLoading(false);
     };
 
@@ -79,14 +79,14 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         setLoading(true);
         const files = event.dataTransfer.files;
         Array.from(files).forEach(async file => {
-            // try {
-            //     fileTypeValidator(file.name);
-            //     const id = await apiClient.uploadAttachment(ipoId, file, true);
-            //     await getAttachments();
-            // } catch (error) {
-            //     console.error('Upload attchment failed: ', error.message, error.data);
-            //     showSnackbarNotification(error.message);
-            // }
+            try {
+                fileTypeValidator(file.name);
+                const id = await apiClient.uploadAttachment(ipoId, file, true);
+                await getAttachments();
+            } catch (error) {
+                console.error('Upload attchment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
         });
         setLoading(false);
     };

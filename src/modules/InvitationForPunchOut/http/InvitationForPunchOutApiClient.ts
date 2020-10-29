@@ -315,6 +315,42 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
+     * Upload IPO Attachment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async uploadAttachment(
+        id: number,
+        file: File,
+        overwriteIfExists: boolean,
+        setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = `/Invitations/${id}/Attachments`;
+
+        const formData = new FormData();
+        formData.append('OverwriteIfExists', overwriteIfExists.toString());
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                formData,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
      * Get persons with the user group MC_CONTRACTOR_MLA
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request

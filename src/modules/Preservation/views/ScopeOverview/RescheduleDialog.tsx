@@ -44,8 +44,8 @@ const directionItems: SelectItem[] = [
 
 const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
-    const [directionItem, setDirectionItem] = useState<SelectItem>();
-    const [timeItem, setTimeItem] = useState<SelectItem>();
+    const [directionItem, setDirectionItem] = useState<SelectItem | null>();
+    const [timeItem, setTimeItem] = useState<SelectItem | null>();
     const [comment, setComment] = useState<string>('');
     const [reschedulableTags, setReschedulableTags] = useState<PreservedTag[]>([]);
     const [nonReschedulableTags, setNonReschedulableTags] = useState<PreservedTag[]>([]);
@@ -65,6 +65,9 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
             } else {
                 showSnackbarNotification('Tags have not been rescheduled. Time, direction and comment is required.');
             }
+            setTimeItem(null);
+            setDirectionItem(null);
+            setComment('');
             setShowSpinner(false);
             props.onClose();
         } catch (error) {

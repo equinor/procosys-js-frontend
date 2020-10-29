@@ -1,10 +1,10 @@
-import { AxiosRequestConfig, AxiosError } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
-import { RequestCanceler } from '../../../http/HttpClient';
-import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
+import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
+import { RequestCanceler } from '../../../http/HttpClient';
 
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError)
@@ -250,6 +250,42 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     mcPkgScope: mcPkgScope,
                     commPkgScope: commPkgScope
                 },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Upload IPO Attachment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async uploadAttachment(
+        id: number,
+        file: File,
+        overwriteIfExists: boolean,
+        setRequestCanceller?: RequestCanceler): Promise<number> {
+        const endpoint = `/Invitations/${id}/Attachments`;
+
+        const formData = new FormData();
+        formData.append('OverwriteIfExists', overwriteIfExists.toString());
+        formData.append('File', file);
+
+        const settings: AxiosRequestConfig = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                formData,
                 settings
             );
             return result.data;

@@ -1,18 +1,19 @@
+import { CommPkgDto, FunctionalRoleDto, McPkgDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import GeneralInfo from './GeneralInfo/GeneralInfo';
-import Participants from './Participants/Participants';
-import CreateIPOHeader from './CreateIPOHeader';
-import { GeneralInfoDetails, CommPkgRow, Step, McScope, Participant, RoleParticipant } from '../../types';
-import SelectScope from './SelectScope/SelectScope';
-import { Container } from './CreateIPO.style';
+
 import Attachments from './Attachments/Attachments';
+import { Container } from './CreateIPO.style';
+import CreateIPOHeader from './CreateIPOHeader';
+import GeneralInfo from './GeneralInfo/GeneralInfo';
+import Loading from '@procosys/components/Loading';
+import { OrganizationsEnum } from './Participants/Participants';
+import Participants from './Participants/Participants';
+import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-import { PersonDto, FunctionalRoleDto, CommPkgDto, McPkgDto, ParticipantDto } from '../../http/InvitationForPunchOutApiClient';
-import { OrganizationsEnum } from './Participants/Participants';
-import Loading from '@procosys/components/Loading';
+import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
@@ -158,6 +159,17 @@ const CreateIPO = (): JSX.Element => {
         });
     };
 
+    const uploadAllAttachments = async (ipoId: number): Promise<any> => {
+        attachments.forEach(async attachment => {
+            try {
+                await apiClient.uploadAttachment(ipoId, attachment, true);
+            } catch (error) {
+                console.error('Upload attchment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+        });
+    };
+
     const createNewIpo = async (): Promise<void> => {
         setIsCreating(true);
         if (generalInfo.title && generalInfo.projectName && generalInfo.poType) {
@@ -178,7 +190,9 @@ const CreateIPO = (): JSX.Element => {
                     mcPkgScope, 
                     commPkgScope
                 );
-                //TODO: save attachments
+
+                await uploadAllAttachments(newIpoId);
+
                 setIsCreating(false);
                 history.push('/' + newIpoId);
             } catch (error) {

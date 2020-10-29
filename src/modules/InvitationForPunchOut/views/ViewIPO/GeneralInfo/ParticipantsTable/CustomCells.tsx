@@ -1,7 +1,7 @@
-import { Switch, Typography } from '@equinor/eds-core-react';
 import { Tooltip, withStyles } from '@material-ui/core';
 
 import React from 'react';
+import { Switch } from '@equinor/eds-core-react';
 
 export const CustomTooltip = withStyles({
     tooltip: {
@@ -19,10 +19,7 @@ interface AttendedProps {
 export const AttendedEditCell = ({status, onChange}: AttendedProps): JSX.Element => {
     return (
         <div style={{display: 'flex', alignItems: 'center'}}>
-            <Switch default checked={status} onChange={(): void => onChange(!status)}/>
-            <Typography variant='body_long'>
-                {status ? 'Attended' : 'Did not attend'}
-            </Typography>
+            <Switch default label={status ? 'Attended' : 'Did not attend'} checked={status} onChange={(): void => onChange(!status)}/>
         </div>
     );
 };

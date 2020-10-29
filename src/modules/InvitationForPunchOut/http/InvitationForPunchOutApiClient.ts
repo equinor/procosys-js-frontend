@@ -1,10 +1,10 @@
-import { AxiosRequestConfig, AxiosError } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
-import { RequestCanceler } from '../../../http/HttpClient';
-import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
 import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
+import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
+import { RequestCanceler } from '../../../http/HttpClient';
 
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError)
@@ -12,6 +12,12 @@ export class IpoApiError extends ProCoSysApiError {
         super(error);
         this.name = 'IpoApiError';
     }
+}
+
+type AttachmentResponse = {
+    id: number;
+    fileName: string;
+    rowVersion: string;
 }
 
 type ProjectResponse = {
@@ -251,6 +257,56 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     commPkgScope: commPkgScope
                 },
                 settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+    
+    /**
+     * Get attachments
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getAttachments(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Invitations/${id}/Attachments`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Delete attachment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async deleteAttachment(
+        id: number,
+        attachmentId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Invitations/${id}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.delete(
+                endpoint, 
+                {
+                    data: { rowVersion: rowVersion }
+                }
             );
             return result.data;
         } catch (error) {

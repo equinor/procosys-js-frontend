@@ -104,7 +104,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                                 <AttendedEditCell status={participant.attended} onChange={(): void => handleEditAttended(index)} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
-                                <TextField value={participant.notes} onChange={(e: any): void => handleEditNotes(e, index)} />
+                                <TextField id={`${participant.id}`} value={participant.notes} onChange={(e: any): void => handleEditNotes(e, index)} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index))}

@@ -1,12 +1,16 @@
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
+import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
-import Dropdown from '../../../../../components/Dropdown';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { DropdownItem, DateTimeContainer, Container, PoTypeContainer, LocationContainer, FormContainer, ButtonContainer } from './GeneralInfo.style';
-import { ProjectDetails, GeneralInfoDetails } from '@procosys/modules/InvitationForPunchOut/types';
-import { TextField as DateTimeField } from '@material-ui/core';
-import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
+
 import { Canceler } from '@procosys/http/HttpClient';
+import { TextField as DateTimeField } from '@material-ui/core';
+import Dropdown from '../../../../../components/Dropdown';
+import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
+
+const TIME_START = '08:00';
+const TIME_END = '08:30';
 
 const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -86,6 +90,25 @@ const GeneralInfo = ({
         }
     }, [selectedProject]);
 
+
+
+    const formatDate = (date: Date, format: string): string => {
+        const map = {
+            mm: date.getMonth() + 1,
+            dd: date.getDate(),
+            yyyy: date.getFullYear()
+        };
+        return format.replace(/mm|dd|yyyy/gi, matched => (map as any)[matched]);
+    };
+
+    useEffect(() => {
+        if (!generalInfo.startDate || !generalInfo.startTime ||
+            !generalInfo.endDate || !generalInfo.endTime) {
+            const now = formatDate(new Date(), 'yyyy-mm-dd');
+            setGeneralInfo(gi => { return { ...gi, startDate: now, endDate: now, startTime: TIME_START, endTime: TIME_END }; });
+        }
+    }, []);
+
     return (<Container>
         <FormContainer>
             <Dropdown
@@ -143,21 +166,21 @@ const GeneralInfo = ({
             <DateTimeContainer>
                 <DateTimeField
                     id='startDate'
-                    label='From'
+                    label='Date'
                     type='date'
-                    defaultValue={generalInfo.startDate}
+                    defaultValue={generalInfo.startDate ? generalInfo.startDate : formatDate(new Date(), 'yyyy-mm-dd')}
                     InputLabelProps={{
                         shrink: true,
                     }}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, startDate: e.target.value};}); 
+                        setGeneralInfo(gi => {return {...gi, startDate: e.target.value, endDate: e.target.value};}); 
                     }}
                 />
                 <DateTimeField
                     id='time'
-                    label='Time'
+                    label='From'
                     type='time'
-                    defaultValue={generalInfo.startTime}
+                    defaultValue={generalInfo.startTime ? generalInfo.startTime : TIME_START}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -166,22 +189,10 @@ const GeneralInfo = ({
                     }}
                 />
                 <DateTimeField
-                    id='endDate'
-                    label='To'
-                    type='date'
-                    defaultValue={generalInfo.endDate}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, endDate: e.target.value};}); 
-                    }}
-                />
-                <DateTimeField
                     id='time'
-                    label='Time'
+                    label='To'
                     type='time'
-                    defaultValue={generalInfo.endTime}
+                    defaultValue={generalInfo.endTime ? generalInfo.endTime : TIME_END}
                     InputLabelProps={{
                         shrink: true,
                     }}

@@ -2,6 +2,7 @@ import { AddAttachmentContainer, AttachmentTable, Container, DragAndDropContaine
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import CustomTooltip from './CustomTooltip';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
@@ -160,7 +161,9 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                     {attachments && attachments.length > 0 && attachments.map((attachment, index) => (
                         <Row key={attachment.id}>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography onClick={(): Promise<void> => openAttachment(attachment.id)} variant="body_short" link>{attachment.fileName}</Typography>
+                                <CustomTooltip title="Click to open in new tab" arrow>
+                                    <Typography onClick={(): Promise<void> => openAttachment(attachment.id)} variant="body_short" link>{attachment.fileName}</Typography>
+                                </CustomTooltip>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em', width: '30px'}}>
                                 <div onClick={(): Promise<void> => removeAttachment(index)}>

@@ -154,11 +154,11 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 <Head>
                     <Row>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Title</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}></Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>{' '}</Cell>
                     </Row>
                 </Head>
                 <Body>
-                    {attachments && attachments.length > 0 && attachments.map((attachment, index) => (
+                    {attachments && attachments.length > 0 ? attachments.map((attachment, index) => (
                         <Row key={attachment.id}>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <CustomTooltip title="Click to open in new tab" arrow>
@@ -171,7 +171,11 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                                 </div>
                             </Cell>
                         </Row>
-                    ))}
+                    )) : (
+                        <Row>
+                            <Cell style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
+                        </Row>
+                    )}
                 </Body>
 
             </AttachmentTable>

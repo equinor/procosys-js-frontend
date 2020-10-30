@@ -1,4 +1,4 @@
-import { AddAttachmentContainer, ButtonContainer, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
+import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -26,21 +26,25 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const getAttachments = async (): Promise<any> => {
-        setLoading(true);
-        let response: any[] = [];
+    const getAttachments = async (): Promise<Attachment[]> => {
+        let response: Attachment[] = [];
         try {
             response = await apiClient.getAttachments(ipoId);
-            setAttachments(response);
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
+        return response;
     };
 
     useEffect(() => {
-        getAttachments();
+        const getAttachmentsOnMount = async (): Promise<void> => {
+            setLoading(true);
+            const response = await getAttachments();
+            setAttachments(response);
+            setLoading(false);
+        };
+        getAttachmentsOnMount();
     }, []);
 
     const handleSubmitFile = async (e: any): Promise<void> => {
@@ -49,8 +53,9 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         const file = e.target.files[0];
         try {
             fileTypeValidator(file.name);
-            const id = await apiClient.uploadAttachment(ipoId, file, true);
-            await getAttachments();
+            await apiClient.uploadAttachment(ipoId, file, true);
+            const response = await getAttachments();
+            setAttachments(response);
         } catch (error) {
             console.error('Upload attchment failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
@@ -78,16 +83,17 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         event.preventDefault();
         setLoading(true);
         const files = event.dataTransfer.files;
-        Array.from(files).forEach(async file => {
+        await Promise.all(Array.from(files).map(async file => {
             try {
                 fileTypeValidator(file.name);
-                const id = await apiClient.uploadAttachment(ipoId, file, true);
-                await getAttachments();
+                await apiClient.uploadAttachment(ipoId, file, true);
             } catch (error) {
-                console.error('Upload attchment failed: ', error.message, error.data);
+                console.error('Upload attachment failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
-        });
+        }));
+        const response = await getAttachments();
+        setAttachments(response);
         setLoading(false);
     };
 

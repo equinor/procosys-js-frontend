@@ -61,3 +61,7 @@ export const SpinnerContainer = styled.div`
     align-items: center;
     justify-content: center;
 `;
+
+export const AttachmentTable = styled.table`
+    width: 95%;
+`;

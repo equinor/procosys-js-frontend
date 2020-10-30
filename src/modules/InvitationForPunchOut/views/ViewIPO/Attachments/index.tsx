@@ -1,14 +1,15 @@
-import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
+import { AddAttachmentContainer, AttachmentTable, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
-import Table from '@procosys/components/Table';
+import { Table } from '@equinor/eds-core-react';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+
+const { Head, Body, Cell, Row } = Table;
 
 type Attachment = {
     id: number;
@@ -111,6 +112,17 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         setLoading(false);
     };
 
+    const openAttachment = async (attachmentId: number): Promise<void> => {
+        try {
+            const response = await apiClient.getAttachment(ipoId, attachmentId);
+            console.log(response);
+            window.open(response, '_blank');
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
     return (<Container>
         {loading && (
             <SpinnerContainer>
@@ -137,38 +149,29 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 <EdsIcon name='cloud_download' size={48} color='#DADADA'/>
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
-            <Table
-                columns={[{ title: 'Title', render: getAttachmentName }]}
-                data={attachments}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    search: false,
-                    draggable: false,
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    actionsColumnIndex: -1,
-                    paging: false
-                }}
-                style={{
-                    boxShadow: 'none',
-                    width: '95%'
-                }}
-                localization={{
-                    header : {
-                        actions: ''
-                    }
-                }}
-                actions={[
-                    {
-                        icon: (): JSX.Element => <EdsIcon name='delete_to_trash' />,
-                        tooltip: 'Remove attachment',
-                        onClick: (_, rowData): Promise<void> => removeAttachment(rowData.tableData.id)
-                    }
-                ]}
-            />
+            <AttachmentTable>
+                <Head>
+                    <Row>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Title</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}></Cell>
+                    </Row>
+                </Head>
+                <Body>
+                    {attachments && attachments.length > 0 && attachments.map((attachment, index) => (
+                        <Row key={attachment.id}>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                <Typography onClick={(): Promise<void> => openAttachment(attachment.id)} variant="body_short" link>{attachment.fileName}</Typography>
+                            </Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em', width: '30px'}}>
+                                <div onClick={(): Promise<void> => removeAttachment(index)}>
+                                    <EdsIcon name='delete_to_trash' />
+                                </div>
+                            </Cell>
+                        </Row>
+                    ))}
+                </Body>
+
+            </AttachmentTable>
         </FormContainer>
     </Container>);
 };

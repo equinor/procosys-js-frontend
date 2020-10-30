@@ -288,6 +288,30 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
+     * Get attachment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getAttachment(
+        id: number,
+        attachmentId: number,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Invitations/${id}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
      * Delete attachment
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request

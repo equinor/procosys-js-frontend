@@ -49,8 +49,14 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         getAttachmentsOnMount();
     }, []);
 
-    const handleSubmitFile = async (e: any): Promise<void> => {
+    const handleSubmitFile = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
         e.preventDefault();
+
+        if (!e.target.files) {
+            showSnackbarNotification('No files to upload');
+            return;
+        }
+
         setLoading(true);
         const file = e.target.files[0];
         try {
@@ -69,12 +75,6 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         if (inputFileRef.current) {
             inputFileRef.current.click();
         }
-    };
-
-    const getAttachmentName = (attachment: Attachment): JSX.Element => {
-        return (
-            <div>{attachment.fileName}</div>
-        );
     };
     
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
@@ -116,7 +116,6 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
     const openAttachment = async (attachmentId: number): Promise<void> => {
         try {
             const response = await apiClient.getAttachment(ipoId, attachmentId);
-            console.log(response);
             window.open(response, '_blank');
         } catch (error) {
             console.error(error.message, error.data);

@@ -1,16 +1,17 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
+import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import { Canceler } from '@procosys/http/HttpClient';
-import { TextField as DateTimeField } from '@material-ui/core';
+import DateFnsUtils from '@date-io/date-fns';
 import Dropdown from '../../../../../components/Dropdown';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { set } from 'date-fns';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
-
-const TIME_START = '08:00';
-const TIME_END = '08:30';
 
 const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -90,25 +91,6 @@ const GeneralInfo = ({
         }
     }, [selectedProject]);
 
-
-
-    const formatDate = (date: Date, format: string): string => {
-        const map = {
-            mm: date.getMonth() + 1,
-            dd: date.getDate(),
-            yyyy: date.getFullYear()
-        };
-        return format.replace(/mm|dd|yyyy/gi, matched => (map as any)[matched]);
-    };
-
-    useEffect(() => {
-        if (!generalInfo.startDate || !generalInfo.startTime ||
-            !generalInfo.endDate || !generalInfo.endTime) {
-            const now = formatDate(new Date(), 'yyyy-mm-dd');
-            setGeneralInfo(gi => { return { ...gi, startDate: now, endDate: now, startTime: TIME_START, endTime: TIME_END }; });
-        }
-    }, []);
-
     return (<Container>
         <FormContainer>
             <Dropdown
@@ -164,42 +146,55 @@ const GeneralInfo = ({
             />
             <Typography constiant='h5'>Date and time for punch round</Typography>
             <DateTimeContainer>
-                <DateTimeField
-                    id='startDate'
-                    label='Date'
-                    type='date'
-                    defaultValue={generalInfo.startDate ? generalInfo.startDate : formatDate(new Date(), 'yyyy-mm-dd')}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, startDate: e.target.value, endDate: e.target.value};}); 
-                    }}
-                />
-                <DateTimeField
-                    id='time'
-                    label='From'
-                    type='time'
-                    defaultValue={generalInfo.startTime ? generalInfo.startTime : TIME_START}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, startTime: e.target.value};}); 
-                    }}
-                />
-                <DateTimeField
-                    id='time'
-                    label='To'
-                    type='time'
-                    defaultValue={generalInfo.endTime ? generalInfo.endTime : TIME_END}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, endTime: e.target.value};}); 
-                    }}
-                />
+                <MuiPickersUtilsProvider utils={DateFnsUtils} >
+                    <KeyboardDatePicker
+                        label="Date"
+                        value={generalInfo.startTime}
+                        onChange={(date: MaterialUiPickersDate): void => { 
+                            setGeneralInfo(gi => {
+                                return {...gi, startTime: date as Date, endTime: date as Date};
+                            }); 
+                        }}
+                        disablePast={false}
+                        format='MM.dd.yyyy'
+                        variant='inline'
+                        inputVariant='outlined'
+                        placeholder='MM.dd.yyyy'
+                    />
+                </MuiPickersUtilsProvider>
+                <MuiPickersUtilsProvider utils={DateFnsUtils} >
+                    <KeyboardTimePicker
+                        label="From"
+                        value={generalInfo.startTime}
+                        onChange={(date: MaterialUiPickersDate): void => { 
+                            const hours = (date as Date).getHours();
+                            const minutes = (date as Date).getMinutes();
+                            hours && minutes && setGeneralInfo(gi => {return {...gi, startTime: set(generalInfo.startTime, { hours, minutes}) }; }); 
+                        }}
+                        ampm={false}
+                        variant='inline'
+                        inputVariant='outlined'
+                    />
+                </MuiPickersUtilsProvider>
+                <MuiPickersUtilsProvider utils={DateFnsUtils} >
+                    <KeyboardTimePicker
+                        label="To"
+                        value={generalInfo.endTime}
+                        onChange={(date: MaterialUiPickersDate): void => { 
+                            const hours = (date as Date).getHours();
+                            const minutes = (date as Date).getMinutes();
+                            const newTime = set(generalInfo.endTime, { hours, minutes});
+                            if (generalInfo.startTime <= newTime) {
+                                setGeneralInfo(gi => {return {...gi, endTime: newTime }; }); 
+                            } else {
+                                showSnackbarNotification('End time must follow start time.');
+                            }
+                        }}
+                        ampm={false}
+                        variant='inline'
+                        inputVariant='outlined'
+                    />
+                </MuiPickersUtilsProvider>
             </DateTimeContainer>
             <LocationContainer>
                 <TextField

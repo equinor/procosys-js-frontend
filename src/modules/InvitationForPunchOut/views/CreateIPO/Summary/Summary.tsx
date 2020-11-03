@@ -147,7 +147,7 @@ const Summary = ({
                 <div className='timeContainer'>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>From</Typography>
-                        <Typography variant="body_long">{ formatDate(generalInfo.startTime, 'mm/dd/yyyy') }</Typography>
+                        <Typography variant="body_long">{ formatDate(generalInfo.startTime, 'dd/mm/yyyy') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>Time</Typography>
@@ -155,7 +155,7 @@ const Summary = ({
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>To</Typography>
-                        <Typography variant="body_long">{ formatDate(generalInfo.endTime, 'mm/dd/yyyy') }</Typography>
+                        <Typography variant="body_long">{ formatDate(generalInfo.endTime, 'dd/mm/yyyy') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>Time</Typography>

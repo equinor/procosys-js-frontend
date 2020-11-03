@@ -1034,26 +1034,26 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
-"@equinor/eds-core-react@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-core-react/-/eds-core-react-0.5.1.tgz#04499f28470db9bdd79ebd2bb413ac41804d9608"
-  integrity sha512-ZuXKnCMA2pEhc3mYt8k49ROhOrJGigOLwNCszI+7gbaGxx48D8aq6LIg/jafFrhtAIkxnKw/UcbXBHoJ1KbYjw==
+"@equinor/eds-core-react@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-core-react/-/eds-core-react-0.6.2.tgz#20ce1872c3347637c2e8d5c6b626009163fbccb5"
+  integrity sha512-ZQnuevIa0czYyMN5nwLC7L3VjVvv2/LPnjqZbqxbM8gxUAEy+fM40BqC2V5n2s3UF0IvgKaJ4hb4iDlyv2Epug==
   dependencies:
-    "@equinor/eds-icons" "0.3.0"
-    "@equinor/eds-tokens" "0.3.0"
+    "@equinor/eds-icons" "0.4.0"
+    "@equinor/eds-tokens" "0.4.0"
     "@testing-library/react-hooks" "^3.3.0"
     focus-visible "^5.1.0"
     lodash "^4.17.19"
 
-"@equinor/eds-icons@0.3.0", "@equinor/eds-icons@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.3.0.tgz#3b4b52937eb0eb66ab1ada4ceb6c24ba2bbf7367"
-  integrity sha512-XcHPX+/RS40rRekD+C6lzZlm/mijDij7KexqZRJiUsgHKQuYPWbZpjSkF54THEXS4xmSwpB0h24dznEWCPBSDg==
+"@equinor/eds-icons@0.4.0", "@equinor/eds-icons@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.4.0.tgz#d896bd292e8a86fab88d5e3fc50bf484aeaa1ac6"
+  integrity sha512-UNZqIZqxCBPIpkenwzFyP18oKtWSt8Y52TlQLSgVp5pNwKY2hVzRC60j5iCRenCT1vF8fr+LDXkDUOl4mE4HTw==
 
-"@equinor/eds-tokens@0.3.0", "@equinor/eds-tokens@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.3.0.tgz#340f0e17b600425ec513938539c347267c703321"
-  integrity sha512-Y5Fo/32eGUTT2p73wY7G4saPYvydyjMBO1NnSLbsvnXy5eTu+4vwEyAeeH6qNqB0GUNghLHqtun0XQmqBTSgkA==
+"@equinor/eds-tokens@0.4.0", "@equinor/eds-tokens@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.4.0.tgz#ee12e6435c6241a228338a87a1a0b6e78f9cadf4"
+  integrity sha512-LEsIcAVNLkgkbjR9WSsMb8W5sAe/NWsQtqPtU7fd44l0Lda+v3FzWL7OOUnb4Da9FPARu/1ZGgad4WLBFcym6Q==
 
 "@eslint/eslintrc@^0.2.1":
   version "0.2.1"

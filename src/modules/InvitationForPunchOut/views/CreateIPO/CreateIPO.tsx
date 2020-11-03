@@ -182,8 +182,6 @@ const CreateIPO = (): JSX.Element => {
                     generalInfo.poType.value,
                     generalInfo.startTime,
                     generalInfo.endTime,
-                    // new Date(generalInfo.startDate + ' ' + generalInfo.startTime + ' GMT'),
-                    // new Date(generalInfo.startDate + ' ' + generalInfo.endTime + ' GMT'),
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
@@ -243,7 +241,7 @@ const CreateIPO = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startTime && generalInfo.endTime) {
+        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);

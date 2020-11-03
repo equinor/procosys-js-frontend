@@ -1,16 +1,13 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
-import { KeyboardDatePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+import { format, set } from 'date-fns';
 
 import { Canceler } from '@procosys/http/HttpClient';
-import DateFnsUtils from '@date-io/date-fns';
+import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { set } from 'date-fns';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 
 const poTypes: SelectItem[] = [
@@ -38,6 +35,7 @@ const GeneralInfo = ({
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');   
+    const [errorFormat, setErrorFormat] = useState<boolean>(false);
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -90,6 +88,26 @@ const GeneralInfo = ({
             setGeneralInfo(gi => {return {...gi, projectName: selectedProject.name};});
         }
     }, [selectedProject]);
+
+    const handleSetDate = (dateString: string): void => {
+        const date = new Date(dateString);
+        const newStart = set(generalInfo.startTime, { year: date.getFullYear(), month: date.getMonth() + 1, date: date.getDate() });
+        const newEnd = set(generalInfo.endTime, { year: date.getFullYear(), month: date.getMonth() + 1, date: date.getDate() });
+        setGeneralInfo(gi => { return { ...gi, startTime: newStart, endTime: newEnd }; });
+    };
+
+    const handleSetTime = (from: 'start' | 'end', timeString: string): void => {
+        const timeSplit = timeString.split(':');
+        if (from === 'start') {
+            const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newTime > gi.endTime ? newTime : gi.endTime }; });
+        } else {
+            const newTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+            setGeneralInfo(gi => { return { ...gi, endTime: newTime }; });
+            setErrorFormat(newTime < generalInfo.startTime);
+        }
+    };
+
 
     return (<Container>
         <FormContainer>
@@ -146,55 +164,39 @@ const GeneralInfo = ({
             />
             <Typography constiant='h5'>Date and time for punch round</Typography>
             <DateTimeContainer>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} >
-                    <KeyboardDatePicker
-                        label="Date"
-                        value={generalInfo.startTime}
-                        onChange={(date: MaterialUiPickersDate): void => { 
-                            setGeneralInfo(gi => {
-                                return {...gi, startTime: date as Date, endTime: date as Date};
-                            }); 
-                        }}
-                        disablePast={false}
-                        format='MM.dd.yyyy'
-                        variant='inline'
-                        inputVariant='outlined'
-                        placeholder='MM.dd.yyyy'
-                    />
-                </MuiPickersUtilsProvider>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} >
-                    <KeyboardTimePicker
-                        label="From"
-                        value={generalInfo.startTime}
-                        onChange={(date: MaterialUiPickersDate): void => { 
-                            const hours = (date as Date).getHours();
-                            const minutes = (date as Date).getMinutes();
-                            hours && minutes && setGeneralInfo(gi => {return {...gi, startTime: set(generalInfo.startTime, { hours, minutes}) }; }); 
-                        }}
-                        ampm={false}
-                        variant='inline'
-                        inputVariant='outlined'
-                    />
-                </MuiPickersUtilsProvider>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} >
-                    <KeyboardTimePicker
-                        label="To"
-                        value={generalInfo.endTime}
-                        onChange={(date: MaterialUiPickersDate): void => { 
-                            const hours = (date as Date).getHours();
-                            const minutes = (date as Date).getMinutes();
-                            const newTime = set(generalInfo.endTime, { hours, minutes});
-                            if (generalInfo.startTime <= newTime) {
-                                setGeneralInfo(gi => {return {...gi, endTime: newTime }; }); 
-                            } else {
-                                showSnackbarNotification('End time must follow start time.');
-                            }
-                        }}
-                        ampm={false}
-                        variant='inline'
-                        inputVariant='outlined'
-                    />
-                </MuiPickersUtilsProvider>
+                <DateTimeField
+                    id='startDate'
+                    label='Date'
+                    type='date'
+                    defaultValue={format(generalInfo.startTime, 'yyyy-MM-dd')}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetDate(event.target.value) }
+                />
+                <DateTimeField
+                    id='startTime'
+                    label='From'
+                    type='time'
+                    onClick={(e: React.MouseEvent<HTMLDivElement>):void => e.preventDefault()}
+                    value={format(generalInfo.startTime, 'HH:mm')}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('start', event.target.value) }
+                />
+                <DateTimeField
+                    id='endDate'
+                    label='To'
+                    type='time'
+                    onClick={(e: React.MouseEvent<HTMLDivElement>):void => e.preventDefault()}
+                    value={format(generalInfo.endTime, 'HH:mm')}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value) }
+                    error={errorFormat}
+                />
             </DateTimeContainer>
             <LocationContainer>
                 <TextField

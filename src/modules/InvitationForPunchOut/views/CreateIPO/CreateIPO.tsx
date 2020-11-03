@@ -41,6 +41,27 @@ const initialParticipants: Participant[] = [
         externalEmail: null,
         person: null,
         role: null
+    },
+    {
+        organization: { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
+        type: 'Functional role',
+        externalEmail: null,
+        person: null,
+        role: null
+    },
+    {
+        organization: { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
+        type: 'Functional role',
+        externalEmail: null,
+        person: null,
+        role: null
+    },
+    {
+        organization: { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
+        type: 'Functional role',
+        externalEmail: null,
+        person: null,
+        role: null
     }
 ];
 

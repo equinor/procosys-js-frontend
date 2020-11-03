@@ -1,7 +1,6 @@
-import { render } from '@testing-library/react';
-
-import SelectScope from '../SelectScope';
 import React from 'react';
+import SelectScope from '../SelectScope';
+import { render } from '@testing-library/react';
 
 const mockScope = [
     {
@@ -43,10 +42,16 @@ describe('<SelectScope />', () => {
         expect(getByText('Next').closest('button')).toHaveProperty('disabled', false);
     });
 
-    it('Renders with title', async () => {
+    it('Renders with title for MDP', async () => {
         var propFunc = jest.fn();
         const { getByText } = render(<SelectScope selectedMcPkgScope={propFunc}/>);
         expect(getByText('Select commissioning packages')).toBeInTheDocument();
+    });
+
+    it('Renders with title for DP', async () => {
+        var propFunc = jest.fn();
+        const { getByText } = render(<SelectScope type="DP" selectedMcPkgScope={propFunc}/>);
+        expect(getByText('Click on the arrow next to a comm pkg to open MC scope')).toBeInTheDocument();
     });
 
 });

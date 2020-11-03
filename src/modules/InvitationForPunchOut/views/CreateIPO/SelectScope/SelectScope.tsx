@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
 import { Button, Typography } from '@equinor/eds-core-react';
-import { Container, Header, ButtonsContainer, SelectComponent, Divider } from './SelectScope.style';
+import { ButtonsContainer, Container, Divider, Header, SelectComponent } from './SelectScope.style';
 import { CommPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
-import SelectedScope from './SelectedScope';
-import EdsIcon from '@procosys/components/EdsIcon';
+import React, { useEffect, useRef, useState } from 'react';
+
 import CommPkgTable from './CommPkgTable';
+import EdsIcon from '@procosys/components/EdsIcon';
 import McPkgTable from './McPkgTable';
+import SelectedScope from './SelectedScope';
 
 interface SelectScopeProps {
     type: string;
@@ -58,7 +59,7 @@ const SelectScope = ({
                         </Button> 
                     }
                     <Typography variant='h2'>
-                        {currentCommPkg == null ? 'Select commissioning packages' : 'Select MC packages in comm pkg ' + currentCommPkg }
+                        {currentCommPkg == null ? (type === 'DP' ? 'Click on the arrow next to a comm pkg to open MC scope': 'Select commissioning packages') : 'Select MC packages in comm pkg ' + currentCommPkg }
                     </Typography>
                     <ButtonsContainer>
                         <Button 

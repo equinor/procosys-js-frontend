@@ -1,5 +1,6 @@
 import React from 'react';
 import Summary from '../Summary';
+import { format } from 'date-fns';
 import { render } from '@testing-library/react';
 
 const generalInfo = {
@@ -51,16 +52,6 @@ const participants = [
     }
 ];
     
-const formatDate = (date, format) => {
-    const map = {
-        mm: date.getMonth() + 1,
-        dd: date.getDate(),
-        yyyy: date.getFullYear(),
-        hours: date.getHours(),
-        minutes: date.getMinutes()
-    };
-    return format.replace(/minutes|hours|mm|dd|yyyy/gi, matched => map[matched]);
-};
 
 describe('Module: <Summary />', () => {
     
@@ -89,9 +80,9 @@ describe('Module: <Summary />', () => {
         expect(getByText(generalInfo.poType.text)).toBeInTheDocument();
         expect(getByText(generalInfo.title)).toBeInTheDocument();
         expect(getByText(generalInfo.description)).toBeInTheDocument();
-        expect(getByText(formatDate(generalInfo.startTime, 'dd/mm/yyyy'))).toBeInTheDocument();
-        expect(getAllByText(formatDate(generalInfo.startTime, 'hours:minutes')).length).toBeGreaterThan(0);
-        expect(getAllByText(formatDate(generalInfo.endTime, 'hours:minutes')).length).toBeGreaterThan(0);
+        expect(getByText(format(generalInfo.startTime, 'dd/MM/yyyy'))).toBeInTheDocument();
+        expect(getAllByText(format(generalInfo.startTime, 'HH:mm')).length).toBeGreaterThan(0);
+        expect(getAllByText(format(generalInfo.endTime, 'HH:mm')).length).toBeGreaterThan(0);
         expect(getByText(generalInfo.location)).toBeInTheDocument();
     });
 

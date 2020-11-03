@@ -1,11 +1,9 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
-
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { format, set } from 'date-fns';
-
 
 import { Canceler } from '@procosys/http/HttpClient';
 import { TextField as DateTimeField } from '@material-ui/core';
@@ -93,8 +91,8 @@ const GeneralInfo = ({
 
     const handleSetDate = (dateString: string): void => {
         const date = new Date(dateString);
-        const newStart = set(generalInfo.startTime, { year: date.getFullYear(), month: date.getMonth() + 1, date: date.getDate() });
-        const newEnd = set(generalInfo.endTime, { year: date.getFullYear(), month: date.getMonth() + 1, date: date.getDate() });
+        const newStart = set(generalInfo.startTime, { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
+        const newEnd = set(generalInfo.endTime, { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
         setGeneralInfo(gi => { return { ...gi, startTime: newStart, endTime: newEnd }; });
     };
 

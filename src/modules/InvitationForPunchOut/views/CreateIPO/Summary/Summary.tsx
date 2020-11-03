@@ -3,6 +3,7 @@ import { ButtonContainer, Container, FormContainer, Section, Subsection, TableSe
 import { CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 
 import React from 'react';
+import { format } from 'date-fns';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -110,17 +111,6 @@ const Summary = ({
         </Row>
     ));
 
-    const formatDate = (date: Date, format: string): string => {
-        const map = {
-            mm: date.getMonth() + 1,
-            dd: date.getDate(),
-            yyyy: date.getFullYear(),
-            hours: date.getHours(),
-            minutes: date.getMinutes()
-        };
-        return format.replace(/minutes|hours|mm|dd|yyyy/gi, matched => (map as any)[matched]);
-    };
-
     return (<Container>
         <FormContainer>
             <Section>
@@ -147,15 +137,15 @@ const Summary = ({
                 <div className='timeContainer'>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>Date</Typography>
-                        <Typography variant="body_long">{ formatDate(generalInfo.startTime, 'dd/mm/yyyy') }</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.startTime, 'dd/MM/yyyy') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>From</Typography>
-                        <Typography variant="body_long">{ formatDate(generalInfo.startTime, 'hours:minutes') }</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.startTime, 'HH:mm') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>To</Typography>
-                        <Typography variant="body_long">{ formatDate(generalInfo.endTime, 'hours:minutes') }</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.endTime, 'HH:mm') }</Typography>
                     </Subsection>
                 </div>
                 <Subsection>

@@ -1,9 +1,11 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
+
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { format, set } from 'date-fns';
+
 
 import { Canceler } from '@procosys/http/HttpClient';
 import { TextField as DateTimeField } from '@material-ui/core';
@@ -133,7 +135,7 @@ const GeneralInfo = ({
                     );
                 })}
             </Dropdown>
-            <PoTypeContainer>
+            <PoTypeContainer data-testid='po-type-select'>
                 <SelectInput
                     onChange={setPoTypeForm}
                     data={poTypes}

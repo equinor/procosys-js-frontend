@@ -94,14 +94,14 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Completion#CommPkg|?bf=1`}
                             >
-                                <DropdownItem>Commissioning Package</DropdownItem>
+                                <DropdownItem>Commissioning package</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
                             { (ProCoSysSettings.ipo.enabled) &&
                                 <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
-                                    <DropdownItem>Invitation for punch-out</DropdownItem>
+                                    <DropdownItem>Invitation for punch out</DropdownItem>
                                 </a>
                             }
                             <a href={`/${params.plant}/Hookup/New`}>
@@ -115,18 +115,18 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Preservation#PreservationTag|`}
                             >
-                                <DropdownItem>Preservation Area Tag</DropdownItem>
+                                <DropdownItem>Preservation area tag</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/PurchaseOrders#PurchaseOrder|`}
                             >
-                                <DropdownItem>Purchase Order</DropdownItem>
+                                <DropdownItem>Purchase order</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Documents/NewQuery`}>
                                 <DropdownItem>Query</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/SWAP/New`}>
-                                <DropdownItem>Software Change Record</DropdownItem>
+                                <DropdownItem>Software change record</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Completion#Tag|`}><DropdownItem>Tag</DropdownItem></a>
                         </Dropdown>
@@ -136,7 +136,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Action%20Log`}
                             >
-                                <DropdownItem>Action Log</DropdownItem>
+                                <DropdownItem>Action log</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Certificates`}
@@ -151,7 +151,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Commissioning%20Packages`}
                             >
-                                <DropdownItem>Commissioning Packages</DropdownItem>
+                                <DropdownItem>Commissioning packages</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Documents`}
@@ -161,12 +161,12 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Formular%20Types`}
                             >
-                                <DropdownItem>Formular Types</DropdownItem>
+                                <DropdownItem>Formular types</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Hookup%20items`}
                             >
-                                <DropdownItem>Hookup Types</DropdownItem>
+                                <DropdownItem>Hookup types</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}
@@ -181,7 +181,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=MC%20Packages`}
                             >
-                                <DropdownItem>MC Packages</DropdownItem>
+                                <DropdownItem>MC packages</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Notifications`}
@@ -196,7 +196,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Preservation%20Tags`}
                             >
-                                <DropdownItem>Preservation Tags</DropdownItem>
+                                <DropdownItem>Preservation tags</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Projects`}
@@ -206,12 +206,12 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Punch%20List%20Items`}
                             >
-                                <DropdownItem>Punch List Items</DropdownItem>
+                                <DropdownItem>Punch list items</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Purchase%20Orders`}
                             >
-                                <DropdownItem>Purchase Orders</DropdownItem>
+                                <DropdownItem>Purchase orders</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Query`}
@@ -221,12 +221,12 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Software%20Change%20Records`}
                             >
-                                <DropdownItem>Software Change Records</DropdownItem>
+                                <DropdownItem>Software change records</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Tag%20Functions`}
                             >
-                                <DropdownItem>Tag Functions</DropdownItem>
+                                <DropdownItem>Tag functions</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Search?searchType=Tags`}>
                                 <DropdownItem>Tags</DropdownItem>
@@ -234,11 +234,11 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Work%20Orders`}
                             >
-                                <DropdownItem>Work Orders</DropdownItem>
+                                <DropdownItem>Work orders</DropdownItem>
                             </a>
                             <hr />
                             <a href={`/${params.plant}/PersonalSearchSettings`}>
-                                <DropdownItem>My Saved Settings</DropdownItem>
+                                <DropdownItem>My saved settings</DropdownItem>
                             </a>
                         </Dropdown>
                     </MenuItem>

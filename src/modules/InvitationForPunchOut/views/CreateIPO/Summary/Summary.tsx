@@ -146,19 +146,15 @@ const Summary = ({
                 <Typography variant="h5">Date and time for punch round</Typography>
                 <div className='timeContainer'>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>From</Typography>
+                        <Typography token={{fontSize: '12px'}}>Date</Typography>
                         <Typography variant="body_long">{ formatDate(generalInfo.startTime, 'dd/mm/yyyy') }</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Time</Typography>
+                        <Typography token={{fontSize: '12px'}}>From</Typography>
                         <Typography variant="body_long">{ formatDate(generalInfo.startTime, 'hours:minutes') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>To</Typography>
-                        <Typography variant="body_long">{ formatDate(generalInfo.endTime, 'dd/mm/yyyy') }</Typography>
-                    </Subsection>
-                    <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Time</Typography>
                         <Typography variant="body_long">{ formatDate(generalInfo.endTime, 'hours:minutes') }</Typography>
                     </Subsection>
                 </div>

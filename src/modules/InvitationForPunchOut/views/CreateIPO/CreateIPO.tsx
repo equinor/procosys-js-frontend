@@ -22,10 +22,8 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     poType: null,
     title: null,
     description: null,
-    startDate: null,
-    endDate: null,
-    startTime: null,
-    endTime: null,
+    startTime: new Date(),
+    endTime: new Date(),
     location: null
 };
 
@@ -203,8 +201,8 @@ const CreateIPO = (): JSX.Element => {
                     generalInfo.title, 
                     generalInfo.projectName,
                     generalInfo.poType.value,
-                    new Date(generalInfo.startDate + ' ' + generalInfo.startTime + ' GMT'),
-                    new Date(generalInfo.startDate + ' ' + generalInfo.endTime + ' GMT'),
+                    generalInfo.startTime,
+                    generalInfo.endTime,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
@@ -264,7 +262,7 @@ const CreateIPO = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
+        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);

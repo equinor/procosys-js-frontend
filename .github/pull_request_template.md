@@ -7,7 +7,7 @@ Completes: DevOps#FILL_IN_YOUR_ISSUE_ID
 
 # Checklist:
 
-- [ ] I have performed a self-review of my own code
-- [ ] My code is easy to read, and comments are added where needed
-- [ ] All variants of my code is covered by tests
-- [ ] I have linked my DevOps task with this pull-request
+- [ ] I have performed a self-review of my own code.
+- [ ] I have linked my DevOps task and the PR (both GitHub and DevOps).
+- [ ] My code is easy to read, and comments are added where needed.
+- [ ] My code is covered by tests.

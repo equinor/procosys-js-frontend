@@ -7,7 +7,6 @@ export type Participant = {
     response: ResponseType;
     attended: boolean;
     notes: string;
-    completed?: boolean;
 };
         
 export type GeneralInfoType = {
@@ -23,11 +22,16 @@ export type GeneralInfoType = {
     location: string;
     completedAt?: Date;
     completedBy?: string;
-    acceptedAt?: Date;
-    acceptedBy?: string;
+    approvedAt?: Date;
+    approvedBy?: string;
 }
 
 export type CompletedType = {
     completedBy?: string;
     completedAt?: Date;
+}
+
+export type ApprovedType = {
+    approvedBy?: string;
+    approvedAt?: Date;
 }

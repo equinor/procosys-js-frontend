@@ -1,4 +1,4 @@
-import { CompletedType, Participant } from './types';
+import { ApprovedType, CompletedType, Participant } from './types';
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
 import React, { useEffect, useState } from 'react';
 import { getFormatDate, getFormatTime } from './utils';
@@ -10,6 +10,7 @@ import { generalInfo } from './dummyData';
 const GeneralInfo = (): JSX.Element => {
     const [participantList, setParticipantList] = useState<Participant[]>([]);
     const [completed, setCompleted] = useState<CompletedType>({});
+    const [approved, setApproved] = useState<ApprovedType>({});
 
     useEffect(() => {
         // TODO: Get IPO data
@@ -18,9 +19,13 @@ const GeneralInfo = (): JSX.Element => {
             completedBy: generalInfo.completedBy,
             completedAt: generalInfo.completedAt
         });
+        setApproved({
+            approvedAt: generalInfo.approvedAt,
+            approvedBy: generalInfo.approvedBy
+        });
     }, []);
 
-    const completePunchOut = async (data: Participant[], index: number): Promise<any> => {
+    const completePunchOut = async (index: number): Promise<any> => {
         // eslint-disable-next-line no-useless-catch
         await new Promise((resolve, reject) => {
             try { 
@@ -32,10 +37,31 @@ const GeneralInfo = (): JSX.Element => {
                 //     completedAt: new Date()
                 // }
                 setCompleted({
-                    completedBy: data[index].name,
+                    completedBy: participantList[index].name,
                     completedAt: new Date()
                 });
-                setParticipantList(data);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    const approvePunchOut = async (index: number): Promise<any> => {
+        // eslint-disable-next-line no-useless-catch
+        await new Promise((resolve, reject) => {
+            try { 
+                // TODO: await api approve punch out
+                // {
+                //     ...generalInfo,
+                //     participants: data,
+                //     approvedBy: data[index].name,
+                //     approvedAt: new Date()
+                // }
+                setApproved({
+                    approvedBy: participantList[index].name,
+                    approvedAt: new Date()
+                });
                 resolve();
             } catch (error) {
                 reject(error);
@@ -99,7 +125,7 @@ const GeneralInfo = (): JSX.Element => {
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={participantList} completed={completed} completePunchOut={completePunchOut} />
+            <ParticipantsTable participants={participantList} completed={completed} approved={approved} completePunchOut={completePunchOut} approvePunchOut={approvePunchOut} />
         </Container>
     );
 };

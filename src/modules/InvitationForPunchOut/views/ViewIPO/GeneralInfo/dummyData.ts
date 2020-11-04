@@ -21,7 +21,7 @@ export const generalInfo: GeneralInfoType = {
         {
             id: 1,
             name: 'Ole OCT',
-            role: 'Constr. Comp.',
+            role: 'Construction company',
             response: 'Attending',
             attended: true,
             notes: 'Any comment',

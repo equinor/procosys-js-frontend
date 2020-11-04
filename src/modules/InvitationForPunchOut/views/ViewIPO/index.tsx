@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Container } from './index.style';
 import GeneralInfo from './GeneralInfo';
+import Scope from './Scope';
 import { Step } from '../../types';
 import { Tabs } from '@equinor/eds-core-react';
 import ViewIPOHeader from './ViewIPOHeader';
@@ -48,7 +49,7 @@ const ViewIPO = (): JSX.Element => {
             </TabList>
             <TabPanels>
                 <TabPanel><GeneralInfo /></TabPanel>
-                <TabPanel>Scope</TabPanel>
+                <TabPanel><Scope type={generalInfo.type} /></TabPanel>
                 <TabPanel>Attachments</TabPanel>
                 <TabPanel>Log</TabPanel>
             </TabPanels>

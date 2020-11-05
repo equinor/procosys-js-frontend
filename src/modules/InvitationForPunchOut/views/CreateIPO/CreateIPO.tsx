@@ -179,14 +179,14 @@ const CreateIPO = (): JSX.Element => {
     };
 
     const uploadAllAttachments = async (ipoId: number): Promise<any> => {
-        attachments.forEach(async attachment => {
+        await Promise.all(attachments.map(async (attachment) => {
             try {
                 await apiClient.uploadAttachment(ipoId, attachment, true);
             } catch (error) {
-                console.error('Upload attchment failed: ', error.message, error.data);
+                console.error('Upload attachment failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
-        });
+        }));
     };
 
     const createNewIpo = async (): Promise<void> => {

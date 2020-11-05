@@ -1,10 +1,10 @@
 import { ApprovedType, CompletedType, Participant } from '../types';
-import { AttendedEditCell, CustomTooltip } from './CustomCells';
-import { Button, TextField } from '@equinor/eds-core-react';
+import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { getFormatDate, getFormatTime } from '../utils';
 
+import CustomTooltip from './CustomTooltip';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -139,7 +139,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{participant.name}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{participant.response}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                <AttendedEditCell disabled={!!completed.completedBy} status={participant.attended} onChange={(): void => handleEditAttended(index)} />
+                                <Switch disabled={!!completed.completedBy} default label={participant.attended ? 'Attended' : 'Did not attend'} checked={participant.attended} onChange={(): void => handleEditAttended(index)}/>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
                                 <TextField disabled={!!completed.completedBy} value={participant.notes} onChange={(e: any): void => handleEditNotes(e, index)} />

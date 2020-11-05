@@ -1,14 +1,15 @@
+import { AddParticipantContainer, ButtonContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
+import { Button, TextField } from '@equinor/eds-core-react';
+import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+
+import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
-import { Button, TextField } from '@equinor/eds-core-react';
-import { DropdownItem, Container, ParticipantRowsContainer, FormContainer, ButtonContainer, AddParticipantContainer } from './Participants.style';
-import { Participant, RoleParticipant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import RoleSelector from '../../../components/RoleSelector';
-import { Canceler } from '@procosys/http/HttpClient';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { Tooltip } from '@material-ui/core';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
 const WAIT_INTERVAL = 300;
@@ -190,7 +191,7 @@ const Participants = ({
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
             });
-            if(value == OrganizationsEnum.External) {
+            if(organization.text === OrganizationsEnum.External) {
                 setType('Person', index);
             }
         }

@@ -1,7 +1,8 @@
 import { AddAttachmentContainer, AttachmentTable, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
 import { Button, Typography } from '@equinor/eds-core-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { Canceler } from '@procosys/http/HttpClient';
 import CustomTooltip from './CustomTooltip';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
@@ -28,25 +29,27 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const getAttachments = async (): Promise<Attachment[]> => {
-        let response: Attachment[] = [];
+    const getAttachments = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
-            response = await apiClient.getAttachments(ipoId);
+            const response = await apiClient.getAttachments(ipoId, requestCanceller);
+            setAttachments(response);
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        return response;
-    };
+    }, [ipoId]);
+
 
     useEffect(() => {
-        const getAttachmentsOnMount = async (): Promise<void> => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
             setLoading(true);
-            const response = await getAttachments();
-            setAttachments(response);
+            await getAttachments((cancel: Canceler) => { requestCancellor = cancel; });
             setLoading(false);
+        })();
+        return (): void => {
+            requestCancellor && requestCancellor();
         };
-        getAttachmentsOnMount();
     }, []);
 
     const handleSubmitFile = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -62,12 +65,11 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         try {
             fileTypeValidator(file.name);
             await apiClient.uploadAttachment(ipoId, file, true);
-            const response = await getAttachments();
-            setAttachments(response);
         } catch (error) {
             console.error('Upload attchment failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
+        await getAttachments();
         setLoading(false);
     };
 
@@ -94,8 +96,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 showSnackbarNotification(error.message);
             }
         }));
-        const response = await getAttachments();
-        setAttachments(response);
+        await getAttachments();
         setLoading(false);
     };
 

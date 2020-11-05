@@ -3,8 +3,8 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin: var(--margin-module--top) var(--margin-module--right);
-    width: 100%;
-    
+    position: relative;
+
     .tabs {
         div:first-child {
             grid-template-columns: auto auto auto auto 1fr;
@@ -13,7 +13,7 @@ export const Container = styled.div`
             pointer-events: none;
         }
     
-        margin-left: calc(var(--margin-module--right) * -1);
+        margin-left: calc(var(--margin-module--left) * -1);
         margin-right: calc(var(--margin-module--right) * -1);
     }
 `;
@@ -21,7 +21,6 @@ export const Container = styled.div`
 export const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 100%;
     > * {
         margin-bottom: calc(var(--grid-unit) * 3);
     }
@@ -30,7 +29,6 @@ export const FormContainer = styled.div`
 export const ButtonContainer = styled.div`
     display: flex;
     justify-content: flex-end;
-    width: 100%;
     button:last-of-type {
         margin-left: calc(var(--grid-unit) * 2);
     }

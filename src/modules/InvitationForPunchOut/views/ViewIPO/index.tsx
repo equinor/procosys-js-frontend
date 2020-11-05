@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
+import Attachments from './Attachments';
 import { Container } from './index.style';
 import GeneralInfo from './GeneralInfo';
 import { Step } from '../../types';
 import { Tabs } from '@equinor/eds-core-react';
 import ViewIPOHeader from './ViewIPOHeader';
-import { generalInfo } from '../ViewIPO/GeneralInfo/dummyData';
 import { useParams } from 'react-router-dom';
 
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
@@ -32,6 +32,7 @@ const ViewIPO = (): JSX.Element => {
         setActiveTab(index);
     };
 
+
     return (<Container>
         <ViewIPOHeader 
             steps={steps}
@@ -49,7 +50,7 @@ const ViewIPO = (): JSX.Element => {
             <TabPanels>
                 <TabPanel><GeneralInfo /></TabPanel>
                 <TabPanel>Scope</TabPanel>
-                <TabPanel>Attachments</TabPanel>
+                <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
                 <TabPanel>Log</TabPanel>
             </TabPanels>
         </Tabs>

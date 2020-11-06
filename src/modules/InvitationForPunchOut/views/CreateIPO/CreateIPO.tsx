@@ -1,4 +1,4 @@
-import { CommPkgDto, FunctionalRoleDto, McPkgDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import React, { useEffect, useState } from 'react';
 
@@ -135,32 +135,22 @@ const CreateIPO = (): JSX.Element => {
         }
         return {
             code: participant.role.code,
-            email: participant.role.email,
-            usePersonalEmail: participant.role.usePersonalEmail,
             persons: getPersons(participant.role)
         };
     };
 
-    const getCommPkgScope = (): CommPkgDto[] => {
+    const getCommPkgScope = (): string[] => {
         return selectedCommPkgScope.map(c => {
-            return {
-                commPkgNo: c.commPkgNo,
-                description: c.description,
-                status: c.status
-            };
+            return c.commPkgNo;
         });
     };
 
-    const getMcScope = (): McPkgDto[] | null => {
+    const getMcScope = (): string[] | null => {
         const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
         let mcPkgScope = null;
         if (commPkgNoContainingMcScope) {
             mcPkgScope = selectedMcPkgScope.selected.map(mc => {
-                return {
-                    mcPkgNo: mc.mcPkgNo,
-                    description: mc.description,
-                    commPkgNo: commPkgNoContainingMcScope
-                };
+                return mc.mcPkgNo;
             });
         }
         return mcPkgScope;
@@ -171,7 +161,7 @@ const CreateIPO = (): JSX.Element => {
             return {
                 organization: p.organization.value,
                 sortKey: i,
-                externalEmail: p.externalEmail,
+                externalEmail: p.externalEmail ? { email: p.externalEmail } : null,
                 person: getPerson(p),
                 functionalRole: getFunctionalRole(p)
             };

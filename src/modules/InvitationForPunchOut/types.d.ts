@@ -33,8 +33,6 @@ export type Person = {
 export type RoleParticipant = {
     code: string;
     description: string;
-    email: string;
-    informationalEmail: string;
     usePersonalEmail: boolean;
     notify: boolean;
     persons: Person[];

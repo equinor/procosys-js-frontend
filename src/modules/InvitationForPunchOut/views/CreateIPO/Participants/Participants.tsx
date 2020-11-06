@@ -68,8 +68,6 @@ const Participants = ({
                         return {
                             code: role.code,
                             description: role.description,
-                            email: role.email,
-                            informationalEmail: role.informationalEmail,
                             usePersonalEmail: role.usePersonalEmail,
                             notify: false,
                             persons: role.persons.map(p => {

@@ -1,26 +1,21 @@
-import { CompletedType, Participant } from './types';
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
-import React, { useEffect, useState } from 'react';
-import { getFormatDate, getFormatTime } from './utils';
+import React, { useState } from 'react';
 
+import { CompletedType } from '../types';
+import { InvitationResponse } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 import ParticipantsTable from './ParticipantsTable';
 import { Typography } from '@equinor/eds-core-react';
-import { generalInfo } from './dummyData';
+import { format } from 'date-fns';
 
-const GeneralInfo = (): JSX.Element => {
-    const [participantList, setParticipantList] = useState<Participant[]>([]);
+interface Props {
+    invitation: InvitationResponse;
+}
+
+const GeneralInfo = ({ invitation }: Props): JSX.Element => {
     const [completed, setCompleted] = useState<CompletedType>({});
 
-    useEffect(() => {
-        // TODO: Get IPO data
-        setParticipantList(generalInfo.participants);
-        setCompleted({
-            completedBy: generalInfo.completedBy,
-            completedAt: generalInfo.completedAt
-        });
-    }, []);
 
-    const completePunchOut = async (data: Participant[], index: number): Promise<any> => {
+    const completePunchOut = async (index: number): Promise<any> => {
         // eslint-disable-next-line no-useless-catch
         await new Promise((resolve, reject) => {
             try { 
@@ -32,10 +27,9 @@ const GeneralInfo = (): JSX.Element => {
                 //     completedAt: new Date()
                 // }
                 setCompleted({
-                    completedBy: data[index].name,
+                    completedBy: invitation.participants[index].person.lastName,
                     completedAt: new Date()
                 });
-                setParticipantList(data);
                 resolve();
             } catch (error) {
                 reject(error);
@@ -51,19 +45,19 @@ const GeneralInfo = (): JSX.Element => {
             <ProjectInfoContainer>
                 <ProjectInfoDetail>
                     <Typography variant="meta">Selected project</Typography>
-                    <Typography variant="body_long">{generalInfo.project}</Typography>
+                    <Typography variant="body_long">{invitation.projectName}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
                     <Typography variant="meta">Type</Typography>
-                    <Typography variant="body_long">{generalInfo.type}</Typography>
+                    <Typography variant="body_long">{invitation.type}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
                     <Typography variant="meta">Title</Typography>
-                    <Typography variant="body_long">{generalInfo.title}</Typography>
+                    <Typography variant="body_long">{invitation.title}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
                     <Typography variant="meta">Description</Typography>
-                    <Typography variant="body_long">{generalInfo.description}</Typography>
+                    <Typography variant="body_long">{invitation.description}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>
@@ -73,33 +67,29 @@ const GeneralInfo = (): JSX.Element => {
                 <ProjectInfoDetail>
                     <DetailContainer>
                         <DateTimeItem>
-                            <Typography variant="meta">From</Typography>
-                            <Typography variant="body_long">{getFormatDate(generalInfo.punchRoundTime.from)}</Typography>
+                            <Typography variant="meta">Date</Typography>
+                            <Typography variant="body_long">{format(new Date(invitation.startTime), 'dd/MM/yyyy')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography variant="meta">Time</Typography>
-                            <Typography variant="body_long">{getFormatTime(generalInfo.punchRoundTime.from)}</Typography>
+                            <Typography variant="meta">From</Typography>
+                            <Typography variant="body_long">{format(new Date(invitation.startTime), 'HH:mm')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
                             <Typography variant="meta">To</Typography>
-                            <Typography variant="body_long">{getFormatDate(generalInfo.punchRoundTime.to)}</Typography>
-                        </DateTimeItem>
-                        <DateTimeItem>
-                            <Typography variant="meta">Time</Typography>
-                            <Typography variant="body_long">{getFormatTime(generalInfo.punchRoundTime.to)}</Typography>
+                            <Typography variant="body_long">{format(new Date(invitation.endTime), 'HH:mm')}</Typography>
                         </DateTimeItem>
                     </DetailContainer>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
                     <Typography variant="meta">Location</Typography>
-                    <Typography variant="body_long">{generalInfo.location}</Typography>
+                    <Typography variant="body_long">{invitation.location}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={participantList} completed={completed} completePunchOut={completePunchOut} />
+            <ParticipantsTable participants={invitation.participants} completed={completed} completePunchOut={completePunchOut} />
         </Container>
     );
 };

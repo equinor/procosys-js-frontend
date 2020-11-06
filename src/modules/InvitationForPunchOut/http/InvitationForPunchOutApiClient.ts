@@ -14,6 +14,44 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
+export type InvitationResponse = {
+    title: string;
+    description: string;
+    location: string;
+    startTime: string;
+    endTime: string;
+    projectName: string;
+    type: string;
+    participants: {
+        organization: string;
+        sortKey: number;
+        externalEmail: string;
+        person: {
+            id: number;
+            firstName: string;
+            lastName: string;
+            azureOid: string;
+            required: boolean;
+            response?: string;
+            rowVersion: string;
+        },
+        functionalRole: {
+            code: string;
+            email: string;
+            usePersonalEmail: boolean;
+            persons: {
+                id: number;
+                firstName: string;
+                lastName: string;
+                azureOid: string;
+                required: boolean;
+                response?: string;
+                rowVersion: string;
+            }[]
+        }
+    }[]
+}
+
 type AttachmentResponse = {
     id: number;
     fileName: string;
@@ -220,6 +258,30 @@ class InvitationForPunchOutApiClient extends ApiClient {
         }
     }
 
+
+    /**
+     * Get IPO details
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getIPO(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<InvitationResponse> {
+        const endpoint = `/invitations/${id}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
     /**
      * Create IPO
      *
@@ -417,7 +479,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     /**
      * Get persons in PCS
      *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     *@param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
         const endpoint = '/Persons';

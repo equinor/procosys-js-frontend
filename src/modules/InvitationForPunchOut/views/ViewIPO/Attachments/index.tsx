@@ -2,6 +2,7 @@ import { AddAttachmentContainer, AttachmentTable, Container, DragAndDropContaine
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { Attachment } from '../types';
 import { Canceler } from '@procosys/http/HttpClient';
 import CustomTooltip from './CustomTooltip';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -13,11 +14,6 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 
 const { Head, Body, Cell, Row } = Table;
 
-type Attachment = {
-    id: number;
-    fileName: string;
-    rowVersion: string;
-}
 
 interface AttachmentsProps {
     ipoId: number;

@@ -41,6 +41,7 @@ type Person = {
 type ExternalEmail = {
     id: number;
     externalEmail: string;
+    response?: string;
     rowVersion: string;
 }
 

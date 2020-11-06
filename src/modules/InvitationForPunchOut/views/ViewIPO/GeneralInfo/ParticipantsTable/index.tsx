@@ -102,8 +102,21 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                     {participants.map((participant: Participant, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{OrganizationMap.get(participant.organization as Organization)}</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{`${participant.person.firstName} ${participant.person.lastName}`}</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{participant.person.response}</Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle'}}>{
+                                participant.person ? 
+                                    `${participant.person.firstName} ${participant.person.lastName}` :
+                                    participant.functionalRole ?
+                                        participant.functionalRole.code :
+                                        participant.externalEmail.response
+                            
+                            }</Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle'}}>{
+                                participant.person ?    
+                                    participant.person.response :
+                                    participant.functionalRole ? 
+                                        participant.functionalRole.response :
+                                        participant.externalEmail.response
+                            }</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                 <Switch label={editData[index].attended ? 'Attended' : 'Did not attend'} checked={editData[index].attended} onChange={(): void => handleEditAttended(index)}/>
                             </Cell>

@@ -1,3 +1,49 @@
+type McPkgScope = {
+    mcPkgNo: string;
+    description: string;
+    commPkgNo: string;
+}
+
+type CommPkgScope = {
+    commPkgNo: string;
+    description: string;
+    status: string;
+}
+
+type Participant = {
+    organization: string;
+    sortKey: number;
+    externalEmail: ExternalEmail;
+    person: Person;
+    functionalRole: FunctionalRole;
+}
+
+type FunctionalRole = {
+    id: number;
+    code: string;
+    email: string;
+    persons: Person[]
+    response?: string;
+    rowVersion: string;
+}
+
+type Person = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    azureOid: string;
+    email: string;
+    required: boolean;
+    response?: string;
+    rowVersion: string;
+}
+
+type ExternalEmail = {
+    id: number;
+    externalEmail: string;
+    rowVersion: string;
+}
+
 export type Invitation = {
     projectName: string;
     title: string;
@@ -8,8 +54,8 @@ export type Invitation = {
     startTime: string;
     endTime: string;
     participants: Participant[];
-    mcPkgScope: McPkg;
-    commPkgScope: CommPkg;
+    mcPkgScope: McPkgScope;
+    commPkgScope: CommPkgScope;
 }
 
 export type Attachment = {
@@ -18,50 +64,7 @@ export type Attachment = {
     rowVersion: string;
 }
 
-export type Participant = {
-    organization: string;
-    sortKey: number;
-    externalEmail: string;
-    person: Person;
-    functionalRole: FunctionalRole;
-}
-
-export type Person = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    azureOid: string;
-    required: boolean;
-    response?: string;
-    rowVersion: string;
-}
-
-export type FunctionalRole = {
-    code: string;
-    email: string;
-    usePersonalEmail: boolean;
-    persons: Person[];
-}
-
-export type McPkg = {
-    mcPkgNo: string;
-    description: string;
-    commPkgNo: string;
-}
-
-export type CommPkg = {
-    commPkgNo: string;
-    description: string;
-    status: string;
-}
-
-export type Organization = 'Commissioning' | 'ConstructionCompany' | 'Contractor' | 'Operation' | 'TechnicalIntegrity' | 'Supplier' | 'External';
-
-
-export type ResponseType = 'Attending' | 'Tentative' | 'Not responded' |'Declined';
-
 export type CompletedType = {
     completedBy?: string;
     completedAt?: Date;
 }
-

@@ -14,42 +14,65 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
-export type InvitationResponse = {
+type InvitationResponse = {
+    projectName: string;
     title: string;
     description: string;
     location: string;
+    type: string;
+    rowVersion: string;
     startTime: string;
     endTime: string;
-    projectName: string;
-    type: string;
-    participants: {
-        organization: string;
-        sortKey: number;
-        externalEmail: string;
-        person: {
-            id: number;
-            firstName: string;
-            lastName: string;
-            azureOid: string;
-            required: boolean;
-            response?: string;
-            rowVersion: string;
-        },
-        functionalRole: {
-            code: string;
-            email: string;
-            usePersonalEmail: boolean;
-            persons: {
-                id: number;
-                firstName: string;
-                lastName: string;
-                azureOid: string;
-                required: boolean;
-                response?: string;
-                rowVersion: string;
-            }[]
-        }
-    }[]
+    participants: ParticipantInvitationResponse[];
+    mcPkgScope: McPkgScopeResponse;
+    commPkgScope: CommPkgScopeResponse;
+}
+
+type McPkgScopeResponse = {
+    mcPkgNo: string;
+    description: string;
+    commPkgNo: string;
+}
+
+type CommPkgScopeResponse = {
+    commPkgNo: string;
+    description: string;
+    status: string;
+}
+
+type ParticipantInvitationResponse = {
+    organization: string;
+    sortKey: number;
+    externalEmail: ExternalEmailInvitationResponse;
+    person: PersonInvitationResponse;
+    functionalRole: FunctionalRoleInvitationResponse;
+}
+
+type FunctionalRoleInvitationResponse = {
+    id: number;
+    code: string;
+    email: string;
+    persons: PersonInvitationResponse[]
+    response?: string;
+    rowVersion: string;
+
+}
+
+type PersonInvitationResponse = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    azureOid: string;
+    email: string;
+    required: boolean;
+    response?: string;
+    rowVersion: string;
+}
+
+type ExternalEmailInvitationResponse = {
+    id: number;
+    externalEmail: string;
+    rowVersion: string;
 }
 
 type AttachmentResponse = {

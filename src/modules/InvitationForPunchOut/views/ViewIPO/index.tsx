@@ -5,7 +5,7 @@ import { Tabs, Typography } from '@equinor/eds-core-react';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import GeneralInfo from './GeneralInfo';
-import { InvitationResponse } from '../../http/InvitationForPunchOutApiClient';
+import { Invitation } from './types';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
@@ -34,7 +34,7 @@ const ViewIPO = (): JSX.Element => {
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Sent);
     const [activeTab, setActiveTab] = useState(0);
     const { apiClient } = useInvitationForPunchOutContext();
-    const [invitation, setInvitation] = useState<InvitationResponse>();
+    const [invitation, setInvitation] = useState<Invitation>();
     const [loading, setLoading] = useState<boolean>(false);
 
     const getInvitation = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
@@ -69,7 +69,7 @@ const ViewIPO = (): JSX.Element => {
         <ViewIPOHeader 
             steps={steps}
             currentStep={currentStep}
-            title='Test title'
+            title={invitation ? `${invitation.title}` : ''}
         />
         { loading ? (
             <CenterContainer>

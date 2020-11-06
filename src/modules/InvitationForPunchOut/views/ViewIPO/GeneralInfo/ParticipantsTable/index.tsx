@@ -1,10 +1,11 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
-import { CompletedType, Organization, Participant } from '../../types';
+import { CompletedType, Participant } from '../../types';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import { OrganizationMap, OrganizationsEnum } from '../../utils';
 import React, { useCallback, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
+import { Organization } from '../../../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';

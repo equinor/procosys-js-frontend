@@ -1,14 +1,13 @@
+import { CompletedType, Invitation } from '../types';
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
 import React, { useState } from 'react';
 
-import { CompletedType } from '../types';
-import { InvitationResponse } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 import ParticipantsTable from './ParticipantsTable';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 
 interface Props {
-    invitation: InvitationResponse;
+    invitation: Invitation;
 }
 
 const GeneralInfo = ({ invitation }: Props): JSX.Element => {
@@ -44,20 +43,20 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
             </HeaderContainer>
             <ProjectInfoContainer>
                 <ProjectInfoDetail>
-                    <Typography variant="meta">Selected project</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Selected project</Typography>
                     <Typography variant="body_long">{invitation.projectName}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="meta">Type</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Type</Typography>
                     <Typography variant="body_long">{invitation.type}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="meta">Title</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Title</Typography>
                     <Typography variant="body_long">{invitation.title}</Typography>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="meta">Description</Typography>
-                    <Typography variant="body_long">{invitation.description}</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Description</Typography>
+                    <Typography variant="body_long">{invitation.description ? invitation.description : '-'}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>
@@ -67,22 +66,22 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
                 <ProjectInfoDetail>
                     <DetailContainer>
                         <DateTimeItem>
-                            <Typography variant="meta">Date</Typography>
+                            <Typography token={{ fontSize: '12px' }}>Date</Typography>
                             <Typography variant="body_long">{format(new Date(invitation.startTime), 'dd/MM/yyyy')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography variant="meta">From</Typography>
+                            <Typography token={{ fontSize: '12px' }}>From</Typography>
                             <Typography variant="body_long">{format(new Date(invitation.startTime), 'HH:mm')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography variant="meta">To</Typography>
+                            <Typography token={{ fontSize: '12px' }}>To</Typography>
                             <Typography variant="body_long">{format(new Date(invitation.endTime), 'HH:mm')}</Typography>
                         </DateTimeItem>
                     </DetailContainer>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail>
-                    <Typography variant="meta">Location</Typography>
-                    <Typography variant="body_long">{invitation.location}</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Location</Typography>
+                    <Typography variant="body_long">{invitation.location ? invitation.location : '-'}</Typography>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>

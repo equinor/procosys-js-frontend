@@ -1,13 +1,13 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { CompletedType, Organization, Participant } from '../../types';
 import { Container, CustomTable, SpinnerContainer } from './style';
+import { OrganizationMap, OrganizationsEnum } from '../../utils';
 import React, { useCallback, useRef, useState } from 'react';
-import { getFormatDate, getFormatTime } from '../utils';
 
 import CustomTooltip from './CustomTooltip';
-import { OrganizationMap } from '../../utils';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
+import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 const { Head, Body, Cell, Row } = Table;
@@ -35,7 +35,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
         if (completed.completedBy && completed.completedBy === participant.person.lastName) {
             return <span>{completed.completedBy}</span>;
         // TODO: Determine participant permission for current user
-        } else if (participant.organization === 'Contractor') {
+        } else if (participant.organization === OrganizationsEnum.Contractor) {
             return (
                 <CustomTooltip title={tooltipText} arrow>
                     <Button tooltip={tooltipText} ref={btnRef} onClick={handleCompletePunchOut}>Complete punch out</Button>
@@ -114,7 +114,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
                                 {(completed.completedAt && completed.completedBy === participant.person.lastName)  
-                                    ? `${getFormatDate(completed.completedAt)} ${getFormatTime(completed.completedAt)}` 
+                                    ? `${format(completed.completedAt, 'dd/MM/yyyy HH:mm')}`
                                     : '-'}
                             </Cell>
                         </Row>

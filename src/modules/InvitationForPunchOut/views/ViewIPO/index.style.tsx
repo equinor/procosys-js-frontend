@@ -16,3 +16,11 @@ export const Container = styled.div`
         margin-right: calc(var(--margin-module--right) * -1);
     }
 `;
+
+export const CenterContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    position: relative;
+    margin-top: calc(var(--margin-module--top) * 4);
+`;

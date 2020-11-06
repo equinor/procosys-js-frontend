@@ -1,16 +1,25 @@
 import { Organization } from './types';
 
-const createOrganizationMap = (): Map<Organization, string> => {
-    const orgMap = new Map<Organization, string>();
-    orgMap.set('Commissioning', 'Commissioning');
-    orgMap.set('ConstructionCompany', 'Constr. company');
-    orgMap.set('Contractor', 'Contractor');
-    orgMap.set('Operation', 'Operation');
-    orgMap.set('TechnicalIntegrity', 'Tech. integrity');
-    orgMap.set('Supplier', 'Supplier');
-    orgMap.set('External', 'External');
-    return orgMap;
+export enum OrganizationsEnum {
+    Commissioning = 'Commissioning',
+    ConstructionCompany = 'ConstructionCompany',
+    Contractor = 'Contractor',
+    Operation = 'Operation',
+    TechnicalIntegrity = 'TechnicalIntegrity',
+    Supplier = 'Supplier',
+    External = 'External',
 };
 
+const createOrganizationMap = (): Map<Organization, string> => {
+    const orgMap = new Map<Organization, string>();
+    orgMap.set(OrganizationsEnum.Commissioning, 'Commissioning');
+    orgMap.set(OrganizationsEnum.ConstructionCompany, 'Constr. comp.');
+    orgMap.set(OrganizationsEnum.Contractor, 'Contractor');
+    orgMap.set(OrganizationsEnum.Operation, 'Operation');
+    orgMap.set(OrganizationsEnum.TechnicalIntegrity, 'Tech. integrity');
+    orgMap.set(OrganizationsEnum.Supplier, 'Supplier');
+    orgMap.set(OrganizationsEnum.External, 'Guest (External)');
+    return orgMap;
+};
 
 export const OrganizationMap = createOrganizationMap();

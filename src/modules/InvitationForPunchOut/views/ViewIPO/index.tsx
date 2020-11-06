@@ -1,9 +1,9 @@
+import { CenterContainer, Container } from './index.style';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
-import { Container } from './index.style';
 import GeneralInfo from './GeneralInfo';
 import { InvitationResponse } from '../../http/InvitationForPunchOutApiClient';
 import Spinner from '@procosys/components/Spinner';
@@ -71,7 +71,11 @@ const ViewIPO = (): JSX.Element => {
             currentStep={currentStep}
             title='Test title'
         />
-        { loading ? <Spinner /> :
+        { loading ? (
+            <CenterContainer>
+                <Spinner large />
+            </CenterContainer>
+        ) :
             invitation ? (
                 <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
                     <TabList>
@@ -89,9 +93,7 @@ const ViewIPO = (): JSX.Element => {
                     </TabPanels>
                 </Tabs>
             ) : (
-                <div>
-                    <Typography>No invitation found</Typography>
-                </div>
+                <Typography>No invitation found</Typography>
             )
         }
     </Container>);

@@ -479,7 +479,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     /**
      * Get persons in PCS
      *
-     *@param setRequestCanceller Returns a function that can be called to cancel the request
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
         const endpoint = '/Persons';

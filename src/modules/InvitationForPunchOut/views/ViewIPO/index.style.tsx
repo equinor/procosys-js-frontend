@@ -22,5 +22,5 @@ export const CenterContainer = styled.div`
     height: 100%;
     text-align: center;
     position: relative;
-    margin-top: calc(var(--margin-module--top) * 4);
+    margin-top: 10%;
 `;

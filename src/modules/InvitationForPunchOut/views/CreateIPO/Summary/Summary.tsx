@@ -88,8 +88,12 @@ const Summary = ({
                 { participant.role &&
                     <Cell>
                         <div>{participant.role.code + ' - ' + participant.role.description}</div>
-                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
-                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                        {!participant.role.usePersonalEmail &&
+                            <>
+                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
+                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                            </>
+                        }
                     </Cell>
                 }
                 { participant.person &&

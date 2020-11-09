@@ -217,12 +217,13 @@ class ScopeTable extends React.Component<ScopeTableProps> {
 
         return new Promise((resolve) => {
             if (this.refreshOnResize && this.result) {
+                this.refreshOnResize = false;
                 resolve({
                     data: this.result.tags,
                     page: query.page,
                     totalCount: this.result.maxAvailable
-
                 });
+
             } else {
                 return this.props.getTags(query.page, query.pageSize, orderByField, orderDirection).then(result => {
                     this.result = result;

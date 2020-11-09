@@ -78,7 +78,6 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
         setEditData([...updateData]);
     };
 
-
     return (
         <Container>
             {loading && (
@@ -113,7 +112,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                                 participant.person ?    
                                     participant.person.response :
                                     participant.functionalRole ? 
-                                        participant.functionalRole.response :
+                                        (participant.functionalRole.response != null ? participant.functionalRole.response : '') :
                                         participant.externalEmail.response
                             }</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>

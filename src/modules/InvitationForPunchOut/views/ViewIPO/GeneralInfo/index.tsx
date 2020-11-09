@@ -67,15 +67,15 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
                     <DetailContainer>
                         <DateTimeItem>
                             <Typography token={{ fontSize: '12px' }}>Date</Typography>
-                            <Typography variant="body_long">{format(new Date(invitation.startTime), 'dd/MM/yyyy')}</Typography>
+                            <Typography variant="body_long">{format(new Date(invitation.startTimeUtc), 'dd/MM/yyyy')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
                             <Typography token={{ fontSize: '12px' }}>From</Typography>
-                            <Typography variant="body_long">{format(new Date(invitation.startTime), 'HH:mm')}</Typography>
+                            <Typography variant="body_long">{format(new Date(invitation.startTimeUtc), 'HH:mm')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
                             <Typography token={{ fontSize: '12px' }}>To</Typography>
-                            <Typography variant="body_long">{format(new Date(invitation.endTime), 'HH:mm')}</Typography>
+                            <Typography variant="body_long">{format(new Date(invitation.endTimeUtc), 'HH:mm')}</Typography>
                         </DateTimeItem>
                     </DetailContainer>
                 </ProjectInfoDetail>

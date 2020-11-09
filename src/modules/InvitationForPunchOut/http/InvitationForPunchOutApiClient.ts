@@ -20,9 +20,10 @@ type InvitationResponse = {
     description: string;
     location: string;
     type: string;
+    status: string;
     rowVersion: string;
-    startTime: string;
-    endTime: string;
+    startTimeUtc: string;
+    endTimeUtc: string;
     participants: ParticipantInvitationResponse[];
     mcPkgScope: McPkgScopeResponse;
     commPkgScope: CommPkgScopeResponse;

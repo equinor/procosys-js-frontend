@@ -1,6 +1,6 @@
 import { Container, CustomTable } from './style';
 
-import { CommPkg } from '../types';
+import { CommPkgScope } from '../../types';
 import React from 'react';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
@@ -8,11 +8,11 @@ import { Typography } from '@equinor/eds-core-react';
 const { Head, Body, Cell, Row } = Table;
 
 interface Props {
-    commPkgs: CommPkg[];
+    commPkgScope: CommPkgScope[];
 }
 
-const CommPkgsTable = ({ commPkgs }: Props ): JSX.Element => {
-    const openCommPkg = async (id: number): Promise<void> => { Promise.resolve(null); };
+const CommPkgsTable = ({ commPkgScope }: Props ): JSX.Element => {
+    const getCommPkg = async (id: string): Promise<void> => { Promise.resolve(null); };
  
     return (
         <Container>
@@ -20,22 +20,24 @@ const CommPkgsTable = ({ commPkgs }: Props ): JSX.Element => {
                 <Head>
                     <Row>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Comm pkg no.</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Comm pkg descripton</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Comm pkg description</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Comm pkg status</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Punch status</Cell>
                     </Row>
                 </Head>
                 <Body>
-                    {commPkgs && commPkgs.length > 0 && commPkgs.map((commPkg: CommPkg, index: number) => (
+                    {commPkgScope && commPkgScope.length > 0 ? commPkgScope.map((commPkg: CommPkgScope, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography onClick={(): Promise<void> => openCommPkg(commPkg.id)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
+                                <Typography onClick={(): Promise<void> => getCommPkg(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.description}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.status}</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.punchStatus}</Cell>
                         </Row>
-                    ))}
+                    )) : (
+                        <Row>
+                            <Cell style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">Nothing to display</Typography></Cell>
+                        </Row>
+                    )}
                 </Body>
             </CustomTable> 
         </Container>
@@ -43,4 +45,3 @@ const CommPkgsTable = ({ commPkgs }: Props ): JSX.Element => {
 };
 
 export default CommPkgsTable;
-

@@ -55,7 +55,6 @@ type FunctionalRoleInvitationResponse = {
     persons: PersonInvitationResponse[]
     response?: string;
     rowVersion: string;
-
 }
 
 type PersonInvitationResponse = {

@@ -52,7 +52,6 @@ const ViewIPO = (): JSX.Element => {
         (async (): Promise<void> => {
             setLoading(true);
             await getInvitation((cancel: Canceler) => { requestCancellor = cancel; });
-            await getInvitation();
             setLoading(false);
         })();
         return (): void => {

@@ -1,4 +1,4 @@
-import { Organization } from '../types';
+import { Organization } from '../../types';
 
 export enum OrganizationsEnum {
     Commissioning = 'Commissioning',

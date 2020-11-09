@@ -5,7 +5,7 @@ import { OrganizationMap, OrganizationsEnum } from '../../utils';
 import React, { useCallback, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
-import { Organization } from '../../../types';
+import { Organization } from '../../../../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
@@ -107,8 +107,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                                     `${participant.person.firstName} ${participant.person.lastName}` :
                                     participant.functionalRole ?
                                         participant.functionalRole.code :
-                                        participant.externalEmail.response
-                            
+                                        participant.externalEmail.externalEmail
                             }</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{
                                 participant.person ?    

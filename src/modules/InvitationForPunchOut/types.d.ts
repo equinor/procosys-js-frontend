@@ -71,3 +71,5 @@ export interface McScope {
     multipleDisciplines: boolean;
     selected: McPkgRow[];
 }
+
+export type Organization = 'Commissioning' | 'ConstructionCompany' | 'Contractor' | 'Operation' | 'TechnicalIntegrity' | 'Supplier' | 'External';

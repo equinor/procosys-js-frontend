@@ -34,7 +34,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
     
     const getSignedProperty = useCallback((participant: Participant, handleCompletePunchOut: (index: number) => void): JSX.Element => {
         if (completed.completedBy && completed.completedBy === participant.person.lastName) {
-            return <span>{completed.completedBy}</span>;
+            return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
         // TODO: Determine participant permission for current user
         } else if (participant.organization === OrganizationsEnum.Contractor) {
             return (

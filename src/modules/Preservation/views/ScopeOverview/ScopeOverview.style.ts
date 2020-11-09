@@ -32,11 +32,7 @@ export const HeaderContainer = styled.div`
     display: flex;
     justify-content:space-between;
     width:100%;
-    flex-wrap: wrap;
-   
-    > div {
-        //margin-bottom: var(--grid-unit);
-    }
+    flex-wrap: wrap;  
 `;
 
 export const Header = styled.header`
@@ -61,13 +57,6 @@ export const HeaderPartOne = styled.div<{ showActions?: boolean }>`
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    button {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-
-        path {
-            fill: ${tokens.colors.interactive.primary__resting.rgba};
-        }
-    }
 
     ${Breakpoints.TABLET} {
         width: 100%;
@@ -104,7 +93,6 @@ export const ActionsContainer = styled.div<{ showActions?: boolean }>`
 `;
 
 export const IconBar = styled.div`
-
     display: flex;
     justify-content: flex-end;
 
@@ -181,7 +169,6 @@ export const ShowActionsButton = styled.div<any>`
     ${Breakpoints.TABLET} {
         display: flex;
         margin-bottom: 6px;
-        //padding: calc(var(--grid-unit) + 4px) var(--grid-unit);
         cursor: pointer;
     }
 `;

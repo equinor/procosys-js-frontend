@@ -1,5 +1,6 @@
 import { CommPkgDto, FunctionalRoleDto, McPkgDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
+import { OrganizationMap, OrganizationsEnum } from './utils';
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
@@ -7,7 +8,6 @@ import { Container } from './CreateIPO.style';
 import CreateIPOHeader from './CreateIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Loading from '@procosys/components/Loading';
-import { OrganizationsEnum } from './Participants/Participants';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
@@ -22,44 +22,42 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     poType: null,
     title: null,
     description: null,
-    startDate: null,
-    endDate: null,
-    startTime: null,
-    endTime: null,
+    startTime: new Date(),
+    endTime: new Date(),
     location: null
 };
 
 const initialParticipants: Participant[] = [
     {
-        organization: { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany  },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
         type: 'Functional role',
         externalEmail: null,
         person: null,
@@ -181,14 +179,14 @@ const CreateIPO = (): JSX.Element => {
     };
 
     const uploadAllAttachments = async (ipoId: number): Promise<any> => {
-        attachments.forEach(async attachment => {
+        await Promise.all(attachments.map(async (attachment) => {
             try {
                 await apiClient.uploadAttachment(ipoId, attachment, true);
             } catch (error) {
-                console.error('Upload attchment failed: ', error.message, error.data);
+                console.error('Upload attachment failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
-        });
+        }));
     };
 
     const createNewIpo = async (): Promise<void> => {
@@ -203,8 +201,8 @@ const CreateIPO = (): JSX.Element => {
                     generalInfo.title, 
                     generalInfo.projectName,
                     generalInfo.poType.value,
-                    new Date(generalInfo.startDate + ' ' + generalInfo.startTime + ' GMT'),
-                    new Date(generalInfo.startDate + ' ' + generalInfo.endTime + ' GMT'),
+                    generalInfo.startTime,
+                    generalInfo.endTime,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
@@ -264,7 +262,7 @@ const CreateIPO = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
+        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);

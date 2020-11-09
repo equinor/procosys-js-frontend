@@ -1,7 +1,9 @@
+import { Button, Table, Typography } from '@equinor/eds-core-react';
+import { ButtonContainer, Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
+import { CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+
 import React from 'react';
-import { Button, Typography, Table } from '@equinor/eds-core-react';
-import { Container, FormContainer, ButtonContainer, Section, Subsection, TableSection } from './Summary.style';
-import { GeneralInfoDetails, CommPkgRow, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+import { format } from 'date-fns';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -134,20 +136,16 @@ const Summary = ({
                 <Typography variant="h5">Date and time for punch round</Typography>
                 <div className='timeContainer'>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>From</Typography>
-                        <Typography variant="body_long">{ generalInfo.startDate }</Typography>
+                        <Typography token={{fontSize: '12px'}}>Date</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.startTime, 'dd/MM/yyyy') }</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Time</Typography>
-                        <Typography variant="body_long">{ generalInfo.startTime}</Typography>
+                        <Typography token={{fontSize: '12px'}}>From</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.startTime, 'HH:mm') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>To</Typography>
-                        <Typography variant="body_long">{ generalInfo.endDate }</Typography>
-                    </Subsection>
-                    <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Time</Typography>
-                        <Typography variant="body_long">{ generalInfo.endTime }</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.endTime, 'HH:mm') }</Typography>
                     </Subsection>
                 </div>
                 <Subsection>

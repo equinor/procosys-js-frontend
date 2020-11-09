@@ -58,6 +58,8 @@ const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
+const close = jest.fn(() => { });
+
 
 describe('<OutlookInfo />', () => {
     it('Renders with supplied dummy data', async () => {
@@ -71,8 +73,6 @@ describe('<OutlookInfo />', () => {
     });
 
     it('Should trigger close when X is clicked', () => {
-        const close = jest.fn(() => { });
-
         const { getByTitle } = renderWithTheme(<OutlookInfo close={ close } participants={participants} organizer={organizer} status={OutlookStatusType.OK} />);
         getByTitle('Close').click();
         expect(close).toHaveBeenCalledTimes(1);

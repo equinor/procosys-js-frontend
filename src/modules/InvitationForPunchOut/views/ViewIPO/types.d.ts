@@ -66,6 +66,6 @@ export type Attachment = {
 }
 
 export type CompletedType = {
-    completedBy?: string;
+    completedBy?: number;
     completedAt?: Date;
 }

@@ -33,7 +33,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
 
     
     const getSignedProperty = useCallback((participant: Participant, handleCompletePunchOut: (index: number) => void): JSX.Element => {
-        if (completed.completedBy && completed.completedBy === participant.person.lastName) {
+        if (participant.person && completed.completedBy && completed.completedBy === participant.person.id) {
             return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
         // TODO: Determine participant permission for current user
         } else if (participant.organization === OrganizationsEnum.Contractor) {
@@ -126,7 +126,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index))}
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                {(completed.completedAt && completed.completedBy === participant.person.lastName)  
+                                {(participant.person && completed.completedAt && completed.completedBy === participant.person.id)  
                                     ? `${format(completed.completedAt, 'dd/MM/yyyy HH:mm')}`
                                     : '-'}
                             </Cell>

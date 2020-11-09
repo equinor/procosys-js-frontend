@@ -1,5 +1,6 @@
 import { CommPkgDto, FunctionalRoleDto, McPkgDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
+import { OrganizationMap, OrganizationsEnum } from './utils';
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
@@ -7,7 +8,6 @@ import { Container } from './CreateIPO.style';
 import CreateIPOHeader from './CreateIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Loading from '@procosys/components/Loading';
-import { OrganizationsEnum } from './Participants/Participants';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
@@ -29,35 +29,35 @@ const emptyGeneralInfo: GeneralInfoDetails = {
 
 const initialParticipants: Participant[] = [
     {
-        organization: { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany  },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
         type: 'Functional role',
         externalEmail: null,
         person: null,

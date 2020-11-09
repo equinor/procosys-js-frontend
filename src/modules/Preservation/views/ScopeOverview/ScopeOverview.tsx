@@ -150,7 +150,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
-    const refreshScopeListCallback = useRef<(maxHeight: number) => void>();
+    const refreshScopeListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
     const isFirstRender = useRef<boolean>(true);
 
     const moduleHeaderContainerRef = useRef<HTMLDivElement>(null);
@@ -212,11 +212,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return null;
     };
 
+
     const updateModuleAreaHeightReference = (): void => {
         if (!moduleContainerRef.current) return;
         setModuleAreaHeight(moduleContainerRef.current.clientHeight);
     };
 
+    /** Update module area height on module resize */
     useEffect(() => {
         updateModuleAreaHeightReference();
         window.addEventListener('resize', updateModuleAreaHeightReference);
@@ -224,7 +226,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return (): void => {
             window.removeEventListener('resize', updateModuleAreaHeightReference);
         };
-
     }, [moduleContainerRef, displayFilter]);
 
     const updateModuleHeaderHeightReference = (): void => {
@@ -232,6 +233,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setModuleHeaderHeight(moduleHeaderContainerRef.current.clientHeight);
     };
 
+    /** Update module header height on module header resize */
     useEffect(() => {
         updateModuleHeaderHeightReference();
         window.addEventListener('resize', updateModuleHeaderHeightReference);
@@ -239,12 +241,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return (): void => {
             window.removeEventListener('resize', updateModuleHeaderHeightReference);
         };
-
     }, [moduleHeaderContainerRef, displayFilter, showActions]);
 
 
-    const refreshScopeList = (): void => {
-        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - moduleHeaderHeight - 115);
+    const refreshScopeList = (refreshOnResize?: boolean): void => {
+        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - moduleHeaderHeight - 115, refreshOnResize);
     };
 
     useEffect(() => {
@@ -261,7 +262,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     }, [filterForProjects]);
 
     useEffect(() => {
-        refreshScopeList();
+        refreshScopeList(true);
     }, [moduleAreaHeight, moduleHeaderHeight]);
 
     useEffect(() => {
@@ -290,7 +291,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     }, [selectedTags]);
 
-    const setRefreshScopeListCallback = (callback: (maxHeight: number) => void): void => {
+    const setRefreshScopeListCallback = (callback: (maxHeight: number, refreshOnResize?: boolean) => void): void => {
         refreshScopeListCallback.current = callback;
     };
 
@@ -612,7 +613,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
         unvoidableTags = [];
@@ -924,7 +924,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
                 />
-
 
                 {
                     displayFlyout && (

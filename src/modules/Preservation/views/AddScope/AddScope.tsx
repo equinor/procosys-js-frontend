@@ -20,6 +20,7 @@ export enum AddScopeMethod {
     AddTagsManually = 'AddTagsManually',
     AddTagsAutoscope = 'AddTagsAutoscope',
     CreateDummyTag = 'CreateDummyTag',
+    DuplicateDummyTag = 'DuplicateDummyTag',
     MigrateTags = 'MigrateTags',
     Unknown = 'Unknown'
 }
@@ -38,6 +39,8 @@ const AddScope = (): JSX.Element => {
                 return (AddScopeMethod.AddTagsAutoscope);
             case 'createDummyTag':
                 return (AddScopeMethod.CreateDummyTag);
+            case 'duplicateDummyTag':
+                return (AddScopeMethod.DuplicateDummyTag);
             case 'selectMigrateTags':
                 return (AddScopeMethod.MigrateTags);
             default:
@@ -67,6 +70,7 @@ const AddScope = (): JSX.Element => {
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
     const [isSubmittingScope, setIsSubmittingScope] = useState(false);
+    const [sourceTagId, setSourceTagId] = useState<number>(-1);
 
     const filterOnPurchaseOrderNumber = (tags: any[]): any[] => {
         return tags.filter((r) => !purchaseOrderNumber || purchaseOrderNumber == r.purchaseOrderTitle);
@@ -111,7 +115,6 @@ const AddScope = (): JSX.Element => {
         }
         setIsLoading(false);
     };
-
 
     /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
@@ -174,7 +177,6 @@ const AddScope = (): JSX.Element => {
         if (selectedTags.length <= 0 && step === 2) {
             setStep(1);
         }
-
     }, [selectedTags]);
 
     const goToNextStep = (): void => {
@@ -209,6 +211,9 @@ const AddScope = (): JSX.Element => {
                     break;
                 case AddScopeMethod.CreateDummyTag:
                     await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
+                    break;
+                case AddScopeMethod.DuplicateDummyTag:
+                    await apiClient.duplicateAreaTag(sourceTagId, areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
                     break;
                 case AddScopeMethod.MigrateTags:
                     await apiClient.migrateTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);

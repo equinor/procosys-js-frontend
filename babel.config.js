@@ -1,5 +1,5 @@
 module.exports = {
-    presets: ['@babel/preset-env', '@babel/preset-react'],
+    presets: ['@babel/preset-env', ['@babel/preset-react', {'runtime': 'automatic'}]],
     plugins: [
         //Lets us use React.lazy(() => {})
         '@babel/plugin-syntax-dynamic-import',

@@ -37,9 +37,11 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 `;
 
 export const Container = styled.div<any>`
-    display: flex;
-    justify-content: space-between;
-    
+    ${Breakpoints.TABLET} {
+        display: flex;
+        justify-content: space-between;
+    }
+
     input + svg {
         width: 24px;
         height: 24px;

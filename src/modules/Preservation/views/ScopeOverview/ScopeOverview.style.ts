@@ -67,6 +67,7 @@ export const HeaderPartOne = styled.div<{ showActions?: boolean }>`
 export const ActionsContainer = styled.div<{ showActions?: boolean }>`
     display: flex;
     padding-top: 10px;
+    flex-wrap: wrap;
 
     .showOnlyOnTablet {
             display:none;
@@ -95,6 +96,7 @@ export const ActionsContainer = styled.div<{ showActions?: boolean }>`
 export const IconBar = styled.div`
     display: flex;
     justify-content: flex-end;
+    flex-wrap: wrap;
 
     #filterButton {
         margin-right: 0px;
@@ -149,7 +151,7 @@ export const TooltipText = styled.span`
 
 export const OldPreservationLink = styled.div`
     display: flex;
-    margin-left: var(--grid-unit);
+    margin-left: calc(var(--grid-unit) * 4);
     padding-bottom: var(--grid-unit);
     justify-content: flex-end;
     color: ${tokens.colors.interactive.primary__resting.rgba};

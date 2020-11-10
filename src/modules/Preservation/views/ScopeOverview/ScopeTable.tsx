@@ -244,7 +244,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                 <Table
                     tableRef={this.refObject} //reference will be used by parent, to trigger rendering
                     columns={[
-                        { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px', maxWidth: '200px' } },
+                        { title: 'Tag nr', render: this.getTagNoColumn, cellStyle: { minWidth: '150px' } },
                         { title: 'Description', render: this.getDescriptionColumn, cellStyle: { minWidth: '500px', maxWidth: '600px' } },
                         { title: 'Next', render: this.getNextColumn, width: '7%' },
                         { title: 'Due', render: this.getDueColumn, defaultSort: 'asc', width: '5%' },

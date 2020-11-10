@@ -1,4 +1,4 @@
-import { fireEvent, render, within } from '@testing-library/react';
+import { fireEvent, render, waitFor, within } from '@testing-library/react';
 
 import CreateIPO from '../CreateIPO';
 import React from 'react';
@@ -48,6 +48,16 @@ describe('<CreateIPO />', () => {
 
         expect(result.getByText('DP (Discipline Punch)')).toBeInTheDocument();
         expect(result.getByText('MDP (Multi Discipline Punch)')).toBeInTheDocument();
+    });
+
+    it('Should render Next button enabled', async () => {
+        const { getByText } = render(<CreateIPO />);
+        await waitFor(() => expect(getByText('Next').closest('button')).toHaveProperty('disabled', true));
+    });
+
+    it('Should render Previous button enabled', async () => {
+        const { getByText } = render(<CreateIPO />);
+        await waitFor(() => expect(getByText('Previous').closest('button')).toHaveProperty('disabled', true));
     });
 });
 

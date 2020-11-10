@@ -100,7 +100,7 @@ const GeneralInfo = ({
         } else {
             const newTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
             setGeneralInfo(gi => { return { ...gi, endTime: newTime }; });
-            setErrorFormat(newTime < generalInfo.startTime);
+            setErrorFormat(newTime <= generalInfo.startTime);
         }
     };
 

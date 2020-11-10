@@ -11,6 +11,7 @@ import Loading from '@procosys/components/Loading';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
+import { addHours } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
@@ -23,7 +24,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     title: null,
     description: null,
     startTime: new Date(),
-    endTime: new Date(),
+    endTime: addHours(new Date(), 1),
     location: null
 };
 
@@ -245,9 +246,8 @@ const CreateIPO = (): JSX.Element => {
 
     const goToStep = (stepNo: number): void => {
         if (steps[stepNo >= 2 ? stepNo-2 : 0].isCompleted) {
-            if (stepNo === StepsEnum.UploadAttachments) {
+            if (stepNo > StepsEnum.Participants) {
                 changeCompletedStatus(true, stepNo);
-                changeCompletedStatus(true, StepsEnum.SummaryAndCreate);
             }
             setCurrentStep(stepNo);
         }

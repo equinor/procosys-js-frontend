@@ -22,20 +22,36 @@ const initialSteps: Step[] = [
 ];
 
 enum StepsEnum {
-    Sent = 1,
+    Planned = 1,
     Completed = 2,
     Accepted = 3
 };
 
-
 const ViewIPO = (): JSX.Element => {
     const params = useParams<{ipoId: any}>();
-    const [steps, setSteps] = useState<Step[]>(initialSteps);
-    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Sent);
+    const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Planned);
     const [activeTab, setActiveTab] = useState(0);
     const { apiClient } = useInvitationForPunchOutContext();
     const [invitation, setInvitation] = useState<Invitation>();
     const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (invitation) {
+            switch (invitation.status) {
+                case StepsEnum[1]:
+                    setCurrentStep(StepsEnum.Planned);
+                    break;
+                case StepsEnum[2]:
+                    setCurrentStep(StepsEnum.Completed);
+                    break;
+                case StepsEnum[3]:
+                    setCurrentStep(StepsEnum.Accepted);
+                    break;
+                default:
+                    setCurrentStep(StepsEnum.Planned);
+            }
+        }
+    }, [invitation]);
 
     const getInvitation = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
@@ -66,7 +82,7 @@ const ViewIPO = (): JSX.Element => {
 
     return (<Container>
         <ViewIPOHeader 
-            steps={steps}
+            steps={initialSteps}
             currentStep={currentStep}
             title={invitation ? `${invitation.title}` : ''}
         />

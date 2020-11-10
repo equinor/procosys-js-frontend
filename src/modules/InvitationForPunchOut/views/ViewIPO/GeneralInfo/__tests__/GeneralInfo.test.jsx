@@ -23,8 +23,8 @@ const invitation = {
     location: 'here',
     type: 'Serious',
     rowVersion: '1231413',
-    startTime: new Date(2020, 11, 6, 11, 0).toString(),
-    endTime: new Date(2020, 11, 6, 13, 0).toString(),
+    startTimeUtc: new Date(2020, 11, 6, 11, 0).toString(),
+    endTimeUtc: new Date(2020, 11, 6, 13, 0).toString(),
     participants: [],
     mcPkgScope: mcPkgScope,
     commPkgScope: commPkgScope

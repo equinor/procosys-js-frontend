@@ -52,8 +52,9 @@ export type Invitation = {
     location: string;
     type: string;
     rowVersion: string;
-    startTime: string;
-    endTime: string;
+    status: string;
+    startTimeUtc: string;
+    endTimeUtc: string;
     participants: Participant[];
     mcPkgScope: McPkgScope;
     commPkgScope: CommPkgScope;

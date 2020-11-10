@@ -20,9 +20,10 @@ type InvitationResponse = {
     description: string;
     location: string;
     type: string;
+    status: string;
     rowVersion: string;
-    startTime: string;
-    endTime: string;
+    startTimeUtc: string;
+    endTimeUtc: string;
     participants: ParticipantInvitationResponse[];
     mcPkgScope: McPkgScopeResponse;
     commPkgScope: CommPkgScopeResponse;
@@ -111,8 +112,6 @@ interface PersonResponse {
 interface FunctionalRoleResponse {
     code: string;
     description: string;
-    email: string;
-    informationalEmail: string;
     usePersonalEmail: boolean;
     persons: PersonResponse[];
 }
@@ -127,29 +126,19 @@ export type PersonDto = {
 
 export type FunctionalRoleDto = {
     code: string;
-    email: string | null;
-    usePersonalEmail: boolean;
     persons: PersonDto[] | null;  
+}
+
+export type ExternalEmailDto = {
+    email: string;
 }
 
 export type ParticipantDto = {
     organization: string;
     sortKey: number;
-    externalEmail: string | null;
+    externalEmail: ExternalEmailDto | null;
     person: PersonDto | null;
     functionalRole: FunctionalRoleDto | null;
-}
-
-export type McPkgDto = {
-    mcPkgNo: string;
-    description: string;
-    commPkgNo: string;
-}
-
-export type CommPkgDto = {
-    commPkgNo: string;
-    description: string;
-    status: string;
 }
 
 /**
@@ -318,8 +307,8 @@ class InvitationForPunchOutApiClient extends ApiClient {
         description: string | null,
         location: string | null,
         participants: ParticipantDto[],
-        mcPkgScope: McPkgDto[] | null,
-        commPkgScope: CommPkgDto[] | null,
+        mcPkgScope: string[] | null,
+        commPkgScope: string[] | null,
         setRequestCanceller?: RequestCanceler): Promise<number> {
         const endpoint = '/invitations';
         const settings: AxiosRequestConfig = {};

@@ -192,6 +192,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
                                 <TextField 
+                                    id={index.toString()}
                                     disabled={!contractor && !constructionCompany}
                                     value={editData[index].notes} 
                                     onChange={(e: any): void => handleEditNotes(e, index)} />
@@ -200,11 +201,15 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                {(completed.completedAt && completed.completedBy === participant.person.id)  
-                                    ? `${format(completed.completedAt, 'dd/MM/yyyy HH:mm')}`
-                                    : (approved.approvedAt && approved.approvedBy === participant.person.id)  
-                                        ? `${format(approved.approvedAt, 'dd/MM/yyyy HH:mm')}`
-                                        : '-'}
+                                {participant.person ? 
+                                    (completed.completedAt && completed.completedBy === participant.person.id)  
+                                        ? `${format(completed.completedAt, 'dd/MM/yyyy HH:mm')}`
+                                        : (approved.approvedAt && approved.approvedBy === participant.person.id)  
+                                            ? `${format(approved.approvedAt, 'dd/MM/yyyy HH:mm')}`
+                                            : '-'
+                                    :
+                                    '-'
+                                }
                             </Cell>
                         </Row>
                     ))}

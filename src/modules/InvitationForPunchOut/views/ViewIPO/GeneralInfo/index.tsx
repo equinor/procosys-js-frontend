@@ -1,8 +1,8 @@
 import { ApprovedType, CompletedType, Invitation } from '../types';
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
+import ParticipantsTable, { EditData } from './ParticipantsTable';
 import React, { useState } from 'react';
 
-import ParticipantsTable from './ParticipantsTable';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 
@@ -15,7 +15,7 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
     const [approved, setApproved] = useState<ApprovedType>({});
 
 
-    const completePunchOut = async (index: number): Promise<any> => {
+    const completePunchOut = async (index: number, editData: EditData[]): Promise<any> => {
         // eslint-disable-next-line no-useless-catch
         await new Promise((resolve, reject) => {
             try { 
@@ -24,7 +24,8 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
                 //     ...generalInfo,
                 //     participants: data,
                 //     completedBy: data[index].name,
-                //     completedAt: new Date()
+                //     completedAt: new Date(),
+                //     data: editData
                 // }
                 setCompleted({
                     completedBy: invitation.participants[index].person.id,
@@ -37,7 +38,7 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
         });
     };
 
-    const approvePunchOut = async (index: number): Promise<any> => {
+    const approvePunchOut = async (index: number, editData: EditData[]): Promise<any> => {
         // eslint-disable-next-line no-useless-catch
         await new Promise((resolve, reject) => {
             try { 
@@ -46,7 +47,8 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
                 //     ...generalInfo,
                 //     participants: data,
                 //     approvedBy: data[index].name,
-                //     approvedAt: new Date()
+                //     approvedAt: new Date(),
+                //     data: editData
                 // }
                 setApproved({
                     approvedBy: invitation.participants[index].person.id,

@@ -1,8 +1,8 @@
-import { ApprovedType, CompletedType, Participant } from '../../types';
+import { ApprovedType, CompletedType, Participant, Person } from '../../types';
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import { OrganizationMap, OrganizationsEnum } from '../../utils';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
@@ -17,8 +17,8 @@ const tooltipApprove = <div>Punch round has been completed<br />and and checked 
 
 
 
-type EditData = {
-    id: number | null;
+export type EditData = {
+    id: number;
     attended: boolean;
     notes: string;
 };
@@ -27,38 +27,70 @@ interface Props {
     participants: Participant[];
     completed: CompletedType;
     approved: ApprovedType;
-    completePunchOut: (index: number) => Promise<any>;
-    approvePunchOut: (index: number) => Promise<any>;
+    completePunchOut: (index: number, editData: EditData[]) => Promise<any>;
+    approvePunchOut: (index: number, editData: EditData[]) => Promise<any>;
 }
+
 
 const ParticipantsTable = ({participants, completed, approved, completePunchOut, approvePunchOut}: Props): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
+    const [contractor, setContractor] = useState<boolean>(true);
+    const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
-    const [editData, setEditData] = useState<EditData[]>([]);
+    // TODO: fill from endpoint
+    const [editData, setEditData] = useState<EditData[]>(Array(participants.length).fill({id: 0, attended: false, notes: ''}));
 
+    useEffect(() => {
+        // TODO: user is contractor or construction company
+        // setContractor
+        // setConstructionCompany
+    }, []);
+
+    const getCompleteButton = (completed: number | undefined, completePunchout: (index: number) => void): JSX.Element => {
+        return (
+            <CustomTooltip title={tooltipComplete} arrow>
+                <Button ref={btnCompleteRef} onClick={completePunchout}>
+                    {completed ? 'Save punch out' : 'Complete punch out'}
+                </Button>
+            </CustomTooltip>
+        );    
+    };
+
+    const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
+        return (
+            <CustomTooltip title={tooltipApprove} arrow>
+                <Button ref={btnApproveRef} onClick={approvePunchout}>
+                    Approve punch out
+                </Button>
+            </CustomTooltip>
+        );    
+    };
 
     const getSignedProperty = useCallback((participant: Participant, handleCompletePunchOut: (index: number) => void, handleApprovePunchOut: (index: number) => void): JSX.Element => {
-        if (participant.person && completed.completedBy && completed.completedBy === participant.person.id) {
+        // TODO: check if participant is current user
+        // TODO: check if contractor 
+        if (participant.organization === OrganizationsEnum.Contractor) {
+            if (approved.approvedBy) {
+                return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
+            } else {
+                return getCompleteButton(completed.completedBy, handleCompletePunchOut);
+            }
+        // TODO: check if constructionCompany 
+        } else if (completed.completedBy && participant.organization === OrganizationsEnum.ConstructionCompany) {
+            if (approved.approvedBy) {
+                return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
+            } else {
+                return getApproveButton(handleApprovePunchOut);
+            }
+        } else if (participant.person && completed.completedBy && completed.completedBy === participant.person.id) {
             return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
         } else if (participant.person && approved.approvedBy && approved.approvedBy === participant.person.id) {
             return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
-        } else if (participant.organization === OrganizationsEnum.Contractor) {
-            return (
-                <CustomTooltip title={tooltipComplete} arrow>
-                    <Button ref={btnCompleteRef} onClick={handleCompletePunchOut}>Complete punch out</Button>
-                </CustomTooltip>
-            );
-        } else if (completed.completedBy && participant.organization === OrganizationsEnum.ConstructionCompany) {
-            return (
-                <CustomTooltip title={tooltipApprove} arrow>
-                    <Button ref={btnApproveRef} onClick={handleApprovePunchOut}>Approve punch out</Button>
-                </CustomTooltip>
-            );
         } else {
             return <span>-</span>;
         }
-    }, [completed, approved]);
+    }, [completed, approved, contractor, constructionCompany]);
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
         setLoading(true);
@@ -66,7 +98,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
             btnCompleteRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await completePunchOut(index);
+            await completePunchOut(index, editData);
         } catch (error) {
             if (btnCompleteRef.current) {
                 btnCompleteRef.current.removeAttribute('disabled');
@@ -74,7 +106,10 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
             showSnackbarNotification(error.message, 2000, true);
             setLoading(false);
         }     
-        showSnackbarNotification('Punch out completed', 2000, true);
+        showSnackbarNotification(`Punch out ${completed.completedBy ? 'saved': 'completed'}`, 2000, true);
+        if (btnCompleteRef.current) {
+            btnCompleteRef.current.removeAttribute('disabled');
+        }
         setLoading(false);
     };
 
@@ -84,7 +119,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
             btnApproveRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await approvePunchOut(index);
+            await approvePunchOut(index, editData);
         } catch (error) {
             if (btnApproveRef.current) {
                 btnApproveRef.current.removeAttribute('disabled');
@@ -148,14 +183,18 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
                                         participant.externalEmail.response
                             }</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                <Switch default label={editData[index].attended ? 'Attended' : 'Did not attend'} checked={editData[index].attended} onChange={(): void => handleEditAttended(index)}/>
+                                <Switch 
+                                    disabled={!contractor} 
+                                    default 
+                                    label={editData[index].attended ? 'Attended' : 'Did not attend'} 
+                                    checked={editData[index].attended} 
+                                    onChange={(): void => handleEditAttended(index)}/>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
-                                <TextField value={editData[index].notes} onChange={(e: any): void => handleEditNotes(e, index)} />
-                                <Switch label={editData[index].attended ? 'Attended' : 'Did not attend'} checked={editData[index].attended} onChange={(): void => handleEditAttended(index)}/>
-                            </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
-                                <TextField id={`${participant.sortKey}`} value={editData[index].notes} onChange={(e: any): void => handleEditNotes(e, index)} />
+                                <TextField 
+                                    disabled={!contractor && !constructionCompany}
+                                    value={editData[index].notes} 
+                                    onChange={(e: any): void => handleEditNotes(e, index)} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}

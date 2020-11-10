@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -10,6 +11,10 @@ interface StepProps {
     currentStep: boolean;
     stepCompleted: boolean;
 }
+
+export const IconContainer = styled.div`
+    cursor: pointer;
+`;
 
 export const StepContainer = styled.div<StepProps>`
     display: flex;

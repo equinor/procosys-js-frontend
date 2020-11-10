@@ -1,4 +1,4 @@
-import { AddParticipantContainer, ButtonContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
+import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
 import { Button, TextField } from '@equinor/eds-core-react';
 import { OrganizationMap, OrganizationsEnum } from '../utils';
 import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
@@ -31,19 +31,13 @@ const ParticipantType: SelectItem[] = [
 ];
 
 interface ParticipantsProps {
-    next: () => void;
-    previous: () => void;
     participants: Participant[];
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
-    isValid: boolean;
 }
 
 const Participants = ({
-    next,
-    previous,
     participants,
     setParticipants,
-    isValid
 }: ParticipantsProps): JSX.Element => {
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
@@ -409,20 +403,6 @@ const Participants = ({
                 </Button>
             </AddParticipantContainer>
         </FormContainer>
-        <ButtonContainer>
-            <Button
-                variant='outlined'
-                onClick={previous}
-            >
-                Previous
-            </Button>
-            <Button 
-                disabled={!isValid}
-                onClick={next}
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

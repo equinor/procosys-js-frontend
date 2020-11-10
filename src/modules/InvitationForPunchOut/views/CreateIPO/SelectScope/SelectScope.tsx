@@ -1,6 +1,6 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, Container, Divider, Header, SelectComponent } from './SelectScope.style';
 import { CommPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
+import { Container, Divider, Header, SelectComponent } from './SelectScope.style';
 import React, { useEffect, useRef, useState } from 'react';
 
 import CommPkgTable from './CommPkgTable';
@@ -14,9 +14,6 @@ interface SelectScopeProps {
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: (selectedMckgScope: McScope) => void;
-    next: () => void;
-    previous: () => void;
-    isValid: boolean;
     commPkgNo: string;
     projectId: number;
     projectName: string;
@@ -28,9 +25,6 @@ const SelectScope = ({
     setSelectedCommPkgScope,
     selectedMcPkgScope,
     setSelectedMcPkgScope,
-    next,
-    previous,
-    isValid,
     commPkgNo,
     projectId,
     projectName
@@ -61,20 +55,6 @@ const SelectScope = ({
                     <Typography variant='h2'>
                         {currentCommPkg == null ? (type === 'DP' ? 'Click on the arrow next to a comm pkg to open MC scope': 'Select commissioning packages') : 'Select MC packages in comm pkg ' + currentCommPkg }
                     </Typography>
-                    <ButtonsContainer>
-                        <Button 
-                            variant='outlined'
-                            onClick={previous}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            disabled={!isValid}
-                            onClick={next}
-                        >
-                            Next
-                        </Button>
-                    </ButtonsContainer>
                 </Header>
                 { (currentCommPkg == null && commPkgNo == null) &&
                     <div>

@@ -1,5 +1,5 @@
-import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
+import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { OrganizationMap, OrganizationsEnum } from './utils';
 import React, { useEffect, useState } from 'react';
 
@@ -65,7 +65,7 @@ const initialParticipants: Participant[] = [
     }
 ];
 
-enum StepsEnum {
+export enum StepsEnum {
     GeneralInfo = 1,
     Scope = 2,
     Participants = 3,
@@ -243,6 +243,16 @@ const CreateIPO = (): JSX.Element => {
         });
     };
 
+    const goToStep = (stepNo: number): void => {
+        if (steps[stepNo >= 2 ? stepNo-2 : 0].isCompleted) {
+            if (stepNo === StepsEnum.UploadAttachments) {
+                changeCompletedStatus(true, stepNo);
+                changeCompletedStatus(true, StepsEnum.SummaryAndCreate);
+            }
+            setCurrentStep(stepNo);
+        }
+    };
+
     const changeCompletedStatus = (isValid: boolean, step: number): void => {
         setSteps(currentSteps => {
             const updatedSteps = [...currentSteps];
@@ -319,14 +329,15 @@ const CreateIPO = (): JSX.Element => {
             currentStep={currentStep}
             canBeCreated={canCreate}
             createNewIpo={createNewIpo}
+            next={goToNextStep}
+            previous={goToPreviousStep}
+            goTo={goToStep}
         />
         {currentStep == StepsEnum.GeneralInfo &&
             <GeneralInfo
                 generalInfo={generalInfo}
                 setGeneralInfo={setGeneralInfo}
                 fromMain={fromMain}
-                next={goToNextStep}
-                isValid={steps[0].isCompleted}
                 clearScope={clearScope}
             /> 
         } 
@@ -338,26 +349,18 @@ const CreateIPO = (): JSX.Element => {
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}
                 setSelectedMcPkgScope={setSelectedMcPkgScope}
-                next={goToNextStep}
-                previous={goToPreviousStep}
-                isValid={steps[1].isCompleted}
                 projectId={generalInfo.projectId}
                 projectName={generalInfo.projectName}
             /> 
         }
         { currentStep == StepsEnum.Participants && 
             <Participants 
-                next={goToNextStep}
-                previous={goToPreviousStep}
                 participants={participants}
                 setParticipants={setParticipants}
-                isValid={steps[2].isCompleted}
             />
         }
         { currentStep == StepsEnum.UploadAttachments && 
             <Attachments 
-                next={goToNextStep}
-                previous={goToPreviousStep}
                 attachments={attachments}
                 addAttachments={addAttachments}
                 removeAttachment={removeAttachment}
@@ -365,7 +368,6 @@ const CreateIPO = (): JSX.Element => {
         }
         { currentStep == StepsEnum.SummaryAndCreate && 
             <Summary 
-                previous={goToPreviousStep}
                 generalInfo={generalInfo}
                 mcPkgScope={selectedMcPkgScope.selected}
                 commPkgScope={selectedCommPkgScope}

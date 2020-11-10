@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
 interface DropdownProps {
@@ -62,14 +63,5 @@ export const FormContainer = styled.div`
     }
     .MuiInput-root:hover::before {
         border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
-    }
-`;
-
-export const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
     }
 `;

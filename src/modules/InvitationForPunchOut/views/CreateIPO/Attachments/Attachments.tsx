@@ -1,4 +1,4 @@
-import { AddAttachmentContainer, ButtonContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
+import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
 
@@ -9,16 +9,12 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { tokens } from '@equinor/eds-tokens';
 
 interface AttachmentsProps {
-    next: () => void;
-    previous: () => void;
     attachments: File[];
     removeAttachment: (index: number) => void;
     addAttachments: (attachments: File[]) => void;
 }
 
 const Attachments = ({
-    next,
-    previous,
     attachments,
     removeAttachment,
     addAttachments
@@ -116,19 +112,6 @@ const Attachments = ({
                 ]}
             />
         </FormContainer>
-        <ButtonContainer>
-            <Button 
-                variant='outlined'
-                onClick={previous}
-            >
-                Previous
-            </Button>
-            <Button
-                onClick={next}
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

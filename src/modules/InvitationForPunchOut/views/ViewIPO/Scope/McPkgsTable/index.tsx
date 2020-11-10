@@ -1,9 +1,8 @@
 import { Container, CustomTable } from './style';
+import { Table, Typography } from '@equinor/eds-core-react';
 
 import { McPkgScope } from '../../types';
 import React from 'react';
-import { Table } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
 
 const { Head, Body, Cell, Row } = Table;
 
@@ -25,7 +24,7 @@ const McPkgsTable = ({ mcPkgScope }: Props ): JSX.Element => {
                     </Row>
                 </Head>
                 <Body>
-                    {mcPkgScope && mcPkgScope.length > 0 ? mcPkgScope.map((mcPkg: McPkgScope, index: number) => (
+                    {mcPkgScope.length > 0 ? mcPkgScope.map((mcPkg: McPkgScope, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <Typography onClick={(): Promise<void> => getMcPkg(mcPkg.mcPkgNo)} variant="body_short" link>{mcPkg.mcPkgNo}</Typography>

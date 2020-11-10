@@ -1,9 +1,8 @@
 import { Container, CustomTable } from './style';
+import { Table, Typography } from '@equinor/eds-core-react';
 
 import { CommPkgScope } from '../../types';
 import React from 'react';
-import { Table } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
 
 const { Head, Body, Cell, Row } = Table;
 
@@ -25,7 +24,7 @@ const CommPkgsTable = ({ commPkgScope }: Props ): JSX.Element => {
                     </Row>
                 </Head>
                 <Body>
-                    {commPkgScope && commPkgScope.length > 0 ? commPkgScope.map((commPkg: CommPkgScope, index: number) => (
+                    {commPkgScope.length > 0 ? commPkgScope.map((commPkg: CommPkgScope, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <Typography onClick={(): Promise<void> => getCommPkg(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>

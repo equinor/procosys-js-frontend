@@ -9,10 +9,9 @@ import { Typography } from '@equinor/eds-core-react';
 interface Props {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
-    type: string;
 }
 
-const Scope = ({ type, mcPkgScope, commPkgScope }: Props): JSX.Element => {
+const Scope = ({ mcPkgScope, commPkgScope }: Props): JSX.Element => {
     return (
         <Container>
             {/* <HeaderContainer>
@@ -21,7 +20,7 @@ const Scope = ({ type, mcPkgScope, commPkgScope }: Props): JSX.Element => {
             <TableContainer>
                 // reports table here
             </TableContainer> */}
-            {type  === 'MDP' ? (
+            {commPkgScope && commPkgScope.length > 0 && (
                 <>
                     <HeaderContainer>
                         <Typography variant="h5">Included Comm Packages</Typography>
@@ -30,7 +29,8 @@ const Scope = ({ type, mcPkgScope, commPkgScope }: Props): JSX.Element => {
                         <CommPkgsTable commPkgScope={commPkgScope} />
                     </TableContainer>
                 </>
-            ) : (
+            )}
+            {mcPkgScope && mcPkgScope.length > 0 && (
                 <>
                     <HeaderContainer>
                         <Typography variant="h5">Included MC Packages</Typography>

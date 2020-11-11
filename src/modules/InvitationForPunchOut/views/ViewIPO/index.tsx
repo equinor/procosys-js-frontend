@@ -6,6 +6,7 @@ import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import GeneralInfo from './GeneralInfo';
 import { Invitation } from './types';
+import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
@@ -102,7 +103,7 @@ const ViewIPO = (): JSX.Element => {
                     </TabList>
                     <TabPanels>
                         <TabPanel><GeneralInfo invitation={invitation} /></TabPanel>
-                        <TabPanel>Scope</TabPanel>
+                        <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} /> </TabPanel>
                         <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
                         <TabPanel>Log</TabPanel>
                     </TabPanels>

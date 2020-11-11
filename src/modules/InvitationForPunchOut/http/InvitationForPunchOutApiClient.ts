@@ -25,8 +25,8 @@ type InvitationResponse = {
     startTimeUtc: string;
     endTimeUtc: string;
     participants: ParticipantInvitationResponse[];
-    mcPkgScope: McPkgScopeResponse;
-    commPkgScope: CommPkgScopeResponse;
+    mcPkgScope: McPkgScopeResponse[];
+    commPkgScope: CommPkgScopeResponse[];
 }
 
 type McPkgScopeResponse = {

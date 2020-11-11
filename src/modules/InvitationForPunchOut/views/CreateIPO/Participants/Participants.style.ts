@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
 interface DropdownProps {
@@ -47,15 +48,6 @@ export const ParticipantRowsContainer = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-    }
-`;
-
-export const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
     }
 `;
 

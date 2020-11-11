@@ -22,18 +22,6 @@ export const Header = styled.header`
     }
 `;
 
-export const ButtonsContainer = styled.div`
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    align-self: flex-start;
-    justify-content: flex-end;
-
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
-    }
-`;
-
 export const Divider = styled.div`
     margin-top: calc(var(--grid-unit) * -3);
     margin-bottom: -1000px;

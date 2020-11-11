@@ -1,8 +1,8 @@
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
+import { Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+import { TextField, Typography } from '@equinor/eds-core-react';
 import { format, set } from 'date-fns';
 
 import { Canceler } from '@procosys/http/HttpClient';
@@ -18,8 +18,6 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
-    next: () => void;
-    isValid: boolean;
     clearScope: () => void;
 }
 
@@ -27,8 +25,6 @@ const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
     fromMain,
-    next,
-    isValid,
     clearScope
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
@@ -104,7 +100,7 @@ const GeneralInfo = ({
         } else {
             const newTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
             setGeneralInfo(gi => { return { ...gi, endTime: newTime }; });
-            setErrorFormat(newTime < generalInfo.startTime);
+            setErrorFormat(newTime <= generalInfo.startTime);
         }
     };
 
@@ -211,15 +207,6 @@ const GeneralInfo = ({
                 />
             </LocationContainer>   
         </FormContainer>
-        <ButtonContainer>
-            <Button constiant='outlined' disabled>Previous</Button>
-            <Button 
-                disabled={!isValid} 
-                onClick={next}
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

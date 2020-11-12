@@ -143,7 +143,7 @@ interface TagDetailsResponse {
     storageArea: string;
     rowVersion: string;
     tagType: string;
-    //disciplineCode: string;
+    disciplineCode: string;
 }
 
 interface TagListFilter {
@@ -725,14 +725,14 @@ class PreservationApiClient extends ApiClient {
      * @returns Promise<void>
      * @throws PreservationApiError
     */
-    async duplicateAreaTag(
+    async duplicateAreaTagAndAddToScope(
         sourceTagId: number,
         areaTagType: string,
         disciplineCode?: string,
         areaCode?: string | null,
         suffix?: string,
         description?: string,
-        remark?: string | null,
+        remark?: string,
         storageArea?: string,
         setRequestCanceller?: RequestCanceler): Promise<void> {
 

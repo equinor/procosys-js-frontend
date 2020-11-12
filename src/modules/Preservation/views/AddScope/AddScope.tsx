@@ -61,7 +61,6 @@ const AddScope = (): JSX.Element => {
     const [areaTagDescription, setAreaTagDescription] = useState<string | undefined>();
     const [areaTagSuffix, setAreaTagSuffix] = useState<string | undefined>();
     const [isSubmittingScope, setIsSubmittingScope] = useState(false);
-    const [sourceTagId, setSourceTagId] = useState<number>(-1);
 
     const filterOnPurchaseOrderNumber = (tags: any[]): any[] => {
         return tags.filter((r) => !purchaseOrderNumber || purchaseOrderNumber == r.purchaseOrderTitle);
@@ -205,7 +204,8 @@ const AddScope = (): JSX.Element => {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
 
             if (addScopeMethod == AddScopeMethod.DuplicateDummyTag) {
-                await apiClient.duplicateAreaTag(sourceTagId, areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
+                await apiClient.duplicateAreaTagAndAddToScope(Number(duplicateTagId), areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription);
+                showSnackbarNotification('Tag is successfully added to scope', 5000);
                 history.push('/');
             } else {
                 if (stepId && requirements) {
@@ -381,6 +381,32 @@ const AddScope = (): JSX.Element => {
                     <LargerComponent>
                         <CreateDummyTag
                             nextStep={goToNextStep}
+                            setSelectedTags={setSelectedTags}
+                            areaType={areaType}
+                            setAreaType={setAreaType}
+                            discipline={areaTagDiscipline}
+                            setDiscipline={setAreaTagDiscipline}
+                            area={areaTagArea}
+                            setArea={setAreaTagArea}
+                            purchaseOrder={pO}
+                            setPurchaseOrder={setPO}
+                            suffix={areaTagSuffix}
+                            setSuffix={setAreaTagSuffix}
+                            description={areaTagDescription}
+                            setDescription={setAreaTagDescription}
+                            selectedTags={selectedTags}
+                            isSubmittingScope={isSubmittingScope}
+                        />
+                    </LargerComponent>
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
+                    </SelectedTags>
+                </Container>);
+            } else if (addScopeMethod === AddScopeMethod.DuplicateDummyTag) {
+                return (<Container>
+                    <LargerComponent>
+                        <CreateDummyTag
                             submit={submit}
                             setSelectedTags={setSelectedTags}
                             areaType={areaType}
@@ -396,33 +422,8 @@ const AddScope = (): JSX.Element => {
                             description={areaTagDescription}
                             setDescription={setAreaTagDescription}
                             selectedTags={selectedTags}
-                        />
-                    </LargerComponent>
-                    <Divider />
-                    <SelectedTags>
-                        <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
-                    </SelectedTags>
-                </Container>);
-            } else if (addScopeMethod === AddScopeMethod.DuplicateDummyTag) {
-                return (<Container>
-                    <LargerComponent>
-                        <CreateDummyTag
-                            nextStep={goToNextStep}
-                            setSelectedTags={setSelectedTags}
-                            areaType={areaType}
-                            setAreaType={setAreaType}
-                            discipline={areaTagDiscipline}
-                            setDiscipline={setAreaTagDiscipline}
-                            area={areaTagArea}
-                            setArea={setAreaTagArea}
-                            purchaseOrder={pO}
-                            setPurchaseOrder={setPO}
-                            suffix={areaTagSuffix}
-                            setSuffix={setAreaTagSuffix}
-                            description={areaTagDescription}
-                            setDescription={setAreaTagDescription}
-                            selectedTags={selectedTags}
                             duplicateTagId={duplicateTagId}
+                            isSubmittingScope={isSubmittingScope}
                         />
                     </LargerComponent>
                     <Divider />

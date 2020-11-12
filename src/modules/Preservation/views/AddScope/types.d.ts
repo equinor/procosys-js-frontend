@@ -7,6 +7,7 @@ export interface Tag {
     remark?: string;
     storageArea?: string;
     tagType?: string;
+    disciplineCode?: string;
 }
 
 export interface TagRow {

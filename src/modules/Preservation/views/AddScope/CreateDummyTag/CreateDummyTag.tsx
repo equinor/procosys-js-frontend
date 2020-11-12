@@ -1,6 +1,6 @@
 import { Area, CheckAreaTagNo, Discipline, PurchaseOrder, Tag } from '../types';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
+import { ButtonsContainer, CenterContent, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -12,6 +12,7 @@ import { showSnackbarNotification } from '../../../../../core/services/Notificat
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import Spinner from '@procosys/components/Spinner';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -33,7 +34,7 @@ type POItem = {
 };
 
 type CreateDummyTagProps = {
-    nextStep: () => void;
+    nextStep?: () => void;
     setSelectedTags: (tags: Tag[]) => void;
     setAreaType: (areaType?: SelectItem) => void;
     setDiscipline: (discipline?: Discipline) => void;
@@ -49,8 +50,8 @@ type CreateDummyTagProps = {
     description?: string;
     selectedTags?: Tag[];
     submit?: () => Promise<void>;
-
     duplicateTagId?: number;
+    isSubmittingScope: boolean;
 }
 
 const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
@@ -111,6 +112,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     }, []);
 
 
+    /** Fill in values from tag to duplicate, if applicable */
     useEffect(() => {
         let requestCancellor: Canceler;
         (async (): Promise<void> => {
@@ -119,8 +121,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                 if (response && response.tagType) {
                     setAreaTypeForm(response.tagType);
                     response.areaCode && props.setArea({ code: response.areaCode, description: '' });
-
-                    descriptionInputRef.current && response.description ? descriptionInputRef.current.value = response.description : null;
+                    response.disciplineCode && setDisciplineForm(response.disciplineCode);
+                    props.setDescription(response.description);
                 }
             }
         })();
@@ -259,7 +261,6 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     /** Set initial values */
     useEffect(() => {
         suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
-        descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
     }, []);
 
     /** Map disciplines into select elements */
@@ -286,6 +287,11 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         }
     }, [props.areaType]);
 
+    useEffect(() => {
+        descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
+    }, [props.description]);
+
+
     const setDisciplineForm = (value: string): void => {
         props.setDiscipline(disciplines.find((p: Discipline) => p.code === value));
     };
@@ -300,7 +306,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         if (props.duplicateTagId) {
             props.submit && props.submit();
         } else {
-            props.nextStep();
+            props.nextStep && props.nextStep();
         }
     };
 
@@ -391,8 +397,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     return (
         <div>
             <Header>
-                {props.duplicateTagId && <Typography variant="h1">Create dummy tag</Typography>}
-                {!props.duplicateTagId && <Typography variant="h1">Duplicate dummy tag</Typography>}
+                {!props.duplicateTagId && <Typography variant="h1">Create dummy tag</Typography>}
+                {props.duplicateTagId && <Typography variant="h1">Duplicate dummy tag</Typography>}
                 <div>{project.name}</div>
                 {purchaseOrderNumber &&
                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
@@ -474,8 +480,14 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                         </FormFieldSpacer>
                         <ButtonsContainer>
                             <Button onClick={cancel} variant='outlined' >Cancel</Button>
-                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid}>
-                                {props.duplicateTagId ? 'Duplicate' : 'Next'}
+                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid || props.isSubmittingScope} >
+                                {props.isSubmittingScope && (
+                                    <CenterContent>
+                                        <Spinner />{props.duplicateTagId ? 'Duplicate' : 'Next'}
+                                    </CenterContent>
+                                )}
+                                {!props.isSubmittingScope && (props.duplicateTagId ? 'Duplicate' : 'Next')}
+
                             </Button>
                         </ButtonsContainer>
                     </InputContainer>

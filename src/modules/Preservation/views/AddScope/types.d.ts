@@ -3,6 +3,10 @@ export interface Tag {
     tagNo: string;
     description: string;
     mcPkgNo?: string;
+    areaCode?: string;
+    remark?: string;
+    storageArea?: string;
+    tagType?: string;
 }
 
 export interface TagRow {

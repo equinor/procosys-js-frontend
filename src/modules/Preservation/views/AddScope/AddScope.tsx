@@ -2,7 +2,6 @@ import { Area, Discipline, Journey, PurchaseOrder, Requirement, RequirementType,
 import { Container, Divider, LargerComponent, SelectedTags } from './AddScope.style';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-
 import { Canceler } from 'axios';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
 import { SelectItem } from '../../../../components/Select';
@@ -29,7 +28,7 @@ const AddScope = (): JSX.Element => {
     const { apiClient, project, purchaseOrderNumber } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const history = useHistory();
-    const { method } = useParams() as any;
+    const { method, duplicateTagId } = useParams() as any;
 
     const addScopeMethod = useMemo((): AddScopeMethod => {
         switch (method) {
@@ -49,15 +48,7 @@ const AddScope = (): JSX.Element => {
     }, [method]);
 
     const [step, setStep] = useState(1);
-    const [selectedTags, setSelectedTags] = useState<Tag[]>((): Tag[] => {
-        if (addScopeMethod === AddScopeMethod.CreateDummyTag) {
-            return [{
-                tagNo: 'type-discipline-area/PO-suffix',
-                description: ''
-            }];
-        }
-        return [];
-    });
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [migrationTableData, setMigrationTableData] = useState<TagMigrationRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
@@ -115,6 +106,17 @@ const AddScope = (): JSX.Element => {
         }
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        (async (): Promise<void> => {
+            if (addScopeMethod === AddScopeMethod.CreateDummyTag) {
+                setSelectedTags([{
+                    tagNo: 'type-discipline-area/PO-suffix',
+                    description: ''
+                }]);
+            }
+        })();
+    }, []);
 
     /**
      * For autoscoping based on tag functions, we will fetch all relevant tags upfront.
@@ -197,31 +199,36 @@ const AddScope = (): JSX.Element => {
         });
     };
 
-    const submit = async (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string): Promise<void> => {
+    const submit = async (stepId?: number, requirements?: Requirement[], remark?: string | null, storageArea?: string): Promise<void> => {
         setIsSubmittingScope(true);
         try {
             const listOfTagNo = selectedTags.map(t => t.tagNo);
 
-            switch (addScopeMethod) {
-                case AddScopeMethod.AddTagsManually:
-                    await apiClient.addTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
-                    break;
-                case AddScopeMethod.AddTagsAutoscope:
-                    await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
-                    break;
-                case AddScopeMethod.CreateDummyTag:
-                    await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
-                    break;
-                case AddScopeMethod.DuplicateDummyTag:
-                    await apiClient.duplicateAreaTag(sourceTagId, areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
-                    break;
-                case AddScopeMethod.MigrateTags:
-                    await apiClient.migrateTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
-                    break;
+            if (addScopeMethod == AddScopeMethod.DuplicateDummyTag) {
+                await apiClient.duplicateAreaTag(sourceTagId, areaType && areaType.value, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, areaTagSuffix, areaTagDescription, remark, storageArea);
+                history.push('/');
+            } else {
+                if (stepId && requirements) {
+                    switch (addScopeMethod) {
+                        case AddScopeMethod.AddTagsManually:
+                            await apiClient.addTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
+                            break;
+                        case AddScopeMethod.AddTagsAutoscope:
+                            await apiClient.addTagsToScopeByAutoscoping(listOfTagNo, stepId, project.name, remark, storageArea);
+                            break;
+                        case AddScopeMethod.CreateDummyTag:
+                            await apiClient.createNewAreaTagAndAddToScope(areaType && areaType.value, stepId, requirements, project.name, areaTagDiscipline && areaTagDiscipline.code, areaTagArea && areaTagArea.code, pO && pO.title, areaTagSuffix, areaTagDescription, remark, storageArea);
+                            break;
+                        case AddScopeMethod.MigrateTags:
+                            await apiClient.migrateTagsToScope(listOfTagNo, stepId, requirements, project.name, remark, storageArea);
+                            break;
+                    }
+                    showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
+                    history.push('/');
+                } else {
+                    showSnackbarNotification('Error occured. Step or requirement is missing.', 5000);
+                }
             }
-
-            showSnackbarNotification(`${listOfTagNo.length} tag(s) successfully added to scope`, 5000);
-            history.push('/');
         } catch (error) {
             console.error('Tag preservation failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
@@ -374,6 +381,7 @@ const AddScope = (): JSX.Element => {
                     <LargerComponent>
                         <CreateDummyTag
                             nextStep={goToNextStep}
+                            submit={submit}
                             setSelectedTags={setSelectedTags}
                             areaType={areaType}
                             setAreaType={setAreaType}
@@ -388,6 +396,33 @@ const AddScope = (): JSX.Element => {
                             description={areaTagDescription}
                             setDescription={setAreaTagDescription}
                             selectedTags={selectedTags}
+                        />
+                    </LargerComponent>
+                    <Divider />
+                    <SelectedTags>
+                        <TagDetails selectedTags={selectedTags} showMCPkg={false} collapsed={false} />
+                    </SelectedTags>
+                </Container>);
+            } else if (addScopeMethod === AddScopeMethod.DuplicateDummyTag) {
+                return (<Container>
+                    <LargerComponent>
+                        <CreateDummyTag
+                            nextStep={goToNextStep}
+                            setSelectedTags={setSelectedTags}
+                            areaType={areaType}
+                            setAreaType={setAreaType}
+                            discipline={areaTagDiscipline}
+                            setDiscipline={setAreaTagDiscipline}
+                            area={areaTagArea}
+                            setArea={setAreaTagArea}
+                            purchaseOrder={pO}
+                            setPurchaseOrder={setPO}
+                            suffix={areaTagSuffix}
+                            setSuffix={setAreaTagSuffix}
+                            description={areaTagDescription}
+                            setDescription={setAreaTagDescription}
+                            selectedTags={selectedTags}
+                            duplicateTagId={duplicateTagId}
                         />
                     </LargerComponent>
                     <Divider />

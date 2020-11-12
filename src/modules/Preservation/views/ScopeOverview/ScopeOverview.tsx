@@ -777,7 +777,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Create dummy tag
                                 </DropdownItem>
                             </Link>
-                            <Link to={'/AddScope/duplicateDummyTag'} >
+                            <Link to={'/AddScope/duplicateDummyTag/' + (selectedTags.length == 1 ? selectedTags[0].id.toString() : '')} >
                                 <DropdownItem
                                     disabled={!duplicatableTagSelected}
                                 >
@@ -889,7 +889,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
                 />
-
 
                 {
                     displayFlyout && (

@@ -143,6 +143,7 @@ interface TagDetailsResponse {
     storageArea: string;
     rowVersion: string;
     tagType: string;
+    //disciplineCode: string;
 }
 
 interface TagListFilter {

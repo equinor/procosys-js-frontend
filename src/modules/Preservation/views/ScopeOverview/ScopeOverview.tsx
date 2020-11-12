@@ -756,8 +756,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     className='showOnlyOnTablet'
                                     variant='ghost'
                                     onClick={(): void => setShowActions(!showActions)}>
-                                    {showActions && <>Show actions <KeyboardArrowUpIcon /></>}
-                                    {!showActions && <>Hide actions <KeyboardArrowDownIcon /></>}
+                                    {!showActions && <>Show actions <KeyboardArrowUpIcon /></>}
+                                    {showActions && <>Hide actions <KeyboardArrowDownIcon /></>}
                                 </StyledButton>
                             </ActionsContainer>
                         </Header>

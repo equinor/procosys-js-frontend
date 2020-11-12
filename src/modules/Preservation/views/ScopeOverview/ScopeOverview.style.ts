@@ -63,7 +63,6 @@ export const HeaderPartOne = styled.div<{ showActions?: boolean }>`
     }
 `;
 
-
 export const ActionsContainer = styled.div<{ showActions?: boolean }>`
     display: flex;
     padding-top: 10px;
@@ -78,7 +77,7 @@ export const ActionsContainer = styled.div<{ showActions?: boolean }>`
     }
 
     ${Breakpoints.TABLET} {
-        ${(props): any => props.showActions && css`
+        ${(props): any => props.showActions == false && css`
             display:none;    
         `}
 
@@ -90,7 +89,6 @@ export const ActionsContainer = styled.div<{ showActions?: boolean }>`
             display:flex;
         }
     }
-
 `;
 
 export const IconBar = styled.div`

@@ -225,7 +225,8 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.isSelected === true}>
+                isSelected={node.isSelected === true}
+                title={node.name}>
                 {
                     node.onClick && (
                         <NodeLink

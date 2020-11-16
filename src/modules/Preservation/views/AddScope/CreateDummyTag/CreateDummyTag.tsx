@@ -246,10 +246,6 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         props.suffix ? newTagNo = `${newTagNo}-${props.suffix}` : null;
     }
 
-    /** Set initial values */
-    useEffect(() => {
-        suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
-    }, []);
 
     /** Map disciplines into select elements */
     useEffect(() => {
@@ -281,6 +277,9 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
     }, [props.description]);
 
+    useEffect(() => {
+        suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
+    }, [props.suffix]);
 
     const setDisciplineForm = (value: string): void => {
         if (disciplines) {
@@ -503,6 +502,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             <InputContainer>
                 <SuffixTextField
                     id={'Suffix'}
+                    data-testid={'suffix'}
                     label="Tag number suffix"
                     inputRef={suffixInputRef}
                     placeholder="Write here"
@@ -519,6 +519,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     style={{ maxWidth: '350px' }}
                     label="Description"
                     inputRef={descriptionInputRef}
+                    value={props.description}
                     multiline={true}
                     placeholder="Write here"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}

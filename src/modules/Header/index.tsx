@@ -67,7 +67,6 @@ const Header: React.FC = (): JSX.Element => {
                             onClick={(): void => setShowMobileMenu(!showMobileMenu)}>
                             <EdsIcon name="menu" />
                         </Button>
-
                     </ShowOnMobile>
                     <ShowOnDesktop>
                         <ProcosysLogo fontSize='inherit' />
@@ -323,14 +322,15 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                 </MenuContainer>
             </Nav>
-            <ShowOnMobile>
-                <Flyout position='left' close={(): void => setShowMobileMenu(false)}>
-                    <ModuleTabs />
-                </Flyout>
-            </ShowOnMobile>
-
+            {showMobileMenu &&
+                <ShowOnMobile>
+                    <Flyout position='left' close={(): void => setShowMobileMenu(false)}>
+                        <ModuleTabs close={(): void => setShowMobileMenu(false)} />
+                    </Flyout>
+                </ShowOnMobile>
+            }
             <ShowOnDesktop>
-                <ModuleTabs />
+                <ModuleTabs close={(): void => setShowMobileMenu(false)} />
             </ShowOnDesktop>
         </div >
     );

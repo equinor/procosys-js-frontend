@@ -59,6 +59,9 @@ export const NodeName = styled.div<NodeNameProps>`
     padding: var(--grid-unit) 0;
     font-weight: 500;
     white-space: nowrap;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     ${(props): any => props.isExpanded && css`
         color: ${tokens.colors.interactive.primary__resting.rgba};

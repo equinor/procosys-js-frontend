@@ -14,6 +14,73 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
+type InvitationResponse = {
+    projectName: string;
+    title: string;
+    description: string;
+    location: string;
+    type: string;
+    status: string;
+    rowVersion: string;
+    startTimeUtc: string;
+    endTimeUtc: string;
+    participants: ParticipantInvitationResponse[];
+    mcPkgScope: McPkgScopeResponse[];
+    commPkgScope: CommPkgScopeResponse[];
+}
+
+type McPkgScopeResponse = {
+    mcPkgNo: string;
+    description: string;
+    commPkgNo: string;
+}
+
+type CommPkgScopeResponse = {
+    commPkgNo: string;
+    description: string;
+    status: string;
+}
+
+type ParticipantInvitationResponse = {
+    organization: string;
+    sortKey: number;
+    externalEmail: ExternalEmailInvitationResponse;
+    person: PersonInvitationResponse;
+    functionalRole: FunctionalRoleInvitationResponse;
+}
+
+type FunctionalRoleInvitationResponse = {
+    id: number;
+    code: string;
+    email: string;
+    persons: PersonInvitationResponse[]
+    response?: string;
+    rowVersion: string;
+}
+
+type PersonInvitationResponse = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    azureOid: string;
+    email: string;
+    required: boolean;
+    response?: string;
+    rowVersion: string;
+}
+
+type ExternalEmailInvitationResponse = {
+    id: number;
+    externalEmail: string;
+    rowVersion: string;
+}
+
+type AttachmentResponse = {
+    id: number;
+    fileName: string;
+    rowVersion: string;
+}
+
 type ProjectResponse = {
     id: number;
     name: string;
@@ -45,8 +112,6 @@ interface PersonResponse {
 interface FunctionalRoleResponse {
     code: string;
     description: string;
-    email: string;
-    informationalEmail: string;
     usePersonalEmail: boolean;
     persons: PersonResponse[];
 }
@@ -61,29 +126,19 @@ export type PersonDto = {
 
 export type FunctionalRoleDto = {
     code: string;
-    email: string | null;
-    usePersonalEmail: boolean;
     persons: PersonDto[] | null;  
+}
+
+export type ExternalEmailDto = {
+    email: string;
 }
 
 export type ParticipantDto = {
     organization: string;
     sortKey: number;
-    externalEmail: string | null;
+    externalEmail: ExternalEmailDto | null;
     person: PersonDto | null;
     functionalRole: FunctionalRoleDto | null;
-}
-
-export type McPkgDto = {
-    mcPkgNo: string;
-    description: string;
-    commPkgNo: string;
-}
-
-export type CommPkgDto = {
-    commPkgNo: string;
-    description: string;
-    status: string;
 }
 
 /**
@@ -214,6 +269,30 @@ class InvitationForPunchOutApiClient extends ApiClient {
         }
     }
 
+
+    /**
+     * Get IPO details
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getIPO(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<InvitationResponse> {
+        const endpoint = `/invitations/${id}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
     /**
      * Create IPO
      *
@@ -228,8 +307,8 @@ class InvitationForPunchOutApiClient extends ApiClient {
         description: string | null,
         location: string | null,
         participants: ParticipantDto[],
-        mcPkgScope: McPkgDto[] | null,
-        commPkgScope: CommPkgDto[] | null,
+        mcPkgScope: string[] | null,
+        commPkgScope: string[] | null,
         setRequestCanceller?: RequestCanceler): Promise<number> {
         const endpoint = '/invitations';
         const settings: AxiosRequestConfig = {};
@@ -251,6 +330,80 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     commPkgScope: commPkgScope
                 },
                 settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+    
+    /**
+     * Get attachments
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getAttachments(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Invitations/${id}/Attachments`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get attachment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getAttachment(
+        id: number,
+        attachmentId: number,
+        setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Invitations/${id}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Delete attachment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async deleteAttachment(
+        id: number,
+        attachmentId: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse[]> {
+        const endpoint = `/Invitations/${id}/Attachments/${attachmentId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.delete(
+                endpoint, 
+                {
+                    data: { rowVersion: rowVersion }
+                }
             );
             return result.data;
         } catch (error) {

@@ -1,5 +1,6 @@
-import { CommPkgDto, FunctionalRoleDto, McPkgDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
+import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import { OrganizationMap, OrganizationsEnum } from './utils';
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
@@ -7,10 +8,10 @@ import { Container } from './CreateIPO.style';
 import CreateIPOHeader from './CreateIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Loading from '@procosys/components/Loading';
-import { OrganizationsEnum } from './Participants/Participants';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
+import { addHours } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
@@ -22,44 +23,42 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     poType: null,
     title: null,
     description: null,
-    startDate: null,
-    endDate: null,
-    startTime: null,
-    endTime: null,
+    startTime: new Date(),
+    endTime: addHours(new Date(), 1),
     location: null
 };
 
 const initialParticipants: Participant[] = [
     {
-        organization: { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany  },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
         type: 'Functional role',
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
         type: 'Functional role',
         externalEmail: null,
         person: null,
@@ -67,7 +66,7 @@ const initialParticipants: Participant[] = [
     }
 ];
 
-enum StepsEnum {
+export enum StepsEnum {
     GeneralInfo = 1,
     Scope = 2,
     Participants = 3,
@@ -137,32 +136,22 @@ const CreateIPO = (): JSX.Element => {
         }
         return {
             code: participant.role.code,
-            email: participant.role.email,
-            usePersonalEmail: participant.role.usePersonalEmail,
             persons: getPersons(participant.role)
         };
     };
 
-    const getCommPkgScope = (): CommPkgDto[] => {
+    const getCommPkgScope = (): string[] => {
         return selectedCommPkgScope.map(c => {
-            return {
-                commPkgNo: c.commPkgNo,
-                description: c.description,
-                status: c.status
-            };
+            return c.commPkgNo;
         });
     };
 
-    const getMcScope = (): McPkgDto[] | null => {
+    const getMcScope = (): string[] | null => {
         const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
         let mcPkgScope = null;
         if (commPkgNoContainingMcScope) {
             mcPkgScope = selectedMcPkgScope.selected.map(mc => {
-                return {
-                    mcPkgNo: mc.mcPkgNo,
-                    description: mc.description,
-                    commPkgNo: commPkgNoContainingMcScope
-                };
+                return mc.mcPkgNo;
             });
         }
         return mcPkgScope;
@@ -173,7 +162,7 @@ const CreateIPO = (): JSX.Element => {
             return {
                 organization: p.organization.value,
                 sortKey: i,
-                externalEmail: p.externalEmail,
+                externalEmail: p.externalEmail ? { email: p.externalEmail } : null,
                 person: getPerson(p),
                 functionalRole: getFunctionalRole(p)
             };
@@ -181,14 +170,14 @@ const CreateIPO = (): JSX.Element => {
     };
 
     const uploadAllAttachments = async (ipoId: number): Promise<any> => {
-        attachments.forEach(async attachment => {
+        await Promise.all(attachments.map(async (attachment) => {
             try {
                 await apiClient.uploadAttachment(ipoId, attachment, true);
             } catch (error) {
-                console.error('Upload attchment failed: ', error.message, error.data);
+                console.error('Upload attachment failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
-        });
+        }));
     };
 
     const createNewIpo = async (): Promise<void> => {
@@ -203,8 +192,8 @@ const CreateIPO = (): JSX.Element => {
                     generalInfo.title, 
                     generalInfo.projectName,
                     generalInfo.poType.value,
-                    new Date(generalInfo.startDate + ' ' + generalInfo.startTime + ' GMT'),
-                    new Date(generalInfo.startDate + ' ' + generalInfo.endTime + ' GMT'),
+                    generalInfo.startTime,
+                    generalInfo.endTime,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
@@ -255,6 +244,15 @@ const CreateIPO = (): JSX.Element => {
         });
     };
 
+    const goToStep = (stepNo: number): void => {
+        if (steps[stepNo >= 2 ? stepNo-2 : 0].isCompleted) {
+            if (stepNo > StepsEnum.Participants) {
+                changeCompletedStatus(true, stepNo);
+            }
+            setCurrentStep(stepNo);
+        }
+    };
+
     const changeCompletedStatus = (isValid: boolean, step: number): void => {
         setSteps(currentSteps => {
             const updatedSteps = [...currentSteps];
@@ -264,7 +262,7 @@ const CreateIPO = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startDate && generalInfo.startTime && generalInfo.endDate && generalInfo.endTime) {
+        if (generalInfo.poType && generalInfo.projectId && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);
@@ -331,14 +329,15 @@ const CreateIPO = (): JSX.Element => {
             currentStep={currentStep}
             canBeCreated={canCreate}
             createNewIpo={createNewIpo}
+            next={goToNextStep}
+            previous={goToPreviousStep}
+            goTo={goToStep}
         />
         {currentStep == StepsEnum.GeneralInfo &&
             <GeneralInfo
                 generalInfo={generalInfo}
                 setGeneralInfo={setGeneralInfo}
                 fromMain={fromMain}
-                next={goToNextStep}
-                isValid={steps[0].isCompleted}
                 clearScope={clearScope}
             /> 
         } 
@@ -350,26 +349,18 @@ const CreateIPO = (): JSX.Element => {
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}
                 setSelectedMcPkgScope={setSelectedMcPkgScope}
-                next={goToNextStep}
-                previous={goToPreviousStep}
-                isValid={steps[1].isCompleted}
                 projectId={generalInfo.projectId}
                 projectName={generalInfo.projectName}
             /> 
         }
         { currentStep == StepsEnum.Participants && 
             <Participants 
-                next={goToNextStep}
-                previous={goToPreviousStep}
                 participants={participants}
                 setParticipants={setParticipants}
-                isValid={steps[2].isCompleted}
             />
         }
         { currentStep == StepsEnum.UploadAttachments && 
             <Attachments 
-                next={goToNextStep}
-                previous={goToPreviousStep}
                 attachments={attachments}
                 addAttachments={addAttachments}
                 removeAttachment={removeAttachment}
@@ -377,7 +368,6 @@ const CreateIPO = (): JSX.Element => {
         }
         { currentStep == StepsEnum.SummaryAndCreate && 
             <Summary 
-                previous={goToPreviousStep}
                 generalInfo={generalInfo}
                 mcPkgScope={selectedMcPkgScope.selected}
                 commPkgScope={selectedCommPkgScope}

@@ -1,6 +1,7 @@
-import { render } from '@testing-library/react';
 import React from 'react';
 import Summary from '../Summary';
+import { format } from 'date-fns';
+import { render } from '@testing-library/react';
 
 const generalInfo = {
     projectId: 50,
@@ -8,10 +9,8 @@ const generalInfo = {
     poType: { text: 'DP (Discipline Punch)', value: 'DP' },
     title: 'test title',
     description: 'decription is looooong and we need to add some info here okay. A description describing the PO, with general info, scope, attachments, participants, and a lot more! Maybe we will add even more as we go, we will find out.',
-    startDate: '2020-09-01',
-    endDate: '2020-09-02',
-    startTime: '10:30',
-    endTime: '11:30',
+    startTime: new Date(2020, 11, 3, 10, 30),
+    endTime: new Date(2020, 11, 3, 10, 30),
     location: 'the usual spot'
 };
 
@@ -36,30 +35,25 @@ const mockMcPkgs = [
 
 const participants = [
     {
-        organization: 'Contractor',
+        organization: {
+            text: 'Contractor'
+        },
         externalEmail: null,
         person: null,
         role: null
     },
     {
-        organization: 'Construction company',
+        organization: {
+            text: 'Construction company'
+        },
         externalEmail: null,
         person: null,
         role: null
     }
 ];
+    
 
 describe('Module: <Summary />', () => {
-    
-    it('Should render Next button disabled', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]} />);
-        expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
-    });
-
-    it('Should render Previous button enabled', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]}/>);
-        expect(getByText('Previous').closest('button')).toHaveProperty('disabled', false);
-    });
 
     it('Should render headers', () => {
         const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]}/>);
@@ -71,15 +65,14 @@ describe('Module: <Summary />', () => {
     });
 
     it('Should render general info', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]} />);
+        const { getByText, getAllByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]} />);
         expect(getByText(generalInfo.projectName)).toBeInTheDocument();
         expect(getByText(generalInfo.poType.text)).toBeInTheDocument();
         expect(getByText(generalInfo.title)).toBeInTheDocument();
         expect(getByText(generalInfo.description)).toBeInTheDocument();
-        expect(getByText(generalInfo.startDate)).toBeInTheDocument();
-        expect(getByText(generalInfo.startTime)).toBeInTheDocument();
-        expect(getByText(generalInfo.endDate)).toBeInTheDocument();
-        expect(getByText(generalInfo.endTime)).toBeInTheDocument();
+        expect(getByText(format(generalInfo.startTime, 'dd/MM/yyyy'))).toBeInTheDocument();
+        expect(getAllByText(format(generalInfo.startTime, 'HH:mm')).length).toBeGreaterThan(0);
+        expect(getAllByText(format(generalInfo.endTime, 'HH:mm')).length).toBeGreaterThan(0);
         expect(getByText(generalInfo.location)).toBeInTheDocument();
     });
 

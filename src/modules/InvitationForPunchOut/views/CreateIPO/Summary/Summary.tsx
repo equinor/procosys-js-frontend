@@ -1,12 +1,13 @@
+import { CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
+import { Table, Typography } from '@equinor/eds-core-react';
+
 import React from 'react';
-import { Button, Typography, Table } from '@equinor/eds-core-react';
-import { Container, FormContainer, ButtonContainer, Section, Subsection, TableSection } from './Summary.style';
-import { GeneralInfoDetails, CommPkgRow, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+import { format } from 'date-fns';
 
 const { Body, Row, Cell, Head } = Table;
 
 interface SummaryProps {
-    previous: () => void;
     generalInfo: GeneralInfoDetails;
     mcPkgScope: McPkgRow[];
     commPkgScope: CommPkgRow[];
@@ -15,7 +16,6 @@ interface SummaryProps {
 }
 
 const Summary = ({
-    previous,
     generalInfo,
     mcPkgScope,
     commPkgScope,
@@ -86,8 +86,12 @@ const Summary = ({
                 { participant.role &&
                     <Cell>
                         <div>{participant.role.code + ' - ' + participant.role.description}</div>
-                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
-                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                        {!participant.role.usePersonalEmail &&
+                            <>
+                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
+                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                            </>
+                        }
                     </Cell>
                 }
                 { participant.person &&
@@ -134,20 +138,16 @@ const Summary = ({
                 <Typography variant="h5">Date and time for punch round</Typography>
                 <div className='timeContainer'>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>From</Typography>
-                        <Typography variant="body_long">{ generalInfo.startDate }</Typography>
+                        <Typography token={{fontSize: '12px'}}>Date</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.startTime, 'dd/MM/yyyy') }</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Time</Typography>
-                        <Typography variant="body_long">{ generalInfo.startTime}</Typography>
+                        <Typography token={{fontSize: '12px'}}>From</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.startTime, 'HH:mm') }</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{fontSize: '12px'}}>To</Typography>
-                        <Typography variant="body_long">{ generalInfo.endDate }</Typography>
-                    </Subsection>
-                    <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Time</Typography>
-                        <Typography variant="body_long">{ generalInfo.endTime }</Typography>
+                        <Typography variant="body_long">{ format(generalInfo.endTime, 'HH:mm') }</Typography>
                     </Subsection>
                 </div>
                 <Subsection>
@@ -232,19 +232,6 @@ const Summary = ({
                 </TableSection>
             }
         </FormContainer>
-        <ButtonContainer>
-            <Button 
-                variant='outlined'
-                onClick={previous}
-            >
-                Previous
-            </Button>
-            <Button
-                disabled
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

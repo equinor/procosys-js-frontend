@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Typography } from '@equinor/eds-core-react';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';

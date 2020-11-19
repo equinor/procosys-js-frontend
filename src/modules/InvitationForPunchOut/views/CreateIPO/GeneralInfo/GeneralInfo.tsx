@@ -1,8 +1,9 @@
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
+import { Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+import { TextField, Typography } from '@equinor/eds-core-react';
+import { format, set } from 'date-fns';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import { TextField as DateTimeField } from '@material-ui/core';
@@ -17,8 +18,6 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
-    next: () => void;
-    isValid: boolean;
     clearScope: () => void;
 }
 
@@ -26,14 +25,13 @@ const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
     fromMain,
-    next,
-    isValid,
     clearScope
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');   
+    const [errorFormat, setErrorFormat] = useState<boolean>(false);
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -86,6 +84,26 @@ const GeneralInfo = ({
             setGeneralInfo(gi => {return {...gi, projectName: selectedProject.name};});
         }
     }, [selectedProject]);
+
+    const handleSetDate = (dateString: string): void => {
+        const date = new Date(dateString);
+        const newStart = set(generalInfo.startTime, { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
+        const newEnd = set(generalInfo.endTime, { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
+        setGeneralInfo(gi => { return { ...gi, startTime: newStart, endTime: newEnd }; });
+    };
+
+    const handleSetTime = (from: 'start' | 'end', timeString: string): void => {
+        const timeSplit = timeString.split(':');
+        if (from === 'start') {
+            const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newTime > gi.endTime ? newTime : gi.endTime }; });
+        } else {
+            const newTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+            setGeneralInfo(gi => { return { ...gi, endTime: newTime }; });
+            setErrorFormat(newTime <= generalInfo.startTime);
+        }
+    };
+
 
     return (<Container>
         <FormContainer>
@@ -144,51 +162,36 @@ const GeneralInfo = ({
             <DateTimeContainer>
                 <DateTimeField
                     id='startDate'
-                    label='From'
+                    label='Date'
                     type='date'
-                    defaultValue={generalInfo.startDate}
+                    defaultValue={format(generalInfo.startTime, 'yyyy-MM-dd')}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, startDate: e.target.value};}); 
-                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetDate(event.target.value) }
                 />
                 <DateTimeField
-                    id='time'
-                    label='Time'
+                    id='startTime'
+                    label='From'
                     type='time'
-                    defaultValue={generalInfo.startTime}
+                    onClick={(e: React.MouseEvent<HTMLDivElement>):void => e.preventDefault()}
+                    value={format(generalInfo.startTime, 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, startTime: e.target.value};}); 
-                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('start', event.target.value) }
                 />
                 <DateTimeField
                     id='endDate'
                     label='To'
-                    type='date'
-                    defaultValue={generalInfo.endDate}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, endDate: e.target.value};}); 
-                    }}
-                />
-                <DateTimeField
-                    id='time'
-                    label='Time'
                     type='time'
-                    defaultValue={generalInfo.endTime}
+                    onClick={(e: React.MouseEvent<HTMLDivElement>):void => e.preventDefault()}
+                    value={format(generalInfo.endTime, 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, endTime: e.target.value};}); 
-                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value) }
+                    error={errorFormat}
                 />
             </DateTimeContainer>
             <LocationContainer>
@@ -204,15 +207,6 @@ const GeneralInfo = ({
                 />
             </LocationContainer>   
         </FormContainer>
-        <ButtonContainer>
-            <Button constiant='outlined' disabled>Previous</Button>
-            <Button 
-                disabled={!isValid} 
-                onClick={next}
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

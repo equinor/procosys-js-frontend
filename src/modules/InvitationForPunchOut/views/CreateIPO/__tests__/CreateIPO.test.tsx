@@ -1,7 +1,8 @@
-import { fireEvent, render, within } from '@testing-library/react';
+import { fireEvent, render, waitFor, within } from '@testing-library/react';
 
 import CreateIPO from '../CreateIPO';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 
 jest.mock('react-router-dom', () => ({
     useParams: (): {projectId: any, commPkgNo: any} => ({
@@ -36,15 +37,27 @@ jest.mock('../../../context/InvitationForPunchOutContext',() => ({
 
 describe('<CreateIPO />', () => {
     it('Should display type types when Type of punch round select is clicked', async () => {
-        const { getByTestId, getByText } = render(<CreateIPO />);
-        const selectContainer = getByTestId('po-type-select');
+        const result = render(<CreateIPO />);
+        await act(async () => {
+            const selectContainer = result.getByTestId('po-type-select');
         
-        const utils = within(selectContainer);
-        const button = utils.getByRole('listbox');
-        fireEvent.click(button);
+            const utils = within(selectContainer);
+            const button = utils.getByRole('listbox');
+            fireEvent.click(button);
+        });
 
-        expect(getByText('DP (Discipline Punch)')).toBeInTheDocument();
-        expect(getByText('MDP (Multi Discipline Punch)')).toBeInTheDocument();
+        expect(result.getByText('DP (Discipline Punch)')).toBeInTheDocument();
+        expect(result.getByText('MDP (Multi Discipline Punch)')).toBeInTheDocument();
+    });
+
+    it('Should render Next button enabled', async () => {
+        const { getByText } = render(<CreateIPO />);
+        await waitFor(() => expect(getByText('Next').closest('button')).toHaveProperty('disabled', true));
+    });
+
+    it('Should render Previous button enabled', async () => {
+        const { getByText } = render(<CreateIPO />);
+        await waitFor(() => expect(getByText('Previous').closest('button')).toHaveProperty('disabled', true));
     });
 });
 

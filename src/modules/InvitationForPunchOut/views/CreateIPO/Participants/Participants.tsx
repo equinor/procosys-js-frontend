@@ -1,36 +1,28 @@
+import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
+import { Button, TextField } from '@equinor/eds-core-react';
+import { OrganizationMap, OrganizationsEnum } from '../utils';
+import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+
+import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
-import { Button, TextField } from '@equinor/eds-core-react';
-import { DropdownItem, Container, ParticipantRowsContainer, FormContainer, ButtonContainer, AddParticipantContainer } from './Participants.style';
-import { Participant, RoleParticipant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import RoleSelector from '../../../components/RoleSelector';
-import { Canceler } from '@procosys/http/HttpClient';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { Tooltip } from '@material-ui/core';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
 const WAIT_INTERVAL = 300;
 
-export enum OrganizationsEnum {
-    Commissioning = 'Commissioning',
-    ConstructionCompany = 'Construction company',
-    Contractor = 'Contractor',
-    Operation = 'Operation',
-    TechnicalIntegrity = 'Technical integrity',
-    Supplier = 'Supplier',
-    External = 'Guest user (external)',
-};
-
 const Organizations: SelectItem[] = [
-    { text: OrganizationsEnum.Commissioning, value: OrganizationsEnum.Commissioning },
-    { text: OrganizationsEnum.ConstructionCompany, value: 'ConstructionCompany' },
-    { text: OrganizationsEnum.Contractor, value: OrganizationsEnum.Contractor },
-    { text: OrganizationsEnum.Operation, value: OrganizationsEnum.Operation },
-    { text: OrganizationsEnum.TechnicalIntegrity, value: 'TechnicalIntegrity' },
-    { text: OrganizationsEnum.Supplier, value: OrganizationsEnum.Supplier },
-    { text: OrganizationsEnum.External, value: 'External' }
+    { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
+    { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany },
+    { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
+    { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
+    { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
+    { text: OrganizationMap.get(OrganizationsEnum.Supplier) as string, value: OrganizationsEnum.Supplier },
+    { text: OrganizationMap.get(OrganizationsEnum.External) as string, value: OrganizationsEnum.External }
 ];
 
 const ParticipantType: SelectItem[] = [
@@ -39,19 +31,13 @@ const ParticipantType: SelectItem[] = [
 ];
 
 interface ParticipantsProps {
-    next: () => void;
-    previous: () => void;
     participants: Participant[];
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
-    isValid: boolean;
 }
 
 const Participants = ({
-    next,
-    previous,
     participants,
     setParticipants,
-    isValid
 }: ParticipantsProps): JSX.Element => {
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
@@ -67,8 +53,6 @@ const Participants = ({
                         return {
                             code: role.code,
                             description: role.description,
-                            email: role.email,
-                            informationalEmail: role.informationalEmail,
                             usePersonalEmail: role.usePersonalEmail,
                             notify: false,
                             persons: role.persons.map(p => {
@@ -190,7 +174,7 @@ const Participants = ({
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
             });
-            if(value == OrganizationsEnum.External) {
+            if(organization.text === OrganizationsEnum.External) {
                 setType('Person', index);
             }
         }
@@ -419,20 +403,6 @@ const Participants = ({
                 </Button>
             </AddParticipantContainer>
         </FormContainer>
-        <ButtonContainer>
-            <Button
-                variant='outlined'
-                onClick={previous}
-            >
-                Previous
-            </Button>
-            <Button 
-                disabled={!isValid}
-                onClick={next}
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

@@ -240,16 +240,16 @@ const Requirements = ({
                                 <Typography variant='h6'>
                                     {requirement.requirementDefinition.title}
                                 </Typography>
-                                <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)' }}>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', marginTop: 'var(--grid-unit)' }}>
                                     <Typography variant='caption'>Interval</Typography>
                                     <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>{`${requirement.intervalWeeks} weeks`}</Typography>
-                                    <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>Next</Typography>
+                                    <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 3)' }}>Next</Typography>
                                     <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>
                                         <NextInfo isOverdue={isOverdue}>
                                             {requirement.nextDueAsYearAndWeek}
                                         </NextInfo>
                                     </Typography>
-                                    <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>Due</Typography>
+                                    <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 3)' }}>Due</Typography>
                                     <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>
                                         <NextInfo isOverdue={isOverdue}>
                                             {requirement.nextDueWeeks}

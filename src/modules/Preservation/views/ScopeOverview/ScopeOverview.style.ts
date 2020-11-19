@@ -7,12 +7,18 @@ import { Breakpoints } from '@procosys/core/styling';
 export const Container = styled.div`
     display: flex;
     margin-left: var(--margin-module--left);
+    ${Breakpoints.MOBILE} {
+        margin-left: var(--grid-unit);
+    }
     height: 100%;
 `;
 
 export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     display: flex;
     margin-right: var(--margin-module--right);
+    ${Breakpoints.MOBILE} {
+        margin-right: var(--grid-unit);
+    }
     width: 100%;
     ${({ withSidePanel }): FlattenSimpleInterpolation | undefined => {
         if (withSidePanel) {
@@ -25,6 +31,9 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     overflow: hidden;
     flex-direction: column;
     margin-top: var(--margin-module--top);
+    ${Breakpoints.MOBILE} {
+        margin-top: var(--grid-unit);
+    }
     min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
 `;
 
@@ -38,8 +47,11 @@ export const HeaderContainer = styled.div`
 export const Header = styled.header`
     display: flex;
     justify-content: space-between;
-
+    align-items: center;
     h1 {
+        ${Breakpoints.MOBILE} {
+           font-size: 20px;
+       }
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
     }
@@ -48,8 +60,15 @@ export const Header = styled.header`
         text-decoration: none;
     }
 
+    .showOnlyOnTablet {
+        display:none;
+    }  
+
     ${Breakpoints.TABLET} {
         width: 100%;
+        .showOnlyOnTablet {
+            display:flex;
+        }  
     }   
 `;
 
@@ -102,6 +121,13 @@ export const IconBar = styled.div`
 
     button {
         margin-left: var(--grid-unit);
+    }
+    
+    ${Breakpoints.TABLET} {
+        justify-content: flex-start;
+        button {
+            margin-left: 0px;
+        }
     }
 `;
 

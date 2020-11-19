@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Overlay = styled.div`
@@ -12,15 +12,28 @@ export const Overlay = styled.div`
     z-index: 100;
 `;
 
-export const FlyoutContainer = styled.div`
+export const FlyoutContainer = styled.div<{ position: string, minWidth: string, maxWidth: string }>`
     background: ${tokens.colors.ui.background__default.rgba};
     position: fixed;
-    right: 0;
+       
+    ${({ position }): FlattenSimpleInterpolation | undefined => {
+        if (position && position == 'left') {
+            return css`
+                left: 0;
+            `;
+        } else {
+            return css`
+                right: 0;
+            `;
+        }
+    }};
+ 
     top: 0;
-    width: 580px;
+    min-width: ${(props): string => props.minWidth};
+    max-width: ${(props): string => props.maxWidth};
     height: 100%;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: scroll;
 
     opacity: 0;
     transition: opacity 0.5s;

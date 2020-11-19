@@ -5,9 +5,15 @@ import { Overlay, FlyoutContainer } from './style';
 interface FlyoutProps {
     close: () => void;
     children: ReactNode;
+    position?: string;
+    minWidth?: string;
+    maxWidth?: string;
 }
 
 const Flyout = ({
+    position,
+    minWidth,
+    maxWidth,
     close,
     children
 }: FlyoutProps): JSX.Element => {
@@ -24,10 +30,13 @@ const Flyout = ({
     }, [flyoutRef]);
 
     return (
-        <Overlay 
+        <Overlay
             onMouseDown={close}>
-            <FlyoutContainer 
-                ref={flyoutRef} 
+            <FlyoutContainer
+                position={position ? position : 'left'}
+                minWidth={minWidth ? minWidth : '300px'}
+                maxWidth={maxWidth ? maxWidth : '580px'}
+                ref={flyoutRef}
                 onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
                 {children}
             </FlyoutContainer>

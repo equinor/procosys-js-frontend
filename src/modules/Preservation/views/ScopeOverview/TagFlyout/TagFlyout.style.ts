@@ -10,6 +10,7 @@ export const Container = styled.div`
 export const Header = styled.div`
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     padding:
         calc(var(--grid-unit) * 4)
         calc(var(--grid-unit) * 2)
@@ -62,6 +63,7 @@ export const HeaderActions = styled.div`
     display: flex;
     align-items: center;
     margin-left: auto;
+    flex-wrap: wrap;
 
     button {
         margin-left: var(--grid-unit);
@@ -101,6 +103,8 @@ interface TagProps {
     isStandardTag: boolean;
 }
 export const TagNoContainer = styled.div<TagProps>`
+    display:flex;
+    flex-wrap: wrap;
     padding: 0px var(--grid-unit);
     
     ${(props): any => !props.isStandardTag && css`

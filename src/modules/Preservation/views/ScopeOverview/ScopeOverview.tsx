@@ -751,17 +751,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     <HeaderPartOne showActions={showActions}>
                         <Header>
                             <Typography variant="h1">Preservation tags</Typography>
-                            <ActionsContainer>
-                                <StyledButton
-                                    className='showOnlyOnTablet'
-                                    variant='ghost'
-                                    onClick={(): void => setShowActions(!showActions)}>
-                                    {!showActions && <>Show actions <KeyboardArrowUpIcon /></>}
-                                    {showActions && <>Hide actions <KeyboardArrowDownIcon /></>}
-                                </StyledButton>
-                            </ActionsContainer>
+                            <StyledButton
+                                className='showOnlyOnTablet'
+                                variant='ghost'
+                                onClick={(): void => setShowActions(!showActions)}>
+                                {!showActions && <>Show actions <KeyboardArrowUpIcon /></>}
+                                {showActions && <>Hide actions <KeyboardArrowDownIcon /></>}
+                            </StyledButton>
                         </Header>
-                        <ActionsContainer style={{ marginLeft: 'calc(var(--grid-unit) * 3)' }} showActions={showActions}>
+                        <ActionsContainer showActions={showActions}>
                             <Dropdown
                                 disabled={project.id === -1}
                                 maxHeight='300px'
@@ -815,11 +813,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     </HeaderPartOne>
                     <ActionsContainer showActions={showActions}>
                         <IconBar>
-                            <Button
+                            <StyledButton
                                 className='hideOnTablet'
                                 onClick={preservedDialog}
                                 disabled={!preservableTagsSelected}>Preserved this week
-                            </Button>
+                            </StyledButton>
                             <StyledButton
                                 variant='ghost'
                                 title='Start preservation for selected tag(s)'

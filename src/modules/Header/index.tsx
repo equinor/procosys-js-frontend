@@ -6,9 +6,10 @@ import {
     MenuItem,
     Nav,
     PlantSelector,
-    SubNav
+    ShowOnDesktop,
+    ShowOnMobile
 } from './style';
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -20,6 +21,8 @@ import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
+import Flyout from '@procosys/components/Flyout';
+import ModuleTabs from './ModuleTabs';
 
 type PlantItem = {
     text: string;
@@ -32,6 +35,7 @@ const Header: React.FC = (): JSX.Element => {
     const { plant, setCurrentPlant } = useCurrentPlant();
     const params = useParams<any>();
     const [filterForPlants, setFilterForPlants] = useState<string>('');
+    const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map(plant => ({
             text: plant.title,
@@ -57,7 +61,17 @@ const Header: React.FC = (): JSX.Element => {
         <div>
             <Nav>
                 <IconContainer>
-                    <ProcosysLogo fontSize='inherit'/>
+                    <ShowOnMobile>
+                        <Button
+                            variant='ghost'
+                            onClick={(): void => setShowMobileMenu(!showMobileMenu)}>
+                            <EdsIcon name="menu" />
+                        </Button>
+
+                    </ShowOnMobile>
+                    <ShowOnDesktop>
+                        <ProcosysLogo fontSize='inherit' />
+                    </ShowOnDesktop>
                 </IconContainer>
                 <LogoContainer>
                     <a
@@ -99,7 +113,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            { (ProCoSysSettings.ipo.enabled) &&
+                            {(ProCoSysSettings.ipo.enabled) &&
                                 <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch out</DropdownItem>
                                 </a>
@@ -309,37 +323,16 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                 </MenuContainer>
             </Nav>
-            <SubNav>
-                <a href={`/${params.plant}/Completion`}>Completion</a>
-                <NavLink
-                    activeClassName={'active'}
-                    to={`/${params.plant}/Preservation`}
-                >
-                    Preservation
-                </NavLink>
-                <a href={`/${params.plant}/WorkOrders`}>Work Orders</a>
-                <a href={`/${params.plant}/SWAP`}>Software Change Record</a>
-                <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>
-                    Purchase Orders
-                </a>
-                <a href={`/${params.plant}/Documents`}>Document</a>
-                <a href={`/${params.plant}/Notification`}>Notification</a>
-                <a href={`/${params.plant}/Hookup`}>Hookup</a>
-                {__DEV__ && (
-                    <NavLink
-                        activeClassName={'active'}
-                        to={`/${params.plant}/libraryv2`}
-                    >
-                        Plant Configuration
-                    </NavLink>
-                )}
-                {!__DEV__ && (
-                    <a href={`/${params.plant}/PlantConfig`}>
-                        Plant Configuration
-                    </a>
-                )}
-            </SubNav>
-        </div>
+            <ShowOnMobile>
+                <Flyout position='left' close={(): void => setShowMobileMenu(false)}>
+                    <ModuleTabs />
+                </Flyout>
+            </ShowOnMobile>
+
+            <ShowOnDesktop>
+                <ModuleTabs />
+            </ShowOnDesktop>
+        </div >
     );
 };
 

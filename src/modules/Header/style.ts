@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Breakpoints } from '@procosys/core/styling';
 
 export const Nav = styled.nav`
     display: grid;
@@ -19,6 +20,12 @@ export const SubNav = styled.nav`
     font-weight: 500;
     a {
         display: inline-block;
+        
+        ${Breakpoints.TABLET} {
+            display: flex;
+            flex-direction: column;            
+        };
+        
         padding: 16px;
         text-decoration: none;
         color: var(--text--default);
@@ -92,4 +99,18 @@ export const MenuItem = styled.div`
     a {
         text-decoration: none;
     }
+`;
+
+export const ShowOnMobile = styled.div`
+    display:none;    
+    ${Breakpoints.TABLET} {
+        display: flex;            
+    } 
+`;
+
+export const ShowOnDesktop = styled.div`
+    display:flex;
+    ${Breakpoints.TABLET} {
+        display: none;            
+    } 
 `;

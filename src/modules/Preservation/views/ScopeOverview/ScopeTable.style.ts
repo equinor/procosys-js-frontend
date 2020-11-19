@@ -37,10 +37,6 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 `;
 
 export const Container = styled.div<any>`
-    ${Breakpoints.TABLET} {
-        display: flex;
-        justify-content: space-between;
-    }
 
     input + svg {
         width: 24px;
@@ -77,17 +73,11 @@ export const Container = styled.div<any>`
     ${Breakpoints.TABLET} {
         //Hide columns
         thead tr th:nth-child(3), table tr td:nth-child(3), //description
-        thead tr th:nth-child(4), table tr td:nth-child(4), //next 
-        thead tr th:nth-child(6), table tr td:nth-child(6), //mode
-        thead tr th:nth-child(7), table tr td:nth-child(7), //PO 
-        thead tr th:nth-child(8), table tr td:nth-child(8), //Area
-        thead tr th:nth-child(9), table tr td:nth-child(9), //Resp
-        thead tr th:nth-child(10), table tr td:nth-child(10), //Disc
-        thead tr th:nth-child(11), table tr td:nth-child(11) //Status
+        thead tr th:nth-child(6), table tr td:nth-child(6) //next 
         {
             display: none;            
         } 
-    }
+   }
 `;
 
 export const SingleIconContainer = styled.div`

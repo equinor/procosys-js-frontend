@@ -12,14 +12,14 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     return (
         <SubNav>
             <a href={`/${params.plant}/Completion`}>Completion</a>
-            <div onClick={props.close}>
+            <span onClick={props.close}>
                 <NavLink
                     activeClassName={'active'}
                     to={`/${params.plant}/Preservation`}
                 >
                     Preservation
                 </NavLink>
-            </div>
+            </span>
             <a href={`/${params.plant}/WorkOrders`}>Work Orders</a>
             <a href={`/${params.plant}/SWAP`}>Software Change Record</a>
             <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>
@@ -30,7 +30,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             <a href={`/${params.plant}/Hookup`}>Hookup</a>
             {
                 __DEV__ && (
-                    <div onClick={props.close}>
+                    <span onClick={props.close}>
 
                         <NavLink
                             activeClassName={'active'}
@@ -38,14 +38,16 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
                         >
                             Plant Configuration
                         </NavLink>
-                    </div>
+                    </span>
                 )
             }
             {
                 !__DEV__ && (
-                    <a href={`/${params.plant}/PlantConfig`}>
-                        Plant Configuration
-                    </a>
+                    <span onClick={props.close}>
+                        <a href={`/${params.plant}/PlantConfig`}>
+                            Plant Configuration
+                        </a>
+                    </span>
                 )
             }
         </SubNav >

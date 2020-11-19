@@ -330,7 +330,7 @@ const Header: React.FC = (): JSX.Element => {
                 </ShowOnMobile>
             }
             <ShowOnDesktop>
-                <ModuleTabs close={(): void => setShowMobileMenu(false)} />
+                <ModuleTabs />
             </ShowOnDesktop>
         </div >
     );

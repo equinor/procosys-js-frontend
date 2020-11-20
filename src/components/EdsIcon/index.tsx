@@ -30,6 +30,7 @@ import {
     filter_list,
     info_circle,
     iphone,
+    link,
     lock,
     microsoft_excel,
     microsoft_outlook,
@@ -56,7 +57,7 @@ import React from 'react';
 
 const icons = {
     error_filled, close, cloud_download, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file,
-    notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world,
+    notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, link,
     place, pressure, verticle_split, category, search, bookmark_collection, add, arrow_down, arrow_up, filter_list, more_verticle,
     warning_filled, delete_forever, restore_from_trash, edit_text, account_circle, lock, info_circle, iphone, print, fast_forward, play,
     copy, star_filled, star_outlined, microsoft_excel, done, chevron_right, arrow_back, warning_outlined, more_horizontal, microsoft_outlook, calendar_date_range

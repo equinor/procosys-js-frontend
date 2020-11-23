@@ -26,7 +26,7 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
                 //     completedAt: new Date()
                 // }
                 setCompleted({
-                    completedBy: invitation.participants[index].person.id,
+                    completedBy: invitation.participants[index].person.person.id,
                     completedAt: new Date()
                 });
                 resolve();

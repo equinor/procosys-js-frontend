@@ -82,32 +82,35 @@ const ViewIPO = (): JSX.Element => {
 
 
     return (<Container>
-        <ViewIPOHeader 
-            steps={initialSteps}
-            currentStep={currentStep}
-            title={invitation ? `${invitation.title}` : ''}
-        />
         { loading ? (
             <CenterContainer>
                 <Spinner large />
             </CenterContainer>
         ) :
             invitation ? (
-                <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
-                    <TabList>
-                        <Tab>General</Tab>
-                        <Tab>Scope</Tab>
-                        <Tab>Attachments</Tab>
-                        <Tab>Log</Tab>
-                        <Tab className='emptyTab'>{''}</Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel><GeneralInfo invitation={invitation} /></TabPanel>
-                        <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} /> </TabPanel>
-                        <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
-                        <TabPanel>Log</TabPanel>
-                    </TabPanels>
-                </Tabs>
+                <>
+                    <ViewIPOHeader 
+                        steps={initialSteps}
+                        currentStep={currentStep}
+                        title={invitation.title}
+                        participants={invitation.participants}
+                    />
+                    <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
+                        <TabList>
+                            <Tab>General</Tab>
+                            <Tab>Scope</Tab>
+                            <Tab>Attachments</Tab>
+                            <Tab>Log</Tab>
+                            <Tab className='emptyTab'>{''}</Tab>
+                        </TabList>
+                        <TabPanels>
+                            <TabPanel><GeneralInfo invitation={invitation} /></TabPanel>
+                            <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} /> </TabPanel>
+                            <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
+                            <TabPanel>Log</TabPanel>
+                        </TabPanels>
+                    </Tabs>
+                </>
             ) : (
                 <Typography>No invitation found</Typography>
             )

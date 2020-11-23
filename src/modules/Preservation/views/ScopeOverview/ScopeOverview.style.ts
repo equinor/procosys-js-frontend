@@ -49,9 +49,6 @@ export const Header = styled.header`
     justify-content: space-between;
     align-items: center;
     h1 {
-        ${Breakpoints.MOBILE} {
-           font-size: 20px;
-       }
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
     }

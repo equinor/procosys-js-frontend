@@ -12,7 +12,7 @@ export const Header = styled.div`
     align-items: center;
     flex-wrap: wrap;
     padding:
-        calc(var(--grid-unit) * 4)
+        calc(var(--grid-unit) * 2)
         calc(var(--grid-unit) * 2)
         var(--grid-unit)
         var(--grid-unit);

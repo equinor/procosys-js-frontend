@@ -255,6 +255,7 @@ class ScopeTable extends React.Component<ScopeTableProps> {
                         { title: 'Resp', render: this.getResponsibleColumn, width: '7%', cellStyle: { maxWidth: '150px' } },
                         { title: 'Disc', render: this.getDisciplineCode, width: '5%' },
                         { title: 'Status', render: this.getStatus, width: '7%', customSort: (): any => null, cellStyle: { whiteSpace: 'nowrap' } },
+                        { title: 'Req type', render: this.getRequirementColumn, sorting: false, width: '10%' },
                         { title: this.getActionsHeader(), render: this.getActionsColumn, sorting: false, width: '2%', cellStyle: { borderLeft: 'solid 1px #dcdcdc' }, headerStyle: { borderLeft: 'solid 1px #dcdcdc' } }
                     ]}
                     data={this.getTagsByQuery}

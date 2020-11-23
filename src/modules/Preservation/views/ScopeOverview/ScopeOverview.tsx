@@ -750,7 +750,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 <HeaderContainer ref={moduleHeaderContainerRef}>
                     <HeaderPartOne showActions={showActions}>
                         <Header>
-                            <Typography variant="h1">Preservation tags</Typography>
+                            <Typography variant="h1">Preservation</Typography>
                             <StyledButton
                                 className='showOnlyOnTablet'
                                 variant='ghost'

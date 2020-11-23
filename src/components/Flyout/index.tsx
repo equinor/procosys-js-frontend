@@ -33,7 +33,7 @@ const Flyout = ({
         <Overlay
             onMouseDown={close}>
             <FlyoutContainer
-                position={position ? position : 'left'}
+                position={position ? position : 'right'}
                 minWidth={minWidth ? minWidth : '300px'}
                 maxWidth={maxWidth ? maxWidth : '580px'}
                 ref={flyoutRef}

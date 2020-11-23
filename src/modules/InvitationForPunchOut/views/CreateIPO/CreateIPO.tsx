@@ -2,6 +2,7 @@ import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, 
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { OrganizationMap, OrganizationsEnum } from './utils';
 import React, { useEffect, useState } from 'react';
+import { addHours, addMinutes } from 'date-fns';
 
 import Attachments from './Attachments/Attachments';
 import { Container } from './CreateIPO.style';
@@ -11,11 +12,20 @@ import Loading from '@procosys/components/Loading';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
-import { addHours } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+
+const getEndTime = (): Date => {
+    const date = new Date();
+    if (date.getHours() === 23) {
+        const minutes = date.getMinutes();
+        return addMinutes(date, 59 - minutes); // TODO: minutes - 80
+    } else {
+        return addHours(date, 1);
+    }
+};
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -24,7 +34,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     title: null,
     description: null,
     startTime: new Date(),
-    endTime: addHours(new Date(), 1),
+    endTime: getEndTime(),
     location: null
 };
 

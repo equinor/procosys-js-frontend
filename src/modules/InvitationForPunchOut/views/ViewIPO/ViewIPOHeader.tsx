@@ -13,6 +13,7 @@ type ProgressBarProps = {
     currentStep: number;
     title: string;
     participants: Participant[];
+    organizer: string;
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
@@ -42,6 +43,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 displayFlyout && (
                     <OutlookInfo
                         close={closeFlyout}
+                        organizer={props.organizer}
                         participants={props.participants}
                         status={OutlookStatusType.OK}
                     />

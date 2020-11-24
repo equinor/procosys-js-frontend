@@ -93,6 +93,7 @@ const ViewIPO = (): JSX.Element => {
                         steps={initialSteps}
                         currentStep={currentStep}
                         title={invitation.title}
+                        organizer={invitation.createdBy}
                         participants={invitation.participants}
                     />
                     <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>

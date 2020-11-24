@@ -110,7 +110,7 @@ export const BadgeContainer = styled.div<BadgeContainerProps>`
 
 export const CardDetail = styled.div`
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--grid-unit);
 `;
 

@@ -21,6 +21,7 @@ type InvitationResponse = {
     location: string;
     type: string;
     status: string;
+    createdBy: string;
     rowVersion: string;
     startTimeUtc: string;
     endTimeUtc: string;

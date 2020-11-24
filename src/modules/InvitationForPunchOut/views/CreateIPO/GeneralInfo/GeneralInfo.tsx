@@ -99,11 +99,11 @@ const GeneralInfo = ({
             const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
             const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
             setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
-            setErrorFormat(newTime > newEndTime);
+            setErrorFormat(newTime >= newEndTime);
         } else {
             const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
             setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
-            setErrorFormat(generalInfo.startTime > newEndTime);
+            setErrorFormat(generalInfo.startTime >= newEndTime);
         }
     };
 

@@ -37,21 +37,16 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
     const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
-    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(Array(participants.length).fill({id: 0, attended: false, notes: ''}));
-
-    useEffect(() => {
-        // TODO: user is contractor or construction company
-        // setContractor
-        // setConstructionCompany
-        setAttNoteData(participants.map(p => {
+    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(
+        participants.map(p => {
             const x = p.person ? p.person : p.functionalRole ? p.functionalRole : p.externalEmail;
             return {
                 id: x.id,
                 attended: p.attended,
                 note: p.note
             };
-        }));
-    }, [participants]);
+        })
+    ); 
 
     const getCompleteButton = (status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
@@ -77,14 +72,14 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         // TODO: check if participant is current user
         // TODO: check if contractor 
         if (participant.organization === OrganizationsEnum.Contractor) {
-            if (participant.signedBy) {
+            if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
                 return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
             } else {
                 return getCompleteButton(status, handleCompletePunchOut);
             }
         // TODO: check if constructionCompany 
-        } else if (status === IpoStatusEnum.COMPLETED && participant.organization === OrganizationsEnum.ConstructionCompany) {
-            if (participant.signedBy) {
+        } else if (participant.organization === OrganizationsEnum.ConstructionCompany) {
+            if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
                 return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
             } else {
                 return getApproveButton(handleApprovePunchOut);
@@ -94,7 +89,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         } else {
             return <span>-</span>;
         }
-    }, [contractor, constructionCompany]);
+    }, [contractor, constructionCompany, status]);
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
         setLoading(true);
@@ -185,7 +180,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
 
                         const id = participant.person ?    
                             participant.person.id :
-                            participant.functionalRole.id ? 
+                            participant.functionalRole ? 
                                 participant.functionalRole.id :
                                 participant.externalEmail.id;
 
@@ -213,7 +208,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                     {getSignedProperty(participant, status, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                    {participant.signedAt ? 
+                                    {participant.signedAt !== undefined ? 
                                         `${format(participant.signedAt, 'dd/MM/yyyy HH:mm')}` :
                                         '-'
                                     }

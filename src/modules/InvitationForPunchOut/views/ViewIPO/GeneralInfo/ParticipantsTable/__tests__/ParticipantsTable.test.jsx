@@ -15,7 +15,9 @@ const participants = [
             externalEmail: 'asdasd@asdasd.com',
             response: 'None',
             rowVersion: '00101' 
-        }
+        },
+        attended: false,
+        note: ''
     },
     {
         organization: 'TechnicalIntegrity',
@@ -29,7 +31,9 @@ const participants = [
             response: 'Attending',
             rowVersion: '123o875'
         },        
-        externalEmail: null    
+        externalEmail: null, 
+        attended: false,
+        note: ''
     },
     {
         organization: 'Contractor',
@@ -46,7 +50,11 @@ const participants = [
 
         },
         externalEmail: null,        
-        functionalRole: null    
+        functionalRole: null,
+        signedBy: 'lkajsdlkj',
+        signedAt: new Date(2020, 11, 6, 11), 
+        attended: true,
+        note: ''
     },
     {
         organization: 'ConstructionCompany',
@@ -63,20 +71,13 @@ const participants = [
 
         },
         externalEmail: null,
-        functionalRole: null
+        functionalRole: null,
+        signedBy: 'lkajsdlkj',
+        signedAt: new Date(2020, 11, 6, 12), 
+        attended: true,
+        note: ''
     }
 ];
-
-
-const completed = {
-    completedBy: 123,
-    completedAt: new Date(2020, 11, 6, 11, 0) // 06/12/2020 11:00
-};
-
-const approved = {
-    approvedBy: 234,
-    approvedAt: new Date(2020, 11, 6, 12, 0) // 06/12/2020 12:00
-};
 
 
 const completePunchOut = jest.fn(() => {});
@@ -90,11 +91,10 @@ const renderWithTheme = (Component) => {
 describe('<ParticipantsTable />', () => {
     it('Renders persons to table', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
-            completed={{completedBy: undefined, completedAt: undefined}} 
-            approved={{approvedBy: undefined, approvedAt: undefined}} 
             participants={participants} 
-            approvePunchOut={approvePunchOut}
-            completePunchOut={completePunchOut} />);
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
 
         expect(queryByText(`${participants[2].person.firstName} ${participants[2].person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[3].person.firstName} ${participants[3].person.lastName}`)).toBeInTheDocument();
@@ -105,11 +105,10 @@ describe('<ParticipantsTable />', () => {
 
     it('Renders external to table', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
-            completed={{completedBy: undefined, completedAt: undefined}} 
-            approved={{approvedBy: undefined, approvedAt: undefined}} 
             participants={participants} 
-            approvePunchOut={approvePunchOut}
-            completePunchOut={completePunchOut} />);
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
 
         expect(queryByText(participants[0].externalEmail.externalEmail)).toBeInTheDocument();
         expect(queryAllByText(participants[0].externalEmail.response).length).toBeGreaterThan(0);
@@ -117,24 +116,22 @@ describe('<ParticipantsTable />', () => {
 
     it('Renders functionalRole to table', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
-            completed={{completedBy: undefined, completedAt: undefined}} 
-            approved={{approvedBy: undefined, approvedAt: undefined}} 
             participants={participants} 
-            approvePunchOut={approvePunchOut}
-            completePunchOut={completePunchOut} />);
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
 
         expect(queryByText('Complete punch out')).toBeInTheDocument();
         expect(queryByText(participants[1].functionalRole.code)).toBeInTheDocument();
         expect(queryAllByText(participants[1].functionalRole.response).length).toBeGreaterThan(0);
     });
 
-    it('Renders completedBy with full name', async () => {
+    it('Renders signedBy with full name', async () => {
         const { queryByText } = renderWithTheme(<ParticipantsTable 
-            completed={completed} 
-            approved={{approvedBy: undefined, approvedAt: undefined}} 
             participants={participants} 
-            completePunchOut={completePunchOut} 
-            approvePunchOut={approvePunchOut} />);
+            status="Completed"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
 
         expect(queryByText('Save punch out')).toBeInTheDocument();
         expect(queryByText('Approve punch out')).toBeInTheDocument();
@@ -143,11 +140,10 @@ describe('<ParticipantsTable />', () => {
 
     it('Renders approvedBy with full name', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
-            completed={completed} 
-            approved={approved} 
             participants={participants} 
-            completePunchOut={completePunchOut} 
-            approvePunchOut={approvePunchOut} />);
+            status="Accepted"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
 
         expect(queryAllByText(`${participants[2].person.firstName} ${participants[2].person.lastName}`)).toHaveLength(2);
         expect(queryAllByText(`${participants[3].person.firstName} ${participants[3].person.lastName}`)).toHaveLength(2);

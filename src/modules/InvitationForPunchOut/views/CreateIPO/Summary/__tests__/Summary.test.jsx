@@ -54,16 +54,6 @@ const participants = [
     
 
 describe('Module: <Summary />', () => {
-    
-    it('Should render Next button disabled', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]} />);
-        expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
-    });
-
-    it('Should render Previous button enabled', () => {
-        const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]}/>);
-        expect(getByText('Previous').closest('button')).toHaveProperty('disabled', false);
-    });
 
     it('Should render headers', () => {
         const { getByText } = render(<Summary generalInfo={generalInfo} mcPkgScope={mockMcPkgs} commPkgScope={[]} participants={participants} attachments={[]}/>);

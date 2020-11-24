@@ -1,10 +1,10 @@
-type McPkgScope = {
+export type McPkgScope = {
     mcPkgNo: string;
     description: string;
     commPkgNo: string;
 }
 
-type CommPkgScope = {
+export type CommPkgScope = {
     commPkgNo: string;
     description: string;
     status: string;
@@ -52,11 +52,12 @@ export type Invitation = {
     location: string;
     type: string;
     rowVersion: string;
-    startTime: string;
-    endTime: string;
+    status: string;
+    startTimeUtc: string;
+    endTimeUtc: string;
     participants: Participant[];
-    mcPkgScope: McPkgScope;
-    commPkgScope: CommPkgScope;
+    mcPkgScope: McPkgScope[];
+    commPkgScope: CommPkgScope[];
 }
 
 export type Attachment = {

@@ -12,14 +12,6 @@ export const FormContainer = styled.div`
     width: 100%;
 `;
 
-export const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
-    }
-`;
-
 export const Section = styled.div`
     display: flex;
     flex-direction: column;

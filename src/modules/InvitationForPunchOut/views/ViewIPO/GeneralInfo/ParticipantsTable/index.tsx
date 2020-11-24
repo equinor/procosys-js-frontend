@@ -144,7 +144,6 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
         setEditData([...updateData]);
     };
 
-
     return (
         <Container>
             {loading && (
@@ -179,7 +178,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
                                 participant.person ?    
                                     participant.person.response :
                                     participant.functionalRole ? 
-                                        participant.functionalRole.response :
+                                        (participant.functionalRole.response != null ? participant.functionalRole.response : '') :
                                         participant.externalEmail.response
                             }</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>

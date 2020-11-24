@@ -1,6 +1,6 @@
-import { Button, Table, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
+import { Table, Typography } from '@equinor/eds-core-react';
 
 import React from 'react';
 import { format } from 'date-fns';
@@ -8,7 +8,6 @@ import { format } from 'date-fns';
 const { Body, Row, Cell, Head } = Table;
 
 interface SummaryProps {
-    previous: () => void;
     generalInfo: GeneralInfoDetails;
     mcPkgScope: McPkgRow[];
     commPkgScope: CommPkgRow[];
@@ -17,7 +16,6 @@ interface SummaryProps {
 }
 
 const Summary = ({
-    previous,
     generalInfo,
     mcPkgScope,
     commPkgScope,
@@ -88,8 +86,12 @@ const Summary = ({
                 { participant.role &&
                     <Cell>
                         <div>{participant.role.code + ' - ' + participant.role.description}</div>
-                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
-                        <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                        {!participant.role.usePersonalEmail &&
+                            <>
+                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
+                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                            </>
+                        }
                     </Cell>
                 }
                 { participant.person &&
@@ -230,19 +232,6 @@ const Summary = ({
                 </TableSection>
             }
         </FormContainer>
-        <ButtonContainer>
-            <Button 
-                variant='outlined'
-                onClick={previous}
-            >
-                Previous
-            </Button>
-            <Button
-                disabled
-            >
-                Next
-            </Button>
-        </ButtonContainer>
     </Container>);
 };
 

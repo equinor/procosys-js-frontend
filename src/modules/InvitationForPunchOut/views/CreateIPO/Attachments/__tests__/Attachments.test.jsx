@@ -1,6 +1,6 @@
-import { render } from '@testing-library/react';
-import React from 'react';
 import Attachments from '../Attachments';
+import React from 'react';
+import { render } from '@testing-library/react';
 
 const attachmentsMock = [
     {
@@ -12,16 +12,6 @@ const attachmentsMock = [
 ];
 
 describe('Module: <Attachments />', () => {
-    
-    it('Should render Next button enabled', () => {
-        const { getByText } = render(<Attachments attachments={[]} />);
-        expect(getByText('Next').closest('button')).toHaveProperty('disabled', false);
-    });
-
-    it('Should render Previous button enabled', () => {
-        const { getByText } = render(<Attachments attachments={[]}/>);
-        expect(getByText('Previous').closest('button')).toHaveProperty('disabled', false);
-    });
 
     it('Should render embty table when no attachments', () => {
         const { getByText } = render(<Attachments attachments={[]}/>);

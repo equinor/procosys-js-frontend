@@ -1,7 +1,7 @@
-import { render } from '@testing-library/react';
-import React from 'react';
-import Participants from '../Participants';
+import { render, waitFor } from '@testing-library/react';
 
+import Participants from '../Participants';
+import React from 'react';
 
 const mockRoles = [
     {
@@ -48,13 +48,10 @@ jest.mock('../../../../context/InvitationForPunchOutContext',() => ({
 
 describe('Module: <Participants />', () => {
     
-    it('Should render Next button disabled', () => {
-        const { getByText } = render(<Participants participants={participants} isValid={false}/>);
-        expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
-    });
-
-    it('Should render Previous button enabled', () => {
-        const { getByText } = render(<Participants participants={participants} />);
-        expect(getByText('Previous').closest('button')).toHaveProperty('disabled', false);
+    it('Should render participants', async () => {
+        const { getAllByText } = render(<Participants participants={participants} isValid={false}/>);
+        await waitFor(() => expect(getAllByText('Organization').length).toBe(2));
+        await waitFor(() => expect(getAllByText('Type').length).toBe(2));
+        await waitFor(() => expect(getAllByText('Select').length).toBe(2));
     });
 });

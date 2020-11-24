@@ -435,6 +435,7 @@ const EditTagProperties = (): JSX.Element => {
                                     placeholder={'Write here'}
                                     meta='Optional'
                                     onChange={remarkOrStorageAreaChange}
+                                    multiline='true'
                                 />
                             </InputContainer>
                             <InputContainer style={{ maxWidth: '150px' }}>

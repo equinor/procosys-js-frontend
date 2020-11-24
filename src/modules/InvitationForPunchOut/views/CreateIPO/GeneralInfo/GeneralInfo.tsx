@@ -97,12 +97,13 @@ const GeneralInfo = ({
         const timeSplit = timeString.split(':');
         if (from === 'start') {
             const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
-            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newTime > gi.endTime ? getEndTime(gi.startTime) : gi.endTime }; });
-            setErrorFormat(newTime <= generalInfo.startTime);
+            const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
+            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
+            setErrorFormat(newTime > newEndTime);
         } else {
-            const newTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
-            setGeneralInfo(gi => { return { ...gi, endTime: newTime }; });
-            setErrorFormat(newTime <= generalInfo.startTime);
+            const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+            setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
+            setErrorFormat(generalInfo.startTime > newEndTime);
         }
     };
 

@@ -16,6 +16,10 @@ type Participant = {
     externalEmail: ExternalEmail;
     person: Person;
     functionalRole: FunctionalRole;
+    signedAt?: Date;
+    signedBy?: string;
+    note: string;
+    attended: boolean;
 }
 
 type FunctionalRole = {
@@ -64,14 +68,4 @@ export type Attachment = {
     id: number;
     fileName: string;
     rowVersion: string;
-}
-
-export type CompletedType = {
-    completedBy?: number;
-    completedAt?: Date;
-}
-
-export type ApprovedType = {
-    approvedBy?: number;
-    approvedAt?: Date;
 }

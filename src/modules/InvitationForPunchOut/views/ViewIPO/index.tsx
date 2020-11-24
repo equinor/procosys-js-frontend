@@ -1,11 +1,13 @@
+import { AcceptIPODto, CompleteIPODto } from '../../http/InvitationForPunchOutApiClient';
 import { CenterContainer, Container } from './index.style';
+import { Invitation, Participant } from './types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
+import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import GeneralInfo from './GeneralInfo';
-import { Invitation } from './types';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
@@ -79,6 +81,46 @@ const ViewIPO = (): JSX.Element => {
     const handleChange = (index: number): void => {
         setActiveTab(index);
     };
+    
+    const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+        const signer = participant.person ? participant.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        const completeDetails: CompleteIPODto = {
+            invitationRowVersion: invitation.rowVersion,
+            participantRowVersion: signer.rowVersion,
+            participants: attNoteData
+        };
+
+        try { 
+            await apiClient.completePunchOut(params.ipoId, completeDetails);
+            await getInvitation();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+        const signer = participant.person ? participant.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        const acceptDetails: AcceptIPODto = {
+            invitationRowVersion: invitation.rowVersion,
+            participantRowVersion: signer.rowVersion,
+            participants: attNoteData
+        };
+
+        try { 
+            await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+            await getInvitation();
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 
     return (<Container>
@@ -102,7 +144,7 @@ const ViewIPO = (): JSX.Element => {
                         <Tab className='emptyTab'>{''}</Tab>
                     </TabList>
                     <TabPanels>
-                        <TabPanel><GeneralInfo invitation={invitation} /></TabPanel>
+                        <TabPanel><GeneralInfo invitation={invitation} complete={completePunchOut} accept={acceptPunchOut} /></TabPanel>
                         <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} /> </TabPanel>
                         <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
                         <TabPanel>Log</TabPanel>

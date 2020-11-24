@@ -1,11 +1,11 @@
-import { ApprovedType, CompletedType, Participant, Person } from '../../types';
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import { OrganizationMap, OrganizationsEnum } from '../../utils';
+import { IpoStatusEnum, OrganizationMap, OrganizationsEnum } from '../../utils';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
+import { Participant } from '../../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
@@ -17,41 +17,47 @@ const tooltipApprove = <div>Punch round has been completed<br />and and checked 
 
 
 
-export type EditData = {
+export type AttNoteData = {
     id: number;
     attended: boolean;
-    notes: string;
+    note: string;
 };
 
 interface Props {
     participants: Participant[];
-    completed: CompletedType;
-    approved: ApprovedType;
-    completePunchOut: (index: number, editData: EditData[]) => Promise<any>;
-    approvePunchOut: (index: number, editData: EditData[]) => Promise<any>;
+    status: string;
+    complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
 }
 
 
-const ParticipantsTable = ({participants, completed, approved, completePunchOut, approvePunchOut}: Props): JSX.Element => {
+const ParticipantsTable = ({participants, status, complete, accept }: Props): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [contractor, setContractor] = useState<boolean>(true);
     const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
-    // TODO: fill from endpoint
-    const [editData, setEditData] = useState<EditData[]>(Array(participants.length).fill({id: 0, attended: false, notes: ''}));
+    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(Array(participants.length).fill({id: 0, attended: false, notes: ''}));
 
     useEffect(() => {
         // TODO: user is contractor or construction company
         // setContractor
         // setConstructionCompany
-    }, []);
+        setAttNoteData(participants.map(p => {
+            const x = p.person ? p.person : p.functionalRole ? p.functionalRole : p.externalEmail;
+            return {
+                id: x.id,
+                attended: p.attended,
+                note: p.note
+            };
+        }));
+    }, [participants]);
 
-    const getCompleteButton = (completed: number | undefined, completePunchout: (index: number) => void): JSX.Element => {
+    const getCompleteButton = (status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipComplete} arrow>
                 <Button ref={btnCompleteRef} onClick={completePunchout}>
-                    {completed ? 'Save punch out' : 'Complete punch out'}
+                    {status === IpoStatusEnum.COMPLETED ? 'Save punch out' : 'Complete punch out'}
                 </Button>
             </CustomTooltip>
         );    
@@ -67,30 +73,28 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
         );    
     };
 
-    const getSignedProperty = useCallback((participant: Participant, handleCompletePunchOut: (index: number) => void, handleApprovePunchOut: (index: number) => void): JSX.Element => {
+    const getSignedProperty = useCallback((participant: Participant, status: string, handleCompletePunchOut: (index: number) => void, handleApprovePunchOut: (index: number) => void): JSX.Element => {
         // TODO: check if participant is current user
         // TODO: check if contractor 
         if (participant.organization === OrganizationsEnum.Contractor) {
-            if (approved.approvedBy) {
+            if (participant.signedBy) {
                 return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
             } else {
-                return getCompleteButton(completed.completedBy, handleCompletePunchOut);
+                return getCompleteButton(status, handleCompletePunchOut);
             }
         // TODO: check if constructionCompany 
-        } else if (completed.completedBy && participant.organization === OrganizationsEnum.ConstructionCompany) {
-            if (approved.approvedBy) {
+        } else if (status === IpoStatusEnum.COMPLETED && participant.organization === OrganizationsEnum.ConstructionCompany) {
+            if (participant.signedBy) {
                 return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
             } else {
                 return getApproveButton(handleApprovePunchOut);
             }
-        } else if (participant.person && completed.completedBy && completed.completedBy === participant.person.id) {
-            return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
-        } else if (participant.person && approved.approvedBy && approved.approvedBy === participant.person.id) {
+        } else if (participant.signedBy) {
             return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
         } else {
             return <span>-</span>;
         }
-    }, [completed, approved, contractor, constructionCompany]);
+    }, [contractor, constructionCompany]);
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
         setLoading(true);
@@ -98,7 +102,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
             btnCompleteRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await completePunchOut(index, editData);
+            await complete(participants[index], attNoteData);
         } catch (error) {
             if (btnCompleteRef.current) {
                 btnCompleteRef.current.removeAttribute('disabled');
@@ -106,7 +110,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
             showSnackbarNotification(error.message, 2000, true);
             setLoading(false);
         }     
-        showSnackbarNotification(`Punch out ${completed.completedBy ? 'saved': 'completed'}`, 2000, true);
+        showSnackbarNotification(`Punch out ${status === IpoStatusEnum.COMPLETED ? 'saved': 'completed'}`, 2000, true);
         if (btnCompleteRef.current) {
             btnCompleteRef.current.removeAttribute('disabled');
         }
@@ -119,7 +123,7 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
             btnApproveRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await approvePunchOut(index, editData);
+            await accept(participants[index], attNoteData);
         } catch (error) {
             if (btnApproveRef.current) {
                 btnApproveRef.current.removeAttribute('disabled');
@@ -131,17 +135,19 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
         setLoading(false);
     };
 
-    const handleEditAttended = (index: number): void => {
-        const updateData = [...editData];
+    const handleEditAttended = (id: number): void => {
+        const updateData = [...attNoteData];
+        const index = updateData.findIndex(x => x.id === id);
         updateData[index] = { ...updateData[index], attended: !updateData[index].attended };
-        setEditData([...updateData]);
+        setAttNoteData([...updateData]);
     };
 
-    const handleEditNotes = (event: any, index: number): void => {
+    const handleEditNotes = (event: any, id: number): void => {
         event.preventDefault();
-        const updateData = [...editData];
-        updateData[index] = { ...updateData[index], notes: event.target.value };
-        setEditData([...updateData]);
+        const updateData = [...attNoteData];
+        const index = updateData.findIndex(x => x.id === id);
+        updateData[index] = { ...updateData[index], note: event.target.value };
+        setAttNoteData([...updateData]);
     };
 
     return (
@@ -164,54 +170,57 @@ const ParticipantsTable = ({participants, completed, approved, completePunchOut,
                     </Row>
                 </Head>
                 <Body>
-                    {participants.map((participant: Participant, index: number) => (
-                        <Row key={index} as="tr">
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{OrganizationMap.get(participant.organization as Organization)}</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{
-                                participant.person ? 
-                                    `${participant.person.firstName} ${participant.person.lastName}` :
-                                    participant.functionalRole ?
-                                        participant.functionalRole.code :
-                                        participant.externalEmail.externalEmail
-                            }</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{
-                                participant.person ?    
-                                    participant.person.response :
-                                    participant.functionalRole ? 
-                                        (participant.functionalRole.response != null ? participant.functionalRole.response : '') :
-                                        participant.externalEmail.response
-                            }</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                <Switch 
-                                    disabled={!contractor} 
-                                    default 
-                                    label={editData[index].attended ? 'Attended' : 'Did not attend'} 
-                                    checked={editData[index].attended} 
-                                    onChange={(): void => handleEditAttended(index)}/>
-                            </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
-                                <TextField 
-                                    id={index.toString()}
-                                    disabled={!contractor && !constructionCompany}
-                                    value={editData[index].notes} 
-                                    onChange={(e: any): void => handleEditNotes(e, index)} />
-                            </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                {getSignedProperty(participant, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}
-                            </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                {participant.person ? 
-                                    (completed.completedAt && completed.completedBy === participant.person.id)  
-                                        ? `${format(completed.completedAt, 'dd/MM/yyyy HH:mm')}`
-                                        : (approved.approvedAt && approved.approvedBy === participant.person.id)  
-                                            ? `${format(approved.approvedAt, 'dd/MM/yyyy HH:mm')}`
-                                            : '-'
-                                    :
-                                    '-'
-                                }
-                            </Cell>
-                        </Row>
-                    ))}
+                    {participants.map((participant: Participant, index: number) => {
+                        const representative = participant.person ? 
+                            `${participant.person.firstName} ${participant.person.lastName}` :
+                            participant.functionalRole ?
+                                participant.functionalRole.code :
+                                participant.externalEmail.externalEmail;
+
+                        const response = participant.person ?    
+                            participant.person.response :
+                            participant.functionalRole ? 
+                                participant.functionalRole.response :
+                                participant.externalEmail.response;
+
+                        const id = participant.person ?    
+                            participant.person.id :
+                            participant.functionalRole.id ? 
+                                participant.functionalRole.id :
+                                participant.externalEmail.id;
+
+                        return (
+                            <Row key={index} as="tr">
+                                <Cell as="td" style={{verticalAlign: 'middle'}}>{OrganizationMap.get(participant.organization as Organization)}</Cell>
+                                <Cell as="td" style={{verticalAlign: 'middle'}}>{representative}</Cell>
+                                <Cell as="td" style={{verticalAlign: 'middle'}}>{response}</Cell>
+                                <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
+                                    <Switch 
+                                        disabled={!contractor || status === IpoStatusEnum.ACCEPTED} 
+                                        default 
+                                        label={attNoteData[index].attended ? 'Attended' : 'Did not attend'} 
+                                        checked={attNoteData[index].attended} 
+                                        onChange={(): void => handleEditAttended(id)}/>
+                                </Cell>
+                                <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
+                                    <TextField 
+                                        id={index.toString()}
+                                        disabled={(!contractor && !constructionCompany) || status === IpoStatusEnum.ACCEPTED}
+                                        value={attNoteData[index].note} 
+                                        onChange={(e: any): void => handleEditNotes(e, id)} />
+                                </Cell>
+                                <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
+                                    {getSignedProperty(participant, status, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}
+                                </Cell>
+                                <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
+                                    {participant.signedAt ? 
+                                        `${format(participant.signedAt, 'dd/MM/yyyy HH:mm')}` :
+                                        '-'
+                                    }
+                                </Cell>
+                            </Row>
+                        );
+                    })}
                 </Body>
             </CustomTable> 
         </Container>

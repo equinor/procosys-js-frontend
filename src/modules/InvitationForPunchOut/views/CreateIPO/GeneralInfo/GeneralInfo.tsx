@@ -8,6 +8,7 @@ import { format, set } from 'date-fns';
 import { Canceler } from '@procosys/http/HttpClient';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
+import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 
 const poTypes: SelectItem[] = [
@@ -96,7 +97,8 @@ const GeneralInfo = ({
         const timeSplit = timeString.split(':');
         if (from === 'start') {
             const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
-            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newTime > gi.endTime ? newTime : gi.endTime }; });
+            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newTime > gi.endTime ? getEndTime(gi.startTime) : gi.endTime }; });
+            setErrorFormat(newTime <= generalInfo.startTime);
         } else {
             const newTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
             setGeneralInfo(gi => { return { ...gi, endTime: newTime }; });

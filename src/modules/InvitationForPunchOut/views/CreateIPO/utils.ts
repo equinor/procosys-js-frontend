@@ -1,3 +1,5 @@
+import { addHours, addMinutes } from 'date-fns';
+
 import { Organization } from '../../types';
 
 export enum OrganizationsEnum {
@@ -23,3 +25,12 @@ const createOrganizationMap = (): Map<Organization, string> => {
 };
 
 export const OrganizationMap = createOrganizationMap();
+
+export const getEndTime = (date: Date): Date => {
+    if (date.getHours() === 23) {
+        const minutes = date.getMinutes();
+        return addMinutes(date, 59 - minutes);
+    } else {
+        return addHours(date, 1);
+    }
+};

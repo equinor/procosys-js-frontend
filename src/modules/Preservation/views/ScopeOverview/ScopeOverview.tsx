@@ -777,7 +777,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Create dummy tag
                                 </DropdownItem>
                             </Link>
-                            <Link to={'/AddScope/duplicateDummyTag/' + (selectedTags.length == 1 ? selectedTags[0].id.toString() : '')} >
+                            <Link to={duplicatableTagSelected ? '/AddScope/duplicateDummyTag/' + (selectedTags.length == 1 ? selectedTags[0].id.toString() : '') : '/'} >
                                 <DropdownItem
                                     disabled={!duplicatableTagSelected}
                                 >

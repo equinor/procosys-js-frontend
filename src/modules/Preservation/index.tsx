@@ -19,7 +19,7 @@ const Preservation = (): JSX.Element => {
             <Router basename={url}>
                 <Switch>
                     <Route
-                        path={'/AddScope/:method'}
+                        path={'/AddScope/:method/:duplicateTagId?'}
                         exact
                         component={(): ReactElement => (<ErrorBoundary><AddScope /></ErrorBoundary>)}
                     />

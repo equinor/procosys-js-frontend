@@ -1,16 +1,17 @@
 import { BadgeContainer, Card, CardDetail, Container, HeaderContainer, InlineContainer, OutlookInformationHeaderContainer, OutlookInformationStatusContainer, ParticipantContainer, ParticipantListContainer, StatusContainer } from './style';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
-import { Link } from '@material-ui/core';
+import { Participant } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 
 export enum ResponseType {
-    ATTENDING = 'Attending',
+    ATTENDING = 'Accepted',
     TENTATIVE = 'Tentative',
-    NOT_RESPONDED = 'Not responded',
+    NONE = 'None',
+    UNKNOWN = 'Unknown',
     DECLINED = 'Declined'
 }
 
@@ -19,51 +20,47 @@ export enum OutlookStatusType {
     CANCELLED = 'Cancelled'
 }
 
-export type Participant = {
-    name: string;
-    email: string;
-    company: string;
-    response?: ResponseType
-    avatar?: string;
-}
 
 type Props = {
     close: () => void;
-    participants: Participant[];
-    organizer: Participant;
+    organizer: string;
+    participants?: Participant[];
     status: OutlookStatusType;
 }
 
-const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Element => {
+const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Element => {
     const [attending, setAttending] = useState<Participant[]>([]);
     const [tentative, setTentative] = useState<Participant[]>([]);
     const [notResponded, setNotResponded] = useState<Participant[]>([]);
     const [declined, setDeclined] = useState<Participant[]>([]);
 
-    useEffect(() => {
-        participants.forEach(p => {
-            switch (p.response) {
-                case ResponseType.ATTENDING:
-                    setAttending(a => [...a, p]);
-                    break;
-                case ResponseType.TENTATIVE:
-                    setTentative(a => [...a, p]);
-                    break;
-                case ResponseType.NOT_RESPONDED:
-                    setNotResponded(a => [...a, p]);
-                    break;
-                case ResponseType.DECLINED:
-                    setDeclined(a => [...a, p]);
-                    break;
-                default:
-                    break;
-            }
+    const setOutlookResponses = useCallback(() => {
+        participants && participants.forEach(p => {
+            const role = p.person ? p.person : p.functionalRole ? p.functionalRole : null;
+            if (role) {
+                switch (role.response) {
+                    case ResponseType.ATTENDING:
+                        setAttending(a => [...a, p]);
+                        break;
+                    case ResponseType.TENTATIVE:
+                        setTentative(a => [...a, p]);
+                        break;
+                    case ResponseType.NONE:
+                        setNotResponded(a => [...a, p]);
+                        break;
+                    case ResponseType.DECLINED:
+                        setDeclined(a => [...a, p]);
+                        break;
+                    default:
+                        break;
+                }
+            }         
         });
     }, [participants]);
 
-    const disableOutlook = (): void => {
-        console.log('disableOutlook not implemented');
-    };
+    useEffect(() => {
+        setOutlookResponses();
+    }, [participants]);
 
     return (
         <Flyout close={close}>
@@ -81,25 +78,20 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                             <EdsIcon name="microsoft_outlook" color="green" />
                             <Typography>{status}</Typography>
                         </InlineContainer>
-                        <Button onClick={disableOutlook} variant="outlined" variantColor="green" title="Disable outlook">Disable outlook</Button>
                     </OutlookInformationStatusContainer>
                     <Typography variant="h6">Organizer</Typography>
-                    <Card>
-                        <CardDetail>
-                            <EdsIcon
-                                name="account_circle"
-                                color="grey"
-                                size={48}
-                            />
-                            <div>
-                                <Typography variant="body_long_bold">{organizer.company}</Typography>
-                                <Typography variant="body_long">{organizer.name}</Typography>
-                                <Link href={`mailto:${organizer.email}`}>
-                                    <Typography variant="body_long_link">{organizer.email}</Typography>
-                                </Link>
-                            </div>
-                        </CardDetail>
-                    </Card>
+                    {organizer && (
+                        <Card>
+                            <CardDetail>
+                                <EdsIcon
+                                    name="account_circle"
+                                    color="grey"
+                                    size={48}
+                                />
+                                <Typography variant="body_long">{`${organizer}`}</Typography>
+                            </CardDetail>
+                        </Card>
+                    )}
                 </StatusContainer>
                 <ParticipantListContainer>
                     <HeaderContainer>
@@ -109,9 +101,20 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         <Typography variant="body_long_bold">Attending</Typography>
                         {attending.map(p => {
                             return (
-                                <BadgeContainer key={p.email} iconBackground="green">
+                                <BadgeContainer key={p.sortKey} iconBackground="green">
                                     <EdsIcon name="done" color="white" size={16}/>
-                                    <Typography>{p.name}</Typography>
+                                    {p.person ? (
+                                        <Typography>{`${p.person.person.firstName} ${p.person.person.lastName}`}</Typography>
+                                    ) : (
+                                        p.functionalRole ? (
+                                            <div>
+                                                <Typography>{`${p.functionalRole.code}`}</Typography>
+                                                <Typography>{`${p.functionalRole.email}`}</Typography> 
+                                            </div>
+                                        ) : (
+                                            null
+                                        )
+                                    )}
                                 </BadgeContainer>
                             );
                         }
@@ -121,9 +124,20 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         <Typography variant="body_long_bold">Tentative</Typography>
                         {tentative.map(p => {
                             return (
-                                <BadgeContainer key={p.email} iconBorder>
+                                <BadgeContainer key={p.sortKey} iconBorder>
                                     <EdsIcon name="more_horizontal" size={16}/>
-                                    <Typography>{p.name}</Typography>
+                                    {p.person ? (
+                                        <Typography>{`${p.person.person.firstName} ${p.person.person.lastName}`}</Typography>
+                                    ) : (
+                                        p.functionalRole ? (
+                                            <div>
+                                                <Typography>{`${p.functionalRole.code}`}</Typography>
+                                                <Typography>{`${p.functionalRole.email}`}</Typography> 
+                                            </div>
+                                        ) : (
+                                            null
+                                        )
+                                    )}
                                 </BadgeContainer>
                             );
                         }
@@ -133,9 +147,19 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         <Typography variant="body_long_bold">Not responded</Typography>
                         {notResponded.map(p => {
                             return (
-                                <BadgeContainer key={p.email} iconBorder>
+                                <BadgeContainer key={p.sortKey} iconBorder>
                                     <h6>?</h6>
-                                    <Typography>{p.name}</Typography>
+                                    {p.person ? (
+                                        <Typography>{`${p.person.person.firstName} ${p.person.person.lastName}`}</Typography>
+                                    ) : (
+                                        p.functionalRole ? (
+                                            <div>
+                                                <Typography>{`${p.functionalRole.code}`}</Typography>
+                                                <Typography>{`${p.functionalRole.email}`}</Typography> 
+                                            </div>) : (
+                                            null
+                                        )
+                                    )}
                                 </BadgeContainer>
                             );
                         }
@@ -145,9 +169,20 @@ const OutlookInfo = ({ close, participants, organizer, status }: Props): JSX.Ele
                         <Typography variant="body_long_bold">Declined</Typography>
                         {declined.map(p => {
                             return (
-                                <BadgeContainer key={p.email} iconBackground="darkred">
+                                <BadgeContainer key={p.sortKey} iconBackground="darkred">
                                     <div></div>
-                                    <Typography>{p.name}</Typography>
+                                    {p.person ? (
+                                        <Typography>{`${p.person.person.firstName} ${p.person.person.lastName}`}</Typography>
+                                    ) : (
+                                        p.functionalRole ? (
+                                            <div>
+                                                <Typography>{`${p.functionalRole.code}`}</Typography>
+                                                <Typography>{`${p.functionalRole.email}`}</Typography> 
+                                            </div>
+                                        ) : (
+                                            null
+                                        )
+                                    )}
                                 </BadgeContainer>
                             );
                         }

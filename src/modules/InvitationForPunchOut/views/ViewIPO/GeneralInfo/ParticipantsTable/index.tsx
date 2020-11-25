@@ -33,8 +33,8 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
 
     
     const getSignedProperty = useCallback((participant: Participant, handleCompletePunchOut: (index: number) => void): JSX.Element => {
-        if (participant.person && completed.completedBy && completed.completedBy === participant.person.id) {
-            return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
+        if (participant.person && completed.completedBy && completed.completedBy === participant.person.person.id) {
+            return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
         // TODO: Determine participant permission for current user
         } else if (participant.organization === OrganizationsEnum.Contractor) {
             return (
@@ -103,7 +103,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{OrganizationMap.get(participant.organization as Organization)}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{
                                 participant.person ? 
-                                    `${participant.person.firstName} ${participant.person.lastName}` :
+                                    `${participant.person.person.firstName} ${participant.person.person.lastName}` :
                                     participant.functionalRole ?
                                         participant.functionalRole.code :
                                         participant.externalEmail.externalEmail
@@ -125,7 +125,7 @@ const ParticipantsTable = ({participants, completed, completePunchOut}: Props): 
                                 {getSignedProperty(participant, () => handleCompletePunchOut(index))}
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                {(participant.person && completed.completedAt && completed.completedBy === participant.person.id)  
+                                {(participant.person && completed.completedAt && completed.completedBy === participant.person.person.id)  
                                     ? `${format(completed.completedAt, 'dd/MM/yyyy HH:mm')}`
                                     : '-'}
                             </Cell>

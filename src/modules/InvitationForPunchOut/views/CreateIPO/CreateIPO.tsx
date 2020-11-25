@@ -37,7 +37,7 @@ const initialParticipants: Participant[] = [
         role: null
     },
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany  },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany },
         type: 'Functional role',
         externalEmail: null,
         person: null,

@@ -448,12 +448,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the user group MC_CONTRACTOR_MLA
+     * Get persons with the privilege group IPO_PLAN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getContractorPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByUserGroup/Contractor';
+    async getPlannerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByUserGroup/Planner';
         const settings: AxiosRequestConfig = {params: {
             searchString: searchString
         }};
@@ -468,12 +468,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the user group MC_CONTRACTOR_MLA
+     * Get persons with the user group IPO_SIGN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getConstructionPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByUserGroup/Construction';
+    async getSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByUserGroup/Signer';
         const settings: AxiosRequestConfig = {params: {
             searchString: searchString
         }};

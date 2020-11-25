@@ -78,12 +78,12 @@ const Participants = ({
         return firstName + ' ' + lastName;
     };
 
-    const getContractorPersons = (input: string): Canceler | null  => {
+    const getPlannerPersons = (input: string): Canceler | null  => {
         let requestCanceler: Canceler | null = null;
         if(input != '') {
             try {
                 (async (): Promise<void> => {
-                    const constractorPersons = await apiClient.getContractorPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const plannerPersons = await apiClient.getPlannerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
@@ -93,7 +93,7 @@ const Participants = ({
                             };
                         })
                         );
-                    setFilteredPersons(constractorPersons);
+                    setFilteredPersons(plannerPersons);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
@@ -106,12 +106,12 @@ const Participants = ({
         };
     };
 
-    const getConstructionPersons = (input: string): Canceler | null  => {
+    const getSignerPersons = (input: string): Canceler | null  => {
         let requestCanceler: Canceler | null = null;
         if(input != '') {
             try {
                 (async (): Promise<void> => {
-                    const constructionPersons = await apiClient.getConstructionPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const signerPersons = await apiClient.getSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
@@ -121,7 +121,7 @@ const Participants = ({
                             };
                         })
                         );
-                    setFilteredPersons(constructionPersons);
+                    setFilteredPersons(signerPersons);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
@@ -285,12 +285,25 @@ const Participants = ({
         }
     };
 
+    const isSignerParticipant = (index: number): boolean => {
+        if (index < 5 && (participants[index].organization == Organizations[2] || 
+            participants[index].organization == Organizations[3] ||
+            participants[index].organization == Organizations[4])) {
+            for (let i = 2; i < index; i++) {
+                if(participants[i].organization == participants[i].organization) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
-            if (personsFilter.value == 0) {
-                getContractorPersons(personsFilter.text);
-            } else if (personsFilter.value == 1) {
-                getConstructionPersons(personsFilter.text);
+            if (personsFilter.value < 2) {
+                getPlannerPersons(personsFilter.text);
+            } else if (isSignerParticipant(personsFilter.value)) {
+                getSignerPersons(personsFilter.text);
             } else {
                 getPersons(personsFilter.text);
             }

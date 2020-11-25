@@ -94,12 +94,8 @@ const ViewIPO = (): JSX.Element => {
             participants: attNoteData
         };
 
-        try { 
-            await apiClient.completePunchOut(params.ipoId, completeDetails);
-            await getInvitation();
-        } catch (error) {
-            console.error(error);
-        }
+        await apiClient.completePunchOut(params.ipoId, completeDetails);
+        await getInvitation();
     };
 
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -114,12 +110,8 @@ const ViewIPO = (): JSX.Element => {
             participants: attNoteData
         };
 
-        try { 
-            await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
-            await getInvitation();
-        } catch (error) {
-            console.error(error);
-        }
+        await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+        await getInvitation();
     };
 
 

@@ -16,7 +16,7 @@ type Participant = {
     externalEmail: ExternalEmail;
     person: Person;
     functionalRole: FunctionalRole;
-    signedAt?: Date;
+    signedAtUtc?: Date;
     signedBy?: string;
     note: string;
     attended: boolean;

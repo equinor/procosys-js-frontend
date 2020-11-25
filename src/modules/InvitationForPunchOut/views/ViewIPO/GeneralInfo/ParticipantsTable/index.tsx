@@ -21,6 +21,7 @@ export type AttNoteData = {
     id: number;
     attended: boolean;
     note: string;
+    rowVersion: string;
 };
 
 interface Props {
@@ -43,7 +44,8 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
             return {
                 id: x.id,
                 attended: p.attended,
-                note: p.note
+                note: p.note,
+                rowVersion: x.rowVersion
             };
         })
     ); 
@@ -72,7 +74,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         // TODO: check if participant is current user
         // TODO: check if contractor 
         if (participant.organization === OrganizationsEnum.Contractor) {
-            if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
+            if (participant.signedBy && (status === IpoStatusEnum.COMPLETED || status === IpoStatusEnum.ACCEPTED )) {
                 return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
             } else {
                 return getCompleteButton(status, handleCompletePunchOut);
@@ -98,14 +100,10 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         }
         try {
             await complete(participants[index], attNoteData);
+            showSnackbarNotification(`Punch out ${status === IpoStatusEnum.COMPLETED ? 'saved': 'completed'}`, 2000, true);
         } catch (error) {
-            if (btnCompleteRef.current) {
-                btnCompleteRef.current.removeAttribute('disabled');
-            }
             showSnackbarNotification(error.message, 2000, true);
-            setLoading(false);
         }     
-        showSnackbarNotification(`Punch out ${status === IpoStatusEnum.COMPLETED ? 'saved': 'completed'}`, 2000, true);
         if (btnCompleteRef.current) {
             btnCompleteRef.current.removeAttribute('disabled');
         }
@@ -119,14 +117,13 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         }
         try {
             await accept(participants[index], attNoteData);
+            showSnackbarNotification('Punch out approved', 2000, true);
         } catch (error) {
             if (btnApproveRef.current) {
                 btnApproveRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
-            setLoading(false);
         }     
-        showSnackbarNotification('Punch out approved', 2000, true);
         setLoading(false);
     };
 
@@ -201,15 +198,15 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                     <TextField 
                                         id={index.toString()}
                                         disabled={(!contractor && !constructionCompany) || status === IpoStatusEnum.ACCEPTED}
-                                        value={attNoteData[index].note} 
+                                        defaultValue={attNoteData[index].note} 
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                     {getSignedProperty(participant, status, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                    {participant.signedAt !== undefined ? 
-                                        `${format(participant.signedAt, 'dd/MM/yyyy HH:mm')}` :
+                                    {participant.signedAtUtc ? 
+                                        `${format(new Date(participant.signedAtUtc), 'dd/MM/yyyy HH:mm')}` :
                                         '-'
                                     }
                                 </Cell>

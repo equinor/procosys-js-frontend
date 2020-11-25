@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
-import { Container, TopContainer, Search } from './Table.style';
-import Table from '@procosys/components/Table';
-import { tokens } from '@equinor/eds-tokens';
-import { Canceler } from '@procosys/http/HttpClient';
+import { Container, Search, TopContainer } from './Table.style';
 import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
-import { Tooltip } from '@material-ui/core';
-import { TextField } from '@equinor/eds-core-react';
-import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+
+import { Canceler } from '@procosys/http/HttpClient';
 import Loading from '@procosys/components/Loading';
+import Table from '@procosys/components/Table';
+import { TextField } from '@equinor/eds-core-react';
+import { Tooltip } from '@material-ui/core';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;
@@ -18,6 +19,16 @@ interface McPkgTableProps {
 }
 
 const KEYCODE_ENTER = 13;
+
+export const multipleDisciplines = (selected: McPkgRow[]): boolean => {
+    if(selected.length > 0) {
+        const initialDiscipline = selected[0].discipline;
+        if(selected.some(mc => mc.discipline !== initialDiscipline)) {
+            return true;
+        }
+    }
+    return false;
+};
 
 const McPkgTable = forwardRef(({
     selectedMcPkgScope,
@@ -73,15 +84,6 @@ const McPkgTable = forwardRef(({
         }));
     }, [filter]);
 
-    const multipleDisciplines = (selected: McPkgRow[]): boolean => {
-        if(selected.length > 0) {
-            const initialDiscipline = selected[0].discipline;
-            if(selected.some(mc => mc.discipline !== initialDiscipline)) {
-                return true;
-            }
-        }
-        return false;
-    };
 
     const unselectMcPkg = (mcPkgNo: string): void => {
         const selectedIndex = selectedMcPkgScope.selected.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);

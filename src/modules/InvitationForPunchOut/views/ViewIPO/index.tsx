@@ -112,6 +112,7 @@ const ViewIPO = (): JSX.Element => {
                         </TabPanels>
                     </Tabs>
                 </>
+
             ) : (
                 <Typography>No invitation found</Typography>
             )

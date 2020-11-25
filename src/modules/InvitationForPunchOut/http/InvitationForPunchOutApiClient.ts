@@ -452,8 +452,8 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getPlannerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByUserGroup/Planner';
+    async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByPrivileges/RequiredSigners';
         const settings: AxiosRequestConfig = {params: {
             searchString: searchString
         }};
@@ -472,8 +472,8 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByUserGroup/Signer';
+    async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByPrivileges/AdditionalSigners';
         const settings: AxiosRequestConfig = {params: {
             searchString: searchString
         }};

@@ -32,14 +32,16 @@ type FunctionalRole = {
 }
 
 type Person = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    azureOid: string;
-    email: string;
-    required: boolean;
+    person: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    },
     response?: string;
-    rowVersion: string;
+    required: boolean;
 }
 
 type ExternalEmail = {
@@ -57,6 +59,7 @@ export type Invitation = {
     type: string;
     rowVersion: string;
     status: string;
+    createdBy: string;
     startTimeUtc: string;
     endTimeUtc: string;
     participants: Participant[];

@@ -1,7 +1,7 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import { IpoStatusEnum, OrganizationMap, OrganizationsEnum } from '../../utils';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
@@ -39,7 +39,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
     const btnApproveRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(
         participants.map(p => {
-            const x = p.person ? p.person : p.functionalRole ? p.functionalRole : p.externalEmail;
+            const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
             return {
                 id: x.id,
                 attended: p.attended,
@@ -73,19 +73,19 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         // TODO: check if contractor 
         if (participant.organization === OrganizationsEnum.Contractor) {
             if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
-                return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
+                return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
             } else {
                 return getCompleteButton(status, handleCompletePunchOut);
             }
         // TODO: check if constructionCompany 
         } else if (participant.organization === OrganizationsEnum.ConstructionCompany) {
             if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
-                return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
+                return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
             } else {
                 return getApproveButton(handleApprovePunchOut);
             }
         } else if (participant.signedBy) {
-            return <span>{`${participant.person.firstName} ${participant.person.lastName}`}</span>;
+            return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
         } else {
             return <span>-</span>;
         }
@@ -167,7 +167,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                 <Body>
                     {participants.map((participant: Participant, index: number) => {
                         const representative = participant.person ? 
-                            `${participant.person.firstName} ${participant.person.lastName}` :
+                            `${participant.person.person.firstName} ${participant.person.person.lastName}` :
                             participant.functionalRole ?
                                 participant.functionalRole.code :
                                 participant.externalEmail.externalEmail;
@@ -179,7 +179,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                 participant.externalEmail.response;
 
                         const id = participant.person ?    
-                            participant.person.id :
+                            participant.person.person.id :
                             participant.functionalRole ? 
                                 participant.functionalRole.id :
                                 participant.externalEmail.id;

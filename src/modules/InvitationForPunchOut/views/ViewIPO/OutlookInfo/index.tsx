@@ -62,10 +62,6 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
         setOutlookResponses();
     }, [participants]);
 
-    const disableOutlook = (): void => {
-        console.log('disableOutlook not implemented');
-    };
-
     return (
         <Flyout close={close}>
             <Container>
@@ -82,7 +78,6 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
                             <EdsIcon name="microsoft_outlook" color="green" />
                             <Typography>{status}</Typography>
                         </InlineContainer>
-                        <Button onClick={disableOutlook} variant="outlined" variantColor="green" title="Disable outlook">Disable outlook</Button>
                     </OutlookInformationStatusContainer>
                     <Typography variant="h6">Organizer</Typography>
                     {organizer && (
@@ -93,13 +88,7 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
                                     color="grey"
                                     size={48}
                                 />
-                                {/* <div> */}
-                                {/* <Typography variant="body_long_bold">{organizer.organization}</Typography> */}
                                 <Typography variant="body_long">{`${organizer}`}</Typography>
-                                {/* <Link href={`mailto:${organizer.person.person.email}`}>
-                                        <Typography variant="body_long_link">{organizer.person.person.email}</Typography>
-                                    </Link> */}
-                                {/* </div> */}
                             </CardDetail>
                         </Card>
                     )}

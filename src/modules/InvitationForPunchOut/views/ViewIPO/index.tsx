@@ -103,7 +103,9 @@ const ViewIPO = (): JSX.Element => {
                     </TabList>
                     <TabPanels>
                         <TabPanel><GeneralInfo invitation={invitation} /></TabPanel>
-                        <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} /> </TabPanel>
+                        <TabPanel>
+                            <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName}/>
+                        </TabPanel>
                         <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
                         <TabPanel>Log</TabPanel>
                     </TabPanels>

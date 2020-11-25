@@ -3,16 +3,22 @@ import { Table, Typography } from '@equinor/eds-core-react';
 
 import { CommPkgScope } from '../../types';
 import React from 'react';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const { Head, Body, Cell, Row } = Table;
 
 interface Props {
     commPkgScope: CommPkgScope[];
+    projectName: string;
 }
 
-const CommPkgsTable = ({ commPkgScope }: Props ): JSX.Element => {
-    const getCommPkg = async (id: string): Promise<void> => { Promise.resolve(null); };
- 
+const CommPkgsTable = ({ commPkgScope, projectName }: Props ): JSX.Element => {
+    const { plant } = useCurrentPlant();
+    
+    const goToCommPkg = (commPkgNo: string): void => {
+        window.location.href = `/${plant.pathId}/Completion#CommPkg|?projectName=${projectName}&commpkgno=${commPkgNo}`;
+    };
+
     return (
         <Container>
             <CustomTable>
@@ -27,7 +33,7 @@ const CommPkgsTable = ({ commPkgScope }: Props ): JSX.Element => {
                     {commPkgScope.length > 0 ? commPkgScope.map((commPkg: CommPkgScope, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography onClick={(): Promise<void> => getCommPkg(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
+                                <Typography onClick={(): void => goToCommPkg(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.description}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.status}</Cell>

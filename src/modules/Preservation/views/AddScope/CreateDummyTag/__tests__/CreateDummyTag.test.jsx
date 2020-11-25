@@ -4,22 +4,22 @@ import { render, act, waitFor } from '@testing-library/react';
 
 const mockDisciplines = [
     {
-        code: 'Discipline code 1',
+        code: 'DC1',
         description: 'Discipline description 1',
     },
     {
-        code: 'Discipline code 2',
+        code: 'DC2',
         description: 'Discipline description 2',
     },
 ];
 
 const mockAreas = [
     {
-        code: 'area code 1',
+        code: 'AC1',
         description: 'area description 1',
     },
     {
-        code: 'area code 2',
+        code: 'AC2',
         description: 'area description 2',
     },
 ];
@@ -36,8 +36,16 @@ const mockValidTagNo = {
     exists: false,
 };
 
-const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
+const mockTagDetails = {
+    tagId: 1,
+    tagNo: '#PRE-E-Test',
+    description: 'pre area test tag',
+    areaCode: 'AC1',
+    tagType: 'PreArea',
+    disciplineCode: 'DC1'
+};
 
+const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
 
 jest.mock('../../../../context/PreservationContext',() => ({
     usePreservationContext: () => {
@@ -48,7 +56,8 @@ jest.mock('../../../../context/PreservationContext',() => ({
                 description: 'project'
             },
             apiClient: {
-                checkAreaTagNo: () => Promise.resolve(mockValidTagNo)
+                checkAreaTagNo: () => Promise.resolve(mockValidTagNo),
+                getTagDetails: () => Promise.resolve(mockTagDetails)
             },
             libraryApiClient: {
                 getAreas: () => Promise.resolve(mockAreas),
@@ -154,10 +163,31 @@ describe('<CreateDummyTag />', () => {
         });
     });
 
-    it.todo('Initial \'Area\' is automatically selected in dropdown');
-    it.todo('Initial \'Area Type\' is automatically selected in dropdown');
-    it.todo('Initial \'Discipline\' is automatically selected in dropdown');
-    it.todo('Initial \'Tag suffix\' is automatically set on render');
-    it.todo('Initial \'Description\' is automatically set on render');
+    it('Should display screen for duplication of dummy tag, and duplicate button should be disabled if not mandatory fields are filled in.', async () => {        
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { getByText } = render(<CreateDummyTag duplicateTagId={1} areaType={{text: 'Area (#PRE)', value: 'PreArea'}} 
+                discipline={{code: 'DC1', description: 'Discipline description 1'}} area={{code: 'AC1', description: 'area description 1'}} 
+                setDescription={propFunc} setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc} setDiscipline={propFunc} setAreaType={propFunc}/>);
 
+            expect(getByText('Duplicate dummy tag')).toBeInTheDocument();
+            await waitFor( () =>  expect(getByText('Area (#PRE)')).toBeInTheDocument());    
+            await waitFor( () =>  expect(getByText('Discipline description 1')).toBeInTheDocument());    
+            await waitFor( () =>  expect(getByText('area description 1')).toBeInTheDocument());    
+            expect(getByText('Duplicate').closest('button')).toHaveAttribute('disabled');
+        });
+    });    
+
+    it('Should display screen for duplication of dummy tag, and Duplicate should be enabled if all mandatory fields are filled in.', async () => {        
+        await act(async () => {
+            var propFunc = jest.fn();
+            const { queryByText, getByTestId } = render(<CreateDummyTag duplicateTagId={1} areaType={{text: 'Area (#PRE)', value: 'PreArea'}} discipline={{code: 'DC1', description: 'Discipline description 1'}} 
+                area={{code: 'AC1', description: 'area description 1'}} setDescription={propFunc} setSelectedTags={propFunc} setArea={propFunc} 
+                setPurchaseOrder={propFunc} setDiscipline={propFunc} setAreaType={propFunc} suffix='suffixtest' description='description test'/>);
+                            
+            await waitFor( () => expect(getByTestId('suffix').value).toBe('suffixtest'));
+            await waitFor( () =>  expect(queryByText('description test')).toBeInTheDocument());    
+            await waitFor( () =>  expect(queryByText('Duplicate').closest('button')).not.toHaveAttribute('disabled'));
+        });
+    });   
 });

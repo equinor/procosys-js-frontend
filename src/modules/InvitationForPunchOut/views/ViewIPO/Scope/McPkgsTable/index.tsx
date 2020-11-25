@@ -3,15 +3,25 @@ import { Table, Typography } from '@equinor/eds-core-react';
 
 import { McPkgScope } from '../../types';
 import React from 'react';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const { Head, Body, Cell, Row } = Table;
 
 interface Props {
     mcPkgScope: McPkgScope[];
+    projectName: string;
 }
 
-const McPkgsTable = ({ mcPkgScope }: Props ): JSX.Element => {
-    const getMcPkg = async (id: string): Promise<void> => { Promise.resolve(null); };
+const McPkgsTable = ({ mcPkgScope, projectName }: Props ): JSX.Element => {
+    const { plant } = useCurrentPlant();
+
+    const goToMcPkg = (mcPkgNo: string): void => {
+        window.location.href = `/${plant.pathId}/Completion#McPkg|?projectName=${projectName}&mcpkgno=${mcPkgNo}`;
+    };
+
+    const goToCommPkg = (commPkgNo: string): void => {
+        window.location.href = `/${plant.pathId}/Completion#CommPkg|?projectName=${projectName}&commpkgno=${commPkgNo}`;
+    };
  
     return (
         <Container>
@@ -27,10 +37,12 @@ const McPkgsTable = ({ mcPkgScope }: Props ): JSX.Element => {
                     {mcPkgScope.length > 0 ? mcPkgScope.map((mcPkg: McPkgScope, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography onClick={(): Promise<void> => getMcPkg(mcPkg.mcPkgNo)} variant="body_short" link>{mcPkg.mcPkgNo}</Typography>
+                                <Typography onClick={(): void => goToMcPkg(mcPkg.mcPkgNo)} variant="body_short" link>{mcPkg.mcPkgNo}</Typography>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{mcPkg.description}</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{mcPkg.commPkgNo}</Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                <Typography onClick={(): void => goToCommPkg(mcPkg.commPkgNo)} variant="body_short" link>{mcPkg.commPkgNo}</Typography>
+                            </Cell>
                         </Row>
                     )) : (
                         <Row>

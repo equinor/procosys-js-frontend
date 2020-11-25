@@ -19,7 +19,7 @@ interface CommPkgTableProps {
     projectId: number;
 }
 
-const KEYCODE_ENTER = 13;
+const WAIT_INTERVAL = 300;
 
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
@@ -33,32 +33,52 @@ const CommPkgTable = forwardRef(({
     const [filter, setFilter] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        if(filter != '') {
-            let requestCanceler: Canceler;
-            setIsLoading(true);
-            try {
-                (async (): Promise<void> => {
-                    const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectId, filter)
-                        .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
-                            return {
-                                commPkgNo: commPkg.commPkgNo,
-                                description: commPkg.description,
-                                status: commPkg.status,
-                                tableData: {
-                                    checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
-                                }
-                            };
-                        }));
-                    setFilteredCommPkgs(filteredCommPkgs);
-                    setIsLoading(false);
-                })();
-                return (): void => requestCanceler && requestCanceler();
-            } catch (error) {
-                showSnackbarNotification(error.message);
-            }
+    const searchCommPkgs = (): Canceler | null  => {
+        let requestCanceler: Canceler | null = null;
+        try {
+            (async (): Promise<void> => {
+                const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectId, filter, (cancel: Canceler) => requestCanceler = cancel)
+                    .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
+                        return {
+                            commPkgNo: commPkg.commPkgNo,
+                            description: commPkg.description,
+                            status: commPkg.status,
+                            tableData: {
+                                checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+                            }
+                        };
+                    }));
+                setFilteredCommPkgs(filteredCommPkgs);
+                setIsLoading(false);
+            })();
+        } catch (error) {
+            showSnackbarNotification(error.message);
             setIsLoading(false);
         }
+        return (): void => {
+            requestCanceler && requestCanceler();
+        };
+    };
+
+    useEffect(() => {
+        if(filter != '') {
+            setIsLoading(true);
+        } else {
+            setIsLoading(false);
+            setFilteredCommPkgs([]);
+        }
+        const handleFilterChange = async (): Promise<void> => {
+            if (filter != '') {
+                searchCommPkgs();
+            }
+        };
+        const timer = setTimeout(() => {
+            handleFilterChange();
+        }, WAIT_INTERVAL);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
     }, [filter]);
 
     const removeAllSelectedCommPkgsInScope = (): void => {
@@ -159,10 +179,10 @@ const CommPkgTable = forwardRef(({
                     <TextField
                         id="search"
                         placeholder="Search"
-                        helperText="Search for comm pkg no, then press enter."
+                        helperText="Search for comm pkg no"
                         defaultValue=''
-                        onKeyDown={(e: any): void => {
-                            e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value);
+                        onKeyUp={(e: any): void => {
+                            setFilter(e.currentTarget.value);
                         }}
                     />
                 </Search>

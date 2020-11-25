@@ -1,6 +1,6 @@
 import { Area, CheckAreaTagNo, Discipline, PurchaseOrder, Tag } from '../types';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
+import { ButtonsContainer, CenterContent, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -12,6 +12,7 @@ import { showSnackbarNotification } from '../../../../../core/services/Notificat
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import Spinner from '@procosys/components/Spinner';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -33,7 +34,7 @@ type POItem = {
 };
 
 type CreateDummyTagProps = {
-    nextStep: () => void;
+    nextStep?: () => void;
     setSelectedTags: (tags: Tag[]) => void;
     setAreaType: (areaType?: SelectItem) => void;
     setDiscipline: (discipline?: Discipline) => void;
@@ -48,6 +49,9 @@ type CreateDummyTagProps = {
     suffix?: string;
     description?: string;
     selectedTags?: Tag[];
+    submit?: () => Promise<void>;
+    duplicateTagId?: number;
+    isSubmittingScope: boolean;
 }
 
 const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
@@ -57,22 +61,34 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>([]);
     const suffixInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
-    const [disciplines, setDisciplines] = useState<Discipline[]>([]);
-
+    const [disciplines, setDisciplines] = useState<Discipline[]>();
     const [filterForAreas, setFilterForAreas] = useState<string>('');
-    const [allAreas, setAllAreas] = useState<AreaItem[]>([]);
-    const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas);
-
+    const [allAreas, setAllAreas] = useState<AreaItem[]>();
+    const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas ? allAreas : []);
     const [filterForPOs, setFilterForPOs] = useState<string>('');
     const [allPOs, setAllPOs] = useState<POItem[]>([]);
     const [filteredPOs, setFilteredPOs] = useState<POItem[]>(allPOs);
-
     const [tagNoValidationError, setTagNoValidationError] = useState<string | null>(null);
     const [tagNoValid, setTagNoValid] = useState<boolean>(false);
-
     const [icon, setIcon] = useState<JSX.Element | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const history = useHistory();
+
+    useEffect(() => {
+        (allAreas && disciplines) ? setIsLoading(false) : setIsLoading(true);
+    }, [allAreas, disciplines]);
+
+    const getTagDetails = async (tagId: number): Promise<Tag | null> => {
+        try {
+            return await apiClient.getTagDetails(tagId);
+        }
+        catch (error) {
+            console.error(`Get tag details failed: ${error.message}`);
+            showSnackbarNotification(error.message, 5000, true);
+        }
+        return null;
+    };
 
     /** Load areas */
     useEffect(() => {
@@ -95,6 +111,24 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             requestCancellor && requestCancellor();
         };
     }, []);
+
+
+    /** Fill in values from tag to duplicate, if applicable */
+    useEffect(() => {
+        let requestCancellor: Canceler;
+        (async (): Promise<void> => {
+            if (props.duplicateTagId && disciplines && allAreas) {
+                const response = await getTagDetails(props.duplicateTagId);
+                if (response && response.tagType) {
+                    setAreaTypeForm(response.tagType);
+                    response.areaCode && setAreaForm(response.areaCode);
+                    response.disciplineCode && setDisciplineForm(response.disciplineCode);
+                    props.setDescription(response.description);
+                }
+            }
+        })();
+        return (): void => requestCancellor && requestCancellor();
+    }, [props.duplicateTagId, disciplines, allAreas]);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -145,11 +179,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
 
     /** Update list of areas based on filter */
     useEffect(() => {
-        if (filterForAreas.length <= 0) {
-            setFilteredAreas(allAreas);
-            return;
+        if (allAreas) {
+            if (filterForAreas.length <= 0) {
+                setFilteredAreas(allAreas);
+                return;
+            }
+            setFilteredAreas(allAreas.filter((p: AreaItem) => p.text.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
         }
-        setFilteredAreas(allAreas.filter((p: AreaItem) => p.text.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
     }, [filterForAreas, allAreas]);
 
     useEffect(() => {
@@ -179,7 +215,6 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         (async (): Promise<void> => {
             try {
                 const data = await libraryApiClient.getDisciplines(['PRESERVATION'], (cancel: Canceler) => requestCancellor = cancel);
-
                 setDisciplines(data);
             } catch (error) {
                 console.error('Get disciplines failed: ', error.message, error.data);
@@ -211,21 +246,18 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         props.suffix ? newTagNo = `${newTagNo}-${props.suffix}` : null;
     }
 
-    /** Set initial values */
-    useEffect(() => {
-        suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
-        descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
-    }, []);
 
     /** Map disciplines into select elements */
     useEffect(() => {
-        const mapped = disciplines.map((itm: Discipline) => {
-            return {
-                text: itm.description,
-                value: itm.code
-            };
-        });
-        setMappedDisciplines(mapped);
+        if (disciplines) {
+            const mapped = disciplines.map((itm: Discipline) => {
+                return {
+                    text: itm.description,
+                    value: itm.code
+                };
+            });
+            setMappedDisciplines(mapped);
+        }
     }, [disciplines]);
 
     const setAreaTypeForm = (value: string): void => {
@@ -241,8 +273,31 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         }
     }, [props.areaType]);
 
+    useEffect(() => {
+        descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
+    }, [props.description]);
+
+    useEffect(() => {
+        suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
+    }, [props.suffix]);
+
     const setDisciplineForm = (value: string): void => {
-        props.setDiscipline(disciplines.find((p: Discipline) => p.code === value));
+        if (disciplines) {
+            props.setDiscipline(disciplines.find((p: Discipline) => p.code === value));
+        }
+    };
+
+    const setAreaForm = (areaCode: string): void => {
+        if (allAreas) {
+            const area = allAreas.find((area) => area.value == areaCode);
+            if (area) {
+                const newArea = {
+                    code: area.value,
+                    description: area.text
+                } as Area;
+                props.setArea(newArea);
+            };
+        }
     };
 
     const nextStep = (): void => {
@@ -251,7 +306,12 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             description: props.description || '',
         };
         props.setSelectedTags([tag]);
-        props.nextStep();
+
+        if (props.duplicateTagId) {
+            props.submit && props.submit();
+        } else {
+            props.nextStep && props.nextStep();
+        }
     };
 
     const checkTagNo = async (areaType: string, discipline: string, area: string | null, po: string | null, suffix: string | null): Promise<CheckAreaTagNo> => {
@@ -341,12 +401,12 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     return (
         <div>
             <Header>
-                <Typography variant="h1">Create dummy tag</Typography>
+                {!props.duplicateTagId && <Typography variant="h1">Create dummy tag</Typography>}
+                {props.duplicateTagId && <Typography variant="h1">Duplicate dummy tag</Typography>}
                 <div>{project.name}</div>
                 {purchaseOrderNumber &&
                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
                 }
-
             </Header>
             <TopContainer>
                 <ErrorContainer>
@@ -354,12 +414,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                 </ErrorContainer>
                 <Container>
                     <InputContainer>
+                        {isLoading && <Spinner />}
                         <FormFieldSpacer>
                             <SelectInput
                                 onChange={setAreaTypeForm}
                                 data={areaTypes}
                                 label={'Dummy type'}
-                                disabled={purchaseOrderNumber ? true : false}
+                                disabled={isLoading || purchaseOrderNumber ? true : false || props.duplicateTagId ? true : false}
                             >
                                 {(props.areaType && props.areaType.text) || 'Select'}
                             </SelectInput>
@@ -367,6 +428,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                         <FormFieldSpacer>
                             <SelectInput
                                 onChange={setDisciplineForm}
+                                disabled={isLoading}
                                 data={mappedDisciplines}
                                 label={'Discipline'}
                             >
@@ -376,7 +438,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                         <FormFieldSpacer>
                             {(props.areaType && props.areaType.value == 'PoArea') ?
                                 <Dropdown
-                                    disabled={purchaseOrderNumber ? true : false}
+                                    disabled={isLoading || purchaseOrderNumber ? true : false}
                                     label={'PO/Calloff'}
                                     variant='form'
                                     text={(props.purchaseOrder && props.purchaseOrder.description) || 'Type to select'}
@@ -397,7 +459,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                 </Dropdown>
                                 :
                                 <Dropdown
-                                    disabled={!props.areaType}
+                                    disabled={isLoading || !props.areaType}
                                     label={props.areaType ? 'Area' : ''}
                                     variant='form'
                                     meta={props.areaType ? 'Optional' : ''}
@@ -424,7 +486,15 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                         </FormFieldSpacer>
                         <ButtonsContainer>
                             <Button onClick={cancel} variant='outlined' >Cancel</Button>
-                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid}>Next</Button>
+                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid || props.isSubmittingScope} >
+                                {props.isSubmittingScope && (
+                                    <CenterContent>
+                                        <Spinner />{props.duplicateTagId ? 'Duplicate' : 'Next'}
+                                    </CenterContent>
+                                )}
+                                {!props.isSubmittingScope && (props.duplicateTagId ? 'Duplicate' : 'Next')}
+
+                            </Button>
                         </ButtonsContainer>
                     </InputContainer>
                 </Container >
@@ -432,6 +502,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             <InputContainer>
                 <SuffixTextField
                     id={'Suffix'}
+                    data-testid={'suffix'}
                     label="Tag number suffix"
                     inputRef={suffixInputRef}
                     placeholder="Write here"
@@ -448,6 +519,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     style={{ maxWidth: '350px' }}
                     label="Description"
                     inputRef={descriptionInputRef}
+                    value={props.description}
                     multiline={true}
                     placeholder="Write here"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}

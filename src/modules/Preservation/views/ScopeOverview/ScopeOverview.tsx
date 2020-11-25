@@ -129,6 +129,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [preservableTagsSelected, setPreservableTagsSelected] = useState<boolean>();
     const [startableTagsSelected, setStartableTagsSelected] = useState<boolean>();
     const [transferableTagsSelected, setTransferableTagsSelected] = useState<boolean>();
+    const [duplicatableTagSelected, setDuplicatableTagSelected] = useState<boolean>();
+
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
@@ -260,6 +262,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setPreservableTagsSelected(selectedTags.find(t => t.readyToBePreserved && !t.isVoided) ? true : false);
         setStartableTagsSelected(selectedTags.find(t => t.readyToBeStarted && !t.isVoided) ? true : false);
         setTransferableTagsSelected(selectedTags.find(t => t.readyToBeTransferred && !t.isVoided) ? true : false);
+        setDuplicatableTagSelected(selectedTags.length == 1 && selectedTags[0].readyToBeDuplicated ? true : false);
 
         if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
@@ -774,6 +777,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Create dummy tag
                                 </DropdownItem>
                             </Link>
+                            <Link to={duplicatableTagSelected ? '/AddScope/duplicateDummyTag/' + (selectedTags.length == 1 ? selectedTags[0].id.toString() : '') : '/'} >
+                                <DropdownItem
+                                    disabled={!duplicatableTagSelected}
+                                >
+                                    Duplicate dummy tag
+                                </DropdownItem>
+                            </Link>
                             <Link to={'/AddScope/selectMigrateTags'}>
                                 <DropdownItem>
                                     Migrate tags from old (temporary)
@@ -879,7 +889,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
                 />
-
 
                 {
                     displayFlyout && (

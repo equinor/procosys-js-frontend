@@ -35,14 +35,16 @@ const participants = [
         organization: 'Contractor',
         sortKey: 0,
         person: {
-            id: 123,
-            firstName: 'Adwa',
-            lastName: 'ASdsklandasnd',
-            azureOid: 'azure1',
-            email: 'asdadasd@dwwdwd.com',
+            person: {
+                id: 123,
+                firstName: 'Adwa',
+                lastName: 'ASdsklandasnd',
+                azureOid: 'azure1',
+                email: 'asdadasd@dwwdwd.com',
+                rowVersion: '123123',
+            },
             required: true,
             response: 'I shall not join',
-            rowVersion: '123123',
 
         },
         externalEmail: null,        
@@ -52,14 +54,16 @@ const participants = [
         organization: 'ConstructionCompany',
         sortKey: 1,
         person: {
-            id: 1,
-            firstName: 'Oakjfcv',
-            lastName: 'Alkjljsdf',
-            azureOid: 'azure2',
-            email: 'lkjlkjsdf@dwwdwd.com',
+            person: {
+                id: 1,
+                firstName: 'Oakjfcv',
+                lastName: 'Alkjljsdf',
+                azureOid: 'azure2',
+                email: 'lkjlkjsdf@dwwdwd.com',
+                rowVersion: '123123',
+            },
             required: true,
             response: 'Tentative',
-            rowVersion: '123123',
 
         },
         externalEmail: null,
@@ -85,8 +89,8 @@ describe('<ParticipantsTable />', () => {
     it('Renders persons to table', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable completed={{completedBy: undefined, completedAt: undefined}} participants={participants} completePunchOut={completePunchOut} />);
 
-        expect(queryByText(`${participants[2].person.firstName} ${participants[2].person.lastName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[3].person.firstName} ${participants[3].person.lastName}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[2].person.person.firstName} ${participants[2].person.person.lastName}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[3].person.person.firstName} ${participants[3].person.person.lastName}`)).toBeInTheDocument();
         expect(queryAllByText(participants[2].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText(participants[3].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText('Did not attend').length).toBeGreaterThan(0);
@@ -109,7 +113,7 @@ describe('<ParticipantsTable />', () => {
     it('Renders completedBy with full name', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable completed={completed} participants={participants} completePunchOut={completePunchOut} />);
 
-        expect(queryAllByText(`${participants[2].person.firstName} ${participants[2].person.lastName}`)).toHaveLength(2);
+        expect(queryAllByText(`${participants[2].person.person.firstName} ${participants[2].person.person.lastName}`)).toHaveLength(2);
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
     });
 });

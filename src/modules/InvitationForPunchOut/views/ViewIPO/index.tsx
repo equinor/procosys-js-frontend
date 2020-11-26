@@ -32,6 +32,7 @@ enum StepsEnum {
 
 const ViewIPO = (): JSX.Element => {
     const params = useParams<{ipoId: any}>();
+    const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Planned);
     const [activeTab, setActiveTab] = useState(0);
     const { apiClient } = useInvitationForPunchOutContext();
@@ -42,16 +43,18 @@ const ViewIPO = (): JSX.Element => {
         if (invitation) {
             switch (invitation.status) {
                 case StepsEnum[1]:
-                    setCurrentStep(StepsEnum.Planned);
+                    setCurrentStep(StepsEnum.Planned + 1);
                     break;
                 case StepsEnum[2]:
-                    setCurrentStep(StepsEnum.Completed);
+                    completeStep(StepsEnum.Completed);
+                    setCurrentStep(StepsEnum.Completed + 1);
                     break;
                 case StepsEnum[3]:
-                    setCurrentStep(StepsEnum.Accepted);
+                    setSteps((steps): Step[] => steps.map((step): Step => { return {...step, isCompleted: true }; }));
+                    setCurrentStep(StepsEnum.Accepted + 1);
                     break;
                 default:
-                    setCurrentStep(StepsEnum.Planned);
+                    setCurrentStep(StepsEnum.Planned + 1);
             }
         }
     }, [invitation]);
@@ -81,6 +84,12 @@ const ViewIPO = (): JSX.Element => {
     const handleChange = (index: number): void => {
         setActiveTab(index);
     };
+
+    const completeStep = (stepNo: number): void => {
+        const modifiedSteps = [...steps];
+        modifiedSteps[stepNo-1] = {...modifiedSteps[stepNo-1], isCompleted: true };
+        setSteps(modifiedSteps);
+    };
     
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
@@ -96,6 +105,7 @@ const ViewIPO = (): JSX.Element => {
 
         await apiClient.completePunchOut(params.ipoId, completeDetails);
         await getInvitation();
+        completeStep(StepsEnum.Completed);
     };
 
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -112,6 +122,7 @@ const ViewIPO = (): JSX.Element => {
 
         await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
         await getInvitation();
+        completeStep(StepsEnum.Accepted);
     };
 
 
@@ -124,7 +135,7 @@ const ViewIPO = (): JSX.Element => {
             invitation ? (
                 <>
                     <ViewIPOHeader 
-                        steps={initialSteps}
+                        steps={steps}
                         currentStep={currentStep}
                         title={invitation.title}
                         organizer={invitation.createdBy}

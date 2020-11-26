@@ -12,8 +12,8 @@ import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 const { Head, Body, Cell, Row } = Table;
-const tooltipComplete = <div>Punch round has been completed<br />and any punches have been added.<br />Set contractor final punch<br />actual date (M01)</div>;
-const tooltipApprove = <div>Punch round has been completed<br />and and checked by company</div>;
+const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
+const tooltipApprove = <div>Punch round has been completed<br />and checked by company</div>;
 
 
 
@@ -83,8 +83,10 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         } else if (participant.organization === OrganizationsEnum.ConstructionCompany) {
             if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
                 return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
-            } else {
+            } else if (status ===  IpoStatusEnum.COMPLETED) {
                 return getApproveButton(handleApprovePunchOut);
+            } else {
+                return <span>-</span>;
             }
         } else if (participant.signedBy) {
             return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;

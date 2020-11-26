@@ -1,41 +1,18 @@
-import { CompletedType, Invitation } from '../types';
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
-import React, { useState } from 'react';
+import { Invitation, Participant } from '../types';
+import ParticipantsTable, { AttNoteData } from './ParticipantsTable';
 
-import ParticipantsTable from './ParticipantsTable';
+import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 
 interface Props {
     invitation: Invitation;
+    complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
 }
 
-const GeneralInfo = ({ invitation }: Props): JSX.Element => {
-    const [completed, setCompleted] = useState<CompletedType>({});
-
-
-    const completePunchOut = async (index: number): Promise<any> => {
-        // eslint-disable-next-line no-useless-catch
-        await new Promise((resolve, reject) => {
-            try { 
-                // TODO: await api complete punch out
-                // {
-                //     ...generalInfo,
-                //     participants: data,
-                //     completedBy: data[index].name,
-                //     completedAt: new Date()
-                // }
-                setCompleted({
-                    completedBy: invitation.participants[index].person.person.id,
-                    completedAt: new Date()
-                });
-                resolve();
-            } catch (error) {
-                reject(error);
-            }
-        });
-    };
-
+const GeneralInfo = ({ invitation, complete, accept }: Props): JSX.Element => {
     return (
         <Container>
             <HeaderContainer>
@@ -88,7 +65,7 @@ const GeneralInfo = ({ invitation }: Props): JSX.Element => {
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={invitation.participants} completed={completed} completePunchOut={completePunchOut} />
+            <ParticipantsTable participants={invitation.participants} status={invitation.status} complete={complete} accept={accept} />
         </Container>
     );
 };

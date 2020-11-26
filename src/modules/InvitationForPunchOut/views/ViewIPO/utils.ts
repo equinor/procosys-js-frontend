@@ -1,5 +1,12 @@
 import { Organization } from '../../types';
 
+export enum IpoStatusEnum {
+    PLANNED = 'Planned',
+    COMPLETED = 'Completed',
+    ACCEPTED = 'Accepted',
+    CANCELED = 'Canceled'
+}
+
 export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
     ConstructionCompany = 'ConstructionCompany',

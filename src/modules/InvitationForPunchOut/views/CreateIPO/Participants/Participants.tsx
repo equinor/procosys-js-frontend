@@ -83,7 +83,7 @@ const Participants = ({
         if(input != '') {
             try {
                 (async (): Promise<void> => {
-                    const plannerPersons = await apiClient.getPlannerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const plannerPersons = await apiClient.getRequiredSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
@@ -111,7 +111,7 @@ const Participants = ({
         if(input != '') {
             try {
                 (async (): Promise<void> => {
-                    const signerPersons = await apiClient.getSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const signerPersons = await apiClient.getAdditionalSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),

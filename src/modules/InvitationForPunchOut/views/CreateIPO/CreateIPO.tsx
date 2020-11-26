@@ -101,7 +101,7 @@ const CreateIPO = (): JSX.Element => {
     const params = useParams<{projectId: any; commPkgNo: any}>();
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
-    const { setDirtyStateFor, isDirty } = useDirtyContext();
+    const { setDirtyStateFor, isDirty, unsetDirtyStateFor } = useDirtyContext();
 
     useEffect(() => {
         if (!isDirty && generalInfo !== emptyGeneralInfo) {
@@ -213,6 +213,7 @@ const CreateIPO = (): JSX.Element => {
                 await uploadAllAttachments(newIpoId);
 
                 setIsCreating(false);
+                unsetDirtyStateFor('CreateIPO');
                 history.push('/' + newIpoId);
             } catch (error) {
                 setIsCreating(false);

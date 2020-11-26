@@ -1,7 +1,7 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import { IpoStatusEnum, OrganizationMap, OrganizationsEnum } from '../../utils';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
@@ -10,6 +10,7 @@ import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
@@ -33,22 +34,22 @@ interface Props {
 
 
 const ParticipantsTable = ({participants, status, complete, accept }: Props): JSX.Element => {
+    const cleanData = participants.map(p => {
+        const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
+        return {
+            id: x.id,
+            attended: p.attended,
+            note: p.note ? p.note : '',
+            rowVersion: x.rowVersion
+        };
+    });
     const [loading, setLoading] = useState<boolean>(false);
     const [contractor, setContractor] = useState<boolean>(true);
     const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
-    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(
-        participants.map(p => {
-            const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
-            return {
-                id: x.id,
-                attended: p.attended,
-                note: p.note,
-                rowVersion: x.rowVersion
-            };
-        })
-    ); 
+    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
+    const { setDirtyStateFor, isDirty, unsetDirtyStateFor } = useDirtyContext();
 
     const getCompleteButton = (status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
@@ -128,6 +129,14 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         }     
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
+            !isDirty && setDirtyStateFor('ParticipantsTable');
+        } else if (isDirty) {
+            unsetDirtyStateFor('ParticipantsTable');
+        }
+    }, [attNoteData]);
 
     const handleEditAttended = (id: number): void => {
         const updateData = [...attNoteData];

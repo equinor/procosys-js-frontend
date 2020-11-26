@@ -12,6 +12,7 @@ import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
@@ -100,6 +101,15 @@ const CreateIPO = (): JSX.Element => {
     const params = useParams<{projectId: any; commPkgNo: any}>();
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
+    const { setDirtyStateFor, isDirty } = useDirtyContext();
+
+    useEffect(() => {
+        if (!isDirty && generalInfo !== emptyGeneralInfo) {
+            setDirtyStateFor('CreateIPO');
+        }
+    }, [generalInfo]);
+
+
 
     const getPerson = (participant: Participant): PersonDto | null => {
         if (!participant.person) {

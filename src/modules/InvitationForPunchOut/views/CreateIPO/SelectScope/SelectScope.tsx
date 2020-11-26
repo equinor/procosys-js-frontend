@@ -1,11 +1,11 @@
 import { Button, Typography } from '@equinor/eds-core-react';
 import { CommPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Divider, Header, SelectComponent } from './SelectScope.style';
+import McPkgTable, { multipleDisciplines } from './McPkgTable';
 import React, { useEffect, useRef, useState } from 'react';
 
 import CommPkgTable from './CommPkgTable';
 import EdsIcon from '@procosys/components/EdsIcon';
-import McPkgTable from './McPkgTable';
 import SelectedScope from './SelectedScope';
 
 interface SelectScopeProps {
@@ -38,6 +38,34 @@ const SelectScope = ({
             setCurrentCommPkg(commPkgNo);
         }
     }, []);
+
+    
+    const handleRemoveMcPkg = (mcPkgNo: string): void => {
+        if (mcPkgRef.current) {
+            mcPkgRef.current.removeSelectedMcPkg(mcPkgNo);
+        } else {
+            const selectedIndex = selectedMcPkgScope.selected.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
+            if (selectedIndex > -1) {
+                // remove from selected mcPkgs
+                const newSelected = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
+                const newSelectedMcPkgScope = {commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected};
+                setSelectedMcPkgScope(newSelectedMcPkgScope);
+            }
+        }
+    };
+
+    const handleRemoveCommPkg = (commPkgNo: string): void => {
+        if (commPkgRef.current) {
+            commPkgRef.current.removeSelectedCommPkg(commPkgNo);
+        } else {
+            const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
+            if (selectedIndex > -1) {
+            // remove from selected commPkgs
+                const newSelectedCommPkgScope = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
+                setSelectedCommPkgScope(newSelectedCommPkgScope);
+            }
+        }
+    };
 
     return (     
         <Container>
@@ -81,9 +109,9 @@ const SelectScope = ({
             <Divider />
             <SelectedScope 
                 selectedCommPkgs={selectedCommPkgScope} 
-                removeCommPkg={(commPkgNo: string): void => commPkgRef.current.removeSelectedCommPkg(commPkgNo)}
+                removeCommPkg={(commPkgNo: string): void => handleRemoveCommPkg(commPkgNo)}
                 selectedMcPkgs={selectedMcPkgScope.selected} 
-                removeMcPkg={(mcPkgNo: string): void => mcPkgRef.current.removeSelectedMcPkg(mcPkgNo)}
+                removeMcPkg={(mcPkgNo: string): void => handleRemoveMcPkg(mcPkgNo)}
                 multipleDisciplines={selectedMcPkgScope.multipleDisciplines}
             />
         </Container>

@@ -105,7 +105,6 @@ const ViewIPO = (): JSX.Element => {
 
         await apiClient.completePunchOut(params.ipoId, completeDetails);
         await getInvitation();
-        completeStep(StepsEnum.Completed);
     };
 
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -122,7 +121,6 @@ const ViewIPO = (): JSX.Element => {
 
         await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
         await getInvitation();
-        completeStep(StepsEnum.Accepted);
     };
 
 

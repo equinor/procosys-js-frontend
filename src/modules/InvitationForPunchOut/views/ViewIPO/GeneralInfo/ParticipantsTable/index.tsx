@@ -1,7 +1,7 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
+import { ComponentName, IpoStatusEnum, OrganizationMap, OrganizationsEnum } from '../../utils';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import { IpoStatusEnum, OrganizationMap, OrganizationsEnum } from '../../utils';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Component, useCallback, useEffect, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
@@ -15,7 +15,6 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipApprove = <div>Punch round has been completed<br />and checked by company</div>;
-
 
 
 export type AttNoteData = {
@@ -44,12 +43,13 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         };
     });
     const [loading, setLoading] = useState<boolean>(false);
-    const [contractor, setContractor] = useState<boolean>(true);
-    const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
+    // TODO: when current user is implemented, the user role should be found and used throughout
+    const contractor = true;
+    const constructionCompany = true;
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
-    const { setDirtyStateFor, isDirty, unsetDirtyStateFor } = useDirtyContext();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const getCompleteButton = (status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
@@ -111,6 +111,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
             btnCompleteRef.current.removeAttribute('disabled');
         }
         setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
     const handleApprovePunchOut = async (index: number): Promise<any> => {
@@ -128,13 +129,14 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
             showSnackbarNotification(error.message, 2000, true);
         }     
         setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
     useEffect(() => {
         if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
-            !isDirty && setDirtyStateFor('ParticipantsTable');
-        } else if (isDirty) {
-            unsetDirtyStateFor('ParticipantsTable');
+            setDirtyStateFor(ComponentName.ParticipantsTable);
+        } else {
+            unsetDirtyStateFor(ComponentName.ParticipantsTable);
         }
     }, [attNoteData]);
 
@@ -199,6 +201,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                 <Cell as="td" style={{verticalAlign: 'middle'}}>{response}</Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                     <Switch 
+                                        id={`attendance${id}`}
                                         disabled={!contractor || status === IpoStatusEnum.ACCEPTED} 
                                         default 
                                         label={attNoteData[index].attended ? 'Attended' : 'Did not attend'} 
@@ -207,7 +210,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
                                     <TextField 
-                                        id={index.toString()}
+                                        id={`textfield${id}`}
                                         disabled={(!contractor && !constructionCompany) || status === IpoStatusEnum.ACCEPTED}
                                         defaultValue={attNoteData[index].note} 
                                         onChange={(e: any): void => handleEditNotes(e, id)} />

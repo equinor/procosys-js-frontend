@@ -13,7 +13,6 @@ import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 
@@ -39,7 +38,6 @@ const ViewIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [invitation, setInvitation] = useState<Invitation>();
     const [loading, setLoading] = useState<boolean>(false);
-    const { clearDirtyState } = useDirtyContext();
 
     useEffect(() => {
         if (invitation) {
@@ -107,7 +105,6 @@ const ViewIPO = (): JSX.Element => {
 
         await apiClient.completePunchOut(params.ipoId, completeDetails);
         await getInvitation();
-        clearDirtyState();
     };
 
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -124,7 +121,6 @@ const ViewIPO = (): JSX.Element => {
 
         await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
         await getInvitation();
-        clearDirtyState();
     };
 
 

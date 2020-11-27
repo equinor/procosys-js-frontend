@@ -7,6 +7,10 @@ export enum IpoStatusEnum {
     CANCELED = 'Canceled'
 }
 
+export enum ComponentName {
+    ParticipantsTable = 'ParticipantsTable'
+}
+
 export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
     ConstructionCompany = 'ConstructionCompany',

@@ -12,6 +12,10 @@ export enum OrganizationsEnum {
     External = 'External',
 };
 
+export enum ComponentName {
+    CreateIPO = 'CreateIPO'
+};
+
 const createOrganizationMap = (): Map<Organization, string> => {
     const orgMap = new Map<Organization, string>();
     orgMap.set(OrganizationsEnum.Commissioning, 'Commissioning');

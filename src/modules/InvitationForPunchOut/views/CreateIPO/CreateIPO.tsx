@@ -1,6 +1,6 @@
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
+import { ComponentName, OrganizationMap, OrganizationsEnum, getEndTime } from './utils';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
-import { OrganizationMap, OrganizationsEnum, getEndTime } from './utils';
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
@@ -19,14 +19,15 @@ import useRouter from '@procosys/hooks/useRouter';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
-    projectName: null,
+    projectName: '',
     poType: null,
-    title: null,
-    description: null,
+    title: '',
+    description: '',
     startTime: new Date(),
     endTime: getEndTime(new Date()),
-    location: null
+    location: ''
 };
+
 
 const initialParticipants: Participant[] = [
     {
@@ -84,7 +85,6 @@ const initialSteps: Step[] = [
 
 const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
-    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
     const [attachments, setAttachments] = useState<File[]>([]);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
@@ -99,16 +99,19 @@ const CreateIPO = (): JSX.Element => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
 
     const params = useParams<{projectId: any; commPkgNo: any}>();
+    const initialGeneralInfo = { ...emptyGeneralInfo, projectId: params.projectId };
+    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(initialGeneralInfo);
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
-    const { setDirtyStateFor, isDirty, unsetDirtyStateFor } = useDirtyContext();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     useEffect(() => {
-        if (!isDirty && generalInfo !== emptyGeneralInfo) {
-            setDirtyStateFor('CreateIPO');
+        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+            setDirtyStateFor(ComponentName.CreateIPO);
+        } else {
+            unsetDirtyStateFor(ComponentName.CreateIPO);
         }
     }, [generalInfo]);
-
 
 
     const getPerson = (participant: Participant): PersonDto | null => {
@@ -213,7 +216,7 @@ const CreateIPO = (): JSX.Element => {
                 await uploadAllAttachments(newIpoId);
 
                 setIsCreating(false);
-                unsetDirtyStateFor('CreateIPO');
+                unsetDirtyStateFor(ComponentName.CreateIPO);
                 history.push('/' + newIpoId);
             } catch (error) {
                 setIsCreating(false);

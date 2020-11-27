@@ -1,8 +1,13 @@
+import { fireEvent, render } from '@testing-library/react';
+
+import { ComponentName } from '@procosys/modules/InvitationForPunchOut/views/ViewIPO/utils';
 import ParticipantsTable from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import { render } from '@testing-library/react';
+import { configure } from '@testing-library/dom';
 import theme from '../../../../../../../assets/theme';
+
+configure({ testIdAttribute: 'id' });
 
 const participants = [
     {
@@ -63,7 +68,7 @@ const participants = [
         sortKey: 1,
         person: {
             person: {
-                id: 1,
+                id: 234,
                 firstName: 'Oakjfcv',
                 lastName: 'Alkjljsdf',
                 azureOid: 'azure2',
@@ -84,15 +89,32 @@ const participants = [
 ];
 
 
-const completePunchOut = jest.fn(() => {});
-const approvePunchOut = jest.fn(() => {});
+const completePunchOut = jest.fn();
+const approvePunchOut = jest.fn();
+const mockSetDirtyStateFor = jest.fn((arg) => { return arg; });
+const mockUnsetDirtyStateFor = jest.fn((arg) => { return arg; });
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
 
 const renderWithTheme = (Component) => {
-    return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
+    return render(
+        <ThemeProvider theme={theme}>{Component}</ThemeProvider>
+    );
 };
 
 
 describe('<ParticipantsTable />', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('Renders persons to table', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
             participants={participants} 
@@ -153,5 +175,47 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
-});
 
+    it('Should set dirty state when entering text', async () => {
+        const { getByTestId } = renderWithTheme(<ParticipantsTable 
+            participants={participants} 
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        const input = getByTestId('textfield234');
+        fireEvent.change(input, { target: { value: 'test' }});
+        expect(mockSetDirtyStateFor).toBeCalledTimes(1);
+        expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+    });
+
+    it('Should set dirty state when setting attendance', async () => {
+        const { getByTestId } = renderWithTheme(<ParticipantsTable 
+            participants={participants} 
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        const input = getByTestId('attendance234');
+        fireEvent.click(input);
+        expect(mockSetDirtyStateFor).toBeCalledTimes(1);
+        expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+    });
+
+    it('Should reset dirty state when reverting to clean state', async () => {
+        const { getByTestId } = renderWithTheme(<ParticipantsTable 
+            participants={participants} 
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        const input = getByTestId('attendance234');
+        jest.clearAllMocks();
+        fireEvent.click(input);
+        fireEvent.click(input);
+        expect(mockSetDirtyStateFor).toBeCalledTimes(1);
+        expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+        expect(mockUnsetDirtyStateFor).toBeCalledTimes(1);
+        expect(mockUnsetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+    });
+});

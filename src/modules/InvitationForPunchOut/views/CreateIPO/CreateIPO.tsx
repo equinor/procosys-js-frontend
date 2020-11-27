@@ -215,8 +215,8 @@ const CreateIPO = (): JSX.Element => {
 
                 await uploadAllAttachments(newIpoId);
 
-                setIsCreating(false);
                 unsetDirtyStateFor(ComponentName.CreateIPO);
+                setIsCreating(false);
                 history.push('/' + newIpoId);
             } catch (error) {
                 setIsCreating(false);

@@ -91,8 +91,8 @@ const participants = [
 
 const completePunchOut = jest.fn();
 const approvePunchOut = jest.fn();
-const mockSetDirtyStateFor = jest.fn((arg) => { return arg; });
-const mockUnsetDirtyStateFor = jest.fn((arg) => { return arg; });
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
 
 jest.mock('@procosys/core/DirtyContext', () => ({
     useDirtyContext: () => {

@@ -71,7 +71,7 @@ export const Container = styled.div<any>`
     }
     
     //Hide requirement column in the middle
-    thead tr th:nth-child(5), table tr td:nth-child(5)
+    thead tr th:nth-child(4), table tr td:nth-child(4)
     { 
         display:none;
     }  
@@ -84,7 +84,7 @@ export const Container = styled.div<any>`
             display: none;            
         } 
         //Show requirement column in the middle
-        thead tr th:nth-child(5), table tr td:nth-child(5)
+        thead tr th:nth-child(4), table tr td:nth-child(4)
         {   
             display:table-cell;
         }        

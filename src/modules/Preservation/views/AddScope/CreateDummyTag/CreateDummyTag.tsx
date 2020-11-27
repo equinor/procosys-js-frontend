@@ -177,7 +177,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         props.setPurchaseOrder(newPO);
     };
 
-    /** Update list of areas based on filter */
+    /** Update list of areas based on filter  */
     useEffect(() => {
         if (allAreas) {
             if (filterForAreas.length <= 0) {

@@ -286,16 +286,17 @@ const Participants = ({
     };
 
     const isSignerParticipant = (index: number): boolean => {
-        if (index < 5 && (participants[index].organization == Organizations[2] || 
-            participants[index].organization == Organizations[3] ||
-            participants[index].organization == Organizations[4])) {
+        if (index < 5 && (participants[index].organization.value == Organizations[0].value || 
+            participants[index].organization.value == Organizations[3].value ||
+            participants[index].organization.value == Organizations[4].value)) {
             for (let i = 2; i < index; i++) {
-                if(participants[i].organization == participants[i].organization) {
+                if(participants[i].organization.value == participants[index].organization.value) {
                     return false;
                 }
             }
+            return true;
         }
-        return true;
+        return false;
     };
 
     useEffect(() => {

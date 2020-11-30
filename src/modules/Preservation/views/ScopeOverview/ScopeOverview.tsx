@@ -1,4 +1,4 @@
-import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, HeaderPartOne, ShowActionsButton, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
+import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, ShowActionsButton, IconBar, OldPreservationLink, StyledButton, TooltipText, LeftPartOfHeader } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -96,7 +96,6 @@ const emptyTagListFilter: TagListFilter = {
     responsibleIds: [],
     areaCodes: []
 };
-
 interface SupportedQueryStringFilters {
     [index: string]: string | null;
     pono: string | null;
@@ -212,7 +211,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return null;
     };
 
-
     const updateModuleAreaHeightReference = (): void => {
         if (!moduleContainerRef.current) return;
         setModuleAreaHeight(moduleContainerRef.current.clientHeight);
@@ -221,12 +219,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     /** Update module area height on module resize */
     useEffect(() => {
         updateModuleAreaHeightReference();
+    }, [moduleContainerRef, displayFilter]);
+
+    useEffect(() => {
         window.addEventListener('resize', updateModuleAreaHeightReference);
 
         return (): void => {
             window.removeEventListener('resize', updateModuleAreaHeightReference);
         };
-    }, [moduleContainerRef, displayFilter]);
+    }, []);
 
     const updateModuleHeaderHeightReference = (): void => {
         if (!moduleHeaderContainerRef.current) return;
@@ -236,13 +237,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     /** Update module header height on module header resize */
     useEffect(() => {
         updateModuleHeaderHeightReference();
+    }, [moduleHeaderContainerRef, displayFilter, showActions]);
+
+    useEffect(() => {
         window.addEventListener('resize', updateModuleHeaderHeightReference);
 
         return (): void => {
             window.removeEventListener('resize', updateModuleHeaderHeightReference);
         };
-    }, [moduleHeaderContainerRef, displayFilter, showActions]);
-
+    }, []);
 
     const refreshScopeList = (refreshOnResize?: boolean): void => {
         refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - moduleHeaderHeight - 115, refreshOnResize);
@@ -748,7 +751,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
                 <HeaderContainer ref={moduleHeaderContainerRef}>
-                    <HeaderPartOne showActions={showActions}>
+                    <LeftPartOfHeader>
                         <Header>
                             <Typography variant="h1">Preservation</Typography>
                             <StyledButton
@@ -810,7 +813,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 </Button>
                             </IconBar>
                         </ActionsContainer>
-                    </HeaderPartOne>
+                    </LeftPartOfHeader>
                     <ActionsContainer showActions={showActions}>
                         <IconBar>
                             <StyledButton

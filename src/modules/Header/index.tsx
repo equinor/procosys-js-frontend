@@ -23,6 +23,7 @@ import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
 import Flyout from '@procosys/components/Flyout';
 import ModuleTabs from './ModuleTabs';
+import { Breakpoints } from '@procosys/core/styling';
 
 type PlantItem = {
     text: string;
@@ -61,16 +62,13 @@ const Header: React.FC = (): JSX.Element => {
         <div>
             <Nav>
                 <IconContainer>
-                    <ShowOnMobile>
-                        <Button
-                            variant='ghost'
-                            onClick={(): void => setShowMobileMenu(!showMobileMenu)}>
-                            <EdsIcon name="menu" />
-                        </Button>
-                    </ShowOnMobile>
-                    <ShowOnDesktop>
-                        <ProcosysLogo fontSize='inherit' />
-                    </ShowOnDesktop>
+                    <Button
+                        variant='ghost'
+                        onClick={(): void => setShowMobileMenu(!showMobileMenu)}>
+                        <EdsIcon name="menu" />
+                    </Button>
+
+                    <ProcosysLogo id='logo' fontSize='inherit' />
                 </IconContainer>
                 <LogoContainer>
                     <a
@@ -325,7 +323,7 @@ const Header: React.FC = (): JSX.Element => {
             {showMobileMenu &&
                 <ShowOnMobile>
                     <Flyout position='left' close={(): void => setShowMobileMenu(false)}>
-                        <ModuleTabs close={(): void => setShowMobileMenu(false)} />
+                        <ModuleTabs onClick={(): void => setShowMobileMenu(false)} />
                     </Flyout>
                 </ShowOnMobile>
             }

@@ -3,7 +3,7 @@ import { NavLink, useParams } from 'react-router-dom';
 import React from 'react';
 
 type ModuleTabsProps = {
-    close?: () => void;
+    onClick?: () => void;
 }
 
 const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
@@ -12,7 +12,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     return (
         <SubNav>
             <a href={`/${params.plant}/Completion`}>Completion</a>
-            <span onClick={props.close}>
+            <span onClick={props.onClick}>
                 <NavLink
                     activeClassName={'active'}
                     to={`/${params.plant}/Preservation`}
@@ -30,7 +30,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             <a href={`/${params.plant}/Hookup`}>Hookup</a>
             {
                 __DEV__ && (
-                    <span onClick={props.close}>
+                    <span onClick={props.onClick}>
 
                         <NavLink
                             activeClassName={'active'}
@@ -43,7 +43,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             }
             {
                 !__DEV__ && (
-                    <span onClick={props.close}>
+                    <span onClick={props.onClick}>
                         <a href={`/${params.plant}/PlantConfig`}>
                             Plant Configuration
                         </a>

@@ -46,6 +46,12 @@ export const IconContainer = styled.div`
     color: #ee3c3c;
     font-size: 28px;
     font-weight: 1000;
+    
+    button {display: none; }
+    ${Breakpoints.TABLET} {
+        button {display: inline-block;}
+        #logo {display: none;}
+    }
 `;
 
 export const LogoContainer = styled.div`

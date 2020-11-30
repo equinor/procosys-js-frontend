@@ -7,18 +7,12 @@ import { Breakpoints } from '@procosys/core/styling';
 export const Container = styled.div`
     display: flex;
     margin-left: var(--margin-module--left);
-    ${Breakpoints.MOBILE} {
-        margin-left: var(--grid-unit);
-    }
     height: 100%;
 `;
 
 export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     display: flex;
     margin-right: var(--margin-module--right);
-    ${Breakpoints.MOBILE} {
-        margin-right: var(--grid-unit);
-    }
     width: 100%;
     ${({ withSidePanel }): FlattenSimpleInterpolation | undefined => {
         if (withSidePanel) {
@@ -31,9 +25,6 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     overflow: hidden;
     flex-direction: column;
     margin-top: var(--margin-module--top);
-    ${Breakpoints.MOBILE} {
-        margin-top: var(--grid-unit);
-    }
     min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */
 `;
 
@@ -41,8 +32,18 @@ export const HeaderContainer = styled.div`
     display: flex;
     justify-content:space-between;
     width:100%;
-    flex-wrap: wrap;  
+    flex-wrap: wrap;     
 `;
+
+export const LeftPartOfHeader = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    ${Breakpoints.TABLET} {
+        width: 100%;
+    }
+`;
+
 
 export const Header = styled.header`
     display: flex;
@@ -67,16 +68,6 @@ export const Header = styled.header`
             display:flex;
         }  
     }   
-`;
-
-export const HeaderPartOne = styled.div<{ showActions?: boolean }>`
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-
-    ${Breakpoints.TABLET} {
-        width: 100%;
-    }
 `;
 
 export const ActionsContainer = styled.div<{ showActions?: boolean }>`

@@ -53,7 +53,7 @@ class ProCoSysSettings {
     /**
      * A random number to validate instance
      */
-    test!: number;
+    private instanceId!: number;
 
     /**
      * Singleton instance of configuration
@@ -98,22 +98,27 @@ class ProCoSysSettings {
         if (ProCoSysSettings.instance instanceof ProCoSysSettings) {
             return ProCoSysSettings.instance;
         }
-        
 
-        this.test = Math.floor(Math.random() * 4000);
-        try {
-            this.configurationResponse = settingsApiClient.getConfig();
-            this.configurationResponse.then((response) => {
-                this.mapFromConfigurationResponse(response);
-                this.mapFromLocalSettingsConfiguration(Settings);
-                this.state = ConfigurationLoaderAsyncState.READY;
-                Object.freeze(this);
-            });
-        } catch (error) {
+        this.instanceId = Math.floor(Math.random() * 9999);
+
+        this.configurationResponse = settingsApiClient.getConfig();
+        this.configurationResponse.catch((error) => {
             this.state = ConfigurationLoaderAsyncState.ERROR;
-            console.error('Failed to load config from remote source' , error);
-        }
+            console.error('Failed to load configuration from remote source', error);
+        });
 
+        this.configurationResponse.then((response) => {
+            try {
+                this.mapFromConfigurationResponse(response);
+                this.state = ConfigurationLoaderAsyncState.READY;
+            } catch (error) {
+                this.state = ConfigurationLoaderAsyncState.ERROR;
+                console.error('Failed to parse configuration from remote source' , error);
+            }
+        }).finally(() => {
+            Object.freeze(this);
+        });
+        
         ProCoSysSettings.instance = this;
     }
 
@@ -132,26 +137,6 @@ class ProCoSysSettings {
         } catch (error) {
             console.error('Failed to parse Configuration from remote server', error);
             throw error;
-        }
-    }
-
-    private mapFromLocalSettingsConfiguration(localSettingsOverride: ConfigResponse): void {
-        try {
-            localSettingsOverride.authority && (this.authority = localSettingsOverride.authority);
-            localSettingsOverride.clientId && (this.clientId = localSettingsOverride.clientId);
-            localSettingsOverride.defaultScopes && (this.defaultScopes = localSettingsOverride.defaultScopes);
-            localSettingsOverride.instrumentationKey && (this.instrumentationKey = localSettingsOverride.instrumentationKey);
-
-            if (localSettingsOverride.externalResources) {
-                localSettingsOverride.externalResources.graphApi && (this.graphApi = localSettingsOverride.externalResources.graphApi);
-                localSettingsOverride.externalResources.preservationApi && (this.preservationApi = localSettingsOverride.externalResources.preservationApi);
-                localSettingsOverride.externalResources.ipoApi && (this.ipoApi = localSettingsOverride.externalResources.ipoApi);
-                localSettingsOverride.externalResources.libraryApi && (this.libraryApi = localSettingsOverride.externalResources.libraryApi);
-                localSettingsOverride.externalResources.procosysApi && (this.procosysApi = localSettingsOverride.externalResources.procosysApi);
-            }
-            
-        } catch {
-            /* We expect to fail here when we dont have any overrides */
         }
     }
 

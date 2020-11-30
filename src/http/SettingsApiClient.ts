@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from 'axios';
 import HttpClient from './HttpClient';
-import { IAuthService } from '../auth/AuthService';
+const LocalSettings = require('../../settings.json');
+
 
 interface FeatureConfig {
     url: string;
@@ -72,6 +73,43 @@ const featureFlagMock: FeatureFlagResponse = {
     main: true
 };
 
+function overrideWithLocalSettings(remoteConfig: ConfigResponse): ConfigResponse {
+
+    //Clone it
+    const configuration: ConfigResponse = {
+        ...remoteConfig,
+        externalResources: {
+            graphApi: {...remoteConfig.externalResources.graphApi},
+            preservationApi: {...remoteConfig.externalResources.preservationApi},
+            libraryApi: {...remoteConfig.externalResources.libraryApi},
+            procosysApi: {...remoteConfig.externalResources.procosysApi},
+            ipoApi: {...remoteConfig.externalResources.ipoApi},
+        }
+    };
+
+    // Alter
+    try {
+        LocalSettings.authority && (configuration.authority = LocalSettings.authority);
+        LocalSettings.clientId && (configuration.clientId = LocalSettings.clientId);
+        LocalSettings.defaultScopes && (configuration.defaultScopes = LocalSettings.defaultScopes);
+        LocalSettings.instrumentationKey && (configuration.instrumentationKey = LocalSettings.instrumentationKey);
+
+        if (LocalSettings.externalResources) {
+            LocalSettings.externalResources.graphApi && (configuration.externalResources.graphApi = LocalSettings.externalResources.graphApi);
+            LocalSettings.externalResources.preservationApi && (configuration.externalResources.preservationApi = LocalSettings.externalResources.preservationApi);
+            LocalSettings.externalResources.ipoApi && (configuration.externalResources.ipoApi = LocalSettings.externalResources.ipoApi);
+            LocalSettings.externalResources.libraryApi && (configuration.externalResources.libraryApi = LocalSettings.externalResources.libraryApi);
+            LocalSettings.externalResources.procosysApi && (configuration.externalResources.procosysApi = LocalSettings.externalResources.procosysApi);
+        }
+        
+    } catch (error) {
+        console.error('An error occured while parsing the local configuration overrides', error);
+    }
+
+    // return
+    return configuration;
+}
+
 /**
  * API Client that is setup to talk with protected resources
  * @extends <HttpClient>
@@ -79,16 +117,20 @@ const featureFlagMock: FeatureFlagResponse = {
 export default class SettingsApiClient extends HttpClient {
 
     /**
-     * @param resource ResourceID/Scope which is required to interact with the API
-     * @param baseUrl The Base URL for the API
      * @param customSettings Any Custom <AxiosRequestConfig> for the client
      */
-    constructor(baseUrl = '', customSettings: AxiosRequestConfig = {}) {
+    constructor(customSettings: AxiosRequestConfig = {}) {
+        const baseUrl = LocalSettings.configurationEndpoint;
         super(baseUrl, customSettings);
     }
 
     getConfig(): Promise<ConfigResponse> {
-        return Promise.resolve(configMock);
+        return new Promise((resolve, reject)  => {
+            const response = {...configMock};
+            const configuration = overrideWithLocalSettings(response);
+
+            setTimeout(() => resolve(configuration), 1000*5);
+        });
     }
 
     getFeatureFlagConfig(): Promise<FeatureFlagResponse> {

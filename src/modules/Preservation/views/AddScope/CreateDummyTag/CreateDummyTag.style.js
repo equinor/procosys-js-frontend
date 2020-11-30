@@ -63,18 +63,6 @@ export const FormFieldSpacer = styled.div`
     }
 `;
 
-export const ButtonContent = styled.span`
-    display: flex;
-    align-items: center;
-    color: ${tokens.colors.interactive.primary__resting.rgba};
-    svg path {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-    }
-    svg {
-        margin-right: var(--grid-unit);
-    }
-`;
-
 export const CenterContent = styled.span`
     display: flex;
     align-items: center;
@@ -90,3 +78,4 @@ export const DropdownItem = styled.div`
 export const ErrorContainer = styled.div`
     min-height: 1rem;
 `;
+

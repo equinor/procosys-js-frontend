@@ -8,48 +8,88 @@ import theme from '../../../../../../assets/theme';
 
 export const participants = [
     {
-        name: 'Adwa Addw dwa Akndw',
-        email: 'kjhasd@lkjasd.com',
-        company: 'EQUI',
-        response: ResponseType.ATTENDING
+        sortKey: 0,
+        person: {
+            person: {
+                firstName: 'Adwa Addw',
+                lastName: 'dwa Akndw',
+                email: 'kjhasd@lkjasd.com',
+                company: 'EQUI',
+            },
+            response: ResponseType.ATTENDING
+        },
     },
     {
-        name: 'Akjooo Okasdf',
-        email: 'lkajsdkjas@equinor.com',
-        company: 'EQUI',
-        response: ResponseType.TENTATIVE
+        sortKey: 1,
+        person: {
+            person: {
+                firstName: 'Akjooo',
+                lastName: 'Okasdf',
+                email: 'lkajsdkjas@equinor.com',
+                company: 'EQUI',
+            },
+            response: ResponseType.TENTATIVE
+        },
     },
     {
-        name: 'Pkjabw Odwalk',
-        email: 'lkjawc@equinor.com',
-        company: 'EQUI',
-        response: ResponseType.TENTATIVE
+        sortKey: 2,
+        person: {
+            person: {
+                firstName: 'Pkjabw',
+                lastName: 'Odwalk',
+                email: 'lkjawc@equinor.com',
+                company: 'EQUI',
+            },
+            response: ResponseType.TENTATIVE
+        },
     },
     {
-        name: 'Prea Trea',
-        email: 'jcklwaclakjj@equinor.com',
-        company: 'EQUI',
-        response: ResponseType.NOT_RESPONDED
+        sortKey: 3,
+        person: {
+            person: {
+                firstName: 'Prea',
+                lastName: 'Trea',
+                email: 'jcklwaclakjj@equinor.com',
+                company: 'EQUI',
+            },
+            response: ResponseType.NONE
+        },
     },
     {
-        name: 'Nuyre ui Ak',
-        email: 'wwwwwwww@equinor.com',
-        company: 'EQUI',
-        response: ResponseType.DECLINED
+        sortKey: 4,
+        person: {
+            person: {
+                firstName: 'Nuyre',
+                lastName: 'ui Ak',
+                email: 'wwwwwwww@equinor.com',
+                company: 'EQUI',
+            },
+            response: ResponseType.DECLINED
+        },
     },
     {
-        name: 'Ttytya as Aiousv',
-        email: 'clclclcwajjk@equinor.com',
-        company: 'EQUI',
-        response: ResponseType.DECLINED
+        sortKey: 5,
+        person: {
+            person: {
+                firstName: 'Ttytya',
+                lastName: 'as Aiousv',
+                email: 'clclclcwajjk@equinor.com',
+                company: 'EQUI',
+            },
+            response: ResponseType.DECLINED
+        },
     },
+    {
+        sortKey: 6,
+        functionalRole: {
+            code: 'asdasd',
+            email: 'sadoiens@weweew.com',
+            response: ResponseType.ATTENDING
+        }
+    }
 ];
 
-export const organizer= {
-    name: 'Organizer Name',
-    email: 'aslkncv@equinor.com',
-    company: 'ASPD'
-};
+export const organizer = 'Organizer Name';
 
 
 
@@ -66,10 +106,7 @@ describe('<OutlookInfo />', () => {
         const { queryByText } = renderWithTheme(<OutlookInfo close={ () => { return; } } participants={participants} organizer={organizer} status={OutlookStatusType.OK} />);
 
         expect(queryByText('Ok')).toBeInTheDocument();
-        expect(queryByText('ASPD')).toBeInTheDocument();
         expect(queryByText('Organizer Name')).toBeInTheDocument();
-        expect(queryByText('Adwa Addw dwa Akndw')).toBeInTheDocument();
-        expect(queryByText('aslkncv@equinor.com')).toBeInTheDocument();
     });
 
     it('Should trigger close when X is clicked', () => {
@@ -81,7 +118,7 @@ describe('<OutlookInfo />', () => {
     it('Renders attending participants under correct container', () => {
         const { getByTestId } = renderWithTheme(<OutlookInfo close={ close } participants={participants} organizer={organizer} status={OutlookStatusType.OK} />);
         const container = getByTestId('attending');
-        expect(container.children.length).toBe(2);
+        expect(container.children.length).toBe(3);
     });
 
     it('Renders tentative participants under correct container', () => {

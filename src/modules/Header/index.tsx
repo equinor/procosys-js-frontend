@@ -16,7 +16,7 @@ import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import OptionsDropdown from '../../components/OptionsDropdown';
-import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
@@ -100,7 +100,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            { (ProCoSysSettings.ipo.enabled) &&
+                            { (ProCoSysSettings.featureIsEnabled('ipo')) &&
                                 <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch out</DropdownItem>
                                 </a>

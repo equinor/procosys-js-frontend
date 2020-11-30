@@ -1,20 +1,20 @@
 import { Configuration, UserAgentApplication } from 'msal';
 
 import AuthUser from './AuthUser';
-import {ProCoSysSettings} from '../core/ProCoSysSettings';
+import ProCoSysSettings from '../core/ProCoSysSettings';
 
 const authConfig: Configuration = {
     auth: {
-        clientId: ProCoSysSettings.auth.clientId,
+        clientId: ProCoSysSettings.clientId,
         redirectUri: window.location.href,
-        authority: ProCoSysSettings.auth.authority,
+        authority: ProCoSysSettings.authority,
     },
     // system: {
     //     logger: new Logger((lvl: any, message: any, piEnabled?: boolean ): void => { console.log('Auth: ', message);})
     // }
 };
 
-const defaultLoginScopes = ProCoSysSettings.auth.defaultScopes;
+const defaultLoginScopes = ProCoSysSettings.defaultScopes;
 
 export interface IAuthService {
     /**

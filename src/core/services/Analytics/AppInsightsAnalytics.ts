@@ -4,7 +4,7 @@ import { ICustomProperties, IExceptionTelemetry } from './types';
 
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import IAnalytics from './IAnalytics';
-import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 class AppInsightsAnalytics implements IAnalytics {

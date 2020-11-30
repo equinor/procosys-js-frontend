@@ -29,6 +29,7 @@ interface PreservedTagResponse {
         readyToBeTransferred: boolean;
         readyToBeCompleted: boolean;
         readyToBeRescheduled: boolean;
+        readyToBeDuplicated: boolean;
         isInUse: boolean;
         requirements: [
             {
@@ -142,6 +143,7 @@ interface TagDetailsResponse {
     storageArea: string;
     rowVersion: string;
     tagType: string;
+    disciplineCode: string;
 }
 
 interface TagListFilter {
@@ -700,6 +702,50 @@ class PreservationApiClient extends ApiClient {
                 tagNoSuffix: suffix,
                 stepId: stepId,
                 requirements,
+                description,
+                remark,
+                storageArea
+            });
+        } catch (error) {
+            throw new PreservationApiError(error);
+        }
+    }
+
+    /**
+     * Duplicate area tag. 
+     *
+     * @param diciplineCode Dicipline code
+     * @param areaCode Area code
+     * @param tagNoSuffix  TagNo suffix
+     * @param description Description of new tag
+     * @param remark Optional: Remark for all tags
+     * @param storageArea Optional: Storage area for all tags
+     * @param setRequestCanceller Optional: Returns a function that can be called to cancel the request
+     *
+     * @returns Promise<void>
+     * @throws PreservationApiError
+    */
+    async duplicateAreaTagAndAddToScope(
+        sourceTagId: number,
+        areaTagType: string,
+        disciplineCode?: string,
+        areaCode?: string | null,
+        suffix?: string,
+        description?: string,
+        remark?: string,
+        storageArea?: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+
+        const endpoint = '/Tags/DuplicateArea';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.post(endpoint, {
+                sourceTagId: sourceTagId,
+                areaTagType: areaTagType,
+                disciplineCode: disciplineCode,
+                areaCode: areaCode,
+                tagNoSuffix: suffix,
                 description,
                 remark,
                 storageArea

@@ -1,11 +1,13 @@
+import { AcceptIPODto, CompleteIPODto } from '../../http/InvitationForPunchOutApiClient';
 import { CenterContainer, Container } from './index.style';
+import { Invitation, Participant } from './types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
+import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import GeneralInfo from './GeneralInfo';
-import { Invitation } from './types';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
@@ -30,6 +32,7 @@ enum StepsEnum {
 
 const ViewIPO = (): JSX.Element => {
     const params = useParams<{ipoId: any}>();
+    const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Planned);
     const [activeTab, setActiveTab] = useState(0);
     const { apiClient } = useInvitationForPunchOutContext();
@@ -40,16 +43,18 @@ const ViewIPO = (): JSX.Element => {
         if (invitation) {
             switch (invitation.status) {
                 case StepsEnum[1]:
-                    setCurrentStep(StepsEnum.Planned);
+                    setCurrentStep(StepsEnum.Planned + 1);
                     break;
                 case StepsEnum[2]:
-                    setCurrentStep(StepsEnum.Completed);
+                    completeStep(StepsEnum.Completed);
+                    setCurrentStep(StepsEnum.Completed + 1);
                     break;
                 case StepsEnum[3]:
-                    setCurrentStep(StepsEnum.Accepted);
+                    setSteps((steps): Step[] => steps.map((step): Step => { return {...step, isCompleted: true }; }));
+                    setCurrentStep(StepsEnum.Accepted + 1);
                     break;
                 default:
-                    setCurrentStep(StepsEnum.Planned);
+                    setCurrentStep(StepsEnum.Planned + 1);
             }
         }
     }, [invitation]);
@@ -80,34 +85,77 @@ const ViewIPO = (): JSX.Element => {
         setActiveTab(index);
     };
 
+    const completeStep = (stepNo: number): void => {
+        const modifiedSteps = [...steps];
+        modifiedSteps[stepNo-1] = {...modifiedSteps[stepNo-1], isCompleted: true };
+        setSteps(modifiedSteps);
+    };
+    
+    const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        const completeDetails: CompleteIPODto = {
+            invitationRowVersion: invitation.rowVersion,
+            participantRowVersion: signer.rowVersion,
+            participants: attNoteData
+        };
+
+        await apiClient.completePunchOut(params.ipoId, completeDetails);
+        await getInvitation();
+    };
+
+    const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        const acceptDetails: AcceptIPODto = {
+            invitationRowVersion: invitation.rowVersion,
+            participantRowVersion: signer.rowVersion,
+            participants: attNoteData
+        };
+
+        await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+        await getInvitation();
+    };
+
 
     return (<Container>
-        <ViewIPOHeader 
-            steps={initialSteps}
-            currentStep={currentStep}
-            title={invitation ? `${invitation.title}` : ''}
-        />
         { loading ? (
             <CenterContainer>
                 <Spinner large />
             </CenterContainer>
         ) :
             invitation ? (
-                <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
-                    <TabList>
-                        <Tab>General</Tab>
-                        <Tab>Scope</Tab>
-                        <Tab>Attachments</Tab>
-                        <Tab>Log</Tab>
-                        <Tab className='emptyTab'>{''}</Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel><GeneralInfo invitation={invitation} /></TabPanel>
-                        <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} /> </TabPanel>
-                        <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
-                        <TabPanel>Log</TabPanel>
-                    </TabPanels>
-                </Tabs>
+                <>
+                    <ViewIPOHeader 
+                        steps={steps}
+                        currentStep={currentStep}
+                        title={invitation.title}
+                        organizer={invitation.createdBy}
+                        participants={invitation.participants}
+                    />
+                    <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
+                        <TabList>
+                            <Tab>General</Tab>
+                            <Tab>Scope</Tab>
+                            <Tab>Attachments</Tab>
+                            <Tab>Log</Tab>
+                            <Tab className='emptyTab'>{''}</Tab>
+                        </TabList>
+                        <TabPanels>
+                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} /></TabPanel>
+                            <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
+                            <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
+                            <TabPanel>Log</TabPanel>
+                        </TabPanels>
+                    </Tabs>
+                </>
+
             ) : (
                 <Typography>No invitation found</Typography>
             )

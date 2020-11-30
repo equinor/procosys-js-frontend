@@ -1,6 +1,6 @@
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
-import { OrganizationMap, OrganizationsEnum } from './utils';
+import { OrganizationMap, OrganizationsEnum, getEndTime } from './utils';
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
@@ -11,7 +11,6 @@ import Loading from '@procosys/components/Loading';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
-import { addHours } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
@@ -24,7 +23,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     title: null,
     description: null,
     startTime: new Date(),
-    endTime: addHours(new Date(), 1),
+    endTime: getEndTime(new Date()),
     location: null
 };
 

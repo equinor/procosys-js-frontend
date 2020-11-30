@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import {
     DropdownItem,
     IconContainer,
@@ -262,6 +263,45 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuItem>
                 </MenuContainer>
                 <MenuContainer>
+                    <MenuItem className='compact'>
+                        <OptionsDropdown variant={'ghost'} icon='link'>
+                            <a href="https://dcp.equinor.com" target="_blank">
+                                <DropdownItem>
+                                    DCP – Digitalized Commissioning Procedure
+                                </DropdownItem>
+                            </a>
+                            <a href="https://statoilsrm.sharepoint.com/sites/Echo" target="_blank">
+                                <DropdownItem>
+                                    Echo homepage – Digital Twin
+                                </DropdownItem>
+                            </a>
+                            <a href="https://fusion.equinor.com" target="_blank">
+                                <DropdownItem>
+                                    FUSION – Project information portal
+                                </DropdownItem>
+                            </a>
+                            <a href="https://infield.equinor.com" target="_blank">
+                                <DropdownItem>
+                                    InField – Technical data and status
+                                </DropdownItem>
+                            </a>
+                            <a href="https://inview.equinor.com" target="_blank">
+                                <DropdownItem>
+                                    InView – SWCR, Punch and Query Analyze
+                                </DropdownItem>
+                            </a>
+                            <a href="https://stid.equinor.com" target="_blank">
+                                <DropdownItem>
+                                    STID - Technical Information Portal
+                                </DropdownItem>
+                            </a>
+                            <a href="https://accessit.equinor.com" target="_blank">
+                                <DropdownItem>
+                                    Access IT – Access Managing Control System for Equinor
+                                </DropdownItem>
+                            </a>                                                                                                                                                                        
+                        </OptionsDropdown>
+                    </MenuItem >                    
                     <MenuItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>

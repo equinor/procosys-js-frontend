@@ -60,11 +60,6 @@ const SelectedScope = ({
                                 {commPkg.status}
                             </Typography>
                         </div>
-                        <div>
-                            <Typography variant='caption'>
-                                Some test info
-                            </Typography>
-                        </div>
                     </AccordionContent>
                 </AccordionPanel>
             </AccordionItem >

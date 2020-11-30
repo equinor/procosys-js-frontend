@@ -67,46 +67,19 @@ jest.mock('../../../context/PreservationContext', () => ({
     }
 }));
 
-const resizeWindow = (width, height) => {
-    window.innerWidth = width;
-    window.innerHeight = height;
-    window.dispatchEvent(new Event('resize'));
-};
-
 describe('<ScopeOverview />', () => {
 
-    it('Should display all columns on desktop screen', async () => {
+    it('Should display description column', async () => {
 
         await act(async () => {
-            resizeWindow(2000,1000);
-            
             const history = createMemoryHistory();
             const { getByText } = render(
                 <Router history={history}>
                     <ScopeOverview />
                 </Router>
-            );
-           
+            );          
             await waitFor(() => expect(getByText('Description')).toBeInTheDocument());
-            await waitFor(() => expect(getByText('Show actions')).not.toBeInTheDocument());
         });        
     });
-
-    it('Should display "show actions" button on mobile device and "description" column should not show', async () => {
-        await act(async () => {
-            resizeWindow(400,1000);
-            
-            const history = createMemoryHistory();
-            const { getByText } = render(
-                <Router history={history}>
-                    <ScopeOverview />
-                </Router>
-            );
-           
-            await waitFor(() => expect(getByText('Description')).not.toBeInTheDocument());
-            await waitFor(() => expect(getByText('Show actions')).toBeInTheDocument());
-        });        
-    });
-
     
 });

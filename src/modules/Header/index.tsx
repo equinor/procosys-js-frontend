@@ -254,14 +254,14 @@ const Header: React.FC = (): JSX.Element => {
                 <MenuContainer>
                     <MenuItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='link'>
+                            <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">
+                                <DropdownItem>
+                                    C&amp;C digital toolbox
+                                </DropdownItem>
+                            </a>                            
                             <a href="https://dcp.equinor.com" target="_blank">
                                 <DropdownItem>
                                     DCP – Digitalized Commissioning Procedure
-                                </DropdownItem>
-                            </a>
-                            <a href="https://statoilsrm.sharepoint.com/sites/Echo" target="_blank">
-                                <DropdownItem>
-                                    Echo homepage – Digital Twin
                                 </DropdownItem>
                             </a>
                             <a href="https://fusion.equinor.com" target="_blank">
@@ -269,14 +269,9 @@ const Header: React.FC = (): JSX.Element => {
                                     FUSION – Project information portal
                                 </DropdownItem>
                             </a>
-                            <a href="https://infield.equinor.com" target="_blank">
+                            <a href="https://echo.equinor.com" target="_blank">
                                 <DropdownItem>
-                                    InField – Technical data and status
-                                </DropdownItem>
-                            </a>
-                            <a href="https://inview.equinor.com" target="_blank">
-                                <DropdownItem>
-                                    InView – SWCR, Punch and Query Analyze
+                                    Echo inField – Technical data and status
                                 </DropdownItem>
                             </a>
                             <a href="https://stid.equinor.com" target="_blank">

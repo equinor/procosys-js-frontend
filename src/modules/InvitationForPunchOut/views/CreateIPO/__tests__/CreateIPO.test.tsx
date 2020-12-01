@@ -66,6 +66,8 @@ describe('<CreateIPO />', () => {
         const { getByTestId } = render(<CreateIPO />);
         const startTime = getByTestId('startTime');
         const endTime = getByTestId('endDate');
+        fireEvent.change(startTime, { target: { value: '08:00'}});
+        fireEvent.change(endTime, { target: { value: '09:00'}});
         fireEvent.change(startTime, { target: { value: '22:23'}});
         await waitFor(() => expect(endTime).toHaveValue('23:23'));
     });
@@ -74,8 +76,9 @@ describe('<CreateIPO />', () => {
         const { getByTestId } = render(<CreateIPO />);
         const startTime = getByTestId('startTime');
         const endTime = getByTestId('endDate');
+        fireEvent.change(startTime, { target: { value: '08:00'}});
         fireEvent.change(endTime, { target: { value: '23:23'}});
-        fireEvent.change(startTime, { target: { value: '08:23'}});
+        fireEvent.change(startTime, { target: { value: '10:23'}});
         await waitFor(() => expect(endTime).toHaveValue('23:23'));
     });
 

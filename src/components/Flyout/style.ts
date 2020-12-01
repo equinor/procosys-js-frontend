@@ -16,7 +16,7 @@ export const FlyoutContainer = styled.div<{ position: string, minWidth: string, 
     background: ${tokens.colors.ui.background__default.rgba};
     position: fixed;
        
-    ${({ position }): FlattenSimpleInterpolation | undefined => {
+    ${({ position }): FlattenSimpleInterpolation => {
         if (position && position == 'left') {
             return css`
                 left: 0;
@@ -33,7 +33,7 @@ export const FlyoutContainer = styled.div<{ position: string, minWidth: string, 
     max-width: ${(props): string => props.maxWidth};
     height: 100%;
     overflow-y: auto;
-    overflow-x: scroll;
+    overflow-x: hidden;
 
     opacity: 0;
     transition: opacity 0.5s;

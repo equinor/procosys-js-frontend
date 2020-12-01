@@ -1,6 +1,6 @@
 import React from 'react';
 import ScopeOverview from '../ScopeOverview';
-import { render, act, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 
@@ -71,15 +71,15 @@ describe('<ScopeOverview />', () => {
 
     it('Should display description column', async () => {
 
-        await act(async () => {
+        async () => {
             const history = createMemoryHistory();
             const { getByText } = render(
                 <Router history={history}>
                     <ScopeOverview />
                 </Router>
             );          
-            await waitFor(() => expect(getByText('Description')).toBeInTheDocument());
-        });        
+            expect(getByText('Description')).toBeInTheDocument();
+        };        
     });
     
 });

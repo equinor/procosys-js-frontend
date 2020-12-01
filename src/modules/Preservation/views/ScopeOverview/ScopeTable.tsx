@@ -49,14 +49,10 @@ class ScopeTable extends React.Component<ScopeTableProps> {
     }
 
     componentDidMount(): void {
-        this.props.setRefreshScopeListCallback((maxHeight: number, refreshOnResize?: boolean) => {
+        this.props.setRefreshScopeListCallback((maxHeight: number, refreshOnResize = false) => {
             if (this.refObject.current) {
                 this.refObject.current.props.options.maxBodyHeight = maxHeight;
-                if (refreshOnResize) {
-                    this.refreshOnResize = refreshOnResize;
-                } else {
-                    this.refreshOnResize = false;
-                }
+                this.refreshOnResize = refreshOnResize;
                 this.refObject.current.onSearchChangeDebounce();
             }
         });

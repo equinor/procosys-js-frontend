@@ -17,7 +17,6 @@ export const Nav = styled.nav`
 
 export const SubNav = styled.nav`
     border-bottom: 2px solid ${tokens.colors.ui.background__medium.rgba};
-    width: 100%;
     font-weight: 500;
     a {
         display: inline-block;
@@ -111,12 +110,11 @@ export const MenuItem = styled.div`
 export const ShowOnMobile = styled.div`
     display:none;    
     ${Breakpoints.TABLET} {
-        display: flex;            
+        display: unset;            
     } 
 `;
 
 export const ShowOnDesktop = styled.div`
-    display:flex;
     ${Breakpoints.TABLET} {
         display: none;            
     } 

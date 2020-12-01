@@ -36,12 +36,10 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
     cursor: pointer;
 `;
 
-export const Container = styled.div<any>`
-
+export const Container = styled.div`
     input + svg {
         width: 24px;
-        height: 24px;
-        
+        height: 24px;       
     }
     
     tbody, thead {
@@ -74,8 +72,7 @@ export const Container = styled.div<any>`
     thead tr th:nth-child(4), table tr td:nth-child(4)
     { 
         display:none;
-    }  
-
+    }   
     
     ${Breakpoints.TABLET} {
         //hide columns

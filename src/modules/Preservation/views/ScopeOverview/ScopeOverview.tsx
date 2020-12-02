@@ -250,7 +250,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     }, []);
 
     const refreshScopeList = (refreshOnResize?: boolean): void => {
-        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - moduleHeaderHeight - 175, refreshOnResize);
+        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - moduleHeaderHeight - 190, refreshOnResize);
     };
 
     useEffect(() => {

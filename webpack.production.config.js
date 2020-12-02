@@ -91,7 +91,7 @@ module.exports = {
             title: 'ProCoSys',
             favicon: 'src/assets/icons/ProCoSys_favicon16x16.png',
             meta: {
-                viewport: 'width=device-width, initial-scale=1'
+                viewport: 'width=device-width, height=device-height, initial-scale=1'
             }
         }),
         /* Deletes our build directory when building */

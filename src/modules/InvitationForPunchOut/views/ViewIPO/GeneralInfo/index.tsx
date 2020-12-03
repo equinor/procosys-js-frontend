@@ -1,8 +1,8 @@
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
 import { Invitation, Participant } from '../types';
 import ParticipantsTable, { AttNoteData } from './ParticipantsTable';
+import React, { useEffect, useState } from 'react';
 
-import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 
@@ -14,6 +14,9 @@ interface Props {
 }
 
 const GeneralInfo = ({ invitation, complete, accept, sign }: Props): JSX.Element => {
+    const participants = invitation.participants.sort((p1, p2): number => p1.sortKey - p2.sortKey );
+
+    
     return (
         <Container>
             <HeaderContainer>
@@ -66,7 +69,7 @@ const GeneralInfo = ({ invitation, complete, accept, sign }: Props): JSX.Element
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={invitation.participants} status={invitation.status} complete={complete} accept={accept} sign={sign} />
+            <ParticipantsTable participants={participants} status={invitation.status} complete={complete} accept={accept} sign={sign} />
         </Container>
     );
 };

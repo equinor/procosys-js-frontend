@@ -93,14 +93,14 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
             case OrganizationsEnum.Contractor:
                 // TODO: check if participant is current user
                 if (participant.signedBy) {
-                    return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
+                    return <span>{`${participant.signedBy}`}</span>;
                 } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
                     return getCompleteButton(status, handleCompletePunchOut);
                 } 
                 break;
             case OrganizationsEnum.ConstructionCompany:
                 if (participant.signedBy) {
-                    return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
+                    return <span>{`${participant.signedBy}`}</span>;
                 } else if (status ===  IpoStatusEnum.COMPLETED) {
                     // TODO: check if participant is current user
                     return getApproveButton(handleApprovePunchOut);
@@ -110,7 +110,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
             case OrganizationsEnum.TechnicalIntegrity:
             case OrganizationsEnum.Commissioning:
                 if (participant.signedBy) {
-                    return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
+                    return <span>{`${participant.signedBy}`}</span>;
                 } else if (status !==  IpoStatusEnum.CANCELED) {
                     // TODO: check if participant is current user
                     return getSignButton(handleSignPunchOut);
@@ -216,9 +216,9 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
 
                         const response = participant.person ?    
                             participant.person.response :
-                            participant.functionalRole ? 
-                                participant.functionalRole.response :
-                                participant.externalEmail.response;
+                            participant.externalEmail ? 
+                                participant.externalEmail.response :
+                                '';
 
                         const id = participant.person ?    
                             participant.person.person.id :
@@ -227,7 +227,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                                 participant.externalEmail.id;
 
                         return (
-                            <Row key={index} as="tr">
+                            <Row key={participant.sortKey} as="tr">
                                 <Cell as="td" style={{verticalAlign: 'middle'}}>
                                     {OrganizationMap.get(participant.organization as Organization)}
                                 </Cell>

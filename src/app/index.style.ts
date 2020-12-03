@@ -7,7 +7,6 @@ export const ProCoSysRootLayout = styled.div`
     overflow-y: auto;
     min-height: 100vh;
     min-height: -webkit-fill-available;
-    height: fill-available;
 
     #root-content {
         overflow: auto;
@@ -16,6 +15,5 @@ export const ProCoSysRootLayout = styled.div`
     
     html {
         height: -webkit-fill-available;
-        height: fill-available;
     }
 `;

@@ -10,9 +10,10 @@ interface Props {
     invitation: Invitation;
     complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    sign: (p: Participant) => Promise<any>;
 }
 
-const GeneralInfo = ({ invitation, complete, accept }: Props): JSX.Element => {
+const GeneralInfo = ({ invitation, complete, accept, sign }: Props): JSX.Element => {
     return (
         <Container>
             <HeaderContainer>
@@ -65,7 +66,7 @@ const GeneralInfo = ({ invitation, complete, accept }: Props): JSX.Element => {
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={invitation.participants} status={invitation.status} complete={complete} accept={accept} />
+            <ParticipantsTable participants={invitation.participants} status={invitation.status} complete={complete} accept={accept} sign={sign} />
         </Container>
     );
 };

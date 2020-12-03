@@ -52,7 +52,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
         })
     ); 
 
-    const getCompleteButton = (status: string, completePunchout: (index: number) => void): JSX.Element => {
+    const getCompleteButton = useCallback((status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipComplete} arrow>
                 <Button ref={btnCompleteRef} onClick={completePunchout}>
@@ -60,7 +60,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                 </Button>
             </CustomTooltip>
         );    
-    };
+    }, [status]);
 
     const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
         return (
@@ -91,21 +91,21 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
 
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
-                if (participant.signedBy && (status === IpoStatusEnum.COMPLETED || status === IpoStatusEnum.ACCEPTED )) {
+                // TODO: check if participant is current user
+                if (participant.signedBy) {
                     return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
-                } else {
-                    // TODO: check if participant is current user
+                } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
                     return getCompleteButton(status, handleCompletePunchOut);
-                }
+                } 
+                break;
             case OrganizationsEnum.ConstructionCompany:
-                if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
+                if (participant.signedBy) {
                     return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
                 } else if (status ===  IpoStatusEnum.COMPLETED) {
                     // TODO: check if participant is current user
                     return getApproveButton(handleApprovePunchOut);
-                } else {
-                    return <span>-</span>;
-                }
+                } 
+                break;
             case OrganizationsEnum.Operation:
             case OrganizationsEnum.TechnicalIntegrity:
             case OrganizationsEnum.Commissioning:
@@ -116,8 +116,6 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                     return getSignButton(handleSignPunchOut);
                 }
                 break;
-            default:
-                return <span>-</span>;
         }
 
         return <span>-</span>;

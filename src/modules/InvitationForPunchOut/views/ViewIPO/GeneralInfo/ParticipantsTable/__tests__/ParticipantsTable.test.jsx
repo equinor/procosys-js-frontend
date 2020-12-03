@@ -94,14 +94,14 @@ const renderWithTheme = (Component) => {
 
 describe('<ParticipantsTable />', () => {
     it('Renders persons to table', async () => {
-        const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
+        const { queryAllByText } = renderWithTheme(<ParticipantsTable 
             participants={participants} 
-            status="Planned"
+            status="Accepted"
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText(`${participants[2].person.person.firstName} ${participants[2].person.person.lastName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[3].person.person.firstName} ${participants[3].person.person.lastName}`)).toBeInTheDocument();
+        expect(queryAllByText(`${participants[2].person.person.firstName} ${participants[2].person.person.lastName}`).length).toBe(2);
+        expect(queryAllByText(`${participants[3].person.person.firstName} ${participants[3].person.person.lastName}`).length).toBe(2);
         expect(queryAllByText(participants[2].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText(participants[3].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText('Did not attend').length).toBeGreaterThan(0);
@@ -114,31 +114,38 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryByText(participants[0].externalEmail.externalEmail)).toBeInTheDocument();
         expect(queryAllByText(participants[0].externalEmail.response).length).toBeGreaterThan(0);
     });
 
     it('Renders functionalRole to table', async () => {
+        const newParticipants = [...participants];
+        newParticipants[2] = { ...participants[2], signedAtUtc: null, signedBy: null};
+        newParticipants[3] = { ...participants[3], signedAtUtc: null, signedBy: null};
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
-            participants={participants} 
+            participants={newParticipants} 
             status="Planned"
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
         expect(queryByText('Complete punch out')).toBeInTheDocument();
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryByText(participants[1].functionalRole.code)).toBeInTheDocument();
         expect(queryAllByText(participants[1].functionalRole.response).length).toBeGreaterThan(0);
     });
 
     it('Renders signedBy with full name', async () => {
+        const newParticipants = [...participants];
+        newParticipants[3] = { ...participants[3], signedAtUtc: null, signedBy: null};
         const { queryByText } = renderWithTheme(<ParticipantsTable 
-            participants={participants} 
+            participants={newParticipants} 
             status="Completed"
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        // expect(queryByText('Save punch out')).toBeInTheDocument();
         expect(queryByText('Approve punch out')).toBeInTheDocument();
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
     });
 
@@ -149,9 +156,22 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryAllByText(`${participants[2].person.person.firstName} ${participants[2].person.person.lastName}`)).toHaveLength(2);
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
+    });
+
+    it('Renders not buttons when canceled', async () => {
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={participants} 
+            status="Canceled"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
+        expect(queryByText('Complete punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
     });
 });
 

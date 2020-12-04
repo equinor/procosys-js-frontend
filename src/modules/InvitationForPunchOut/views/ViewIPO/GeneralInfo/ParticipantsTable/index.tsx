@@ -215,10 +215,15 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                                 participant.externalEmail.externalEmail;
 
                         const response = participant.person ?    
-                            participant.person.response :
-                            participant.externalEmail ? 
-                                participant.externalEmail.response :
-                                '';
+                            participant.person.response ?
+                                participant.person.response : ''
+                            : participant.externalEmail ? 
+                                participant.externalEmail.response ?
+                                    participant.externalEmail.response : ''
+                                : participant.functionalRole ? 
+                                    participant.functionalRole.response ?
+                                        participant.functionalRole.response : ''
+                                    : '';
 
                         const id = participant.person ?    
                             participant.person.person.id :

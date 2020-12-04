@@ -5,8 +5,7 @@ export const ProCoSysRootLayout = styled.div`
     flex-direction: column;
     //max-height: calc(100vh);
     overflow-y: auto;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    height: 100vh;
 
     #root-content {
         overflow: auto;

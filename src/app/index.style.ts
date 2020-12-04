@@ -10,5 +10,6 @@ export const ProCoSysRootLayout = styled.div`
 
     #root-content {
         overflow: auto;
+        height: 100%;
     }   
 `;

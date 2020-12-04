@@ -1,3 +1,4 @@
+import { OutlookResponseType } from '../../../utils';
 import ParticipantsTable from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
@@ -13,7 +14,7 @@ const participants = [
         externalEmail: {
             id: 0,
             externalEmail: 'asdasd@asdasd.com',
-            response: 'None',
+            response: OutlookResponseType.NONE,
             rowVersion: '00101' 
         },
         attended: false,
@@ -28,7 +29,7 @@ const participants = [
             code: 'asdasdasd',
             email: 'funcitonalRole@asd.com',
             persons: [],
-            response: 'Attending',
+            response: OutlookResponseType.ATTENDING,
             rowVersion: '123o875'
         },        
         externalEmail: null, 
@@ -48,7 +49,7 @@ const participants = [
                 rowVersion: '123123',
             },
             required: true,
-            response: 'I shall not join',
+            response: OutlookResponseType.DECLINED,
 
         },
         externalEmail: null,        
@@ -71,7 +72,7 @@ const participants = [
                 rowVersion: '123123',
             },
             required: true,
-            response: 'Tentative',
+            response: OutlookResponseType.TENTATIVE,
 
         },
         externalEmail: null,
@@ -164,7 +165,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
 
-    it('Renders not buttons when canceled', async () => {
+    it('Should not render buttons when canceled', async () => {
         const { queryByText } = renderWithTheme(<ParticipantsTable 
             participants={participants} 
             status="Canceled"
@@ -174,6 +175,28 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch out')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+    });
+
+    it('Should set attended from outlook response in planned state', async () => {
+        const { queryAllByText } = renderWithTheme(<ParticipantsTable 
+            participants={participants} 
+            status="Planned"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        expect(queryAllByText('Attended').length).toBe(2); // +1 for table header
+        expect(queryAllByText('Did not attend').length).toBe(3);
+    });
+
+    it('Should set attended from participant status when not in planned state', async () => {
+        const { queryAllByText } = renderWithTheme(<ParticipantsTable 
+            participants={participants} 
+            status="Completed"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        expect(queryAllByText('Attended').length).toBe(3); // +1 for table header
+        expect(queryAllByText('Did not attend').length).toBe(2);
     });
 });
 

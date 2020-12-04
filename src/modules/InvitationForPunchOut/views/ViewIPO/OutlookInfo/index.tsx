@@ -4,16 +4,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
+import { OutlookResponseType } from '../utils';
 import { Participant } from '../types';
 import { Typography } from '@equinor/eds-core-react';
-
-export enum ResponseType {
-    ATTENDING = 'Accepted',
-    TENTATIVE = 'Tentative',
-    NONE = 'None',
-    UNKNOWN = 'Unknown',
-    DECLINED = 'Declined'
-}
 
 export enum OutlookStatusType {
     OK = 'Ok',
@@ -39,16 +32,16 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
             const role = p.person ? p.person : p.functionalRole ? p.functionalRole : null;
             if (role) {
                 switch (role.response) {
-                    case ResponseType.ATTENDING:
+                    case OutlookResponseType.ATTENDING:
                         setAttending(a => [...a, p]);
                         break;
-                    case ResponseType.TENTATIVE:
+                    case OutlookResponseType.TENTATIVE:
                         setTentative(a => [...a, p]);
                         break;
-                    case ResponseType.NONE:
+                    case OutlookResponseType.NONE:
                         setNotResponded(a => [...a, p]);
                         break;
-                    case ResponseType.DECLINED:
+                    case OutlookResponseType.DECLINED:
                         setDeclined(a => [...a, p]);
                         break;
                     default:

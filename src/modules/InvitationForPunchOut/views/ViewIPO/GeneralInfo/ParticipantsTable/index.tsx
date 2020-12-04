@@ -29,15 +29,17 @@ interface Props {
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    sign: (p: Participant) => Promise<any>;
 }
 
 
-const ParticipantsTable = ({participants, status, complete, accept }: Props): JSX.Element => {
+const ParticipantsTable = ({participants, status, complete, accept, sign }: Props): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [contractor, setContractor] = useState<boolean>(true);
     const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
+    const btnSignRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(
         participants.map(p => {
             const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
@@ -50,7 +52,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         })
     ); 
 
-    const getCompleteButton = (status: string, completePunchout: (index: number) => void): JSX.Element => {
+    const getCompleteButton = useCallback((status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipComplete} arrow>
                 <Button ref={btnCompleteRef} onClick={completePunchout}>
@@ -58,7 +60,7 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                 </Button>
             </CustomTooltip>
         );    
-    };
+    }, [status]);
 
     const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
         return (
@@ -70,29 +72,53 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         );    
     };
 
-    const getSignedProperty = useCallback((participant: Participant, status: string, handleCompletePunchOut: (index: number) => void, handleApprovePunchOut: (index: number) => void): JSX.Element => {
-        // TODO: check if participant is current user
-        // TODO: check if contractor 
-        if (participant.organization === OrganizationsEnum.Contractor) {
-            if (participant.signedBy && (status === IpoStatusEnum.COMPLETED || status === IpoStatusEnum.ACCEPTED )) {
-                return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
-            } else {
-                return getCompleteButton(status, handleCompletePunchOut);
-            }
-        // TODO: check if constructionCompany 
-        } else if (participant.organization === OrganizationsEnum.ConstructionCompany) {
-            if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
-                return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
-            } else if (status ===  IpoStatusEnum.COMPLETED) {
-                return getApproveButton(handleApprovePunchOut);
-            } else {
-                return <span>-</span>;
-            }
-        } else if (participant.signedBy) {
-            return <span>{`${participant.person.person.firstName} ${participant.person.person.lastName}`}</span>;
-        } else {
-            return <span>-</span>;
+    const getSignButton = (signPunchOut: (index: number) => void): JSX.Element => {
+        return (
+            <CustomTooltip title={tooltipApprove} arrow>
+                <Button ref={btnSignRef} onClick={signPunchOut}>
+                    Sign punch out
+                </Button>
+            </CustomTooltip>
+        );    
+    };
+
+    const getSignedProperty = useCallback((   
+        participant: Participant, 
+        status: string, 
+        handleCompletePunchOut: (index: number) => void, 
+        handleApprovePunchOut: (index: number) => void,
+        handleSignPunchOut: (index: number) => void): JSX.Element => {
+
+        switch (participant.organization) {
+            case OrganizationsEnum.Contractor:
+                // TODO: check if participant is current user
+                if (participant.signedBy) {
+                    return <span>{`${participant.signedBy}`}</span>;
+                } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
+                    return getCompleteButton(status, handleCompletePunchOut);
+                } 
+                break;
+            case OrganizationsEnum.ConstructionCompany:
+                if (participant.signedBy) {
+                    return <span>{`${participant.signedBy}`}</span>;
+                } else if (status ===  IpoStatusEnum.COMPLETED) {
+                    // TODO: check if participant is current user
+                    return getApproveButton(handleApprovePunchOut);
+                } 
+                break;
+            case OrganizationsEnum.Operation:
+            case OrganizationsEnum.TechnicalIntegrity:
+            case OrganizationsEnum.Commissioning:
+                if (participant.signedBy) {
+                    return <span>{`${participant.signedBy}`}</span>;
+                } else if (status !==  IpoStatusEnum.CANCELED) {
+                    // TODO: check if participant is current user
+                    return getSignButton(handleSignPunchOut);
+                }
+                break;
         }
+
+        return <span>-</span>;
     }, [contractor, constructionCompany, status]);
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
@@ -123,6 +149,23 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
         } catch (error) {
             if (btnApproveRef.current) {
                 btnApproveRef.current.removeAttribute('disabled');
+            }
+            showSnackbarNotification(error.message, 2000, true);
+        }     
+        setLoading(false);
+    };
+
+    const handleSignPunchOut = async (index: number): Promise<any> => {
+        setLoading(true);
+        if (btnSignRef.current) {
+            btnSignRef.current.setAttribute('disabled', 'disabled');
+        }
+        try {
+            await sign(participants[index]);
+            showSnackbarNotification('Punch out signed', 2000, true);
+        } catch (error) {
+            if (btnSignRef.current) {
+                btnSignRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
         }     
@@ -172,10 +215,15 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                 participant.externalEmail.externalEmail;
 
                         const response = participant.person ?    
-                            participant.person.response :
-                            participant.functionalRole ? 
-                                participant.functionalRole.response :
-                                participant.externalEmail.response;
+                            participant.person.response ?
+                                participant.person.response : ''
+                            : participant.externalEmail ? 
+                                participant.externalEmail.response ?
+                                    participant.externalEmail.response : ''
+                                : participant.functionalRole ? 
+                                    participant.functionalRole.response ?
+                                        participant.functionalRole.response : ''
+                                    : '';
 
                         const id = participant.person ?    
                             participant.person.person.id :
@@ -184,8 +232,10 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                 participant.externalEmail.id;
 
                         return (
-                            <Row key={index} as="tr">
-                                <Cell as="td" style={{verticalAlign: 'middle'}}>{OrganizationMap.get(participant.organization as Organization)}</Cell>
+                            <Row key={participant.sortKey} as="tr">
+                                <Cell as="td" style={{verticalAlign: 'middle'}}>
+                                    {OrganizationMap.get(participant.organization as Organization)}
+                                </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle'}}>{representative}</Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle'}}>{response}</Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
@@ -204,7 +254,11 @@ const ParticipantsTable = ({participants, status, complete, accept }: Props): JS
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                    {getSignedProperty(participant, status, () => handleCompletePunchOut(index), () => handleApprovePunchOut(index))}
+                                    {getSignedProperty(
+                                        participant, status,
+                                        () => handleCompletePunchOut(index),
+                                        () => handleApprovePunchOut(index),
+                                        () => handleSignPunchOut(index))}
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
                                     {participant.signedAtUtc ? 

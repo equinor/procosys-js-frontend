@@ -148,7 +148,7 @@ export type ParticipantDto = {
     functionalRole: FunctionalRoleDto | null;
 }
 
-type SignIPODto = {
+type CompleteAcceptBaseIPODto = {
     invitationRowVersion: string;
     participantRowVersion: string;
 }
@@ -162,11 +162,16 @@ export type AttendedAndNotesDto = {
 
 export type CompleteIPODto = {
     participants: AttendedAndNotesDto[]
-} & SignIPODto;
+} & CompleteAcceptBaseIPODto;
 
 export type AcceptIPODto = {
     participants: Omit<AttendedAndNotesDto, 'attended'>[]
-} & SignIPODto;
+} & CompleteAcceptBaseIPODto;
+
+export type SignIPODto = {
+    participantId: number;
+    participantRowVersion: string;
+}
 
 /**
  * API for interacting with data in InvitationForPunchOut API.
@@ -541,7 +546,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async completePunchOut(id: number, completeDetails: CompleteIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
         const endpoint = `/Invitations/${id}/Complete`;
-        console.log(completeDetails);
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
@@ -579,6 +583,28 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     participants: acceptDetails.participants
                 },
                 settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * SignPunchOut
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async signPunchOut(id: number, signDetails: SignIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = `/Invitations/${id}/Sign`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+        
+            const result = await this.client.put(
+                endpoint,
+                {
+                    ...signDetails
+                });
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

@@ -1,4 +1,4 @@
-import { AcceptIPODto, CompleteIPODto } from '../../http/InvitationForPunchOutApiClient';
+import { AcceptIPODto, CompleteIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
 import { CenterContainer, Container } from './index.style';
 import { Invitation, Participant } from './types';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -123,6 +123,21 @@ const ViewIPO = (): JSX.Element => {
         await getInvitation();
     };
 
+    const signPunchOut = async (participant: Participant): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        const signDetails: SignIPODto = {
+            participantId: signer.id,
+            participantRowVersion: signer.rowVersion
+        };
+
+        await apiClient.signPunchOut(params.ipoId, signDetails);
+        await getInvitation();
+    };
+
 
     return (<Container>
         { loading ? (
@@ -148,7 +163,7 @@ const ViewIPO = (): JSX.Element => {
                             <Tab className='emptyTab'>{''}</Tab>
                         </TabList>
                         <TabPanels>
-                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} /></TabPanel>
+                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} /></TabPanel>
                             <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
                             <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
                             <TabPanel>Log</TabPanel>

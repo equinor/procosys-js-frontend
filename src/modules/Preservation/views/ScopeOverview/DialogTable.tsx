@@ -38,7 +38,9 @@ const DialogTable = ({
                     selection: false,
                     emptyRowsWhenPaging: false,
                     headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba
+                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                        whiteSpace: 'nowrap',
+                        fontFamily: 'Equinor'
                     },
                     rowStyle: (rowData): any => ({
                         color: isTagOverdue(rowData) && tokens.colors.interactive.danger__text.rgba,

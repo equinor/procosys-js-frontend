@@ -95,15 +95,17 @@ const GeneralInfo = ({
 
     const handleSetTime = (from: 'start' | 'end', timeString: string): void => {
         const timeSplit = timeString.split(':');
-        if (from === 'start') {
-            const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
-            const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
-            setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
-            setErrorFormat(newTime >= newEndTime);
-        } else {
-            const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
-            setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
-            setErrorFormat(generalInfo.startTime >= newEndTime);
+        if (timeSplit[0] && timeSplit[1]) {
+            if (from === 'start') {
+                const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+                const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
+                setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
+                setErrorFormat(newTime >= newEndTime);
+            } else {
+                const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+                setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
+                setErrorFormat(generalInfo.startTime >= newEndTime);
+            }
         }
     };
 

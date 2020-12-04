@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Breakpoints } from '@procosys/core/styling';
 
 export const Toolbar = styled.div`
     margin-top: calc(var(--grid-unit) * 2);
@@ -38,10 +39,9 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 export const Container = styled.div`
     input + svg {
         width: 24px;
-        height: 24px;
-        
+        height: 24px;       
     }
-
+    
     tbody, thead {
         .MuiButtonBase-root {
             :hover {
@@ -67,6 +67,31 @@ export const Container = styled.div`
         text-overflow: ellipsis;
         color: inherit;
     }
+    
+    //Hide requirement column in the middle
+    thead tr th:nth-child(4), table tr td:nth-child(4)
+    { 
+        display:none;
+    }   
+    
+    ${Breakpoints.TABLET} {
+        //hide columns
+        thead tr th:nth-child(3), table tr td:nth-child(3) //description
+        {
+            display: none;            
+        } 
+        //Show requirement column in the middle
+        thead tr th:nth-child(4), table tr td:nth-child(4)
+        {   
+            display:table-cell;
+        }        
+        //Hide requirement column at the end
+        thead tr th:nth-child(13), table tr td:nth-child(13)
+        {   
+            display:none;
+        }               
+    }
+
 `;
 
 export const SingleIconContainer = styled.div`

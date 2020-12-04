@@ -19,8 +19,14 @@
     --grid-unit: 8px;
 
     // Margins
-    --margin-module--top: 30px;
+    --margin-module--top: 16px;
     --margin-module--bottom: 50px;
     --margin-module--left: 35px;
     --margin-module--right: 35px;
+    
+    @media (max-width: 639px) {
+        --margin-module--top: 8px;
+        --margin-module--right: 8px;
+        --margin-module--left: 8px;
+    }
 }

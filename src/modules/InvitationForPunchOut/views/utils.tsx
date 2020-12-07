@@ -8,6 +8,7 @@ export const getFileTypeIconName = (fileName: string): string => {
         case 'JPEG':
         case 'PNG':
         case 'SVG':
+        case 'ICO':
             return 'image';
         case 'PDF':
             return 'file_description';
@@ -16,8 +17,10 @@ export const getFileTypeIconName = (fileName: string): string => {
             return 'microsoft_word';
         case 'XLS':
         case 'XLSX':
+        case 'CSV':
             return 'microsoft_excel';
         case 'PPT':
+        case 'PPTX':
             return 'microsoft_powerpoint';
         default:
             return 'file';

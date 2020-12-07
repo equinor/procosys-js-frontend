@@ -1,6 +1,6 @@
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
-import { OrganizationMap, OrganizationsEnum, getEndTime } from './utils';
+import { OrganizationMap, OrganizationsEnum, getEndTime, getNextHalfHourTimeString } from './utils';
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
@@ -16,14 +16,16 @@ import { useInvitationForPunchOutContext } from '../../context/InvitationForPunc
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
 
+const initialDate = getNextHalfHourTimeString(new Date());
+
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
     projectName: null,
     poType: null,
     title: null,
     description: null,
-    startTime: new Date(),
-    endTime: getEndTime(new Date()),
+    startTime: initialDate,
+    endTime: getEndTime(initialDate),
     location: null
 };
 

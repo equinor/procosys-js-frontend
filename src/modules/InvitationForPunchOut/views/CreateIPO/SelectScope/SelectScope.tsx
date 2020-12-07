@@ -32,6 +32,7 @@ const SelectScope = ({
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
     const commPkgRef = useRef<any>();
     const mcPkgRef = useRef<any>();
+    const [commPkgFilter, setCommPkgFilter] = useState<string>('');
 
     useEffect(() => {
         if(commPkgNo) {
@@ -93,6 +94,8 @@ const SelectScope = ({
                             setCurrentCommPkg={setCurrentCommPkg}
                             type={type}
                             projectId={projectId}
+                            filter={commPkgFilter}
+                            setFilter={setCommPkgFilter}
                         />
                     </div>
                 }

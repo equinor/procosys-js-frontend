@@ -1,6 +1,7 @@
 import { AddAttachmentContainer, AttachmentTable, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { getFileName, getFileTypeIconName } from '../../utils';
 
 import { Attachment } from '../types';
 import { Canceler } from '@procosys/http/HttpClient';
@@ -149,6 +150,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
             <AttachmentTable>
                 <Head>
                     <Row>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Type</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Title</Cell>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>{' '}</Cell>
                     </Row>
@@ -156,9 +158,12 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 <Body>
                     {attachments && attachments.length > 0 ? attachments.map((attachment, index) => (
                         <Row key={attachment.id}>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em', width: '30px'}}>
+                                <EdsIcon name={getFileTypeIconName(attachment.fileName)} size={24} />
+                            </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <CustomTooltip title="Click to open in new tab" arrow>
-                                    <Typography onClick={(): Promise<void> => openAttachment(attachment.id)} variant="body_short" link>{attachment.fileName}</Typography>
+                                    <Typography onClick={(): Promise<void> => openAttachment(attachment.id)} variant="body_short" link>{getFileName(attachment.fileName)}</Typography>
                                 </CustomTooltip>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em', width: '30px'}}>

@@ -1,6 +1,7 @@
 import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
+import { getFileExtension, getFileName, getFileTypeIconName } from '../../utils';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';
@@ -39,7 +40,14 @@ const Attachments = ({
 
     const getAttachmentName = (attachment: File): JSX.Element => {
         return (
-            <div>{attachment.name}</div>
+            <div>{getFileName(attachment.name)}</div>
+        );
+    };
+
+    const getAttachmentIcon = (attachment: File): JSX.Element => {
+        const iconName = getFileTypeIconName(attachment.name);
+        return (
+            <EdsIcon name={iconName} size={24}/>
         );
     };
     
@@ -81,7 +89,7 @@ const Attachments = ({
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
             <Table
-                columns={[{ title: 'Title', render: getAttachmentName }]}
+                columns={[{ title: 'Type', render: getAttachmentIcon, width: '30px' }, { title: 'Title', render: getAttachmentName }]}
                 data={attachments}
                 options={{
                     toolbar: false,

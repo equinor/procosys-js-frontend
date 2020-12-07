@@ -1,15 +1,16 @@
-import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Button, TextField } from '@equinor/eds-core-react';
-import Table from '@procosys/components/Table';
-import { tokens } from '@equinor/eds-tokens';
+import { Container, Search, TopContainer } from './Table.style';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+
 import { Canceler } from '@procosys/http/HttpClient';
 import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
-import { Tooltip } from '@material-ui/core';
 import EdsIcon from '@procosys/components/EdsIcon';
-import { Container, TopContainer, Search } from './Table.style';
-import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import Loading from '@procosys/components/Loading';
+import Table from '@procosys/components/Table';
+import { Tooltip } from '@material-ui/core';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
@@ -17,6 +18,8 @@ interface CommPkgTableProps {
     setCurrentCommPkg: (commPkgNo: string | null) => void;
     type: string;
     projectId: number;
+    filter: string;
+    setFilter: (filter: string) => void;
 }
 
 const WAIT_INTERVAL = 300;
@@ -26,11 +29,12 @@ const CommPkgTable = forwardRef(({
     setSelectedCommPkgScope,
     setCurrentCommPkg,
     type,
-    projectId
+    projectId,
+    filter,
+    setFilter
 }: CommPkgTableProps, ref): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
-    const [filter, setFilter] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const searchCommPkgs = (): Canceler | null  => {
@@ -180,7 +184,7 @@ const CommPkgTable = forwardRef(({
                         id="search"
                         placeholder="Search"
                         helperText="Search for comm pkg no"
-                        defaultValue=''
+                        defaultValue={filter}
                         onKeyUp={(e: any): void => {
                             setFilter(e.currentTarget.value);
                         }}

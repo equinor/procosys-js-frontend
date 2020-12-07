@@ -1,5 +1,5 @@
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
-import { ComponentName, OrganizationMap, OrganizationsEnum, getEndTime } from './utils';
+import { ComponentName, OrganizationMap, OrganizationsEnum, getEndTime, getNextHalfHourTimeString } from './utils';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import React, { useEffect, useState } from 'react';
 
@@ -17,14 +17,16 @@ import { useInvitationForPunchOutContext } from '../../context/InvitationForPunc
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
 
+const initialDate = getNextHalfHourTimeString(new Date());
+
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
     projectName: '',
     poType: null,
     title: '',
     description: '',
-    startTime: new Date(),
-    endTime: getEndTime(new Date()),
+    startTime: initialDate,
+    endTime: getEndTime(initialDate),
     location: ''
 };
 
@@ -107,6 +109,8 @@ const CreateIPO = (): JSX.Element => {
 
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+            console.log(generalInfo);
+            console.log(initialGeneralInfo);
             setDirtyStateFor(ComponentName.CreateIPO);
         } else {
             unsetDirtyStateFor(ComponentName.CreateIPO);

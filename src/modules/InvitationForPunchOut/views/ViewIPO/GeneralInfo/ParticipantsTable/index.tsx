@@ -1,11 +1,11 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
-import { ComponentName, IpoStatusEnum, OrganizationMap, OrganizationsEnum } from '../../utils';
+import { ComponentName, IpoStatusEnum, OrganizationMap, OrganizationsEnum, OutlookResponseType } from '../../utils';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import React, { Component, useCallback, useEffect, useRef, useState } from 'react';
+import { ExternalEmail, FunctionalRole, Participant } from '../../types';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
-import { Participant } from '../../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
@@ -36,9 +36,15 @@ interface Props {
 const ParticipantsTable = ({participants, status, complete, accept, sign }: Props): JSX.Element => {
     const cleanData = participants.map(p => {
         const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
+        const attendedStatus = status === IpoStatusEnum.PLANNED ? 
+            p.person ? 
+                p.person.response ? p.person.response === OutlookResponseType.ATTENDING : false 
+                : (x as FunctionalRole | ExternalEmail).response ? (x as FunctionalRole | ExternalEmail).response === OutlookResponseType.ATTENDING : false 
+            : p.attended;
+
         return {
             id: x.id,
-            attended: p.attended,
+            attended: attendedStatus,
             note: p.note ? p.note : '',
             rowVersion: x.rowVersion
         };

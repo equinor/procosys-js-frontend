@@ -38,3 +38,9 @@ const createOrganizationMap = (): Map<Organization, string> => {
 };
 
 export const OrganizationMap = createOrganizationMap();
+
+export enum ReportIdEnum {
+    MC32 = 132,
+    MC84 = 144,
+    CDP06 = 114
+}

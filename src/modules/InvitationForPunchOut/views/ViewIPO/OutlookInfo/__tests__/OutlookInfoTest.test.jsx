@@ -40,7 +40,7 @@ export const participants = [
                 email: 'lkjawc@equinor.com',
                 company: 'EQUI',
             },
-            response: OutlookResponseType.TENTATIVE
+            response: OutlookResponseType.TENTATIVELY_ACCEPTED
         },
     },
     {

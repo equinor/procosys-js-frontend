@@ -20,7 +20,7 @@ const Scope = ({ mcPkgScope, commPkgScope, projectName }: Props): JSX.Element =>
                 <Typography variant="h5">Reports</Typography>
             </HeaderContainer>
             <TableContainer>
-                <ReportsTable commPkgs={commPkgScope} mcPkgs={mcPkgScope} />
+                <ReportsTable commPkgScope={commPkgScope} mcPkgScope={mcPkgScope} />
             </TableContainer>
             {commPkgScope && commPkgScope.length > 0 && (
                 <>

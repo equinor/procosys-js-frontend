@@ -15,7 +15,6 @@ interface SelectScopeProps {
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: (selectedMckgScope: McScope) => void;
     commPkgNo: string;
-    projectId: number;
     projectName: string;
 }
 
@@ -26,7 +25,6 @@ const SelectScope = ({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
     commPkgNo,
-    projectId,
     projectName
 }: SelectScopeProps): JSX.Element => {
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
@@ -93,7 +91,7 @@ const SelectScope = ({
                             setSelectedCommPkgScope={setSelectedCommPkgScope}
                             setCurrentCommPkg={setCurrentCommPkg}
                             type={type}
-                            projectId={projectId}
+                            projectName={projectName}
                             filter={commPkgFilter}
                             setFilter={setCommPkgFilter}
                         />

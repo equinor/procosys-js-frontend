@@ -17,7 +17,7 @@ interface CommPkgTableProps {
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
     setCurrentCommPkg: (commPkgNo: string | null) => void;
     type: string;
-    projectId: number;
+    projectName: string;
     filter: string;
     setFilter: (filter: string) => void;
 }
@@ -29,7 +29,7 @@ const CommPkgTable = forwardRef(({
     setSelectedCommPkgScope,
     setCurrentCommPkg,
     type,
-    projectId,
+    projectName,
     filter,
     setFilter
 }: CommPkgTableProps, ref): JSX.Element => {
@@ -41,7 +41,7 @@ const CommPkgTable = forwardRef(({
         let requestCanceler: Canceler | null = null;
         try {
             (async (): Promise<void> => {
-                const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectId, filter, (cancel: Canceler) => requestCanceler = cancel)
+                const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectName, filter, (cancel: Canceler) => requestCanceler = cancel)
                     .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
                         return {
                             commPkgNo: commPkg.commPkgNo,

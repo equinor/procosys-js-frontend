@@ -246,10 +246,10 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getCommPkgsAsync(projectId: number, startWith: string, setRequestCanceller?: RequestCanceler): Promise<CommPkgResponse[]> {
+    async getCommPkgsAsync(projectName: string, startWith: string, setRequestCanceller?: RequestCanceler): Promise<CommPkgResponse[]> {
         const endpoint = '/CommPkgs';
         const settings: AxiosRequestConfig = {params: {
-            projectId: projectId,
+            projectName: projectName,
             startsWithCommPkgNo: startWith
         },};
         this.setupRequestCanceler(settings, setRequestCanceller);

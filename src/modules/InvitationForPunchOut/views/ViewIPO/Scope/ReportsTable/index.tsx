@@ -9,14 +9,14 @@ import { useCurrentPlant } from '@procosys/core/PlantContext';
 const getReportParams = (mcScope: McPkgScope[], commScope: CommPkgScope[]): string => {
     let reportParams = '';
 
-    if (mcScope.length > 0) {
+    if (mcScope && mcScope.length > 0) {
         reportParams += '&mcPkgs=';
         mcScope.forEach(mcPkg => {
             reportParams += `${mcPkg.mcPkgNo},`;
         });
         reportParams = reportParams.slice(0, -1);
     }
-    if (commScope.length > 0) {
+    if (commScope && commScope.length > 0) {
         reportParams += '&commPkgs=';
         commScope.forEach(commPkg => {
             reportParams += `${commPkg.commPkgNo},`;
@@ -30,13 +30,13 @@ const getReportParams = (mcScope: McPkgScope[], commScope: CommPkgScope[]): stri
 const { Head, Body, Cell, Row } = Table;
 
 interface Props {
-    mcPkgs: McPkgScope[];
-    commPkgs: CommPkgScope[];
+    mcPkgScope: McPkgScope[];
+    commPkgScope: CommPkgScope[];
 }
 
-const ReportsTable = ({ mcPkgs, commPkgs }: Props ): JSX.Element => {
+const ReportsTable = ({ mcPkgScope, commPkgScope }: Props ): JSX.Element => {
     const { plant } = useCurrentPlant();
-    const reportParams = getReportParams(mcPkgs, commPkgs);
+    const reportParams = getReportParams(mcPkgScope, commPkgScope);
 
     const goToReport = (reportId: number): void => {
         if (reportId === ReportIdEnum.MC32) {

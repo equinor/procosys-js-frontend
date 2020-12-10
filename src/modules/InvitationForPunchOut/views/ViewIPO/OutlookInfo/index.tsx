@@ -36,6 +36,7 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
                         setAttending(a => [...a, p]);
                         break;
                     case OutlookResponseType.TENTATIVE:
+                    case OutlookResponseType.TENTATIVELY_ACCEPTED:
                         setTentative(a => [...a, p]);
                         break;
                     case OutlookResponseType.NONE:

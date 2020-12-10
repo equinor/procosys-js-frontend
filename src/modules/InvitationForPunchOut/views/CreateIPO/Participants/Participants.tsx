@@ -174,7 +174,7 @@ const Participants = ({
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
             });
-            if(organization.text === OrganizationsEnum.External) {
+            if(organization.value === OrganizationsEnum.External) {
                 setType('Person', index);
             }
         }
@@ -340,12 +340,12 @@ const Participants = ({
                                     onChange={(value): void => setType(value, index)}
                                     data={ParticipantType}
                                     label={'Type'}
-                                    disabled={p.organization.text == OrganizationsEnum.External}
+                                    disabled={p.organization.value == OrganizationsEnum.External}
                                 >
                                     {p.type}
                                 </SelectInput>
                             </div>
-                            { p.organization.text == OrganizationsEnum.External &&
+                            { p.organization.value == OrganizationsEnum.External &&
                                 <div>
                                     <TextField
                                         id={'guestEmail'}
@@ -356,7 +356,7 @@ const Participants = ({
                                     />
                                 </div>
                             }
-                            { p.type == ParticipantType[1].text && p.organization.text != OrganizationsEnum.External &&
+                            { p.type == ParticipantType[1].text && p.organization.value != OrganizationsEnum.External &&
                                 <div>
                                     <Dropdown
                                         label={'Person'}

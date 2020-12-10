@@ -1,7 +1,8 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import { ExternalEmail, FunctionalRole, Participant, Person } from '../../types';
-import { IpoStatusEnum, OrganizationMap, OrganizationsEnum, OutlookResponseType } from '../../utils';
+import { ExternalEmail, FunctionalRole, Participant } from '../../types';
+import { IpoStatusEnum, OutlookResponseType } from '../../utils';
+import { OrganizationMap, OrganizationsEnum } from '../../../utils';
 import React, { useCallback, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';

@@ -1,7 +1,8 @@
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
-import { OrganizationMap, OrganizationsEnum, getEndTime, getNextHalfHourTimeString } from './utils';
+import { OrganizationMap, OrganizationsEnum } from '../utils';
 import React, { useEffect, useState } from 'react';
+import { getEndTime, getNextHalfHourTimeString } from './utils';
 
 import Attachments from './Attachments/Attachments';
 import { Container } from './CreateIPO.style';

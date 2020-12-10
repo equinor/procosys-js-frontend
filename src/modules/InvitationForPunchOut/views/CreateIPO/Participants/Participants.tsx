@@ -1,6 +1,6 @@
 import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { OrganizationMap, OrganizationsEnum } from '../utils';
+import { OrganizationMap, OrganizationsEnum } from '../../utils';
 import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';

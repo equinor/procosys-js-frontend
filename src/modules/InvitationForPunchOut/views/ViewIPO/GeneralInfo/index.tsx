@@ -1,8 +1,8 @@
 import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoContainer, ProjectInfoDetail } from './style';
 import { Invitation, Participant } from '../types';
 import ParticipantsTable, { AttNoteData } from './ParticipantsTable';
-import React, { useEffect, useState } from 'react';
 
+import React  from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 

@@ -10,12 +10,8 @@ const attachment = {
     rowVersion: '',
     uploadedAt: new Date(2020, 11, 11, 11),
     uploadedBy: {
-        id: 1,
         firstName: 'firstName',
         lastName: 'lastName',
-        azureOid: '',
-        email: null,
-        rowVersion: ''
     }
 };
 
@@ -30,12 +26,8 @@ jest.mock('../../../../context/InvitationForPunchOutContext',() => ({
                     rowVersion: '',
                     uploadedAt: new Date(2020, 11, 11, 11),
                     uploadedBy: {
-                        id: 1,
                         firstName: 'firstName',
                         lastName: 'lastName',
-                        azureOid: '',
-                        email: null,
-                        rowVersion: ''
                     }
                 }] : [])
             }

@@ -29,12 +29,12 @@ const getReportParams = (mcScope: McPkgScope[], commScope: CommPkgScope[]): stri
 
 const { Head, Body, Cell, Row } = Table;
 
-interface Props {
+interface ReportsTableProps {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
 }
 
-const ReportsTable = ({ mcPkgScope, commPkgScope }: Props ): JSX.Element => {
+const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps ): JSX.Element => {
     const { plant } = useCurrentPlant();
     const reportParams = getReportParams(mcPkgScope, commPkgScope);
 

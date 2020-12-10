@@ -25,7 +25,7 @@ export type AttNoteData = {
     rowVersion: string;
 };
 
-interface Props {
+interface ParticipantsTableProps {
     participants: Participant[];
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
@@ -34,7 +34,7 @@ interface Props {
 }
 
 
-const ParticipantsTable = ({participants, status, complete, accept, sign }: Props): JSX.Element => {
+const ParticipantsTable = ({participants, status, complete, accept, sign }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [contractor, setContractor] = useState<boolean>(true);
     const [constructionCompany, setConstructionCompany] = useState<boolean>(true);

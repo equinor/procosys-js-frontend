@@ -7,12 +7,12 @@ import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const { Head, Body, Cell, Row } = Table;
 
-interface Props {
+interface CommPkgsTableProps {
     commPkgScope: CommPkgScope[];
     projectName: string;
 }
 
-const CommPkgsTable = ({ commPkgScope, projectName }: Props ): JSX.Element => {
+const CommPkgsTable = ({ commPkgScope, projectName }: CommPkgsTableProps ): JSX.Element => {
     const { plant } = useCurrentPlant();
     
     const goToCommPkg = (commPkgNo: string): void => {

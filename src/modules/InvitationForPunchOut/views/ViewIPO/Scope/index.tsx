@@ -4,23 +4,24 @@ import { Container, HeaderContainer, TableContainer } from './style';
 import CommPkgsTable from './CommPkgsTable';
 import McPkgsTable from './McPkgsTable';
 import React from 'react';
+import ReportsTable from './ReportsTable';
 import { Typography } from '@equinor/eds-core-react';
 
-interface Props {
+interface ScopeProps {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
     projectName: string;
 }
 
-const Scope = ({ mcPkgScope, commPkgScope, projectName }: Props): JSX.Element => {
+const Scope = ({ mcPkgScope, commPkgScope, projectName }: ScopeProps): JSX.Element => {
     return (
         <Container>
-            {/* <HeaderContainer>
+            <HeaderContainer>
                 <Typography variant="h5">Reports</Typography>
             </HeaderContainer>
             <TableContainer>
-                // reports table here
-            </TableContainer> */}
+                <ReportsTable commPkgScope={commPkgScope} mcPkgScope={mcPkgScope} />
+            </TableContainer>
             {commPkgScope && commPkgScope.length > 0 && (
                 <>
                     <HeaderContainer>

@@ -1,7 +1,8 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import { ExternalEmail, FunctionalRole, Participant, Person } from '../../types';
-import { IpoStatusEnum, OrganizationMap, OrganizationsEnum, OutlookResponseType } from '../../utils';
+import { ExternalEmail, FunctionalRole, Participant } from '../../types';
+import { IpoStatusEnum, OutlookResponseType } from '../../utils';
+import { OrganizationMap, OrganizationsEnum } from '../../../utils';
 import React, { useCallback, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
@@ -24,7 +25,7 @@ export type AttNoteData = {
     rowVersion: string;
 };
 
-interface Props {
+interface ParticipantsTableProps {
     participants: Participant[];
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
@@ -33,7 +34,7 @@ interface Props {
 }
 
 
-const ParticipantsTable = ({participants, status, complete, accept, sign }: Props): JSX.Element => {
+const ParticipantsTable = ({participants, status, complete, accept, sign }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [contractor, setContractor] = useState<boolean>(true);
     const [constructionCompany, setConstructionCompany] = useState<boolean>(true);

@@ -46,6 +46,22 @@ export type Participant = {
     role: RoleParticipant | null;
 }
 
+export type Attachment = {
+    downloadUri: string;
+    id: number;
+    fileName: string;
+    rowVersion: string;
+    uploadedAt: Date;
+    uploadedBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    }
+}
+
 export interface CommPkgRow {
     commPkgNo: string;
     description: string;

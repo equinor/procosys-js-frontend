@@ -7,13 +7,13 @@ import React from 'react';
 import ReportsTable from './ReportsTable';
 import { Typography } from '@equinor/eds-core-react';
 
-interface Props {
+interface ScopeProps {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
     projectName: string;
 }
 
-const Scope = ({ mcPkgScope, commPkgScope, projectName }: Props): JSX.Element => {
+const Scope = ({ mcPkgScope, commPkgScope, projectName }: ScopeProps): JSX.Element => {
     return (
         <Container>
             <HeaderContainer>

@@ -1,7 +1,9 @@
 import { CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
+import { getFileName, getFileTypeIconName } from '../../utils';
 
+import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
 import { format } from 'date-fns';
 
@@ -109,7 +111,8 @@ const Summary = ({
 
     const attachmentList = attachments.map((attachment, index) => (
         <Row key={index}>
-            <Cell>{attachment.name}</Cell>
+            <Cell><EdsIcon name={getFileTypeIconName(attachment.name)}/></Cell>
+            <Cell>{getFileName(attachment.name)}</Cell>
         </Row>
     ));
 
@@ -220,6 +223,9 @@ const Summary = ({
                     <Table>
                         <Head>
                             <Row>
+                                <Cell as="th" width="30px" scope="col">
+                                    Type
+                                </Cell>
                                 <Cell as="th" scope="col">
                                     Title
                                 </Cell>

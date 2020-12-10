@@ -7,12 +7,12 @@ import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const { Head, Body, Cell, Row } = Table;
 
-interface Props {
+interface McPkgsTableProps {
     mcPkgScope: McPkgScope[];
     projectName: string;
 }
 
-const McPkgsTable = ({ mcPkgScope, projectName }: Props ): JSX.Element => {
+const McPkgsTable = ({ mcPkgScope, projectName }: McPkgsTableProps ): JSX.Element => {
     const { plant } = useCurrentPlant();
 
     const goToMcPkg = (mcPkgNo: string): void => {

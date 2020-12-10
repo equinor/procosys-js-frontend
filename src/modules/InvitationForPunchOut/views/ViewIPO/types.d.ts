@@ -66,9 +66,3 @@ export type Invitation = {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
 }
-
-export type Attachment = {
-    id: number;
-    fileName: string;
-    rowVersion: string;
-}

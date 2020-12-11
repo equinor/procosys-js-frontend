@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import { ComponentName } from '@procosys/modules/InvitationForPunchOut/views/ViewIPO/enums';
+import { ComponentName } from '../../../../enums';
 import { OutlookResponseType } from '../../../enums';
 import ParticipantsTable from '../index';
 import React from 'react';

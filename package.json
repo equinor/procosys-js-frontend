@@ -36,7 +36,7 @@
         "@babel/preset-typescript": "^7.12.1",
         "@hot-loader/react-dom": "^17.0.0",
         "@testing-library/jest-dom": "^5.11.4",
-        "@testing-library/react": "^10.4.9",
+        "@testing-library/react": "^11.2.2",
         "@types/jest": "^26.0.10",
         "@types/material-ui": "^0.21.8",
         "@types/qs": "^6.9.4",

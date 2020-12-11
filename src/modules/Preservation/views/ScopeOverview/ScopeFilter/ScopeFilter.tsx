@@ -1,6 +1,7 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { Collapse, CollapseInfo, Container, Header, Link, Section } from './ScopeFilter.style';
 import React, { useEffect, useRef, useState } from 'react';
+import { SavedTagListFilter, TagListFilter } from '../types';
 
 import AreaIcon from '@procosys/assets/icons/Area';
 import { Canceler } from 'axios';
@@ -14,7 +15,6 @@ import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import { SavedTagListFilter, TagListFilter } from '../types';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
 
@@ -531,7 +531,7 @@ const ScopeFilter = ({
             <CheckboxFilter title='Preservation journeys' filterValues={journeys} tagListFilterParam='journeyIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.journeyIds} icon={'world'} />
             <CheckboxFilter title='Preservation modes' filterValues={modes} tagListFilterParam='modeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.modeIds} icon={'place'} />
             <CheckboxFilter title='Requirements' filterValues={requirements} tagListFilterParam='requirementTypeIds' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.requirementTypeIds} icon={'pressure'} />
-            <CheckboxFilter title='Tag functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'verticle_split'} />
+            <CheckboxFilter title='Tag functions' filterValues={tagFunctions} tagListFilterParam='tagFunctionCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.tagFunctionCodes} icon={'vertical_split'} />
             <CheckboxFilter title='Discipline' filterValues={disciplines} tagListFilterParam='disciplineCodes' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={tagListFilter.disciplineCodes} icon={'category'} />
             <MultiSelectFilter headerLabel="Responsible" items={responsibles} onChange={responsibleFilterUpdated} selectedItems={localTagListFilter.responsibleIds} inputLabel="Responsible" inputPlaceholder="Select responsible" icon={<EdsIcon name='person' />} />
             <MultiSelectFilter headerLabel="Area (on-site)" items={areas} onChange={areaFilterUpdated} selectedItems={localTagListFilter.areaCodes} inputLabel="Area" inputPlaceholder="Select area" icon={<AreaIcon />} />

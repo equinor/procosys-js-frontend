@@ -1,13 +1,15 @@
 import { CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
-import { ComponentName, OrganizationMap, OrganizationsEnum, getEndTime, getNextHalfHourTimeString } from './utils';
+import { ComponentName, OrganizationsEnum } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import React, { useEffect, useState } from 'react';
+import { getEndTime, getNextHalfHourTimeString } from './utils';
 
 import Attachments from './Attachments/Attachments';
 import { Container } from './CreateIPO.style';
 import CreateIPOHeader from './CreateIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Loading from '@procosys/components/Loading';
+import { OrganizationMap } from '../utils';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
@@ -40,7 +42,7 @@ const initialParticipants: Participant[] = [
         role: null
     },
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany  },
+        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany },
         type: 'Functional role',
         externalEmail: null,
         person: null,

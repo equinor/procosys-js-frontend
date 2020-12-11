@@ -75,6 +75,7 @@ const GeneralInfo = ({
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
+        if (generalInfo.projectId !== filteredProjects[index].id) clearScope();
         setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name};});
     };
 

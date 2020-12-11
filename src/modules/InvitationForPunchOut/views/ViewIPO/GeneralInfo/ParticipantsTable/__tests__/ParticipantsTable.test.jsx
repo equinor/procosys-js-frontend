@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import { ComponentName } from '@procosys/modules/InvitationForPunchOut/views/ViewIPO/utils';
-import { OutlookResponseType } from '../../../utils';
+import { ComponentName } from '@procosys/modules/InvitationForPunchOut/views/ViewIPO/enums';
+import { OutlookResponseType } from '../../../enums';
 import ParticipantsTable from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';

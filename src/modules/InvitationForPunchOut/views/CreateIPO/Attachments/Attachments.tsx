@@ -1,7 +1,7 @@
 import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
-import { getFileExtension, getFileName, getFileTypeIconName } from '../../utils';
+import { getFileName, getFileTypeIconName } from '../../utils';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';

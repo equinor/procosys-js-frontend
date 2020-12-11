@@ -83,9 +83,19 @@ type ExternalEmailInvitationResponse = {
 }
 
 type AttachmentResponse = {
+    downloadUri: string;
     id: number;
     fileName: string;
     rowVersion: string;
+    uploadedAt: Date;
+    uploadedBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    }
 }
 
 type ProjectResponse = {
@@ -400,7 +410,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     async getAttachment(
         id: number,
         attachmentId: number,
-        setRequestCanceller?: RequestCanceler): Promise<string> {
+        setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse> {
         const endpoint = `/Invitations/${id}/Attachments/${attachmentId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -480,12 +490,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the user group MC_CONTRACTOR_MLA
+     * Get persons with the privilege group IPO_PLAN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getContractorPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByUserGroup/Contractor';
+    async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByPrivileges/RequiredSigners';
         const settings: AxiosRequestConfig = {params: {
             searchString: searchString
         }};
@@ -500,12 +510,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the user group MC_CONTRACTOR_MLA
+     * Get persons with the user group IPO_SIGN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getConstructionPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByUserGroup/Construction';
+    async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = '/Persons/ByPrivileges/AdditionalSigners';
         const settings: AxiosRequestConfig = {params: {
             searchString: searchString
         }};

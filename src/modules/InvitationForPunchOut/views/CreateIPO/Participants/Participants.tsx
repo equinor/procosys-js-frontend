@@ -1,6 +1,5 @@
 import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { OrganizationMap, OrganizationsEnum } from '../utils';
 import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -8,6 +7,8 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { OrganizationMap } from '../../utils';
+import { OrganizationsEnum } from '../../enums';
 import RoleSelector from '../../../components/RoleSelector';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -78,12 +79,12 @@ const Participants = ({
         return firstName + ' ' + lastName;
     };
 
-    const getContractorPersons = (input: string): Canceler | null  => {
+    const getPlannerPersons = (input: string): Canceler | null  => {
         let requestCanceler: Canceler | null = null;
         if(input != '') {
             try {
                 (async (): Promise<void> => {
-                    const constractorPersons = await apiClient.getContractorPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const plannerPersons = await apiClient.getRequiredSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
@@ -93,7 +94,7 @@ const Participants = ({
                             };
                         })
                         );
-                    setFilteredPersons(constractorPersons);
+                    setFilteredPersons(plannerPersons);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
@@ -106,12 +107,12 @@ const Participants = ({
         };
     };
 
-    const getConstructionPersons = (input: string): Canceler | null  => {
+    const getSignerPersons = (input: string): Canceler | null  => {
         let requestCanceler: Canceler | null = null;
         if(input != '') {
             try {
                 (async (): Promise<void> => {
-                    const constructionPersons = await apiClient.getConstructionPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const signerPersons = await apiClient.getAdditionalSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
@@ -121,7 +122,7 @@ const Participants = ({
                             };
                         })
                         );
-                    setFilteredPersons(constructionPersons);
+                    setFilteredPersons(signerPersons);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
@@ -174,7 +175,7 @@ const Participants = ({
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
             });
-            if(organization.text === OrganizationsEnum.External) {
+            if(organization.value === OrganizationsEnum.External) {
                 setType('Person', index);
             }
         }
@@ -285,12 +286,26 @@ const Participants = ({
         }
     };
 
+    const isSignerParticipant = (index: number): boolean => {
+        if (index < 5 && (participants[index].organization.value == Organizations[0].value || 
+            participants[index].organization.value == Organizations[3].value ||
+            participants[index].organization.value == Organizations[4].value)) {
+            for (let i = 2; i < index; i++) {
+                if(participants[i].organization.value == participants[index].organization.value) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    };
+
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
-            if (personsFilter.value == 0) {
-                getContractorPersons(personsFilter.text);
-            } else if (personsFilter.value == 1) {
-                getConstructionPersons(personsFilter.text);
+            if (personsFilter.value < 2) {
+                getPlannerPersons(personsFilter.text);
+            } else if (isSignerParticipant(personsFilter.value)) {
+                getSignerPersons(personsFilter.text);
             } else {
                 getPersons(personsFilter.text);
             }
@@ -326,12 +341,12 @@ const Participants = ({
                                     onChange={(value): void => setType(value, index)}
                                     data={ParticipantType}
                                     label={'Type'}
-                                    disabled={p.organization.text == OrganizationsEnum.External}
+                                    disabled={p.organization.value == OrganizationsEnum.External}
                                 >
                                     {p.type}
                                 </SelectInput>
                             </div>
-                            { p.organization.text == OrganizationsEnum.External &&
+                            { p.organization.value == OrganizationsEnum.External &&
                                 <div>
                                     <TextField
                                         id={'guestEmail'}
@@ -342,7 +357,7 @@ const Participants = ({
                                     />
                                 </div>
                             }
-                            { p.type == ParticipantType[1].text && p.organization.text != OrganizationsEnum.External &&
+                            { p.type == ParticipantType[1].text && p.organization.value != OrganizationsEnum.External &&
                                 <div>
                                     <Dropdown
                                         label={'Person'}

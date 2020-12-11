@@ -1,6 +1,6 @@
 import OutlookInfo, { OutlookStatusType } from '../index';
 
-import { OutlookResponseType } from '../../utils';
+import { OutlookResponseType } from '../../enums';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { render } from '@testing-library/react';
@@ -40,7 +40,7 @@ export const participants = [
                 email: 'lkjawc@equinor.com',
                 company: 'EQUI',
             },
-            response: OutlookResponseType.TENTATIVE
+            response: OutlookResponseType.TENTATIVELY_ACCEPTED
         },
     },
     {

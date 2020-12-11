@@ -3,13 +3,14 @@ import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { getFileName, getFileTypeIconName } from '../../utils';
 
-import { Attachment } from '../types';
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import { Canceler } from '@procosys/http/HttpClient';
 import CustomTooltip from './CustomTooltip';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
+import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
@@ -111,14 +112,8 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         setLoading(false);
     };
 
-    const openAttachment = async (attachmentId: number): Promise<void> => {
-        try {
-            const response = await apiClient.getAttachment(ipoId, attachmentId);
-            window.open(response, '_blank');
-        } catch (error) {
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
+    const openAttachment = (downloadUri: string): void => {
+        window.open(downloadUri, '_blank');
     };
 
     return (<Container>
@@ -151,22 +146,30 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 <Head>
                     <Row>
                         <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Type</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Title</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>{' '}</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="60%">Title</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="20%">Uploaded at</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="20%">Uploaded by</Cell>
+                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} >{' '}</Cell>
                     </Row>
                 </Head>
                 <Body>
                     {attachments && attachments.length > 0 ? attachments.map((attachment, index) => (
                         <Row key={attachment.id}>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em', width: '30px'}}>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <EdsIcon name={getFileTypeIconName(attachment.fileName)} size={24} />
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <CustomTooltip title="Click to open in new tab" arrow>
-                                    <Typography onClick={(): Promise<void> => openAttachment(attachment.id)} variant="body_short" link>{getFileName(attachment.fileName)}</Typography>
+                                    <Typography onClick={(): void => openAttachment(attachment.downloadUri)} variant="body_short" link>{getFileName(attachment.fileName)}</Typography>
                                 </CustomTooltip>
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em', width: '30px'}}>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                <Typography variant="body_short">{format(new Date(attachment.uploadedAt), 'dd/MM/yyyy HH:mm')}</Typography>
+                            </Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                <Typography variant="body_short">{`${attachment.uploadedBy.firstName} ${attachment.uploadedBy.lastName}`}</Typography>
+                            </Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <div onClick={(): Promise<void> => removeAttachment(index)}>
                                     <EdsIcon name='delete_to_trash' />
                                 </div>

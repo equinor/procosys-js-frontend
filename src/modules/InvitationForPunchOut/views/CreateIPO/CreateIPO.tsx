@@ -343,7 +343,7 @@ const CreateIPO = (): JSX.Element => {
                 clearScope={clearScope}
             /> 
         } 
-        { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectId != null && generalInfo.projectName != null) &&
+        { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectName != null) &&
             <SelectScope 
                 type={generalInfo.poType.value}
                 commPkgNo={params.commPkgNo ? params.commPkgNo : null}
@@ -351,7 +351,6 @@ const CreateIPO = (): JSX.Element => {
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}
                 setSelectedMcPkgScope={setSelectedMcPkgScope}
-                projectId={generalInfo.projectId}
                 projectName={generalInfo.projectName}
             /> 
         }

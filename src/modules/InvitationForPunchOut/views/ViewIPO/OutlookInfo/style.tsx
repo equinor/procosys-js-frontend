@@ -9,7 +9,10 @@ type BadgeContainerProps = {
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width: inherit;
+    width: 500px;
+    @media (max-width: 639px) {
+        width: inherit;
+    }
 `;
 
 export const StatusContainer = styled.div`

@@ -3,7 +3,7 @@ import { Container, CustomTable } from './style';
 import { Table, Typography } from '@equinor/eds-core-react';
 
 import React from 'react';
-import { ReportIdEnum } from '../../utils';
+import { ReportIdEnum } from '../../enums';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const getReportParams = (mcScope: McPkgScope[], commScope: CommPkgScope[]): string => {

@@ -1,6 +1,5 @@
 import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { OrganizationMap, OrganizationsEnum } from '../../utils';
 import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -8,6 +7,8 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { OrganizationMap } from '../../utils';
+import { OrganizationsEnum } from '../../enums';
 import RoleSelector from '../../../components/RoleSelector';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';

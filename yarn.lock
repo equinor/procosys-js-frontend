@@ -1020,30 +1020,21 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
-"@equinor/eds-core-react@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-core-react/-/eds-core-react-0.7.1.tgz#b1ea285cbd6ada799e1b76a7a89973c483c0bd87"
-  integrity sha512-/wG2GVOJ8CtT4bNXaG5bYwtXIgCEqRIIsllsYYIWgRKbKpft9RzZyiGU+mHROfLLAvUY8IpN3elhOkKU3eQ69w==
+"@equinor/eds-core-react@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-core-react/-/eds-core-react-0.8.3.tgz#9565e0255b5ddfcfbbd5d654819078e615b95bc8"
+  integrity sha512-Py61onBu5V+2MSTsvFBd5mMwVeqmsid6UO4ruFpIPEboJVjN7V8ZnCaE6pDOJ9pLZ/g9q/+WTFTNSLZsQpm1NQ==
   dependencies:
-    "@equinor/eds-icons" "0.5.0-beta.2"
-    "@equinor/eds-tokens" "0.5.1-beta.2"
+    "@equinor/eds-icons" "0.6.1"
+    "@equinor/eds-tokens" "0.5.4"
+    downshift "^6.0.6"
 
-"@equinor/eds-icons@0.5.0-beta.2":
-  version "0.5.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.5.0-beta.2.tgz#4e7ba0bcffc94e0b1e22018885ef24f483bd06eb"
-  integrity sha512-sD574J11TMS/HhiNupDCASFFE++l5uywLc9zGcE5QAI4kXED4aC2KOWN9nnoshK5KKTyax8wkA2JDsNa7UPJeQ==
-
-"@equinor/eds-icons@^0.6.0":
+"@equinor/eds-icons@0.6.1", "@equinor/eds-icons@^0.6.0":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.6.1.tgz#fbbef1888a94e63ef5bf70a9e8e2910db664e8e5"
   integrity sha512-GPzl83rk3wtse2HsfVu3qCY3f4uk8NZdkkh6Ze+9+BsmVrmOwKAG+ntDIQabv6DiEum54GtuqW0X2f6KkT0dnQ==
 
-"@equinor/eds-tokens@0.5.1-beta.2":
-  version "0.5.1-beta.2"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.5.1-beta.2.tgz#72e5d07dbf60373fa25bfa861a13e9fab589dd4c"
-  integrity sha512-54KCtyCKEu7srnbDO6D7mFONoT4bQ0tPjuvOHMSR+Bk+yg0+gGrwyt8C1s0C0NqTFDarTbu6d6VzWRGwKSkUeA==
-
-"@equinor/eds-tokens@^0.5.4":
+"@equinor/eds-tokens@0.5.4", "@equinor/eds-tokens@^0.5.4":
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.5.4.tgz#48985b6d61610a1b3c022af5b57e75f208ca8880"
   integrity sha512-BByowcN80LCOcK/buD9g+3gK92HsnY/54J9BH9dK5mpFKtFONu5pqBq7C2N6VqjvlLVY/tOG17jdCWMJ8P2eAQ==
@@ -1707,9 +1698,9 @@
     "@types/react" "*"
 
 "@types/react-native@*":
-  version "0.63.37"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.37.tgz#c43df90c9d3cc082a97a49a53e989de26cb8ab45"
-  integrity sha512-xr9SZG7tQQBKT6840tAGaWEC65D2gjyxZtuZxz631UgeW1ofItuu9HMVhoyYqot2hRSa6Q4YC8FYkRVUpM53/w==
+  version "0.63.40"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.40.tgz#66b11824a6aadb0dde0db87bd8aff58165c7a8f8"
+  integrity sha512-y98TQBjfncIrdDrwIhxcmcad1gHKNfUKFnCBk3heYy0Gvt6BNcBeSKRvACV4cf6R1K/cNJMoS3rjaMvYhQyAgw==
   dependencies:
     "@types/react" "*"
 
@@ -3038,6 +3029,11 @@ compression@^1.7.4:
     safe-buffer "5.1.2"
     vary "~1.1.2"
 
+compute-scroll-into-view@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-1.0.16.tgz#5b7bf4f7127ea2c19b750353d7ce6776a90ee088"
+  integrity sha512-a85LHKY81oQnikatZYA90pufpZ6sQx++BoCxOEMsjpZx+ZnaKGQnCyCehTRr/1p9GBIAHTjcU9k71kSYWloLiQ==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -3551,6 +3547,16 @@ dot-case@^3.0.4:
   dependencies:
     no-case "^3.0.4"
     tslib "^2.0.3"
+
+downshift@^6.0.6:
+  version "6.0.7"
+  resolved "https://registry.yarnpkg.com/downshift/-/downshift-6.0.7.tgz#05ef58b991e4467cdb8cd36e7a87a011d0bada5c"
+  integrity sha512-+rqgx3JTSs8b4V9q++hsLvaP8mhMOdX7u+jy5S2etg7+Y7uFLVzZaI0S7Xo2yEnNDmTcNnYZZ/vFjdWuJ2kZdg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    compute-scroll-into-view "^1.0.16"
+    prop-types "^15.7.2"
+    react-is "^17.0.1"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"

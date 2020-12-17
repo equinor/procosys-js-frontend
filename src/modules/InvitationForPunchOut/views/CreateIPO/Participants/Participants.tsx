@@ -41,7 +41,7 @@ const Participants = ({
 }: ParticipantsProps): JSX.Element => {
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
-    const [personsFilter, setPersonsFilter] = useState<SelectItem>({text: '', value: -1}); //filter string and index of participant
+    const [personsFilter, setPersonsFilter] = useState<SelectItem>({ text: '', value: -1 }); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
 
     useEffect(() => {
@@ -51,12 +51,16 @@ const Participants = ({
                 const functionalRoles = await apiClient.getFunctionalRolesAsync()
                     .then(roles => roles.map((role): RoleParticipant => {
                         return {
+                            id: null,
+                            rowVersion: null,
                             code: role.code,
                             description: role.description,
                             usePersonalEmail: role.usePersonalEmail,
                             notify: false,
                             persons: role.persons.map(p => {
                                 return {
+                                    id: null,
+                                    rowVersion: null,
                                     azureOid: p.azureOid,
                                     firstName: p.firstName,
                                     lastName: p.lastName,
@@ -78,9 +82,9 @@ const Participants = ({
         return firstName + ' ' + lastName;
     };
 
-    const getPlannerPersons = (input: string): Canceler | null  => {
+    const getPlannerPersons = (input: string): Canceler | null => {
         let requestCanceler: Canceler | null = null;
-        if(input != '') {
+        if (input != '') {
             try {
                 (async (): Promise<void> => {
                     const plannerPersons = await apiClient.getRequiredSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
@@ -106,9 +110,9 @@ const Participants = ({
         };
     };
 
-    const getSignerPersons = (input: string): Canceler | null  => {
+    const getSignerPersons = (input: string): Canceler | null => {
         let requestCanceler: Canceler | null = null;
-        if(input != '') {
+        if (input != '') {
             try {
                 (async (): Promise<void> => {
                     const signerPersons = await apiClient.getAdditionalSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
@@ -134,9 +138,9 @@ const Participants = ({
         };
     };
 
-    const getPersons = (input: string): Canceler | null  => {
+    const getPersons = (input: string): Canceler | null => {
         let requestCanceler: Canceler | null = null;
-        if(input != '') {
+        if (input != '') {
             try {
                 (async (): Promise<void> => {
                     const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
@@ -174,7 +178,7 @@ const Participants = ({
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
             });
-            if(organization.text === OrganizationsEnum.External) {
+            if (organization.text === OrganizationsEnum.External) {
                 setType('Person', index);
             }
         }
@@ -185,7 +189,7 @@ const Participants = ({
             const participantsCopy = [...p];
             participantsCopy[index].role = null;
             participantsCopy[index].person = null;
-            participantsCopy[index].externalEmail = value;
+            participantsCopy[index].externalEmail = { id: null, rowVersion: null, email: value };
             return participantsCopy;
         });
     };
@@ -230,7 +234,7 @@ const Participants = ({
                 const to = participant.role.persons.filter(p => p.radioOption == 'to');
                 if (to.length > 0) {
                     textToDisplay += personsInRoleText('To: ', to);
-                    if(cc.length > 0) {
+                    if (cc.length > 0) {
                         textToDisplay += '. ';
                     }
                 }
@@ -246,6 +250,7 @@ const Participants = ({
     const addParticipant = (): void => {
         const newParticipant: Participant = {
             organization: Organizations[0],
+            sortKey: null,
             type: 'Functional role',
             externalEmail: null,
             person: null,
@@ -274,7 +279,9 @@ const Participants = ({
                 participantsCopy[participantIndex].role = null;
                 participantsCopy[participantIndex].externalEmail = null;
                 participantsCopy[participantIndex].person = {
-                    azureOid: person.value, 
+                    id: null,
+                    rowVersion: null,
+                    azureOid: person.value,
                     firstName: name[1],
                     lastName: name[0],
                     email: person.email ? person.email : '',
@@ -286,11 +293,11 @@ const Participants = ({
     };
 
     const isSignerParticipant = (index: number): boolean => {
-        if (index < 5 && (participants[index].organization.value == Organizations[0].value || 
+        if (index < 5 && (participants[index].organization.value == Organizations[0].value ||
             participants[index].organization.value == Organizations[3].value ||
             participants[index].organization.value == Organizations[4].value)) {
             for (let i = 2; i < index; i++) {
-                if(participants[i].organization.value == participants[index].organization.value) {
+                if (participants[i].organization.value == participants[index].organization.value) {
                     return false;
                 }
             }
@@ -352,7 +359,7 @@ const Participants = ({
                                         placeholder='Email'
                                         label='e-mail address'
                                         value={p.externalEmail ? p.externalEmail : ''}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setExternalEmail(e.target.value, index)} 
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setExternalEmail(e.target.value, index)}
                                     />
                                 </div>
                             }
@@ -362,10 +369,10 @@ const Participants = ({
                                         label={'Person'}
                                         maxHeight='300px'
                                         variant='form'
-                                        onFilter={(input: string): void => setPersonsFilter({text: input, value: index})}
+                                        onFilter={(input: string): void => setPersonsFilter({ text: input, value: index })}
                                         text={p.person ? getDisplayText(index) : 'Search to select'}
                                     >
-                                        { filteredPersons.map((person, i) => {
+                                        {filteredPersons.map((person, i) => {
                                             return (
                                                 <DropdownItem
                                                     key={i}
@@ -388,23 +395,23 @@ const Participants = ({
                                         roles={getRolesCopy()}
                                         label={'Role'}
                                     >
-                                        {p.role ? 
+                                        {p.role ?
                                             <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
                                                 <div className='overflowControl'>
                                                     {getDisplayText(index)}
                                                 </div>
                                             </Tooltip>
-                                            : 'Select' }
+                                            : 'Select'}
                                     </RoleSelector>
                                 </div>
                             }
                             <div>
-                                { index > 1 &&
-                                <>
-                                    <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>
-                                        <EdsIcon name='delete_to_trash' />
-                                    </Button>
-                                </>
+                                {index > 1 &&
+                                    <>
+                                        <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>
+                                            <EdsIcon name='delete_to_trash' />
+                                        </Button>
+                                    </>
                                 }
                             </div>
                         </React.Fragment>

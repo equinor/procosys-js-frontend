@@ -19,9 +19,9 @@ import { useParams } from 'react-router-dom';
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
 
 const initialSteps: Step[] = [
-    {title: 'Invitation for puch out sent', isCompleted: true},
-    {title: 'Punch out completed', isCompleted: false},
-    {title: 'Punch out accepted by company', isCompleted: false}
+    { title: 'Invitation for puch out sent', isCompleted: true },
+    { title: 'Punch out completed', isCompleted: false },
+    { title: 'Punch out accepted by company', isCompleted: false }
 ];
 
 enum StepsEnum {
@@ -31,7 +31,7 @@ enum StepsEnum {
 };
 
 const ViewIPO = (): JSX.Element => {
-    const params = useParams<{ipoId: any}>();
+    const params = useParams<{ ipoId: any }>();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Planned);
     const [activeTab, setActiveTab] = useState(0);
@@ -50,7 +50,7 @@ const ViewIPO = (): JSX.Element => {
                     setCurrentStep(StepsEnum.Completed + 1);
                     break;
                 case StepsEnum[3]:
-                    setSteps((steps): Step[] => steps.map((step): Step => { return {...step, isCompleted: true }; }));
+                    setSteps((steps): Step[] => steps.map((step): Step => { return { ...step, isCompleted: true }; }));
                     setCurrentStep(StepsEnum.Accepted + 1);
                     break;
                 default:
@@ -87,10 +87,10 @@ const ViewIPO = (): JSX.Element => {
 
     const completeStep = (stepNo: number): void => {
         const modifiedSteps = [...steps];
-        modifiedSteps[stepNo-1] = {...modifiedSteps[stepNo-1], isCompleted: true };
+        modifiedSteps[stepNo - 1] = { ...modifiedSteps[stepNo - 1], isCompleted: true };
         setSteps(modifiedSteps);
     };
-    
+
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
@@ -147,7 +147,8 @@ const ViewIPO = (): JSX.Element => {
         ) :
             invitation ? (
                 <>
-                    <ViewIPOHeader 
+                    <ViewIPOHeader
+                        ipoId={params.ipoId}
                         steps={steps}
                         currentStep={currentStep}
                         title={invitation.title}
@@ -165,15 +166,16 @@ const ViewIPO = (): JSX.Element => {
                         <TabPanels>
                             <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} /></TabPanel>
                             <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
-                            <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
+                            <TabPanel><Attachments ipoId={params.ipoId} /></TabPanel>
                             <TabPanel>Log</TabPanel>
                         </TabPanels>
                     </Tabs>
                 </>
 
-            ) : (
-                <Typography>No invitation found</Typography>
-            )
+            ) :
+                (
+                    <Typography>No invitation found</Typography>
+                )
         }
     </Container>);
 };

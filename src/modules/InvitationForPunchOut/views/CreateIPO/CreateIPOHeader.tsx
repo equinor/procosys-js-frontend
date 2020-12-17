@@ -7,21 +7,24 @@ import { Step } from '../../types';
 import { StepsEnum } from './CreateIPO';
 
 type ProgressBarProps = {
+    ipoId: number | null;
+    title: string | null;
     steps: Step[];
-    canBeCreated: boolean;
+    canBeCreatedOrUpdated: boolean;
     currentStep: number;
     createNewIpo: () => void;
+    saveUpdatedIpo: () => void;
     next: () => void;
     previous: () => void;
     goTo: (stepNo: number) => void;
 }
 
 const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
-    const [validNext, setValidNext] = useState<boolean>(props.steps[props.currentStep -1].isCompleted);
+    const [validNext, setValidNext] = useState<boolean>(props.steps[props.currentStep - 1].isCompleted);
 
     useEffect(() => {
         props.currentStep == StepsEnum.UploadAttachments ?
-            setValidNext(true) : 
+            setValidNext(true) :
             props.currentStep == StepsEnum.SummaryAndCreate ?
                 setValidNext(false) :
                 setValidNext(props.steps[props.currentStep - 1].isCompleted);
@@ -30,29 +33,41 @@ const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
     return (
         <Container>
             <HeaderContainer>
-                <Typography variant="h2">Create invitation for punch-out</Typography>
+                {!props.ipoId && <Typography variant="h2">Create invitation for punch-out</Typography>}
+                {props.ipoId && <Typography variant="h2">Edit {props.title}</Typography>}
+
                 <ButtonContainer>
                     <Button variant='outlined'>Cancel</Button>
-                    <Button 
-                        constiant='outlined' 
+                    <Button
+                        constiant='outlined'
                         disabled={props.currentStep === 1}
                         onClick={props.previous}>
-                            Previous
+                        Previous
                     </Button>
-                    {props.currentStep == StepsEnum.SummaryAndCreate ? (
+                    {props.currentStep == StepsEnum.SummaryAndCreate && !props.ipoId && (
                         <Button
-                            disabled={!props.canBeCreated}
+                            disabled={!props.canBeCreatedOrUpdated}
                             onClick={props.createNewIpo}
                         >
                             Create
                         </Button>
-                    ) : (
-                        <Button 
-                            disabled={!validNext} 
+                    )}
+                    {props.currentStep == StepsEnum.SummaryAndCreate && props.ipoId && (
+                        <Button
+                            disabled={!props.canBeCreatedOrUpdated}
+                            onClick={props.saveUpdatedIpo}
+                        >
+                            Save and send update
+                        </Button>
+                    )}
+                    {props.currentStep != StepsEnum.SummaryAndCreate && (
+                        (<Button
+                            disabled={!validNext}
                             onClick={props.next}
                         >
                             Next
                         </Button>
+                        )
                     )}
                 </ButtonContainer>
             </HeaderContainer>

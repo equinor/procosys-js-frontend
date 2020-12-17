@@ -1,18 +1,19 @@
 import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
-import { getFileExtension, getFileName, getFileTypeIconName } from '../../utils';
+import { getFileName, getFileTypeIconName } from '../../utils';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 
 interface AttachmentsProps {
-    attachments: File[];
+    attachments: Attachment[];
     removeAttachment: (index: number) => void;
-    addAttachments: (attachments: File[]) => void;
+    addAttachments: (attachments: Attachment[]) => void;
 }
 
 const Attachments = ({
@@ -26,7 +27,9 @@ const Attachments = ({
         e.preventDefault();
         try {
             fileTypeValidator(e.target.files[0].name);
-            addAttachments([e.target.files[0]]);
+            const file = e.target.files[0];
+            const newAttachment = { fileName: file.name, file: file };
+            addAttachments([newAttachment]);
         } catch (error) {
             showSnackbarNotification(error.message);
         }
@@ -38,30 +41,30 @@ const Attachments = ({
         }
     };
 
-    const getAttachmentName = (attachment: File): JSX.Element => {
+    const getAttachmentName = (attachment: Attachment): JSX.Element => {
         return (
-            <div>{getFileName(attachment.name)}</div>
+            <div>{getFileName(attachment.fileName)}</div>
         );
     };
 
-    const getAttachmentIcon = (attachment: File): JSX.Element => {
-        const iconName = getFileTypeIconName(attachment.name);
+    const getAttachmentIcon = (attachment: Attachment): JSX.Element => {
+        const iconName = getFileTypeIconName(attachment.fileName);
         return (
-            <EdsIcon name={iconName} size={24}/>
+            <EdsIcon name={iconName} size={24} />
         );
     };
-    
+
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
     };
-    
+
     const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
         const files = event.dataTransfer.files;
         Array.from(files).forEach(file => {
             try {
                 fileTypeValidator(file.name);
-                addAttachments([file]);
+                addAttachments([{ fileName: file.name, file: file }]);
             } catch (error) {
                 showSnackbarNotification(error.message);
             }
@@ -85,12 +88,12 @@ const Attachments = ({
                 onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
                 onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
             >
-                <EdsIcon name='cloud_download' size={48} color='#DADADA'/>
+                <EdsIcon name='cloud_download' size={48} color='#DADADA' />
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
             <Table
                 columns={[{ title: 'Type', render: getAttachmentIcon, width: '30px' }, { title: 'Title', render: getAttachmentName }]}
-                data={attachments}
+                data={attachments.filter((attachment) => !attachment.toBeDeleted)}
                 options={{
                     toolbar: false,
                     showTitle: false,
@@ -107,7 +110,7 @@ const Attachments = ({
                     boxShadow: 'none'
                 }}
                 localization={{
-                    header : {
+                    header: {
                         actions: ''
                     }
                 }}

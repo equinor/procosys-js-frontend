@@ -20,6 +20,12 @@ const InvitationForPunchOut = (): JSX.Element => {
                             component={CreateIPO}
                         />
                         <Route
+                            path={'/EditIPO/:ipoId'}
+                            exact
+                            component={CreateIPO}
+                        />
+
+                        <Route
                             path={'/:ipoId'}
                             exact
                             component={ViewIPO}

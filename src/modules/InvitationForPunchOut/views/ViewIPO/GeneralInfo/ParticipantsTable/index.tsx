@@ -1,20 +1,21 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
+import { ComponentName } from '../../../enums';
 import { Container, CustomTable, SpinnerContainer } from './style';
-import { ExternalEmail, FunctionalRole, Participant, Person } from '../../types';
-import { IpoStatusEnum, OrganizationMap, OrganizationsEnum, OutlookResponseType } from '../../utils';
-import React, { useCallback, useRef, useState } from 'react';
-
+import { ExternalEmail, FunctionalRole, Participant } from '../../types';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { IpoStatusEnum, OutlookResponseType } from '../../enums';
+import { OrganizationMap, OrganizationsEnum } from '../../../utils';
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipApprove = <div>Punch round has been completed<br />and checked by company</div>;
-
 
 
 export type AttNoteData = {
@@ -24,7 +25,7 @@ export type AttNoteData = {
     rowVersion: string;
 };
 
-interface Props {
+interface ParticipantsTableProps {
     participants: Participant[];
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
@@ -33,30 +34,40 @@ interface Props {
 }
 
 
-const ParticipantsTable = ({participants, status, complete, accept, sign }: Props): JSX.Element => {
+const ParticipantsTable = ({ participants, status, complete, accept, sign }: ParticipantsTableProps): JSX.Element => {
+    const cleanData = participants.map(p => {
+        const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
+        const attendedStatus = status === IpoStatusEnum.PLANNED ?
+            p.person ?
+                p.person.response ? p.person.response === OutlookResponseType.ATTENDING : false
+                : (x as FunctionalRole | ExternalEmail).response ? (x as FunctionalRole | ExternalEmail).response === OutlookResponseType.ATTENDING : false
+            : p.attended;
+
+        return {
+            id: x.id,
+            attended: attendedStatus,
+            note: p.note ? p.note : '',
+            rowVersion: x.rowVersion
+        };
+    });
     const [loading, setLoading] = useState<boolean>(false);
-    const [contractor, setContractor] = useState<boolean>(true);
-    const [constructionCompany, setConstructionCompany] = useState<boolean>(true);
+    // TODO: when current user is implemented, the user role should be found and used throughout
+    const contractor = true;
+    const constructionCompany = true;
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
+    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const btnSignRef = useRef<HTMLButtonElement>();
-    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(
-        participants.map(p => {
-            const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
-            const attendedStatus = status === IpoStatusEnum.PLANNED ? 
-                p.person ? 
-                    p.person.response ? p.person.response === OutlookResponseType.ATTENDING : false 
-                    : (x as FunctionalRole | ExternalEmail).response ? (x as FunctionalRole | ExternalEmail).response === OutlookResponseType.ATTENDING : false 
-                : p.attended;
 
-            return {
-                id: x.id,
-                attended: attendedStatus,
-                note: p.note,
-                rowVersion: x.rowVersion
-            };
-        })
-    ); 
+
+    useEffect(() => {
+        if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
+            setDirtyStateFor(ComponentName.ParticipantsTable);
+        } else {
+            unsetDirtyStateFor(ComponentName.ParticipantsTable);
+        }
+    }, [attNoteData]);
 
     const getCompleteButton = useCallback((status: string, completePunchout: (index: number) => void): JSX.Element => {
         return (
@@ -65,7 +76,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                     {status === IpoStatusEnum.COMPLETED ? 'Save punch out' : 'Complete punch out'}
                 </Button>
             </CustomTooltip>
-        );    
+        );
     }, [status]);
 
     const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
@@ -75,7 +86,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                     Approve punch out
                 </Button>
             </CustomTooltip>
-        );    
+        );
     };
 
     const getSignButton = (signPunchOut: (index: number) => void): JSX.Element => {
@@ -85,13 +96,13 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                     Sign punch out
                 </Button>
             </CustomTooltip>
-        );    
+        );
     };
 
-    const getSignedProperty = useCallback((   
-        participant: Participant, 
-        status: string, 
-        handleCompletePunchOut: (index: number) => void, 
+    const getSignedProperty = useCallback((
+        participant: Participant,
+        status: string,
+        handleCompletePunchOut: (index: number) => void,
         handleApprovePunchOut: (index: number) => void,
         handleSignPunchOut: (index: number) => void): JSX.Element => {
 
@@ -102,22 +113,22 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                     return <span>{`${participant.signedBy}`}</span>;
                 } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
                     return getCompleteButton(status, handleCompletePunchOut);
-                } 
+                }
                 break;
             case OrganizationsEnum.ConstructionCompany:
                 if (participant.signedBy) {
                     return <span>{`${participant.signedBy}`}</span>;
-                } else if (status ===  IpoStatusEnum.COMPLETED) {
+                } else if (status === IpoStatusEnum.COMPLETED) {
                     // TODO: check if participant is current user
                     return getApproveButton(handleApprovePunchOut);
-                } 
+                }
                 break;
             case OrganizationsEnum.Operation:
             case OrganizationsEnum.TechnicalIntegrity:
             case OrganizationsEnum.Commissioning:
                 if (participant.signedBy) {
                     return <span>{`${participant.signedBy}`}</span>;
-                } else if (status !==  IpoStatusEnum.CANCELED) {
+                } else if (status !== IpoStatusEnum.CANCELED) {
                     // TODO: check if participant is current user
                     return getSignButton(handleSignPunchOut);
                 }
@@ -134,14 +145,15 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
         }
         try {
             await complete(participants[index], attNoteData);
-            showSnackbarNotification(`Punch out ${status === IpoStatusEnum.COMPLETED ? 'saved': 'completed'}`, 2000, true);
+            showSnackbarNotification(`Punch out ${status === IpoStatusEnum.COMPLETED ? 'saved' : 'completed'}`, 2000, true);
         } catch (error) {
             showSnackbarNotification(error.message, 2000, true);
-        }     
+        }
         if (btnCompleteRef.current) {
             btnCompleteRef.current.removeAttribute('disabled');
         }
         setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
     const handleApprovePunchOut = async (index: number): Promise<any> => {
@@ -157,9 +169,11 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                 btnApproveRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
-        }     
+        }
         setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
+
 
     const handleSignPunchOut = async (index: number): Promise<any> => {
         setLoading(true);
@@ -174,7 +188,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                 btnSignRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
-        }     
+        }
         setLoading(false);
     };
 
@@ -203,71 +217,72 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
             <CustomTable>
                 <Head>
                     <Row>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Attendance list </Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Representative </Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Outlook response</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Attended</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Notes</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Signed by</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Signed at</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attendance list </Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Representative </Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Outlook response</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attended</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Notes</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed by</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed at</Cell>
                     </Row>
                 </Head>
                 <Body>
                     {participants.map((participant: Participant, index: number) => {
-                        const representative = participant.person ? 
+                        const representative = participant.person ?
                             `${participant.person.person.firstName} ${participant.person.person.lastName}` :
                             participant.functionalRole ?
                                 participant.functionalRole.code :
                                 participant.externalEmail.externalEmail;
 
-                        const response = participant.person ?    
+                        const response = participant.person ?
                             participant.person.response ?
                                 participant.person.response : ''
-                            : participant.externalEmail ? 
+                            : participant.externalEmail ?
                                 participant.externalEmail.response ?
                                     participant.externalEmail.response : ''
-                                : participant.functionalRole ? 
+                                : participant.functionalRole ?
                                     participant.functionalRole.response ?
                                         participant.functionalRole.response : ''
                                     : '';
 
-                        const id = participant.person ?    
+                        const id = participant.person ?
                             participant.person.person.id :
-                            participant.functionalRole ? 
+                            participant.functionalRole ?
                                 participant.functionalRole.id :
                                 participant.externalEmail.id;
 
                         return (
                             <Row key={participant.sortKey} as="tr">
-                                <Cell as="td" style={{verticalAlign: 'middle'}}>
+                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     {OrganizationMap.get(participant.organization as Organization)}
                                 </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle'}}>{representative}</Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle'}}>{response}</Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
-                                    <Switch 
-                                        disabled={!contractor || status === IpoStatusEnum.ACCEPTED} 
-                                        default 
-                                        label={attNoteData[index].attended ? 'Attended' : 'Did not attend'} 
-                                        checked={attNoteData[index].attended} 
-                                        onChange={(): void => handleEditAttended(id)}/>
+                                <Cell as="td" style={{ verticalAlign: 'middle' }}>{representative}</Cell>
+                                <Cell as="td" style={{ verticalAlign: 'middle' }}>{response}</Cell>
+                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
+                                    <Switch
+                                        id={`attendance${id}`}
+                                        disabled={!contractor || status === IpoStatusEnum.ACCEPTED}
+                                        default
+                                        label={attNoteData[index].attended ? 'Attended' : 'Did not attend'}
+                                        checked={attNoteData[index].attended}
+                                        onChange={(): void => handleEditAttended(id)} />
                                 </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
-                                    <TextField 
-                                        id={index.toString()}
+                                <Cell as="td" style={{ verticalAlign: 'middle', width: '40%', minWidth: '200px' }}>
+                                    <TextField
+                                        id={`textfield${id}`}
                                         disabled={(!contractor && !constructionCompany) || status === IpoStatusEnum.ACCEPTED}
-                                        defaultValue={attNoteData[index].note} 
+                                        defaultValue={attNoteData[index].note}
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
                                 </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
+                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     {getSignedProperty(
                                         participant, status,
                                         () => handleCompletePunchOut(index),
                                         () => handleApprovePunchOut(index),
                                         () => handleSignPunchOut(index))}
                                 </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', minWidth: '150px'}}>
-                                    {participant.signedAtUtc ? 
+                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
+                                    {participant.signedAtUtc ?
                                         `${format(new Date(participant.signedAtUtc), 'dd/MM/yyyy HH:mm')}` :
                                         '-'
                                     }
@@ -276,7 +291,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Prop
                         );
                     })}
                 </Body>
-            </CustomTable> 
+            </CustomTable>
         </Container>
     );
 };

@@ -13,7 +13,7 @@ import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 interface AttachmentsProps {
     attachments: Attachment[];
     removeAttachment: (index: number) => void;
-    addAttachments: (attachments: Attachment[]) => void;
+    addAttachments: (files: File[]) => void;
 }
 
 const Attachments = ({
@@ -28,8 +28,7 @@ const Attachments = ({
         try {
             fileTypeValidator(e.target.files[0].name);
             const file = e.target.files[0];
-            const newAttachment = { fileName: file.name, file: file };
-            addAttachments([newAttachment]);
+            addAttachments([e.target.files[0]]);
         } catch (error) {
             showSnackbarNotification(error.message);
         }
@@ -64,7 +63,7 @@ const Attachments = ({
         Array.from(files).forEach(file => {
             try {
                 fileTypeValidator(file.name);
-                addAttachments([{ fileName: file.name, file: file }]);
+                addAttachments([file]);
             } catch (error) {
                 showSnackbarNotification(error.message);
             }

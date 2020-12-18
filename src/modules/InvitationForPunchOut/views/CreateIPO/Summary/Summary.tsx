@@ -1,7 +1,9 @@
 import { Attachment, CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
+import { getFileName, getFileTypeIconName } from '../../utils';
 
+import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
 import { format } from 'date-fns';
 
@@ -109,8 +111,9 @@ const Summary = ({
 
     const attachmentList = attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment, index) => (
         <Row key={index}>
-            <Cell>{attachment.fileName} </Cell>
-        </Row >
+            <Cell><EdsIcon name={getFileTypeIconName(attachment.fileName)} /></Cell>
+            <Cell>{getFileName(attachment.fileName)}</Cell>
+        </Row>
     ));
 
     return (<Container>
@@ -220,6 +223,9 @@ const Summary = ({
                     <Table>
                         <Head>
                             <Row>
+                                <Cell as="th" width="30px" scope="col">
+                                    Type
+                                </Cell>
                                 <Cell as="th" scope="col">
                                     Title
                                 </Cell>

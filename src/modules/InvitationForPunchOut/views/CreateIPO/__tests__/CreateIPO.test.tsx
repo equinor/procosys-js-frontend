@@ -5,6 +5,8 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { configure } from '@testing-library/dom';
 
+configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
+
 jest.mock('react-router-dom', () => ({
     useParams: (): {projectId: any, commPkgNo: any} => ({
         projectId: '1001',
@@ -36,7 +38,23 @@ jest.mock('../../../context/InvitationForPunchOutContext',() => ({
     }
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: (): any => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('<CreateIPO />', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('Should display type types when Type of punch round select is clicked', async () => {
         const result = render(<CreateIPO />);
         await act(async () => {
@@ -62,7 +80,6 @@ describe('<CreateIPO />', () => {
     });
 
     it('Should update end time when entering start time > end time', async () => {
-        configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
         const { getByTestId } = render(<CreateIPO />);
         const startTime = getByTestId('startTime');
         const endTime = getByTestId('endDate');

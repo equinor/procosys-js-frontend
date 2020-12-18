@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
-import { OutlookResponseType } from '../utils';
+import { OutlookResponseType } from '../enums';
 import { Participant } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 
@@ -14,14 +14,14 @@ export enum OutlookStatusType {
 }
 
 
-type Props = {
+type OutlookInfoProps = {
     close: () => void;
     organizer: string;
     participants?: Participant[];
     status: OutlookStatusType;
 }
 
-const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Element => {
+const OutlookInfo = ({ close, organizer, participants, status }: OutlookInfoProps): JSX.Element => {
     const [attending, setAttending] = useState<Participant[]>([]);
     const [tentative, setTentative] = useState<Participant[]>([]);
     const [notResponded, setNotResponded] = useState<Participant[]>([]);
@@ -36,6 +36,7 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
                         setAttending(a => [...a, p]);
                         break;
                     case OutlookResponseType.TENTATIVE:
+                    case OutlookResponseType.TENTATIVELY_ACCEPTED:
                         setTentative(a => [...a, p]);
                         break;
                     case OutlookResponseType.NONE:

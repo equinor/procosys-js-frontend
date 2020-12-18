@@ -30,6 +30,17 @@ const invitation = {
     commPkgScope: commPkgScope
 };
 
+const mockSetDirtyStateFor = jest.fn((arg) => { return arg; });
+const mockUnsetDirtyStateFor = jest.fn((arg) => { return arg; });
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
 
 
 const renderWithTheme = (Component) => {

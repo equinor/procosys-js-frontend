@@ -82,9 +82,19 @@ type ExternalEmailInvitationResponse = {
 }
 
 type AttachmentResponse = {
+    downloadUri: string;
     id: number;
     fileName: string;
     rowVersion: string;
+    uploadedAt: Date;
+    uploadedBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    }
 }
 
 type ProjectResponse = {
@@ -454,7 +464,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     async getAttachment(
         id: number,
         attachmentId: number,
-        setRequestCanceller?: RequestCanceler): Promise<string> {
+        setRequestCanceller?: RequestCanceler): Promise<AttachmentResponse> {
         const endpoint = `/Invitations/${id}/Attachments/${attachmentId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);

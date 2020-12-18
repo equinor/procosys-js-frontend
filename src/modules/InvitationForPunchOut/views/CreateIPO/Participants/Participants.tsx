@@ -1,6 +1,5 @@
 import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { OrganizationMap, OrganizationsEnum } from '../utils';
 import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -8,6 +7,7 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { OrganizationMap, OrganizationsEnum } from '../../utils';
 import RoleSelector from '../../../components/RoleSelector';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -178,7 +178,7 @@ const Participants = ({
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
             });
-            if (organization.text === OrganizationsEnum.External) {
+            if (organization.value === OrganizationsEnum.External) {
                 setType('Person', index);
             }
         }
@@ -347,12 +347,12 @@ const Participants = ({
                                     onChange={(value): void => setType(value, index)}
                                     data={ParticipantType}
                                     label={'Type'}
-                                    disabled={p.organization.text == OrganizationsEnum.External}
+                                    disabled={p.organization.value == OrganizationsEnum.External}
                                 >
                                     {p.type}
                                 </SelectInput>
                             </div>
-                            { p.organization.text == OrganizationsEnum.External &&
+                            { p.organization.value == OrganizationsEnum.External &&
                                 <div>
                                     <TextField
                                         id={'guestEmail'}
@@ -363,7 +363,7 @@ const Participants = ({
                                     />
                                 </div>
                             }
-                            { p.type == ParticipantType[1].text && p.organization.text != OrganizationsEnum.External &&
+                            { p.type == ParticipantType[1].text && p.organization.value != OrganizationsEnum.External &&
                                 <div>
                                     <Dropdown
                                         label={'Person'}

@@ -57,6 +57,24 @@ export type Participant = {
     role: RoleParticipant | null;
 }
 
+export type Attachment = {
+    fileName: string;
+    downloadUri?: string;
+    id?: number;
+    file?: File;
+    rowVersion?: string;
+    uploadedAt?: Date;
+    toBeDeleted?: boolean;
+    uploadedBy?: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    }
+}
+
 export interface CommPkgRow {
     commPkgNo: string;
     description: string;
@@ -81,13 +99,12 @@ export interface McScope {
     selected: McPkgRow[];
 }
 
-export interface Attachment {
+/*export interface Attachment {
     id?: number;
     fileName: string;
     file?: File;
     rowVersion?: string;
-    toBeDeleted?: boolean;
 }
-
+*/
 export type Organization = 'Commissioning' | 'ConstructionCompany' | 'Contractor' | 'Operation' | 'TechnicalIntegrity' | 'Supplier' | 'External';
 

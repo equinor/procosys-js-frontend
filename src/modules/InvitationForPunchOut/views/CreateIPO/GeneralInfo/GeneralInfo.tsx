@@ -134,7 +134,7 @@ const GeneralInfo = ({
                     );
                 })}
             </Dropdown>
-            <PoTypeContainer data-testid='po-type-select'>
+            <PoTypeContainer id='po-type-select'>
                 <SelectInput
                     onChange={setPoTypeForm}
                     data={poTypes}

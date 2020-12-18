@@ -1,9 +1,10 @@
-import { render, waitFor } from '@testing-library/react';
+import { configure, render, waitFor } from '@testing-library/react';
 
-import CreateIPO from '../CreateIPO';
+import CreateAndEditIPO from '../CreateAndEditIPO';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { Invitation } from '../../ViewIPO/types';
+
+configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
 
 const mockInvitation: Invitation = {
     projectName: 'projectName',
@@ -57,20 +58,29 @@ jest.mock('../../../context/InvitationForPunchOutContext', () => ({
     }
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: (): any => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('<CreateIPO />', () => {
     it('Should display "Edit" as headline when in edit mode', async () => {
-        await act(async () => {
-            const { getByText, getByTestId, getByLabelText } = render(<CreateIPO />);
-            await waitFor(() => expect(getByText('Edit')).toBeInTheDocument());
-            await waitFor(() => expect(getByTestId('title')).toHaveProperty('value', 'titleA'));
-            await waitFor(() => expect(getByText('descriptionA')).toBeInTheDocument());
-            await waitFor(() => expect(getByTestId('location')).toHaveProperty('value', 'locationA'));
-            await waitFor(() => expect(getByText('DP (Discipline Punch)')).toBeInTheDocument());
-            await waitFor(() => expect(getByLabelText('Date')).toHaveValue('2020-12-16'));
-            await waitFor(() => expect(getByLabelText('From')).toHaveValue('00:57'));
-            await waitFor(() => expect(getByLabelText('To')).toHaveValue('00:57'));
-        });
+        const { getByText, getByTestId, getByLabelText } = render(<CreateAndEditIPO />);
+        await waitFor(() => expect(getByText('Edit titleA')).toBeInTheDocument());
+        await waitFor(() => expect(getByTestId('title')).toHaveProperty('value', 'titleA'));
+        await waitFor(() => expect(getByText('descriptionA')).toBeInTheDocument());
+        await waitFor(() => expect(getByTestId('location')).toHaveProperty('value', 'locationA'));
+        await waitFor(() => expect(getByText('DP (Discipline Punch)')).toBeInTheDocument());
+        await waitFor(() => expect(getByLabelText('Date')).toHaveValue('2020-12-16'));
+        await waitFor(() => expect(getByLabelText('From')).toHaveValue('00:57'));
+        await waitFor(() => expect(getByLabelText('To')).toHaveValue('00:57'));
     });
 });
-
 

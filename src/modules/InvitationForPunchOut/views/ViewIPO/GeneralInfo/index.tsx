@@ -2,7 +2,7 @@ import { Container, DateTimeItem, DetailContainer, HeaderContainer, ProjectInfoC
 import { Invitation, Participant } from '../types';
 import ParticipantsTable, { AttNoteData } from './ParticipantsTable';
 
-import React  from 'react';
+import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 
@@ -14,9 +14,9 @@ interface GeneralInfoProps {
 }
 
 const GeneralInfo = ({ invitation, complete, accept, sign }: GeneralInfoProps): JSX.Element => {
-    const participants = invitation.participants.sort((p1, p2): number => p1.sortKey - p2.sortKey );
+    const participants = invitation.participants.sort((p1, p2): number => p1.sortKey - p2.sortKey);
 
-    
+
     return (
         <Container>
             <HeaderContainer>

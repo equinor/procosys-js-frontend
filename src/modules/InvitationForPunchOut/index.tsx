@@ -2,7 +2,7 @@ import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-rou
 import { Container } from './style';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
-import CreateIPO from './views/CreateIPO/CreateIPO';
+import CreateAndEditIPO from './views/CreateAndEditIPO/CreateAndEditIPO';
 import ViewIPO from './views/ViewIPO/index';
 import withFeatureFlag from '../../core/features/withFeatureFlag';
 
@@ -17,12 +17,12 @@ const InvitationForPunchOut = (): JSX.Element => {
                         <Route
                             path={'/CreateIPO/:projectId?/:commPkgNo?'}
                             exact
-                            component={CreateIPO}
+                            component={CreateAndEditIPO}
                         />
                         <Route
                             path={'/EditIPO/:ipoId'}
                             exact
-                            component={CreateIPO}
+                            component={CreateAndEditIPO}
                         />
 
                         <Route

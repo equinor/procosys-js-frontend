@@ -8,6 +8,7 @@ import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
 import { Link } from 'react-router-dom';
+import { IpoStatusEnum } from './enums';
 
 type ProgressBarProps = {
     ipoId: number;
@@ -16,6 +17,7 @@ type ProgressBarProps = {
     title: string;
     participants: Participant[];
     organizer: string;
+    status: string;
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
@@ -27,6 +29,10 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
 
     const openFlyout = (): void => {
         setDisplayFlyout(true);
+    };
+
+    const isNotEditable = (): boolean => {
+        return (props.status == IpoStatusEnum.ACCEPTED || props.status == IpoStatusEnum.COMPLETED || props.status == IpoStatusEnum.CANCELED);
     };
 
     return (
@@ -44,6 +50,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 <ButtonContainer>
                     <Link to={`/EditIPO/${props.ipoId}`}>
                         <Button
+                            disabled={isNotEditable()}
                             variant='outlined'>
                             <EdsIcon name='edit' /> Edit
                         </Button>

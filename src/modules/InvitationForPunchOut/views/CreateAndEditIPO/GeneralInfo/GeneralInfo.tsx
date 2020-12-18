@@ -19,6 +19,7 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
+    isEditMode: boolean;
     clearScope: () => void;
 }
 
@@ -26,6 +27,7 @@ const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
     fromMain,
+    isEditMode,
     clearScope
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
@@ -118,7 +120,7 @@ const GeneralInfo = ({
                 variant='form'
                 text={selectedProject && selectedProject.description || generalInfo.projectName || 'Select'}
                 onFilter={setFilterForProjects}
-                disabled={fromMain}
+                disabled={fromMain || isEditMode}
             >
                 {filteredProjects.map((projectItem, index) => {
                     return (

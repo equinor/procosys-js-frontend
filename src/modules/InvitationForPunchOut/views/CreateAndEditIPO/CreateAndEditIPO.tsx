@@ -6,8 +6,8 @@ import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/Invitat
 import { getEndTime, getNextHalfHourTimeString } from './utils';
 
 import Attachments from './Attachments/Attachments';
-import { CenterContainer, Container } from './CreateIPO.style';
-import CreateIPOHeader from './CreateIPOHeader';
+import { CenterContainer, Container } from './CreateAndEditIPO.style';
+import CreateIPOHeader from './CreateAndEditIPOHeader';
 import GeneralInfo, { poTypes } from './GeneralInfo/GeneralInfo';
 import Loading from '@procosys/components/Loading';
 import Participants from './Participants/Participants';
@@ -34,7 +34,6 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     endTime: getEndTime(initialDate),
     location: ''
 };
-
 
 const initialParticipants: Participant[] = [
     {
@@ -87,14 +86,6 @@ export enum StepsEnum {
     SummaryAndCreate = 5
 };
 
-const initialSteps: Step[] = [
-    { title: 'General info', isCompleted: false },
-    { title: 'Scope', isCompleted: false },
-    { title: 'Participants', isCompleted: false },
-    { title: 'Upload attachments', isCompleted: false },
-    { title: 'Summary & create/update', isCompleted: false }
-];
-
 const CreateIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
@@ -106,7 +97,6 @@ const CreateIPO = (): JSX.Element => {
         multipleDisciplines: false,
         selected: []
     });
-    const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -121,6 +111,16 @@ const CreateIPO = (): JSX.Element => {
     const { history } = useRouter();
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
+    const initialSteps: Step[] = [
+        { title: 'General info', isCompleted: false },
+        { title: 'Scope', isCompleted: false },
+        { title: 'Participants', isCompleted: false },
+        { title: 'Upload attachments', isCompleted: (params.ipoId ? true : false) },
+        { title: 'Summary & ' + (params.ipoId ? 'update' : 'create'), isCompleted: false }
+    ];
+
+    const [steps, setSteps] = useState<Step[]>(initialSteps);
+
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
             setDirtyStateFor(ComponentName.CreateIPO);
@@ -128,7 +128,6 @@ const CreateIPO = (): JSX.Element => {
             unsetDirtyStateFor(ComponentName.CreateIPO);
         }
     }, [generalInfo]);
-
 
     const getPerson = (participant: Participant): PersonDto | null => {
         if (!participant.person) {
@@ -290,7 +289,6 @@ const CreateIPO = (): JSX.Element => {
 
                 await uploadOrRemoveAttachments(params.ipoId);
 
-                setIsSaving(false);
                 history.push('/' + params.ipoId);
             } catch (error) {
                 setIsCreating(false);
@@ -298,6 +296,7 @@ const CreateIPO = (): JSX.Element => {
                 showSnackbarNotification(error.message);
             }
         }
+        setIsSaving(false);
     };
 
     useEffect(() => {
@@ -590,6 +589,7 @@ const CreateIPO = (): JSX.Element => {
                 generalInfo={generalInfo}
                 setGeneralInfo={setGeneralInfo}
                 fromMain={fromMain}
+                isEditMode={params.ipoId != null}
                 clearScope={clearScope}
             />
         }

@@ -19,7 +19,7 @@ export const HeaderContainer = styled.div`
 export const ButtonContainer = styled.div`
     display: flex;
     justify-content: flex-end;
-    button:not(:first-of-type) {
+    button {
         margin-left: calc(var(--grid-unit) * 2);
     }
 `;

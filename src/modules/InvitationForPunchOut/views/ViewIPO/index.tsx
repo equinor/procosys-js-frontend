@@ -154,6 +154,7 @@ const ViewIPO = (): JSX.Element => {
                         title={invitation.title}
                         organizer={invitation.createdBy}
                         participants={invitation.participants}
+                        status={invitation.status}
                     />
                     <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
                         <TabList>

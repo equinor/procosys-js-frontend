@@ -1,10 +1,11 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, HeaderContainer } from './CreateIPOHeader.style';
+import { ButtonContainer, Container, HeaderContainer } from './CreateAndEditIPOHeader.style';
 import React, { useEffect, useState } from 'react';
 
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
-import { StepsEnum } from './CreateIPO';
+import { StepsEnum } from './CreateAndEditIPO';
+import { Link } from 'react-router-dom';
 
 type ProgressBarProps = {
     ipoId: number | null;
@@ -37,7 +38,14 @@ const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 {props.ipoId && <Typography variant="h2">Edit {props.title}</Typography>}
 
                 <ButtonContainer>
-                    <Button variant='outlined'>Cancel</Button>
+                    {props.ipoId &&
+                        <Link to={`/${props.ipoId}`}>
+                            <Button
+                                variant='outlined'>
+                                Cancel
+                            </Button>
+                        </Link>
+                    }
                     <Button
                         constiant='outlined'
                         disabled={props.currentStep === 1}

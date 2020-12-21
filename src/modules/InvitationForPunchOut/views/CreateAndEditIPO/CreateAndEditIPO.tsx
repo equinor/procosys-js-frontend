@@ -7,7 +7,7 @@ import { getEndTime, getNextHalfHourTimeString } from './utils';
 
 import Attachments from './Attachments/Attachments';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
-import CreateIPOHeader from './CreateAndEditIPOHeader';
+import CreateAndEditIPOHeader from './CreateAndEditIPOHeader';
 import GeneralInfo, { poTypes } from './GeneralInfo/GeneralInfo';
 import Loading from '@procosys/components/Loading';
 import Participants from './Participants/Participants';
@@ -86,7 +86,7 @@ export enum StepsEnum {
     SummaryAndCreate = 5
 };
 
-const CreateIPO = (): JSX.Element => {
+const CreateAndEditIPO = (): JSX.Element => {
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -572,7 +572,7 @@ const CreateIPO = (): JSX.Element => {
     };
 
     return (<Container>
-        <CreateIPOHeader
+        <CreateAndEditIPOHeader
             ipoId={params.ipoId}
             title={generalInfo.title}
             steps={steps}
@@ -629,4 +629,4 @@ const CreateIPO = (): JSX.Element => {
     </Container>);
 };
 
-export default CreateIPO;
+export default CreateAndEditIPO;

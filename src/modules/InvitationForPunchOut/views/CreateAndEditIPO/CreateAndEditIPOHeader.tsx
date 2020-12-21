@@ -20,7 +20,7 @@ type ProgressBarProps = {
     goTo: (stepNo: number) => void;
 }
 
-const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
+const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
     const [validNext, setValidNext] = useState<boolean>(props.steps[props.currentStep - 1].isCompleted);
 
     useEffect(() => {
@@ -46,6 +46,13 @@ const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
                             </Button>
                         </Link>
                     }
+                    {!props.ipoId &&
+                        <Button
+                            variant='outlined'>
+                            Cancel
+                        </Button>
+                    }
+
                     <Button
                         constiant='outlined'
                         disabled={props.currentStep === 1}
@@ -84,4 +91,4 @@ const CreateIPOHeader = (props: ProgressBarProps): JSX.Element => {
     );
 };
 
-export default CreateIPOHeader;
+export default CreateAndEditIPOHeader;

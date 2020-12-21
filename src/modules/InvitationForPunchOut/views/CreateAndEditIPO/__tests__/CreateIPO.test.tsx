@@ -50,7 +50,7 @@ jest.mock('@procosys/core/DirtyContext', () => ({
     }
 }));
 
-describe('<CreateIPO />', () => {
+describe('<CreateAndEditIPO />', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });

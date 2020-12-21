@@ -436,7 +436,7 @@ const CreateIPO = (): JSX.Element => {
                             firstName: person.person.firstName,
                             lastName: person.person.lastName,
                             email: person.person.email,
-                            radioOption: null
+                            radioOption: person.required ? 'to' : 'cc'
                         });
                     });
 
@@ -446,7 +446,7 @@ const CreateIPO = (): JSX.Element => {
                         code: participant.functionalRole.code,
                         description: 'description',
                         usePersonalEmail: false,
-                        notify: false,
+                        notify: (persons && persons.length > 0) ? true : false,
                         persons: persons
                     };
                 }

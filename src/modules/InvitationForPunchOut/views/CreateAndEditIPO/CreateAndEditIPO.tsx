@@ -1,7 +1,7 @@
 import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, Person, RoleParticipant, Step } from '../../types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Canceler } from 'axios';
-import { ComponentName } from '../enums';
+import { ComponentName, OrganizationsEnum } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { getEndTime, getNextHalfHourTimeString } from './utils';
 
@@ -20,7 +20,7 @@ import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
 import { Invitation } from '../ViewIPO/types';
 import { SelectItem } from '@procosys/components/Select';
-import { OrganizationMap, OrganizationsEnum } from '../utils';
+import { OrganizationMap } from '../utils';
 
 const initialDate = getNextHalfHourTimeString(new Date());
 

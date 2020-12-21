@@ -7,11 +7,12 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
-import { OrganizationMap, OrganizationsEnum } from '../../utils';
+import { OrganizationMap } from '../../utils';
 import RoleSelector from '../../../components/RoleSelector';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { OrganizationsEnum } from '../../enums';
 
 const WAIT_INTERVAL = 300;
 

@@ -1,14 +1,5 @@
 import { Organization } from '../types';
-
-export enum OrganizationsEnum {
-    Commissioning = 'Commissioning',
-    ConstructionCompany = 'ConstructionCompany',
-    Contractor = 'Contractor',
-    Operation = 'Operation',
-    TechnicalIntegrity = 'TechnicalIntegrity',
-    Supplier = 'Supplier',
-    External = 'External',
-};
+import { OrganizationsEnum } from './enums';
 
 const createOrganizationMap = (): Map<Organization, string> => {
     const orgMap = new Map<Organization, string>();

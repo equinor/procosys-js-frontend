@@ -83,7 +83,7 @@
         "@material-ui/pickers": "^3.2.10",
         "@microsoft/applicationinsights-react-js": "^3.0.3",
         "@microsoft/applicationinsights-web": "^2.5.8",
-        "axios": "0.21.0",
+        "axios": "0.21.1",
         "material-table": "1.62.0",
         "msal": "^1.4.0",
         "qs": "^6.9.4",

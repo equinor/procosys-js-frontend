@@ -64,9 +64,9 @@ module.exports = {
     },
     output: {
         // `filename` provides a template for naming your bundles (remember to use `[name]`)
-        filename: 'v2-assets/[name].[hash].bundle.js',
+        filename: 'v2-assets/[name].[contenthash].bundle.js',
         // `chunkFilename` provides a template for naming code-split bundles (optional)
-        chunkFilename: 'v2-assets/[name].[hash].chunk.js',
+        chunkFilename: 'v2-assets/[name].[contenthash].chunk.js',
         path: path.resolve(__dirname, 'build'),
         publicPath: '/'
     },

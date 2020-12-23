@@ -21,7 +21,7 @@ const useClickOutsideNotifier = (
         return (): void => {
             document.removeEventListener('mousedown', handleClickOutsideTarget);
         };
-    });
+    }, []);
 };
 
 export default useClickOutsideNotifier;

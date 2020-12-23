@@ -1,6 +1,6 @@
 import React from 'react';
-import { render } from 'react-dom';
 import { StyledSnackbarNotification } from './style';
+import { render } from 'react-dom';
 
 let lastTimeoutId = -1;
 const snackbarContainer = document.createElement('div');
@@ -35,7 +35,7 @@ export const showSnackbarNotification = (
     clearTimeout(lastTimeoutId);
     render(<Notification message={message} displayRight={displayRight} />, snackbarContainer);
 
-    lastTimeoutId = setTimeout(() => {
+    lastTimeoutId = window.setTimeout(() => {
         render(<></>, snackbarContainer);
     }, duration);
 };

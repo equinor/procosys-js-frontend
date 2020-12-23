@@ -1,6 +1,6 @@
+import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
-import { Breakpoints } from '@procosys/core/styling';
 
 export const Nav = styled.nav`
     display: grid;
@@ -95,7 +95,7 @@ export const MenuContainer = styled.div`
     }
 `;
 
-export const MenuItem = styled.div`
+export const MenuContainerItem = styled.div`
     margin: 0px 16px;
     &:hover {
         background-color: rgba(222,237,238,1);

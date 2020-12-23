@@ -1,8 +1,8 @@
 import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
 
+import { Breakpoints } from '@procosys/core/styling';
 import { Button } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import { Breakpoints } from '@procosys/core/styling';
 
 export const Container = styled.div`
     display: flex;

@@ -1,9 +1,9 @@
 import { Container, DropdownButton, DropdownItem, IconContainer } from './style';
-import React, { useRef, useState, useEffect } from 'react';
-import { useClickOutsideNotifier } from '../../hooks';
+import React, { useEffect, useRef, useState } from 'react';
+
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
-
+import { useClickOutsideNotifier } from '../../hooks';
 
 type DropdownProps = {
     disabled?: boolean;
@@ -65,7 +65,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
-                {icon && <IconContainer size={iconSize}><EdsIcon name={icon} size={iconSize} color={disabled ? tokens.colors.interactive.disabled__border.rgba : ''} /></IconContainer>}
+                {icon && <IconContainer size={iconSize}><EdsIcon name={icon} size={iconSize} color={disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba } /></IconContainer>}
                 {text}
             </DropdownButton>
             {isOpen && (

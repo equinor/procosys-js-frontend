@@ -4,27 +4,26 @@ import {
     IconContainer,
     LogoContainer,
     MenuContainer,
-    MenuItem,
+    MenuContainerItem,
     Nav,
     PlantSelector,
     ShowOnDesktop,
     ShowOnMobile
 } from './style';
-import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
+import Flyout from '@procosys/components/Flyout';
+import ModuleTabs from './ModuleTabs';
 import OptionsDropdown from '../../components/OptionsDropdown';
 import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
+import { useParams } from 'react-router-dom';
 import { useProcosysContext } from '../../core/ProcosysContext';
-import Flyout from '@procosys/components/Flyout';
-import ModuleTabs from './ModuleTabs';
-import { Breakpoints } from '@procosys/core/styling';
 
 type PlantItem = {
     text: string;
@@ -95,7 +94,7 @@ const Header: React.FC = (): JSX.Element => {
                     </Dropdown>
                 </PlantSelector>
                 <MenuContainer>
-                    <MenuItem>
+                    <MenuContainerItem>
                         <Dropdown text="New">
 
                             <a
@@ -142,8 +141,8 @@ const Header: React.FC = (): JSX.Element => {
                             </a>
                             <a href={`/${params.plant}/Completion#Tag|`}><DropdownItem>Tag</DropdownItem></a>
                         </Dropdown>
-                    </MenuItem>
-                    <MenuItem>
+                    </MenuContainerItem>
+                    <MenuContainerItem>
                         <Dropdown text="Search">
                             <a
                                 href={`/${params.plant}/Search?searchType=Action%20Log`}
@@ -253,17 +252,17 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>My saved settings</DropdownItem>
                             </a>
                         </Dropdown>
-                    </MenuItem>
-                    <MenuItem>
+                    </MenuContainerItem>
+                    <MenuContainerItem>
                         <a href={`/${params.plant}/Reports`}>
                             <Button variant={'ghost'}>
                                 Reports
                             </Button>
                         </a>
-                    </MenuItem>
+                    </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuItem className='compact'>
+                    <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='link'>
                             <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">
                                 <DropdownItem>
@@ -296,8 +295,8 @@ const Header: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                             </a>                                                                                                                                                                        
                         </OptionsDropdown>
-                    </MenuItem >                    
-                    <MenuItem className='compact'>
+                    </MenuContainerItem >                    
+                    <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>
                                 <DropdownItem>
@@ -315,8 +314,8 @@ const Header: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
-                    </MenuItem>
-                    <MenuItem className='compact'>
+                    </MenuContainerItem>
+                    <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='lock'>
                             <a href={`/${params.plant}/Security/User`}>
                                 <DropdownItem>
@@ -339,20 +338,20 @@ const Header: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
-                    </MenuItem >
-                    <MenuItem className={'compact'}>
+                    </MenuContainerItem >
+                    <MenuContainerItem className={'compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
                                 <EdsIcon name='account_circle' />
                                 {user.name}
                             </Button>
                         </a>
-                    </MenuItem>
-                    <MenuItem className='compact lastButton'>
+                    </MenuContainerItem>
+                    <MenuContainerItem className='compact lastButton'>
                         <Button variant={'ghost'} onClick={(): void => auth.logout()}>
                             Logout
                         </Button>
-                    </MenuItem>
+                    </MenuContainerItem>
                 </MenuContainer>
             </Nav>
             {showMobileMenu &&

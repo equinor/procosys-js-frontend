@@ -7,6 +7,7 @@ import Flyout from '@procosys/components/Flyout';
 import { OutlookResponseType } from '../enums';
 import { Participant } from '../types';
 import { Typography } from '@equinor/eds-core-react';
+import { tokens } from '@equinor/eds-tokens';
 
 export enum OutlookStatusType {
     OK = 'Ok',
@@ -69,7 +70,7 @@ const OutlookInfo = ({ close, organizer, participants, status }: OutlookInfoProp
                     <OutlookInformationStatusContainer>
                         <InlineContainer>
                             <Typography variant="h6">Status:</Typography>
-                            <EdsIcon name="microsoft_outlook" color="green" />
+                            <EdsIcon name="microsoft_outlook" color={ tokens.colors.interactive.primary__resting.rgba } />
                             <Typography>{status}</Typography>
                         </InlineContainer>
                     </OutlookInformationStatusContainer>

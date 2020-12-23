@@ -7,6 +7,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
+import { tokens } from '@equinor/eds-tokens';
 
 type ProgressBarProps = {
     steps: Step[];
@@ -35,7 +36,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                     variant='ghost_icon'
                     onClick={(): void => openFlyout()}
                 >
-                    <EdsIcon name='microsoft_outlook' />
+                    <EdsIcon name='microsoft_outlook' color={tokens.colors.interactive.primary__resting.rgba} />
                 </Button>
             </HeaderContainer>
             <ProgressBar steps={props.steps} currentStep={props.currentStep} />

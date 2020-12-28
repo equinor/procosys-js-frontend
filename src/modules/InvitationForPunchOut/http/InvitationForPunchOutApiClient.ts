@@ -82,6 +82,18 @@ type ExternalEmailInvitationResponse = {
     rowVersion: string;
 }
 
+type LogResponse = {
+    id: number;
+    description: string;
+    createdAtUtc: string;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    },
+    eventType: string;
+}
+
 type AttachmentResponse = {
     downloadUri: string;
     id: number;
@@ -374,6 +386,53 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 settings
             );
             return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get Logs
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getLogs(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<LogResponse[]> {
+        const endpoint = `/Invitations/${id}/Logs`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            // const result = await this.client.get(
+            //     endpoint,
+            //     settings
+            // );
+            // return result.data;
+            return [
+                {
+                    id: 0,
+                    description: 'asdasdsadd',
+                    createdAtUtc: '2020-12-28T09:24:19.592Z',
+                    createdBy: {
+                        id: 0,
+                        firstName: 'jan',
+                        lastName: 'hagevold',
+                    },
+                    eventType: 'created IPO'
+                },
+                {
+                    id: 1,
+                    description: 'jcecopwej oijewfj wfije oij ewjwjic woiejweoijcwij jcewijwoecjweij ',
+                    createdAtUtc: '2020-12-28T10:24:19.592Z',
+                    createdBy: {
+                        id: 1,
+                        firstName: 'elisabeth',
+                        lastName: 'bartli',
+                    },
+                    eventType: 'completed IPO'
+                }
+            ];
         } catch (error) {
             throw new IpoApiError(error);
         }

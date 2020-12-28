@@ -66,3 +66,15 @@ export type Invitation = {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
 }
+
+export type Log = {
+    id: number;
+    description: string;
+    createdAtUtc: string;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+    },
+    eventType: string;
+}

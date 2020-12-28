@@ -53,8 +53,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
     });
     const [loading, setLoading] = useState<boolean>(false);
     // TODO: when current user is implemented, the user role should be found and used throughout
-    const contractor = true;
-    const constructionCompany = true;
+    // edit fields enable and button visibility
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
@@ -107,22 +106,37 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
         handleApprovePunchOut: (index: number) => void,
         handleSignPunchOut: (index: number) => void): JSX.Element => {
 
+
+        // TODO: check if participant is current user. buttons should only appear for self
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
-                // TODO: check if participant is current user
-                if (participant.signedBy) {
-                    return <span>{`${participant.signedBy}`}</span>;
-                } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
-                    return getCompleteButton(status, handleCompletePunchOut);
-                } 
+
+                if (participant.sortKey === 0) {
+                    if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
+                        return <span>{`${participant.signedBy}`}</span>;
+                    } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
+                        return getCompleteButton(status, handleCompletePunchOut);
+                    }                 
+                } else {
+                    if (participant.signedBy) {
+                        return <span>{`${participant.signedBy}`}</span>;
+                    } else if (status !== IpoStatusEnum.CANCELED) {
+                        return getSignButton(handleSignPunchOut);
+                    }                 
+                }
                 break;
             case OrganizationsEnum.ConstructionCompany:
                 if (participant.signedBy) {
                     return <span>{`${participant.signedBy}`}</span>;
-                } else if (status ===  IpoStatusEnum.COMPLETED) {
-                    // TODO: check if participant is current user
-                    return getApproveButton(handleApprovePunchOut);
-                } 
+                }
+
+                if (status !== IpoStatusEnum.CANCELED) {
+                    if (participant.sortKey === 1) {
+                        return getApproveButton(handleApprovePunchOut);
+                    } else {
+                        return getSignButton(handleSignPunchOut);
+                    }  
+                }
                 break;
             case OrganizationsEnum.Operation:
             case OrganizationsEnum.TechnicalIntegrity:
@@ -130,14 +144,13 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
                 if (participant.signedBy) {
                     return <span>{`${participant.signedBy}`}</span>;
                 } else if (status !==  IpoStatusEnum.CANCELED) {
-                    // TODO: check if participant is current user
                     return getSignButton(handleSignPunchOut);
                 }
                 break;
         }
 
         return <span>-</span>;
-    }, [contractor, constructionCompany, status]);
+    }, [status]);
 
     const handleCompletePunchOut = async (index: number): Promise<any> => {
         setLoading(true);
@@ -262,7 +275,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                     <Switch 
                                         id={`attendance${id}`}
-                                        disabled={!contractor || status === IpoStatusEnum.ACCEPTED} 
+                                        disabled={status === IpoStatusEnum.ACCEPTED} 
                                         default 
                                         label={attNoteData[index].attended ? 'Attended' : 'Did not attend'} 
                                         checked={attNoteData[index].attended} 
@@ -271,7 +284,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
                                 <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
                                     <TextField 
                                         id={`textfield${id}`}
-                                        disabled={(!contractor && !constructionCompany) || status === IpoStatusEnum.ACCEPTED}
+                                        disabled={status === IpoStatusEnum.ACCEPTED}
                                         defaultValue={attNoteData[index].note} 
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
                                 </Cell>

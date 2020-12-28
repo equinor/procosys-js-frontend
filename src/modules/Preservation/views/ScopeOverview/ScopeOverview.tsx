@@ -744,10 +744,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const navigateToOldPreservation = (): void => {
         analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
-        const oldPreservationUrl = 
-            window.location.origin + '/' +
-            plant.pathId + '/OldPreservation';
-        window.location.href = oldPreservationUrl;
+        window.location.href = '/' + plant.pathId + '/OldPreservation';
     };
 
     const closeReschededuleDialog = (): void => {

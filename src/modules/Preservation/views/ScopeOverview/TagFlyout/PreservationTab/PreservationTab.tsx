@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Container, TagDetailsContainer, Details, GridFirstRow, GridSecondRow, TagDetailsInputContainer, TextFieldContainer, StyledButton, IconContainer, TextFieldLabelReadOnly, TextFieldReadOnly } from './PreservationTab.style';
-import { TextField, Typography } from '@equinor/eds-core-react';
+import { Container, Details, GridFirstRow, GridSecondRow, IconContainer, StyledButton, TagDetailsContainer, TagDetailsInputContainer, TextFieldContainer, TextFieldLabelReadOnly, TextFieldReadOnly } from './PreservationTab.style';
+import React, { useEffect, useState } from 'react';
 import { TagDetails, TagRequirement, TagRequirementRecordValues } from './../types';
-import Requirements from './Requirements';
-import { usePreservationContext } from '../../../../context/PreservationContext';
-import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
-import Spinner from '../../../../../../components/Spinner';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import { TextField, Typography } from '@equinor/eds-core-react';
+
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import Requirements from './Requirements';
+import Spinner from '../../../../../../components/Spinner';
+import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../../../context/PreservationContext';
 
 interface PreservationTabProps {
     tagDetails: TagDetails;
@@ -178,7 +179,7 @@ const PreservationTab = ({
                         <TextField
                             id='remark'
                             label='Remark'
-                            value={remark}
+                            value={remark ? remark : ''}
                             meta="Optional"
                             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { setRemark(e.target.value); }}
                             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {

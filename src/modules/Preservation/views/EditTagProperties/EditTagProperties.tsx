@@ -1,5 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, ErrorContainer, Header, InputContainer, SpinnerContainer, ContentContainer } from './EditTagProperties.style';
+import { ButtonContainer, Container, ContentContainer, ErrorContainer, Header, InputContainer, SpinnerContainer } from './EditTagProperties.style';
 import { Journey, RequirementType, Step, TagDetails } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';

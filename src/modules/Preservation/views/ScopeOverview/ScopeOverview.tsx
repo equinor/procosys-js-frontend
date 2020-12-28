@@ -871,9 +871,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Reschedule
                                 </DropdownItem>
                                 <DropdownItem
-                                    disabled={selectedTags.length === 0}
+                                    disabled={!voidedTagsSelected}
                                     onClick={(): void => showRemoveDialog()}>
-                                    <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    <EdsIcon name='delete_to_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                     Remove
                                 </DropdownItem>
                                 <DropdownItem

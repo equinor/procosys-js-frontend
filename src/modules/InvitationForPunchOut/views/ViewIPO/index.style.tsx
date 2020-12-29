@@ -5,6 +5,9 @@ export const Container = styled.div`
     width: 100%;
     
     .tabs {
+        width: 100%;
+        min-width: 300px;
+        overflow-x: auto;
         div:first-child {
             grid-template-columns: auto auto auto auto 1fr;
         }
@@ -23,4 +26,8 @@ export const CenterContainer = styled.div`
     text-align: center;
     position: relative;
     margin-top: 10%;
+`;
+
+export const InvitationContainer = styled.div`
+    display: flex;
 `;

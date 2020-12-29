@@ -1,5 +1,5 @@
 import { AcceptIPODto, CompleteIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
-import { CenterContainer, Container } from './index.style';
+import { CenterContainer, Container, InvitationContainer } from './index.style';
 import { Invitation, Participant } from './types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
@@ -7,6 +7,7 @@ import { Tabs, Typography } from '@equinor/eds-core-react';
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
+import Comments from './Comments';
 import GeneralInfo from './GeneralInfo';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
@@ -154,21 +155,24 @@ const ViewIPO = (): JSX.Element => {
                         organizer={invitation.createdBy}
                         participants={invitation.participants}
                     />
-                    <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
-                        <TabList>
-                            <Tab>General</Tab>
-                            <Tab>Scope</Tab>
-                            <Tab>Attachments</Tab>
-                            <Tab>Log</Tab>
-                            <Tab className='emptyTab'>{''}</Tab>
-                        </TabList>
-                        <TabPanels>
-                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} /></TabPanel>
-                            <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
-                            <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
-                            <TabPanel>Log</TabPanel>
-                        </TabPanels>
-                    </Tabs>
+                    <InvitationContainer>
+                        <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
+                            <TabList>
+                                <Tab>General</Tab>
+                                <Tab>Scope</Tab>
+                                <Tab>Attachments</Tab>
+                                <Tab>Log</Tab>
+                                <Tab className='emptyTab'>{''}</Tab>
+                            </TabList>
+                            <TabPanels>
+                                <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} /></TabPanel>
+                                <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
+                                <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
+                                <TabPanel>Log</TabPanel>
+                            </TabPanels>
+                        </Tabs>
+                        <Comments ipoId={params.ipoId}/>
+                    </InvitationContainer>
                 </>
 
             ) : (

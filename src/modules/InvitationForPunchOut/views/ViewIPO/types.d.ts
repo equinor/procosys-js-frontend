@@ -66,3 +66,14 @@ export type Invitation = {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
 }
+
+export type IpoComment = {
+    id: number;
+    comment: string;
+    createdAtUtc: string;
+    createdBy: {
+        firstName: string;
+        lastName: string;
+    },
+    rowVersion: string;
+}

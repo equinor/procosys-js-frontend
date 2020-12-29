@@ -409,6 +409,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             //     settings
             // );
             // return result.data;
+            // TODO: replace with above when api available, check response type
             return [
                 {
                     id: 0,

@@ -15,8 +15,8 @@ interface CommPkgsTableProps {
 const CommPkgsTable = ({ commPkgScope, projectName }: CommPkgsTableProps ): JSX.Element => {
     const { plant } = useCurrentPlant();
     
-    const goToCommPkg = (commPkgNo: string): void => {
-        window.location.href = `/${plant.pathId}/Completion#CommPkg|?projectName=${projectName}&commpkgno=${commPkgNo}`;
+    const getCommPkgUrl = (commPkgNo: string): string => {
+        return `/${plant.pathId}/Completion#CommPkg|?projectName=${projectName}&commpkgno=${commPkgNo}`;
     };
 
     return (
@@ -33,7 +33,7 @@ const CommPkgsTable = ({ commPkgScope, projectName }: CommPkgsTableProps ): JSX.
                     {commPkgScope.length > 0 ? commPkgScope.map((commPkg: CommPkgScope, index: number) => (
                         <Row key={index} as="tr">
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography onClick={(): void => goToCommPkg(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
+                                <Typography href={getCommPkgUrl(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
                             </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.description}</Cell>
                             <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.status}</Cell>

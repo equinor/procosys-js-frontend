@@ -31,6 +31,7 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
@@ -148,6 +149,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const history = useHistory();
     const location = useLocation();
     const analytics = useAnalytics();
+    const { plant } = useCurrentPlant();
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
@@ -742,7 +744,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const navigateToOldPreservation = (): void => {
         analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
-        window.location.href = './OldPreservation';
+        window.location.href = '/' + plant.pathId + '/OldPreservation';
     };
 
     const closeReschededuleDialog = (): void => {

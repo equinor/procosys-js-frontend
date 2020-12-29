@@ -38,11 +38,11 @@ const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps ): JSX.Ele
     const { plant } = useCurrentPlant();
     const reportParams = getReportParams(mcPkgScope, commPkgScope);
 
-    const goToReport = (reportId: number): void => {
+    const getReportUrl = (reportId: number): string => {
         if (reportId === ReportIdEnum.MC32) {
-            window.location.href = `/${plant.pathId}/Report/AutoGenerate?reportId=${reportId}${reportParams}`;
+            return `/${plant.pathId}/Report/AutoGenerate?reportId=${reportId}${reportParams}`;
         } else {
-            window.location.href = `/${plant.pathId}/Search/AutoGenerate?searchId=${reportId}${reportParams}`;
+            return `/${plant.pathId}/Search/AutoGenerate?searchId=${reportId}${reportParams}`;
         }
     };
  
@@ -59,7 +59,7 @@ const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps ): JSX.Ele
                 <Body>
                     <Row as="tr">
                         <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                            <Typography onClick={(): void => goToReport(ReportIdEnum.MC32)} variant="body_short" link>MC32</Typography>
+                            <Typography href={getReportUrl(ReportIdEnum.MC32)} variant="body_short" link>MC32</Typography>
                         </Cell>
                         <Cell as="td" style={{verticalAlign: 'middle'}}>MC Scope</Cell>
                         <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
@@ -68,7 +68,7 @@ const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps ): JSX.Ele
                     </Row>
                     <Row as="tr">
                         <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                            <Typography onClick={(): void => goToReport(ReportIdEnum.MC84)} variant="body_short" link>MC84</Typography>
+                            <Typography href={getReportUrl(ReportIdEnum.MC84)} variant="body_short" link>MC84</Typography>
                         </Cell>
                         <Cell as="td" style={{verticalAlign: 'middle'}}>Punch List</Cell>
                         <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
@@ -77,7 +77,7 @@ const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps ): JSX.Ele
                     </Row>
                     <Row as="tr">
                         <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                            <Typography onClick={(): void => goToReport(ReportIdEnum.CDP06)} variant="body_short" link>CDP06</Typography>
+                            <Typography href={getReportUrl(ReportIdEnum.CDP06)} variant="body_short" link>CDP06</Typography>
                         </Cell>
                         <Cell as="td" style={{verticalAlign: 'middle'}}>Concession Deviation Permit</Cell>
                         <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>

@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { usePreservationContext } from '../../../../context/PreservationContext';
-import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
-import { getFormattedDate } from '../../../../../../core/services/DateService';
-import { Container, Section, GridRow, IconContainer, StyledButton } from './ActionExpanded.style';
 import { Button, Typography } from '@equinor/eds-core-react';
+import { Container, GridRow, IconContainer, Section, StyledButton } from './ActionExpanded.style';
+import React, { useEffect, useState } from 'react';
+
+import ActionAttachments from './ActionAttachments';
 import { Canceler } from 'axios';
 import CreateOrEditAction from './CreateOrEditAction';
 import EdsIcon from '../../../../../../components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
-import ActionAttachments from './ActionAttachments';
+import { getFormattedDate } from '../../../../../../core/services/DateService';
+import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../../../context/PreservationContext';
 
 const editIcon = <EdsIcon name='edit' size={16} />;
 
@@ -93,8 +94,8 @@ const ActionExpanded = ({
         } catch (error) {
             console.error('Closing action failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     const getDateField = (date: Date | null): string => {

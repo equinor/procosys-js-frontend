@@ -133,18 +133,18 @@ interface FunctionalRoleResponse {
 }
 
 export type PersonDto = {
-    id: number | null;
+    id?: number;
     azureOid: string | null;
     firstName: string;
     lastName: string;
     email: string;
-    rowVersion: string | null;
+    rowVersion?: string;
     required: boolean;
 }
 
 export type FunctionalRoleDto = {
-    id: number | null;
-    rowVersion: string | null;
+    id?: number;
+    rowVersion?: string;
     code: string;
     persons: PersonDto[] | null;
 }

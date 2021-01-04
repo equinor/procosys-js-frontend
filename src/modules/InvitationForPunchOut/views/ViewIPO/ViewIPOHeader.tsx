@@ -9,6 +9,7 @@ import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
 import { Link } from 'react-router-dom';
 import { IpoStatusEnum } from './enums';
+import { tokens } from '@equinor/eds-tokens';
 
 type ProgressBarProps = {
     ipoId: number;
@@ -44,7 +45,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                         variant='ghost_icon'
                         onClick={(): void => openFlyout()}
                     >
-                        <EdsIcon name='microsoft_outlook' />
+                        <EdsIcon name='microsoft_outlook' color={tokens.colors.interactive.primary__resting.rgba} />
                     </Button>
                 </ButtonContainer>
                 <ButtonContainer>

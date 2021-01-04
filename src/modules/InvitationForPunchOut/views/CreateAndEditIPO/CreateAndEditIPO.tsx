@@ -102,6 +102,7 @@ const CreateAndEditIPO = (): JSX.Element => {
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [invitation, setInvitation] = useState<Invitation>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>();
 
     const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
 
@@ -110,6 +111,7 @@ const CreateAndEditIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
 
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },
@@ -120,6 +122,39 @@ const CreateAndEditIPO = (): JSX.Element => {
     ];
 
     const [steps, setSteps] = useState<Step[]>(initialSteps);
+
+    /**
+     * Fetch available functional roles 
+     */
+    useEffect(() => {
+        let requestCanceler: Canceler;
+        try {
+            (async (): Promise<void> => {
+                const functionalRoles = await apiClient.getFunctionalRolesAsync()
+                    .then(roles => roles.map((role): RoleParticipant => {
+                        return {
+                            code: role.code,
+                            description: role.description,
+                            usePersonalEmail: role.usePersonalEmail,
+                            notify: false,
+                            persons: role.persons.map(p => {
+                                return {
+                                    azureOid: p.azureOid,
+                                    firstName: p.firstName,
+                                    lastName: p.lastName,
+                                    email: p.email,
+                                    radioOption: role.usePersonalEmail ? 'to' : null,
+                                };
+                            })
+                        };
+                    }));
+                setAvailableRoles(functionalRoles);
+            })();
+            return (): void => requestCanceler && requestCanceler();
+        } catch (error) {
+            showSnackbarNotification(error.message);
+        }
+    }, []);
 
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
@@ -440,12 +475,13 @@ const CreateAndEditIPO = (): JSX.Element => {
                         });
                     });
 
+                    const funcRole = availableRoles ? availableRoles.find((role) => role.code === participant.functionalRole.code) : null;
                     roleParticipant = {
                         id: participant.functionalRole.id,
                         rowVersion: participant.functionalRole.rowVersion,
                         code: participant.functionalRole.code,
-                        description: 'description',
-                        usePersonalEmail: false,
+                        description: funcRole ? funcRole.description : '',
+                        usePersonalEmail: funcRole ? funcRole.usePersonalEmail : false,
                         notify: (persons && persons.length > 0) ? true : false,
                         persons: persons
                     };
@@ -470,7 +506,7 @@ const CreateAndEditIPO = (): JSX.Element => {
      * For edit, fetch data for existing ipo 
      */
     useEffect(() => {
-        if (params.ipoId) {
+        if (params.ipoId && availableRoles) {
             let requestCancellor: Canceler | null = null;
             (async (): Promise<void> => {
                 setIsLoading(true);
@@ -482,7 +518,7 @@ const CreateAndEditIPO = (): JSX.Element => {
                 requestCancellor && requestCancellor();
             };
         }
-    }, [params.ipoId]);
+    }, [params.ipoId, availableRoles]);
 
     useEffect(() => {
         if (generalInfo.poType && generalInfo.projectName && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
@@ -608,6 +644,7 @@ const CreateAndEditIPO = (): JSX.Element => {
             <Participants
                 participants={participants}
                 setParticipants={setParticipants}
+                availableRoles={availableRoles ? availableRoles : []}
             />
         }
         {currentStep == StepsEnum.UploadAttachments &&

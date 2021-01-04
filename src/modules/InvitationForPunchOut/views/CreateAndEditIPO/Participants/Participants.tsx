@@ -34,50 +34,17 @@ const ParticipantType: SelectItem[] = [
 interface ParticipantsProps {
     participants: Participant[];
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
+    availableRoles: RoleParticipant[];
 }
 
 const Participants = ({
     participants,
     setParticipants,
+    availableRoles,
 }: ParticipantsProps): JSX.Element => {
-    const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
     const [personsFilter, setPersonsFilter] = useState<SelectItem>({ text: '', value: -1 }); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
-
-    useEffect(() => {
-        let requestCanceler: Canceler;
-        try {
-            (async (): Promise<void> => {
-                const functionalRoles = await apiClient.getFunctionalRolesAsync()
-                    .then(roles => roles.map((role): RoleParticipant => {
-                        return {
-                            id: null,
-                            rowVersion: null,
-                            code: role.code,
-                            description: role.description,
-                            usePersonalEmail: role.usePersonalEmail,
-                            notify: false,
-                            persons: role.persons.map(p => {
-                                return {
-                                    id: null,
-                                    rowVersion: null,
-                                    azureOid: p.azureOid,
-                                    firstName: p.firstName,
-                                    lastName: p.lastName,
-                                    email: p.email,
-                                    radioOption: role.usePersonalEmail ? 'to' : null,
-                                };
-                            })
-                        };
-                    }));
-                setAvailableRoles(functionalRoles);
-            })();
-            return (): void => requestCanceler && requestCanceler();
-        } catch (error) {
-            showSnackbarNotification(error.message);
-        }
-    }, []);
 
     const nameCombiner = (firstName: string, lastName: string): string => {
         return firstName + ' ' + lastName;
@@ -280,8 +247,6 @@ const Participants = ({
                 participantsCopy[participantIndex].role = null;
                 participantsCopy[participantIndex].externalEmail = null;
                 participantsCopy[participantIndex].person = {
-                    id: null,
-                    rowVersion: null,
                     azureOid: person.value,
                     firstName: name[1],
                     lastName: name[0],

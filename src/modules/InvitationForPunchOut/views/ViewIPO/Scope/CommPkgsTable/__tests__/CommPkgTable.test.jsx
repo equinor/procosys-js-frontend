@@ -22,6 +22,16 @@ const commPkgScope = [
     }
 ];
 
+jest.mock('@procosys/core/PlantContext',() => ({
+    useCurrentPlant: () => {
+        return {
+            plant: {
+                pathId: 'HEIMDAL'
+            }
+        };
+    }
+}));
+
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };

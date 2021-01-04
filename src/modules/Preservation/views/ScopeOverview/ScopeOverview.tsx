@@ -1,4 +1,4 @@
-import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, ShowActionsButton, IconBar, OldPreservationLink, StyledButton, TooltipText, LeftPartOfHeader } from './ScopeOverview.style';
+import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, OldPreservationLink, ShowActionsButton, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,13 +10,17 @@ import CompleteDialog from './CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
 import EdsIcon from '../../../../components/EdsIcon';
 import Flyout from './../../../../components/Flyout';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import OptionsDropdown from '../../../../components/OptionsDropdown';
 import PreservedDialog from './PreservedDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import RemoveDialog from './RemoveDialog';
+import RescheduleDialog from './RescheduleDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 import ScopeTable from './ScopeTable';
+import Spinner from '@procosys/components/Spinner';
 import StartPreservationDialog from './StartPreservationDialog';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { Tooltip } from '@material-ui/core';
@@ -27,11 +31,8 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
-import Spinner from '@procosys/components/Spinner';
-import RescheduleDialog from './RescheduleDialog';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -148,6 +149,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const history = useHistory();
     const location = useLocation();
     const analytics = useAnalytics();
+    const { plant } = useCurrentPlant();
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
@@ -742,7 +744,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const navigateToOldPreservation = (): void => {
         analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
-        window.location.href = './OldPreservation';
+        window.location.href = '/' + plant.pathId + '/OldPreservation';
     };
 
     const closeReschededuleDialog = (): void => {
@@ -856,7 +858,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             </StyledButton>
                             <OptionsDropdown
                                 text="More options"
-                                icon='more_verticle'
+                                icon='more_vertical'
                                 variant='ghost'>
                                 <DropdownItem
                                     disabled={selectedTags.length != 1 || voidedTagsSelected}
@@ -871,9 +873,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Reschedule
                                 </DropdownItem>
                                 <DropdownItem
-                                    disabled={selectedTags.length === 0}
+                                    disabled={!voidedTagsSelected}
                                     onClick={(): void => showRemoveDialog()}>
-                                    <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    <EdsIcon name='delete_to_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
                                     Remove
                                 </DropdownItem>
                                 <DropdownItem

@@ -23,18 +23,18 @@ export type GeneralInfoDetails = {
 }
 
 export type Person = {
-    id: number | null;
+    id?: number;
     azureOid: string;
     firstName: string;
     lastName: string;
     email: string;
-    rowVersion: string | null;
+    rowVersion?: string;
     radioOption: string | null;
 }
 
 export type RoleParticipant = {
-    id: number | null;
-    rowVersion: string | null;
+    id?: number;
+    rowVersion?: string;
     code: string;
     description: string;
     usePersonalEmail: boolean;

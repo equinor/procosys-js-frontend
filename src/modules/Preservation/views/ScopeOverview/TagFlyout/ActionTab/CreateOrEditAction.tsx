@@ -6,9 +6,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import ActionAttachments from './ActionAttachments';
 import DateFnsUtils from '@date-io/date-fns';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
-import Spinner from '@procosys/components/Spinner';
 
 interface ActionTabProps {
     tagId: number;
@@ -57,6 +57,7 @@ const CreateOrEditAction = ({
             if (actionId) {
                 if (rowVersion) {
                     await apiClient.updateAction(tagId, actionId, newTitle, newDescription, newDueTimeUtc, rowVersion);
+                    setDirty();
                     backToParentView();
                     showSnackbarNotification('Action is updated.', 5000, true);
                 } else {
@@ -71,8 +72,8 @@ const CreateOrEditAction = ({
         } catch (error) {
             console.error('Update action failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000, true);
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     if (isLoading) {

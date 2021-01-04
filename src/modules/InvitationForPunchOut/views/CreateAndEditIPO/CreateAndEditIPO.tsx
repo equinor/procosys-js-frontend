@@ -128,6 +128,7 @@ const CreateAndEditIPO = (): JSX.Element => {
      */
     useEffect(() => {
         let requestCanceler: Canceler;
+        setIsLoading(true);
         try {
             (async (): Promise<void> => {
                 const functionalRoles = await apiClient.getFunctionalRolesAsync()
@@ -154,6 +155,7 @@ const CreateAndEditIPO = (): JSX.Element => {
         } catch (error) {
             showSnackbarNotification(error.message);
         }
+        setIsLoading(false);
     }, []);
 
     useEffect(() => {
@@ -229,7 +231,7 @@ const CreateAndEditIPO = (): JSX.Element => {
         return participants.map((p, i) => {
             return {
                 organization: p.organization.value,
-                sortKey: p.sortKey ? p.sortKey : i,
+                sortKey: i,
                 externalEmail: p.externalEmail,
                 person: getPerson(p),
                 functionalRole: getFunctionalRole(p)
@@ -290,14 +292,14 @@ const CreateAndEditIPO = (): JSX.Element => {
                 await uploadOrRemoveAttachments(newIpoId);
 
                 unsetDirtyStateFor(ComponentName.CreateIPO);
-                setIsCreating(false);
                 history.push('/' + newIpoId);
             } catch (error) {
-                setIsCreating(false);
                 console.error('Create IPO failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         }
+        setIsCreating(false);
+
     };
 
     const saveUpdatedIpo = async (): Promise<void> => {
@@ -326,7 +328,6 @@ const CreateAndEditIPO = (): JSX.Element => {
 
                 history.push('/' + params.ipoId);
             } catch (error) {
-                setIsCreating(false);
                 console.error('Save updated IPO failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }

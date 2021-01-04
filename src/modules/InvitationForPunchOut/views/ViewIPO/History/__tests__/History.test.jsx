@@ -1,9 +1,9 @@
 import { render, waitFor } from '@testing-library/react';
 
-import Log from '../index';
+import History from '../index';
 import React from 'react';
 
-const dummyLogs = [
+const dummyHistory = [
     {
         id: 0,
         description: 'asdasdsadd',
@@ -32,27 +32,27 @@ jest.mock('../../../../context/InvitationForPunchOutContext',() => ({
     useInvitationForPunchOutContext: () => {
         return {
             apiClient: {
-                getLogs: (id) => Promise.resolve(id === 0 ? dummyLogs : [])
+                getHistory: (id) => Promise.resolve(id === 0 ? dummyHistory : [])
             }
         };
     }
 }));
 
-describe('Module: <Log ipoId={} />', () => {
+describe('Module: <History ipoId={} />', () => {
 
-    it('Should render empty table when no logs', async () => {
-        const { getByText } = render(<Log ipoId={2} />);
+    it('Should render empty table when no history', async () => {
+        const { getByText } = render(<History ipoId={2} />);
 
         await waitFor(() => expect(getByText('No records to display')).toBeInTheDocument());
     });
 
-    it('Should render logs in table', async () => {
-        const { getByText } = render(<Log ipoId={0} />);
+    it('Should render history in table', async () => {
+        const { getByText } = render(<History ipoId={0} />);
 
-        await waitFor(() => expect(getByText(dummyLogs[1].eventType)).toBeInTheDocument());
-        await waitFor(() => expect(getByText(dummyLogs[1].description)).toBeInTheDocument());
+        await waitFor(() => expect(getByText(dummyHistory[1].eventType)).toBeInTheDocument());
+        await waitFor(() => expect(getByText(dummyHistory[1].description)).toBeInTheDocument());
         await waitFor(() => expect(getByText('28/12/2020 10:24')).toBeInTheDocument());
-        await waitFor(() => expect(getByText(`${dummyLogs[0].createdBy.firstName} ${dummyLogs[0].createdBy.lastName}`)).toBeInTheDocument());
+        await waitFor(() => expect(getByText(`${dummyHistory[0].createdBy.firstName} ${dummyHistory[0].createdBy.lastName}`)).toBeInTheDocument());
     });
 });
 

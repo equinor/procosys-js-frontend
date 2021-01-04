@@ -17,5 +17,5 @@ export enum IpoStatusEnum {
 export enum ReportIdEnum {
     MC32 = 132,
     MC84 = 144,
-    CDP06 = 114
+    CDP06 = 118
 }

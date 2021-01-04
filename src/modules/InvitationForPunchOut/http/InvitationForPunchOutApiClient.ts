@@ -82,7 +82,7 @@ type ExternalEmailInvitationResponse = {
     rowVersion: string;
 }
 
-type LogResponse = {
+type HistoryResponse = {
     id: number;
     description: string;
     createdAtUtc: string;
@@ -392,14 +392,14 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get Logs
+     * Get History
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getLogs(
+    async getHistory(
         id: number,
-        setRequestCanceller?: RequestCanceler): Promise<LogResponse[]> {
-        const endpoint = `/Invitations/${id}/Logs`;
+        setRequestCanceller?: RequestCanceler): Promise<HistoryResponse[]> {
+        const endpoint = `/Invitations/${id}/History`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 

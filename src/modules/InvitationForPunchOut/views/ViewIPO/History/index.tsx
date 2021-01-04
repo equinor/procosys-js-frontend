@@ -1,8 +1,8 @@
-import { Container, FormContainer, LogsTable, SpinnerContainer } from './index.style';
+import { Container, FormContainer, HistoryTable, SpinnerContainer } from './index.style';
 import React, { useEffect, useState } from 'react';
-import { Log } from '../types';
 
 import { Canceler } from '@procosys/http/HttpClient';
+import { History } from '../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
@@ -13,19 +13,19 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 const { Head, Body, Cell, Row } = Table;
 
 
-interface LogProps {
+interface HistoryProps {
     ipoId: number;
 }
 
-const Log = ({ ipoId }: LogProps): JSX.Element => {
-    const [logs, setLogs] = useState<Log[]>([]);
+const History = ({ ipoId }: HistoryProps): JSX.Element => {
+    const [history, setHistory] = useState<History[]>([]);
     const { apiClient } = useInvitationForPunchOutContext();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const getLogs = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    const getHistory = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
-            const response = await apiClient.getLogs(ipoId, requestCanceller);
-            setLogs(response);
+            const response = await apiClient.getHistory(ipoId, requestCanceller);
+            setHistory(response);
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
@@ -37,7 +37,7 @@ const Log = ({ ipoId }: LogProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             setLoading(true);
-            await getLogs((cancel: Canceler) => { requestCancellor = cancel; });
+            await getHistory((cancel: Canceler) => { requestCancellor = cancel; });
             setLoading(false);
         })();
         return (): void => {
@@ -54,7 +54,7 @@ const Log = ({ ipoId }: LogProps): JSX.Element => {
                 </SpinnerContainer>
             )}
             <FormContainer>
-                <LogsTable>
+                <HistoryTable>
                     <Head>
                         <Row>
                             <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Date</Cell>
@@ -64,19 +64,19 @@ const Log = ({ ipoId }: LogProps): JSX.Element => {
                         </Row>
                     </Head>
                     <Body>
-                        {logs && logs.length > 0 ? logs.map((logItem) => (
-                            <Row key={logItem.id}>
+                        {history && history.length > 0 ? history.map((historyItem) => (
+                            <Row key={historyItem.id}>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{format(new Date(logItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}</Typography>
+                                    <Typography variant="body_short">{format(new Date(historyItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}</Typography>
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{`${logItem.createdBy.firstName} ${logItem.createdBy.lastName}`}</Typography>
+                                    <Typography variant="body_short">{`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}</Typography>
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{`${logItem.eventType}`}</Typography>
+                                    <Typography variant="body_short">{`${historyItem.eventType}`}</Typography>
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{`${logItem.description}`}</Typography>
+                                    <Typography variant="body_short">{`${historyItem.description}`}</Typography>
                                 </Cell>
                             </Row>
                         )) : (
@@ -86,10 +86,10 @@ const Log = ({ ipoId }: LogProps): JSX.Element => {
                         )}
                     </Body>
 
-                </LogsTable>
+                </HistoryTable>
             </FormContainer>
         </Container>);
 };
 
-export default Log;
+export default History;
 

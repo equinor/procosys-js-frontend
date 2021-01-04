@@ -67,7 +67,7 @@ export type Invitation = {
     commPkgScope: CommPkgScope[];
 }
 
-export type Log = {
+export type History = {
     id: number;
     description: string;
     createdAtUtc: string;

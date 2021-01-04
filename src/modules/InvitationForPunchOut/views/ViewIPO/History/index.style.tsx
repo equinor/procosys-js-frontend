@@ -40,7 +40,7 @@ export const SpinnerContainer = styled.div`
     justify-content: center;
 `;
 
-export const LogsTable = styled.table`
+export const HistoryTable = styled.table`
     width: 95%;
 `;
 

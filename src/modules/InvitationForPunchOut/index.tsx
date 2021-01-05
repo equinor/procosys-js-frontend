@@ -5,6 +5,8 @@ import React from 'react';
 import CreateAndEditIPO from './views/CreateAndEditIPO/CreateAndEditIPO';
 import ViewIPO from './views/ViewIPO/index';
 import withFeatureFlag from '../../core/features/withFeatureFlag';
+import EditIPO from './views/CreateAndEditIPO/EditIPO';
+import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 
 
 const InvitationForPunchOut = (): JSX.Element => {
@@ -17,12 +19,12 @@ const InvitationForPunchOut = (): JSX.Element => {
                         <Route
                             path={'/CreateIPO/:projectId?/:commPkgNo?'}
                             exact
-                            component={CreateAndEditIPO}
+                            component={CreateIPO}
                         />
                         <Route
                             path={'/EditIPO/:ipoId'}
                             exact
-                            component={CreateAndEditIPO}
+                            component={EditIPO}
                         />
 
                         <Route

@@ -1,10 +1,27 @@
 import { configure, render, waitFor } from '@testing-library/react';
-
-import CreateAndEditIPO from '../CreateAndEditIPO';
 import React from 'react';
 import { Invitation } from '../../ViewIPO/types';
+import EditIPO from '../EditIPO';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
+
+const mockRoles = [
+    {
+        code: 'Code a',
+        description: 'Desc',
+        email: 'codea@test.com',
+        informationalEmail: null,
+        usePersonalEmail: false,
+        persons: [
+            {
+                azureOid: '00-11-22',
+                firstName: 'Elisabeth',
+                lastName: 'Bratli',
+                email: 'elisabeth@email.com'
+            }
+        ]
+    }
+];
 
 const mockInvitation: Invitation = {
     projectName: 'projectName',
@@ -40,6 +57,7 @@ jest.mock('@procosys/hooks/useRouter', () => jest.fn(() => ({
 })));
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
+    getFunctionalRolesAsync: () => Promise.resolve(mockRoles),
     useInvitationForPunchOutContext: (): any => {
         return {
             apiClient: {
@@ -74,9 +92,9 @@ jest.mock('@procosys/core/DirtyContext', () => ({
 }));
 
 
-describe('<CreateAndEditIPO />', () => {
+describe('<EditIPO />', () => {
     it('Should display "Edit" as headline when in edit mode', async () => {
-        const { getByText, getByTestId, getByLabelText } = render(<CreateAndEditIPO />);
+        const { getByText, getByTestId, getByLabelText } = render(<EditIPO />);
         await waitFor(() => expect(getByText('Edit titleA')).toBeInTheDocument());
         await waitFor(() => expect(getByTestId('title')).toHaveProperty('value', 'titleA'));
         await waitFor(() => expect(getByText('descriptionA')).toBeInTheDocument());

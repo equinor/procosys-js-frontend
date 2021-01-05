@@ -12,14 +12,12 @@ import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 
 interface AttachmentsProps {
     attachments: Attachment[];
-    removeAttachment: (index: number) => void;
-    addAttachments: (files: File[]) => void;
+    setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
 }
 
 const Attachments = ({
     attachments,
-    removeAttachment,
-    addAttachments
+    setAttachments
 }: AttachmentsProps): JSX.Element => {
     const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -38,6 +36,25 @@ const Attachments = ({
         if (inputFileRef.current) {
             inputFileRef.current.click();
         }
+    };
+
+    const removeAttachment = (index: number): void => {
+        if (attachments[index].id) {
+            //Attachments already uploaded will be deleted when ipo i saved
+            attachments[index].toBeDeleted = true;
+            setAttachments([...attachments]);
+        } else {
+            //Attachments not yet uploaded can be removed from the attachments array
+            setAttachments(currentAttachments =>
+                [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
+            );
+        }
+    };
+
+    const addAttachments = (files: File[]): void => {
+        files.forEach((file) => {
+            setAttachments(currentAttachments => currentAttachments.concat({ fileName: file.name, file: file }));
+        });
     };
 
     const getAttachmentName = (attachment: Attachment): JSX.Element => {

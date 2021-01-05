@@ -13,8 +13,7 @@ type ProgressBarProps = {
     steps: Step[];
     canBeCreatedOrUpdated: boolean;
     currentStep: number;
-    createNewIpo: () => void;
-    saveUpdatedIpo: () => void;
+    saveIpo: () => void;
     next: () => void;
     previous: () => void;
     goTo: (stepNo: number) => void;
@@ -59,20 +58,12 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
                         onClick={props.previous}>
                         Previous
                     </Button>
-                    {props.currentStep == StepsEnum.SummaryAndCreate && !props.ipoId && (
+                    {props.currentStep == StepsEnum.SummaryAndCreate && (
                         <Button
                             disabled={!props.canBeCreatedOrUpdated}
-                            onClick={props.createNewIpo}
+                            onClick={props.saveIpo}
                         >
-                            Create
-                        </Button>
-                    )}
-                    {props.currentStep == StepsEnum.SummaryAndCreate && props.ipoId && (
-                        <Button
-                            disabled={!props.canBeCreatedOrUpdated}
-                            onClick={props.saveUpdatedIpo}
-                        >
-                            Save and send update
+                            {!props.ipoId ? 'Create' : 'Save and send update'}
                         </Button>
                     )}
                     {props.currentStep != StepsEnum.SummaryAndCreate && (

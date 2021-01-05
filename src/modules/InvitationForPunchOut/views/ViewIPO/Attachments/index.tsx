@@ -177,7 +177,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                         </Row>
                     )) : (
                         <Row>
-                            <Cell style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
+                            <Cell colSpan={5} style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
                         </Row>
                     )}
                 </Body>

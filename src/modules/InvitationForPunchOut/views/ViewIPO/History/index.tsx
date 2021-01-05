@@ -2,7 +2,7 @@ import { Container, FormContainer, HistoryTable, SpinnerContainer } from './inde
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
-import { History } from '../types';
+import { HistoryItem } from '../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
@@ -18,7 +18,7 @@ interface HistoryProps {
 }
 
 const History = ({ ipoId }: HistoryProps): JSX.Element => {
-    const [history, setHistory] = useState<History[]>([]);
+    const [history, setHistory] = useState<HistoryItem[]>([]);
     const { apiClient } = useInvitationForPunchOutContext();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -67,21 +67,21 @@ const History = ({ ipoId }: HistoryProps): JSX.Element => {
                         {history && history.length > 0 ? history.map((historyItem) => (
                             <Row key={historyItem.id}>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{format(new Date(historyItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}</Typography>
+                                    {format(new Date(historyItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}</Typography>
+                                    {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{`${historyItem.eventType}`}</Typography>
+                                    {`${historyItem.eventType}`}
                                 </Cell>
                                 <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    <Typography variant="body_short">{`${historyItem.description}`}</Typography>
+                                    {`${historyItem.description}`}
                                 </Cell>
                             </Row>
                         )) : (
                             <Row>
-                                <Cell style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
+                                <Cell colSpan={4} tyle={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
                             </Row>
                         )}
                     </Body>

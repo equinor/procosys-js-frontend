@@ -48,46 +48,47 @@ const History = ({ ipoId }: HistoryProps): JSX.Element => {
 
     return (
         <Container>
-            {loading && (
+            {loading ? (
                 <SpinnerContainer>
                     <Spinner large />
                 </SpinnerContainer>
-            )}
-            <FormContainer>
-                <HistoryTable>
-                    <Head>
-                        <Row>
-                            <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="15%">Date</Cell>
-                            <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Changed by</Cell>
-                            <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Event type</Cell>
-                            <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Description</Cell>
-                        </Row>
-                    </Head>
-                    <Body>
-                        {history && history.length > 0 ? history.map((historyItem) => (
-                            <Row key={historyItem.id}>
-                                <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    {format(new Date(historyItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}
-                                </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    {`${historyItem.createdBy.userName}`}
-                                </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    {`${historyItem.eventType}`}
-                                </Cell>
-                                <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                    {`${historyItem.description}`}
-                                </Cell>
-                            </Row>
-                        )) : (
+            ) : (
+                <FormContainer>
+                    <HistoryTable>
+                        <Head>
                             <Row>
-                                <Cell colSpan={4} tyle={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="15%">Date</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Changed by</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Event type</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Description</Cell>
                             </Row>
-                        )}
-                    </Body>
+                        </Head>
+                        <Body>
+                            {history && history.length > 0 ? history.map((historyItem) => (
+                                <Row key={historyItem.id}>
+                                    <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                        {format(new Date(historyItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}
+                                    </Cell>
+                                    <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                        {`${historyItem.createdBy.userName}`}
+                                    </Cell>
+                                    <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                        {`${historyItem.eventType}`}
+                                    </Cell>
+                                    <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                                        {`${historyItem.description}`}
+                                    </Cell>
+                                </Row>
+                            )) : (
+                                <Row>
+                                    <Cell colSpan={4} tyle={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
+                                </Row>
+                            )}
+                        </Body>
 
-                </HistoryTable>
-            </FormContainer>
+                    </HistoryTable>
+                </FormContainer>
+            )}
         </Container>);
 };
 

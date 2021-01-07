@@ -90,6 +90,10 @@ type HistoryResponse = {
         id: number;
         firstName: string;
         lastName: string;
+        userName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
     },
     eventType: string;
 }
@@ -404,36 +408,11 @@ class InvitationForPunchOutApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            // const result = await this.client.get(
-            //     endpoint,
-            //     settings
-            // );
-            // return result.data;
-            // TODO: replace with above when api available, check response type
-            return [
-                {
-                    id: 0,
-                    description: 'asdasdsadd',
-                    createdAtUtc: '2020-12-28T09:24:19.592Z',
-                    createdBy: {
-                        id: 0,
-                        firstName: 'jan',
-                        lastName: 'hagevold',
-                    },
-                    eventType: 'created IPO'
-                },
-                {
-                    id: 1,
-                    description: 'jcecopwej oijewfj wfije oij ewjwjic woiejweoijcwij jcewijwoecjweij ',
-                    createdAtUtc: '2020-12-28T10:24:19.592Z',
-                    createdBy: {
-                        id: 1,
-                        firstName: 'elisabeth',
-                        lastName: 'bartli',
-                    },
-                    eventType: 'completed IPO'
-                }
-            ];
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
         } catch (error) {
             throw new IpoApiError(error);
         }

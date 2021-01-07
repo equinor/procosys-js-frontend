@@ -12,8 +12,9 @@ const dummyHistory = [
             id: 0,
             firstName: 'jan',
             lastName: 'hagevold',
+            userName: 'JEHAG'
         },
-        eventType: 'created IPO'
+        eventType: 'IpoCreated'
     },
     {
         id: 1,
@@ -23,8 +24,9 @@ const dummyHistory = [
             id: 1,
             firstName: 'elisabeth',
             lastName: 'bartli',
+            userName: 'ELIBRA'
         },
-        eventType: 'completed IPO'
+        eventType: 'IpoCompleted'
     }
 ];
 
@@ -52,7 +54,8 @@ describe('Module: <History ipoId={} />', () => {
         await waitFor(() => expect(getByText(dummyHistory[1].eventType)).toBeInTheDocument());
         await waitFor(() => expect(getByText(dummyHistory[1].description)).toBeInTheDocument());
         await waitFor(() => expect(getByText('28/12/2020 10:24')).toBeInTheDocument());
-        await waitFor(() => expect(getByText(`${dummyHistory[0].createdBy.firstName} ${dummyHistory[0].createdBy.lastName}`)).toBeInTheDocument());
+        await waitFor(() => expect(getByText(`${dummyHistory[0].createdBy.userName}`)).toBeInTheDocument());
+        await waitFor(() => expect(getByText(`${dummyHistory[1].createdBy.userName}`)).toBeInTheDocument());
     });
 });
 

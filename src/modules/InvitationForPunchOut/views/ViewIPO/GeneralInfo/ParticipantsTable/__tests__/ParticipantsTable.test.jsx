@@ -136,8 +136,8 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText(`${participants[ParticipantIndex.COMPLETER].person.person.firstName} ${participants[2].person.person.lastName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[ParticipantIndex.APPROVER].person.person.firstName} ${participants[3].person.person.lastName}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.COMPLETER].person.person.firstName} ${participants[ParticipantIndex.COMPLETER].person.person.lastName}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.APPROVER].person.person.firstName} ${participants[ParticipantIndex.APPROVER].person.person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy}`)).toBeInTheDocument();
         expect(queryAllByText(participants[ParticipantIndex.COMPLETER].person.response).length).toBeGreaterThan(0);

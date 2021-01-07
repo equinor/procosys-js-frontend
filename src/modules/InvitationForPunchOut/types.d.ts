@@ -99,12 +99,5 @@ export interface McScope {
     selected: McPkgRow[];
 }
 
-/*export interface Attachment {
-    id?: number;
-    fileName: string;
-    file?: File;
-    rowVersion?: string;
-}
-*/
 export type Organization = 'Commissioning' | 'ConstructionCompany' | 'Contractor' | 'Operation' | 'TechnicalIntegrity' | 'Supplier' | 'External';
 

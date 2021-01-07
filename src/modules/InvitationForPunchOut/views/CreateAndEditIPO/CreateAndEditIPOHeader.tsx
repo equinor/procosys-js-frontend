@@ -1,5 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, HeaderContainer } from './CreateAndEditIPOHeader.style';
+import { ButtonContainer, ButtonSpacer, Container, HeaderContainer } from './CreateAndEditIPOHeader.style';
 import React, { useEffect, useState } from 'react';
 
 import ProgressBar from '@procosys/components/ProgressBar';
@@ -45,6 +45,7 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
                             </Button>
                         </Link>
                     }
+
                     {!props.ipoId &&
                         <Button
                             variant='outlined'>
@@ -52,12 +53,17 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
                         </Button>
                     }
 
+                    <ButtonSpacer />
+
                     <Button
                         constiant='outlined'
                         disabled={props.currentStep === 1}
                         onClick={props.previous}>
                         Previous
                     </Button>
+
+                    <ButtonSpacer />
+
                     {props.currentStep == StepsEnum.SummaryAndCreate && (
                         <Button
                             disabled={!props.canBeCreatedOrUpdated}

@@ -163,7 +163,7 @@ const EditIPO = (): JSX.Element => {
                     await apiClient.deleteAttachment(ipoId, attachment.id, attachment.rowVersion);
                 }
             } catch (error) {
-                console.error('Upload attachment failed: ', error.message, error.data);
+                console.error('Upload or delete of attachment failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);
             }
         }));
@@ -292,7 +292,6 @@ const EditIPO = (): JSX.Element => {
                 } else if (participant.functionalRole) {
                     participantType = 'Functional role';
 
-                    //The information here will be updated in Participants-component after fetching the functional roles 
                     const persons: Person[] = [];
                     participant.functionalRole.persons.forEach((person) => {
                         persons.push({

@@ -15,6 +15,7 @@ import ViewIPOHeader from './ViewIPOHeader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
+import { IpoStatusEnum } from './enums';
 
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
 
@@ -154,7 +155,7 @@ const ViewIPO = (): JSX.Element => {
                         title={invitation.title}
                         organizer={invitation.createdBy}
                         participants={invitation.participants}
-                        status={invitation.status}
+                        isEditable={invitation.status == IpoStatusEnum.PLANNED}
                     />
                     <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
                         <TabList>

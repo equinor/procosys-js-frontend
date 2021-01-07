@@ -8,7 +8,6 @@ import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
 import { Link } from 'react-router-dom';
-import { IpoStatusEnum } from './enums';
 import { tokens } from '@equinor/eds-tokens';
 
 type ProgressBarProps = {
@@ -18,7 +17,7 @@ type ProgressBarProps = {
     title: string;
     participants: Participant[];
     organizer: string;
-    status: string;
+    isEditable: boolean;
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
@@ -30,10 +29,6 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
 
     const openFlyout = (): void => {
         setDisplayFlyout(true);
-    };
-
-    const isNotEditable = (): boolean => {
-        return (props.status == IpoStatusEnum.ACCEPTED || props.status == IpoStatusEnum.COMPLETED || props.status == IpoStatusEnum.CANCELED);
     };
 
     return (
@@ -51,7 +46,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 <ButtonContainer>
                     <Link to={`/EditIPO/${props.ipoId}`}>
                         <Button
-                            disabled={isNotEditable()}
+                            disabled={!props.isEditable}
                             variant='outlined'>
                             <EdsIcon name='edit' /> Edit
                         </Button>

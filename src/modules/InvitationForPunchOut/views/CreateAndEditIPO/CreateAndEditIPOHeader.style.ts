@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -19,7 +20,8 @@ export const HeaderContainer = styled.div`
 export const ButtonContainer = styled.div`
     display: flex;
     justify-content: flex-end;
-    button {
-        margin-left: calc(var(--grid-unit) * 2);
-    }
+`;
+
+export const ButtonSpacer = styled.div`
+    margin-left: calc(var(--grid-unit) * 2);
 `;

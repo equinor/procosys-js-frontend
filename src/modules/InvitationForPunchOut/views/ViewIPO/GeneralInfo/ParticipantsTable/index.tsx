@@ -67,6 +67,9 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
             setEditNotesDisabled(false);
         } else if (participant && participant.sortKey === 1 && (status === IpoStatusEnum.COMPLETED)) {
             setEditNotesDisabled(false);
+        } else {
+            setEditAttendedDisabled(true);
+            setEditNotesDisabled(true);
         }
     }, [participants, status]); 
 

@@ -98,15 +98,13 @@ const ViewIPO = (): JSX.Element => {
 
         if (!signer || !invitation) return;
 
-        const completeDetails: CompleteIPODto = {
-            invitationRowVersion: invitation.rowVersion,
-            participantRowVersion: signer.rowVersion,
-            participants: attNoteData
-        };
-
         invitation.status === IpoStatusEnum.PLANNED ?
-            await apiClient.completePunchOut(params.ipoId, completeDetails) :
-            await apiClient.updatePunchOut(params.ipoId, completeDetails);
+            await apiClient.completePunchOut(params.ipoId, {
+                invitationRowVersion: invitation.rowVersion,
+                participantRowVersion: signer.rowVersion,
+                participants: attNoteData
+            }) :
+            await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
         await getInvitation();
     };
 

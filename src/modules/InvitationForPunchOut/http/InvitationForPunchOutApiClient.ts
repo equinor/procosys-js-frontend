@@ -576,31 +576,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * AttendedAnsStatusNotes
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async updatePunchOut(id: number, completeDetails: CompleteIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = `/Invitations/${id}/AttendedAndStatusNotes`;
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-        
-        try {
-            const result = await this.client.put(
-                endpoint,
-                {
-                    invitationRowVersion: completeDetails.invitationRowVersion,
-                    participantRowVersion: completeDetails.participantRowVersion,
-                    participants: completeDetails.participants
-                },
-                settings);
-            return result.data;
-        } catch (error) {
-            throw new IpoApiError(error);
-        }
-    }
-
-    /**
      * AcceptPunchOut
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
@@ -653,16 +628,14 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async attendedStatusAndNotes(id: number, participantDetails: AttendedAndNotesDto[], setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = `/Invitations/${id}/Accept`;
+        const endpoint = `/Invitations/${id}/AttendedStatusAndNotes`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         
         try {
             const result = await this.client.put(
                 endpoint,
-                {
-                    participantDetails
-                },
+                participantDetails,
                 settings);
             return result.data;
         } catch (error) {

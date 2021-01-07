@@ -45,6 +45,7 @@ type CommPkgScopeResponse = {
 type ParticipantInvitationResponse = {
     organization: string;
     sortKey: number;
+    canSign: boolean;
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;
     functionalRole: FunctionalRoleInvitationResponse;
@@ -556,6 +557,31 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async completePunchOut(id: number, completeDetails: CompleteIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
         const endpoint = `/Invitations/${id}/Complete`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        
+        try {
+            const result = await this.client.put(
+                endpoint,
+                {
+                    invitationRowVersion: completeDetails.invitationRowVersion,
+                    participantRowVersion: completeDetails.participantRowVersion,
+                    participants: completeDetails.participants
+                },
+                settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * AttendedAnsStatusNotes
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async updatePunchOut(id: number, completeDetails: CompleteIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+        const endpoint = `/Invitations/${id}/AttendedAndStatusNotes`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         

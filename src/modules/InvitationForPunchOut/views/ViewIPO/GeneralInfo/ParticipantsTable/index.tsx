@@ -52,13 +52,23 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
         };
     });
     const [loading, setLoading] = useState<boolean>(false);
-    // TODO: when current user is implemented, the user role should be found and used throughout
-    // edit fields enable and button visibility
+    const [editAttendedDisabled, setEditAttendedDisabled] = useState<boolean>(true);
+    const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const btnSignRef = useRef<HTMLButtonElement>();
+
+    useEffect(() => {
+        const participant = participants.find(p => p.canSign);
+        if (participant && participant.sortKey === 0 && (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) ) {
+            setEditAttendedDisabled(false);
+            setEditNotesDisabled(false);
+        } else if (participant && participant.sortKey === 1 && (status === IpoStatusEnum.COMPLETED)) {
+            setEditNotesDisabled(false);
+        }
+    }, [participants, status]); 
 
 
     useEffect(() => {
@@ -106,21 +116,19 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
         handleApprovePunchOut: (index: number) => void,
         handleSignPunchOut: (index: number) => void): JSX.Element => {
 
-
-        // TODO: check if participant is current user. buttons should only appear for self
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
 
                 if (participant.sortKey === 0) {
-                    if (participant.signedBy && status === IpoStatusEnum.ACCEPTED) {
+                    if ((participant.signedBy && status === IpoStatusEnum.ACCEPTED) || (!participant.canSign && status === IpoStatusEnum.COMPLETED)) {
                         return <span>{`${participant.signedBy}`}</span>;
-                    } else if (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED) {
+                    } else if (participant.canSign && (status === IpoStatusEnum.PLANNED || status === IpoStatusEnum.COMPLETED)) {
                         return getCompleteButton(status, handleCompletePunchOut);
                     }                 
                 } else {
                     if (participant.signedBy) {
                         return <span>{`${participant.signedBy}`}</span>;
-                    } else if (status !== IpoStatusEnum.CANCELED) {
+                    } else if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                         return getSignButton(handleSignPunchOut);
                     }                 
                 }
@@ -130,9 +138,9 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
                     return <span>{`${participant.signedBy}`}</span>;
                 }
 
-                if (status !== IpoStatusEnum.CANCELED) {
+                if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                     if (participant.sortKey === 1) {
-                        return getApproveButton(handleApprovePunchOut);
+                        if (status === IpoStatusEnum.COMPLETED) return getApproveButton(handleApprovePunchOut);
                     } else {
                         return getSignButton(handleSignPunchOut);
                     }  
@@ -143,7 +151,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
             case OrganizationsEnum.Commissioning:
                 if (participant.signedBy) {
                     return <span>{`${participant.signedBy}`}</span>;
-                } else if (status !==  IpoStatusEnum.CANCELED) {
+                } else if (participant.canSign && status !==  IpoStatusEnum.CANCELED) {
                     return getSignButton(handleSignPunchOut);
                 }
                 break;
@@ -159,7 +167,9 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
         }
         try {
             await complete(participants[index], attNoteData);
-            showSnackbarNotification(`Punch out ${status === IpoStatusEnum.COMPLETED ? 'saved': 'completed'}`, 2000, true);
+            status === IpoStatusEnum.PLANNED ?
+                showSnackbarNotification('Punch out completed', 2000, true) :
+                showSnackbarNotification('Punch out saved', 2000, true);
         } catch (error) {
             showSnackbarNotification(error.message, 2000, true);
         }     
@@ -221,6 +231,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
         setAttNoteData([...updateData]);
     };
 
+
     return (
         <Container>
             {loading && (
@@ -275,7 +286,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
                                 <Cell as="td" style={{verticalAlign: 'middle', minWidth: '160px'}}>
                                     <Switch 
                                         id={`attendance${id}`}
-                                        disabled={status === IpoStatusEnum.ACCEPTED} 
+                                        disabled={editAttendedDisabled} 
                                         default 
                                         label={attNoteData[index].attended ? 'Attended' : 'Did not attend'} 
                                         checked={attNoteData[index].attended} 
@@ -284,7 +295,7 @@ const ParticipantsTable = ({participants, status, complete, accept, sign }: Part
                                 <Cell as="td" style={{verticalAlign: 'middle', width: '40%', minWidth: '200px'}}>
                                     <TextField 
                                         id={`textfield${id}`}
-                                        disabled={status === IpoStatusEnum.ACCEPTED}
+                                        disabled={editNotesDisabled}
                                         defaultValue={attNoteData[index].note} 
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
                                 </Cell>

@@ -8,6 +8,7 @@ import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import GeneralInfo from './GeneralInfo';
+import { IpoStatusEnum } from './enums';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
@@ -103,7 +104,9 @@ const ViewIPO = (): JSX.Element => {
             participants: attNoteData
         };
 
-        await apiClient.completePunchOut(params.ipoId, completeDetails);
+        invitation.status === IpoStatusEnum.PLANNED ?
+            await apiClient.completePunchOut(params.ipoId, completeDetails) :
+            await apiClient.updatePunchOut(params.ipoId, completeDetails);
         await getInvitation();
     };
 

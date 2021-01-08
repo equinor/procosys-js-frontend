@@ -10,10 +10,11 @@ interface GeneralInfoProps {
     invitation: Invitation;
     complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    update: (p: Participant, e: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
 }
 
-const GeneralInfo = ({ invitation, complete, accept, sign }: GeneralInfoProps): JSX.Element => {
+const GeneralInfo = ({ invitation, complete, accept, update, sign }: GeneralInfoProps): JSX.Element => {
     const participants = invitation.participants.sort((p1, p2): number => p1.sortKey - p2.sortKey );
 
     
@@ -69,7 +70,7 @@ const GeneralInfo = ({ invitation, complete, accept, sign }: GeneralInfoProps): 
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={participants} status={invitation.status} complete={complete} accept={accept} sign={sign} />
+            <ParticipantsTable participants={participants} status={invitation.status} complete={complete} accept={accept} update={update} sign={sign} />
         </Container>
     );
 };

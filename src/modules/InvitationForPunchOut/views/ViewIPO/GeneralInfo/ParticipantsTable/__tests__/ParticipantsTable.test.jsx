@@ -198,7 +198,7 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Save punch out')).toBeInTheDocument();
+        expect(queryByText('Update participants')).toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
@@ -213,7 +213,7 @@ describe('<ParticipantsTable />', () => {
             status={IpoStatusEnum.COMPLETED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
         expect(queryByText('Approve punch out')).toBeInTheDocument();
         expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy)).toBeInTheDocument();
@@ -229,7 +229,7 @@ describe('<ParticipantsTable />', () => {
             status={IpoStatusEnum.COMPLETED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy)).toBeInTheDocument();
@@ -247,7 +247,7 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy}`)).toBeInTheDocument();
@@ -266,7 +266,7 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy}`)).toBeInTheDocument();
@@ -283,7 +283,7 @@ describe('<ParticipantsTable />', () => {
             status={IpoStatusEnum.ACCEPTED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy)).toBeInTheDocument();
@@ -304,7 +304,7 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch out')).not.toBeInTheDocument();
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
     });
 
@@ -317,7 +317,7 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch out')).not.toBeInTheDocument();
-        expect(queryByText('Save punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
     });
 

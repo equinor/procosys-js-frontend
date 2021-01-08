@@ -51,24 +51,27 @@ const RoleSelector = ({
     useEffect(() => {
         if (roles.length != allRoles.length) {
             setAllRoles(roles);
-            if(selectedRole && selectedRole.notify) {
-                const index = roles.findIndex(r => r.code == selectedRole.code);
-                setFilteredRoles(() => {
-                    const rolesCopy = [...roles];
-                    rolesCopy[index].notify = true;
-                    rolesCopy[index].persons.forEach(p => {
-                        const person = selectedRole.persons.find(pers => pers.email == p.email);
-                        if (person) {
-                            p.radioOption = person.radioOption;
-                        }
-                    });
-                    return rolesCopy;
-                });
-            } else {
-                setFilteredRoles(roles);
-            }
-        }
+        };
     }, [roles]);
+
+    useEffect(() => {
+        if (selectedRole && selectedRole.notify) {
+            const index = roles.findIndex(r => r.code == selectedRole.code);
+            setFilteredRoles(() => {
+                const rolesCopy = [...roles];
+                rolesCopy[index].notify = true;
+                rolesCopy[index].persons.forEach(p => {
+                    const person = selectedRole.persons.find(pers => pers.email == p.email);
+                    if (person) {
+                        p.radioOption = person.radioOption;
+                    }
+                });
+                return rolesCopy;
+            });
+        } else {
+            setFilteredRoles(roles);
+        }
+    }, [selectedRole]);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -96,11 +99,11 @@ const RoleSelector = ({
     const selectItem = (role: RoleParticipant, roleIndex: number): void => {
         clearOtherRoles(roleIndex);
         setPickedRoleValue(role.code);
-        if(role.usePersonalEmail) {
-            onChange({...role});
+        if (role.usePersonalEmail) {
+            onChange({ ...role });
         } else {
             const radioCheckedPersons = role.persons.filter(p => p.radioOption);
-            const selectedRole = {...role, persons: radioCheckedPersons};
+            const selectedRole = { ...role, persons: radioCheckedPersons };
             onChange(selectedRole);
         }
         setIsOpen(false);
@@ -108,7 +111,7 @@ const RoleSelector = ({
 
     const filterRoles = (input: string): void => {
         setFilter(input);
-        if(input.length > 0) {
+        if (input.length > 0) {
             setFilteredRoles(allRoles.filter(role => role.code.toLocaleLowerCase().startsWith(input.toLocaleLowerCase())));
         } else {
             setFilteredRoles(allRoles);
@@ -163,7 +166,7 @@ const RoleSelector = ({
 
         if (role.code == pickedRoleValue) {
             const radioCheckedPersons = role.persons.filter(p => p.radioOption);
-            const selectedRole = {...role, persons: radioCheckedPersons};
+            const selectedRole = { ...role, persons: radioCheckedPersons };
             onChange(selectedRole);
         }
     };
@@ -172,17 +175,16 @@ const RoleSelector = ({
         setFilteredRoles(r => {
             const copy = [...r];
             copy[index].notify = notify;
-            if(!notify) {
+            if (!notify) {
                 copy[index].persons.forEach(p => {
                     p.radioOption = null;
                 });
+                //update selected role
+                const selectedRole = { ...copy[index], persons: [] };
+                onChange(selectedRole);
             }
             return copy;
         });
-        if(!notify) {
-            const selectedRole = {...filteredRoles[index], persons: []};
-            onChange(selectedRole);
-        }
     };
 
     const createChildNodes = (parentItem: RoleParticipant, parentIndex: number, items: Person[]): JSX.Element[] => {
@@ -196,7 +198,7 @@ const RoleSelector = ({
                     marginBottom={true}
                     hideToCc={!parentItem.notify}
                 >
-                    <Checkbox 
+                    <Checkbox
                         checked={parentItem.notify}
                         onChange={(checked: boolean): void => {
                             showPersons(checked, parentIndex);
@@ -256,7 +258,7 @@ const RoleSelector = ({
             }}
         >
             <ItemContent readOnlyItem={false} greenText={true}>
-                Add functional role to invitation
+                Add/update functional role to invitation
             </ItemContent>
         </SelectableItem>);
 
@@ -296,7 +298,7 @@ const RoleSelector = ({
                         <Typography>{itm.code}</Typography>
                         <Typography style={{ fontSize: '12px', marginTop: '8px' }}>{itm.description}</Typography>
                     </div>
-                    <EdsIcon name='chevron_right'/>
+                    <EdsIcon name='chevron_right' />
                 </ItemContent>
                 <CascadingItem>
                     {createChildNodes(itm, index, itm.persons)}
@@ -330,15 +332,15 @@ const RoleSelector = ({
                     }}
                 >
                     <FilterContainer>
-                        <input 
-                            autoFocus 
-                            type="text" 
-                            onKeyUp={(e): void => filterRoles(e.currentTarget.value)} 
-                            placeholder="Filter" 
+                        <input
+                            autoFocus
+                            type="text"
+                            onKeyUp={(e): void => filterRoles(e.currentTarget.value)}
+                            placeholder="Filter"
                         />
                     </FilterContainer>
-                    { (filter.length > 0 && filteredRoles.length < 1 ) && <li data-value={-1}><Info>No items found</Info></li> }
-                    { createNodesForItems(filteredRoles) }
+                    { (filter.length > 0 && filteredRoles.length < 1) && <li data-value={-1}><Info>No items found</Info></li>}
+                    { createNodesForItems(filteredRoles)}
                 </ul>
             )}
         </Container>

@@ -37,7 +37,7 @@ const CommPkgTable = forwardRef(({
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const searchCommPkgs = (): Canceler | null  => {
+    const searchCommPkgs = (): Canceler | null => {
         let requestCanceler: Canceler | null = null;
         try {
             (async (): Promise<void> => {
@@ -65,7 +65,7 @@ const CommPkgTable = forwardRef(({
     };
 
     useEffect(() => {
-        if(filter != '') {
+        if (filter != '') {
             setIsLoading(true);
         } else {
             setIsLoading(false);
@@ -162,8 +162,8 @@ const CommPkgTable = forwardRef(({
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
         return (
             <div className='tableCell goToMcCol'>
-                <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg.commPkgNo)}> 
-                    <EdsIcon name='chevron_right'/>
+                <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
+                    <EdsIcon name='chevron_right' />
                 </Button>
             </div>
         );
@@ -173,10 +173,10 @@ const CommPkgTable = forwardRef(({
         { title: 'Comm pkg', field: 'commPkgNo' },
         { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
         { title: 'Comm status', field: 'status' },
-        ... type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []
+        ...type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []
     ];
 
-    return (     
+    return (
         <Container disableSelectAll={type == 'DP'} mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>

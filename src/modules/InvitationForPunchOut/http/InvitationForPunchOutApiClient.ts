@@ -87,13 +87,7 @@ type HistoryResponse = {
     description: string;
     createdAtUtc: string;
     createdBy: {
-        id: number;
-        firstName: string;
-        lastName: string;
         userName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
     },
     eventType: string;
 }

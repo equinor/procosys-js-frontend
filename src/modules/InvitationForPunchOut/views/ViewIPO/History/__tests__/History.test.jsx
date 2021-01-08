@@ -9,24 +9,16 @@ const dummyHistory = [
         description: 'asdasdsadd',
         createdAtUtc: '2020-12-28T09:24:19.592Z',
         createdBy: {
-            id: 0,
-            firstName: 'jan',
-            lastName: 'hagevold',
             userName: 'JEHAG'
         },
-        eventType: 'IpoCreated'
     },
     {
         id: 1,
         description: 'jcecopwej dwada daddawd',
         createdAtUtc: '2020-12-28T10:24:19.592Z',
         createdBy: {
-            id: 1,
-            firstName: 'elisabeth',
-            lastName: 'bartli',
             userName: 'ELIBRA'
         },
-        eventType: 'IpoCompleted'
     }
 ];
 
@@ -51,7 +43,6 @@ describe('Module: <History ipoId={} />', () => {
     it('Should render history in table', async () => {
         const { getByText } = render(<History ipoId={0} />);
 
-        await waitFor(() => expect(getByText(dummyHistory[1].eventType)).toBeInTheDocument());
         await waitFor(() => expect(getByText(dummyHistory[1].description)).toBeInTheDocument());
         await waitFor(() => expect(getByText('28/12/2020 10:24')).toBeInTheDocument());
         await waitFor(() => expect(getByText(`${dummyHistory[0].createdBy.userName}`)).toBeInTheDocument());

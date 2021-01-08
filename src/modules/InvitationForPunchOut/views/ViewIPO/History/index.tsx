@@ -57,9 +57,8 @@ const History = ({ ipoId }: HistoryProps): JSX.Element => {
                     <HistoryTable>
                         <Head>
                             <Row>
-                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="15%">Date</Cell>
-                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Changed by</Cell>
-                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="10%">Event type</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="12%">Date</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="12%">Changed by</Cell>
                                 <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Description</Cell>
                             </Row>
                         </Head>
@@ -71,9 +70,6 @@ const History = ({ ipoId }: HistoryProps): JSX.Element => {
                                     </Cell>
                                     <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                         {`${historyItem.createdBy.userName}`}
-                                    </Cell>
-                                    <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                        {`${historyItem.eventType}`}
                                     </Cell>
                                     <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                         {`${historyItem.description}`}

@@ -89,7 +89,6 @@ type HistoryResponse = {
     createdBy: {
         userName: string;
     },
-    eventType: string;
 }
 
 type AttachmentResponse = {

@@ -74,5 +74,4 @@ export type HistoryItem = {
     createdBy: {
         userName: string;
     },
-    eventType: string;
 }

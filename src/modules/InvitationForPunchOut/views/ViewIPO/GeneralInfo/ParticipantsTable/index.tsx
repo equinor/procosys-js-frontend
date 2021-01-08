@@ -190,9 +190,7 @@ const ParticipantsTable = ({participants, status, complete, accept, update, sign
         }
         try {
             await complete(participants[index], attNoteData);
-            status === IpoStatusEnum.PLANNED ?
-                showSnackbarNotification('Punch out completed', 2000, true) :
-                showSnackbarNotification('Punch out saved', 2000, true);
+            showSnackbarNotification('Punch out completed', 2000, true);
         } catch (error) {
             showSnackbarNotification(error.message, 2000, true);
         }     

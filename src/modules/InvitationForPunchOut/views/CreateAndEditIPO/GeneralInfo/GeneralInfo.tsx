@@ -1,4 +1,4 @@
-import { Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer } from './GeneralInfo.style';
+import { ConfirmCheckbox, ConfirmationTextContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -21,6 +21,8 @@ interface GeneralInfoProps {
     fromMain: boolean;
     isEditMode: boolean;
     clearScope: () => void;
+    confirmationChecked: boolean;
+    setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const GeneralInfo = ({
@@ -28,7 +30,9 @@ const GeneralInfo = ({
     setGeneralInfo,
     fromMain,
     isEditMode,
-    clearScope
+    clearScope,
+    confirmationChecked,
+    setConfirmationChecked
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
@@ -215,6 +219,19 @@ const GeneralInfo = ({
                     }}
                 />
             </LocationContainer>
+            <ConfirmationTextContainer>
+                <ConfirmCheckbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />
+                <TextContainer>
+                    <Typography variant="body_short" fontWeight={400}>
+                        I hereby confirm that prior to common punch out all relevant MCCR shall be signed and all punch items registered.
+                    </Typography>
+                    <br />
+                    <Typography variant="body_short" fontWeight={400}>
+                        Mechanical Completion means that the installation is built in accordance with relevant drawings and specifications. 
+                            All specified tests and inspections are carried out and documented in a uniform way.
+                    </Typography>
+                </TextContainer>
+            </ConfirmationTextContainer>
         </FormContainer>
     </Container>);
 };

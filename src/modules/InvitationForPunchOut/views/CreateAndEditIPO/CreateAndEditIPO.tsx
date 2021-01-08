@@ -1,7 +1,8 @@
 import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import React, { useEffect, useState } from 'react';
-import { ComponentName } from '../enums';
+
 import Attachments from './Attachments/Attachments';
+import { ComponentName } from '../enums';
 import { Container } from './CreateAndEditIPO.style';
 import CreateAndEditIPOHeader from './CreateAndEditIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
@@ -33,6 +34,8 @@ interface CreateAndEditProps {
     setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
     availableRoles: RoleParticipant[];
     fromMain: boolean;
+    confirmationChecked: boolean;
+    setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>
 };
 
 const CreateAndEditIPO = ({
@@ -48,7 +51,9 @@ const CreateAndEditIPO = ({
     attachments,
     setAttachments,
     availableRoles,
-    fromMain
+    fromMain,
+    confirmationChecked,
+    setConfirmationChecked
 }: CreateAndEditProps): JSX.Element => {
 
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
@@ -119,12 +124,12 @@ const CreateAndEditIPO = ({
     };
 
     useEffect(() => {
-        if (generalInfo.poType && generalInfo.projectName && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
+        if (confirmationChecked && generalInfo.poType && generalInfo.projectName && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);
         }
-    }, [generalInfo]);
+    }, [generalInfo, confirmationChecked]);
 
     useEffect(() => {
         if (selectedCommPkgScope.length > 0 || selectedMcPkgScope.selected.length > 0) {
@@ -181,6 +186,8 @@ const CreateAndEditIPO = ({
                 fromMain={fromMain}
                 isEditMode={params.ipoId != null}
                 clearScope={clearScope}
+                confirmationChecked={confirmationChecked}
+                setConfirmationChecked={setConfirmationChecked}
             />
         }
         { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectName != null) &&

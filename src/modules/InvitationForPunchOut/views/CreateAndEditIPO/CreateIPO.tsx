@@ -1,18 +1,19 @@
 import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant } from '../../types';
-import React, { useEffect, useState } from 'react';
-import { Canceler } from 'axios';
 import { ComponentName, OrganizationsEnum } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import React, { useEffect, useState } from 'react';
 import { getEndTime, getNextHalfHourTimeString } from './utils';
+
+import { Canceler } from 'axios';
 import { Container } from './CreateAndEditIPO.style';
+import CreateAndEditIPO from './CreateAndEditIPO';
 import Loading from '@procosys/components/Loading';
+import { OrganizationMap } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
-import { OrganizationMap } from '../utils';
-import CreateAndEditIPO from './CreateAndEditIPO';
 
 const initialDate = getNextHalfHourTimeString(new Date());
 
@@ -76,6 +77,7 @@ const CreateIPO = (): JSX.Element => {
 
     const initialGeneralInfo = { ...emptyGeneralInfo, projectId: params.projectId };
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(initialGeneralInfo);
+    const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null,
@@ -273,6 +275,8 @@ const CreateIPO = (): JSX.Element => {
         setAttachments={setAttachments}
         availableRoles={availableRoles}
         fromMain={fromMain}
+        confirmationChecked={confirmationChecked}
+        setConfirmationChecked={setConfirmationChecked}
     />);
 };
 

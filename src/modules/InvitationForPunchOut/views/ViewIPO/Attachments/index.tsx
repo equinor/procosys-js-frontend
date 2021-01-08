@@ -76,11 +76,11 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
             inputFileRef.current.click();
         }
     };
-    
+
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
     };
-    
+
     const handleDrop = async (event: React.DragEvent<HTMLDivElement>): Promise<void> => {
         event.preventDefault();
         setLoading(true);
@@ -99,17 +99,20 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
     };
 
     const removeAttachment = async (index: number): Promise<void> => {
-        setLoading(true);
-        try {
-            await apiClient.deleteAttachment(ipoId, attachments[index].id, attachments[index].rowVersion);
-            setAttachments(currentAttachments =>
-                [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
-            );
-        } catch (error) {
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
+        const attachment = attachments[index];
+        if (attachment.id && attachment.rowVersion) {
+            setLoading(true);
+            try {
+                await apiClient.deleteAttachment(ipoId, attachment.id, attachment.rowVersion);
+                setAttachments(currentAttachments =>
+                    [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
+                );
+            } catch (error) {
+                console.error(error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const openAttachment = (downloadUri: string): void => {
@@ -139,37 +142,37 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 onDrop={(event: React.DragEvent<HTMLDivElement>): Promise<void> => handleDrop(event)}
                 onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
             >
-                <EdsIcon name='cloud_download' size={48} color='#DADADA'/>
+                <EdsIcon name='cloud_download' size={48} color='#DADADA' />
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
             <AttachmentTable>
                 <Head>
                     <Row>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Type</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="60%">Title</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="20%">Uploaded at</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="20%">Uploaded by</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} >{' '}</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Type</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} width="60%">Title</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} width="20%">Uploaded at</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} width="20%">Uploaded by</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} >{' '}</Cell>
                     </Row>
                 </Head>
                 <Body>
                     {attachments && attachments.length > 0 ? attachments.map((attachment, index) => (
                         <Row key={attachment.id}>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                                 <EdsIcon name={getFileTypeIconName(attachment.fileName)} size={24} />
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                                 <CustomTooltip title="Click to open in new tab" arrow>
-                                    <Typography onClick={(): void => openAttachment(attachment.downloadUri)} variant="body_short" link>{getFileName(attachment.fileName)}</Typography>
+                                    <Typography onClick={(): void => { attachment.downloadUri && openAttachment(attachment.downloadUri); }} variant="body_short" link>{getFileName(attachment.fileName)}</Typography>
                                 </CustomTooltip>
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography variant="body_short">{format(new Date(attachment.uploadedAt), 'dd/MM/yyyy HH:mm')}</Typography>
+                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
+                                <Typography variant="body_short">{attachment.uploadedAt && format(new Date(attachment.uploadedAt), 'dd/MM/yyyy HH:mm')}</Typography>
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                <Typography variant="body_short">{`${attachment.uploadedBy.firstName} ${attachment.uploadedBy.lastName}`}</Typography>
+                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
+                                <Typography variant="body_short">{attachment.uploadedBy && `${attachment.uploadedBy.firstName} ${attachment.uploadedBy.lastName}`}</Typography>
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                                 <div onClick={(): Promise<void> => removeAttachment(index)}>
                                     <EdsIcon name='delete_to_trash' />
                                 </div>
@@ -177,7 +180,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                         </Row>
                     )) : (
                         <Row>
-                            <Cell colSpan={5} style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">No records to display</Typography></Cell>
+                            <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
                         </Row>
                     )}
                 </Body>

@@ -10,6 +10,6 @@ export enum OrganizationsEnum {
 };
 
 export enum ComponentName {
-    CreateIPO = 'CreateIPO',
+    CreateAndEditIPO = 'CreateAndEditIPO',
     ParticipantsTable = 'ParticipantsTable'
 }

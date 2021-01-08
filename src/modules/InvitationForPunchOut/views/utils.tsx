@@ -51,7 +51,8 @@ export const getFileExtension = (filename: string): string => {
 export const getFileName = (fullName: string): string => {
     return fullName.includes('.') ? (
         fullName.split('.').slice(0, -1).join('.')
-    ) : (
-        fullName
-    );
+    ) :
+        (
+            fullName
+        );
 };

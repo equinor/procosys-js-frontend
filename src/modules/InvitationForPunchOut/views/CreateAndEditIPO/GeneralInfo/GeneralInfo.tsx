@@ -11,7 +11,7 @@ import Dropdown from '../../../../../components/Dropdown';
 import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 
-const poTypes: SelectItem[] = [
+export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
     { text: 'MDP (Multi Discipline Punch)', value: 'MDP' }];
 
@@ -19,6 +19,7 @@ interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
+    isEditMode: boolean;
     clearScope: () => void;
 }
 
@@ -26,12 +27,13 @@ const GeneralInfo = ({
     generalInfo,
     setGeneralInfo,
     fromMain,
+    isEditMode,
     clearScope
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
-    const [filterForProjects, setFilterForProjects] = useState<string>('');   
+    const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [errorFormat, setErrorFormat] = useState<boolean>(false);
 
     useEffect(() => {
@@ -49,7 +51,7 @@ const GeneralInfo = ({
             setFilteredProjects(allProjects);
         })();
         return (): void => requestCanceler && requestCanceler();
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -64,26 +66,26 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
-        if(!fromMain) {
+        if (!fromMain) {
             clearScope();
         }
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
-            setGeneralInfo(gi => {return {...gi, poType: newPoType};});
+            setGeneralInfo(gi => { return { ...gi, poType: newPoType }; });
         }
     };
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
         if (generalInfo.projectId !== filteredProjects[index].id) clearScope();
-        setGeneralInfo(gi => {return {...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name};});
+        setGeneralInfo(gi => { return { ...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name }; });
     };
 
     const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
 
     useEffect(() => {
         if (selectedProject) {
-            setGeneralInfo(gi => {return {...gi, projectName: selectedProject.name};});
+            setGeneralInfo(gi => { return { ...gi, projectName: selectedProject.name }; });
         }
     }, [selectedProject]);
 
@@ -110,18 +112,17 @@ const GeneralInfo = ({
         }
     };
 
-
     return (<Container>
         <FormContainer>
             <Dropdown
                 label={'Project'}
                 maxHeight='300px'
                 variant='form'
-                text={selectedProject && selectedProject.description || 'Select'}
+                text={selectedProject && selectedProject.description || generalInfo.projectName || 'Select'}
                 onFilter={setFilterForProjects}
-                disabled={fromMain}
+                disabled={fromMain || isEditMode}
             >
-                { filteredProjects.map((projectItem, index) => {
+                {filteredProjects.map((projectItem, index) => {
                     return (
                         <DropdownItem
                             key={index}
@@ -145,12 +146,13 @@ const GeneralInfo = ({
                 </SelectInput>
             </PoTypeContainer>
             <TextField
+                data-testid='title'
                 id={'title'}
                 label='Title'
                 placeholder='Write here'
                 defaultValue={generalInfo.title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                    setGeneralInfo(gi => {return {...gi, title: e.target.value};}); 
+                    setGeneralInfo(gi => { return { ...gi, title: e.target.value }; });
                 }}
             />
             <TextField
@@ -160,8 +162,8 @@ const GeneralInfo = ({
                 meta='Optional'
                 defaultValue={generalInfo.description}
                 multiline
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                    setGeneralInfo(gi => {return {...gi, description: e.target.value};}); 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                    setGeneralInfo(gi => { return { ...gi, description: e.target.value }; });
                 }}
             />
             <Typography constiant='h5'>Date and time for punch round</Typography>
@@ -170,48 +172,49 @@ const GeneralInfo = ({
                     id='startDate'
                     label='Date'
                     type='date'
-                    defaultValue={format(generalInfo.startTime, 'yyyy-MM-dd')}
+                    value={format(generalInfo.startTime, 'yyyy-MM-dd')}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetDate(event.target.value) }
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetDate(event.target.value)}
                 />
                 <DateTimeField
                     id='startTime'
                     label='From'
                     type='time'
-                    onClick={(e: React.MouseEvent<HTMLDivElement>):void => e.preventDefault()}
+                    onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
                     value={format(generalInfo.startTime, 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('start', event.target.value) }
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('start', event.target.value)}
                 />
                 <DateTimeField
                     id='endDate'
                     label='To'
                     type='time'
-                    onClick={(e: React.MouseEvent<HTMLDivElement>):void => e.preventDefault()}
+                    onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
                     value={format(generalInfo.endTime, 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value) }
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value)}
                     error={errorFormat}
                 />
             </DateTimeContainer>
             <LocationContainer>
                 <TextField
+                    data-testid='location'
                     id='location'
                     placeholder='Write here'
                     label='Location'
                     meta='Optional'
                     defaultValue={generalInfo.location}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => { 
-                        setGeneralInfo(gi => {return {...gi, location: e.target.value};}); 
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                        setGeneralInfo(gi => { return { ...gi, location: e.target.value }; });
                     }}
                 />
-            </LocationContainer>   
+            </LocationContainer>
         </FormContainer>
     </Container>);
 };

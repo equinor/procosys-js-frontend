@@ -1,4 +1,4 @@
-import { CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+import { Attachment, CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
 import { getFileName, getFileTypeIconName } from '../../utils';
@@ -14,7 +14,7 @@ interface SummaryProps {
     mcPkgScope: McPkgRow[];
     commPkgScope: CommPkgRow[];
     participants: Participant[];
-    attachments: File[];
+    attachments: Attachment[];
 }
 
 const Summary = ({
@@ -90,8 +90,8 @@ const Summary = ({
                         <div>{participant.role.code + ' - ' + participant.role.description}</div>
                         {!participant.role.usePersonalEmail &&
                             <>
-                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
-                                <div style={{ fontSize: '12px'}}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
+                                <div style={{ fontSize: '12px' }}>{getNotifiedPersons(participant.role.persons, 'To')}</div>
+                                <div style={{ fontSize: '12px' }}>{getNotifiedPersons(participant.role.persons, 'CC')}</div>
                             </>
                         }
                     </Cell>
@@ -109,10 +109,10 @@ const Summary = ({
             </Row>);
     };
 
-    const attachmentList = attachments.map((attachment, index) => (
+    const attachmentList = attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment, index) => (
         <Row key={index}>
-            <Cell><EdsIcon name={getFileTypeIconName(attachment.name)}/></Cell>
-            <Cell>{getFileName(attachment.name)}</Cell>
+            <Cell><EdsIcon name={getFileTypeIconName(attachment.fileName)} /></Cell>
+            <Cell>{getFileName(attachment.fileName)}</Cell>
         </Row>
     ));
 
@@ -121,41 +121,41 @@ const Summary = ({
             <Section>
                 <Typography variant="h5">General info</Typography>
                 <Subsection>
-                    <Typography token={{fontSize: '12px'}}>Selected project</Typography>
-                    <Typography variant="body_long">{ generalInfo.projectName }</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Selected project</Typography>
+                    <Typography variant="body_long">{generalInfo.projectName}</Typography>
                 </Subsection>
                 <Subsection>
-                    <Typography token={{fontSize: '12px'}}>Type</Typography>
-                    <Typography variant="body_long">{ generalInfo.poType ? generalInfo.poType.text : '-' }</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Type</Typography>
+                    <Typography variant="body_long">{generalInfo.poType ? generalInfo.poType.text : '-'}</Typography>
                 </Subsection>
                 <Subsection>
-                    <Typography token={{fontSize: '12px'}}>Title</Typography>
-                    <Typography variant="body_long">{ generalInfo.title }</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Title</Typography>
+                    <Typography variant="body_long">{generalInfo.title}</Typography>
                 </Subsection>
                 <Subsection>
-                    <Typography token={{fontSize: '12px'}}>Description</Typography>
-                    <Typography variant="body_long">{ generalInfo.description ? generalInfo.description : '-' }</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Description</Typography>
+                    <Typography variant="body_long">{generalInfo.description ? generalInfo.description : '-'}</Typography>
                 </Subsection>
             </Section>
             <Section>
                 <Typography variant="h5">Date and time for punch round</Typography>
                 <div className='timeContainer'>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>Date</Typography>
-                        <Typography variant="body_long">{ format(generalInfo.startTime, 'dd/MM/yyyy') }</Typography>
+                        <Typography token={{ fontSize: '12px' }}>Date</Typography>
+                        <Typography variant="body_long">{format(generalInfo.startTime, 'dd/MM/yyyy')}</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>From</Typography>
-                        <Typography variant="body_long">{ format(generalInfo.startTime, 'HH:mm') }</Typography>
+                        <Typography token={{ fontSize: '12px' }}>From</Typography>
+                        <Typography variant="body_long">{format(generalInfo.startTime, 'HH:mm')}</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{fontSize: '12px'}}>To</Typography>
-                        <Typography variant="body_long">{ format(generalInfo.endTime, 'HH:mm') }</Typography>
+                        <Typography token={{ fontSize: '12px' }}>To</Typography>
+                        <Typography variant="body_long">{format(generalInfo.endTime, 'HH:mm')}</Typography>
                     </Subsection>
                 </div>
                 <Subsection>
-                    <Typography token={{fontSize: '12px'}}>Location</Typography>
-                    <Typography variant="body_long">{ generalInfo.location ? generalInfo.location : '-' }</Typography>
+                    <Typography token={{ fontSize: '12px' }}>Location</Typography>
+                    <Typography variant="body_long">{generalInfo.location ? generalInfo.location : '-'}</Typography>
                 </Subsection>
             </Section>
             <TableSection>
@@ -191,11 +191,11 @@ const Summary = ({
                 <Typography variant="h5">Selected scope</Typography>
                 <Table>
                     <Head>
-                        { getHeaders() }
+                        {getHeaders()}
                     </Head>
                     <Body>
-                        { mcPkgScope.length > 0 && mcPkgScope.map(mcPkg => getMcPkgScope(mcPkg)) }
-                        { commPkgScope.length > 0 && commPkgScope.map(commPkg => getCommPkgScope(commPkg)) }
+                        {mcPkgScope.length > 0 && mcPkgScope.map(mcPkg => getMcPkgScope(mcPkg))}
+                        {commPkgScope.length > 0 && commPkgScope.map(commPkg => getCommPkgScope(commPkg))}
                     </Body>
                 </Table>
             </TableSection>
@@ -213,11 +213,11 @@ const Summary = ({
                         </Row>
                     </Head>
                     <Body>
-                        { participants.map((participant, i) => getParticipants(participant, i)) }
+                        {participants.map((participant, i) => getParticipants(participant, i))}
                     </Body>
                 </Table>
             </TableSection>
-            { attachmentList.length > 0 && 
+            {attachmentList.length > 0 &&
                 <TableSection>
                     <Typography variant="h5">Attachments</Typography>
                     <Table>
@@ -232,7 +232,7 @@ const Summary = ({
                             </Row>
                         </Head>
                         <Body>
-                            { attachmentList }
+                            {attachmentList}
                         </Body>
                     </Table>
                 </TableSection>

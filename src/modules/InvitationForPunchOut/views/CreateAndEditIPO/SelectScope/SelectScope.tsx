@@ -33,12 +33,11 @@ const SelectScope = ({
     const [commPkgFilter, setCommPkgFilter] = useState<string>('');
 
     useEffect(() => {
-        if(commPkgNo) {
+        if (commPkgNo) {
             setCurrentCommPkg(commPkgNo);
         }
     }, []);
 
-    
     const handleRemoveMcPkg = (mcPkgNo: string): void => {
         if (mcPkgRef.current) {
             mcPkgRef.current.removeSelectedMcPkg(mcPkgNo);
@@ -47,7 +46,7 @@ const SelectScope = ({
             if (selectedIndex > -1) {
                 // remove from selected mcPkgs
                 const newSelected = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
-                const newSelectedMcPkgScope = {commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected};
+                const newSelectedMcPkgScope = { commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
                 setSelectedMcPkgScope(newSelectedMcPkgScope);
             }
         }
@@ -59,33 +58,33 @@ const SelectScope = ({
         } else {
             const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
             if (selectedIndex > -1) {
-            // remove from selected commPkgs
+                // remove from selected commPkgs
                 const newSelectedCommPkgScope = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
                 setSelectedCommPkgScope(newSelectedCommPkgScope);
             }
         }
     };
 
-    return (     
+    return (
         <Container>
             <SelectComponent>
                 <Header>
                     {(currentCommPkg != null && commPkgNo == null) &&
-                        <Button 
+                        <Button
                             id='backButton'
                             onClick={(): void => setCurrentCommPkg(null)}
-                            variant="ghost_icon" 
+                            variant="ghost_icon"
                         >
-                            <EdsIcon name='arrow_back'/>
-                        </Button> 
+                            <EdsIcon name='arrow_back' />
+                        </Button>
                     }
                     <Typography variant='h2'>
-                        {currentCommPkg == null ? (type === 'DP' ? 'Click on the arrow next to a comm pkg to open MC scope': 'Select commissioning packages') : 'Select MC packages in comm pkg ' + currentCommPkg }
+                        {currentCommPkg == null ? (type === 'DP' ? 'Click on the arrow next to a comm pkg to open MC scope' : 'Select commissioning packages') : 'Select MC packages in comm pkg ' + currentCommPkg}
                     </Typography>
                 </Header>
-                { (currentCommPkg == null && commPkgNo == null) &&
+                {(currentCommPkg == null && commPkgNo == null) &&
                     <div>
-                        <CommPkgTable 
+                        <CommPkgTable
                             ref={commPkgRef}
                             selectedCommPkgScope={selectedCommPkgScope}
                             setSelectedCommPkgScope={setSelectedCommPkgScope}
@@ -97,8 +96,8 @@ const SelectScope = ({
                         />
                     </div>
                 }
-                { currentCommPkg != null && 
-                    <McPkgTable 
+                {currentCommPkg != null &&
+                    <McPkgTable
                         ref={mcPkgRef}
                         selectedMcPkgScope={selectedMcPkgScope}
                         setSelectedMcPkgScope={setSelectedMcPkgScope}
@@ -108,10 +107,10 @@ const SelectScope = ({
                 }
             </SelectComponent>
             <Divider />
-            <SelectedScope 
-                selectedCommPkgs={selectedCommPkgScope} 
+            <SelectedScope
+                selectedCommPkgs={selectedCommPkgScope}
                 removeCommPkg={(commPkgNo: string): void => handleRemoveCommPkg(commPkgNo)}
-                selectedMcPkgs={selectedMcPkgScope.selected} 
+                selectedMcPkgs={selectedMcPkgScope.selected}
                 removeMcPkg={(mcPkgNo: string): void => handleRemoveMcPkg(mcPkgNo)}
                 multipleDisciplines={selectedMcPkgScope.multipleDisciplines}
             />

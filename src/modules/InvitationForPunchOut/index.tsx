@@ -2,9 +2,11 @@ import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-rou
 import { Container } from './style';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
-import CreateIPO from './views/CreateIPO/CreateIPO';
+import CreateAndEditIPO from './views/CreateAndEditIPO/CreateAndEditIPO';
 import ViewIPO from './views/ViewIPO/index';
 import withFeatureFlag from '../../core/features/withFeatureFlag';
+import EditIPO from './views/CreateAndEditIPO/EditIPO';
+import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 
 
 const InvitationForPunchOut = (): JSX.Element => {
@@ -19,6 +21,12 @@ const InvitationForPunchOut = (): JSX.Element => {
                             exact
                             component={CreateIPO}
                         />
+                        <Route
+                            path={'/EditIPO/:ipoId'}
+                            exact
+                            component={EditIPO}
+                        />
+
                         <Route
                             path={'/:ipoId'}
                             exact

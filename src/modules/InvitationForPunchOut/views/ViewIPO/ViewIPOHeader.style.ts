@@ -13,5 +13,11 @@ export const Container = styled.div`
 export const HeaderContainer = styled.div`
     display: flex;
     align-items: center;
+    justify-content:space-between;
     margin-bottom: calc(var(--grid-unit) * 3);
+`;
+
+export const ButtonContainer = styled.div`
+    display: flex;
+    align-items: center;
 `;

@@ -8,17 +8,16 @@ import Table from '@procosys/components/Table';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 
 interface AttachmentsProps {
-    attachments: File[];
-    removeAttachment: (index: number) => void;
-    addAttachments: (attachments: File[]) => void;
+    attachments: Attachment[];
+    setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
 }
 
 const Attachments = ({
     attachments,
-    removeAttachment,
-    addAttachments
+    setAttachments
 }: AttachmentsProps): JSX.Element => {
     const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -26,6 +25,7 @@ const Attachments = ({
         e.preventDefault();
         try {
             fileTypeValidator(e.target.files[0].name);
+            const file = e.target.files[0];
             addAttachments([e.target.files[0]]);
         } catch (error) {
             showSnackbarNotification(error.message);
@@ -38,23 +38,42 @@ const Attachments = ({
         }
     };
 
-    const getAttachmentName = (attachment: File): JSX.Element => {
+    const removeAttachment = (index: number): void => {
+        if (attachments[index].id) {
+            //Attachments already uploaded will be deleted when ipo i saved
+            attachments[index].toBeDeleted = true;
+            setAttachments([...attachments]);
+        } else {
+            //Attachments not yet uploaded can be removed from the attachments array
+            setAttachments(currentAttachments =>
+                [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
+            );
+        }
+    };
+
+    const addAttachments = (files: File[]): void => {
+        files.forEach((file) => {
+            setAttachments(currentAttachments => currentAttachments.concat({ fileName: file.name, file: file }));
+        });
+    };
+
+    const getAttachmentName = (attachment: Attachment): JSX.Element => {
         return (
-            <div>{getFileName(attachment.name)}</div>
+            <div>{getFileName(attachment.fileName)}</div>
         );
     };
 
-    const getAttachmentIcon = (attachment: File): JSX.Element => {
-        const iconName = getFileTypeIconName(attachment.name);
+    const getAttachmentIcon = (attachment: Attachment): JSX.Element => {
+        const iconName = getFileTypeIconName(attachment.fileName);
         return (
-            <EdsIcon name={iconName} size={24}/>
+            <EdsIcon name={iconName} size={24} />
         );
     };
-    
+
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
     };
-    
+
     const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
         const files = event.dataTransfer.files;
@@ -85,12 +104,12 @@ const Attachments = ({
                 onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
                 onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
             >
-                <EdsIcon name='cloud_download' size={48} color='#DADADA'/>
+                <EdsIcon name='cloud_download' size={48} color='#DADADA' />
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
             <Table
                 columns={[{ title: 'Type', render: getAttachmentIcon, width: '30px' }, { title: 'Title', render: getAttachmentName }]}
-                data={attachments}
+                data={attachments.filter((attachment) => !attachment.toBeDeleted)}
                 options={{
                     toolbar: false,
                     showTitle: false,
@@ -107,7 +126,7 @@ const Attachments = ({
                     boxShadow: 'none'
                 }}
                 localization={{
-                    header : {
+                    header: {
                         actions: ''
                     }
                 }}

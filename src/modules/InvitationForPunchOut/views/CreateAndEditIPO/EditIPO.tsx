@@ -40,7 +40,7 @@ const EditIPO = (): JSX.Element => {
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [invitation, setInvitation] = useState<Invitation>();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
 
     const { apiClient } = useInvitationForPunchOutContext();
@@ -52,7 +52,7 @@ const EditIPO = (): JSX.Element => {
      */
     const getFunctionalRoles = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
-            const functionalRoles = await apiClient.getFunctionalRolesAsync()
+            const functionalRoles = await apiClient.getFunctionalRolesAsync(requestCanceller)
                 .then(roles => roles.map((role): RoleParticipant => {
                     return {
                         code: role.code,

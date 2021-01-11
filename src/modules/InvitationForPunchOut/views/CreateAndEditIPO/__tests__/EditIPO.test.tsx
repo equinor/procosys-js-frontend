@@ -58,7 +58,6 @@ jest.mock('@procosys/hooks/useRouter', () => jest.fn(() => ({
 })));
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
-    getFunctionalRolesAsync: (): any => Promise.resolve(mockRoles),
     useInvitationForPunchOutContext: (): any => {
         return {
             apiClient: {
@@ -74,7 +73,8 @@ jest.mock('../../../context/InvitationForPunchOutContext', () => ({
                 getIPO: (): any => Promise.resolve(mockInvitation),
                 getAttachments: (): any => {
                     return Promise.resolve([]);
-                }
+                },
+                getFunctionalRolesAsync: (): any => Promise.resolve(mockRoles),
             }
         };
     }

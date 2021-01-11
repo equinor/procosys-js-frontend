@@ -9,6 +9,7 @@ import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import Comments from './Comments';
 import GeneralInfo from './GeneralInfo';
+import History from './History';
 import { IpoStatusEnum } from './enums';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
@@ -93,19 +94,22 @@ const ViewIPO = (): JSX.Element => {
         setSteps(modifiedSteps);
     };
 
+    const updateParticipants = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+        await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
+        await getInvitation();
+    };
+    
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
 
         if (!signer || !invitation) return;
 
-        const completeDetails: CompleteIPODto = {
+        await apiClient.completePunchOut(params.ipoId, {
             invitationRowVersion: invitation.rowVersion,
             participantRowVersion: signer.rowVersion,
             participants: attNoteData
-        };
-
-        await apiClient.completePunchOut(params.ipoId, completeDetails);
+        });
         await getInvitation();
     };
 

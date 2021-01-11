@@ -178,12 +178,11 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                                 </div>
                             </Cell>
                         </Row>
-                    )) :
-                        (
-                            <Row>
-                                <Cell style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
-                            </Row>
-                        )}
+                    )) : (
+                        <Row>
+                            <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
+                        </Row>
+                    )}
                 </Body>
 
             </AttachmentTable>

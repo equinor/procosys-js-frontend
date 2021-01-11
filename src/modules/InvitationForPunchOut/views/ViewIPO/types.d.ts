@@ -13,6 +13,7 @@ export type CommPkgScope = {
 type Participant = {
     organization: string;
     sortKey: number;
+    canSign: boolean;
     externalEmail: ExternalEmail;
     person: Person;
     functionalRole: FunctionalRole;
@@ -74,6 +75,14 @@ export type IpoComment = {
     createdBy: {
         firstName: string;
         lastName: string;
+    }
+}
+
+export type HistoryItem = {
+    id: number;
+    description: string;
+    createdAtUtc: string;
+    createdBy: {
+        userName: string;
     },
-    rowVersion: string;
 }

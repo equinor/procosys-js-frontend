@@ -1,7 +1,8 @@
 import { configure, render, waitFor } from '@testing-library/react';
-import React from 'react';
-import { Invitation } from '../../ViewIPO/types';
+
 import EditIPO from '../EditIPO';
+import { Invitation } from '../../ViewIPO/types';
+import React from 'react';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
 
@@ -57,7 +58,6 @@ jest.mock('@procosys/hooks/useRouter', () => jest.fn(() => ({
 })));
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
-    getFunctionalRolesAsync: () => Promise.resolve(mockRoles),
     useInvitationForPunchOutContext: (): any => {
         return {
             apiClient: {
@@ -73,7 +73,8 @@ jest.mock('../../../context/InvitationForPunchOutContext', () => ({
                 getIPO: (): any => Promise.resolve(mockInvitation),
                 getAttachments: (): any => {
                     return Promise.resolve([]);
-                }
+                },
+                getFunctionalRolesAsync: (): any => Promise.resolve(mockRoles),
             }
         };
     }

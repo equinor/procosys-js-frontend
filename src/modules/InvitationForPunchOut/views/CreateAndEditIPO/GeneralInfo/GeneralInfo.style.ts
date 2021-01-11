@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 
+import { Checkbox } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 
 interface DropdownProps {
@@ -64,4 +65,19 @@ export const FormContainer = styled.div`
     .MuiInput-root:hover::before {
         border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
     }
+`;
+
+export const ConfirmationTextContainer = styled.div`
+    display: flex;
+    /* width: 600px; */
+    align-items: flex-start;
+`;
+
+export const TextContainer = styled.div`
+    padding: 12px;
+`;
+
+export const ConfirmCheckbox = styled(Checkbox)`
+    margin: 0 !important;
+    padding: 0 !important;
 `;

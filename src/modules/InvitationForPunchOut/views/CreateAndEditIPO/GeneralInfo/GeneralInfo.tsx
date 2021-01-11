@@ -36,19 +36,17 @@ const GeneralInfo = ({
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [errorFormat, setErrorFormat] = useState<boolean>(false);
 
+
     useEffect(() => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
-            const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback)
-                .then(projects => projects.map((project): ProjectDetails => {
-                    return {
-                        id: project.id,
-                        name: project.name,
-                        description: project.description
-                    };
-                }));
-            setAvailableProjects(allProjects);
-            setFilteredProjects(allProjects);
+            try {
+                const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback);
+                setAvailableProjects(allProjects);
+                setFilteredProjects(allProjects);
+            } catch (error) {
+                console.log(error);
+            }
         })();
         return (): void => requestCanceler && requestCanceler();
     }, []);

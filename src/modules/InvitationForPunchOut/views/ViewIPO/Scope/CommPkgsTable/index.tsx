@@ -40,7 +40,7 @@ const CommPkgsTable = ({ commPkgScope, projectName }: CommPkgsTableProps ): JSX.
                         </Row>
                     )) : (
                         <Row>
-                            <Cell style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">Nothing to display</Typography></Cell>
+                            <Cell colSpan={3} style={{verticalAlign: 'middle', width: '100%'}}><Typography style={{textAlign: 'center'}} variant="body_short">Nothing to display</Typography></Cell>
                         </Row>
                     )}
                 </Body>

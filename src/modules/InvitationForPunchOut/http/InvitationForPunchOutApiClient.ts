@@ -82,6 +82,15 @@ type ExternalEmailInvitationResponse = {
     rowVersion: string;
 }
 
+type HistoryResponse = {
+    id: number;
+    description: string;
+    createdAtUtc: string;
+    createdBy: {
+        userName: string;
+    },
+}
+
 type AttachmentResponse = {
     downloadUri: string;
     id: number;
@@ -389,9 +398,9 @@ class InvitationForPunchOutApiClient extends ApiClient {
         }
     }
 
-    /**
+    /** 
      * Update IPO
-     *
+     * 
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async updateIpo(
@@ -426,6 +435,28 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     updatedCommPkgScope: commPkgScope,
                     rowVersion: rowVersion
                 },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Get History
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getHistory(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<HistoryResponse[]> {
+        const endpoint = `/Invitations/${id}/History`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.get(
+                endpoint,
                 settings
             );
             return result.data;

@@ -8,6 +8,7 @@ import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
 import GeneralInfo from './GeneralInfo';
+import History from './History';
 import { IpoStatusEnum } from './enums';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
@@ -170,14 +171,14 @@ const ViewIPO = (): JSX.Element => {
                             <Tab>General</Tab>
                             <Tab>Scope</Tab>
                             <Tab>Attachments</Tab>
-                            <Tab>Log</Tab>
+                            <Tab>History</Tab>
                             <Tab className='emptyTab'>{''}</Tab>
                         </TabList>
                         <TabPanels>
                             <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants}/></TabPanel>
                             <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
                             <TabPanel><Attachments ipoId={params.ipoId} /></TabPanel>
-                            <TabPanel>Log</TabPanel>
+                            <TabPanel><History ipoId={params.ipoId} /></TabPanel>
                         </TabPanels>
                     </Tabs>
                 </>

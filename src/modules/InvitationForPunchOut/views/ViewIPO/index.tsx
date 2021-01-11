@@ -94,11 +94,6 @@ const ViewIPO = (): JSX.Element => {
     };
 
     const updateParticipants = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
-        const signer = participant.person ? participant.person.person :
-            participant.functionalRole ? participant.functionalRole : undefined;
-
-        if (!signer || !invitation) return;
-
         await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
         await getInvitation();
     };

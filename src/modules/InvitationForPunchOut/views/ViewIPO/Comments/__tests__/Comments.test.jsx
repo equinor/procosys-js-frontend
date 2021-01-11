@@ -40,7 +40,7 @@ describe('Module: <Comments ipoId={} />', () => {
 
 
     it('Should render comments in pane', async () => {
-        const { getByText } = render(<Comments ipoId={0} />);
+        const { getByText } = render(<Comments ipoId={0} show={jest.fn()} hasComments={jest.fn()} />);
 
         await waitFor(() => expect(getByText(comments[1].comment)).toBeInTheDocument());
         await waitFor(() => expect(getByText((new Date(comments[1].createdAtUtc)).toLocaleString([], {year: 'numeric', month: '2-digit', day: 'numeric', hour: '2-digit', minute: '2-digit'}))).toBeInTheDocument());

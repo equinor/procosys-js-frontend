@@ -10,7 +10,7 @@ interface GeneralInfoProps {
     invitation: Invitation;
     complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
-    update: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    update: (e: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
 }
 

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
     margin: var(--margin-module--top) var(--margin-module--right);
     width: 100%;
+    height: 100%;
     
     .tabs {
         width: 100%;
@@ -20,6 +21,27 @@ export const Container = styled.div`
     }
 `;
 
+export const InvitationContentContainer = styled.div`
+    width: 100%;
+    position: relative;
+`;
+
+interface CommentsProps {
+    commentsDisplayed: boolean;
+}
+
+export const CommentsContainer = styled.div<CommentsProps>`
+    display: ${(props: any): string => props.commentsDisplayed ? 'block' : 'none'}
+`;
+
+
+export const CommentsIconContainer = styled.div`
+    position: absolute;
+    top: var(--margin-module--top);
+    right: var(--margin-module--right);
+    margin-right: 20px;
+`;
+
 export const CenterContainer = styled.div`
     width: 100%;
     height: 100%;
@@ -30,4 +52,5 @@ export const CenterContainer = styled.div`
 
 export const InvitationContainer = styled.div`
     display: flex;
+    height: 100%;
 `;

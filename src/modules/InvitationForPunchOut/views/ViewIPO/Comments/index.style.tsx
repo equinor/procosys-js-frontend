@@ -2,28 +2,34 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
-    position: relative;
-    display: block;
+    position: fixed;
     right: 0;
-    max-width: 20%;
-    min-width: 200px;
-    min-height: 100%;
-    margin: 0 var(--margin-module--right);
-    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2);
+    width: 400px;
+    max-width: 80%;
+    height: 100%;
+    max-height: calc(100vh - 300px);
     border-left: 1px solid ${tokens.colors.interactive.disabled__border.rgba};
+    background: var(--ui-background--default);
 `;
 
 export const HeaderContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding: calc(var(--grid-unit) * 2);
 `;
 
 export const CommentSectionContainer = styled.div`
     position: relative;
+    width: 100%;
+    height: 60%;
+    overflow-y: scroll;
 `;
 
 export const CommentContainer = styled.div`
     position: relative;
     margin: calc(var(--grid-unit) * 6) 0;
     line-height: calc(var(--grid-unit) * 3);
+    padding: 0 calc(var(--grid-unit) * 2);
 `;
 
 export const CommentHeaderContainer = styled.div`
@@ -39,7 +45,6 @@ export const SpinnerContainer = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.01);
     z-index: 9999;
     align-items: center;
     justify-content: center;

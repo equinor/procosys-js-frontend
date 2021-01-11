@@ -1,7 +1,9 @@
 import { CommentContainer, CommentHeaderContainer, CommentSectionContainer, Container, HeaderContainer, SpinnerContainer } from './index.style';
 import React, { useEffect, useState } from 'react';
 
+import { Button } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
+import EdsIcon from '@procosys/components/EdsIcon';
 import { IpoComment } from '../types';
 import Spinner from '@procosys/components/Spinner';
 import { Typography } from '@equinor/eds-core-react';
@@ -10,12 +12,18 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 
 interface CommentsProps {
     ipoId: number;
+    show: React.Dispatch<React.SetStateAction<boolean>>;
+    hasComments: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Comments = ({ ipoId }: CommentsProps): JSX.Element => {
+const Comments = ({ ipoId, show, hasComments }: CommentsProps): JSX.Element => {
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const { apiClient } = useInvitationForPunchOutContext();
+
+    useEffect(() => {
+        hasComments(comments.length > 0);
+    }, [comments]);
 
     const getComments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
@@ -43,6 +51,9 @@ const Comments = ({ ipoId }: CommentsProps): JSX.Element => {
         <Container>
             <HeaderContainer>
                 <Typography variant="h3">Comments</Typography>
+                <Button variant="ghost" title='Close' onClick={(): void => show(false)}>
+                    <EdsIcon name="close" />
+                </Button>
             </HeaderContainer>
             <CommentSectionContainer>
                 {loading && (

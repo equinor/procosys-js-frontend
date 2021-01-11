@@ -1,19 +1,20 @@
 import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, Person, RoleParticipant } from '../../types';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Canceler } from 'axios';
-import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
-import { poTypes } from './GeneralInfo/GeneralInfo';
+import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { Canceler } from 'axios';
+import { ComponentName } from '../enums';
+import CreateAndEditIPO from './CreateAndEditIPO';
+import { Invitation } from '../ViewIPO/types';
 import Loading from '@procosys/components/Loading';
+import { SelectItem } from '@procosys/components/Select';
+import { poTypes } from './GeneralInfo/GeneralInfo';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
-import { Invitation } from '../ViewIPO/types';
-import { SelectItem } from '@procosys/components/Select';
-import CreateAndEditIPO from './CreateAndEditIPO';
-import { ComponentName } from '../enums';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -30,6 +31,7 @@ const EditIPO = (): JSX.Element => {
     const params = useParams<{ ipoId: any }>();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
+    const [confirmationChecked, setConfirmationChecked] = useState<boolean>(true);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null,
@@ -381,6 +383,8 @@ const EditIPO = (): JSX.Element => {
         setAttachments={setAttachments}
         availableRoles={availableRoles}
         fromMain={false}
+        confirmationChecked={confirmationChecked}
+        setConfirmationChecked={setConfirmationChecked}
     />);
 };
 

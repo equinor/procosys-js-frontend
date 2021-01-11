@@ -1,7 +1,7 @@
+import { ComponentName, OrganizationsEnum } from '../../../../enums';
+import { IpoStatusEnum, OutlookResponseType } from '../../../enums';
 import { fireEvent, render } from '@testing-library/react';
 
-import { ComponentName } from '../../../../enums';
-import { OutlookResponseType } from '../../../enums';
 import ParticipantsTable from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
@@ -10,9 +10,17 @@ import theme from '../../../../../../../assets/theme';
 
 configure({ testIdAttribute: 'id' });
 
+const ParticipantIndex = Object.freeze({
+    COMPLETER: 2,
+    APPROVER: 3,
+    EXTERNAL: 0,
+    FUNCROLE: 1
+});
+
 const participants = [
     {
-        organization: 'External',
+        organization: OrganizationsEnum.External,
+        canSign: false,
         sortKey: 2,
         person: null,
         functionalRole: null,        
@@ -26,24 +34,28 @@ const participants = [
         note: ''
     },
     {
-        organization: 'TechnicalIntegrity',
+        organization: OrganizationsEnum.TechnicalIntegrity,
         sortKey: 3,
+        canSign: false,
         person: null,
         functionalRole: {
             id: 1,
             code: 'asdasdasd',
             email: 'funcitonalRole@asd.com',
             persons: [],
-            response: OutlookResponseType.ATTENDING,
+            response: OutlookResponseType.TENTATIVE,
             rowVersion: '123o875'
         },        
         externalEmail: null, 
         attended: false,
+        signedBy: 'signer3',
+        signedAtUtc: new Date(2020, 11, 6, 11), 
         note: ''
     },
     {
-        organization: 'Contractor',
+        organization: OrganizationsEnum.Contractor,
         sortKey: 0,
+        canSign: false,
         person: {
             person: {
                 id: 123,
@@ -54,7 +66,7 @@ const participants = [
                 rowVersion: '123123',
             },
             required: true,
-            response: OutlookResponseType.DECLINED,
+            response: OutlookResponseType.ATTENDING,
 
         },
         externalEmail: null,        
@@ -65,8 +77,9 @@ const participants = [
         note: ''
     },
     {
-        organization: 'ConstructionCompany',
+        organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
+        canSign: false,
         person: {
             person: {
                 id: 234,
@@ -77,7 +90,7 @@ const participants = [
                 rowVersion: '123123',
             },
             required: true,
-            response: OutlookResponseType.TENTATIVE,
+            response: OutlookResponseType.ATTENDING,
 
         },
         externalEmail: null,
@@ -123,71 +136,179 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText(`${participants[2].person.person.firstName} ${participants[2].person.person.lastName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[3].person.person.firstName} ${participants[3].person.person.lastName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[3].signedBy}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[2].signedBy}`)).toBeInTheDocument();
-        expect(queryAllByText(participants[2].person.response).length).toBeGreaterThan(0);
-        expect(queryAllByText(participants[3].person.response).length).toBeGreaterThan(0);
+        expect(queryByText(`${participants[ParticipantIndex.COMPLETER].person.person.firstName} ${participants[ParticipantIndex.COMPLETER].person.person.lastName}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.APPROVER].person.person.firstName} ${participants[ParticipantIndex.APPROVER].person.person.lastName}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy}`)).toBeInTheDocument();
+        expect(queryAllByText(participants[ParticipantIndex.COMPLETER].person.response).length).toBeGreaterThan(0);
+        expect(queryAllByText(participants[ParticipantIndex.APPROVER].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText('Did not attend').length).toBeGreaterThan(0);
     });
 
     it('Renders external to table', async () => {
         const { queryByText, queryAllByText } = renderWithTheme(<ParticipantsTable 
             participants={participants} 
-            status="Planned"
+            status={IpoStatusEnum.PLANNED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
-        expect(queryByText(participants[0].externalEmail.externalEmail)).toBeInTheDocument();
-        expect(queryAllByText(participants[0].externalEmail.response).length).toBeGreaterThan(0);
+        expect(queryByText(participants[ParticipantIndex.EXTERNAL].externalEmail.externalEmail)).toBeInTheDocument();
+        expect(queryAllByText(participants[ParticipantIndex.EXTERNAL].externalEmail.response).length).toBeGreaterThan(0);
     });
 
     it('Renders functionalRole to table', async () => {
         const newParticipants = [...participants];
-        newParticipants[2] = { ...participants[2], signedAtUtc: null, signedBy: null};
-        newParticipants[3] = { ...participants[3], signedAtUtc: null, signedBy: null};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null, canSign: true };
+        newParticipants[ParticipantIndex.COMPLETER] = { ...participants[ParticipantIndex.COMPLETER], signedAtUtc: null, signedBy: null};
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER], signedAtUtc: null, signedBy: null};
         const { queryByText } = renderWithTheme(<ParticipantsTable 
             participants={newParticipants} 
-            status="Planned"
+            status={IpoStatusEnum.PLANNED}
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
+        expect(queryByText(participants[ParticipantIndex.FUNCROLE].functionalRole.code)).toBeInTheDocument();
+    });
+
+    it('Renders planned status for completer', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.COMPLETER] = { ...participants[ParticipantIndex.COMPLETER], signedAtUtc: null, signedBy: null, canSign: true};
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER], signedAtUtc: null, signedBy: null};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null};
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={newParticipants} 
+            status={IpoStatusEnum.PLANNED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
         expect(queryByText('Complete punch out')).toBeInTheDocument();
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
-        expect(queryByText(participants[1].functionalRole.code)).toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
     });
 
-    it('Renders signedBy with full name', async () => {
+    it('Renders completed status for completer', async () => {
         const newParticipants = [...participants];
-        newParticipants[3] = { ...participants[3], signedAtUtc: null, signedBy: null};
+        newParticipants[ParticipantIndex.COMPLETER] = { ...participants[ParticipantIndex.COMPLETER], canSign: true};
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER], signedAtUtc: null, signedBy: null};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null};
         const { queryByText } = renderWithTheme(<ParticipantsTable 
             participants={newParticipants} 
-            status="Completed"
+            status={IpoStatusEnum.COMPLETED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Approve punch out')).toBeInTheDocument();
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
+        expect(queryByText('Update participants')).toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
     });
 
-    it('Renders approvedBy with full name', async () => {
+    it('Renders completed status for approver', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER], signedAtUtc: null, signedBy: null, canSign: true};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null};
         const { queryByText } = renderWithTheme(<ParticipantsTable 
-            participants={participants} 
-            status="Accepted"
+            participants={newParticipants} 
+            status={IpoStatusEnum.COMPLETED}
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Approve punch out')).toBeInTheDocument();
+        expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy)).toBeInTheDocument();
+        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+    });
+
+    it('Renders completed status for signer', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER], signedAtUtc: null, signedBy: null};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null, canSign: true};
+        const { queryByText, getByText } = renderWithTheme(<ParticipantsTable 
+            participants={newParticipants} 
+            status={IpoStatusEnum.COMPLETED}
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
+        expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy)).toBeInTheDocument();
+        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+    });
+
+    it('Renders accepted status for completer', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.COMPLETER] = { ...participants[ParticipantIndex.COMPLETER], canSign: true};
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER]};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null};
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={newParticipants} 
+            status={IpoStatusEnum.ACCEPTED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
-        expect(queryByText(`${participants[2].signedBy}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[3].signedBy}`)).toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy}`)).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
 
+    it('Renders accepted status for approver', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.APPROVER] = { ...participants[ParticipantIndex.APPROVER], canSign: true};
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null};
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={newParticipants} 
+            status={IpoStatusEnum.ACCEPTED}
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy}`)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy}`)).toBeInTheDocument();
+        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+        expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
+    });
+
+    it('Renders accepted status for signer', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.FUNCROLE] = { ...participants[ParticipantIndex.FUNCROLE], signedAtUtc: null, signedBy: null, canSign: true};
+        const { queryByText, getByText } = renderWithTheme(<ParticipantsTable 
+            participants={newParticipants} 
+            status={IpoStatusEnum.ACCEPTED}
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).toBeInTheDocument();
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
+        expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy)).toBeInTheDocument();
+        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy}`)).toBeInTheDocument();
+        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+        expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
+    });
+
+
     it('Should not render buttons when canceled', async () => {
+        const newParticipants = [...participants];
+        newParticipants[ParticipantIndex.COMPLETER] = { ...participants[ParticipantIndex.COMPLETER], canSign: true};
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={newParticipants} 
+            status="Canceled"
+            accept={approvePunchOut}
+            complete={completePunchOut} />);
+
+        expect(queryByText('Approve punch out')).not.toBeInTheDocument();
+        expect(queryByText('Complete punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+    });
+
+    it('Should not render buttons when noone can sign', async () => {
         const { queryByText } = renderWithTheme(<ParticipantsTable 
             participants={participants} 
             status="Canceled"
@@ -196,6 +317,7 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch out')).not.toBeInTheDocument();
+        expect(queryByText('Update participants')).not.toBeInTheDocument();
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
     });
 
@@ -206,8 +328,8 @@ describe('<ParticipantsTable />', () => {
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
-        expect(queryAllByText('Attended').length).toBe(2); // +1 for table header
-        expect(queryAllByText('Did not attend').length).toBe(3);
+        expect(queryAllByText('Attended').length).toBe(3); // +1 for table header
+        expect(queryAllByText('Did not attend').length).toBe(2);
     });
 
     it('Should set attended from participant status when not in planned state', async () => {

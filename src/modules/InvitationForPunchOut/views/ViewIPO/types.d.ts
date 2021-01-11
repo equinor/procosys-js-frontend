@@ -13,6 +13,7 @@ export type CommPkgScope = {
 type Participant = {
     organization: string;
     sortKey: number;
+    canSign: boolean;
     externalEmail: ExternalEmail;
     person: Person;
     functionalRole: FunctionalRole;

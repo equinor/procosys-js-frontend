@@ -66,3 +66,12 @@ export type Invitation = {
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
 }
+
+export type HistoryItem = {
+    id: number;
+    description: string;
+    createdAtUtc: string;
+    createdBy: {
+        userName: string;
+    },
+}

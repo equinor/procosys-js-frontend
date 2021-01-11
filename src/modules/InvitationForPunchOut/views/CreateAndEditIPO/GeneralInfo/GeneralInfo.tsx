@@ -220,7 +220,7 @@ const GeneralInfo = ({
                 />
             </LocationContainer>
             <ConfirmationTextContainer>
-                <ConfirmCheckbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />
+                {isEditMode ? <ConfirmCheckbox disabled checked /> : <ConfirmCheckbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
                 <TextContainer>
                     <Typography variant="body_short" fontWeight={400}>
                         I hereby confirm that prior to common punch out all relevant MCCR shall be signed and all punch items registered.

@@ -102,7 +102,7 @@ const ParticipantsTable = ({participants, status, complete, accept, update, sign
             <CustomTooltip title={tooltipUpdate} arrow>
                 <span>
                     <Button ref={btnUpdateRef} onClick={updateParticipants}>
-                        Update participants
+                        Update
                     </Button>
                 </span>
             </CustomTooltip>
@@ -121,11 +121,9 @@ const ParticipantsTable = ({participants, status, complete, accept, update, sign
 
     const getSignButton = (signPunchOut: (index: number) => void): JSX.Element => {
         return (
-            <CustomTooltip title={tooltipApprove} arrow>
-                <Button ref={btnSignRef} onClick={signPunchOut}>
+            <Button ref={btnSignRef} onClick={signPunchOut}>
                     Sign punch out
-                </Button>
-            </CustomTooltip>
+            </Button>
         );
     };
 

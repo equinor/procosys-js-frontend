@@ -457,34 +457,11 @@ class InvitationForPunchOutApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            // const result = await this.client.get(
-            //     endpoint,
-            //     settings
-            // );
-            // return result.data;
-            // TODO: replace with above when endpoint is available. check response type
-            return [
-                {
-                    id: 0,
-                    comment: 'Attachments alkwd akwkl dknawkndlaknwd wdadd adwa a adwadwad ada adw ad adw ad awaddadawdawdadawd',
-                    createdAtUtc: 'Wed, 14 Jun 2017 07:00:00 GMT',
-                    createdBy: {
-                        firstName: 'Jan Erik',
-                        lastName: 'Hagevold'
-                    },
-                    rowVersion: 'asdadasdads'
-                },
-                {
-                    id: 1,
-                    comment: 'Attachments alkwd akwkl dknawkndlaknwd dsa dwad adwad adw awdawd awda wd a  awdawda wdawda dawd awd awd awdawdad',
-                    createdAtUtc: 'Wed, 14 Jun 2017 08:00:00 GMT',
-                    createdBy: {
-                        firstName: 'Elisabeth',
-                        lastName: 'Bratli'
-                    },
-                    rowVersion: 'asdawwwwwads'
-                }
-            ];
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
         } catch (error) {
             throw new IpoApiError(error);
         }

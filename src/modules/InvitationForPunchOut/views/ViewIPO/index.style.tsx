@@ -56,7 +56,7 @@ export const InvitationContainer = styled.div`
 
 export const TabsContainer = styled.div`
     width: 100%;
-    overflow: hidden;
+    overflow: auto;
 `;
 
 export const InvitationContentContainer = styled.div`

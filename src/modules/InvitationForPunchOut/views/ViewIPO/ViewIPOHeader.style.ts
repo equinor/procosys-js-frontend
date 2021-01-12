@@ -6,7 +6,6 @@ export const Container = styled.div`
     flex-direction: column;
     width: 100%;
     background-color: ${tokens.colors.ui.background__light.rgba};
-    /* margin: calc(var(--margin-module--top) * -1) calc(var(--margin-module--right) * -1) 0 calc(var(--margin-module--right) * -1); */
     padding: calc(var(--grid-unit) * 2) 0 calc(var(--grid-unit) * 4) 0;
 `;
 

@@ -11,49 +11,48 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
 interface CommentsProps {
-    ipoId: number;
-    show: React.Dispatch<React.SetStateAction<boolean>>;
-    hasComments: React.Dispatch<React.SetStateAction<boolean>>;
+    comments: IpoComment[];
+    loading: boolean;
 }
 
-const Comments = ({ ipoId, show, hasComments }: CommentsProps): JSX.Element => {
-    const [comments, setComments] = useState<IpoComment[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const { apiClient } = useInvitationForPunchOutContext();
+const Comments = ({ comments, loading }: CommentsProps): JSX.Element => {
+    // const [comments, setComments] = useState<IpoComment[]>([]);
+    // const [loading, setLoading] = useState<boolean>(true);
+    // const { apiClient } = useInvitationForPunchOutContext();
 
-    useEffect(() => {
-        hasComments(comments.length > 0);
-    }, [comments]);
+    // useEffect(() => {
+    //     hasComments(comments.length > 0);
+    // }, [comments]);
 
-    const getComments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
-        try {
-            const response = await apiClient.getComments(ipoId, requestCanceller);
-            setComments(response);
-        } catch (error) {
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
-    };
+    // const getComments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    //     try {
+    //         const response = await apiClient.getComments(ipoId, requestCanceller);
+    //         setComments(response);
+    //     } catch (error) {
+    //         console.error(error.message, error.data);
+    //         showSnackbarNotification(error.message);
+    //     }
+    // };
 
-    useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            setLoading(true);
-            await getComments((cancel: Canceler) => { requestCancellor = cancel; });
-            setLoading(false);
-        })();
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
-    }, []);
+    // useEffect(() => {
+    //     let requestCancellor: Canceler | null = null;
+    //     (async (): Promise<void> => {
+    //         setLoading(true);
+    //         await getComments((cancel: Canceler) => { requestCancellor = cancel; });
+    //         setLoading(false);
+    //     })();
+    //     return (): void => {
+    //         requestCancellor && requestCancellor();
+    //     };
+    // }, []);
 
     return (
         <Container>
             <HeaderContainer>
                 <Typography variant="h3">Comments</Typography>
-                <Button variant="ghost" title='Close' onClick={(): void => show(false)}>
+                {/* <Button variant="ghost" title='Close' onClick={(): void => show(false)}>
                     <EdsIcon name="close" />
-                </Button>
+                </Button> */}
             </HeaderContainer>
             <CommentSectionContainer>
                 {loading && (

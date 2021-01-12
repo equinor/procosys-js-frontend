@@ -1,7 +1,7 @@
 import { AcceptIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
-import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer } from './index.style';
-import { Invitation, Participant } from './types';
-import React, { useCallback, useEffect, useState } from 'react';
+import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabsContainer } from './index.style';
+import { Invitation, IpoComment, Participant } from './types';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
@@ -45,6 +45,29 @@ const ViewIPO = (): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [showComments, setShowComments] = useState<boolean>(false);
     const [hasComments, setHasComments] = useState<boolean>(false);
+    const [comments, setComments] = useState<IpoComment[]>([]);
+    const [loadingComments, setLoadingComments] = useState<boolean>(false);
+
+    const moduleContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
+
+    const updateModuleAreaHeightReference = (): void => {
+        if (!moduleContainerRef.current) return;
+        setModuleAreaHeight(moduleContainerRef.current.clientHeight);
+    };
+
+    /** Update module area height on module resize */
+    useEffect(() => {
+        updateModuleAreaHeightReference();
+    }, [moduleContainerRef, showComments]);
+
+    useEffect(() => {
+        window.addEventListener('resize', updateModuleAreaHeightReference);
+
+        return (): void => {
+            window.removeEventListener('resize', updateModuleAreaHeightReference);
+        };
+    }, []);
 
     useEffect(() => {
         if (invitation) {
@@ -66,7 +89,7 @@ const ViewIPO = (): JSX.Element => {
         }
     }, [invitation]);
 
-    const getInvitation = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    const getInvitation = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
             const response = await apiClient.getIPO(params.ipoId, requestCanceller);
             setInvitation(response);
@@ -74,7 +97,33 @@ const ViewIPO = (): JSX.Element => {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-    }, [params.ipoId]);
+    };
+
+    const getComments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+        try {
+            const response = await apiClient.getComments(params.ipoId, requestCanceller);
+            setComments(response);
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+    useEffect(() => {
+        setHasComments(comments.length > 0);
+    }, [comments]);
+
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            setLoadingComments(true);
+            await getComments((cancel: Canceler) => { requestCancellor = cancel; });
+            setLoadingComments(false);
+        })();
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -150,14 +199,14 @@ const ViewIPO = (): JSX.Element => {
 
 
     return (
-        <Container>
+        <Container >
             { loading ? (
                 <CenterContainer>
                     <Spinner large />
                 </CenterContainer>
             ) :
                 invitation ? (
-                    <>
+                    <InvitationContainer>
                         <ViewIPOHeader
                             ipoId={params.ipoId}
                             steps={steps}
@@ -167,8 +216,8 @@ const ViewIPO = (): JSX.Element => {
                             participants={invitation.participants}
                             isEditable={invitation.status == IpoStatusEnum.PLANNED}
                         />
-                        <InvitationContainer>
-                            <InvitationContentContainer>
+                        <InvitationContentContainer ref={moduleContainerRef}>
+                            <TabsContainer>
                                 <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
                                     <TabList>
                                         <Tab>General</Tab>
@@ -187,13 +236,16 @@ const ViewIPO = (): JSX.Element => {
                                 <CommentsIconContainer onClick={(): void => setShowComments(show => !show)}>
                                     <EdsIcon name={`${hasComments ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba}/>
                                 </CommentsIconContainer>
-                            </InvitationContentContainer>
 
-                            <CommentsContainer commentsDisplayed={showComments}>
-                                <Comments ipoId={params.ipoId} show={setShowComments} hasComments={setHasComments}/>
-                            </CommentsContainer>
-                        </InvitationContainer>
-                    </>
+                            </TabsContainer>
+                            {showComments && (
+                                <CommentsContainer commentsDisplayed={showComments} maxHeight={moduleAreaHeight}>
+                                    <Comments comments={comments} loading={loadingComments}/>
+                                </CommentsContainer>
+                            )}
+
+                        </InvitationContentContainer>
+                    </InvitationContainer>
 
                 ) :
                     (

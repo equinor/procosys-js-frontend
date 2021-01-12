@@ -1,15 +1,8 @@
 import styled from 'styled-components';
-import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
-    position: fixed;
-    right: 0;
-    width: 400px;
-    max-width: 80%;
+    width: 100%;
     height: 100%;
-    max-height: calc(100vh - 300px);
-    border-left: 1px solid ${tokens.colors.interactive.disabled__border.rgba};
-    background: var(--ui-background--default);
 `;
 
 export const HeaderContainer = styled.div`
@@ -21,8 +14,6 @@ export const HeaderContainer = styled.div`
 export const CommentSectionContainer = styled.div`
     position: relative;
     width: 100%;
-    height: 60%;
-    overflow-y: scroll;
 `;
 
 export const CommentContainer = styled.div`

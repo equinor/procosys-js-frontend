@@ -56,10 +56,11 @@ const CreateAndEditIPO = ({
     setConfirmationChecked
 }: CreateAndEditProps): JSX.Element => {
 
+    const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
+
+    const [commPkgNoFromMain, setCommPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
-
-    const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
 
     const initialGeneralInfo = { ...generalInfo };
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
@@ -193,7 +194,7 @@ const CreateAndEditIPO = ({
         { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectName != null) &&
             <SelectScope
                 type={generalInfo.poType.value}
-                commPkgNo={params.commPkgNo ? params.commPkgNo : null}
+                commPkgNo={commPkgNoFromMain ? commPkgNoFromMain : null}
                 selectedCommPkgScope={selectedCommPkgScope}
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}

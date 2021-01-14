@@ -1,5 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, HeaderContainer } from './ViewIPOHeader.style';
+import { ButtonContainer, ButtonSpacer, Container, HeaderContainer } from './ViewIPOHeader.style';
 import OutlookInfo, { OutlookStatusType } from './OutlookInfo';
 import React, { useState } from 'react';
 
@@ -9,6 +9,7 @@ import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
 import { Link } from 'react-router-dom';
 import { tokens } from '@equinor/eds-tokens';
+import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 
 type ProgressBarProps = {
     ipoId: number;
@@ -18,6 +19,8 @@ type ProgressBarProps = {
     participants: Participant[];
     organizer: string;
     isEditable: boolean;
+    isCancelable: boolean;
+    cancelPunchOut: () => void;
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
@@ -29,6 +32,18 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
 
     const openFlyout = (): void => {
         setDisplayFlyout(true);
+    };
+
+    const confirmCancelIpo = (): void => {
+        showModalDialog(
+            'Cancel IPO',
+            <div>This will cancel the IPO and send a cancellation to invited participants.</div>,
+            '18vw',
+            'Cancel',
+            null,
+            'Confirm',
+            props.cancelPunchOut,
+            true);
     };
 
     return (
@@ -44,6 +59,14 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                     </Button>
                 </ButtonContainer>
                 <ButtonContainer>
+                    <Button
+                        disabled={!props.isCancelable}
+                        variant='outlined'
+                        onClick={(): void => confirmCancelIpo()}
+                    >
+                        <EdsIcon name='calendar_reject' /> Cancel IPO
+                    </Button>
+                    <ButtonSpacer />
                     <Link to={`/EditIPO/${props.ipoId}`}>
                         <Button
                             disabled={!props.isEditable}

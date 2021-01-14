@@ -21,3 +21,7 @@ export const ButtonContainer = styled.div`
     display: flex;
     align-items: center;
 `;
+
+export const ButtonSpacer = styled.div`
+    margin-right: calc(var(--grid-unit) * 2);
+`;

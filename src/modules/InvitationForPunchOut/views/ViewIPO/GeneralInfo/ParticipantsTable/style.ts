@@ -28,5 +28,3 @@ export const SpinnerContainer = styled.div`
     justify-content: center;
 `;
 
-
-

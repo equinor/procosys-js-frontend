@@ -97,7 +97,7 @@ const ViewIPO = (): JSX.Element => {
         await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
         await getInvitation();
     };
-    
+
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
@@ -127,6 +127,23 @@ const ViewIPO = (): JSX.Element => {
         await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
         await getInvitation();
     };
+
+    const unAcceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        const acceptDetails: AcceptIPODto = {
+            invitationRowVersion: invitation.rowVersion,
+            participantRowVersion: signer.rowVersion,
+            participants: attNoteData
+        };
+
+        await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+        await getInvitation();
+    };
+
 
     const signPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person ? participant.person.person :
@@ -170,7 +187,7 @@ const ViewIPO = (): JSX.Element => {
                             <Tab className='emptyTab'>{''}</Tab>
                         </TabList>
                         <TabPanels>
-                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants}/></TabPanel>
+                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unAccept={unAcceptPunchOut} /></TabPanel>
                             <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
                             <TabPanel><Attachments ipoId={params.ipoId} /></TabPanel>
                             <TabPanel><History ipoId={params.ipoId} /></TabPanel>

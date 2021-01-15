@@ -20,7 +20,6 @@ export const Container = styled.div`
 `;
 
 interface CommentsProps {
-    commentsDisplayed: boolean;
     maxHeight: number;
 }
 
@@ -29,7 +28,6 @@ export const CommentsContainer = styled.div<CommentsProps>`
     height: ${(props): number => props.maxHeight}px; 
     width: 400px;
     min-width: 300px;
-    display: ${(props: any): string => props.commentsDisplayed ? 'block' : 'none'};
     background: var(--ui-background--default);
 `;
 

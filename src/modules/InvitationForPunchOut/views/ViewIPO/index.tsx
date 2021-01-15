@@ -253,7 +253,7 @@ const ViewIPO = (): JSX.Element => {
 
                             </TabsContainer>
                             {showComments && (
-                                <CommentsContainer commentsDisplayed={showComments} maxHeight={moduleAreaHeight}>
+                                <CommentsContainer maxHeight={moduleAreaHeight}>
                                     <Comments comments={comments} addComment={addComment} loading={loadingComments} close={(): void => setShowComments(false)}/>
                                 </CommentsContainer>
                             )}

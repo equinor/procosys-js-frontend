@@ -14,7 +14,6 @@ export const HeaderContainer = styled.div`
     align-items: center;
     justify-content:space-between;
     margin: 0 var(--margin-module--right) calc(var(--grid-unit) * 3) var(--margin-module--right);
-
 `;
 
 export const ProgressBarContainer = styled.div`

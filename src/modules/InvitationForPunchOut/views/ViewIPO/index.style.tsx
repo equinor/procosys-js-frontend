@@ -30,8 +30,6 @@ export const CommentsContainer = styled.div<CommentsProps>`
     width: 400px;
     min-width: 300px;
     display: ${(props: any): string => props.commentsDisplayed ? 'block' : 'none'};
-    overflow-y: auto;
-    scrollbar-width: none;
     background: var(--ui-background--default);
 `;
 

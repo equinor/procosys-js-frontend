@@ -14,7 +14,9 @@ export const HeaderContainer = styled.div`
 
 export const CommentSectionContainer = styled.div`
     position: relative;
+    overflow-y: scroll;
     width: 100%;
+    height: 100%;
 `;
 
 export const CommentContainer = styled.div`

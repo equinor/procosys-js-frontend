@@ -477,6 +477,34 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
+     * Add comment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async addComment(
+        id: number,
+        comment: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Invitations/${id}/Comments`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    comment
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+
+    /**
      * Get History
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request

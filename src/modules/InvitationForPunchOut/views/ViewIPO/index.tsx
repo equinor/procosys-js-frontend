@@ -125,6 +125,20 @@ const ViewIPO = (): JSX.Element => {
         };
     }, []);
 
+
+    const addComment = async (comment: string): Promise<void> => {
+        setLoadingComments(true);
+        try {
+            await apiClient.addComment(params.ipoId, comment);
+            await getComments();
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        setLoadingComments(false);
+    };
+
+
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
@@ -234,13 +248,13 @@ const ViewIPO = (): JSX.Element => {
                                     </TabPanels>
                                 </Tabs>
                                 <CommentsIconContainer onClick={(): void => setShowComments(show => !show)}>
-                                    <EdsIcon name={`${hasComments ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba}/>
+                                    {!showComments && <EdsIcon name={`${hasComments ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba}/>}
                                 </CommentsIconContainer>
 
                             </TabsContainer>
                             {showComments && (
                                 <CommentsContainer commentsDisplayed={showComments} maxHeight={moduleAreaHeight}>
-                                    <Comments comments={comments} loading={loadingComments}/>
+                                    <Comments comments={comments} addComment={addComment} loading={loadingComments} close={(): void => setShowComments(false)}/>
                                 </CommentsContainer>
                             )}
 

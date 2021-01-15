@@ -1,3 +1,4 @@
+import { Button } from '@equinor/eds-core-react';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -39,4 +40,18 @@ export const SpinnerContainer = styled.div`
     z-index: 9999;
     align-items: center;
     justify-content: center;
+`;
+
+export const AddSectionContainer = styled.div`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: var(--margin-module--top) 0;
+    padding: 0 calc(var(--grid-unit) * 2);
+`;
+
+export const StyledButton = styled(Button)`
+    margin-top: var(--grid-unit);
+    margin-left: auto !important;
 `;

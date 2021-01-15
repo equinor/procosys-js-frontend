@@ -14,7 +14,7 @@ interface SelectScopeProps {
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: (selectedMckgScope: McScope) => void;
-    commPkgNo: string;
+    commPkgNo: string | null;
     projectName: string;
 }
 

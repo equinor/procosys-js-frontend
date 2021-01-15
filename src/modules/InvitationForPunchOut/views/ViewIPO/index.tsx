@@ -44,7 +44,6 @@ const ViewIPO = (): JSX.Element => {
     const [invitation, setInvitation] = useState<Invitation>();
     const [loading, setLoading] = useState<boolean>(false);
     const [showComments, setShowComments] = useState<boolean>(false);
-    const [hasComments, setHasComments] = useState<boolean>(false);
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
 
@@ -108,10 +107,6 @@ const ViewIPO = (): JSX.Element => {
             showSnackbarNotification(error.message);
         }
     };
-
-    useEffect(() => {
-        setHasComments(comments.length > 0);
-    }, [comments]);
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -248,7 +243,7 @@ const ViewIPO = (): JSX.Element => {
                                     </TabPanels>
                                 </Tabs>
                                 <CommentsIconContainer onClick={(): void => setShowComments(show => !show)}>
-                                    {!showComments && <EdsIcon name={`${hasComments ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba}/>}
+                                    {!showComments && <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba}/>}
                                 </CommentsIconContainer>
 
                             </TabsContainer>

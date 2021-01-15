@@ -208,7 +208,7 @@ const ViewIPO = (): JSX.Element => {
                         organizer={invitation.createdBy}
                         participants={invitation.participants}
                         isEditable={invitation.status == IpoStatusEnum.PLANNED}
-                        isCancelable={invitation.status != IpoStatusEnum.CANCELED}
+                        isCancelable={invitation.status == IpoStatusEnum.PLANNED || invitation.status == IpoStatusEnum.COMPLETED}
                         cancelPunchOut={cancelPunchOut}
                     />
                     <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>

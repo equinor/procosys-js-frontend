@@ -324,7 +324,7 @@ const Participants = ({
                                         id={'guestEmail'}
                                         placeholder='Email'
                                         label='e-mail address'
-                                        value={p.externalEmail ? p.externalEmail : ''}
+                                        defaultValue={p.externalEmail ? p.externalEmail.email : ''}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setExternalEmail(e.target.value, index)}
                                     />
                                 </div>

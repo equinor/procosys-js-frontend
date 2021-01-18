@@ -103,7 +103,7 @@ const Summary = ({
                 }
                 { participant.externalEmail &&
                     <Cell>
-                        {participant.externalEmail}
+                        {participant.externalEmail.email}
                     </Cell>
                 }
             </Row>);

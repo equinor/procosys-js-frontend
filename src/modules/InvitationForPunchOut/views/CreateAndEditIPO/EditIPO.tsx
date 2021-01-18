@@ -1,4 +1,4 @@
-import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, Person, RoleParticipant, Step } from '../../types';
+import { Attachment, CommPkgRow, ExternalEmail, GeneralInfoDetails, McScope, Participant, Person, RoleParticipant, Step } from '../../types';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,6 +15,8 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+import { OrganizationMap } from '../utils';
+import { Organization } from '../../types';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectId: null,
@@ -289,6 +291,7 @@ const EditIPO = (): JSX.Element => {
                 let participantType = '';
                 let person: Person | null = null;
                 let roleParticipant: RoleParticipant | null = null;
+                let externalEmail: ExternalEmail | null = null;
 
                 if (participant.person) {
                     participantType = 'Person';
@@ -327,13 +330,20 @@ const EditIPO = (): JSX.Element => {
                         notify: (persons && persons.length > 0) ? true : false,
                         persons: persons
                     };
+                } else if (participant.externalEmail) {
+                    participantType = 'Person';
+                    externalEmail = {
+                        id: participant.externalEmail.id,
+                        email: participant.externalEmail.externalEmail,
+                        rowVersion: participant.externalEmail.rowVersion
+                    };
                 }
-
+                const organizationText = OrganizationMap.get(participant.organization as Organization);
                 const newParticipant: Participant = {
-                    organization: { text: participant.organization, value: participant.organization },
+                    organization: { text: organizationText ? organizationText : 'Unknown', value: participant.organization },
                     sortKey: participant.sortKey,
                     type: participantType,
-                    externalEmail: null,
+                    externalEmail: externalEmail,
                     person: person,
                     role: roleParticipant
                 };

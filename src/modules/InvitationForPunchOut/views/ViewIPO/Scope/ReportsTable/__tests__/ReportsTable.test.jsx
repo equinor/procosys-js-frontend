@@ -54,7 +54,7 @@ describe('<ReportsTable />', () => {
     it('Renders Report types with MC Scope', async () => {
         const { queryByText } = renderWithTheme(<ReportsTable mcPkgScope={mcPkgScope} commPkgScope={[]} />);
 
-        expect(queryByText('MC32')).toBeInTheDocument();
+        expect(queryByText('MC32D')).toBeInTheDocument();
         expect(queryByText('MC84')).toBeInTheDocument();
         expect(queryByText('CDP06')).toBeInTheDocument();
     });
@@ -62,7 +62,7 @@ describe('<ReportsTable />', () => {
     it('Renders Report types with Comm Scope', async () => {
         const { queryByText } = renderWithTheme(<ReportsTable mcPkgScope={[]} commPkgScope={commPkgScope} />);
 
-        expect(queryByText('MC32')).toBeInTheDocument();
+        expect(queryByText('MC32D')).toBeInTheDocument();
         expect(queryByText('MC84')).toBeInTheDocument();
         expect(queryByText('CDP06')).toBeInTheDocument();
     });

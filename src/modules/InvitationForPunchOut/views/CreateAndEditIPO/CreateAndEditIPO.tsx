@@ -22,6 +22,8 @@ export enum StepsEnum {
 
 interface CreateAndEditProps {
     saveIpo: () => void;
+    steps: Step[];
+    setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     selectedCommPkgScope: CommPkgRow[];
@@ -40,6 +42,8 @@ interface CreateAndEditProps {
 
 const CreateAndEditIPO = ({
     saveIpo,
+    steps,
+    setSteps,
     generalInfo,
     setGeneralInfo,
     selectedCommPkgScope,
@@ -65,15 +69,6 @@ const CreateAndEditIPO = ({
     const initialGeneralInfo = { ...generalInfo };
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
-    const initialSteps: Step[] = [
-        { title: 'General info', isCompleted: false },
-        { title: 'Scope', isCompleted: false },
-        { title: 'Participants', isCompleted: false },
-        { title: 'Upload attachments', isCompleted: (params.ipoId ? true : false) },
-        { title: 'Summary & ' + (params.ipoId ? 'update' : 'create'), isCompleted: false }
-    ];
-
-    const [steps, setSteps] = useState<Step[]>(initialSteps);
 
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {

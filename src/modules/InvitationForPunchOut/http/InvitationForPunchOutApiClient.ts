@@ -696,7 +696,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async unAcceptPunchOut(id: number, unAcceptDetails: AcceptIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+    async unacceptPunchOut(id: number, invitationRowVersion: string, participantRowVersion: string, setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Invitations/${id}/UnAccept`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -705,11 +705,11 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.put(
                 endpoint,
                 {
-                    invitationRowVersion: unAcceptDetails.invitationRowVersion,
-                    participantRowVersion: unAcceptDetails.participantRowVersion,
-                    participants: unAcceptDetails.participants
-                },
-                settings);
+                    invitationRowVersion: invitationRowVersion,
+                    participantRowVersion: participantRowVersion,
+                    settings
+                }
+            );
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

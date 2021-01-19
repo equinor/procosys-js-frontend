@@ -35,11 +35,11 @@ interface ParticipantsTableProps {
     accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     update: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
-    unAccept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    unaccept: (p: Participant) => Promise<any>;
 }
 
 
-const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unAccept }: ParticipantsTableProps): JSX.Element => {
+const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unaccept }: ParticipantsTableProps): JSX.Element => {
     const cleanData = participants.map(p => {
         const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
         const attendedStatus = status === IpoStatusEnum.PLANNED ?
@@ -224,6 +224,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         }
         try {
             await accept(participants[index], attNoteData);
+            if (btnUnApproveRef.current) {
+                btnUnApproveRef.current.removeAttribute('disabled');
+            }
             showSnackbarNotification('Punch out approved', 2000, true);
         } catch (error) {
             if (btnApproveRef.current) {
@@ -237,15 +240,18 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
     const handleUnApprovePunchOut = async (index: number): Promise<any> => {
         setLoading(true);
-        if (btnApproveRef.current) {
-            btnApproveRef.current.setAttribute('disabled', 'disabled');
+        if (btnUnApproveRef.current) {
+            btnUnApproveRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await accept(participants[index], attNoteData);
-            showSnackbarNotification('Punch out approved', 2000, true);
-        } catch (error) {
+            await unaccept(participants[index]);
+            showSnackbarNotification('Punch out unapproved', 2000, true);
             if (btnApproveRef.current) {
                 btnApproveRef.current.removeAttribute('disabled');
+            }
+        } catch (error) {
+            if (btnUnApproveRef.current) {
+                btnUnApproveRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
         }

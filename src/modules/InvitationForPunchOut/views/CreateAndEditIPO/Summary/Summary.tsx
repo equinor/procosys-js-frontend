@@ -172,8 +172,8 @@ const Summary = ({
                         </Row>
                     </Head>
                     <Body>
-                        <Row key={'MC32'}>
-                            <Cell>{'MC32'}</Cell>
+                        <Row key={'MC32D'}>
+                            <Cell>{'MC32D'}</Cell>
                             <Cell>{'MC scope'}</Cell>
                         </Row>
                         <Row key={'MC84'}>

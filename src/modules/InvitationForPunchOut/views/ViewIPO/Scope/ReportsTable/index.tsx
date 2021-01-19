@@ -34,58 +34,58 @@ interface ReportsTableProps {
     commPkgScope: CommPkgScope[];
 }
 
-const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps ): JSX.Element => {
+const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps): JSX.Element => {
     const { plant } = useCurrentPlant();
     const reportParams = getReportParams(mcPkgScope, commPkgScope);
 
     const getReportUrl = (reportId: number): string => {
-        if (reportId === ReportIdEnum.MC32) {
+        if (reportId === ReportIdEnum.MC32D) {
             return `/${plant.pathId}/Report/AutoGenerate?reportId=${reportId}${reportParams}`;
         } else {
             return `/${plant.pathId}/Search/AutoGenerate?searchId=${reportId}${reportParams}`;
         }
     };
- 
+
     return (
         <Container>
             <CustomTable>
                 <Head>
                     <Row>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Report</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>{' '}</Cell>
-                        <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>{' '}</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Report</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>{' '}</Cell>
+                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>{' '}</Cell>
                     </Row>
                 </Head>
                 <Body>
                     <Row as="tr">
-                        <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                            <Typography href={getReportUrl(ReportIdEnum.MC32)} variant="body_short" link>MC32</Typography>
+                        <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
+                            <Typography href={getReportUrl(ReportIdEnum.MC32D)} variant="body_short" link>MC32D</Typography>
                         </Cell>
-                        <Cell as="td" style={{verticalAlign: 'middle'}}>MC Scope</Cell>
-                        <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                        <Cell as="td" style={{ verticalAlign: 'middle' }}>MC Scope</Cell>
+                        <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             {' '}
                         </Cell>
                     </Row>
                     <Row as="tr">
-                        <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                        <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             <Typography href={getReportUrl(ReportIdEnum.MC84)} variant="body_short" link>MC84</Typography>
                         </Cell>
-                        <Cell as="td" style={{verticalAlign: 'middle'}}>Punch List</Cell>
-                        <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                        <Cell as="td" style={{ verticalAlign: 'middle' }}>Punch List</Cell>
+                        <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             {' '}
                         </Cell>
                     </Row>
                     <Row as="tr">
-                        <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                        <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             <Typography href={getReportUrl(ReportIdEnum.CDP06)} variant="body_short" link>CDP06</Typography>
                         </Cell>
-                        <Cell as="td" style={{verticalAlign: 'middle'}}>Concession Deviation Permit</Cell>
-                        <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
+                        <Cell as="td" style={{ verticalAlign: 'middle' }}>Concession Deviation Permit</Cell>
+                        <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             {' '}
                         </Cell>
                     </Row>
                 </Body>
-            </CustomTable> 
+            </CustomTable>
         </Container>
     );
 };

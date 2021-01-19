@@ -48,7 +48,15 @@ type ParticipantInvitationResponse = {
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;
     functionalRole: FunctionalRoleInvitationResponse;
-    signedBy?: string;
+    signedBy?: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        userName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    },
     signedAtUtc?: Date;
     attended: boolean;
     note: string;
@@ -685,6 +693,31 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     participants: acceptDetails.participants
                 },
                 settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * UnAcceptPunchOut
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async unacceptPunchOut(id: number, invitationRowVersion: string, participantRowVersion: string, setRequestCanceller?: RequestCanceler): Promise<string> {
+        const endpoint = `/Invitations/${id}/UnAccept`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.put(
+                endpoint,
+                {
+                    invitationRowVersion: invitationRowVersion,
+                    participantRowVersion: participantRowVersion,
+                    settings
+                }
+            );
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

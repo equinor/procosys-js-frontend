@@ -19,13 +19,7 @@ type Participant = {
     functionalRole: FunctionalRole;
     signedAtUtc?: Date;
     signedBy?: {
-        id: number;
-        firstName: string;
-        lastName: string;
         userName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
     },
     note: string;
     attended: boolean;

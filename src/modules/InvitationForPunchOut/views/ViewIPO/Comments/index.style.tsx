@@ -2,8 +2,6 @@ import { Button } from '@equinor/eds-core-react';
 import styled from 'styled-components';
 
 export const Container = styled.div`
-    width: 100%;
-    height: 100%;
 `;
 
 export const HeaderContainer = styled.div`
@@ -12,24 +10,19 @@ export const HeaderContainer = styled.div`
     padding: calc(var(--grid-unit) * 2);
 `;
 
-export const CommentSectionContainer = styled.div`
-    position: relative;
-    overflow-y: scroll;
-    width: 100%;
-    height: 100%;
-`;
 
 export const CommentContainer = styled.div`
     position: relative;
     margin: calc(var(--grid-unit) * 6) 0;
     line-height: calc(var(--grid-unit) * 3);
     padding: 0 calc(var(--grid-unit) * 2);
+    word-wrap: break-word;
 `;
 
 export const CommentHeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-bottom: var(--grid-unit);
+    margin-bottom: var(--grid-unit);    
 `;
 
 export const SpinnerContainer = styled.div`

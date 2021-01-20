@@ -1,5 +1,5 @@
 import { AcceptIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
-import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabsContainer } from './index.style';
+import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabsContainer, TabStyle } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
@@ -35,6 +35,9 @@ enum StepsEnum {
     Accepted = 3
 };
 
+const ipoHeaderSize = 136;
+const ipoTabHeaderSize = 115;
+
 const ViewIPO = (): JSX.Element => {
     const params = useParams<{ ipoId: any }>();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
@@ -48,12 +51,18 @@ const ViewIPO = (): JSX.Element => {
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
-    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
+
+    const getModuleAreaHeight = (): number => {
+        if (!moduleContainerRef.current) return 0;
+        return (moduleContainerRef.current.clientHeight - ipoHeaderSize);
+    };
 
     const updateModuleAreaHeightReference = (): void => {
         if (!moduleContainerRef.current) return;
-        setModuleAreaHeight(moduleContainerRef.current.clientHeight);
+        setModuleAreaHeight(getModuleAreaHeight);
     };
+
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(getModuleAreaHeight);
 
     /** Update module area height on module resize */
     useEffect(() => {
@@ -160,7 +169,6 @@ const ViewIPO = (): JSX.Element => {
         await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
         await getInvitation();
     };
-    
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
@@ -206,9 +214,8 @@ const ViewIPO = (): JSX.Element => {
         await getInvitation();
     };
 
-
     return (
-        <Container >
+        <Container ref={moduleContainerRef}>
             { loading ? (
                 <CenterContainer>
                     <Spinner large />
@@ -225,7 +232,7 @@ const ViewIPO = (): JSX.Element => {
                             participants={invitation.participants}
                             isEditable={invitation.status == IpoStatusEnum.PLANNED}
                         />
-                        <InvitationContentContainer ref={moduleContainerRef}>
+                        <InvitationContentContainer>
                             <TabsContainer>
                                 <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
                                     <TabList>
@@ -236,20 +243,36 @@ const ViewIPO = (): JSX.Element => {
                                         <Tab className='emptyTab'>{''}</Tab>
                                     </TabList>
                                     <TabPanels>
-                                        <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants}/></TabPanel>
-                                        <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
-                                        <TabPanel><Attachments ipoId={params.ipoId}/></TabPanel>
-                                        <TabPanel><History ipoId={params.ipoId} /></TabPanel>
+                                        <TabPanel>
+                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} />
+                                            </TabStyle>
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                                <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />
+                                            </TabStyle>
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                                <Attachments ipoId={params.ipoId} />
+                                            </TabStyle>
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                                <History ipoId={params.ipoId} />
+                                            </TabStyle>
+                                        </TabPanel>
                                     </TabPanels>
                                 </Tabs>
                                 <CommentsIconContainer onClick={(): void => setShowComments(show => !show)}>
-                                    {!showComments && <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba}/>}
+                                    {!showComments && <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba} />}
                                 </CommentsIconContainer>
 
                             </TabsContainer>
                             {showComments && (
                                 <CommentsContainer maxHeight={moduleAreaHeight}>
-                                    <Comments comments={comments} addComment={addComment} loading={loadingComments} close={(): void => setShowComments(false)}/>
+                                    <Comments comments={comments} addComment={addComment} loading={loadingComments} close={(): void => setShowComments(false)} />
                                 </CommentsContainer>
                             )}
 

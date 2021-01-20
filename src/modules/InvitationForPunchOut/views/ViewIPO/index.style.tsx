@@ -4,8 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 export const Container = styled.div`
     display: flex;
     width: 100%;
-    height: 100%;
-    
+
     .tabs {
         width: 100%;
         min-width: 300px;
@@ -19,16 +18,13 @@ export const Container = styled.div`
     }
 `;
 
-interface CommentsProps {
-    maxHeight: number;
-}
-
-export const CommentsContainer = styled.div<CommentsProps>`
+export const CommentsContainer = styled.div<{ maxHeight: number }>`
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
-    height: ${(props): number => props.maxHeight}px; 
+    height: ${(props): number => props.maxHeight}px;
     width: 400px;
     min-width: 300px;
     background: var(--ui-background--default);
+    overflow-y: scroll;
 `;
 
 
@@ -52,10 +48,16 @@ export const InvitationContainer = styled.div`
 
 export const TabsContainer = styled.div`
     width: 100%;
-    overflow: auto;
+    overflow-x: hidden;
+`;
+
+export const TabStyle = styled.div<{ maxHeight: number }>`
+    height: ${(props): number => props.maxHeight}px;
+    overflow: scroll;
 `;
 
 export const InvitationContentContainer = styled.div`
     display: flex;
     position: relative;
+    width: 100%;
 `;

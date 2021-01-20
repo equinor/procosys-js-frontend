@@ -52,17 +52,24 @@ const ViewIPO = (): JSX.Element => {
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
-    const getModuleAreaHeight = (): number => {
+    const getCommentModuleHeight = (): number => {
         if (!moduleContainerRef.current) return 0;
         return (moduleContainerRef.current.clientHeight - ipoHeaderSize);
     };
 
+    const [commentModuleHeight, setCommentModuleHeight] = useState<number>(getCommentModuleHeight);
+
+    const getTabModuleHeight = (): number => {
+        if (!moduleContainerRef.current) return 0;
+        return (moduleContainerRef.current.clientHeight - ipoHeaderSize - ipoTabHeaderSize);
+    };
+    const [tabModuleHeight, setTabModuleHeight] = useState<number>(getTabModuleHeight);
+
     const updateModuleAreaHeightReference = (): void => {
         if (!moduleContainerRef.current) return;
-        setModuleAreaHeight(getModuleAreaHeight);
+        setCommentModuleHeight(getCommentModuleHeight);
+        setTabModuleHeight(getTabModuleHeight);
     };
-
-    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(getModuleAreaHeight);
 
     /** Update module area height on module resize */
     useEffect(() => {
@@ -242,28 +249,22 @@ const ViewIPO = (): JSX.Element => {
                                         <Tab>History</Tab>
                                         <Tab className='emptyTab'>{''}</Tab>
                                     </TabList>
-                                    <TabPanels>
-                                        <TabPanel>
-                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                    <TabStyle maxHeight={tabModuleHeight + 67}>
+                                        <TabPanels>
+                                            <TabPanel>
                                                 <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} />
-                                            </TabStyle>
-                                        </TabPanel>
-                                        <TabPanel>
-                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                            </TabPanel>
+                                            <TabPanel>
                                                 <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />
-                                            </TabStyle>
-                                        </TabPanel>
-                                        <TabPanel>
-                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                            </TabPanel>
+                                            <TabPanel>
                                                 <Attachments ipoId={params.ipoId} />
-                                            </TabStyle>
-                                        </TabPanel>
-                                        <TabPanel>
-                                            <TabStyle maxHeight={moduleAreaHeight - ipoTabHeaderSize}>
+                                            </TabPanel>
+                                            <TabPanel>
                                                 <History ipoId={params.ipoId} />
-                                            </TabStyle>
-                                        </TabPanel>
-                                    </TabPanels>
+                                            </TabPanel>
+                                        </TabPanels>
+                                    </TabStyle>
                                 </Tabs>
                                 <CommentsIconContainer onClick={(): void => setShowComments(show => !show)}>
                                     {!showComments && <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba} />}
@@ -271,7 +272,7 @@ const ViewIPO = (): JSX.Element => {
 
                             </TabsContainer>
                             {showComments && (
-                                <CommentsContainer maxHeight={moduleAreaHeight}>
+                                <CommentsContainer maxHeight={commentModuleHeight}>
                                     <Comments comments={comments} addComment={addComment} loading={loadingComments} close={(): void => setShowComments(false)} />
                                 </CommentsContainer>
                             )}

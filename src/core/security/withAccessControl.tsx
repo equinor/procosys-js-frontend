@@ -3,6 +3,7 @@ import {useCurrentPlant} from '../PlantContext';
 import styled from 'styled-components';
 import Error from '../../components/Error';
 import { Loading } from '../../components';
+import {ProCoSysSettings} from '../ProCoSysSettings';
 
 const CenterContainer = styled.div`
     display: flex;
@@ -12,9 +13,10 @@ const CenterContainer = styled.div`
     margin-top: 1rem;
 `;
 
-const withAccessControl = (WrappedComponent: () => JSX.Element, requiredPermissions: string[] = [] ): React.ComponentType<any> => (props: any): ReactElement => {
+const withAccessControl = (WrappedComponent: () => JSX.Element, requiredPermissions: string[] = [], featureFlag: string[] = [] ): React.ComponentType<any> => (props: any): ReactElement => {
 
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+    const [featureEnabled, setFeatureEnabled] = useState<boolean | null>(null);
 
     const {permissions} = useCurrentPlant();
 
@@ -25,23 +27,40 @@ const withAccessControl = (WrappedComponent: () => JSX.Element, requiredPermissi
             setHasAccess(false);
         }
     }, [permissions]);
+    
+    useEffect(() => {
+        if (featureFlag.every((item) => ProCoSysSettings.featureIsEnabled(item))) {
+            setFeatureEnabled(true);
+        } else {
+            setFeatureEnabled(false);
+        }
+    }, [featureFlag]);
 
-    if (hasAccess === null) {
+    if (hasAccess === null || featureEnabled === null) {
         return (
             <CenterContainer>
                 <Loading />
             </CenterContainer>
         );
     }
-    if (hasAccess) {
+
+    if (!featureEnabled) {
+        return (
+            <CenterContainer>
+                <Error title='Feature disabled' large />
+            </CenterContainer>
+        );
+    }
+
+    if (hasAccess && featureEnabled) {
         return (<WrappedComponent {...props} />);
     }
+
     return (
         <CenterContainer>
             <Error title='Access restricted' large />
         </CenterContainer>
     );
-
 };
 
 export default withAccessControl;

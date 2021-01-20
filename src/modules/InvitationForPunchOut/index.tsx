@@ -2,11 +2,10 @@ import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-rou
 import { Container } from './style';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
-import CreateAndEditIPO from './views/CreateAndEditIPO/CreateAndEditIPO';
 import ViewIPO from './views/ViewIPO/index';
-import withFeatureFlag from '../../core/features/withFeatureFlag';
 import EditIPO from './views/CreateAndEditIPO/EditIPO';
 import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
+import withAccessControl from '@procosys/core/security/withAccessControl';
 
 
 const InvitationForPunchOut = (): JSX.Element => {
@@ -44,4 +43,4 @@ const InvitationForPunchOut = (): JSX.Element => {
     );
 };
 
-export default withFeatureFlag(InvitationForPunchOut, ['IPO']);
+export default withAccessControl(InvitationForPunchOut, ['IPO/READ'], ['IPO']);

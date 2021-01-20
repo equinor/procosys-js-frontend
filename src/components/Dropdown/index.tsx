@@ -35,6 +35,9 @@ const Select: React.FC<DropdownProps> = ({
     children = children ? React.Children.toArray(children) : [];
 
     useClickOutsideNotifier(() => {
+        if (onFilter) {
+            onFilter('');
+        }
         setIsOpen(false);
     }, containerRef);
 

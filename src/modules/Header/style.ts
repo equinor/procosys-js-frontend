@@ -1,3 +1,4 @@
+import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
@@ -19,6 +20,12 @@ export const SubNav = styled.nav`
     font-weight: 500;
     a {
         display: inline-block;
+        
+        ${Breakpoints.TABLET} {
+            display: flex;
+            flex-direction: column;            
+        };
+        
         padding: 16px;
         text-decoration: none;
         color: var(--text--default);
@@ -38,6 +45,12 @@ export const IconContainer = styled.div`
     color: #ee3c3c;
     font-size: 28px;
     font-weight: 1000;
+    
+    button {display: none; }
+    ${Breakpoints.TABLET} {
+        button {display: inline-block;}
+        #logo {display: none;}
+    }
 `;
 
 export const LogoContainer = styled.div`
@@ -82,7 +95,7 @@ export const MenuContainer = styled.div`
     }
 `;
 
-export const MenuItem = styled.div`
+export const MenuContainerItem = styled.div`
     margin: 0px 16px;
     &:hover {
         background-color: rgba(222,237,238,1);
@@ -92,4 +105,17 @@ export const MenuItem = styled.div`
     a {
         text-decoration: none;
     }
+`;
+
+export const ShowOnMobile = styled.div`
+    display:none;    
+    ${Breakpoints.TABLET} {
+        display: unset;            
+    } 
+`;
+
+export const ShowOnDesktop = styled.div`
+    ${Breakpoints.TABLET} {
+        display: none;            
+    } 
 `;

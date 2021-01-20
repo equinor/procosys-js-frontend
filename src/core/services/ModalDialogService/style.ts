@@ -1,4 +1,5 @@
 import { tokens } from '@equinor/eds-tokens';
+import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 
 export const Scrim = styled.div`
@@ -23,6 +24,10 @@ export const DialogContainer = styled.div<{ width: string }>`
         box-shadow: ${tokens.elevation.above_scrim}; 
         border-radius: ${tokens.shape.corners.borderRadius}; 
        `}
+       
+    ${Breakpoints.MOBILE} {
+       width: 95vw;
+    }   
 `;
 
 export const Title = styled.div`

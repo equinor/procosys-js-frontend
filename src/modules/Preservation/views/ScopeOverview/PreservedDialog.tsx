@@ -18,10 +18,10 @@ const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
 };
 
 const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
+    { title: 'Tag nr', field: 'tagNo', cellStyle: { whiteSpace: 'nowrap' } },
     { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+    { title: 'Status', field: 'status', cellStyle: { whiteSpace: 'nowrap' } },
+    { title: 'Req type', render: getRequirementIcons, cellStyle: { whiteSpace: 'nowrap' } },
 ];
 
 const PreservedDialog = ({

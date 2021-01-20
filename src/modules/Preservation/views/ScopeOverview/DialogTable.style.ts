@@ -1,3 +1,4 @@
+import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 
 export const Toolbar = styled.div`
@@ -9,4 +10,13 @@ export const Container = styled.div`
     div > div > div > div[style] {
         overflow-y: hidden !important; /* This is to remove the scrollbar in table that makes it seem like the page is lagging when user is scrolling  */
     }
+    
+    ${Breakpoints.TABLET} {
+        //hide columns
+        thead tr th:nth-child(2), table tr td:nth-child(2) //description
+        {
+            display: none;            
+        } 
+    }
+
 `;

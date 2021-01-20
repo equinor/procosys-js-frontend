@@ -23,14 +23,18 @@ export type GeneralInfoDetails = {
 }
 
 export type Person = {
+    id?: number;
     azureOid: string;
     firstName: string;
     lastName: string;
     email: string;
+    rowVersion?: string;
     radioOption: string | null;
 }
 
 export type RoleParticipant = {
+    id?: number;
+    rowVersion?: string;
     code: string;
     description: string;
     usePersonalEmail: boolean;
@@ -38,12 +42,37 @@ export type RoleParticipant = {
     persons: Person[];
 }
 
+type ExternalEmail = {
+    id: number | null;
+    email: string;
+    rowVersion: string | null;
+}
+
 export type Participant = {
     organization: SelectItem;
+    sortKey: number | null;
     type: string;
-    externalEmail: string | null;
+    externalEmail: ExternalEmail | null;
     person: Person | null;
     role: RoleParticipant | null;
+}
+
+export type Attachment = {
+    fileName: string;
+    downloadUri?: string;
+    id?: number;
+    file?: File;
+    rowVersion?: string;
+    uploadedAt?: Date;
+    toBeDeleted?: boolean;
+    uploadedBy?: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        azureOid: string;
+        email: string;
+        rowVersion: string;
+    }
 }
 
 export interface CommPkgRow {
@@ -71,3 +100,4 @@ export interface McScope {
 }
 
 export type Organization = 'Commissioning' | 'ConstructionCompany' | 'Contractor' | 'Operation' | 'TechnicalIntegrity' | 'Supplier' | 'External';
+

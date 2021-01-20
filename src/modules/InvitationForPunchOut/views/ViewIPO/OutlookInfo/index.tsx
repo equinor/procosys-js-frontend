@@ -4,16 +4,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
+import { OutlookResponseType } from '../enums';
 import { Participant } from '../types';
 import { Typography } from '@equinor/eds-core-react';
-
-export enum ResponseType {
-    ATTENDING = 'Accepted',
-    TENTATIVE = 'Tentative',
-    NONE = 'None',
-    UNKNOWN = 'Unknown',
-    DECLINED = 'Declined'
-}
+import { tokens } from '@equinor/eds-tokens';
 
 export enum OutlookStatusType {
     OK = 'Ok',
@@ -21,14 +15,14 @@ export enum OutlookStatusType {
 }
 
 
-type Props = {
+type OutlookInfoProps = {
     close: () => void;
     organizer: string;
     participants?: Participant[];
     status: OutlookStatusType;
 }
 
-const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Element => {
+const OutlookInfo = ({ close, organizer, participants, status }: OutlookInfoProps): JSX.Element => {
     const [attending, setAttending] = useState<Participant[]>([]);
     const [tentative, setTentative] = useState<Participant[]>([]);
     const [notResponded, setNotResponded] = useState<Participant[]>([]);
@@ -39,16 +33,17 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
             const role = p.person ? p.person : p.functionalRole ? p.functionalRole : null;
             if (role) {
                 switch (role.response) {
-                    case ResponseType.ATTENDING:
+                    case OutlookResponseType.ATTENDING:
                         setAttending(a => [...a, p]);
                         break;
-                    case ResponseType.TENTATIVE:
+                    case OutlookResponseType.TENTATIVE:
+                    case OutlookResponseType.TENTATIVELY_ACCEPTED:
                         setTentative(a => [...a, p]);
                         break;
-                    case ResponseType.NONE:
+                    case OutlookResponseType.NONE:
                         setNotResponded(a => [...a, p]);
                         break;
-                    case ResponseType.DECLINED:
+                    case OutlookResponseType.DECLINED:
                         setDeclined(a => [...a, p]);
                         break;
                     default:
@@ -75,7 +70,7 @@ const OutlookInfo = ({ close, organizer, participants, status }: Props): JSX.Ele
                     <OutlookInformationStatusContainer>
                         <InlineContainer>
                             <Typography variant="h6">Status:</Typography>
-                            <EdsIcon name="microsoft_outlook" color="green" />
+                            <EdsIcon name="microsoft_outlook" color={ tokens.colors.interactive.primary__resting.rgba } />
                             <Typography>{status}</Typography>
                         </InlineContainer>
                     </OutlookInformationStatusContainer>

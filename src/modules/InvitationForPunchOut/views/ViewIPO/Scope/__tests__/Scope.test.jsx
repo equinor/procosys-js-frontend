@@ -35,12 +35,31 @@ const mcPkgScope = [
     }
 ];
 
+jest.mock('@procosys/core/PlantContext',() => ({
+    useCurrentPlant: () => {
+        return {
+            plant: {
+                pathId: 'HEIMDAL'
+            }
+        };
+    }
+}));
+
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
 
 describe('<Scope />', () => {
+    it('Renders reports', async () => {
+        const { queryByText } = renderWithTheme(<Scope commPkgScope={commPkgScope} mcPkgScope={[]} />);
+
+        expect(queryByText('Reports')).toBeInTheDocument();
+        expect(queryByText('MC32D')).toBeInTheDocument();
+        expect(queryByText('MC84')).toBeInTheDocument();
+        expect(queryByText('CDP06')).toBeInTheDocument();
+    });
+    
     it('Renders comm pkg scope', async () => {
         const { queryByText } = renderWithTheme(<Scope commPkgScope={commPkgScope} mcPkgScope={[]} />);
 

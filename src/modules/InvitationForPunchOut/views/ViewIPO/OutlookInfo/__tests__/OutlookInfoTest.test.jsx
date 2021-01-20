@@ -1,7 +1,7 @@
 import OutlookInfo, { OutlookStatusType } from '../index';
 
+import { OutlookResponseType } from '../../enums';
 import React from 'react';
-import { ResponseType } from '../index';
 import { ThemeProvider } from 'styled-components';
 import { render } from '@testing-library/react';
 import theme from '../../../../../../assets/theme';
@@ -16,7 +16,7 @@ export const participants = [
                 email: 'kjhasd@lkjasd.com',
                 company: 'EQUI',
             },
-            response: ResponseType.ATTENDING
+            response: OutlookResponseType.ATTENDING
         },
     },
     {
@@ -28,7 +28,7 @@ export const participants = [
                 email: 'lkajsdkjas@equinor.com',
                 company: 'EQUI',
             },
-            response: ResponseType.TENTATIVE
+            response: OutlookResponseType.TENTATIVE
         },
     },
     {
@@ -40,7 +40,7 @@ export const participants = [
                 email: 'lkjawc@equinor.com',
                 company: 'EQUI',
             },
-            response: ResponseType.TENTATIVE
+            response: OutlookResponseType.TENTATIVELY_ACCEPTED
         },
     },
     {
@@ -52,7 +52,7 @@ export const participants = [
                 email: 'jcklwaclakjj@equinor.com',
                 company: 'EQUI',
             },
-            response: ResponseType.NONE
+            response: OutlookResponseType.NONE
         },
     },
     {
@@ -64,7 +64,7 @@ export const participants = [
                 email: 'wwwwwwww@equinor.com',
                 company: 'EQUI',
             },
-            response: ResponseType.DECLINED
+            response: OutlookResponseType.DECLINED
         },
     },
     {
@@ -76,7 +76,7 @@ export const participants = [
                 email: 'clclclcwajjk@equinor.com',
                 company: 'EQUI',
             },
-            response: ResponseType.DECLINED
+            response: OutlookResponseType.DECLINED
         },
     },
     {
@@ -84,7 +84,7 @@ export const participants = [
         functionalRole: {
             code: 'asdasd',
             email: 'sadoiens@weweew.com',
-            response: ResponseType.ATTENDING
+            response: OutlookResponseType.ATTENDING
         }
     }
 ];

@@ -13,6 +13,7 @@ export type CommPkgScope = {
 type Participant = {
     organization: string;
     sortKey: number;
+    canSign: boolean;
     externalEmail: ExternalEmail;
     person: Person;
     functionalRole: FunctionalRole;
@@ -67,8 +68,11 @@ export type Invitation = {
     commPkgScope: CommPkgScope[];
 }
 
-export type Attachment = {
+export type HistoryItem = {
     id: number;
-    fileName: string;
-    rowVersion: string;
+    description: string;
+    createdAtUtc: string;
+    createdBy: {
+        userName: string;
+    },
 }

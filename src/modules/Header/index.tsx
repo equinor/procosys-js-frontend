@@ -4,22 +4,25 @@ import {
     IconContainer,
     LogoContainer,
     MenuContainer,
-    MenuItem,
+    MenuContainerItem,
     Nav,
     PlantSelector,
-    SubNav
+    ShowOnDesktop,
+    ShowOnMobile
 } from './style';
-import { NavLink, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
+import Flyout from '@procosys/components/Flyout';
+import ModuleTabs from './ModuleTabs';
 import OptionsDropdown from '../../components/OptionsDropdown';
 import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
+import { useParams } from 'react-router-dom';
 import { useProcosysContext } from '../../core/ProcosysContext';
 
 type PlantItem = {
@@ -33,6 +36,7 @@ const Header: React.FC = (): JSX.Element => {
     const { plant, setCurrentPlant } = useCurrentPlant();
     const params = useParams<any>();
     const [filterForPlants, setFilterForPlants] = useState<string>('');
+    const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map(plant => ({
             text: plant.title,
@@ -58,7 +62,13 @@ const Header: React.FC = (): JSX.Element => {
         <div>
             <Nav>
                 <IconContainer>
-                    <ProcosysLogo fontSize='inherit'/>
+                    <Button
+                        variant='ghost'
+                        onClick={(): void => setShowMobileMenu(!showMobileMenu)}>
+                        <EdsIcon name="menu" />
+                    </Button>
+
+                    <ProcosysLogo id='logo' fontSize='inherit' />
                 </IconContainer>
                 <LogoContainer>
                     <a
@@ -84,7 +94,7 @@ const Header: React.FC = (): JSX.Element => {
                     </Dropdown>
                 </PlantSelector>
                 <MenuContainer>
-                    <MenuItem>
+                    <MenuContainerItem>
                         <Dropdown text="New">
 
                             <a
@@ -131,8 +141,8 @@ const Header: React.FC = (): JSX.Element => {
                             </a>
                             <a href={`/${params.plant}/Completion#Tag|`}><DropdownItem>Tag</DropdownItem></a>
                         </Dropdown>
-                    </MenuItem>
-                    <MenuItem>
+                    </MenuContainerItem>
+                    <MenuContainerItem>
                         <Dropdown text="Search">
                             <a
                                 href={`/${params.plant}/Search?searchType=Action%20Log`}
@@ -242,26 +252,26 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>My saved settings</DropdownItem>
                             </a>
                         </Dropdown>
-                    </MenuItem>
-                    <MenuItem>
+                    </MenuContainerItem>
+                    <MenuContainerItem>
                         <a href={`/${params.plant}/Reports`}>
                             <Button variant={'ghost'}>
                                 Reports
                             </Button>
                         </a>
-                    </MenuItem>
+                    </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuItem className='compact'>
+                    <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='link'>
+                            <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">
+                                <DropdownItem>
+                                    C&amp;C digital toolbox
+                                </DropdownItem>
+                            </a>                            
                             <a href="https://dcp.equinor.com" target="_blank">
                                 <DropdownItem>
                                     DCP – Digitalized Commissioning Procedure
-                                </DropdownItem>
-                            </a>
-                            <a href="https://statoilsrm.sharepoint.com/sites/Echo" target="_blank">
-                                <DropdownItem>
-                                    Echo homepage – Digital Twin
                                 </DropdownItem>
                             </a>
                             <a href="https://fusion.equinor.com" target="_blank">
@@ -269,14 +279,9 @@ const Header: React.FC = (): JSX.Element => {
                                     FUSION – Project information portal
                                 </DropdownItem>
                             </a>
-                            <a href="https://infield.equinor.com" target="_blank">
+                            <a href="https://echo.equinor.com" target="_blank">
                                 <DropdownItem>
-                                    InField – Technical data and status
-                                </DropdownItem>
-                            </a>
-                            <a href="https://inview.equinor.com" target="_blank">
-                                <DropdownItem>
-                                    InView – SWCR, Punch and Query Analyze
+                                    Echo inField – Technical data and status
                                 </DropdownItem>
                             </a>
                             <a href="https://stid.equinor.com" target="_blank">
@@ -290,8 +295,8 @@ const Header: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                             </a>                                                                                                                                                                        
                         </OptionsDropdown>
-                    </MenuItem >                    
-                    <MenuItem className='compact'>
+                    </MenuContainerItem >                    
+                    <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>
                                 <DropdownItem>
@@ -309,8 +314,8 @@ const Header: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
-                    </MenuItem>
-                    <MenuItem className='compact'>
+                    </MenuContainerItem>
+                    <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='lock'>
                             <a href={`/${params.plant}/Security/User`}>
                                 <DropdownItem>
@@ -333,52 +338,32 @@ const Header: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
-                    </MenuItem >
-                    <MenuItem className={'compact'}>
+                    </MenuContainerItem >
+                    <MenuContainerItem className={'compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
                             <Button variant={'ghost'} >
                                 <EdsIcon name='account_circle' />
                                 {user.name}
                             </Button>
                         </a>
-                    </MenuItem>
-                    <MenuItem className='compact lastButton'>
+                    </MenuContainerItem>
+                    <MenuContainerItem className='compact lastButton'>
                         <Button variant={'ghost'} onClick={(): void => auth.logout()}>
                             Logout
                         </Button>
-                    </MenuItem>
+                    </MenuContainerItem>
                 </MenuContainer>
             </Nav>
-            <SubNav>
-                <a href={`/${params.plant}/Completion`}>Completion</a>
-                <NavLink
-                    activeClassName={'active'}
-                    to={`/${params.plant}/Preservation`}
-                >
-                    Preservation
-                </NavLink>
-                <a href={`/${params.plant}/WorkOrders`}>Work Orders</a>
-                <a href={`/${params.plant}/SWAP`}>Software Change Record</a>
-                <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>
-                    Purchase Orders
-                </a>
-                <a href={`/${params.plant}/Documents`}>Document</a>
-                <a href={`/${params.plant}/Notification`}>Notification</a>
-                <a href={`/${params.plant}/Hookup`}>Hookup</a>
-                {__DEV__ && (
-                    <NavLink
-                        activeClassName={'active'}
-                        to={`/${params.plant}/libraryv2`}
-                    >
-                        Plant Configuration
-                    </NavLink>
-                )}
-                {!__DEV__ && (
-                    <a href={`/${params.plant}/PlantConfig`}>
-                        Plant Configuration
-                    </a>
-                )}
-            </SubNav>
+            {showMobileMenu &&
+                <ShowOnMobile>
+                    <Flyout position='left' close={(): void => setShowMobileMenu(false)}>
+                        <ModuleTabs onClick={(): void => setShowMobileMenu(false)} />
+                    </Flyout>
+                </ShowOnMobile>
+            }
+            <ShowOnDesktop>
+                <ModuleTabs />
+            </ShowOnDesktop>
         </div>
     );
 };

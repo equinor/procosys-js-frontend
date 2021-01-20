@@ -1,4 +1,4 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
+import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, OldPreservationLink, ShowActionsButton, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,13 +10,17 @@ import CompleteDialog from './CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
 import EdsIcon from '../../../../components/EdsIcon';
 import Flyout from './../../../../components/Flyout';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import OptionsDropdown from '../../../../components/OptionsDropdown';
 import PreservedDialog from './PreservedDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
 import RemoveDialog from './RemoveDialog';
+import RescheduleDialog from './RescheduleDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 import ScopeTable from './ScopeTable';
+import Spinner from '@procosys/components/Spinner';
 import StartPreservationDialog from './StartPreservationDialog';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { Tooltip } from '@material-ui/core';
@@ -27,9 +31,8 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
-import Spinner from '@procosys/components/Spinner';
-import RescheduleDialog from './RescheduleDialog';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -94,7 +97,6 @@ const emptyTagListFilter: TagListFilter = {
     responsibleIds: [],
     areaCodes: []
 };
-
 interface SupportedQueryStringFilters {
     [index: string]: string | null;
     pono: string | null;
@@ -142,15 +144,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showTagRescheduleDialog, setShowTagRescheduleDialog] = useState<boolean>(false);
+    const [showActions, setShowActions] = useState<boolean>(false);
 
     const history = useHistory();
     const location = useLocation();
     const analytics = useAnalytics();
+    const { plant } = useCurrentPlant();
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(v => v && JSON.stringify(v) != '[]').length;
 
-    const refreshScopeListCallback = useRef<(maxHeight: number) => void>();
+    const refreshScopeListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
     const isFirstRender = useRef<boolean>(true);
+
+    const moduleHeaderContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleHeaderHeight, setModuleHeaderHeight] = useState<number>(250);
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
@@ -213,18 +220,39 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setModuleAreaHeight(moduleContainerRef.current.clientHeight);
     };
 
+    /** Update module area height on module resize */
     useEffect(() => {
         updateModuleAreaHeightReference();
+    }, [moduleContainerRef, displayFilter]);
+
+    useEffect(() => {
         window.addEventListener('resize', updateModuleAreaHeightReference);
 
         return (): void => {
             window.removeEventListener('resize', updateModuleAreaHeightReference);
         };
+    }, []);
 
-    }, [moduleContainerRef, displayFilter]);
+    const updateModuleHeaderHeightReference = (): void => {
+        if (!moduleHeaderContainerRef.current) return;
+        setModuleHeaderHeight(moduleHeaderContainerRef.current.clientHeight);
+    };
 
-    const refreshScopeList = (): void => {
-        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - 300);
+    /** Update module header height on module header resize */
+    useEffect(() => {
+        updateModuleHeaderHeightReference();
+    }, [moduleHeaderContainerRef, displayFilter, showActions]);
+
+    useEffect(() => {
+        window.addEventListener('resize', updateModuleHeaderHeightReference);
+
+        return (): void => {
+            window.removeEventListener('resize', updateModuleHeaderHeightReference);
+        };
+    }, []);
+
+    const refreshScopeList = (refreshOnResize?: boolean): void => {
+        refreshScopeListCallback.current && refreshScopeListCallback.current(moduleAreaHeight - moduleHeaderHeight - 115, refreshOnResize);
     };
 
     useEffect(() => {
@@ -241,8 +269,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     }, [filterForProjects]);
 
     useEffect(() => {
-        refreshScopeList();
-    }, [moduleAreaHeight]);
+        refreshScopeList(true);
+    }, [moduleAreaHeight, moduleHeaderHeight]);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -271,7 +299,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     }, [selectedTags]);
 
-    const setRefreshScopeListCallback = (callback: (maxHeight: number) => void): void => {
+    const setRefreshScopeListCallback = (callback: (maxHeight: number, refreshOnResize?: boolean) => void): void => {
         refreshScopeListCallback.current = callback;
     };
 
@@ -593,7 +621,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
         unvoidableTags = [];
@@ -717,7 +744,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const navigateToOldPreservation = (): void => {
         analytics.trackUserAction('Btn_SwitchToOldPreservation', { module: 'preservation' });
-        window.location.href = './OldPreservation';
+        window.location.href = '/' + plant.pathId + '/OldPreservation';
     };
 
     const closeReschededuleDialog = (): void => {
@@ -728,148 +755,168 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
-                <OldPreservationLink>
-                    {!purchaseOrderNumber &&
-                        <Typography variant="caption">
-                            <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
-                                <Button variant="ghost" onClick={navigateToOldPreservation}>Switch to old system</Button>
-                            </Tooltip>
-                        </Typography>
-                    }
-                </OldPreservationLink>
-                <HeaderContainer>
-                    <Header>
-                        <Typography variant="h1">Preservation tags</Typography>
-                        <Dropdown
-                            disabled={project.id === -1}
-                            maxHeight='300px'
-                            text={project.name}
-                            onFilter={setFilterForProjects}
-                        >
-                            {filteredProjects.map((projectItem, index) => {
-                                return (
-                                    <DropdownItem
-                                        key={index}
-                                        onClick={(event): void => changeProject(event, index)}
-                                    >
-                                        <div>{projectItem.description}</div>
-                                        <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                <HeaderContainer ref={moduleHeaderContainerRef}>
+                    <LeftPartOfHeader>
+                        <Header>
+                            <Typography variant="h1">Preservation</Typography>
+                            <StyledButton
+                                className='showOnlyOnTablet'
+                                variant='ghost'
+                                onClick={(): void => setShowActions(!showActions)}>
+                                {!showActions && <>Show actions <KeyboardArrowUpIcon /></>}
+                                {showActions && <>Hide actions <KeyboardArrowDownIcon /></>}
+                            </StyledButton>
+                        </Header>
+                        <ActionsContainer showActions={showActions}>
+                            <Dropdown
+                                disabled={project.id === -1}
+                                maxHeight='300px'
+                                text={project.name}
+                                onFilter={setFilterForProjects}
+                            >
+                                {filteredProjects.map((projectItem, index) => {
+                                    return (
+                                        <DropdownItem
+                                            key={index}
+                                            onClick={(event): void => changeProject(event, index)}
+                                        >
+                                            <div>{projectItem.description}</div>
+                                            <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>
+                            {purchaseOrderNumber &&
+                                <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
+                            }
+                            <Dropdown disabled={project.id === -1} text="Add scope">
+                                <Link to={'/AddScope/selectTagsManual'}>
+                                    <DropdownItem>
+                                        Add tags manually
                                     </DropdownItem>
-                                );
-                            })}
-                        </Dropdown>
-                        {purchaseOrderNumber &&
-                            <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)', marginRight: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
-                        }
-                        <Dropdown disabled={project.id === -1} text="Add scope">
-                            <Link to={'/AddScope/selectTagsManual'}>
-                                <DropdownItem>
-                                    Add tags manually
-                                </DropdownItem>
-                            </Link>
-                            <Link to={'/AddScope/selectTagsAutoscope'}>
-                                <DropdownItem>
-                                    Autoscope by tag function
-                                </DropdownItem>
-                            </Link>
-                            <Link to={'/AddScope/createDummyTag'}>
-                                <DropdownItem>
-                                    Create dummy tag
-                                </DropdownItem>
-                            </Link>
-                            <Link to={duplicatableTagSelected ? '/AddScope/duplicateDummyTag/' + (selectedTags.length == 1 ? selectedTags[0].id.toString() : '') : '/'} >
+                                </Link>
+                                <Link to={'/AddScope/selectTagsAutoscope'}>
+                                    <DropdownItem>
+                                        Autoscope by tag function
+                                    </DropdownItem>
+                                </Link>
+                                <Link to={'/AddScope/createDummyTag'}>
+                                    <DropdownItem>
+                                        Create dummy tag
+                                    </DropdownItem>
+                                </Link>
+                                <Link to={duplicatableTagSelected ? '/AddScope/duplicateDummyTag/' + (selectedTags.length == 1 ? selectedTags[0].id.toString() : '') : '/'} >
+                                    <DropdownItem
+                                        disabled={!duplicatableTagSelected}>
+                                        Duplicate dummy tag
+                                    </DropdownItem>
+                                </Link>
+                                <Link to={'/AddScope/selectMigrateTags'}>
+                                    <DropdownItem>
+                                        Migrate tags from old (temporary)
+                                    </DropdownItem>
+                                </Link>
+                            </Dropdown>
+                            <IconBar className='showOnlyOnTablet'>
+                                <Button
+                                    onClick={preservedDialog}
+                                    disabled={!preservableTagsSelected}>Preserved this week
+                                </Button>
+                            </IconBar>
+                        </ActionsContainer>
+                    </LeftPartOfHeader>
+                    <ActionsContainer showActions={showActions}>
+                        <IconBar>
+                            <StyledButton
+                                className='hideOnTablet'
+                                onClick={preservedDialog}
+                                disabled={!preservableTagsSelected}>Preserved this week
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost'
+                                title='Start preservation for selected tag(s)'
+                                onClick={startPreservationDialog}
+                                disabled={!startableTagsSelected}>
+                                <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                                Start
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost'
+                                title="Transfer selected tag(s)"
+                                onClick={transferDialog}
+                                disabled={!transferableTagsSelected}>
+                                <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                                Transfer
+                            </StyledButton>
+                            <StyledButton
+                                variant='ghost'
+                                title="Complete selected tag(s)"
+                                onClick={showCompleteDialog}
+                                disabled={!completableTagsSelected}>
+                                <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
+                                Complete
+                            </StyledButton>
+                            <OptionsDropdown
+                                text="More options"
+                                icon='more_vertical'
+                                variant='ghost'>
                                 <DropdownItem
-                                    disabled={!duplicatableTagSelected}
-                                >
-                                    Duplicate dummy tag
+                                    disabled={selectedTags.length != 1 || voidedTagsSelected}
+                                    onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
+                                    <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    Edit
                                 </DropdownItem>
-                            </Link>
-                            <Link to={'/AddScope/selectMigrateTags'}>
-                                <DropdownItem>
-                                    Migrate tags from old (temporary)
+                                <DropdownItem
+                                    disabled={selectedTags.length === 0}
+                                    onClick={(): void => setShowTagRescheduleDialog(true)}>
+                                    <EdsIcon name='calendar_date_range' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    Reschedule
                                 </DropdownItem>
-                            </Link>
-                        </Dropdown>
-                    </Header>
-                    <IconBar>
-                        <Button
-                            onClick={preservedDialog}
-                            disabled={!preservableTagsSelected}>Preserved this week
-                        </Button>
-                        <StyledButton
-                            variant='ghost'
-                            title='Start preservation for selected tag(s)'
-                            onClick={startPreservationDialog}
-                            disabled={!startableTagsSelected}>
-                            <EdsIcon name='play' color={!startableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
-                        Start
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            title="Transfer selected tag(s)"
-                            onClick={transferDialog}
-                            disabled={!transferableTagsSelected}>
-                            <EdsIcon name='fast_forward' color={!transferableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
-                        Transfer
-                        </StyledButton>
-                        <StyledButton
-                            variant='ghost'
-                            title="Complete selected tag(s)"
-                            onClick={showCompleteDialog}
-                            disabled={!completableTagsSelected}>
-                            <EdsIcon name='done_all' color={!completableTagsSelected ? tokens.colors.interactive.disabled__border.rgba : ''} />
-                        Complete
-                        </StyledButton>
-                        <OptionsDropdown
-                            text="More options"
-                            icon='more_verticle'
-                            variant='ghost'>
-                            <DropdownItem
-                                disabled={selectedTags.length != 1 || voidedTagsSelected}
-                                onClick={(): void => history.push(`/EditTagProperties/${selectedTagId}`)}>
-                                <EdsIcon name='edit_text' color={selectedTags.length != 1 || voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
-                                Edit
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={selectedTags.length === 0}
-                                onClick={(): void => setShowTagRescheduleDialog(true)}>
-                                <EdsIcon name='calendar_date_range' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
-                                Reschedule
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={selectedTags.length === 0}
-                                onClick={(): void => showRemoveDialog()}>
-                                <EdsIcon name='delete_to_trash' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
-                                Remove
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={!unvoidedTagsSelected}
-                                onClick={(): void => showVoidDialog(true)}>
-                                <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
-                                Void
-                            </DropdownItem>
-                            <DropdownItem
-                                disabled={!voidedTagsSelected}
-                                onClick={(): void => showVoidDialog(false)}>
-                                <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
-                                Unvoid
-                            </DropdownItem>
-                        </OptionsDropdown>
-                        <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
-                            <div>
-                                <StyledButton
-                                    id='filterButton'
-                                    variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
-                                    onClick={(): void => {
-                                        toggleFilter();
-                                    }}
-                                >
-                                    <EdsIcon name='filter_list' />
-                                </StyledButton>
-                            </div>
-                        </Tooltip>
-                    </IconBar>
-                </HeaderContainer>
+                                <DropdownItem
+                                    disabled={!voidedTagsSelected}
+                                    onClick={(): void => showRemoveDialog()}>
+                                    <EdsIcon name='delete_to_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    Remove
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={!unvoidedTagsSelected}
+                                    onClick={(): void => showVoidDialog(true)}>
+                                    <EdsIcon name='delete_forever' color={!unvoidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    Void
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={!voidedTagsSelected}
+                                    onClick={(): void => showVoidDialog(false)}>
+                                    <EdsIcon name='restore_from_trash' color={!voidedTagsSelected ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.text.static_icons__tertiary.rgba} />
+                                    Unvoid
+                                </DropdownItem>
+                            </OptionsDropdown>
+                            <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfTags} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
+                                <div>
+                                    <StyledButton
+                                        id='filterButton'
+                                        variant={numberOfFilters > 0 ? 'contained' : 'ghost'}
+                                        onClick={(): void => {
+                                            toggleFilter();
+                                        }}
+                                    >
+                                        <EdsIcon name='filter_list' />
+                                    </StyledButton>
+                                </div>
+                            </Tooltip>
+                        </IconBar>
+                        <OldPreservationLink>
+                            {!purchaseOrderNumber &&
+                                <Typography variant="caption">
+                                    <Tooltip title='To work on preservation scope not yet migrated.' enterDelay={200} enterNextDelay={100} arrow={true}>
+                                        <Button variant="ghost" onClick={navigateToOldPreservation}>Switch to old system</Button>
+                                    </Tooltip>
+                                </Typography>
+                            }
+                        </OldPreservationLink>
+
+                    </ActionsContainer>
+                </HeaderContainer >
                 {
                     isLoading && (
                         <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
+import { Breakpoints } from '@procosys/core/styling';
 
 export const Container = styled.div`
     display: inline-block;
@@ -14,6 +15,9 @@ export const Container = styled.div`
         overflow-y: auto;
         z-index: 100;
         white-space: nowrap;
+        ${Breakpoints.MOBILE} {
+            max-width: 300px;
+        }
     }
     :hover {
         cursor: pointer;

@@ -6,13 +6,17 @@ import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 
-interface Props {
+interface GeneralInfoProps {
     invitation: Invitation;
     complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    update: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    sign: (p: Participant) => Promise<any>;
 }
 
-const GeneralInfo = ({ invitation, complete, accept }: Props): JSX.Element => {
+const GeneralInfo = ({ invitation, complete, accept, update, sign }: GeneralInfoProps): JSX.Element => {
+    const participants = invitation.participants.sort((p1, p2): number => p1.sortKey - p2.sortKey );
+
     return (
         <Container>
             <HeaderContainer>
@@ -65,7 +69,7 @@ const GeneralInfo = ({ invitation, complete, accept }: Props): JSX.Element => {
                 <Typography variant="h5">Participants</Typography>
             </HeaderContainer>
             <br />
-            <ParticipantsTable participants={invitation.participants} status={invitation.status} complete={complete} accept={accept} />
+            <ParticipantsTable participants={participants} status={invitation.status} complete={complete} accept={accept} update={update} sign={sign} />
         </Container>
     );
 };

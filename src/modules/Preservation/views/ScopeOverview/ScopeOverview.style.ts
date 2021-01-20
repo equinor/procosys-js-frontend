@@ -1,5 +1,6 @@
 import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
 
+import { Breakpoints } from '@procosys/core/styling';
 import { Button } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 
@@ -29,22 +30,25 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
 
 export const HeaderContainer = styled.div`
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    justify-content:space-between;
+    width:100%;
+    flex-wrap: wrap;     
+`;
 
-    > div {
-        margin-bottom: var(--grid-unit);
+export const LeftPartOfHeader = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    ${Breakpoints.TABLET} {
+        width: 100%;
     }
 `;
 
+
 export const Header = styled.header`
     display: flex;
-    align-items: baseline;
-
-    > div {	
-        margin-right: calc(var(--grid-unit) * 2);	
-    }
-
+    justify-content: space-between;
+    align-items: center;
     h1 {
         display: inline-block;
         margin-right: calc(var(--grid-unit) * 2);
@@ -54,25 +58,64 @@ export const Header = styled.header`
         text-decoration: none;
     }
 
-    button {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
+    .showOnlyOnTablet {
+        display:none;
+    }  
 
-        path {
-            fill: ${tokens.colors.interactive.primary__resting.rgba};
+    ${Breakpoints.TABLET} {
+        width: 100%;
+        .showOnlyOnTablet {
+            display:flex;
+        }  
+    }   
+`;
+
+export const ActionsContainer = styled.div<{ showActions?: boolean }>`
+    display: flex;
+    padding-top: 10px;
+    flex-wrap: wrap;
+
+    .showOnlyOnTablet {
+            display:none;
+    }   
+       
+    > div {	
+       margin-right: calc(var(--grid-unit) * 2);	
+    }
+
+    ${Breakpoints.TABLET} {
+        ${(props): any => props.showActions == false && css`
+            display:none;    
+        `}
+
+        .hideOnTablet {
+            display:none;
+        } 
+
+        .showOnlyOnTablet {
+            display:flex;
         }
     }
 `;
 
 export const IconBar = styled.div`
     display: flex;
-    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
 
     #filterButton {
         margin-right: 0px;
     }
 
-    button {	
-        margin-right: var(--grid-unit);	
+    button {
+        margin-left: var(--grid-unit);
+    }
+    
+    ${Breakpoints.TABLET} {
+        justify-content: flex-start;
+        button {
+            margin-left: 0px;
+        }
     }
 `;
 
@@ -107,7 +150,7 @@ export const FilterContainer = styled.div<{ maxHeight: number }>`
     margin-left: calc(var(--grid-unit) * 2);
     padding-right: calc(var(--grid-unit) * 2);
     overflow-y: auto;
-    height: ${(props): number => props.maxHeight}px;
+    height: ${(props): number => props.maxHeight} px;
     min-width: 300px;
 `;
 
@@ -120,6 +163,7 @@ export const TooltipText = styled.span`
 
 export const OldPreservationLink = styled.div`
     display: flex;
+    margin-left: calc(var(--grid-unit) * 4);
     padding-bottom: var(--grid-unit);
     justify-content: flex-end;
     color: ${tokens.colors.interactive.primary__resting.rgba};
@@ -127,5 +171,18 @@ export const OldPreservationLink = styled.div`
     cursor: pointer;
     a {
         color: var(--text--default);
+    }
+    ${Breakpoints.TABLET} {
+        display: none;
+    }
+`;
+
+export const ShowActionsButton = styled.div<any>`
+    display: none;
+
+    ${Breakpoints.TABLET} {
+        display: flex;
+        margin-bottom: 6px;
+        cursor: pointer;
     }
 `;

@@ -153,13 +153,6 @@ const TagFlyout = ({
         }
     };
 
-    const goToTag = (): void => {
-        if (mainTagId) {
-            window.location.href = `/${plant.pathId}/Completion#Tag|${mainTagId}`;
-        } else {
-            showSnackbarNotification('Something went wrong. Could not direct you to tag.');
-        }
-    };
 
     return (
         <Container>
@@ -175,10 +168,12 @@ const TagFlyout = ({
                 </HeaderNotification>
             }
             <Header>
-                <TagNoContainer isStandardTag={isStandardTag()} onClick={goToTag}>
-                    <Typography variant="h1">
-                        {tagDetails ? tagDetails.tagNo : '-'}
-                    </Typography>
+                <TagNoContainer isStandardTag={isStandardTag()} >
+                    <a href={mainTagId ? `/${plant.pathId}/Completion#Tag|${mainTagId}` : ''}>
+                        <Typography variant="h1">
+                            {tagDetails ? tagDetails.tagNo : '-'}
+                        </Typography>
+                    </a>
                 </TagNoContainer>
                 <HeaderActions>
                     {(!isVoided && preservationIsStarted) &&

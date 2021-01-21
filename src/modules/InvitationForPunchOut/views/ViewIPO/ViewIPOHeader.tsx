@@ -37,11 +37,11 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
     const confirmCancelIpo = (): void => {
         showModalDialog(
             'Cancel IPO',
-            <div>This will cancel the IPO and send a cancellation to invited participants.</div>,
+            <div>Are you sure you want to cancel the IPO and send a cancellation to invited participants?</div>,
             '18vw',
-            'Cancel',
+            'No',
             null,
-            'Confirm',
+            'Yes',
             props.cancelPunchOut,
             true);
     };

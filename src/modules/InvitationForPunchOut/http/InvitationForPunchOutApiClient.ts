@@ -718,13 +718,14 @@ class InvitationForPunchOutApiClient extends ApiClient {
     *
     * @param setRequestCanceller Returns a function that can be called to cancel the request
     */
-    async cancelPunchOut(id: number, setRequestCanceller?: RequestCanceler): Promise<void> {
+    async cancelPunchOut(id: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Invitations/${id}/Cancel`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
-            const result = await this.client.post(
+            const result = await this.client.put(
                 endpoint,
+                { rowVersion: rowVersion },
                 settings
             );
             return result.data;

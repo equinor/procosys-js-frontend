@@ -182,12 +182,15 @@ const ViewIPO = (): JSX.Element => {
 
     const cancelPunchOut = async (): Promise<any> => {
         setLoading(true);
-        try {
-            await apiClient.cancelPunchOut(params.ipoId);
-            await getInvitation();
-        } catch (error) {
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
+        if (invitation) {
+            try {
+                await apiClient.cancelPunchOut(params.ipoId, invitation.rowVersion);
+                await getInvitation();
+                showSnackbarNotification('Invitation for punch out is cancelled.');
+            } catch (error) {
+                console.error(error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
         }
         setLoading(false);
     };

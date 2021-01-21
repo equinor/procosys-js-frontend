@@ -20,7 +20,7 @@ type InvitationResponse = {
     location: string;
     type: string;
     status: string;
-    createdBy: string;
+    createdBy: CreatedByInvitationResponse;
     rowVersion: string;
     startTimeUtc: string;
     endTimeUtc: string;
@@ -39,6 +39,16 @@ type CommPkgScopeResponse = {
     commPkgNo: string;
     description: string;
     status: string;
+}
+
+type CreatedByInvitationResponse = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    azureOid: string;
+    email: string;
+    rowVersion: string;
 }
 
 type ParticipantInvitationResponse = {

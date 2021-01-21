@@ -62,7 +62,10 @@ export type Invitation = {
     type: string;
     rowVersion: string;
     status: string;
-    createdBy: string;
+    createdBy: {
+        firstName: string;
+        lastName: string;
+    }
     startTimeUtc: string;
     endTimeUtc: string;
     participants: Participant[];

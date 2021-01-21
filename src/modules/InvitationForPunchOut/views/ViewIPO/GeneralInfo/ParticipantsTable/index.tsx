@@ -17,8 +17,7 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipUpdate = <div>Update attended status and notes for participants.</div>;
-const tooltipApprove = <div>Punch round has been completed<br />and checked by company.</div>;
-const tooltipUnApprove = <div>Punch round has been approved.</div>;
+const tooltipApprove = <div>Punch round has been checked by company.</div>;
 
 
 export type AttNoteData = {
@@ -93,9 +92,11 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const getCompleteButton = (completePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipComplete} arrow>
-                <Button ref={btnCompleteRef} onClick={completePunchout}>
-                    Complete punch out
-                </Button>
+                <span>
+                    <Button ref={btnCompleteRef} onClick={completePunchout}>
+                        Complete punch out
+                    </Button>
+                </span>
             </CustomTooltip>
         );
     };
@@ -115,20 +116,20 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipApprove} arrow>
-                <Button ref={btnApproveRef} onClick={approvePunchout}>
-                    Approve punch out
-                </Button>
+                <span>
+                    <Button ref={btnApproveRef} onClick={approvePunchout}>
+                        Approve punch out
+                    </Button>
+                </span>
             </CustomTooltip>
         );
     };
 
     const getUnApproveButton = (unApprovePunchout: (index: number) => void): JSX.Element => {
         return (
-            <CustomTooltip title={tooltipUnApprove} arrow>
-                <Button ref={btnUnApproveRef} onClick={unApprovePunchout}>
-                    Unapprove punch out
-                </Button>
-            </CustomTooltip>
+            <Button ref={btnUnApproveRef} onClick={unApprovePunchout}>
+                Unapprove punch out
+            </Button>
         );
     };
 

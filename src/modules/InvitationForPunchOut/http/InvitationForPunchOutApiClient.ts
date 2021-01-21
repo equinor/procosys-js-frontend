@@ -254,7 +254,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getAllProjectsForUserAsync(setRequestCanceller?: RequestCanceler): Promise<ProjectResponse[]> {
-        const endpoint = '/projects';
+        const endpoint = '/Scope/Projects';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -272,7 +272,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getCommPkgsAsync(projectName: string, startWith: string, setRequestCanceller?: RequestCanceler): Promise<CommPkgResponse[]> {
-        const endpoint = '/CommPkgs';
+        const endpoint = '/Scope/CommPkgs';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
@@ -295,7 +295,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getMcPkgsAsync(projectName: string, commPkgNo: string, setRequestCanceller?: RequestCanceler): Promise<McPkgResponse[]> {
-        const endpoint = '/McPkgs';
+        const endpoint = '/Scope/McPkgs';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
@@ -318,7 +318,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getFunctionalRolesAsync(setRequestCanceller?: RequestCanceler): Promise<FunctionalRoleResponse[]> {
-        const endpoint = '/FunctionalRoles/ByClassification/IPO';
+        const endpoint = '/Participants/FunctionalRoles/ByClassification/IPO';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -339,7 +339,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     async getIPO(
         id: number,
         setRequestCanceller?: RequestCanceler): Promise<InvitationResponse> {
-        const endpoint = `/invitations/${id}`;
+        const endpoint = `/Invitations/${id}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -371,7 +371,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
         mcPkgScope: string[] | null,
         commPkgScope: string[] | null,
         setRequestCanceller?: RequestCanceler): Promise<number> {
-        const endpoint = '/invitations';
+        const endpoint = '/Invitations';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -581,7 +581,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByPrivileges/RequiredSigners';
+        const endpoint = '/Participants/Persons/ByPrivileges/RequiredSigners';
         const settings: AxiosRequestConfig = {
             params: {
                 searchString: searchString
@@ -603,7 +603,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons/ByPrivileges/AdditionalSigners';
+        const endpoint = '/Participants/Persons/ByPrivileges/AdditionalSigners';
         const settings: AxiosRequestConfig = {
             params: {
                 searchString: searchString
@@ -625,7 +625,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
-        const endpoint = '/Persons';
+        const endpoint = '/Participants/Persons';
         const settings: AxiosRequestConfig = {
             params: {
                 searchString: searchString

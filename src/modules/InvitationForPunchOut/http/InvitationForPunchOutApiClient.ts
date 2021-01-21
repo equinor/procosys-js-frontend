@@ -20,7 +20,7 @@ type InvitationResponse = {
     location: string;
     type: string;
     status: string;
-    createdBy: CreatedByInvitationResponse;
+    createdBy: PersonResponse;
     rowVersion: string;
     startTimeUtc: string;
     endTimeUtc: string;
@@ -41,16 +41,6 @@ type CommPkgScopeResponse = {
     status: string;
 }
 
-type CreatedByInvitationResponse = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    userName: string;
-    azureOid: string;
-    email: string;
-    rowVersion: string;
-}
-
 type ParticipantInvitationResponse = {
     organization: string;
     sortKey: number;
@@ -58,15 +48,7 @@ type ParticipantInvitationResponse = {
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;
     functionalRole: FunctionalRoleInvitationResponse;
-    signedBy?: {
-        id: number;
-        firstName: string;
-        lastName: string;
-        userName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
-    },
+    signedBy?: PersonResponse;
     signedAtUtc?: Date;
     attended: boolean;
     note: string;
@@ -82,14 +64,7 @@ type FunctionalRoleInvitationResponse = {
 }
 
 type PersonInvitationResponse = {
-    person: {
-        id: number;
-        firstName: string;
-        lastName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
-    },
+    person: PersonResponse,
     response?: string;
     required: boolean;
 }
@@ -115,14 +90,7 @@ type AttachmentResponse = {
     fileName: string;
     rowVersion: string;
     uploadedAt: Date;
-    uploadedBy: {
-        id: number;
-        firstName: string;
-        lastName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
-    }
+    uploadedBy: PersonResponse;
 }
 
 type ProjectResponse = {
@@ -146,11 +114,13 @@ interface McPkgResponse {
 }
 
 interface PersonResponse {
+    id: number;
     azureOid: string;
     userName: string;
     firstName: string;
     lastName: string;
     email: string;
+    rowVersion: string;
 }
 
 interface FunctionalRoleResponse {

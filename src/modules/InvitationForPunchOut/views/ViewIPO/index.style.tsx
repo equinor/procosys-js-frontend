@@ -30,7 +30,7 @@ export const CommentsContainer = styled.div<{ maxHeight: number }>`
 
 export const CommentsIconContainer = styled.div`
     position: absolute;
-    top: var(--margin-module--top);
+    top: 5px;
     right: var(--margin-module--right);
 `;
 

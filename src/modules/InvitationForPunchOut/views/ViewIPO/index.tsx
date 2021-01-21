@@ -20,6 +20,7 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
+import { Button } from '@equinor/eds-core-react';
 
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
 
@@ -266,8 +267,15 @@ const ViewIPO = (): JSX.Element => {
                                         </TabPanels>
                                     </TabStyle>
                                 </Tabs>
-                                <CommentsIconContainer onClick={(): void => setShowComments(show => !show)}>
-                                    {!showComments && <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba} />}
+                                <CommentsIconContainer >
+                                    {!showComments &&
+                                        <Button
+                                            variant='ghost_icon'
+                                            onClick={(): void => setShowComments(show => !show)}
+                                        >
+                                            <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba} />
+                                        </Button>
+                                    }
                                 </CommentsIconContainer>
 
                             </TabsContainer>
@@ -285,7 +293,7 @@ const ViewIPO = (): JSX.Element => {
                         <Typography>No invitation found</Typography>
                     )
             }
-        </Container>);
+        </Container >);
 };
 
 export default ViewIPO;

@@ -62,7 +62,7 @@ const CreateAndEditIPO = ({
 
     const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
 
-    const [commPkgNoFromMain, setCommPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
+    const [commPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
 

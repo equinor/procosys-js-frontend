@@ -47,7 +47,7 @@ const Participants = ({
     const { apiClient } = useInvitationForPunchOutContext();
 
     const nameCombiner = (firstName: string, lastName: string): string => {
-        return firstName + ' ' + lastName;
+        return `${firstName} ${lastName}`;
     };
 
     const getPlannerPersons = (input: string): Canceler | null => {
@@ -60,7 +60,6 @@ const Participants = ({
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
                                 value: person.azureOid,
-                                name: person.lastName + ', ' + person.firstName,
                                 email: person.email
                             };
                         })
@@ -88,7 +87,6 @@ const Participants = ({
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
                                 value: person.azureOid,
-                                name: person.lastName + ', ' + person.firstName,
                                 email: person.email
                             };
                         })
@@ -116,7 +114,6 @@ const Participants = ({
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
                                 value: person.azureOid,
-                                name: person.lastName + ', ' + person.firstName,
                                 email: person.email
                             };
                         })
@@ -182,7 +179,7 @@ const Participants = ({
 
     const personsInRoleText = (textToDisplay: string, persons: Person[]): string => {
         persons.forEach((p, i) => {
-            textToDisplay += nameCombiner(p.firstName, p.lastName);
+            textToDisplay += p.name;
             if (i + 1 < persons.length) {
                 textToDisplay += ', ';
             }
@@ -193,7 +190,7 @@ const Participants = ({
     const getDisplayText = (index: number): string => {
         const participant = participants[index];
         if (participant.person) {
-            return nameCombiner(participant.person.firstName, participant.person.lastName);
+            return participant.person.name;
         } else if (participant.role) {
             let textToDisplay = participant.role.code;
             if (participant.role.persons.length > 0 && !participant.role.usePersonalEmail) {
@@ -240,16 +237,14 @@ const Participants = ({
     const setPersonOnParticipant = (event: React.MouseEvent, personIndex: number, participantIndex: number): void => {
         event.preventDefault();
         const person = filteredPersons[personIndex];
-        if (person && person.name) {
-            const name = person.name.split(', ');
+        if (person && person.text) {
             setParticipants(p => {
                 const participantsCopy = [...p];
                 participantsCopy[participantIndex].role = null;
                 participantsCopy[participantIndex].externalEmail = null;
                 participantsCopy[participantIndex].person = {
                     azureOid: person.value,
-                    firstName: name[1],
-                    lastName: name[0],
+                    name: person.text ? person.text : '',
                     email: person.email ? person.email : '',
                     radioOption: null
                 };

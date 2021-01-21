@@ -11,7 +11,6 @@ export type SelectItem = {
     icon?: ReactNode;
     children?: SelectItem[];
     title?: boolean;
-    name?: string;
     email?: string;
 };
 

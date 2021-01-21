@@ -145,8 +145,6 @@ interface FunctionalRoleResponse {
 export type PersonDto = {
     id?: number;
     azureOid: string | null;
-    firstName: string;
-    lastName: string;
     email: string;
     rowVersion?: string;
     required: boolean;

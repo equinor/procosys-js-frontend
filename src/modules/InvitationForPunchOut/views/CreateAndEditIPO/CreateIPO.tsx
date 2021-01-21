@@ -14,6 +14,7 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+import { useCurrentUser } from '../../../../core/UserContext';
 
 const initialDate = getNextHalfHourTimeString(new Date());
 
@@ -72,7 +73,7 @@ const initialParticipants: Participant[] = [
 ];
 
 const CreateIPO = (): JSX.Element => {
-
+    const user = useCurrentUser();
     const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
 
     const initialSteps: Step[] = [
@@ -120,8 +121,7 @@ const CreateIPO = (): JSX.Element => {
                             persons: role.persons.map(p => {
                                 return {
                                     azureOid: p.azureOid,
-                                    firstName: p.firstName,
-                                    lastName: p.lastName,
+                                    name: `${p.firstName} ${p.lastName}`,
                                     email: p.email,
                                     radioOption: role.usePersonalEmail ? 'to' : null,
                                 };
@@ -136,6 +136,21 @@ const CreateIPO = (): JSX.Element => {
         }
     }, []);
 
+    useEffect(() => {
+        setParticipants(p => {
+            const participantsCopy = [...p];
+            participantsCopy[0].type = 'Person';
+            participantsCopy[0].role = null;
+            participantsCopy[0].person = {
+                azureOid: user.id,
+                name: user.name,
+                email: '',
+                radioOption: null
+            };
+            return participantsCopy;
+        });
+    }, [user]);
+
     const getPerson = (participant: Participant): PersonDto | null => {
         if (!participant.person) {
             return null;
@@ -143,8 +158,6 @@ const CreateIPO = (): JSX.Element => {
         return {
             id: participant.person.id,
             azureOid: participant.person.azureOid,
-            firstName: participant.person.firstName,
-            lastName: participant.person.lastName,
             email: participant.person.email,
             rowVersion: participant.person.rowVersion,
             required: participant.person.radioOption == 'to'
@@ -159,8 +172,6 @@ const CreateIPO = (): JSX.Element => {
             return {
                 id: p.id,
                 azureOid: p.azureOid,
-                firstName: p.firstName,
-                lastName: p.lastName,
                 email: p.email,
                 rowVersion: p.rowVersion,
                 required: p.radioOption == 'to' || role.usePersonalEmail

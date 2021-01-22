@@ -82,6 +82,16 @@ type ExternalEmailInvitationResponse = {
     rowVersion: string;
 }
 
+type CommentResponse = {
+    id: number;
+    comment: string;
+    createdAtUtc: string;
+    createdBy: {
+        firstName: string;
+        lastName: string;
+    }
+}
+
 type HistoryResponse = {
     id: number;
     description: string;
@@ -443,6 +453,57 @@ class InvitationForPunchOutApiClient extends ApiClient {
         }
     }
 
+    /** 
+     * Get comments
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getComments(
+        id: number,
+        setRequestCanceller?: RequestCanceler): Promise<CommentResponse[]> {
+        const endpoint = `/Invitations/${id}/Comments`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get(
+                endpoint,
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+     * Add comment
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async addComment(
+        id: number,
+        comment: string,
+        setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Invitations/${id}/Comments`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    comment
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+
     /**
      * Get History
      *
@@ -732,6 +793,27 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 {
                     ...signDetails
                 });
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+    * Cancel PunchOut
+    *
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async cancelPunchOut(id: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Invitations/${id}/Cancel`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.put(
+                endpoint,
+                { rowVersion: rowVersion },
+                settings
+            );
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

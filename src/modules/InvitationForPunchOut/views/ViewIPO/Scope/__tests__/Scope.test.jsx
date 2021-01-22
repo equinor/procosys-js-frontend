@@ -55,7 +55,7 @@ describe('<Scope />', () => {
         const { queryByText } = renderWithTheme(<Scope commPkgScope={commPkgScope} mcPkgScope={[]} />);
 
         expect(queryByText('Reports')).toBeInTheDocument();
-        expect(queryByText('MC32')).toBeInTheDocument();
+        expect(queryByText('MC32D')).toBeInTheDocument();
         expect(queryByText('MC84')).toBeInTheDocument();
         expect(queryByText('CDP06')).toBeInTheDocument();
     });

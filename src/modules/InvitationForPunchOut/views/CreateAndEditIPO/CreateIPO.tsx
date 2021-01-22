@@ -1,4 +1,4 @@
-import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant } from '../../types';
+import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import { ComponentName, OrganizationsEnum } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import React, { useEffect, useState } from 'react';
@@ -75,6 +75,14 @@ const CreateIPO = (): JSX.Element => {
 
     const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
 
+    const initialSteps: Step[] = [
+        { title: 'General info', isCompleted: false },
+        { title: 'Scope', isCompleted: false },
+        { title: 'Participants', isCompleted: false },
+        { title: 'Upload attachments', isCompleted: false },
+        { title: 'Summary & create', isCompleted: false }
+    ];
+
     const initialGeneralInfo = { ...emptyGeneralInfo, projectId: params.projectId };
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(initialGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
@@ -92,6 +100,8 @@ const CreateIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
     const { unsetDirtyStateFor } = useDirtyContext();
+    const [steps, setSteps] = useState<Step[]>(initialSteps);
+
 
     /**
      * Fetch available functional roles 
@@ -263,6 +273,8 @@ const CreateIPO = (): JSX.Element => {
 
     return (<CreateAndEditIPO
         saveIpo={createNewIpo}
+        steps={steps}
+        setSteps={setSteps}
         generalInfo={generalInfo}
         setGeneralInfo={setGeneralInfo}
         selectedCommPkgScope={selectedCommPkgScope}

@@ -10,7 +10,6 @@ import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import { useParams } from 'react-router-dom';
 
 export enum StepsEnum {
     GeneralInfo = 1,
@@ -38,6 +37,9 @@ interface CreateAndEditProps {
     fromMain: boolean;
     confirmationChecked: boolean;
     setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>
+    ipoId?: number | null;
+    isEditMode?: boolean;
+    commPkgNoFromMain?: string | null;
 };
 
 const CreateAndEditIPO = ({
@@ -57,12 +59,12 @@ const CreateAndEditIPO = ({
     availableRoles,
     fromMain,
     confirmationChecked,
-    setConfirmationChecked
+    setConfirmationChecked,
+    ipoId = null,
+    isEditMode = false,
+    commPkgNoFromMain = null
 }: CreateAndEditProps): JSX.Element => {
 
-    const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
-
-    const [commPkgNoFromMain, setCommPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
 
@@ -165,7 +167,7 @@ const CreateAndEditIPO = ({
 
     return (<Container>
         <CreateAndEditIPOHeader
-            ipoId={params.ipoId}
+            ipoId={ipoId}
             title={generalInfo.title}
             steps={steps}
             currentStep={currentStep}
@@ -180,7 +182,7 @@ const CreateAndEditIPO = ({
                 generalInfo={generalInfo}
                 setGeneralInfo={setGeneralInfo}
                 fromMain={fromMain}
-                isEditMode={params.ipoId != null}
+                isEditMode={isEditMode}
                 clearScope={clearScope}
                 confirmationChecked={confirmationChecked}
                 setConfirmationChecked={setConfirmationChecked}

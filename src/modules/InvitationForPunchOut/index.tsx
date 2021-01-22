@@ -17,7 +17,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                 <Router basename={url}>
                     <Switch>
                         <Route
-                            path={'/CreateIPO/:projectId?/:commPkgNo?'}
+                            path={'/CreateIPO/:projectName?/:commPkgNo?'}
                             exact
                             component={CreateIPO}
                         />

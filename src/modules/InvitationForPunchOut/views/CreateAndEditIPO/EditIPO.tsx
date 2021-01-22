@@ -19,7 +19,6 @@ import { OrganizationMap } from '../utils';
 import { Organization } from '../../types';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
-    projectId: null,
     projectName: null,
     poType: null,
     title: null,
@@ -407,6 +406,8 @@ const EditIPO = (): JSX.Element => {
         fromMain={false}
         confirmationChecked={confirmationChecked}
         setConfirmationChecked={setConfirmationChecked}
+        isEditMode={true}
+        ipoId={params.ipoId}
     />);
 };
 

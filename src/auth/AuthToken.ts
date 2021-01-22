@@ -23,26 +23,24 @@ export default class AuthToken {
     static parse(token: string): AuthToken {
         try {
             const userData = JSON.parse(atob(token.split('.')[1])) as ParsedToken;
-            return new AuthToken(userData, token);
+            return new AuthToken(userData);
 
         } catch (err) {
             throw new InvalidToken(err);
         }
     }
 
-    constructor(json: ParsedToken, token: string) {
+    constructor(json: ParsedToken) {
         this._exp = json.exp;
         this._oid = json.oid;
         this._name = json.name;
         this._username = json.preferred_username;
-        this._idToken = token;
     }
 
     private _exp: number;
     private _oid: string;
     private _name: string;
     private _username: string;
-    private _idToken: string;
 
     get expiresAt(): Date {
         return new Date(this._exp * 1000);
@@ -62,8 +60,5 @@ export default class AuthToken {
 
     get isValid(): boolean {
         return this.expiresAt > new Date();
-    }
-    get idToken(): string {
-        return this._idToken;
     }
 }

@@ -32,43 +32,6 @@ interface AuthConfigResponse {
     scopes: Array<string>
 }
 
-// function overrideWithLocalSettings(remoteConfig: ConfigResponse): ConfigResponse {
-
-//     //Clone it
-//     const configuration: ConfigResponse = {
-//         ...remoteConfig,
-//         externalResources: {
-//             graphApi: {...remoteConfig.externalResources.graphApi},
-//             preservationApi: {...remoteConfig.externalResources.preservationApi},
-//             libraryApi: {...remoteConfig.externalResources.libraryApi},
-//             procosysApi: {...remoteConfig.externalResources.procosysApi},
-//             ipoApi: {...remoteConfig.externalResources.ipoApi},
-//         }
-//     };
-
-//     // Alter
-//     try {
-//         LocalSettings.authority && (configuration.authority = LocalSettings.authority);
-//         LocalSettings.clientId && (configuration.clientId = LocalSettings.clientId);
-//         LocalSettings.defaultScopes && (configuration.defaultScopes = LocalSettings.defaultScopes);
-//         LocalSettings.instrumentationKey && (configuration.instrumentationKey = LocalSettings.instrumentationKey);
-
-//         if (LocalSettings.externalResources) {
-//             LocalSettings.externalResources.graphApi && (configuration.externalResources.graphApi = LocalSettings.externalResources.graphApi);
-//             LocalSettings.externalResources.preservationApi && (configuration.externalResources.preservationApi = LocalSettings.externalResources.preservationApi);
-//             LocalSettings.externalResources.ipoApi && (configuration.externalResources.ipoApi = LocalSettings.externalResources.ipoApi);
-//             LocalSettings.externalResources.libraryApi && (configuration.externalResources.libraryApi = LocalSettings.externalResources.libraryApi);
-//             LocalSettings.externalResources.procosysApi && (configuration.externalResources.procosysApi = LocalSettings.externalResources.procosysApi);
-//         }
-        
-//     } catch (error) {
-//         console.error('An error occured while parsing the local configuration overrides', error);
-//     }
-
-//     // return
-//     return configuration;
-// }
-
 /**
  * API Client that is setup to talk with protected resources
  * @extends <HttpClient>

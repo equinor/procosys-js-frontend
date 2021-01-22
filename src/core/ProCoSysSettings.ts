@@ -140,26 +140,20 @@ class ProCoSysSettings {
         };
         this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
 
+        ProCoSysSettings.instance = this;
+    }
 
-        this.authConfigResponse = this.settingsConfigurationApiClient.getAuthConfig();
-        this.authConfigResponse.catch((error) => {
+    async loadAuthConfiguration(): Promise<void> {
+        this.authConfigState = AsyncState.INITIALIZING;
+        try {
+            this.authConfigResponse = this.settingsConfigurationApiClient.getAuthConfig();
+            const response = await this.authConfigResponse;
+            this.mapFromAuthConfigResponse(response);
+            this.authConfigState = AsyncState.READY;
+        } catch (error) {
             this.authConfigState = AsyncState.ERROR;
             console.error('Failed to load configuration from remote source', error);
-        });
-
-        this.authConfigResponse.then((response) => {
-            try {
-                console.log('Auth Config response: ', response);
-                this.mapFromAuthConfigResponse(response);
-                console.log('Settings after mapping: ', this);
-                this.authConfigState = AsyncState.READY;
-            } catch (error) {
-                this.authConfigState = AsyncState.ERROR;
-                console.error('Failed to parse auth configuration from remote source' , error);
-            }
-        });
-        
-        ProCoSysSettings.instance = this;
+        }
     }
 
     async loadConfiguration(authService: IAuthService): Promise<void> {
@@ -213,6 +207,13 @@ class ProCoSysSettings {
             console.error('Failed to override with local configuration', error);
             throw error;
         }
+    }
+
+    private overrideAuthFromLocalSettings(): void {
+        // Auth elements
+        localSettings.clientId && (this.clientId = localSettings.clientId);
+        localSettings.authority && (this.authority = localSettings.authority);
+        localSettings.defaultScopes && (this.defaultScopes = localSettings.defaultScopes);
     }
 
     private overrideFromLocalConfiguration(): void {

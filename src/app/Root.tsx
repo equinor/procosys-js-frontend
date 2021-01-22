@@ -20,13 +20,10 @@ const Root = (props: AppProps): JSX.Element => {
     const overlayRef = useRef<HTMLDivElement | null>(null);
     
     const [configurationState, setConfigurationState] = useState<AsyncState>(ProCoSysSettings.configState);
-    ProCoSysSettings.loadConfiguration(props.authService);
 
-    const updateConfigurationState = (): void => {
+    const updateConfigurationState = async (): Promise<void> => {
+        await ProCoSysSettings.loadConfiguration(props.authService);
         setConfigurationState(ProCoSysSettings.configState);
-        if (ProCoSysSettings.configState == AsyncState.INITIALIZING) {
-            setTimeout(updateConfigurationState, 10);
-        }
     };
 
     useEffect(() => {

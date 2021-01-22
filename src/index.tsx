@@ -16,12 +16,11 @@ render(
     <Loading title="Loading configuration" />,
     element);
 
-const validateConfigurationState = (): void => {
+const validateConfigurationState = async (): Promise<void> => {
 
+    await ProCoSysSettings.loadAuthConfiguration();
 
-    if (ProCoSysSettings.authConfigState == AsyncState.INITIALIZING) {
-        setTimeout(validateConfigurationState, 10);
-    } else if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
+    if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
         render(
             <Error title="Failed to initialize auth config" large />,
             element);

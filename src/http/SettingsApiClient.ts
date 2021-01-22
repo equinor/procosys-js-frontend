@@ -63,8 +63,4 @@ export default class SettingsApiClient extends HttpClient {
         });
         return result.data;
     }
-
-    // getFeatureFlagConfig(): Promise<FeatureFlagResponse> {
-    //     return Promise.resolve(featureFlagMock);
-    // }
 }

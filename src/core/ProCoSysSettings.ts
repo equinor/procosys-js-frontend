@@ -130,13 +130,14 @@ class ProCoSysSettings {
 
         this.instanceId = Math.floor(Math.random() * 9999);
         if (!localSettings.configurationEndpoint || !localSettings.configurationScope) {
+            console.error('Missing local configuration for Config API', localSettings);
             throw 'Missing local configuration for Config API';
         }
         this.featureFlags = {
-            ipo: false,
-            preservation: false,
-            main: false,
-            library: false
+            ipo: true,
+            preservation: true,
+            main: true,
+            library: true
         };
         this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
 

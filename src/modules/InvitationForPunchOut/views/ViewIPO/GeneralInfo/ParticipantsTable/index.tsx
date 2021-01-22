@@ -32,7 +32,7 @@ interface ParticipantsTableProps {
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    update: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    update: (attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
 }
 
@@ -216,13 +216,13 @@ const ParticipantsTable = ({participants, status, complete, accept, update, sign
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
-    const handleUpdateParticipants = async (index: number): Promise<any> => {
+    const handleUpdateParticipants = async (): Promise<any> => {
         setLoading(true);
         if (btnUpdateRef.current) {
             btnUpdateRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await update(participants[index], attNoteData);
+            await update(attNoteData);
             showSnackbarNotification('Participants updated', 2000, true);
         } catch (error) {
             if (btnUpdateRef.current) {
@@ -340,7 +340,7 @@ const ParticipantsTable = ({participants, status, complete, accept, update, sign
                                         participant, status,
                                         () => handleCompletePunchOut(index),
                                         () => handleApprovePunchOut(index),
-                                        () => handleUpdateParticipants(index),
+                                        () => handleUpdateParticipants(),
                                         () => handleSignPunchOut(index))}
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>

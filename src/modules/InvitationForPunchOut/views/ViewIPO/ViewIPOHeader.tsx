@@ -1,13 +1,13 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, HeaderContainer } from './ViewIPOHeader.style';
+import { ButtonContainer, Container, HeaderContainer, ProgressBarContainer } from './ViewIPOHeader.style';
 import OutlookInfo, { OutlookStatusType } from './OutlookInfo';
 import React, { useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
+import { Link } from 'react-router-dom';
 import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
-import { Link } from 'react-router-dom';
 import { tokens } from '@equinor/eds-tokens';
 
 type ProgressBarProps = {
@@ -53,7 +53,9 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                     </Link>
                 </ButtonContainer>
             </HeaderContainer>
-            <ProgressBar steps={props.steps} currentStep={props.currentStep} />
+            <ProgressBarContainer>
+                <ProgressBar steps={props.steps} currentStep={props.currentStep} />
+            </ProgressBarContainer>
             {
                 displayFlyout && (
                     <OutlookInfo

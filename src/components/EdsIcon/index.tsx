@@ -9,6 +9,7 @@ import {
     attach_file,
     bookmark_collection,
     calendar_date_range,
+    calendar_reject,
     calendar_today,
     category,
     checkbox,
@@ -68,7 +69,7 @@ const icons = {
     notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, link,
     place, pressure, vertical_split, category, search, bookmark_collection, add, arrow_down, arrow_up, file, file_description, image, filter_list, more_vertical,
     warning_filled, delete_forever, restore_from_trash, edit_text, account_circle, lock, info_circle, iphone, print, fast_forward, play,
-    copy, star_filled, star_outlined, microsoft_excel, done, chevron_right, arrow_back, warning_outlined, more_horizontal, microsoft_outlook, microsoft_powerpoint, microsoft_word, calendar_date_range, menu
+    copy, star_filled, star_outlined, microsoft_excel, done, chevron_right, arrow_back, warning_outlined, more_horizontal, microsoft_outlook, microsoft_powerpoint, microsoft_word, calendar_date_range, menu, calendar_reject
 };
 
 Icon.add(icons);

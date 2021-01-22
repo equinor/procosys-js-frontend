@@ -25,4 +25,6 @@ export const ButtonContainer = styled.div`
     align-items: center;
 `;
 
-
+export const ButtonSpacer = styled.div`
+    margin-right: calc(var(--grid-unit) * 2);
+`;

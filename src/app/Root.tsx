@@ -48,11 +48,10 @@ const Root = (props: AppProps): JSX.Element => {
             return failedToLoadConfig();
     }
 
-    console.log('Configuration complete: ', ProCoSysSettings);
-    
     const context = createProcosysContext({
         auth: props.authService,
     });
+
 
     return (
         <ProcosysContext.Provider value={context}>

@@ -1,12 +1,14 @@
-import { AcceptIPODto, CompleteIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
-import { CenterContainer, Container } from './index.style';
-import { Invitation, Participant } from './types';
-import React, { useCallback, useEffect, useState } from 'react';
+import { AcceptIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
+import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabsContainer, TabStyle } from './index.style';
+import { Invitation, IpoComment, Participant } from './types';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Canceler } from 'axios';
+import Comments from './Comments';
+import EdsIcon from '@procosys/components/EdsIcon';
 import GeneralInfo from './GeneralInfo';
 import History from './History';
 import { IpoStatusEnum } from './enums';
@@ -15,8 +17,10 @@ import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
+import { Button } from '@equinor/eds-core-react';
 
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
 
@@ -38,6 +42,9 @@ enum StepsEnum {
     Canceled = 4
 };
 
+const ipoHeaderSize = 136;
+const ipoTabHeaderSize = 115;
+
 const ViewIPO = (): JSX.Element => {
     const params = useParams<{ ipoId: any }>();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
@@ -46,6 +53,43 @@ const ViewIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [invitation, setInvitation] = useState<Invitation>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [showComments, setShowComments] = useState<boolean>(true);
+    const [comments, setComments] = useState<IpoComment[]>([]);
+    const [loadingComments, setLoadingComments] = useState<boolean>(false);
+
+    const moduleContainerRef = useRef<HTMLDivElement>(null);
+
+    const getCommentModuleHeight = (): number => {
+        if (!moduleContainerRef.current) return 0;
+        return (moduleContainerRef.current.clientHeight - ipoHeaderSize);
+    };
+
+    const [commentModuleHeight, setCommentModuleHeight] = useState<number>(getCommentModuleHeight);
+
+    const getTabModuleHeight = (): number => {
+        if (!moduleContainerRef.current) return 0;
+        return (moduleContainerRef.current.clientHeight - ipoHeaderSize - ipoTabHeaderSize);
+    };
+    const [tabModuleHeight, setTabModuleHeight] = useState<number>(getTabModuleHeight);
+
+    const updateModuleAreaHeightReference = (): void => {
+        if (!moduleContainerRef.current) return;
+        setCommentModuleHeight(getCommentModuleHeight);
+        setTabModuleHeight(getTabModuleHeight);
+    };
+
+    /** Update module area height on module resize */
+    useEffect(() => {
+        updateModuleAreaHeightReference();
+    }, [moduleContainerRef, showComments]);
+
+    useEffect(() => {
+        window.addEventListener('resize', updateModuleAreaHeightReference);
+
+        return (): void => {
+            window.removeEventListener('resize', updateModuleAreaHeightReference);
+        };
+    }, []);
 
     useEffect(() => {
         if (invitation) {
@@ -71,7 +115,7 @@ const ViewIPO = (): JSX.Element => {
         }
     }, [invitation]);
 
-    const getInvitation = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    const getInvitation = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
             const response = await apiClient.getIPO(params.ipoId, requestCanceller);
             setInvitation(response);
@@ -79,7 +123,43 @@ const ViewIPO = (): JSX.Element => {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-    }, [params.ipoId]);
+    };
+
+    const getComments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+        try {
+            const response = await apiClient.getComments(params.ipoId, requestCanceller);
+            setComments(response);
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+    useEffect(() => {
+        let requestCancellor: Canceler | null = null;
+        (async (): Promise<void> => {
+            setLoadingComments(true);
+            await getComments((cancel: Canceler) => { requestCancellor = cancel; });
+            setLoadingComments(false);
+        })();
+        return (): void => {
+            requestCancellor && requestCancellor();
+        };
+    }, []);
+
+
+    const addComment = async (comment: string): Promise<void> => {
+        setLoadingComments(true);
+        try {
+            await apiClient.addComment(params.ipoId, comment);
+            await getComments();
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        setLoadingComments(false);
+    };
+
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -103,7 +183,7 @@ const ViewIPO = (): JSX.Element => {
         setSteps(modifiedSteps);
     };
 
-    const updateParticipants = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
+    const updateParticipants = async (attNoteData: AttNoteData[]): Promise<any> => {
         try {
             setLoading(true);
             await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
@@ -195,48 +275,80 @@ const ViewIPO = (): JSX.Element => {
         setLoading(false);
     };
 
-    return (<Container>
-        { loading ? (
-            <CenterContainer>
-                <Spinner large />
-            </CenterContainer>
-        ) :
-            invitation ? (
-                <>
-                    <ViewIPOHeader
-                        ipoId={params.ipoId}
-                        steps={steps}
-                        currentStep={currentStep}
-                        title={invitation.title}
-                        organizer={invitation.createdBy}
-                        participants={invitation.participants}
-                        isEditable={invitation.status == IpoStatusEnum.PLANNED}
-                        isCancelable={invitation.status == IpoStatusEnum.PLANNED || invitation.status == IpoStatusEnum.COMPLETED}
-                        cancelPunchOut={cancelPunchOut}
-                    />
-                    <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
-                        <TabList>
-                            <Tab>General</Tab>
-                            <Tab>Scope</Tab>
-                            <Tab>Attachments</Tab>
-                            <Tab>History</Tab>
-                            <Tab className='emptyTab'>{''}</Tab>
-                        </TabList>
-                        <TabPanels>
-                            <TabPanel><GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} /></TabPanel>
-                            <TabPanel><Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} /> </TabPanel>
-                            <TabPanel><Attachments ipoId={params.ipoId} /></TabPanel>
-                            <TabPanel><History ipoId={params.ipoId} /></TabPanel>
-                        </TabPanels>
-                    </Tabs>
-                </>
-
+    return (
+        <Container ref={moduleContainerRef}>
+            { loading ? (
+                <CenterContainer>
+                    <Spinner large />
+                </CenterContainer>
             ) :
-                (
-                    <Typography>No invitation found</Typography>
-                )
-        }
-    </Container>);
+                invitation ? (
+                    <InvitationContainer>
+                        <ViewIPOHeader
+                            ipoId={params.ipoId}
+                            steps={steps}
+                            currentStep={currentStep}
+                            title={invitation.title}
+                            organizer={invitation.createdBy}
+                            participants={invitation.participants}
+                            isEditable={invitation.status == IpoStatusEnum.PLANNED}
+                            isCancelable={invitation.status == IpoStatusEnum.PLANNED || invitation.status == IpoStatusEnum.COMPLETED}
+                            cancelPunchOut={cancelPunchOut}
+                        />
+                        <InvitationContentContainer>
+                            <TabsContainer>
+                                <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
+                                    <TabList>
+                                        <Tab>General</Tab>
+                                        <Tab>Scope</Tab>
+                                        <Tab>Attachments</Tab>
+                                        <Tab>History</Tab>
+                                        <Tab className='emptyTab'>{''}</Tab>
+                                    </TabList>
+                                    <TabStyle maxHeight={tabModuleHeight + 67}>
+                                        <TabPanels>
+                                            <TabPanel>
+                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} />
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <Attachments ipoId={params.ipoId} />
+                                            </TabPanel>
+                                            <TabPanel>
+                                                <History ipoId={params.ipoId} />
+                                            </TabPanel>
+                                        </TabPanels>
+                                    </TabStyle>
+                                </Tabs>
+                                <CommentsIconContainer >
+                                    {!showComments &&
+                                        <Button
+                                            variant='ghost_icon'
+                                            onClick={(): void => setShowComments(show => !show)}
+                                        >
+                                            <EdsIcon name={`${comments.length > 0 ? 'comment_chat' : 'comment'}`} color={tokens.colors.interactive.primary__resting.rgba} />
+                                        </Button>
+                                    }
+                                </CommentsIconContainer>
+
+                            </TabsContainer>
+                            {showComments && (
+                                <CommentsContainer maxHeight={commentModuleHeight}>
+                                    <Comments comments={comments} addComment={addComment} loading={loadingComments} close={(): void => setShowComments(false)} />
+                                </CommentsContainer>
+                            )}
+
+                        </InvitationContentContainer>
+                    </InvitationContainer>
+
+                ) :
+                    (
+                        <Typography>No invitation found</Typography>
+                    )
+            }
+        </Container >);
 };
 
 export default ViewIPO;

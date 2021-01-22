@@ -22,6 +22,8 @@ export enum StepsEnum {
 
 interface CreateAndEditProps {
     saveIpo: () => void;
+    steps: Step[];
+    setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
     generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     selectedCommPkgScope: CommPkgRow[];
@@ -40,6 +42,8 @@ interface CreateAndEditProps {
 
 const CreateAndEditIPO = ({
     saveIpo,
+    steps,
+    setSteps,
     generalInfo,
     setGeneralInfo,
     selectedCommPkgScope,
@@ -56,23 +60,15 @@ const CreateAndEditIPO = ({
     setConfirmationChecked
 }: CreateAndEditProps): JSX.Element => {
 
+    const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
+
+    const [commPkgNoFromMain, setCommPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
-
-    const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
 
     const initialGeneralInfo = { ...generalInfo };
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
-    const initialSteps: Step[] = [
-        { title: 'General info', isCompleted: false },
-        { title: 'Scope', isCompleted: false },
-        { title: 'Participants', isCompleted: false },
-        { title: 'Upload attachments', isCompleted: (params.ipoId ? true : false) },
-        { title: 'Summary & ' + (params.ipoId ? 'update' : 'create'), isCompleted: false }
-    ];
-
-    const [steps, setSteps] = useState<Step[]>(initialSteps);
 
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
@@ -193,7 +189,7 @@ const CreateAndEditIPO = ({
         { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectName != null) &&
             <SelectScope
                 type={generalInfo.poType.value}
-                commPkgNo={params.commPkgNo ? params.commPkgNo : null}
+                commPkgNo={commPkgNoFromMain ? commPkgNoFromMain : null}
                 selectedCommPkgScope={selectedCommPkgScope}
                 setSelectedCommPkgScope={setSelectedCommPkgScope}
                 selectedMcPkgScope={selectedMcPkgScope}

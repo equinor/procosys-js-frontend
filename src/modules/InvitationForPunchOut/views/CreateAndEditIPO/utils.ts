@@ -10,16 +10,16 @@ export const getEndTime = (date: Date): Date => {
 };
 
 export const getNextHalfHourTimeString = (date: Date): Date => {
-    const hours  = date.getHours();
+    const hours = date.getHours();
     const minutes = date.getMinutes();
     if (hours < 20) {
         if (minutes < 30) {
-            return addMinutes(date, 30 - minutes);
+            return set(addMinutes(date, 30 - minutes), { seconds: 0 });
         } else {
-            return set(date, { hours: hours + 1, minutes: 0});
+            return set(date, { hours: hours + 1, minutes: 0, seconds: 0 });
         }
     } else {
         const nextDay = addDays(date, 1);
-        return set(nextDay, { hours: 7, minutes: 0});
+        return set(nextDay, { hours: 7, minutes: 0 });
     }
 };

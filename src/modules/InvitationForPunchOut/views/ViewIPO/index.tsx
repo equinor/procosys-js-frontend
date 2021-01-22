@@ -47,7 +47,7 @@ const ViewIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [invitation, setInvitation] = useState<Invitation>();
     const [loading, setLoading] = useState<boolean>(false);
-    const [showComments, setShowComments] = useState<boolean>(false);
+    const [showComments, setShowComments] = useState<boolean>(true);
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
 

@@ -120,7 +120,7 @@ const GeneralInfo = ({
                 label={'Project'}
                 maxHeight='300px'
                 variant='form'
-                text={selectedProject && selectedProject.description || generalInfo.projectName || 'Select'}
+                text={generalInfo.projectName || 'Select'}
                 onFilter={setFilterForProjects}
                 disabled={fromMain || isEditMode}
             >

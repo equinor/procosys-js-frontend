@@ -14,7 +14,11 @@ type AppProps = {
     authService: IAuthService;
 }
 
-
+/**
+ * Loads initial application configuration before 
+ * rendering the main application
+ * @param props 
+ */
 const Root = (props: AppProps): JSX.Element => {
     const rootRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);

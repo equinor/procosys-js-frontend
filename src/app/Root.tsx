@@ -1,6 +1,6 @@
 import '../assets/sass/procosys-styles.scss';
 
-import ProCoSysSettings, { ConfigurationLoaderAsyncState } from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings, { AsyncState } from '@procosys/core/ProCoSysSettings';
 import ProcosysContext, { createProcosysContext } from '../core/ProcosysContext';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -19,11 +19,12 @@ const Root = (props: AppProps): JSX.Element => {
     const rootRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
     
-    const [configurationState, setConfigurationState] = useState<ConfigurationLoaderAsyncState>(ProCoSysSettings.state);
+    const [configurationState, setConfigurationState] = useState<AsyncState>(ProCoSysSettings.configState);
+    ProCoSysSettings.loadConfiguration(props.authService);
 
     const updateConfigurationState = (): void => {
-        setConfigurationState(ProCoSysSettings.state);
-        if (ProCoSysSettings.state == ConfigurationLoaderAsyncState.INITIALIZING) {
+        setConfigurationState(ProCoSysSettings.configState);
+        if (ProCoSysSettings.configState == AsyncState.INITIALIZING) {
             setTimeout(updateConfigurationState, 10);
         }
     };
@@ -33,23 +34,21 @@ const Root = (props: AppProps): JSX.Element => {
     },[]);
 
     const loadingConfiguration = (): JSX.Element => {
-        console.log('Loading settings');
         return (<Loading title="Loading configuration" />);
     };
 
     const failedToLoadConfig = (): JSX.Element => {
-        console.log('Failed to load settings');
-
         return (<Error title="Failed to load remote configuration" large />);
     };
 
     switch(configurationState) {
-        case ConfigurationLoaderAsyncState.INITIALIZING: 
+        case AsyncState.INITIALIZING: 
             return loadingConfiguration();
-        case ConfigurationLoaderAsyncState.ERROR: 
+        case AsyncState.ERROR: 
             return failedToLoadConfig();
     }
-    console.log('Settings: ', ProCoSysSettings);
+
+    console.log('Configuration complete: ', ProCoSysSettings);
     
     const context = createProcosysContext({
         auth: props.authService,

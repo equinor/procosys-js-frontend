@@ -1,8 +1,9 @@
-import ProCoSysSettings, {ConfigurationLoaderAsyncState} from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings, {AsyncState} from '@procosys/core/ProCoSysSettings';
 
 import AuthService from './auth/AuthService';
 import Error from './components/Error';
 import { Loading } from './components';
+import Login from './modules/Login';
 import React from 'react';
 import Root from './app/Root';
 import { render } from 'react-dom';
@@ -16,16 +17,15 @@ render(
     element);
 
 const validateConfigurationState = (): void => {
-    if (ProCoSysSettings.state == ConfigurationLoaderAsyncState.INITIALIZING) {
-        console.log('This needs re-validation');
+
+
+    if (ProCoSysSettings.authConfigState == AsyncState.INITIALIZING) {
         setTimeout(validateConfigurationState, 10);
-    } else if (ProCoSysSettings.state == ConfigurationLoaderAsyncState.ERROR) {
+    } else if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
         render(
-            <Error title="Failed to initialize system config" large />,
+            <Error title="Failed to initialize auth config" large />,
             element);
     } else {
-        console.log('Rendering');
-        
         const authService = new AuthService();
         authService.handleRedirectCallback();
         /**
@@ -35,9 +35,16 @@ const validateConfigurationState = (): void => {
         if (window.parent != window) {
             console.info('Aborted further app loading iFrame');
         } else {
-            render(
-                <Root authService={authService} />,
-                element);
+            if (authService.getCurrentUser() === null) {
+                authService.login();
+                render(
+                    <Login />,
+                    element);
+            } else {
+                render(
+                    <Root authService={authService} />,
+                    element);
+            }
         }
     }
 };

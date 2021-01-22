@@ -105,6 +105,6 @@ export default class AuthService implements IAuthService {
     getCurrentUser(): AuthUser | null {
         const account = this.authInstance.getAccount();
         if (!account) return null;
-        return new AuthUser({ username: account.userName, fullname: account.name, id: account.accountIdentifier });
+        return new AuthUser({ username: account.userName, fullname: account.name, id: account.accountIdentifier, idToken: '' });
     }
 }

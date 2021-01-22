@@ -1,38 +1,42 @@
+import { IAuthService } from 'src/auth/AuthService';
 import SettingsApiClient from '@procosys/http/SettingsApiClient';
 
-const Settings = require('../../settings.json');
-const settingsApiClient = new SettingsApiClient(Settings.configuratinEndpoint);
+const localSettings = require('../../settings.json');
 //#region types
 
 interface FeatureConfig {
     url: string;
     scope: Array<string>,
-    version: string | null;
+    version?: string;
 }
 
-interface ConfigResponse {
-    clientId: string;
-    authority: string;
-    defaultScopes: Array<string>;
-    externalResources: {
-        procosysApi: FeatureConfig,
-        graphApi: FeatureConfig,
-        preservationApi: FeatureConfig,
-        ipoApi: FeatureConfig,
-        libraryApi: FeatureConfig
-    },
-    instrumentationKey: string;
-}
-
-interface FeatureFlagResponse {
-    ipo: boolean;
-    library: boolean,
-    preservervation: boolean,
-    graph: boolean,
+interface FeatureFlags {
+    ipo: boolean
+    library: boolean
+    preservation: boolean
     main: boolean
 }
 
-export enum ConfigurationLoaderAsyncState {
+interface ConfigResponse {
+    configuration: {
+        procosysApi: FeatureConfig
+        graphApi: FeatureConfig
+        preservationApi: FeatureConfig
+        ipoApi: FeatureConfig
+        libraryApi: FeatureConfig
+        instrumentationKey: string
+    }
+    featureFlags: FeatureFlags
+    
+}
+
+interface AuthConfigResponse {
+    clientId: string;
+    authority: string;
+    scopes: Array<string>;
+}
+
+export enum AsyncState {
     READY,
     INITIALIZING,
     ERROR
@@ -40,6 +44,9 @@ export enum ConfigurationLoaderAsyncState {
 //#endregion types
 
 class ProCoSysSettings {
+    private settingsConfigurationApiClient!: SettingsApiClient;
+    configurationEndpoint!: string;
+    configurationScope!: string;
 
     // remoteConfigurationResponse: ConfigResponse;
     /**
@@ -48,7 +55,15 @@ class ProCoSysSettings {
      * ERROR - Settings initializer encountered an error while loading
      * READY - Settings are finished loading
      */
-    state:ConfigurationLoaderAsyncState = ConfigurationLoaderAsyncState.INITIALIZING;
+    configState:AsyncState = AsyncState.INITIALIZING;
+
+    /**
+     * Validates the async state
+     * INITIALIZING - Settings is not done initializing
+     * ERROR - Settings initializer encountered an error while loading
+     * READY - Settings are finished loading
+     */
+    authConfigState:AsyncState = AsyncState.INITIALIZING;
 
     /**
      * A random number to validate instance
@@ -64,6 +79,11 @@ class ProCoSysSettings {
      * Cached response from server
      */
     private configurationResponse!: Promise<ConfigResponse>;
+
+    /**
+     * Cached response from server
+     */
+    private authConfigResponse!: Promise<AuthConfigResponse>;
 
     /**
      * URI to the login authority
@@ -90,8 +110,17 @@ class ProCoSysSettings {
     ipoApi!: FeatureConfig;
     libraryApi!: FeatureConfig;
 
-    featureIsEnabled(featureName: string): boolean {
-        return true;
+    featureFlags!: FeatureFlags
+
+    /**
+     * Returns true or false based on if the feature is enabled or disabled. 
+     * @returns TRUE: feature is enabled
+     * @returns FALSE: feature is disabled
+     * @default false - if the feature is not configured
+     * @param feature key for feature
+     */
+    featureIsEnabled(feature: string): boolean {
+        return this.featureFlags[feature as keyof FeatureFlags] || false;
     }
 
     constructor() {
@@ -100,44 +129,114 @@ class ProCoSysSettings {
         }
 
         this.instanceId = Math.floor(Math.random() * 9999);
+        if (!localSettings.configurationEndpoint || !localSettings.configurationScope) {
+            throw 'Missing local configuration for Config API';
+        }
+        this.featureFlags = {
+            ipo: false,
+            preservation: false,
+            main: false,
+            library: false
+        };
+        this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
 
-        this.configurationResponse = settingsApiClient.getConfig();
-        this.configurationResponse.catch((error) => {
-            this.state = ConfigurationLoaderAsyncState.ERROR;
+
+        this.authConfigResponse = this.settingsConfigurationApiClient.getAuthConfig();
+        this.authConfigResponse.catch((error) => {
+            this.authConfigState = AsyncState.ERROR;
             console.error('Failed to load configuration from remote source', error);
         });
 
-        this.configurationResponse.then((response) => {
+        this.authConfigResponse.then((response) => {
             try {
-                this.mapFromConfigurationResponse(response);
-                this.state = ConfigurationLoaderAsyncState.READY;
+                console.log('Auth Config response: ', response);
+                this.mapFromAuthConfigResponse(response);
+                console.log('Settings after mapping: ', this);
+                this.authConfigState = AsyncState.READY;
             } catch (error) {
-                this.state = ConfigurationLoaderAsyncState.ERROR;
-                console.error('Failed to parse configuration from remote source' , error);
+                this.authConfigState = AsyncState.ERROR;
+                console.error('Failed to parse auth configuration from remote source' , error);
             }
-        }).finally(() => {
-            Object.freeze(this);
         });
         
         ProCoSysSettings.instance = this;
     }
 
+    async loadConfiguration(authService: IAuthService): Promise<void> {
+        this.configurationResponse = this.settingsConfigurationApiClient.getConfig(authService, localSettings.configurationScope);
+
+        try {
+            const configResponse = await this.configurationResponse;
+            try {
+                this.mapFromConfigurationResponse(configResponse);
+                this.configState = AsyncState.READY;
+            } catch (error) {
+                this.configState = AsyncState.ERROR;
+                console.error('Failed to parse configuration from remote source' , error);
+            }
+
+        } catch (error) {
+            this.configState = AsyncState.ERROR;
+            console.error('Failed to load configuration from remote source', error);
+        }
+    }
+
+    private mapFromAuthConfigResponse(authConfigResponse: AuthConfigResponse): void {
+        this.authority = authConfigResponse.authority;
+        this.clientId = authConfigResponse.clientId;
+        this.defaultScopes = authConfigResponse.scopes;
+    }
+
     private mapFromConfigurationResponse(configurationResponse: ConfigResponse): void {
         try {
-            this.authority = configurationResponse.authority;
-            this.clientId = configurationResponse.clientId;
-            this.defaultScopes = configurationResponse.defaultScopes;
-            this.instrumentationKey = configurationResponse.instrumentationKey;
+            this.instrumentationKey = configurationResponse.configuration.instrumentationKey;
 
-            this.graphApi = configurationResponse.externalResources.graphApi;
-            this.preservationApi = configurationResponse.externalResources.preservationApi;
-            this.ipoApi = configurationResponse.externalResources.ipoApi;
-            this.libraryApi = configurationResponse.externalResources.libraryApi;
-            this.procosysApi = configurationResponse.externalResources.procosysApi;
+            this.graphApi = configurationResponse.configuration.graphApi;
+            this.preservationApi = configurationResponse.configuration.preservationApi;
+            this.ipoApi = configurationResponse.configuration.ipoApi;
+            this.libraryApi = configurationResponse.configuration.libraryApi;
+            this.procosysApi = configurationResponse.configuration.procosysApi;
+
+            // Feature flags
+            this.featureFlags.ipo = configurationResponse.featureFlags.ipo;
+            this.featureFlags.main = configurationResponse.featureFlags.main;
+            this.featureFlags.library = configurationResponse.featureFlags.library;
+            this.featureFlags.preservation = configurationResponse.featureFlags.preservation;
         } catch (error) {
             console.error('Failed to parse Configuration from remote server', error);
             throw error;
         }
+
+        try {
+            this.overrideFromLocalConfiguration();
+        } catch (error) {
+            console.error('Failed to override with local configuration', error);
+            throw error;
+        }
+    }
+
+    private overrideFromLocalConfiguration(): void {
+        if (localSettings.configuration) {
+            // Configuration elements
+            console.info('Overriding configuration from settings: ', localSettings.configuration);
+            localSettings.configuration.instrumentationKey && (this.instrumentationKey = localSettings.configuration.instrumentationKey);
+            localSettings.configuration.graphApi && (this.graphApi = localSettings.configuration.graphApi);
+            localSettings.configuration.preservationApi && (this.preservationApi = localSettings.configuration.preservationApi);
+            localSettings.configuration.ipoApi && (this.ipoApi = localSettings.configuration.ipoApi);
+            localSettings.configuration.libraryApi && (this.libraryApi = localSettings.configuration.libraryApi);
+            localSettings.configuration.procosysApi && (this.procosysApi = localSettings.configuration.procosysApi);
+        }
+        
+        // Feature flags
+        if (localSettings.featureFlags) {
+            console.info('Overriding feature flags from settings: ', localSettings.featureFlags);
+
+            localSettings.featureFlags.main != undefined && (this.featureFlags.main = localSettings.featureFlags.main);
+            localSettings.featureFlags.ipo != undefined && (this.featureFlags.ipo = localSettings.featureFlags.ipo);
+            localSettings.featureFlags.library != undefined && (this.featureFlags.library = localSettings.featureFlags.library);
+            localSettings.featureFlags.preservation != undefined && (this.featureFlags.preservation = localSettings.featureFlags.preservation);
+        }
+
     }
 
 }

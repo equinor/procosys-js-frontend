@@ -238,6 +238,16 @@ const ViewIPO = (): JSX.Element => {
         setLoading(false);
     };
 
+    const unacceptPunchOut = async (participant: Participant): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        await apiClient.unacceptPunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
+        await getInvitation();
+    };
+
     const signPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
@@ -277,7 +287,7 @@ const ViewIPO = (): JSX.Element => {
 
     return (
         <Container ref={moduleContainerRef}>
-            { loading ? (
+            {loading ? (
                 <CenterContainer>
                     <Spinner large />
                 </CenterContainer>
@@ -308,7 +318,7 @@ const ViewIPO = (): JSX.Element => {
                                     <TabStyle maxHeight={tabModuleHeight + 67}>
                                         <TabPanels>
                                             <TabPanel>
-                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} />
+                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unaccept={unacceptPunchOut} />
                                             </TabPanel>
                                             <TabPanel>
                                                 <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />

@@ -20,7 +20,7 @@ type InvitationResponse = {
     location: string;
     type: string;
     status: string;
-    createdBy: string;
+    createdBy: PersonResponse;
     rowVersion: string;
     startTimeUtc: string;
     endTimeUtc: string;
@@ -48,7 +48,7 @@ type ParticipantInvitationResponse = {
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;
     functionalRole: FunctionalRoleInvitationResponse;
-    signedBy?: string;
+    signedBy?: PersonResponse;
     signedAtUtc?: Date;
     attended: boolean;
     note: string;
@@ -64,14 +64,7 @@ type FunctionalRoleInvitationResponse = {
 }
 
 type PersonInvitationResponse = {
-    person: {
-        id: number;
-        firstName: string;
-        lastName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
-    },
+    person: PersonResponse,
     response?: string;
     required: boolean;
 }
@@ -107,14 +100,7 @@ type AttachmentResponse = {
     fileName: string;
     rowVersion: string;
     uploadedAt: Date;
-    uploadedBy: {
-        id: number;
-        firstName: string;
-        lastName: string;
-        azureOid: string;
-        email: string;
-        rowVersion: string;
-    }
+    uploadedBy: PersonResponse;
 }
 
 type ProjectResponse = {
@@ -138,6 +124,17 @@ interface McPkgResponse {
 }
 
 interface PersonResponse {
+    id: number;
+    azureOid: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    rowVersion: string;
+}
+
+//This interface is used for objects comming from main, and does not have an id or rowVersion
+interface ParticipantPersonResponse {
     azureOid: string;
     userName: string;
     firstName: string;
@@ -145,18 +142,17 @@ interface PersonResponse {
     email: string;
 }
 
+
 interface FunctionalRoleResponse {
     code: string;
     description: string;
     usePersonalEmail: boolean;
-    persons: PersonResponse[];
+    persons: ParticipantPersonResponse[];
 }
 
 export type PersonDto = {
     id?: number;
     azureOid: string | null;
-    firstName: string;
-    lastName: string;
     email: string;
     rowVersion?: string;
     required: boolean;
@@ -641,7 +637,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+    async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
         const endpoint = '/Participants/Persons/ByPrivileges/RequiredSigners';
         const settings: AxiosRequestConfig = {
             params: {
@@ -663,7 +659,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+    async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
         const endpoint = '/Participants/Persons/ByPrivileges/AdditionalSigners';
         const settings: AxiosRequestConfig = {
             params: {
@@ -685,7 +681,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+    async getPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
         const endpoint = '/Participants/Persons';
         const settings: AxiosRequestConfig = {
             params: {
@@ -707,7 +703,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async completePunchOut(id: number, completeDetails: CompleteIPODto, setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+    async completePunchOut(id: number, completeDetails: CompleteIPODto, setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Invitations/${id}/Complete`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -825,7 +821,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async attendedStatusAndNotes(id: number, participantDetails: AttendedAndNotesDto[], setRequestCanceller?: RequestCanceler): Promise<PersonResponse[]> {
+    async attendedStatusAndNotes(id: number, participantDetails: AttendedAndNotesDto[], setRequestCanceller?: RequestCanceler): Promise<void> {
         const endpoint = `/Invitations/${id}/AttendedStatusAndNotes`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -835,7 +831,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 endpoint,
                 participantDetails,
                 settings);
-            return result.data;
         } catch (error) {
             throw new IpoApiError(error);
         }

@@ -115,8 +115,6 @@ const EditIPO = (): JSX.Element => {
         return {
             id: participant.person.id,
             azureOid: participant.person.azureOid,
-            firstName: participant.person.firstName,
-            lastName: participant.person.lastName,
             email: participant.person.email,
             rowVersion: participant.person.rowVersion,
             required: participant.person.radioOption == 'to'

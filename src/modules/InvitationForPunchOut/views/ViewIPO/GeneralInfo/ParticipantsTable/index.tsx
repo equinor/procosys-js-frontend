@@ -155,7 +155,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
             case OrganizationsEnum.Contractor:
                 if (participant.sortKey === 0) {
                     if ((participant.signedBy && status === IpoStatusEnum.ACCEPTED) || (!participant.canSign && status === IpoStatusEnum.COMPLETED)) {
-                        return <span>{`${participant.signedBy}`}</span>;
+                        return <span>{participant.signedBy ? `${participant.signedBy.userName}` : ''}</span>;
                     } else if (participant.canSign && status === IpoStatusEnum.PLANNED) {
                         return getCompleteButton(handleCompletePunchOut);
                     } else if (participant.canSign && status === IpoStatusEnum.COMPLETED) {
@@ -163,7 +163,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                     }
                 } else {
                     if (participant.signedBy) {
-                        return <span>{`${participant.signedBy}`}</span>;
+                        return <span>{`${participant.signedBy.userName}`}</span>;
                     } else if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                         return getSignButton(handleSignPunchOut);
                     }
@@ -174,7 +174,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                     if (participant.sortKey == 1) {
                         return getUnApproveButton(handleUnApprovePunchOut);
                     }
-                    return <span>{`${participant.signedBy}`}</span>;
+                    if (participant.signedBy) {
+                        return <span>{`${participant.signedBy.userName}`}</span>;
+                    }
                 }
 
                 if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
@@ -190,7 +192,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
             case OrganizationsEnum.TechnicalIntegrity:
             case OrganizationsEnum.Commissioning:
                 if (participant.signedBy) {
-                    return <span>{`${participant.signedBy}`}</span>;
+                    return <span>{`${participant.signedBy.userName}`}</span>;
                 } else if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                     return getSignButton(handleSignPunchOut);
                 }

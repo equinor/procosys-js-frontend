@@ -299,7 +299,7 @@ const ViewIPO = (): JSX.Element => {
                             steps={steps}
                             currentStep={currentStep}
                             title={invitation.title}
-                            organizer={invitation.createdBy}
+                            organizer={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
                             participants={invitation.participants}
                             isEditable={invitation.status == IpoStatusEnum.PLANNED}
                             isCancelable={invitation.status == IpoStatusEnum.PLANNED || invitation.status == IpoStatusEnum.COMPLETED}

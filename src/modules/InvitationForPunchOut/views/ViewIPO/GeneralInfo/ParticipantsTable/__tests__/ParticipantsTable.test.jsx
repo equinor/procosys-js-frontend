@@ -73,7 +73,7 @@ const participants = [
         functionalRole: null,
         signedBy: {
             id: 123,
-            firstName: 'Adsigner1wa',
+            firstName: 'Adwa',
             lastName: 'ASdsklandasnd',
             userName: 'signer1',
             azureOid: 'azure1',
@@ -104,12 +104,13 @@ const participants = [
         functionalRole: null,
         signedBy:  {
             id: 123,
-            firstName: 'Adsigner1wa',
-            lastName: 'ASdsklandasnd',
             userName: 'signer2',
+            firstName: 'Oakjfcv',
+            lastName: 'Alkjljsdf',
             azureOid: 'azure2',
-            email: 'asdadasd@dwwdwd.com',
-            rowVersion: '123123'},
+            email: 'lkjlkjsdf@dwwdwd.com',
+            rowVersion: '123123',
+        },
         signedAtUtc: new Date(2020, 11, 6, 12), 
         attended: true,
         note: ''
@@ -153,7 +154,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].person.person.firstName} ${participants[ParticipantIndex.COMPLETER].person.person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].person.person.firstName} ${participants[ParticipantIndex.APPROVER].person.person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryAllByText(participants[ParticipantIndex.COMPLETER].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText(participants[ParticipantIndex.APPROVER].person.response).length).toBeGreaterThan(0);
@@ -266,7 +266,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
@@ -286,7 +285,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Sign punch out')).not.toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
-        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
@@ -304,7 +302,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Sign punch out')).toBeInTheDocument();
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
-        expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();

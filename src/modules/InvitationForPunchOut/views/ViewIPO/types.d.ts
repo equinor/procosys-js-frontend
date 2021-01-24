@@ -73,6 +73,16 @@ export type Invitation = {
     commPkgScope: CommPkgScope[];
 }
 
+export type IpoComment = {
+    id: number;
+    comment: string;
+    createdAtUtc: string;
+    createdBy: {
+        firstName: string;
+        lastName: string;
+    }
+}
+
 export type HistoryItem = {
     id: number;
     description: string;

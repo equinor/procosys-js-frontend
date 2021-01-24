@@ -146,7 +146,7 @@ describe('<ParticipantsTable />', () => {
     it('Renders persons to table', async () => {
         const { queryAllByText, queryByText } = renderWithTheme(<ParticipantsTable 
             participants={participants} 
-            status="Accepted"
+            status={IpoStatusEnum.ACCEPTED}
             accept={approvePunchOut}
             complete={completePunchOut} />);
 
@@ -154,6 +154,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].person.person.firstName} ${participants[ParticipantIndex.APPROVER].person.person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
+        expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryAllByText(participants[ParticipantIndex.COMPLETER].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText(participants[ParticipantIndex.APPROVER].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText('Did not attend').length).toBeGreaterThan(0);
@@ -266,6 +267,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
+        expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
@@ -285,6 +287,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
+        expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
@@ -302,6 +305,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Approve punch out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.APPROVER].signedBy.userName}`)).toBeInTheDocument();
+        expect(queryByText('Unapprove punch out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
@@ -399,4 +403,5 @@ describe('<ParticipantsTable />', () => {
         expect(mockUnsetDirtyStateFor).toBeCalledTimes(1);
         expect(mockUnsetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
     });
+    
 });

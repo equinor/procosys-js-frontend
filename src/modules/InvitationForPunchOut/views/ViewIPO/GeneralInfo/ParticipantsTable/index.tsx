@@ -17,7 +17,7 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipUpdate = <div>Update attended status and notes for participants.</div>;
-const tooltipApprove = <div>Punch round has been completed<br />and checked by company</div>;
+const tooltipApprove = <div>Punch round has been checked by company.</div>;
 
 
 export type AttNoteData = {
@@ -32,12 +32,13 @@ interface ParticipantsTableProps {
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    update: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    update: (attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
+    unaccept: (p: Participant) => Promise<any>;
 }
 
 
-const ParticipantsTable = ({ participants, status, complete, accept, update, sign }: ParticipantsTableProps): JSX.Element => {
+const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unaccept }: ParticipantsTableProps): JSX.Element => {
     const cleanData = participants.map(p => {
         const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
         const attendedStatus = status === IpoStatusEnum.PLANNED ?
@@ -58,6 +59,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
     const btnApproveRef = useRef<HTMLButtonElement>();
+    const btnUnApproveRef = useRef<HTMLButtonElement>();
     const btnUpdateRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
@@ -90,9 +92,11 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const getCompleteButton = (completePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipComplete} arrow>
-                <Button ref={btnCompleteRef} onClick={completePunchout}>
-                    Complete punch out
-                </Button>
+                <span>
+                    <Button ref={btnCompleteRef} onClick={completePunchout}>
+                        Complete punch out
+                    </Button>
+                </span>
             </CustomTooltip>
         );
     };
@@ -112,12 +116,23 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
         return (
             <CustomTooltip title={tooltipApprove} arrow>
-                <Button ref={btnApproveRef} onClick={approvePunchout}>
-                    Approve punch out
-                </Button>
+                <span>
+                    <Button ref={btnApproveRef} onClick={approvePunchout}>
+                        Approve punch out
+                    </Button>
+                </span>
             </CustomTooltip>
         );
     };
+
+    const getUnApproveButton = (unApprovePunchout: (index: number) => void): JSX.Element => {
+        return (
+            <Button ref={btnUnApproveRef} onClick={unApprovePunchout}>
+                Unapprove punch out
+            </Button>
+        );
+    };
+
 
     const getSignButton = (signPunchOut: (index: number) => void): JSX.Element => {
         return (
@@ -133,7 +148,8 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         handleCompletePunchOut: (index: number) => void,
         handleApprovePunchOut: (index: number) => void,
         handleUpdateParticipants: (index: number) => void,
-        handleSignPunchOut: (index: number) => void): JSX.Element => {
+        handleSignPunchOut: (index: number) => void,
+        handleUnApprovePunchOut: (index: number) => void): JSX.Element => {
 
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
@@ -154,8 +170,13 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 }
                 break;
             case OrganizationsEnum.ConstructionCompany:
-                if (participant.signedBy) {
-                    return <span>{`${participant.signedBy.userName}`}</span>;
+                if (status == IpoStatusEnum.ACCEPTED) {
+                    if (participant.sortKey == 1) {
+                        return getUnApproveButton(handleUnApprovePunchOut);
+                    }
+                    if (participant.signedBy) {
+                        return <span>{`${participant.signedBy.userName}`}</span>;
+                    }
                 }
 
                 if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
@@ -165,6 +186,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                         return getSignButton(handleSignPunchOut);
                     }
                 }
+
                 break;
             case OrganizationsEnum.Operation:
             case OrganizationsEnum.TechnicalIntegrity:
@@ -205,6 +227,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         }
         try {
             await accept(participants[index], attNoteData);
+            if (btnUnApproveRef.current) {
+                btnUnApproveRef.current.removeAttribute('disabled');
+            }
             showSnackbarNotification('Punch out approved', 2000, true);
         } catch (error) {
             if (btnApproveRef.current) {
@@ -216,13 +241,34 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
-    const handleUpdateParticipants = async (index: number): Promise<any> => {
+    const handleUnApprovePunchOut = async (index: number): Promise<any> => {
+        setLoading(true);
+        if (btnUnApproveRef.current) {
+            btnUnApproveRef.current.setAttribute('disabled', 'disabled');
+        }
+        try {
+            await unaccept(participants[index]);
+            showSnackbarNotification('Punch out unapproved', 2000, true);
+            if (btnApproveRef.current) {
+                btnApproveRef.current.removeAttribute('disabled');
+            }
+        } catch (error) {
+            if (btnUnApproveRef.current) {
+                btnUnApproveRef.current.removeAttribute('disabled');
+            }
+            showSnackbarNotification(error.message, 2000, true);
+        }
+        setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
+    };
+
+    const handleUpdateParticipants = async (): Promise<any> => {
         setLoading(true);
         if (btnUpdateRef.current) {
             btnUpdateRef.current.setAttribute('disabled', 'disabled');
         }
         try {
-            await update(participants[index], attNoteData);
+            await update(attNoteData);
             showSnackbarNotification('Participants updated', 2000, true);
         } catch (error) {
             if (btnUpdateRef.current) {
@@ -340,8 +386,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                         participant, status,
                                         () => handleCompletePunchOut(index),
                                         () => handleApprovePunchOut(index),
-                                        () => handleUpdateParticipants(index),
-                                        () => handleSignPunchOut(index))}
+                                        () => handleUpdateParticipants(),
+                                        () => handleSignPunchOut(index),
+                                        () => handleUnApprovePunchOut(index))}
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
                                     {participant.signedAtUtc ?

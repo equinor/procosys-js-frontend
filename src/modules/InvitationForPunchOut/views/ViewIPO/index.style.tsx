@@ -1,20 +1,37 @@
 import styled from 'styled-components';
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
-    margin: var(--margin-module--top) var(--margin-module--right);
+    display: flex;
     width: 100%;
-    
+
     .tabs {
+        width: 100%;
+        min-width: 300px;
+        overflow-x: auto;
         div:first-child {
             grid-template-columns: auto auto auto auto 1fr;
         }
         .emptyTab {
             pointer-events: none;
         }
-    
-        margin-left: calc(var(--margin-module--right) * -1);
-        margin-right: calc(var(--margin-module--right) * -1);
     }
+`;
+
+export const CommentsContainer = styled.div<{ maxHeight: number }>`
+    border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
+    height: ${(props): number => props.maxHeight}px;
+    width: 400px;
+    min-width: 300px;
+    background: var(--ui-background--default);
+    overflow-y: scroll;
+`;
+
+
+export const CommentsIconContainer = styled.div`
+    position: absolute;
+    top: 5px;
+    right: var(--margin-module--right);
 `;
 
 export const CenterContainer = styled.div`
@@ -23,4 +40,24 @@ export const CenterContainer = styled.div`
     text-align: center;
     position: relative;
     margin-top: 10%;
+`;
+
+export const InvitationContainer = styled.div`
+    width: 100%;
+`;
+
+export const TabsContainer = styled.div`
+    width: 100%;
+    overflow-x: hidden;
+`;
+
+export const TabStyle = styled.div<{ maxHeight: number }>`
+    height: ${(props): number => props.maxHeight}px;
+    overflow: scroll;
+`;
+
+export const InvitationContentContainer = styled.div`
+    display: flex;
+    position: relative;
+    width: 100%;
 `;

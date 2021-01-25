@@ -20,7 +20,7 @@ const Scope = ({ mcPkgScope, commPkgScope, projectName }: ScopeProps): JSX.Eleme
                 <Typography variant="h5">Reports</Typography>
             </HeaderContainer>
             <TableContainer>
-                <ReportsTable commPkgScope={commPkgScope} mcPkgScope={mcPkgScope} />
+                <ReportsTable commPkgNumbers={commPkgScope.map((commPkg) => { return commPkg.commPkgNo; })} mcPkgNumbers={mcPkgScope.map((mcPkg) => { return mcPkg.mcPkgNo; })} />
             </TableContainer>
             {commPkgScope && commPkgScope.length > 0 && (
                 <>
@@ -28,7 +28,7 @@ const Scope = ({ mcPkgScope, commPkgScope, projectName }: ScopeProps): JSX.Eleme
                         <Typography variant="h5">Included Comm Packages</Typography>
                     </HeaderContainer>
                     <TableContainer>
-                        <CommPkgsTable commPkgScope={commPkgScope} projectName={projectName}/>
+                        <CommPkgsTable commPkgScope={commPkgScope} projectName={projectName} />
                     </TableContainer>
                 </>
             )}

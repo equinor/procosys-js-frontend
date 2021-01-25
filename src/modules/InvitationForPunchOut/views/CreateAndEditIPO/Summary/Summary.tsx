@@ -6,6 +6,7 @@ import { getFileName, getFileTypeIconName } from '../../utils';
 import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
 import { format } from 'date-fns';
+import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -158,6 +159,11 @@ const Summary = ({
                     <Typography variant="body_long">{generalInfo.location ? generalInfo.location : '-'}</Typography>
                 </Subsection>
             </Section>
+
+            <Section>
+                <ReportsTable commPkgNumbers={commPkgScope.map((commPkg) => { return commPkg.commPkgNo; })} mcPkgNumbers={mcPkgScope.map((mcPkg) => { return mcPkg.mcPkgNo; })} />
+            </Section>
+
             <TableSection>
                 <Typography variant="h5">Reports added</Typography>
                 <Table>

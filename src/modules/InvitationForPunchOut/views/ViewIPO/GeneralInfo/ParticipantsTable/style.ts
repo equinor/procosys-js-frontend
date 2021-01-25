@@ -10,7 +10,6 @@ export const Container = styled.div`
 export const CustomTable = styled.table`
     position: relative;
     display: block;
-    overflow-x: auto;
     white-space: nowrap;
     width: 100%;
 `;
@@ -27,6 +26,4 @@ export const SpinnerContainer = styled.div`
     align-items: center;
     justify-content: center;
 `;
-
-
 

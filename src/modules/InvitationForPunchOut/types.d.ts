@@ -12,7 +12,6 @@ export type Step = {
 }
 
 export type GeneralInfoDetails = {
-    projectId: number | null;
     projectName: string | null;
     poType: SelectItem | null;
     title: string | null;

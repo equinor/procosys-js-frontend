@@ -9,6 +9,7 @@ import {
     attach_file,
     bookmark_collection,
     calendar_date_range,
+    calendar_reject,
     calendar_today,
     category,
     checkbox,
@@ -18,6 +19,8 @@ import {
     chevron_up,
     close,
     cloud_download,
+    comment,
+    comment_chat,
     copy,
     delete_forever,
     delete_to_trash,
@@ -62,11 +65,11 @@ import { Icon } from '@equinor/eds-core-react';
 import React from 'react';
 
 const icons = {
-    error_filled, close, cloud_download, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file,
+    error_filled, close, cloud_download, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, comment, comment_chat,
     notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, link,
     place, pressure, vertical_split, category, search, bookmark_collection, add, arrow_down, arrow_up, file, file_description, image, filter_list, more_vertical,
     warning_filled, delete_forever, restore_from_trash, edit_text, account_circle, lock, info_circle, iphone, print, fast_forward, play,
-    copy, star_filled, star_outlined, microsoft_excel, done, chevron_right, arrow_back, warning_outlined, more_horizontal, microsoft_outlook, microsoft_powerpoint, microsoft_word, calendar_date_range, menu
+    copy, star_filled, star_outlined, microsoft_excel, done, chevron_right, arrow_back, warning_outlined, more_horizontal, microsoft_outlook, microsoft_powerpoint, microsoft_word, calendar_date_range, menu, calendar_reject
 };
 
 Icon.add(icons);

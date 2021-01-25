@@ -19,7 +19,6 @@ import { useCurrentUser } from '../../../../core/UserContext';
 const initialDate = getNextHalfHourTimeString(new Date());
 
 const emptyGeneralInfo: GeneralInfoDetails = {
-    projectId: null,
     projectName: '',
     poType: null,
     title: '',
@@ -74,7 +73,7 @@ const initialParticipants: Participant[] = [
 
 const CreateIPO = (): JSX.Element => {
     const user = useCurrentUser();
-    const params = useParams<{ ipoId: any; projectId: any; commPkgNo: any }>();
+    const params = useParams<{ ipoId: any; projectName: any; commPkgNo: any }>();
 
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },
@@ -84,7 +83,7 @@ const CreateIPO = (): JSX.Element => {
         { title: 'Summary & create', isCompleted: false }
     ];
 
-    const initialGeneralInfo = { ...emptyGeneralInfo, projectId: params.projectId };
+    const initialGeneralInfo = { ...emptyGeneralInfo, projectName: params.projectName };
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(initialGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
@@ -102,7 +101,8 @@ const CreateIPO = (): JSX.Element => {
     const { history } = useRouter();
     const { unsetDirtyStateFor } = useDirtyContext();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
-
+    const [projectNameFromMain] = useState<string | null>(params.projectName ? decodeURIComponent(params.projectName) : null);
+    const [commPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
 
     /**
      * Fetch available functional roles 
@@ -268,11 +268,11 @@ const CreateIPO = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (params.projectId && params.commPkgNo) {
+        if (params.projectName && params.commPkgNo) {
             setFromMain(true);
-            setGeneralInfo(gi => { return { ...gi, projectId: params.projectId }; });
+            setGeneralInfo(gi => { return { ...gi, projectName: projectNameFromMain }; });
         }
-    }, [fromMain]);
+    }, [projectNameFromMain]);
 
     if (isCreating) {
         return (
@@ -300,6 +300,7 @@ const CreateIPO = (): JSX.Element => {
         fromMain={fromMain}
         confirmationChecked={confirmationChecked}
         setConfirmationChecked={setConfirmationChecked}
+        commPkgNoFromMain={commPkgNoFromMain}
     />);
 };
 

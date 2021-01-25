@@ -18,7 +18,9 @@ type Participant = {
     person: Person;
     functionalRole: FunctionalRole;
     signedAtUtc?: Date;
-    signedBy?: string;
+    signedBy?: {
+        userName: string;
+    },
     note: string;
     attended: boolean;
 }
@@ -60,12 +62,25 @@ export type Invitation = {
     type: string;
     rowVersion: string;
     status: string;
-    createdBy: string;
+    createdBy: {
+        firstName: string;
+        lastName: string;
+    }
     startTimeUtc: string;
     endTimeUtc: string;
     participants: Participant[];
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
+}
+
+export type IpoComment = {
+    id: number;
+    comment: string;
+    createdAtUtc: string;
+    createdBy: {
+        firstName: string;
+        lastName: string;
+    }
 }
 
 export type HistoryItem = {

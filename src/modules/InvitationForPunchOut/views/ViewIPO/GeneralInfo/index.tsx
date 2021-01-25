@@ -52,11 +52,11 @@ const GeneralInfo = ({ invitation, complete, accept, update, sign, unaccept }: G
                             <Typography variant="body_long">{format(new Date(invitation.startTimeUtc), 'dd/MM/yyyy')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography token={{ fontSize: '12px' }}>From</Typography>
+                            <Typography token={{ fontSize: '12px' }}>Start</Typography>
                             <Typography variant="body_long">{format(new Date(invitation.startTimeUtc), 'HH:mm')}</Typography>
                         </DateTimeItem>
                         <DateTimeItem>
-                            <Typography token={{ fontSize: '12px' }}>To</Typography>
+                            <Typography token={{ fontSize: '12px' }}>End</Typography>
                             <Typography variant="body_long">{format(new Date(invitation.endTimeUtc), 'HH:mm')}</Typography>
                         </DateTimeItem>
                     </DetailContainer>

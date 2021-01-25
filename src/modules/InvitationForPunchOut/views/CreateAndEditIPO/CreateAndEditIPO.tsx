@@ -120,7 +120,9 @@ const CreateAndEditIPO = ({
     };
 
     useEffect(() => {
-        if (confirmationChecked && generalInfo.poType && generalInfo.projectName && generalInfo.title && generalInfo.startTime && generalInfo.endTime && (generalInfo.startTime <= generalInfo.endTime)) {
+        if (confirmationChecked && generalInfo.poType && generalInfo.projectName &&
+            generalInfo.title && generalInfo.startTime && generalInfo.endTime && 
+            (generalInfo.startTime < generalInfo.endTime)) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);

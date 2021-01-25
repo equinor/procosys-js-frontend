@@ -64,13 +64,11 @@ const CreateAndEditIPO = ({
     isEditMode = false,
     commPkgNoFromMain = null
 }: CreateAndEditProps): JSX.Element => {
-
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
 
     const initialGeneralInfo = { ...generalInfo };
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
 
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {

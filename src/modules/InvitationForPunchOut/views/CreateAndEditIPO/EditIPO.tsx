@@ -75,8 +75,7 @@ const EditIPO = (): JSX.Element => {
                         persons: role.persons.map(p => {
                             return {
                                 azureOid: p.azureOid,
-                                firstName: p.firstName,
-                                lastName: p.lastName,
+                                name: `${p.firstName} ${p.lastName}`,
                                 email: p.email,
                                 radioOption: role.usePersonalEmail ? 'to' : null,
                             };
@@ -128,8 +127,6 @@ const EditIPO = (): JSX.Element => {
             return {
                 id: p.id,
                 azureOid: p.azureOid,
-                firstName: p.firstName,
-                lastName: p.lastName,
                 email: p.email,
                 rowVersion: p.rowVersion,
                 required: p.radioOption == 'to' || role.usePersonalEmail
@@ -296,8 +293,7 @@ const EditIPO = (): JSX.Element => {
                         id: participant.person.person.id,
                         rowVersion: participant.person.person.rowVersion,
                         azureOid: participant.person.person.azureOid,
-                        firstName: participant.person.person.firstName,
-                        lastName: participant.person.person.lastName,
+                        name: `${participant.person.person.firstName} ${participant.person.person.lastName}`,
                         email: participant.person.person.email,
                         radioOption: null
                     };
@@ -310,8 +306,7 @@ const EditIPO = (): JSX.Element => {
                             id: person.person.id,
                             rowVersion: person.person.rowVersion,
                             azureOid: person.person.azureOid,
-                            firstName: person.person.firstName,
-                            lastName: person.person.lastName,
+                            name: `${person.person.firstName} ${person.person.lastName}`,
                             email: person.person.email,
                             radioOption: person.required ? 'to' : 'cc'
                         });

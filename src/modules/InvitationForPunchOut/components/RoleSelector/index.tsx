@@ -239,7 +239,7 @@ const RoleSelector = ({
                             />
                         </div>
                     </div>
-                    {person.firstName + ' ' + person.lastName}
+                    {person.name}
                 </ItemContent>
             </SelectableItem>);
         });

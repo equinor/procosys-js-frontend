@@ -72,7 +72,7 @@ const Summary = ({
         if (filtered.length > 0) {
             notifyString += value + ': ';
             filtered.forEach((t, i) => {
-                notifyString += t.firstName + ' ' + t.lastName;
+                notifyString += t.name;
                 if (i < filtered.length - 1) {
                     notifyString += ', ';
                 }
@@ -98,7 +98,7 @@ const Summary = ({
                 }
                 { participant.person &&
                     <Cell>
-                        {participant.person.firstName + ' ' + participant.person.lastName}
+                        {participant.person.name}
                     </Cell>
                 }
                 { participant.externalEmail &&

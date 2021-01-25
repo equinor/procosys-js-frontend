@@ -1,12 +1,12 @@
 # build environment
-FROM node:14.15.1 as build
+FROM node:14.15.3 as build
 WORKDIR /app
 COPY . /app
 RUN yarn install
 RUN yarn build --mode=production
 
 # production environment
-FROM nginx:1.19.5-alpine
+FROM nginx:1.19.6-alpine
 ## add permissions for nginx user
 RUN apk add python3
 COPY --from=build /app/build /usr/share/nginx/html

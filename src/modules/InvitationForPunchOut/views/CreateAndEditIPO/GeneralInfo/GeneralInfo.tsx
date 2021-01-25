@@ -79,17 +79,9 @@ const GeneralInfo = ({
 
     const setProjectForm = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
-        if (generalInfo.projectId !== filteredProjects[index].id) clearScope();
-        setGeneralInfo(gi => { return { ...gi, projectId: filteredProjects[index].id, projectName: filteredProjects[index].name }; });
+        if (generalInfo.projectName !== filteredProjects[index].name) clearScope();
+        setGeneralInfo(gi => { return { ...gi, projectName: filteredProjects[index].name }; });
     };
-
-    const selectedProject = availableProjects.find(p => p.id == generalInfo.projectId);
-
-    useEffect(() => {
-        if (selectedProject) {
-            setGeneralInfo(gi => { return { ...gi, projectName: selectedProject.name }; });
-        }
-    }, [selectedProject]);
 
     const handleSetDate = (dateString: string): void => {
         const date = new Date(dateString);
@@ -120,7 +112,7 @@ const GeneralInfo = ({
                 label={'Project'}
                 maxHeight='300px'
                 variant='form'
-                text={selectedProject && selectedProject.description || generalInfo.projectName || 'Select'}
+                text={generalInfo.projectName || 'Select'}
                 onFilter={setFilterForProjects}
                 disabled={fromMain || isEditMode}
             >

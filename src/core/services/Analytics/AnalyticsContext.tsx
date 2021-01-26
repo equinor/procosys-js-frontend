@@ -5,8 +5,9 @@ import propTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
 const AnalyticsContext = React.createContext<IAnalytics>({} as IAnalytics);
+AnalyticsContext.displayName = 'AnalyticsContext';
 
-export const AnalyticsContextProvider: React.FC = ({ children }): JSX.Element => {
+const AnalyticsContextProvider: React.FC = ({ children }): JSX.Element => {
 
     const history = useHistory();
     const analytics = new AnalyticsService(history);
@@ -20,4 +21,10 @@ AnalyticsContextProvider.propTypes = {
     children: propTypes.node
 };
 
-export const useAnalytics = (): IAnalytics => React.useContext<IAnalytics>(AnalyticsContext);
+const useAnalytics = (): IAnalytics => React.useContext<IAnalytics>(AnalyticsContext);
+
+export {
+    useAnalytics,
+    AnalyticsContext,
+    AnalyticsContextProvider
+};

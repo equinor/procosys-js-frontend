@@ -2,8 +2,8 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
-import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
-import { ProCoSysSettings } from '../../../core/ProCoSysSettings';
+import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
+import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import { RequestCanceler } from '../../../http/HttpClient';
 
 export class IpoApiError extends ProCoSysApiError {
@@ -212,8 +212,8 @@ class InvitationForPunchOutApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            ProCoSysSettings.ipo.scopes.join(' '),
-            ProCoSysSettings.ipo.url
+            ProCoSysSettings.ipoApi.scope.join(' '),
+            ProCoSysSettings.ipoApi.url
         );
         this.client.interceptors.request.use(
             config => {

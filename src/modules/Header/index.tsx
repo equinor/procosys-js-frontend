@@ -18,7 +18,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
 import ModuleTabs from './ModuleTabs';
 import OptionsDropdown from '../../components/OptionsDropdown';
-import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
@@ -110,7 +110,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            {(ProCoSysSettings.ipo.enabled) &&
+                            { (ProCoSysSettings.featureIsEnabled('ipo')) &&
                                 <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch out</DropdownItem>
                                 </a>
@@ -364,7 +364,7 @@ const Header: React.FC = (): JSX.Element => {
             <ShowOnDesktop>
                 <ModuleTabs />
             </ShowOnDesktop>
-        </div >
+        </div>
     );
 };
 

@@ -1,12 +1,11 @@
 import ApiClient from './ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import {IAuthService} from '../auth/AuthService';
+import ProCoSysSettings from '../core/ProCoSysSettings';
 import {RequestCanceler} from './HttpClient';
 
-import {ProCoSysSettings} from '../core/ProCoSysSettings';
-
-const RESOURCE_ID = ProCoSysSettings.graph.scopes.join(' ');
-const BASE_URL = `${ProCoSysSettings.graph.url}${ProCoSysSettings.graph.version}`;
+const RESOURCE_ID = ProCoSysSettings.graphApi.scope.join(' ');
+const BASE_URL = `${ProCoSysSettings.graphApi.url}${ProCoSysSettings.graphApi.version}`;
 
 export type ProfileResponse = {
     displayName: string;

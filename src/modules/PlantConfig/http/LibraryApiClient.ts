@@ -1,10 +1,11 @@
+import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
+
 import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
-import { RequestCanceler } from '../../../http/HttpClient';
-import {ProCoSysSettings} from '../../../core/ProCoSysSettings';
-import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
+import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
+import { RequestCanceler } from '../../../http/HttpClient';
 
 export interface AreaResponse {
     code: string;
@@ -55,8 +56,8 @@ class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            ProCoSysSettings.library.scopes.join(' '),
-            ProCoSysSettings.library.url
+            ProCoSysSettings.libraryApi.scope.join(' '),
+            ProCoSysSettings.libraryApi.url
         );
         this.client.interceptors.request.use(
             config => {

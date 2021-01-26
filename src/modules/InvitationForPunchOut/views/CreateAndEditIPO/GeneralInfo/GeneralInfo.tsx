@@ -10,6 +10,7 @@ import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
 import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
+import Spinner from '@procosys/components/Spinner';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -39,17 +40,20 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [timeError, setTimeError] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
             try {
+                setIsLoading(true);
                 const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback);
                 setAvailableProjects(allProjects);
                 setFilteredProjects(allProjects);
             } catch (error) {
                 console.log(error);
             }
+            setIsLoading(false);
         })();
         return (): void => requestCanceler && requestCanceler();
     }, []);
@@ -115,19 +119,22 @@ const GeneralInfo = ({
                 onFilter={setFilterForProjects}
                 disabled={fromMain || isEditMode}
             >
-                {filteredProjects.map((projectItem, index) => {
-                    return (
-                        <DropdownItem
-                            key={index}
-                            onClick={(event: React.MouseEvent): void =>
-                                setProjectForm(event, index)
-                            }
-                        >
-                            <div>{projectItem.description}</div>
-                            <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
-                        </DropdownItem>
-                    );
-                })}
+                {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                {!isLoading &&
+                    filteredProjects.map((projectItem, index) => {
+                        return (
+                            <DropdownItem
+                                key={index}
+                                onClick={(event: React.MouseEvent): void =>
+                                    setProjectForm(event, index)
+                                }
+                            >
+                                <div>{projectItem.description}</div>
+                                <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                            </DropdownItem>
+                        );
+                    })
+                }
             </Dropdown>
             <PoTypeContainer id='po-type-select'>
                 <SelectInput
@@ -193,11 +200,11 @@ const GeneralInfo = ({
                     }}
                     onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value)}
                 />
-                { timeError &&
+                {timeError &&
                     (<Typography variant="caption" color="danger">Start time must be before end time</Typography>)
                 }
             </DateTimeContainer>
-        
+
             <LocationContainer>
                 <TextField
                     data-testid='location'
@@ -219,8 +226,8 @@ const GeneralInfo = ({
                     </Typography>
                     <br />
                     <Typography variant="body_short" fontWeight={400}>
-                        Mechanical Completion means that the installation is built in accordance with relevant drawings and specifications. 
-                            All specified tests and inspections are carried out and documented in a uniform way.
+                        Mechanical Completion means that the installation is built in accordance with relevant drawings and specifications.
+                        All specified tests and inspections are carried out and documented in a uniform way.
                     </Typography>
                 </TextContainer>
             </ConfirmationTextContainer>

@@ -1,13 +1,13 @@
 import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
+
 import { Container } from './style';
+import CreateAndEditIPO from './views/CreateAndEditIPO/CreateAndEditIPO';
+import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
+import EditIPO from './views/CreateAndEditIPO/EditIPO';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
-import CreateAndEditIPO from './views/CreateAndEditIPO/CreateAndEditIPO';
 import ViewIPO from './views/ViewIPO/index';
 import withFeatureFlag from '../../core/features/withFeatureFlag';
-import EditIPO from './views/CreateAndEditIPO/EditIPO';
-import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
-
 
 const InvitationForPunchOut = (): JSX.Element => {
     const { url } = useRouteMatch();

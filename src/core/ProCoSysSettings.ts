@@ -11,7 +11,7 @@ interface FeatureConfig {
 }
 
 interface FeatureFlags {
-    ipo: boolean
+    IPO: boolean
     library: boolean
     preservation: boolean
     main: boolean
@@ -120,6 +120,8 @@ class ProCoSysSettings {
      * @param feature key for feature
      */
     featureIsEnabled(feature: string): boolean {
+        console.log('Feature: ', feature);
+        console.log('Keys: ', Object.keys(this.featureFlags));
         return this.featureFlags[feature as keyof FeatureFlags] || false;
     }
 
@@ -134,7 +136,7 @@ class ProCoSysSettings {
             throw 'Missing local configuration for Config API';
         }
         this.featureFlags = {
-            ipo: true,
+            IPO: true,
             preservation: true,
             main: true,
             library: true
@@ -193,7 +195,7 @@ class ProCoSysSettings {
             this.procosysApi = configurationResponse.configuration.procosysApi;
 
             // Feature flags
-            this.featureFlags.ipo = configurationResponse.featureFlags.ipo;
+            this.featureFlags.IPO = configurationResponse.featureFlags.IPO;
             this.featureFlags.main = configurationResponse.featureFlags.main;
             this.featureFlags.library = configurationResponse.featureFlags.library;
             this.featureFlags.preservation = configurationResponse.featureFlags.preservation;
@@ -234,7 +236,7 @@ class ProCoSysSettings {
             console.info('Overriding feature flags from settings: ', localSettings.featureFlags);
 
             localSettings.featureFlags.main != undefined && (this.featureFlags.main = localSettings.featureFlags.main);
-            localSettings.featureFlags.ipo != undefined && (this.featureFlags.ipo = localSettings.featureFlags.ipo);
+            localSettings.featureFlags.IPO != undefined && (this.featureFlags.IPO = localSettings.featureFlags.IPO);
             localSettings.featureFlags.library != undefined && (this.featureFlags.library = localSettings.featureFlags.library);
             localSettings.featureFlags.preservation != undefined && (this.featureFlags.preservation = localSettings.featureFlags.preservation);
         }

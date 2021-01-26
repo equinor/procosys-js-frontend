@@ -18,7 +18,7 @@ interface ConfigResponse {
         instrumentationKey: string
     }
     featureFlags: {
-        ipo: boolean
+        IPO: boolean
         library: boolean
         preservation: boolean
         main: boolean

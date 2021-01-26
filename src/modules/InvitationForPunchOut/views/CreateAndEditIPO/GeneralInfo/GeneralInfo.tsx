@@ -1,4 +1,4 @@
-import { ConfirmCheckbox, ConfirmationTextContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
+import { ConfirmationTextContainer, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -10,6 +10,7 @@ import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
 import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
+import Checkbox from '@procosys/components/Checkbox';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -106,7 +107,7 @@ const GeneralInfo = ({
         }
     };
 
-    return (<Container>
+    return (
         <FormContainer>
             <Dropdown
                 label={'Project'}
@@ -210,20 +211,20 @@ const GeneralInfo = ({
                 />
             </LocationContainer>
             <ConfirmationTextContainer>
-                {isEditMode ? <ConfirmCheckbox disabled checked /> : <ConfirmCheckbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
+                {isEditMode ? <Checkbox disabled checked /> : <Checkbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
                 <TextContainer>
                     <Typography variant="body_short" fontWeight={400}>
                         I hereby confirm that prior to common punch out all relevant MCCR shall be signed and all punch items registered.
                     </Typography>
                     <br />
                     <Typography variant="body_short" fontWeight={400}>
-                        Mechanical Completion means that the installation is built in accordance with relevant drawings and specifications. 
-                            All specified tests and inspections are carried out and documented in a uniform way.
+                        Mechanical Completion means that the installation is built in accordance with relevant drawings and specifications.
+                        All specified tests and inspections are carried out and documented in a uniform way.
                     </Typography>
                 </TextContainer>
             </ConfirmationTextContainer>
         </FormContainer>
-    </Container>);
+    );
 };
 
 export default GeneralInfo;

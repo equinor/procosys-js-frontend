@@ -145,11 +145,11 @@ const Summary = ({
                         <Typography variant="body_long">{format(generalInfo.startTime, 'dd/MM/yyyy')}</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>From</Typography>
+                        <Typography token={{ fontSize: '12px' }}>Start</Typography>
                         <Typography variant="body_long">{format(generalInfo.startTime, 'HH:mm')}</Typography>
                     </Subsection>
                     <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>To</Typography>
+                        <Typography token={{ fontSize: '12px' }}>End</Typography>
                         <Typography variant="body_long">{format(generalInfo.endTime, 'HH:mm')}</Typography>
                     </Subsection>
                 </div>

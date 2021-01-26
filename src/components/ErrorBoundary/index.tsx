@@ -1,5 +1,6 @@
 import React, { ErrorInfo } from 'react';
 
+import { AnalyticsContext } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { ErrorBoundaryContainer } from './ErrorBoundary.style';
 import { Typography } from '@equinor/eds-core-react';
 
@@ -26,6 +27,7 @@ class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
         console.error('CRITICAL ERROR OCCURED');
         console.error('Error: ', error);
         console.error('ErrorInfo: ', errorInfo);
+        this.context.trackException(error);
     }
 
     render(): React.ReactChild {
@@ -45,5 +47,7 @@ class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
         return this.props.children;
     }
 }
+
+ErrorBoundary.contextType = AnalyticsContext;
 
 export default ErrorBoundary;

@@ -11,6 +11,7 @@ import Dropdown from '../../../../../components/Dropdown';
 import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import Checkbox from '@procosys/components/Checkbox';
+import Spinner from '@procosys/components/Spinner';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -39,19 +40,21 @@ const GeneralInfo = ({
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [errorFormat, setErrorFormat] = useState<boolean>(false);
-
+    const [timeError, setTimeError] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
             try {
+                setIsLoading(true);
                 const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback);
                 setAvailableProjects(allProjects);
                 setFilteredProjects(allProjects);
             } catch (error) {
                 console.log(error);
             }
+            setIsLoading(false);
         })();
         return (): void => requestCanceler && requestCanceler();
     }, []);
@@ -98,11 +101,11 @@ const GeneralInfo = ({
                 const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
                 const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
                 setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
-                setErrorFormat(newTime >= newEndTime);
+                setTimeError(newTime >= newEndTime);
             } else {
                 const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
                 setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
-                setErrorFormat(generalInfo.startTime >= newEndTime);
+                setTimeError(generalInfo.startTime >= newEndTime);
             }
         }
     };
@@ -117,19 +120,22 @@ const GeneralInfo = ({
                 onFilter={setFilterForProjects}
                 disabled={fromMain || isEditMode}
             >
-                {filteredProjects.map((projectItem, index) => {
-                    return (
-                        <DropdownItem
-                            key={index}
-                            onClick={(event: React.MouseEvent): void =>
-                                setProjectForm(event, index)
-                            }
-                        >
-                            <div>{projectItem.description}</div>
-                            <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
-                        </DropdownItem>
-                    );
-                })}
+                {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                {!isLoading &&
+                    filteredProjects.map((projectItem, index) => {
+                        return (
+                            <DropdownItem
+                                key={index}
+                                onClick={(event: React.MouseEvent): void =>
+                                    setProjectForm(event, index)
+                                }
+                            >
+                                <div>{projectItem.description}</div>
+                                <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                            </DropdownItem>
+                        );
+                    })
+                }
             </Dropdown>
             <PoTypeContainer id='po-type-select'>
                 <SelectInput
@@ -175,7 +181,7 @@ const GeneralInfo = ({
                 />
                 <DateTimeField
                     id='startTime'
-                    label='From'
+                    label='Start'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
                     value={format(generalInfo.startTime, 'HH:mm')}
@@ -186,7 +192,7 @@ const GeneralInfo = ({
                 />
                 <DateTimeField
                     id='endDate'
-                    label='To'
+                    label='End'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
                     value={format(generalInfo.endTime, 'HH:mm')}
@@ -194,9 +200,12 @@ const GeneralInfo = ({
                         shrink: true,
                     }}
                     onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value)}
-                    error={errorFormat}
                 />
+                {timeError &&
+                    (<Typography variant="caption" color="danger">Start time must be before end time</Typography>)
+                }
             </DateTimeContainer>
+
             <LocationContainer>
                 <TextField
                     data-testid='location'

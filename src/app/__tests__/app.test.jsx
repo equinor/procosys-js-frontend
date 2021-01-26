@@ -13,23 +13,6 @@ jest.mock('../../http/ProCoSysClient', () => {
     });
 });
 
-describe('Renders <App /> when not authenticated', () => {
-    useProcosysContext.mockImplementation(() => ({auth: {login: jest.fn(), getCurrentUser: () => null}}));
-
-    it('Renders login when not signed in', () => {
-        const { getByTitle } = render(<App />);
-        expect(getByTitle('Loading')).toBeInTheDocument();
-    });
-
-    it('Automatically tries to login the user on load', () => {
-        const fakeLoginInterceptor = jest.fn();
-        useProcosysContext.mockImplementation(() => ({auth: {login: fakeLoginInterceptor, getCurrentUser: () => null}}));
-        render(<App />);
-        expect(fakeLoginInterceptor).toBeCalledTimes(1);
-    });
-    useProcosysContext.mockRestore();
-});
-
 describe('Renders <App /> when authenticated', () => {
     const fakeLoginInterceptor = jest.fn();
     useProcosysContext.mockImplementation(() => ({auth: {login: fakeLoginInterceptor, getCurrentUser: () => ({ })}}));

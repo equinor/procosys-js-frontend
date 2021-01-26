@@ -23,6 +23,7 @@ export const DropdownItem = styled.div<DropdownProps>`
 
 export const DateTimeContainer = styled.div`
     display: flex;
+    align-items: center;
     > div {
         margin-right: calc(var(--grid-unit) * 2);
         input {
@@ -32,6 +33,9 @@ export const DateTimeContainer = styled.div`
         label {
             color: var(--text--default);
         }
+    }
+    > p {
+        width: 150px;
     }
 `;
 

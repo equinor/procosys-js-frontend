@@ -1,9 +1,10 @@
-import React, { useState, useEffect, ReactElement } from 'react';
-import {useCurrentPlant} from '../PlantContext';
-import styled from 'styled-components';
+import React, { ReactElement, useEffect, useState } from 'react';
+
 import Error from '../../components/Error';
 import { Loading } from '../../components';
-import {ProCoSysSettings} from '../ProCoSysSettings';
+import ProCoSysSettings from '../ProCoSysSettings';
+import styled from 'styled-components';
+import {useCurrentPlant} from '../PlantContext';
 
 const CenterContainer = styled.div`
     display: flex;

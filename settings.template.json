@@ -1,42 +1,4 @@
 {
-    "auth": {
-        "clientId": "",
-        "authority": "",
-        "defaultScopes": "[]"
-    },
-    "enabledFeatures": {
-        "ipo": "false",
-        "library": "true",
-        "preserveration": "true",
-        "graph": "true",
-        "main": "true"
-    },
-    "externalResources": {
-        "procosysApi": {
-            "url": "",
-            "scope": "[]",
-            "version": ""
-        },
-        "graphApi": {
-            "url": "",
-            "scope": "[]",
-            "version": ""
-        },
-        "preservationApi": {
-            "url": "",
-            "scope": "[]",
-            "version": ""
-        },
-        "ipoApi": {
-            "url": "",
-            "scope": "[]",
-            "version": ""
-        },
-        "libraryApi": {
-            "url": "",
-            "scope": "[]",
-            "version": ""
-        }
-    },
-    "instrumentationKey": ""
+    "configurationEndpoint": "",
+    "configurationScope": ""
 }

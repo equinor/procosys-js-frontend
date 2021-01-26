@@ -13,6 +13,7 @@ import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { OrganizationsEnum } from '../../enums';
+import Spinner from '@procosys/components/Spinner';
 
 const WAIT_INTERVAL = 300;
 
@@ -45,6 +46,7 @@ const Participants = ({
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
     const [personsFilter, setPersonsFilter] = useState<SelectItem>({ text: '', value: -1 }); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const nameCombiner = (firstName: string, lastName: string): string => {
         return `${firstName} ${lastName}`;
@@ -55,6 +57,7 @@ const Participants = ({
         if (input != '') {
             try {
                 (async (): Promise<void> => {
+                    setIsLoading(true);
                     const plannerPersons = await apiClient.getRequiredSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
@@ -65,9 +68,11 @@ const Participants = ({
                         })
                         );
                     setFilteredPersons(plannerPersons);
+                    setIsLoading(false);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
+                setIsLoading(false);
             }
         } else {
             setFilteredPersons([]);
@@ -82,6 +87,7 @@ const Participants = ({
         if (input != '') {
             try {
                 (async (): Promise<void> => {
+                    setIsLoading(true);
                     const signerPersons = await apiClient.getAdditionalSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
@@ -92,9 +98,11 @@ const Participants = ({
                         })
                         );
                     setFilteredPersons(signerPersons);
+                    setIsLoading(false);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
+                setIsLoading(false);
             }
         } else {
             setFilteredPersons([]);
@@ -109,6 +117,8 @@ const Participants = ({
         if (input != '') {
             try {
                 (async (): Promise<void> => {
+                    setIsLoading(true);
+
                     const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
@@ -119,10 +129,13 @@ const Participants = ({
                         })
                         );
                     setFilteredPersons(persons);
+                    setIsLoading(false);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
+                setIsLoading(false);
             }
+
         } else {
             setFilteredPersons([]);
         }
@@ -333,18 +346,20 @@ const Participants = ({
                                         onFilter={(input: string): void => setPersonsFilter({ text: input, value: index })}
                                         text={p.person ? getDisplayText(index) : 'Search to select'}
                                     >
-                                        {filteredPersons.map((person, i) => {
-                                            return (
-                                                <DropdownItem
-                                                    key={i}
-                                                    onClick={(event: React.MouseEvent): void =>
-                                                        setPersonOnParticipant(event, i, index)
-                                                    }
-                                                >
-                                                    <div>{person.text}</div>
-                                                </DropdownItem>
-                                            );
-                                        })}
+                                        {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                                        {!isLoading &&
+                                            filteredPersons.map((person, i) => {
+                                                return (
+                                                    <DropdownItem
+                                                        key={i}
+                                                        onClick={(event: React.MouseEvent): void =>
+                                                            setPersonOnParticipant(event, i, index)
+                                                        }
+                                                    >
+                                                        <div>{person.text}</div>
+                                                    </DropdownItem>
+                                                );
+                                            })}
                                     </Dropdown>
                                 </div>
                             }

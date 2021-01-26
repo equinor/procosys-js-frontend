@@ -8,9 +8,9 @@ import { format, set } from 'date-fns';
 import { Canceler } from '@procosys/http/HttpClient';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
+import Spinner from '@procosys/components/Spinner';
 import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
-import Spinner from '@procosys/components/Spinner';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -51,7 +51,7 @@ const GeneralInfo = ({
                 setAvailableProjects(allProjects);
                 setFilteredProjects(allProjects);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
             setIsLoading(false);
         })();

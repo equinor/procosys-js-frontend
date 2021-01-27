@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
-import { tokens } from '@equinor/eds-tokens';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
+import { tokens } from '@equinor/eds-tokens';
 
 type ProgressBarProps = {
     ipoId: number;
@@ -50,7 +50,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
         <Container>
             <HeaderContainer>
                 <ButtonContainer>
-                    <Typography variant="h2">{props.title}</Typography>
+                    <Typography variant="h2">{`IPO-${props.ipoId}: ${props.title}`}</Typography>
                     <Button
                         variant='ghost_icon'
                         onClick={(): void => openFlyout()}

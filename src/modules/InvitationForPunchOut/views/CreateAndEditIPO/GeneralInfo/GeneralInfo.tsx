@@ -1,4 +1,4 @@
-import { ConfirmCheckbox, ConfirmationTextContainer, Container, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
+import { ConfirmationTextContainer, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -8,9 +8,10 @@ import { format, set } from 'date-fns';
 import { Canceler } from '@procosys/http/HttpClient';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
-import Spinner from '@procosys/components/Spinner';
 import { getEndTime } from '../utils';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
+import Checkbox from '@procosys/components/Checkbox';
+import Spinner from '@procosys/components/Spinner';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -109,7 +110,7 @@ const GeneralInfo = ({
         }
     };
 
-    return (<Container>
+    return (
         <FormContainer>
             <Dropdown
                 label={'Project'}
@@ -219,7 +220,7 @@ const GeneralInfo = ({
                 />
             </LocationContainer>
             <ConfirmationTextContainer>
-                {isEditMode ? <ConfirmCheckbox disabled checked /> : <ConfirmCheckbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
+                {isEditMode ? <Checkbox disabled checked /> : <Checkbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
                 <TextContainer>
                     <Typography variant="body_short" fontWeight={400}>
                         I hereby confirm that prior to common punch out all relevant MCCR shall be signed and all punch items registered.
@@ -232,7 +233,7 @@ const GeneralInfo = ({
                 </TextContainer>
             </ConfirmationTextContainer>
         </FormContainer>
-    </Container>);
+    );
 };
 
 export default GeneralInfo;

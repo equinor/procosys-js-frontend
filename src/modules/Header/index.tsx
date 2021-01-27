@@ -268,7 +268,7 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>
                                     C&amp;C digital toolbox
                                 </DropdownItem>
-                            </a>                            
+                            </a>
                             <a href="https://dcp.equinor.com" target="_blank">
                                 <DropdownItem>
                                     DCP – Digitalized Commissioning Procedure
@@ -293,9 +293,9 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>
                                     Access IT – Access Managing Control System for Equinor
                                 </DropdownItem>
-                            </a>                                                                                                                                                                        
+                            </a>
                         </OptionsDropdown>
-                    </MenuContainerItem >                    
+                    </MenuContainerItem >
                     <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>

@@ -237,7 +237,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param plantId Plant ID
      */
     setCurrentPlant(plantId: string): void {
-        console.log('Setting current plant for IPO: ', plantId);
         if (this.plantIdInterceptorId) {
             this.client.interceptors.request.eject(this.plantIdInterceptorId);
             this.plantIdInterceptorId = null;

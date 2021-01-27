@@ -6,20 +6,20 @@ import React from 'react';
 import { ReportIdEnum } from '../../enums';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 
-const getReportParams = (mcScope: McPkgScope[], commScope: CommPkgScope[]): string => {
+const getReportParams = (mcPkgNumbers: string[], commPkgNumbers: string[]): string => {
     let reportParams = '';
 
-    if (mcScope && mcScope.length > 0) {
+    if (mcPkgNumbers && mcPkgNumbers.length > 0) {
         reportParams += '&mcPkgs=';
-        mcScope.forEach(mcPkg => {
-            reportParams += `${mcPkg.mcPkgNo},`;
+        mcPkgNumbers.forEach(mcPkgNo => {
+            reportParams += `${mcPkgNo},`;
         });
         reportParams = reportParams.slice(0, -1);
     }
-    if (commScope && commScope.length > 0) {
+    if (commPkgNumbers && commPkgNumbers.length > 0) {
         reportParams += '&commPkgs=';
-        commScope.forEach(commPkg => {
-            reportParams += `${commPkg.commPkgNo},`;
+        commPkgNumbers.forEach(commPkgNo => {
+            reportParams += `${commPkgNo},`;
         });
         reportParams = reportParams.slice(0, -1);
     }
@@ -30,17 +30,19 @@ const getReportParams = (mcScope: McPkgScope[], commScope: CommPkgScope[]): stri
 const { Head, Body, Cell, Row } = Table;
 
 interface ReportsTableProps {
-    mcPkgScope: McPkgScope[];
-    commPkgScope: CommPkgScope[];
+    mcPkgNumbers: string[];
+    commPkgNumbers: string[];
 }
 
-const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps): JSX.Element => {
+const ReportsTable = ({ mcPkgNumbers, commPkgNumbers }: ReportsTableProps): JSX.Element => {
     const { plant } = useCurrentPlant();
-    const reportParams = getReportParams(mcPkgScope, commPkgScope);
+    const reportParams = getReportParams(mcPkgNumbers, commPkgNumbers);
 
     const getReportUrl = (reportId: number): string => {
         if (reportId === ReportIdEnum.MC32D) {
             return `/${plant.pathId}/Report/AutoGenerate?reportId=${reportId}${reportParams}`;
+        } else if (reportId === ReportIdEnum.MC84) {
+            return `/${plant.pathId}/Search/AutoGenerate?enablePlItemVerifiedCleared=true&searchId=${reportId}${reportParams}`;
         } else {
             return `/${plant.pathId}/Search/AutoGenerate?searchId=${reportId}${reportParams}`;
         }

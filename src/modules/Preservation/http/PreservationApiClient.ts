@@ -485,7 +485,6 @@ class PreservationApiClient extends ApiClient {
      * @param plantId Plant ID
      */
     setCurrentPlant(plantId: string): void {
-        console.log('Setting current plant for preservation: ', plantId);
         if (this.plantIdInterceptorId) {
             this.client.interceptors.request.eject(this.plantIdInterceptorId);
             this.plantIdInterceptorId = null;

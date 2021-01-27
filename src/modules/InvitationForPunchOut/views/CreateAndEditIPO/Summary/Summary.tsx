@@ -1,17 +1,20 @@
-import { Attachment, CommPkgRow, GeneralInfoDetails, McPkgRow, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
+import { Attachment, CommPkgRow, GeneralInfoDetails, Participant, Person } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
 import { getFileName, getFileTypeIconName } from '../../utils';
-
 import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
 import { format } from 'date-fns';
+import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
+import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
+import CommPkgsTable from '../../ViewIPO/Scope/CommPkgsTable';
+import { McPkgScope } from '../../ViewIPO/types';
 
 const { Body, Row, Cell, Head } = Table;
 
 interface SummaryProps {
     generalInfo: GeneralInfoDetails;
-    mcPkgScope: McPkgRow[];
+    mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgRow[];
     participants: Participant[];
     attachments: Attachment[];
@@ -25,46 +28,6 @@ const Summary = ({
     attachments
 }: SummaryProps): JSX.Element => {
 
-    const getHeaders = (): JSX.Element => {
-        if (mcPkgScope.length > 0) {
-            return (<Row>
-                <Cell as="th" scope="col">
-                    Mc pkg no
-                </Cell>
-                <Cell as="th" scope="col">
-                    Description
-                </Cell>
-            </Row>);
-        }
-        return (<Row>
-            <Cell as="th" scope="col">
-                Comm pkg no
-            </Cell>
-            <Cell as="th" scope="col">
-                Description
-            </Cell>
-            <Cell as="th" scope="col">
-                Comm status
-            </Cell>
-        </Row>);
-    };
-
-    const getMcPkgScope = (mcPkg: McPkgRow): JSX.Element => {
-        return (
-            <Row key={mcPkg.mcPkgNo}>
-                <Cell>{mcPkg.mcPkgNo}</Cell>
-                <Cell>{mcPkg.description}</Cell>
-            </Row>);
-    };
-
-    const getCommPkgScope = (commPkg: CommPkgRow): JSX.Element => {
-        return (
-            <Row key={commPkg.commPkgNo}>
-                <Cell>{commPkg.commPkgNo}</Cell>
-                <Cell>{commPkg.description}</Cell>
-                <Cell>{commPkg.status}</Cell>
-            </Row>);
-    };
 
     const getNotifiedPersons = (persons: Person[], value: string): string => {
         const filtered = persons.filter(p => p.radioOption == value.toLocaleLowerCase());
@@ -158,47 +121,30 @@ const Summary = ({
                     <Typography variant="body_long">{generalInfo.location ? generalInfo.location : '-'}</Typography>
                 </Subsection>
             </Section>
-            <TableSection>
+
+            <Section>
                 <Typography variant="h5">Reports added</Typography>
-                <Table>
-                    <Head>
-                        <Row>
-                            <Cell as="th" scope="col">
-                                Reports
-                            </Cell>
-                            <Cell as="th" scope="col">
-                                {''}
-                            </Cell>
-                        </Row>
-                    </Head>
-                    <Body>
-                        <Row key={'MC32D'}>
-                            <Cell>{'MC32D'}</Cell>
-                            <Cell>{'MC scope'}</Cell>
-                        </Row>
-                        <Row key={'MC84'}>
-                            <Cell>{'MC84'}</Cell>
-                            <Cell>{'Punch list'}</Cell>
-                        </Row>
-                        <Row key={'CDP06'}>
-                            <Cell>{'CDP06'}</Cell>
-                            <Cell>{'Concession Deviation Permit'}</Cell>
-                        </Row>
-                    </Body>
-                </Table>
-            </TableSection>
-            <TableSection>
-                <Typography variant="h5">Selected scope</Typography>
-                <Table>
-                    <Head>
-                        {getHeaders()}
-                    </Head>
-                    <Body>
-                        {mcPkgScope.length > 0 && mcPkgScope.map(mcPkg => getMcPkgScope(mcPkg))}
-                        {commPkgScope.length > 0 && commPkgScope.map(commPkg => getCommPkgScope(commPkg))}
-                    </Body>
-                </Table>
-            </TableSection>
+                <ReportsTable commPkgNumbers={commPkgScope.map((commPkg) => { return commPkg.commPkgNo; })} mcPkgNumbers={mcPkgScope.map((mcPkg) => { return mcPkg.mcPkgNo; })} />
+            </Section>
+
+
+            {commPkgScope && generalInfo.projectName && commPkgScope.length > 0 && (
+                <>
+                    <Section>
+                        <Typography variant="h5">Included Comm Packages</Typography>
+                        <CommPkgsTable commPkgScope={commPkgScope} projectName={generalInfo.projectName} />
+                    </Section>
+                </>
+            )}
+            {mcPkgScope && generalInfo.projectName && mcPkgScope.length > 0 && (
+                <>
+                    <Section>
+                        <Typography variant="h5">Included MC Packages</Typography>
+                        <McPkgsTable mcPkgScope={mcPkgScope.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: mcPkg.commPkgNo }; })} projectName={generalInfo.projectName} />
+                    </Section>
+                </>
+            )}
+
             <TableSection>
                 <Typography variant="h5">Participants</Typography>
                 <Table>

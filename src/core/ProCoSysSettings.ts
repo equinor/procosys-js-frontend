@@ -120,8 +120,6 @@ class ProCoSysSettings {
      * @param feature key for feature
      */
     featureIsEnabled(feature: string): boolean {
-        console.log('Feature: ', feature);
-        console.log('Keys: ', Object.keys(this.featureFlags));
         return this.featureFlags[feature as keyof FeatureFlags] || false;
     }
 

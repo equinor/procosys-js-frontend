@@ -52,7 +52,7 @@ const GeneralInfo = ({
                 setAvailableProjects(allProjects);
                 setFilteredProjects(allProjects);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
             setIsLoading(false);
         })();

@@ -270,7 +270,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         const originalStep = journey.steps.find((s) => s.id == step.id);
 
                         if (originalStep === null) {
-                            console.log('Error occured when trying to save update to a step that was not found in the journey.');
+                            console.error('Error occured when trying to save update to a step that was not found in the journey.');
                             showSnackbarNotification('Error occured when trying to save update to a step that was not found in the journey.', 5000);
                             setIsLoading(false);
                             return;

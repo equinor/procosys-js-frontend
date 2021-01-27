@@ -171,7 +171,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 break;
             case OrganizationsEnum.ConstructionCompany:
                 if (status == IpoStatusEnum.ACCEPTED) {
-                    if (participant.sortKey == 1) {
+                    if (participant.sortKey == 1 && participant.canSign) {
                         return getUnAcceptButton(handleUnAcceptPunchOut);
                     }
                     if (participant.signedBy) {
@@ -181,12 +181,17 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
                 if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                     if (participant.sortKey === 1) {
-                        if (status === IpoStatusEnum.COMPLETED) return getAcceptButton(handleAcceptPunchOut);
+                        if (status === IpoStatusEnum.COMPLETED) {
+                            return getAcceptButton(handleAcceptPunchOut);
+                        }
                     } else {
                         return getSignButton(handleSignPunchOut);
                     }
                 }
 
+                if (participant.signedBy) {
+                    return <span>{`${participant.signedBy.userName}`}</span>;
+                }
                 break;
             case OrganizationsEnum.Operation:
             case OrganizationsEnum.TechnicalIntegrity:

@@ -59,13 +59,15 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         }
 
         setLoading(true);
-        const file = e.target.files[0];
-        try {
-            fileTypeValidator(file.name);
-            await apiClient.uploadAttachment(ipoId, file, true);
-        } catch (error) {
-            console.error('Upload attchment failed: ', error.message, error.data);
-            showSnackbarNotification(error.message);
+        for (let i = 0; i < e.target.files.length; i++) {
+            const file = e.target.files[i];
+            try {
+                fileTypeValidator(file.name);
+                await apiClient.uploadAttachment(ipoId, file, true);
+            } catch (error) {
+                console.error('Upload attachment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
         }
         await getAttachments();
         setLoading(false);
@@ -135,7 +137,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                     >
                         Select files
                     </Button>
-                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
+                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
                 </form>
             </AddAttachmentContainer>
             <DragAndDropContainer
@@ -178,11 +180,12 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                                 </div>
                             </Cell>
                         </Row>
-                    )) : (
-                        <Row>
-                            <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
-                        </Row>
-                    )}
+                    )) :
+                        (
+                            <Row>
+                                <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
+                            </Row>
+                        )}
                 </Body>
 
             </AttachmentTable>

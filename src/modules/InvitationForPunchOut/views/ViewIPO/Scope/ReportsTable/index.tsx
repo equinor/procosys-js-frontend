@@ -41,6 +41,8 @@ const ReportsTable = ({ mcPkgScope, commPkgScope }: ReportsTableProps): JSX.Elem
     const getReportUrl = (reportId: number): string => {
         if (reportId === ReportIdEnum.MC32D) {
             return `/${plant.pathId}/Report/AutoGenerate?reportId=${reportId}${reportParams}`;
+        } else if (reportId === ReportIdEnum.MC84) {
+            return `/${plant.pathId}/Search/AutoGenerate?enablePlItemVerifiedCleared=true&searchId=${reportId}${reportParams}`;
         } else {
             return `/${plant.pathId}/Search/AutoGenerate?searchId=${reportId}${reportParams}`;
         }

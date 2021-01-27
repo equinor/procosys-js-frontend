@@ -17,7 +17,7 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipUpdate = <div>Update attended status and notes for participants.</div>;
-const tooltipApprove = <div>Punch round has been checked by company.</div>;
+const tooltipAccept = <div>Punch round has been checked by company.</div>;
 
 
 export type AttNoteData = {
@@ -58,8 +58,8 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const [editAttendedDisabled, setEditAttendedDisabled] = useState<boolean>(true);
     const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
-    const btnApproveRef = useRef<HTMLButtonElement>();
-    const btnUnApproveRef = useRef<HTMLButtonElement>();
+    const btnAcceptRef = useRef<HTMLButtonElement>();
+    const btnUnAcceptRef = useRef<HTMLButtonElement>();
     const btnUpdateRef = useRef<HTMLButtonElement>();
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
@@ -113,22 +113,22 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         );
     };
 
-    const getApproveButton = (approvePunchout: (index: number) => void): JSX.Element => {
+    const getAcceptButton = (acceptPunchout: (index: number) => void): JSX.Element => {
         return (
-            <CustomTooltip title={tooltipApprove} arrow>
+            <CustomTooltip title={tooltipAccept} arrow>
                 <span>
-                    <Button ref={btnApproveRef} onClick={approvePunchout}>
-                        Approve punch out
+                    <Button ref={btnAcceptRef} onClick={acceptPunchout}>
+                        Accept punch out
                     </Button>
                 </span>
             </CustomTooltip>
         );
     };
 
-    const getUnApproveButton = (unApprovePunchout: (index: number) => void): JSX.Element => {
+    const getUnAcceptButton = (unAcceptPunchout: (index: number) => void): JSX.Element => {
         return (
-            <Button ref={btnUnApproveRef} onClick={unApprovePunchout}>
-                Unapprove punch out
+            <Button ref={btnUnAcceptRef} onClick={unAcceptPunchout}>
+                Unaccept punch out
             </Button>
         );
     };
@@ -146,10 +146,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         participant: Participant,
         status: string,
         handleCompletePunchOut: (index: number) => void,
-        handleApprovePunchOut: (index: number) => void,
+        handleAcceptPunchOut: (index: number) => void,
         handleUpdateParticipants: (index: number) => void,
         handleSignPunchOut: (index: number) => void,
-        handleUnApprovePunchOut: (index: number) => void): JSX.Element => {
+        handleUnAcceptPunchOut: (index: number) => void): JSX.Element => {
 
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
@@ -172,7 +172,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
             case OrganizationsEnum.ConstructionCompany:
                 if (status == IpoStatusEnum.ACCEPTED) {
                     if (participant.sortKey == 1) {
-                        return getUnApproveButton(handleUnApprovePunchOut);
+                        return getUnAcceptButton(handleUnAcceptPunchOut);
                     }
                     if (participant.signedBy) {
                         return <span>{`${participant.signedBy.userName}`}</span>;
@@ -181,7 +181,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
                 if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                     if (participant.sortKey === 1) {
-                        if (status === IpoStatusEnum.COMPLETED) return getApproveButton(handleApprovePunchOut);
+                        if (status === IpoStatusEnum.COMPLETED) return getAcceptButton(handleAcceptPunchOut);
                     } else {
                         return getSignButton(handleSignPunchOut);
                     }
@@ -220,20 +220,20 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
-    const handleApprovePunchOut = async (index: number): Promise<any> => {
+    const handleAcceptPunchOut = async (index: number): Promise<any> => {
         setLoading(true);
-        if (btnApproveRef.current) {
-            btnApproveRef.current.setAttribute('disabled', 'disabled');
+        if (btnAcceptRef.current) {
+            btnAcceptRef.current.setAttribute('disabled', 'disabled');
         }
         try {
             await accept(participants[index], attNoteData);
-            if (btnUnApproveRef.current) {
-                btnUnApproveRef.current.removeAttribute('disabled');
+            if (btnUnAcceptRef.current) {
+                btnUnAcceptRef.current.removeAttribute('disabled');
             }
-            showSnackbarNotification('Punch out approved', 2000, true);
+            showSnackbarNotification('Punch out accepted', 2000, true);
         } catch (error) {
-            if (btnApproveRef.current) {
-                btnApproveRef.current.removeAttribute('disabled');
+            if (btnAcceptRef.current) {
+                btnAcceptRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
         }
@@ -241,20 +241,20 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
-    const handleUnApprovePunchOut = async (index: number): Promise<any> => {
+    const handleUnAcceptPunchOut = async (index: number): Promise<any> => {
         setLoading(true);
-        if (btnUnApproveRef.current) {
-            btnUnApproveRef.current.setAttribute('disabled', 'disabled');
+        if (btnUnAcceptRef.current) {
+            btnUnAcceptRef.current.setAttribute('disabled', 'disabled');
         }
         try {
             await unaccept(participants[index]);
-            showSnackbarNotification('Punch out unapproved', 2000, true);
-            if (btnApproveRef.current) {
-                btnApproveRef.current.removeAttribute('disabled');
+            showSnackbarNotification('Punch out unaccepted', 2000, true);
+            if (btnAcceptRef.current) {
+                btnAcceptRef.current.removeAttribute('disabled');
             }
         } catch (error) {
-            if (btnUnApproveRef.current) {
-                btnUnApproveRef.current.removeAttribute('disabled');
+            if (btnUnAcceptRef.current) {
+                btnUnAcceptRef.current.removeAttribute('disabled');
             }
             showSnackbarNotification(error.message, 2000, true);
         }
@@ -385,10 +385,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                     {getSignedProperty(
                                         participant, status,
                                         () => handleCompletePunchOut(index),
-                                        () => handleApprovePunchOut(index),
+                                        () => handleAcceptPunchOut(index),
                                         () => handleUpdateParticipants(),
                                         () => handleSignPunchOut(index),
-                                        () => handleUnApprovePunchOut(index))}
+                                        () => handleUnAcceptPunchOut(index))}
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
                                     {participant.signedAtUtc ?

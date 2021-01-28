@@ -6,16 +6,19 @@ import { TextField, Typography } from '@equinor/eds-core-react';
 import { format, set } from 'date-fns';
 
 import { Canceler } from '@procosys/http/HttpClient';
+import Checkbox from '@procosys/components/Checkbox';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
-import { getEndTime } from '../utils';
-import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
-import Checkbox from '@procosys/components/Checkbox';
+import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
+import { getEndTime } from '../utils';
+import { tokens } from '@equinor/eds-tokens';
+import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
     { text: 'MDP (Multi Discipline Punch)', value: 'MDP' }];
+
 
 interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
@@ -24,7 +27,8 @@ interface GeneralInfoProps {
     isEditMode: boolean;
     clearScope: () => void;
     confirmationChecked: boolean;
-    setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>
+    setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>;
+    errors: Record<string, string> | null;
 }
 
 const GeneralInfo = ({
@@ -34,7 +38,8 @@ const GeneralInfo = ({
     isEditMode,
     clearScope,
     confirmationChecked,
-    setConfirmationChecked
+    setConfirmationChecked,
+    errors
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
@@ -42,6 +47,7 @@ const GeneralInfo = ({
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [timeError, setTimeError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -152,6 +158,9 @@ const GeneralInfo = ({
                 label='Title'
                 placeholder='Write here'
                 defaultValue={generalInfo.title}
+                helperText={errors && errors['title'] ? errors['title'] : undefined}
+                helperIcon={<EdsIcon name="warning_filled" size={16} color="danger"/>}
+                variant={errors && errors['title'] ? 'error' : 'default'}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setGeneralInfo(gi => { return { ...gi, title: e.target.value }; });
                 }}
@@ -201,8 +210,8 @@ const GeneralInfo = ({
                     }}
                     onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value)}
                 />
-                {timeError &&
-                    (<Typography variant="caption" color="danger">Start time must be before end time</Typography>)
+                {errors && errors['time'] &&
+                    (<Typography variant="caption" color="danger">{errors['time']}</Typography>)
                 }
             </DateTimeContainer>
 
@@ -214,6 +223,9 @@ const GeneralInfo = ({
                     label='Location'
                     meta='Optional'
                     defaultValue={generalInfo.location}
+                    helperText={errors && errors['location'] ? errors['location'] : undefined}
+                    helperIcon={<EdsIcon name="warning_filled" size={16} color="danger" />}
+                    variant={errors && errors['location'] ? 'error' : 'default'}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                         setGeneralInfo(gi => { return { ...gi, location: e.target.value }; });
                     }}

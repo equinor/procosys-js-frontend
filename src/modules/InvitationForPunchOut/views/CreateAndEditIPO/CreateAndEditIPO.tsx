@@ -38,7 +38,7 @@ const validateGeneralInfo = (info: GeneralInfoDetails, confirmationChecked?: boo
         location.length > 250 && (errors = { ...errors, location: 'Location is too long. Maximum 250 characters.' });
     }
     if (startTime && endTime) {
-        startTime >= endTime && (errors = { ...errors, time: 'Start time must precede end time'});
+        startTime >= endTime && (errors = { ...errors, time: 'Start time must precede end time.'});
     }
 
     if (isEmptyObject(errors)) return null;

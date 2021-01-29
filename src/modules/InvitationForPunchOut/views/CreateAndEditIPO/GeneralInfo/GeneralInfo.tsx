@@ -231,7 +231,7 @@ const GeneralInfo = ({
                     onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('start', event.target.value)}
                 />
                 <DateTimeField
-                    id='endDate'
+                    id='endTime'
                     label='End'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}

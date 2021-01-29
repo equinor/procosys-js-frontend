@@ -12,27 +12,35 @@ import Summary from './Summary/Summary';
 import { isEmptyObject } from './utils';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 
-const validateGeneralInfo = (info: GeneralInfoDetails): Record<string, string> | null => {
+const validateGeneralInfo = (info: GeneralInfoDetails, confirmationChecked?: boolean): Record<string, string> | null => {
     let errors = {};
-    const { title, location, poType, projectName, startTime, endTime } = info;
-    if (!title || !poType || !projectName || !startTime || !endTime) {
-        errors = {...errors, valid: 'General info is missing required fields'};
-    }
+    const { title, description, location, poType, projectName, startTime, endTime } = info;
+
+    if (typeof confirmationChecked === 'boolean') {
+        !projectName && (errors = { ...errors, projectName: 'Required field.' });
+        !poType && (errors = { ...errors, poType: 'Required field.' });
+        
+        !title ? (errors = { ...errors, title: 'Required field.' }) :
+            title.trim().length < 3 && (errors = { ...errors, title: 'Title is too short. Minimum 3 characters.' });
+        
+        (!startTime || !endTime) && (errors = { ...errors, time: 'Start and end time is required.'});
+
+        !confirmationChecked && (errors = { ...errors, confirmation: 'Confirmation required.'});
+    };
+
     if (title) {
-        if (title.length > 250) {
-            errors = { ...errors, title: 'Title is too long. Maximum 250 characters.' };
-        } 
+        title.length > 250 && (errors = { ...errors, title: 'Title is too long. Maximum 250 characters.' });
+    }
+    if (description) {
+        description.length > 4096 && (errors = { ...errors, description: 'Description is too long. Maximum 4096 characters.' });
     }
     if (location) {
-        if (location.length > 250) {
-            errors = { ...errors, location: 'Location is too long. Maximum 250 characters.' };
-        } 
+        location.length > 250 && (errors = { ...errors, location: 'Location is too long. Maximum 250 characters.' });
     }
     if (startTime && endTime) {
-        if (startTime >= endTime) {
-            errors = { ...errors, time: 'Start time must precede end time'};
-        }
+        startTime >= endTime && (errors = { ...errors, time: 'Start time must precede end time'});
     }
+
     if (isEmptyObject(errors)) return null;
     return errors;
 };
@@ -106,6 +114,13 @@ const CreateAndEditIPO = ({
     }, [generalInfo]);
 
     const goToNextStep = (): void => {
+        if (currentStep === StepsEnum.GeneralInfo) {
+            const errors = validateGeneralInfo(generalInfo, confirmationChecked);
+            if (errors) {
+                setGeneralInfoErrors(errors);
+                return;
+            }
+        }
         if (currentStep > StepsEnum.Participants) {
             changeCompletedStatus(true, currentStep);
             if (currentStep == StepsEnum.UploadAttachments) {
@@ -130,6 +145,13 @@ const CreateAndEditIPO = ({
     };
 
     const goToStep = (stepNo: number): void => {
+        if (currentStep === StepsEnum.GeneralInfo) {
+            const errors = validateGeneralInfo(generalInfo, confirmationChecked);
+            if (errors) {
+                setGeneralInfoErrors(errors);
+                return;
+            }
+        }
         if (steps[stepNo >= 2 ? stepNo - 2 : 0].isCompleted) {
             if (stepNo > StepsEnum.Participants) {
                 changeCompletedStatus(true, stepNo);
@@ -148,12 +170,12 @@ const CreateAndEditIPO = ({
 
     useEffect(() => {
         const errors = validateGeneralInfo(generalInfo);
-        setGeneralInfoErrors(errors);
-        if (confirmationChecked && !errors) {
+        if (!errors) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);
         }
+        setGeneralInfoErrors(errors);
     }, [generalInfo, confirmationChecked]);
 
     useEffect(() => {

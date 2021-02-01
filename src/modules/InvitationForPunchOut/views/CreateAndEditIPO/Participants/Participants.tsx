@@ -13,6 +13,7 @@ import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { OrganizationsEnum } from '../../enums';
+import Spinner from '@procosys/components/Spinner';
 
 const WAIT_INTERVAL = 300;
 
@@ -45,9 +46,10 @@ const Participants = ({
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
     const [personsFilter, setPersonsFilter] = useState<SelectItem>({ text: '', value: -1 }); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const nameCombiner = (firstName: string, lastName: string): string => {
-        return firstName + ' ' + lastName;
+        return `${firstName} ${lastName}`;
     };
 
     const getPlannerPersons = (input: string): Canceler | null => {
@@ -55,20 +57,22 @@ const Participants = ({
         if (input != '') {
             try {
                 (async (): Promise<void> => {
+                    setIsLoading(true);
                     const plannerPersons = await apiClient.getRequiredSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
                                 value: person.azureOid,
-                                name: person.lastName + ', ' + person.firstName,
                                 email: person.email
                             };
                         })
                         );
                     setFilteredPersons(plannerPersons);
+                    setIsLoading(false);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
+                setIsLoading(false);
             }
         } else {
             setFilteredPersons([]);
@@ -83,20 +87,22 @@ const Participants = ({
         if (input != '') {
             try {
                 (async (): Promise<void> => {
+                    setIsLoading(true);
                     const signerPersons = await apiClient.getAdditionalSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
                                 value: person.azureOid,
-                                name: person.lastName + ', ' + person.firstName,
                                 email: person.email
                             };
                         })
                         );
                     setFilteredPersons(signerPersons);
+                    setIsLoading(false);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
+                setIsLoading(false);
             }
         } else {
             setFilteredPersons([]);
@@ -111,21 +117,25 @@ const Participants = ({
         if (input != '') {
             try {
                 (async (): Promise<void> => {
+                    setIsLoading(true);
+
                     const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
                                 value: person.azureOid,
-                                name: person.lastName + ', ' + person.firstName,
                                 email: person.email
                             };
                         })
                         );
                     setFilteredPersons(persons);
+                    setIsLoading(false);
                 })();
             } catch (error) {
                 showSnackbarNotification(error.message);
+                setIsLoading(false);
             }
+
         } else {
             setFilteredPersons([]);
         }
@@ -182,7 +192,7 @@ const Participants = ({
 
     const personsInRoleText = (textToDisplay: string, persons: Person[]): string => {
         persons.forEach((p, i) => {
-            textToDisplay += nameCombiner(p.firstName, p.lastName);
+            textToDisplay += p.name;
             if (i + 1 < persons.length) {
                 textToDisplay += ', ';
             }
@@ -193,7 +203,7 @@ const Participants = ({
     const getDisplayText = (index: number): string => {
         const participant = participants[index];
         if (participant.person) {
-            return nameCombiner(participant.person.firstName, participant.person.lastName);
+            return participant.person.name;
         } else if (participant.role) {
             let textToDisplay = participant.role.code;
             if (participant.role.persons.length > 0 && !participant.role.usePersonalEmail) {
@@ -240,16 +250,14 @@ const Participants = ({
     const setPersonOnParticipant = (event: React.MouseEvent, personIndex: number, participantIndex: number): void => {
         event.preventDefault();
         const person = filteredPersons[personIndex];
-        if (person && person.name) {
-            const name = person.name.split(', ');
+        if (person && person.text) {
             setParticipants(p => {
                 const participantsCopy = [...p];
                 participantsCopy[participantIndex].role = null;
                 participantsCopy[participantIndex].externalEmail = null;
                 participantsCopy[participantIndex].person = {
                     azureOid: person.value,
-                    firstName: name[1],
-                    lastName: name[0],
+                    name: person.text ? person.text : '',
                     email: person.email ? person.email : '',
                     radioOption: null
                 };
@@ -338,18 +346,20 @@ const Participants = ({
                                         onFilter={(input: string): void => setPersonsFilter({ text: input, value: index })}
                                         text={p.person ? getDisplayText(index) : 'Search to select'}
                                     >
-                                        {filteredPersons.map((person, i) => {
-                                            return (
-                                                <DropdownItem
-                                                    key={i}
-                                                    onClick={(event: React.MouseEvent): void =>
-                                                        setPersonOnParticipant(event, i, index)
-                                                    }
-                                                >
-                                                    <div>{person.text}</div>
-                                                </DropdownItem>
-                                            );
-                                        })}
+                                        {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                                        {!isLoading &&
+                                            filteredPersons.map((person, i) => {
+                                                return (
+                                                    <DropdownItem
+                                                        key={i}
+                                                        onClick={(event: React.MouseEvent): void =>
+                                                            setPersonOnParticipant(event, i, index)
+                                                        }
+                                                    >
+                                                        <div>{person.text}</div>
+                                                    </DropdownItem>
+                                                );
+                                            })}
                                     </Dropdown>
                                 </div>
                             }

@@ -50,23 +50,27 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         };
     }, []);
 
-    const handleSubmitFile = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-        e.preventDefault();
-
-        if (!e.target.files) {
+    const uploadFiles = async (files: FileList | null): Promise<void> => {
+        if (!files) {
             showSnackbarNotification('No files to upload');
             return;
         }
 
+        await Promise.all(Array.from(files).map(async file => {
+            try {
+                fileTypeValidator(file.name);
+                await apiClient.uploadAttachment(ipoId, file, true);
+            } catch (error) {
+                console.error('Upload attachment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+        }));
+    };
+
+    const handleSubmitFile = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+        e.preventDefault();
         setLoading(true);
-        const file = e.target.files[0];
-        try {
-            fileTypeValidator(file.name);
-            await apiClient.uploadAttachment(ipoId, file, true);
-        } catch (error) {
-            console.error('Upload attchment failed: ', error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
+        await uploadFiles(e.target.files);
         await getAttachments();
         setLoading(false);
     };
@@ -84,16 +88,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
     const handleDrop = async (event: React.DragEvent<HTMLDivElement>): Promise<void> => {
         event.preventDefault();
         setLoading(true);
-        const files = event.dataTransfer.files;
-        await Promise.all(Array.from(files).map(async file => {
-            try {
-                fileTypeValidator(file.name);
-                await apiClient.uploadAttachment(ipoId, file, true);
-            } catch (error) {
-                console.error('Upload attachment failed: ', error.message, error.data);
-                showSnackbarNotification(error.message);
-            }
-        }));
+        await uploadFiles(event.dataTransfer.files);
         await getAttachments();
         setLoading(false);
     };
@@ -135,7 +130,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                     >
                         Select files
                     </Button>
-                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
+                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
                 </form>
             </AddAttachmentContainer>
             <DragAndDropContainer
@@ -178,11 +173,12 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                                 </div>
                             </Cell>
                         </Row>
-                    )) : (
-                        <Row>
-                            <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
-                        </Row>
-                    )}
+                    )) :
+                        (
+                            <Row>
+                                <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
+                            </Row>
+                        )}
                 </Body>
 
             </AttachmentTable>

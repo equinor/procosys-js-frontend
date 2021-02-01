@@ -18,6 +18,7 @@ const UserGreeting = (): JSX.Element => {
     let imageRequestToken: null | Canceler = null;
     const graphClient = new GraphClient(auth);
 
+
     useEffect(() => {
         (async (): Promise<void> => {
             try {

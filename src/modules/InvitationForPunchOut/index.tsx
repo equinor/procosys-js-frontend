@@ -1,12 +1,12 @@
 import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
+
 import { Container } from './style';
+import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
+import EditIPO from './views/CreateAndEditIPO/EditIPO';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
 import ViewIPO from './views/ViewIPO/index';
-import EditIPO from './views/CreateAndEditIPO/EditIPO';
-import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 import withAccessControl from '@procosys/core/security/withAccessControl';
-
 
 const InvitationForPunchOut = (): JSX.Element => {
     const { url } = useRouteMatch();
@@ -16,7 +16,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                 <Router basename={url}>
                     <Switch>
                         <Route
-                            path={'/CreateIPO/:projectId?/:commPkgNo?'}
+                            path={'/CreateIPO/:projectName?/:commPkgNo?'}
                             exact
                             component={CreateIPO}
                         />

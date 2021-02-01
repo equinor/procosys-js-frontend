@@ -12,7 +12,6 @@ export type Step = {
 }
 
 export type GeneralInfoDetails = {
-    projectId: number | null;
     projectName: string | null;
     poType: SelectItem | null;
     title: string | null;
@@ -25,8 +24,7 @@ export type GeneralInfoDetails = {
 export type Person = {
     id?: number;
     azureOid: string;
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     rowVersion?: string;
     radioOption: string | null;

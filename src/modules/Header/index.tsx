@@ -18,7 +18,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
 import ModuleTabs from './ModuleTabs';
 import OptionsDropdown from '../../components/OptionsDropdown';
-import { ProCoSysSettings } from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
@@ -110,9 +110,9 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            {(ProCoSysSettings.ipo.enabled) &&
+                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
                                 <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
-                                    <DropdownItem>Invitation for punch out</DropdownItem>
+                                    <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </a>
                             }
                             <a href={`/${params.plant}/Hookup/New`}>
@@ -268,7 +268,7 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>
                                     C&amp;C digital toolbox
                                 </DropdownItem>
-                            </a>                            
+                            </a>
                             <a href="https://dcp.equinor.com" target="_blank">
                                 <DropdownItem>
                                     DCP – Digitalized Commissioning Procedure
@@ -293,9 +293,9 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>
                                     Access IT – Access Managing Control System for Equinor
                                 </DropdownItem>
-                            </a>                                                                                                                                                                        
+                            </a>
                         </OptionsDropdown>
-                    </MenuContainerItem >                    
+                    </MenuContainerItem >
                     <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
                             <a href={'https://procosyspublictoc.azurewebsites.net/'}>
@@ -364,7 +364,7 @@ const Header: React.FC = (): JSX.Element => {
             <ShowOnDesktop>
                 <ModuleTabs />
             </ShowOnDesktop>
-        </div >
+        </div>
     );
 };
 

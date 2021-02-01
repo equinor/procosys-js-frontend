@@ -1,11 +1,11 @@
-import { AxiosRequestConfig, AxiosError } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
+import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
+import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
-import { ProCoSysSettings } from '../../../core/ProCoSysSettings';
-import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -460,8 +460,8 @@ class PreservationApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            ProCoSysSettings.preservation.scopes.join(' '),
-            ProCoSysSettings.preservation.url
+            ProCoSysSettings.preservationApi.scope.join(' '),
+            ProCoSysSettings.preservationApi.url
         );
         this.client.interceptors.request.use(
             config => {
@@ -485,7 +485,6 @@ class PreservationApiClient extends ApiClient {
      * @param plantId Plant ID
      */
     setCurrentPlant(plantId: string): void {
-        console.log('Setting current plant for preservation: ', plantId);
         if (this.plantIdInterceptorId) {
             this.client.interceptors.request.eject(this.plantIdInterceptorId);
             this.plantIdInterceptorId = null;

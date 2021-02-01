@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
-import { Checkbox } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
+import Checkbox from '@procosys/components/Checkbox';
 
 interface DropdownProps {
     disabled?: boolean;
@@ -23,6 +23,7 @@ export const DropdownItem = styled.div<DropdownProps>`
 
 export const DateTimeContainer = styled.div`
     display: flex;
+    align-items: center;
     > div {
         margin-right: calc(var(--grid-unit) * 2);
         input {
@@ -33,11 +34,9 @@ export const DateTimeContainer = styled.div`
             color: var(--text--default);
         }
     }
-`;
-
-export const Container = styled.div`
-    display: flex;
-    width: 100%;
+    > p {
+        width: 150px;
+    }
 `;
 
 export const LocationContainer = styled.div`
@@ -69,15 +68,10 @@ export const FormContainer = styled.div`
 
 export const ConfirmationTextContainer = styled.div`
     display: flex;
-    /* width: 600px; */
+    margin-top: var(--grid-unit);
     align-items: flex-start;
 `;
 
 export const TextContainer = styled.div`
-    padding: 12px;
-`;
-
-export const ConfirmCheckbox = styled(Checkbox)`
-    margin: 0 !important;
-    padding: 0 !important;
+    padding-left: 12px;
 `;

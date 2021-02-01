@@ -32,9 +32,9 @@ const mockInvitation: Invitation = {
     type: 'DP',
     rowVersion: 'version1',
     status: '',
-    createdBy: 'arild',
+    createdBy: { firstName: 'arild', lastName: 'bjerke' },
     startTimeUtc: '2020-12-16 00:57:59',
-    endTimeUtc: '2020-12-17 00:57:59',
+    endTimeUtc: '2020-12-17 00:59:59',
     participants: [],
     mcPkgScope: [],
     commPkgScope: []
@@ -102,8 +102,8 @@ describe('<EditIPO />', () => {
         await waitFor(() => expect(getByTestId('location')).toHaveProperty('value', 'locationA'));
         await waitFor(() => expect(getByText('DP (Discipline Punch)')).toBeInTheDocument());
         await waitFor(() => expect(getByLabelText('Date')).toHaveValue('2020-12-16'));
-        await waitFor(() => expect(getByLabelText('From')).toHaveValue('00:57'));
-        await waitFor(() => expect(getByLabelText('To')).toHaveValue('00:57'));
+        await waitFor(() => expect(getByLabelText('Start')).toHaveValue('00:57'));
+        await waitFor(() => expect(getByLabelText('End')).toHaveValue('00:59'));
 
     });
 });

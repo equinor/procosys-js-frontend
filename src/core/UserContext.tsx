@@ -14,8 +14,10 @@ type Plant = {
 
 export type User = {
     name: string;
+    id: string;
     plants: Array<Plant>;
     setName(name: string): void;
+    setId(id: string): void;
     setPlants(plants: Array<Plant>): void;
 }
 
@@ -31,6 +33,10 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     const [name, setName] = useState(() => {
         const account = auth.getCurrentUser();
         return (account && account.fullname) || '';
+    });
+    const [id, setId] = useState(() => {
+        const account = auth.getCurrentUser();
+        return (account && account.id) || '';
     });
     const [loading, setLoading] = useState(true);
     const [plants, setPlants] = useState<User['plants']>([]);
@@ -68,7 +74,7 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
 
     return (
         <UserContext.Provider value={{
-            name, plants, setName, setPlants
+            name, id, plants, setName, setId, setPlants
         }}>
             {children}
         </UserContext.Provider>

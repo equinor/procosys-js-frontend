@@ -24,10 +24,9 @@ const Attachments = ({
     const handleSubmitFile = (e: any): void => {
         e.preventDefault();
         try {
-            fileTypeValidator(e.target.files[0].name);
-            const file = e.target.files[0];
-            addAttachments([e.target.files[0]]);
+            addAttachments(e.target.files);
         } catch (error) {
+            console.error('Upload attachment failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }
     };
@@ -51,9 +50,20 @@ const Attachments = ({
         }
     };
 
-    const addAttachments = (files: File[]): void => {
-        files.forEach((file) => {
-            setAttachments(currentAttachments => currentAttachments.concat({ fileName: file.name, file: file }));
+    const addAttachments = (files: FileList | null): void => {
+        if (!files) {
+            showSnackbarNotification('No files to upload');
+            return;
+        }
+
+        Array.from(files).forEach(file => {
+            try {
+                fileTypeValidator(file.name);
+                setAttachments(currentAttachments => currentAttachments.concat({ fileName: file.name, file: file }));
+            } catch (error) {
+                showSnackbarNotification(error.message);
+            }
+
         });
     };
 
@@ -76,15 +86,8 @@ const Attachments = ({
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
         event.preventDefault();
-        const files = event.dataTransfer.files;
-        Array.from(files).forEach(file => {
-            try {
-                fileTypeValidator(file.name);
-                addAttachments([file]);
-            } catch (error) {
-                showSnackbarNotification(error.message);
-            }
-        });
+        addAttachments(event.dataTransfer.files);
+
     };
 
     return (<Container>
@@ -97,7 +100,7 @@ const Attachments = ({
                     >
                         Select files
                     </Button>
-                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
+                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
                 </form>
             </AddAttachmentContainer>
             <DragAndDropContainer

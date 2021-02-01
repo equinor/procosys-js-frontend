@@ -3,7 +3,7 @@ import {useCurrentPlant} from '../PlantContext';
 import styled from 'styled-components';
 import Error from '../../components/Error';
 import { Loading } from '../../components';
-import {ProCoSysSettings} from '../ProCoSysSettings';
+import ProCoSysSettings from '../ProCoSysSettings';
 
 const CenterContainer = styled.div`
     display: flex;

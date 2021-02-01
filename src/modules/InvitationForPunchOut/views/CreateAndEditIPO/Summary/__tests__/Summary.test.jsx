@@ -18,18 +18,12 @@ const mockMcPkgs = [
     {
         mcPkgNo: 'Mc pkg 1',
         description: 'Description 1',
-        status: 'OK',
-        tableData: {
-            checked: true,
-        }
+        commPkgNo: 'Comm pkg 1',
     },
     {
         mcPkgNo: 'Mc pkg 2',
         description: 'Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.Very long description of a commpkg that is to be selected. Description should be displayed in accordion in selected scope component.',
-        status: 'OK',
-        tableData: {
-            checked: true,
-        }
+        commPkgNo: 'Comm pkg 1',
     }
 ];
 
@@ -52,6 +46,15 @@ const participants = [
     }
 ];
     
+jest.mock('@procosys/core/PlantContext',() => ({
+    useCurrentPlant: () => {
+        return {
+            plant: {
+                pathId: 'HEIMDAL'
+            }
+        };
+    }
+}));
 
 describe('Module: <Summary />', () => {
 
@@ -60,7 +63,7 @@ describe('Module: <Summary />', () => {
         expect(getByText('General info')).toBeInTheDocument();
         expect(getByText('Date and time for punch round')).toBeInTheDocument();
         expect(getByText('Reports added')).toBeInTheDocument();
-        expect(getByText('Selected scope')).toBeInTheDocument();
+        expect(getByText('Included MC Packages')).toBeInTheDocument();
         expect(getByText('Participants')).toBeInTheDocument();
     });
 

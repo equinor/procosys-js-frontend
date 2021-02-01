@@ -1,65 +1,246 @@
-const Settings = require('../../settings.json');
+import { IAuthService } from 'src/auth/AuthService';
+import SettingsApiClient from '@procosys/http/SettingsApiClient';
 
-export interface Feature {
-    scopes: Array<string>,
-    url: string,
-    version: string,
-    enabled: boolean
+const localSettings = require('../../settings.json');
+//#region types
+
+interface FeatureConfig {
+    url: string;
+    scope: Array<string>,
+    version?: string;
 }
 
-export class ProCoSysSettings {
-    static featureIsEnabled(item: string): boolean {
-        if (item != undefined) {
-            if (item === 'IPO') return this.ipo.enabled;
-            if (item === 'LIBRARY') return this.library.enabled;
-            if (item === 'PRESERVATION') return this.preservation.enabled;
-            if (item === 'GRAPH') return this.graph.enabled;
-            if (item === 'MAIN') return this.main.enabled;
-        }
+interface FeatureFlags {
+    IPO: boolean
+    library: boolean
+    preservation: boolean
+    main: boolean
+}
 
-        return false;
+interface ConfigResponse {
+    configuration: {
+        procosysApi: FeatureConfig
+        graphApi: FeatureConfig
+        preservationApi: FeatureConfig
+        ipoApi: FeatureConfig
+        libraryApi: FeatureConfig
+        instrumentationKey: string
+    }
+    featureFlags: FeatureFlags
+    
+}
+
+interface AuthConfigResponse {
+    clientId: string;
+    authority: string;
+    scopes: Array<string>;
+}
+
+export enum AsyncState {
+    READY,
+    INITIALIZING,
+    ERROR
+}
+//#endregion types
+
+class ProCoSysSettings {
+    private settingsConfigurationApiClient!: SettingsApiClient;
+    configurationEndpoint!: string;
+    configurationScope!: string;
+
+    // remoteConfigurationResponse: ConfigResponse;
+    /**
+     * Validates the async state
+     * INITIALIZING - Settings is not done initializing
+     * ERROR - Settings initializer encountered an error while loading
+     * READY - Settings are finished loading
+     */
+    configState:AsyncState = AsyncState.INITIALIZING;
+
+    /**
+     * Validates the async state
+     * INITIALIZING - Settings is not done initializing
+     * ERROR - Settings initializer encountered an error while loading
+     * READY - Settings are finished loading
+     */
+    authConfigState:AsyncState = AsyncState.INITIALIZING;
+
+    /**
+     * A random number to validate instance
+     */
+    private instanceId!: number;
+
+    /**
+     * Singleton instance of configuration
+     */
+    private static instance: ProCoSysSettings;
+
+    /**
+     * Cached response from server
+     */
+    private configurationResponse!: Promise<ConfigResponse>;
+
+    /**
+     * Cached response from server
+     */
+    private authConfigResponse!: Promise<AuthConfigResponse>;
+
+    /**
+     * URI to the login authority
+     */
+    authority!:string;
+    /**
+     * Default scopes to ask for concent for when logging in
+     */
+    defaultScopes: Array<string> = [];
+
+    /**
+     * AAD Client ID
+     */
+    clientId!: string;
+
+    /**
+     * Application insight instrumentation key
+     */
+    instrumentationKey = '';
+
+    procosysApi!: FeatureConfig;
+    graphApi!: FeatureConfig;
+    preservationApi!: FeatureConfig;
+    ipoApi!: FeatureConfig;
+    libraryApi!: FeatureConfig;
+
+    featureFlags!: FeatureFlags
+
+    /**
+     * Returns true or false based on if the feature is enabled or disabled. 
+     * @returns TRUE: feature is enabled
+     * @returns FALSE: feature is disabled
+     * @default false - if the feature is not configured
+     * @param feature key for feature
+     */
+    featureIsEnabled(feature: string): boolean {
+        return this.featureFlags[feature as keyof FeatureFlags] || false;
     }
 
-    static auth = {
-        clientId: Settings.auth.clientId,
-        authority: Settings.auth.authority,
-        defaultScopes: JSON.parse(Settings.auth.defaultScopes.replace(/'/g, '"'))
-    };
+    constructor() {
+        if (ProCoSysSettings.instance instanceof ProCoSysSettings) {
+            return ProCoSysSettings.instance;
+        }
 
-    static ipo: Feature = {
-        scopes: JSON.parse(Settings.externalResources.ipoApi.scope.replace(/'/g, '"')),
-        url: Settings.externalResources.ipoApi.url,
-        version: Settings.externalResources.ipoApi.version,
-        enabled: (Settings.enabledFeatures.ipo == 'true'),
-    };
+        this.instanceId = Math.floor(Math.random() * 9999);
+        if (!localSettings.configurationEndpoint || !localSettings.configurationScope) {
+            console.error('Missing local configuration for Config API', localSettings);
+            throw 'Missing local configuration for Config API';
+        }
+        this.featureFlags = {
+            IPO: true,
+            preservation: true,
+            main: true,
+            library: true
+        };
+        this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
 
-    static library: Feature = {
-        scopes: JSON.parse(Settings.externalResources.libraryApi.scope.replace(/'/g, '"')),
-        url: Settings.externalResources.libraryApi.url,
-        version: Settings.externalResources.libraryApi.version,
-        enabled: (Settings.enabledFeatures.library == 'true'),
-    };
+        ProCoSysSettings.instance = this;
+    }
 
-    static preservation: Feature = {
-        scopes: JSON.parse(Settings.externalResources.preservationApi.scope.replace(/'/g, '"')),
-        url: Settings.externalResources.preservationApi.url,
-        version: Settings.externalResources.preservationApi.version,
-        enabled: (Settings.enabledFeatures.preservation == 'true'),
-    };
+    async loadAuthConfiguration(): Promise<void> {
+        this.authConfigState = AsyncState.INITIALIZING;
+        try {
+            this.authConfigResponse = this.settingsConfigurationApiClient.getAuthConfig();
+            const response = await this.authConfigResponse;
+            this.mapFromAuthConfigResponse(response);
+            this.authConfigState = AsyncState.READY;
+        } catch (error) {
+            this.authConfigState = AsyncState.ERROR;
+            console.error('Failed to load configuration from remote source', error);
+        }
+    }
 
-    static main: Feature = {
-        scopes: JSON.parse(Settings.externalResources.procosysApi.scope.replace(/'/g, '"')),
-        url: Settings.externalResources.procosysApi.url,
-        version: Settings.externalResources.procosysApi.version,
-        enabled: (Settings.enabledFeatures.main == 'true'),
-    };
+    async loadConfiguration(authService: IAuthService): Promise<void> {
+        this.configurationResponse = this.settingsConfigurationApiClient.getConfig(authService, localSettings.configurationScope);
 
-    static graph: Feature = {
-        scopes: JSON.parse(Settings.externalResources.graphApi.scope.replace(/'/g, '"')),
-        url: Settings.externalResources.graphApi.url,
-        version: Settings.externalResources.graphApi.version,
-        enabled: (Settings.enabledFeatures.graph == 'true'),
-    };
+        try {
+            const configResponse = await this.configurationResponse;
+            try {
+                this.mapFromConfigurationResponse(configResponse);
+                this.configState = AsyncState.READY;
+            } catch (error) {
+                this.configState = AsyncState.ERROR;
+                console.error('Failed to parse configuration from remote source' , error);
+            }
 
-    static instrumentationKey: string = Settings.instrumentationKey;
+        } catch (error) {
+            this.configState = AsyncState.ERROR;
+            console.error('Failed to load configuration from remote source', error);
+        }
+    }
+
+    private mapFromAuthConfigResponse(authConfigResponse: AuthConfigResponse): void {
+        this.authority = authConfigResponse.authority;
+        this.clientId = authConfigResponse.clientId;
+        this.defaultScopes = authConfigResponse.scopes;
+    }
+
+    private mapFromConfigurationResponse(configurationResponse: ConfigResponse): void {
+        try {
+            this.instrumentationKey = configurationResponse.configuration.instrumentationKey;
+
+            this.graphApi = configurationResponse.configuration.graphApi;
+            this.preservationApi = configurationResponse.configuration.preservationApi;
+            this.ipoApi = configurationResponse.configuration.ipoApi;
+            this.libraryApi = configurationResponse.configuration.libraryApi;
+            this.procosysApi = configurationResponse.configuration.procosysApi;
+
+            // Feature flags
+            this.featureFlags.IPO = configurationResponse.featureFlags.IPO;
+            this.featureFlags.main = configurationResponse.featureFlags.main;
+            this.featureFlags.library = configurationResponse.featureFlags.library;
+            this.featureFlags.preservation = configurationResponse.featureFlags.preservation;
+        } catch (error) {
+            console.error('Failed to parse Configuration from remote server', error);
+            throw error;
+        }
+
+        try {
+            this.overrideFromLocalConfiguration();
+        } catch (error) {
+            console.error('Failed to override with local configuration', error);
+            throw error;
+        }
+    }
+
+    private overrideAuthFromLocalSettings(): void {
+        // Auth elements
+        localSettings.clientId && (this.clientId = localSettings.clientId);
+        localSettings.authority && (this.authority = localSettings.authority);
+        localSettings.defaultScopes && (this.defaultScopes = localSettings.defaultScopes);
+    }
+
+    private overrideFromLocalConfiguration(): void {
+        if (localSettings.configuration) {
+            // Configuration elements
+            console.info('Overriding configuration from settings: ', localSettings.configuration);
+            localSettings.configuration.instrumentationKey && (this.instrumentationKey = localSettings.configuration.instrumentationKey);
+            localSettings.configuration.graphApi && (this.graphApi = localSettings.configuration.graphApi);
+            localSettings.configuration.preservationApi && (this.preservationApi = localSettings.configuration.preservationApi);
+            localSettings.configuration.ipoApi && (this.ipoApi = localSettings.configuration.ipoApi);
+            localSettings.configuration.libraryApi && (this.libraryApi = localSettings.configuration.libraryApi);
+            localSettings.configuration.procosysApi && (this.procosysApi = localSettings.configuration.procosysApi);
+        }
+        
+        // Feature flags
+        if (localSettings.featureFlags) {
+            console.info('Overriding feature flags from settings: ', localSettings.featureFlags);
+
+            localSettings.featureFlags.main != undefined && (this.featureFlags.main = localSettings.featureFlags.main);
+            localSettings.featureFlags.IPO != undefined && (this.featureFlags.IPO = localSettings.featureFlags.IPO);
+            localSettings.featureFlags.library != undefined && (this.featureFlags.library = localSettings.featureFlags.library);
+            localSettings.featureFlags.preservation != undefined && (this.featureFlags.preservation = localSettings.featureFlags.preservation);
+        }
+
+    }
+
 }
+
+export default new ProCoSysSettings();

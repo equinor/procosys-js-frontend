@@ -16,6 +16,8 @@ const validateGeneralInfo = (info: GeneralInfoDetails, confirmationChecked?: boo
     let errors = {};
     const { title, description, location, poType, projectName, startTime, endTime } = info;
 
+    // when function is called with 'confirmationChecked', additional validation is performed
+    // that would produce errors on initial state, or interfere when entering info
     if (typeof confirmationChecked === 'boolean') {
         !projectName && (errors = { ...errors, projectName: 'Required field.' });
         !poType && (errors = { ...errors, poType: 'Required field.' });

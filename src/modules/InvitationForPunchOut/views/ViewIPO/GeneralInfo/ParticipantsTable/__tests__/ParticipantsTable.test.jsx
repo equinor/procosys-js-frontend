@@ -117,6 +117,71 @@ const participants = [
     }
 ];
 
+const participants_canSign = [
+    {
+        organization: OrganizationsEnum.Contractor,
+        sortKey: 0,
+        canSign: true,
+        person: {
+            person: {
+                id: 123,
+                firstName: 'Adwa',
+                lastName: 'ASdsklandasnd',
+                azureOid: 'azure1',
+                email: 'asdadasd@dwwdwd.com',
+                rowVersion: '123123',
+            },
+            required: true,
+            response: OutlookResponseType.ATTENDING,
+
+        },
+        externalEmail: null,        
+        functionalRole: null,
+        signedBy: {
+            id: 123,
+            firstName: 'Adwa',
+            lastName: 'ASdsklandasnd',
+            userName: 'signer1',
+            azureOid: 'azure1',
+            email: 'asdadasd@dwwdwd.com',
+            rowVersion: '123123'},          
+        signedAtUtc: new Date(2020, 11, 6, 11), 
+        attended: true,
+        note: ''
+    },
+    {
+        organization: OrganizationsEnum.ConstructionCompany,
+        sortKey: 1,
+        canSign: true,
+        person: {
+            person: {
+                id: 234,
+                firstName: 'Oakjfcv',
+                lastName: 'Alkjljsdf',
+                azureOid: 'azure2',
+                email: 'lkjlkjsdf@dwwdwd.com',
+                rowVersion: '123123',
+            },
+            required: true,
+            response: OutlookResponseType.ATTENDING,
+
+        },
+        externalEmail: null,
+        functionalRole: null,
+        signedBy:  {
+            id: 123,
+            userName: 'signer2',
+            firstName: 'Oakjfcv',
+            lastName: 'Alkjljsdf',
+            azureOid: 'azure2',
+            email: 'lkjlkjsdf@dwwdwd.com',
+            rowVersion: '123123',
+        },
+        signedAtUtc: new Date(2020, 11, 6, 12), 
+        attended: true,
+        note: ''
+    }
+];
 
 const completePunchOut = jest.fn();
 const acceptPunchOut = jest.fn();
@@ -154,7 +219,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].person.person.firstName} ${participants[ParticipantIndex.COMPLETER].person.person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.ACCEPTER].person.person.firstName} ${participants[ParticipantIndex.ACCEPTER].person.person.lastName}`)).toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
-        expect(queryByText('Unaccept punch out')).toBeInTheDocument();
         expect(queryAllByText(participants[ParticipantIndex.COMPLETER].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText(participants[ParticipantIndex.ACCEPTER].person.response).length).toBeGreaterThan(0);
         expect(queryAllByText('Did not attend').length).toBeGreaterThan(0);
@@ -182,7 +246,7 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText(participants[ParticipantIndex.FUNCROLE].functionalRole.code)).toBeInTheDocument();
     });
 
@@ -197,9 +261,9 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Complete punch out')).toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
+        expect(queryByText('Complete punch-out')).toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
     });
 
     it('Renders completed status for completer', async () => {
@@ -214,8 +278,8 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryByText('Update')).toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
     });
 
@@ -229,8 +293,8 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch out')).toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).toBeInTheDocument();
         expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
     });
@@ -245,8 +309,8 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
     });
@@ -263,10 +327,10 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
-        expect(queryByText('Unaccept punch out')).toBeInTheDocument();
+        expect(queryByText('Unaccept punch-out')).not.toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
@@ -282,10 +346,10 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
-        expect(queryByText('Unaccept punch out')).toBeInTheDocument();
+        expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
@@ -299,10 +363,10 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).toBeInTheDocument();
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
-        expect(queryByText('Unaccept punch out')).toBeInTheDocument();
+        expect(queryByText('Unaccept punch-out')).not.toBeInTheDocument();
         expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
         expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
     });
@@ -317,10 +381,10 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
-        expect(queryByText('Complete punch out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
 
     it('Should not render buttons when noone can sign', async () => {
@@ -330,10 +394,10 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Accept punch out')).not.toBeInTheDocument();
-        expect(queryByText('Complete punch out')).not.toBeInTheDocument();
+        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
+        expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
         expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch out')).not.toBeInTheDocument();
+        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
 
     it('Should set attended from outlook response in planned state', async () => {
@@ -399,6 +463,24 @@ describe('<ParticipantsTable />', () => {
         expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
         expect(mockUnsetDirtyStateFor).toBeCalledTimes(1);
         expect(mockUnsetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+    });
+
+    it('User can accept', async () => {
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={participants_canSign} 
+            status={IpoStatusEnum.COMPLETED}
+            accept={acceptPunchOut}
+            complete={completePunchOut} />);
+        expect(queryByText('Accept punch-out')).toBeInTheDocument();
+    });
+
+    it('User can unaccept', async () => {
+        const { queryByText } = renderWithTheme(<ParticipantsTable 
+            participants={participants_canSign} 
+            status={IpoStatusEnum.ACCEPTED}
+            accept={acceptPunchOut}
+            complete={completePunchOut} />);
+        expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
     });
     
 });

@@ -94,7 +94,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
             <CustomTooltip title={tooltipComplete} arrow>
                 <span>
                     <Button ref={btnCompleteRef} onClick={completePunchout}>
-                        Complete punch out
+                        Complete punch-out
                     </Button>
                 </span>
             </CustomTooltip>
@@ -118,7 +118,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
             <CustomTooltip title={tooltipAccept} arrow>
                 <span>
                     <Button ref={btnAcceptRef} onClick={acceptPunchout}>
-                        Accept punch out
+                        Accept punch-out
                     </Button>
                 </span>
             </CustomTooltip>
@@ -128,7 +128,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const getUnAcceptButton = (unAcceptPunchout: (index: number) => void): JSX.Element => {
         return (
             <Button ref={btnUnAcceptRef} onClick={unAcceptPunchout}>
-                Unaccept punch out
+                Unaccept punch-out
             </Button>
         );
     };
@@ -137,7 +137,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const getSignButton = (signPunchOut: (index: number) => void): JSX.Element => {
         return (
             <Button ref={btnSignRef} onClick={signPunchOut}>
-                Sign punch out
+                Sign punch-out
             </Button>
         );
     };
@@ -171,7 +171,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 break;
             case OrganizationsEnum.ConstructionCompany:
                 if (status == IpoStatusEnum.ACCEPTED) {
-                    if (participant.sortKey == 1) {
+                    if (participant.sortKey == 1 && participant.canSign) {
                         return getUnAcceptButton(handleUnAcceptPunchOut);
                     }
                     if (participant.signedBy) {
@@ -181,12 +181,17 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
                 if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
                     if (participant.sortKey === 1) {
-                        if (status === IpoStatusEnum.COMPLETED) return getAcceptButton(handleAcceptPunchOut);
+                        if (status === IpoStatusEnum.COMPLETED) {
+                            return getAcceptButton(handleAcceptPunchOut);
+                        }
                     } else {
                         return getSignButton(handleSignPunchOut);
                     }
                 }
 
+                if (participant.signedBy) {
+                    return <span>{`${participant.signedBy.userName}`}</span>;
+                }
                 break;
             case OrganizationsEnum.Operation:
             case OrganizationsEnum.TechnicalIntegrity:
@@ -209,7 +214,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         }
         try {
             await complete(participants[index], attNoteData);
-            showSnackbarNotification('Punch out completed', 2000, true);
+            showSnackbarNotification('Punch-out completed', 2000, true);
         } catch (error) {
             showSnackbarNotification(error.message, 2000, true);
         }
@@ -230,7 +235,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
             if (btnUnAcceptRef.current) {
                 btnUnAcceptRef.current.removeAttribute('disabled');
             }
-            showSnackbarNotification('Punch out accepted', 2000, true);
+            showSnackbarNotification('Punch-out accepted', 2000, true);
         } catch (error) {
             if (btnAcceptRef.current) {
                 btnAcceptRef.current.removeAttribute('disabled');
@@ -248,7 +253,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         }
         try {
             await unaccept(participants[index]);
-            showSnackbarNotification('Punch out unaccepted', 2000, true);
+            showSnackbarNotification('Punch-out unaccepted', 2000, true);
             if (btnAcceptRef.current) {
                 btnAcceptRef.current.removeAttribute('disabled');
             }
@@ -288,7 +293,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         }
         try {
             await sign(participants[index]);
-            showSnackbarNotification('Punch out signed', 2000, true);
+            showSnackbarNotification('Punch-out signed', 2000, true);
         } catch (error) {
             if (btnSignRef.current) {
                 btnSignRef.current.removeAttribute('disabled');

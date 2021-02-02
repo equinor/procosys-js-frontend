@@ -277,7 +277,7 @@ const GeneralInfo = ({
                     {isEditMode ? <Checkbox disabled checked /> : <Checkbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
                     <TextContainer>
                         <Typography variant="body_short" fontWeight={400}>
-                        I hereby confirm that prior to common punch out all relevant MCCR shall be signed and all punch items registered.
+                        I hereby confirm that prior to common punch-out all relevant MCCR shall be signed and all punch items registered.
                         </Typography>
                         <br />
                         <Typography variant="body_short" fontWeight={400}>

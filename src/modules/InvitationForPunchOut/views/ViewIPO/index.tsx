@@ -1,11 +1,12 @@
 import { AcceptIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
-import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabsContainer, TabStyle } from './index.style';
+import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabStyle, TabsContainer } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
+import { Button } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
 import Comments from './Comments';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -20,19 +21,18 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
-import { Button } from '@equinor/eds-core-react';
 
 const { TabList, Tab, TabPanels, TabPanel } = Tabs;
 
 const initialSteps: Step[] = [
-    { title: 'Invitation for puch out sent', isCompleted: true },
-    { title: 'Punch out completed', isCompleted: false },
-    { title: 'Punch out accepted by company', isCompleted: false }
+    { title: 'Invitation for punch-out sent', isCompleted: true },
+    { title: 'Punch-out completed', isCompleted: false },
+    { title: 'Punch-out accepted by company', isCompleted: false }
 ];
 
 const stepsWhenCanceled: Step[] = [
-    { title: 'Invitation for puch out sent', isCompleted: true },
-    { title: 'Punch out is canceled', isCompleted: true }
+    { title: 'Invitation for punch-out sent', isCompleted: true },
+    { title: 'Punch-out is canceled', isCompleted: true }
 ];
 
 enum StepsEnum {
@@ -276,7 +276,7 @@ const ViewIPO = (): JSX.Element => {
             try {
                 await apiClient.cancelPunchOut(params.ipoId, invitation.rowVersion);
                 await getInvitation();
-                showSnackbarNotification('Invitation for punch out is cancelled.');
+                showSnackbarNotification('Invitation for punch-out is cancelled.');
             } catch (error) {
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);

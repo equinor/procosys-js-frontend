@@ -22,9 +22,9 @@ export interface IPO {
     type: string;
     commPkgs?: CommPkg[];
     mcPkgs?: McPkg[];
-    sent: string;
-    completed?: string;
-    accepted?: string;
+    sent: Date;
+    completed?: Date;
+    accepted?: Date;
     contractor: string;
     construction: string;
 }

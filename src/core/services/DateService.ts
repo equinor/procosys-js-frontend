@@ -32,16 +32,16 @@ export const getFormattedDateAndTime = (date: Date | null): string => {
 };
 
 
-export const getLocalDateAndTime = (date: string | undefined): string => {
+export const getLocalDateAndTime = (date: Date | undefined): string => {
     if (!date) {
         return '';
     }
-    return new Date(date).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 };
 
-export const getLocalDate = (date: string | undefined): string => {
+export const getLocalDate = (date: Date | undefined): string => {
     if (!date) {
         return '';
     }
-    return new Date(date).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return date.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
 };

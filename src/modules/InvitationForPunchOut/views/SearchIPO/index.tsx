@@ -8,8 +8,8 @@ import InvitationsTable from './Table';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import Spinner from '@procosys/components/Spinner';
 import { Typography } from '@equinor/eds-core-react';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 const emptyFilter = {
 
@@ -32,11 +32,10 @@ const SearchIPO = (): JSX.Element => {
 
     const [savedIPOFilters, setSavedIPOFilters] = useState<SavedIPOFilter[] | null>(null);
     const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
-    const numberOfFilters = 5;
+    const numberOfFilters = 0;
 
     const refreshListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
     const cancelerRef = useRef<Canceler | null>();
-    const { procosysApiClient} = useProcosysContext();
 
 
     useEffect(() => {
@@ -47,7 +46,6 @@ const SearchIPO = (): JSX.Element => {
                 const allProjects = await apiClient.getAllProjectsForUserAsync((cancelerCallback) => requestCanceler = cancelerCallback);
                 setAvailableProjects(allProjects);
                 setFilteredProjects(allProjects);
-                setProject(allProjects[0]);
             } catch (error) {
                 console.error(error);
             }
@@ -139,29 +137,24 @@ const SearchIPO = (): JSX.Element => {
 
 
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
-        // if (savedIPOFilters) {  //to avoid getting ipos before we have set previous-/default filter
-        //     try {
-        //         cancelerRef.current && cancelerRef.current();
-        //         return await apiClient.getIPOs(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
-        //             (response) => {
-        //                 setNumberOfIPOs(response.maxAvailable);
-        //                 return response;
-        //             }
-        //         );
-        //     } catch (error) {
-        //         console.error('Get IPOs failed: ', error.message, error.data);
-        //         if (!error.isCancel) {
-        //             showSnackbarNotification(error.message);
-        //         }
-        //     }
-        // };
-        console.log(`project: ${project?.name}\npage: ${page}\npageSize: ${pageSize}\norderBy: ${orderBy}\norderDirection: ${orderDirection}`);
-        setNumberOfIPOs(3);
-        return { maxAvailable: 3, ipos: [
-            {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgs: [{mcPkgNo: '1001-D03'}, {mcPkgNo: '25221-D01'}, {mcPkgNo: '32133-A03'}, {mcPkgNo: '32133-A03'}], sent: (new Date()).toUTCString(), contractorRep: 'asdasd asd ', constructionRep: 'dawdada dwa adw '},
-            {id: 1, title: 'IPO-13', status: 'Completed', type: 'DP', mcPkgs: [{mcPkgNo: '2001-D03'}], sent: (new Date(2012, 11,11,11,11)).toUTCString(), contractorRep: 'asdasd asd ', constructionRep: 'dawdada dwa adw '},
-            {id: 2, title: 'IPO-13', status: 'Canceled', type: 'DP', mcPkgs: [{mcPkgNo: '2001-D03'}], sent: (new Date(2012, 11,11,11,11)).toUTCString(), contractorRep: 'asdasd asd ', constructionRep: 'dawdada dwa adw '}
-        ] };
+        if (!savedIPOFilters && project) {  //to avoid getting ipos before we have set previous-/default filter
+            try {
+                cancelerRef.current && cancelerRef.current();
+                return await apiClient.getIPOs(project.name, page, pageSize, orderBy, orderDirection, filter, (c) => { cancelerRef.current = c; }).then(
+                    (response) => {
+                        setNumberOfIPOs(response.maxAvailable);
+                        return response;
+                    }
+                );
+            } catch (error) {
+                console.error('Get IPOs failed: ', error.message, error.data);
+                if (!error.isCancel) {
+                    showSnackbarNotification(error.message);
+                }
+            }
+        };
+        setNumberOfIPOs(0);
+        return { maxAvailable: 0, ipos: [] };
     };
 
     const setRefreshListCallback = (callback: (maxHeight: number, refreshOnResize?: boolean) => void): void => {
@@ -183,13 +176,13 @@ const SearchIPO = (): JSX.Element => {
                 <HeaderContainer ref={moduleHeaderContainerRef}>
                     <Header>
                         <Typography variant="h1">Invitation for punch-out</Typography>
-                        { project && <Dropdown
-                            disabled={project.id === -1}
+                        { <Dropdown
                             maxHeight='300px'
-                            text={project.name}
+                            text={project ? project.name : 'Select project'}
                             onFilter={setFilterForProjects}
                         >
-                            {filteredProjects.map((projectItem, index) => {
+                            {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                            {!isLoading && filteredProjects.map((projectItem, index) => {
                                 return (
                                     <DropdownItem
                                         key={index}
@@ -216,13 +209,8 @@ const SearchIPO = (): JSX.Element => {
                         </div>
                     </Tooltip> */}
                 </HeaderContainer >
-                {
-                    isLoading && (
-                        <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
-                    )
-                }
 
-                {project && <InvitationsTable
+                <InvitationsTable
                     getIPOs={getIPOs}
                     data-testId='invitationsTable'
                     // setSelectedIPOs={setSelectedIPOs}
@@ -233,8 +221,8 @@ const SearchIPO = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
-                    projectName={project.name}
-                />}
+                    projectName={project?.name}
+                />
 
 
             </ContentContainer >

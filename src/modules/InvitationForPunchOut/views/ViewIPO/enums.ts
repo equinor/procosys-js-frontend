@@ -7,12 +7,6 @@ export enum OutlookResponseType {
     DECLINED = 'Declined'
 }
 
-export enum IpoStatusEnum {
-    PLANNED = 'Planned',
-    COMPLETED = 'Completed',
-    ACCEPTED = 'Accepted',
-    CANCELED = 'Canceled'
-}
 
 export enum ReportIdEnum {
     MC32D = 48430,

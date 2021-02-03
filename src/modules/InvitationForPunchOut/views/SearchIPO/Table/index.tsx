@@ -3,6 +3,7 @@ import { Query, QueryResult } from 'material-table';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Container } from './index.style';
+import { IpoStatusEnum } from '../../enums';
 import Table from '@procosys/components/Table';
 import { Typography } from '@equinor/eds-core-react';
 import { getLocalDate } from '@procosys/core/services/DateService';
@@ -18,7 +19,7 @@ interface InvitationsTableProps {
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
     setRefreshListCallback: (callback: (maxHeight: number, refreshOnResize?: boolean) => void) => void;
-    projectName: string;
+    projectName?: string;
 }
 
 
@@ -146,8 +147,8 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.sent)) },
                     { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.completed)) },
                     { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.accepted)) },
-                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractorRep) },
-                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.constructionRep) },
+                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractor) },
+                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.construction) },
                 ]}
                 data={getIPOsByQuery}
                 options={{
@@ -167,8 +168,8 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                         fontFamily: 'Equinor',
                     },
                     rowStyle: (rowData): any => ({
-                        opacity: rowData.status === 'Canceled' && 0.5,
-                        color: rowData.status === 'Canceled' && tokens.colors.interactive.danger__text.rgba,
+                        opacity: rowData.status === IpoStatusEnum.CANCELED && 0.5,
+                        color: rowData.status === IpoStatusEnum.CANCELED && tokens.colors.interactive.danger__text.rgba,
                     }),
                     thirdSortClick: false
                 }}

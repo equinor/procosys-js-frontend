@@ -4,6 +4,7 @@ import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import {ProCoSysApiError} from '../../../core/ProCoSysApiError';
 import ProCoSysSettings from '../../../core/ProCoSysSettings';
+import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
 
 export class IpoApiError extends ProCoSysApiError {
@@ -150,6 +151,30 @@ interface FunctionalRoleResponse {
     persons: ParticipantPersonResponse[];
 }
 
+interface IPO {
+    id: number;
+    title: string;
+    type: string;
+    status: string;
+    commPkgs?: Pick<CommPkgResponse, 'commPkgNo'>[];
+    mcPkgs?: Pick<McPkgResponse, 'mcPkgNo'>[];
+    sent: string;
+    punchOut: string;
+    completed?: string;
+    accepted?: string;
+    contractor: string;
+    construction: string;
+}
+
+type IPOFilter = {
+
+}
+
+interface IPOsResponse {
+    maxAvailable: number;
+    ipos: IPO[];
+}
+
 export type PersonDto = {
     id?: number;
     azureOid: string | null;
@@ -251,6 +276,44 @@ class InvitationForPunchOutApiClient extends ApiClient {
             },
             error => Promise.reject(error)
         );
+    }
+
+    /**
+     * Get IPOs
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getIPOs(projectName: string, page: number, pageSize: number, orderBy: string | null, orderDirection: string | null, filter: IPOFilter, setRequestCanceller?: RequestCanceler): Promise<IPOsResponse> {
+        const endpoint = '/Invitations';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                page: page,
+                size: pageSize,
+                property: orderBy,
+                direction: orderDirection,
+                ...filter,
+            },
+        };
+
+        settings.paramsSerializer = (p): string => {
+            return Qs.stringify(p);
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        // try {
+        //     const result = await this.client.get<IPOsResponse>(endpoint, settings);
+        //     return result.data;
+        // } catch (error) {
+        //     throw new IpoApiError(error);
+        // }
+        return await new Promise<IPOsResponse>(resolve => setTimeout(() => resolve(
+            { maxAvailable: 3, ipos: [
+                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgs: [{mcPkgNo: '1001-D03'}, {mcPkgNo: '25221-D01'}, {mcPkgNo: '32133-A03'}, {mcPkgNo: '32133-A03'}], punchOut: (new Date().toString()), sent: (new Date()).toUTCString(), contractor: 'asdasd asd ', construction: 'dawdada dwa adw '},
+                {id: 1, title: 'IPO-13', status: 'Completed', type: 'DP', mcPkgs: [{mcPkgNo: '2001-D03'}],punchOut: (new Date().toString()), sent: (new Date(2012, 11,11,11,11)).toUTCString(), contractor: 'asdasd asd ', construction: 'dawdada dwa adw '},
+                {id: 2, title: 'IPO-13', status: 'Canceled', type: 'DP', mcPkgs: [{mcPkgNo: '2001-D03'}],punchOut: (new Date().toString()), sent: (new Date(2012, 11,11,11,11)).toUTCString(), contractor: 'asdasd asd ', construction: 'dawdada dwa adw '}
+            ] }), 3000));
     }
 
     /**

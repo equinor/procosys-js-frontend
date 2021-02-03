@@ -25,8 +25,8 @@ export interface IPO {
     sent: string;
     completed?: string;
     accepted?: string;
-    contractorRep: string;
-    constructionRep: string;
+    contractor: string;
+    construction: string;
 }
 
 export interface IPOs {

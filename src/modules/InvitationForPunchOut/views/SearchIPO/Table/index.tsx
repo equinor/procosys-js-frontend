@@ -2,7 +2,6 @@ import { CommPkg, IPO, IPOs, McPkg } from '../types';
 import { Query, QueryResult } from 'material-table';
 import React, { useEffect, useRef, useState } from 'react';
 
-/* eslint-disable react/prop-types */
 import { Container } from './index.style';
 import Table from '@procosys/components/Table';
 import { Typography } from '@equinor/eds-core-react';
@@ -23,7 +22,7 @@ interface InvitationsTableProps {
 }
 
 
-const InvitationsTable: React.FC<InvitationsTableProps> = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, setRefreshListCallback, projectName }): JSX.Element => {
+const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, setRefreshListCallback, projectName }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
     const [refreshOnResize, setRefreshOnResize] = useState<boolean>(false);
     const [result, setResult] = useState<IPOs | null>(null);

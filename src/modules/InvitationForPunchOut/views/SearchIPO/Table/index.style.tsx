@@ -2,6 +2,10 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
+    margin-top: var(--margin-module--top);
+        .MuiTableCell-root {
+            border-bottom: none;
+        }
     tbody, thead {
         .MuiButtonBase-root {
             :hover {

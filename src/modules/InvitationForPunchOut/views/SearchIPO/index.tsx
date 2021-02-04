@@ -82,7 +82,7 @@ const SearchIPO = (): JSX.Element => {
             }
         } else {
             // No filters, regular scope list refresh.
-            refreshList();
+            // refreshList();
         }
     };
 
@@ -157,17 +157,17 @@ const SearchIPO = (): JSX.Element => {
         return { maxAvailable: 0, ipos: [] };
     };
 
-    const setRefreshListCallback = (callback: (maxHeight: number, refreshOnResize?: boolean) => void): void => {
-        refreshListCallback.current = callback;
-    };
+    // const setRefreshListCallback = (callback: (maxHeight: number, refreshOnResize?: boolean) => void): void => {
+    //     refreshListCallback.current = callback;
+    // };
 
-    const refreshList = (refreshOnResize?: boolean): void => {
-        refreshListCallback.current && refreshListCallback.current(moduleAreaHeight - moduleHeaderHeight - 115, refreshOnResize);
-    };
+    // const refreshList = (refreshOnResize?: boolean): void => {
+    //     refreshListCallback.current && refreshListCallback.current(moduleAreaHeight - moduleHeaderHeight - 115, refreshOnResize);
+    // };
 
-    useEffect(() => {
-        refreshList(true);
-    }, [moduleAreaHeight, moduleHeaderHeight]);
+    // useEffect(() => {
+    //     refreshList(true);
+    // }, [moduleAreaHeight, moduleHeaderHeight]);
 
 
     return (
@@ -214,7 +214,7 @@ const SearchIPO = (): JSX.Element => {
                     getIPOs={getIPOs}
                     data-testId='invitationsTable'
                     // setSelectedIPOs={setSelectedIPOs}
-                    setRefreshListCallback={setRefreshListCallback}
+                    // setRefreshListCallback={setRefreshListCallback}
                     pageSize={pageSize}
                     setPageSize={setPageSize}
                     shouldSelectFirstPage={resetTablePaging}
@@ -222,6 +222,7 @@ const SearchIPO = (): JSX.Element => {
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
                     projectName={project?.name}
+                    height={moduleAreaHeight - moduleHeaderHeight - 100}
                 />
 
 

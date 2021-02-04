@@ -1,4 +1,4 @@
-import { CommPkg, IPO, IPOs, McPkg } from '../types';
+import { CommPkg, IPO, McPkg } from '../types';
 import { Query, QueryResult } from 'material-table';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -18,15 +18,14 @@ interface InvitationsTableProps {
     setFirstPageSelected: () => void;
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
-    setRefreshListCallback: (callback: (maxHeight: number, refreshOnResize?: boolean) => void) => void;
     projectName?: string;
+    height: number;
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, setRefreshListCallback, projectName }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, projectName, height }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
-    const [refreshOnResize, setRefreshOnResize] = useState<boolean>(false);
-    const [result, setResult] = useState<IPOs | null>(null);
+    const [maxAvailable, setMaxAvailable] = useState<number>(0);
     const { plant } = useCurrentPlant();
 
     const getMcPkgUrl = (mcPkgNo: string): string => {
@@ -37,15 +36,17 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         return `/${plant.pathId}/Completion#CommPkg|?projectName=${projectName}&commpkgno=${commPkgNo}`;
     };
 
-    useEffect((): void => {
-        setRefreshListCallback((maxHeight: number, refresh = false) => {
-            if (refObject.current) {
-                refObject.current.props.options.maxBodyHeight = maxHeight;
-                setRefreshOnResize(refresh);
-                refObject.current.onSearchChangeDebounce();
-            }
-        });
-    }, []);
+    useEffect(() => {
+        if (refObject.current) {
+            refObject.current.onSearchChangeDebounce();
+        }
+    }, [projectName]);
+
+    useEffect(() => {
+        if (refObject.current) {
+            refObject.current.props.options.maxBodyHeight = height;
+        }     
+    }, [height, maxAvailable]);
 
     const getIdColumn = (data: string):JSX.Element => {
         return (
@@ -110,25 +111,16 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         setOrderDirection(orderDirection);
 
         return new Promise((resolve) => {
-            if (refreshOnResize && result) {
-                setRefreshOnResize(false);
+            return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
+                setMaxAvailable(result.maxAvailable);
                 resolve({
                     data: result.ipos,
                     page: query.page,
                     totalCount: result.maxAvailable
                 });
 
-            } else {
-                return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
-                    setResult(result);
-                    resolve({
-                        data: result.ipos,
-                        page: query.page,
-                        totalCount: result.maxAvailable
-                    });
-
-                });
-            }
+            });
+            // }
         });
     };
 
@@ -153,6 +145,7 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                 data={getIPOsByQuery}
                 options={{
                     showTitle: false,
+                    toolbar: false,
                     draggable: false,
                     selection: false,
                     search: false,

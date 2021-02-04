@@ -34,7 +34,7 @@ const SearchIPO = (): JSX.Element => {
     const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
     const numberOfFilters = 0;
 
-    const refreshListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
+    // const refreshListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
     const cancelerRef = useRef<Canceler | null>();
 
 

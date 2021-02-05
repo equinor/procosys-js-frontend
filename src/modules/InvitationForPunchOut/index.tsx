@@ -6,6 +6,7 @@ import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 import EditIPO from './views/CreateAndEditIPO/EditIPO';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import React from 'react';
+import SearchIPO from './views/SearchIPO';
 import ViewIPO from './views/ViewIPO/index';
 import withFeatureFlag from '../../core/features/withFeatureFlag';
 
@@ -16,6 +17,11 @@ const InvitationForPunchOut = (): JSX.Element => {
             <Container>
                 <Router basename={url}>
                     <Switch>
+                        <Route
+                            path={'/'}
+                            exact
+                            component={SearchIPO}
+                        />
                         <Route
                             path={'/CreateIPO/:projectName?/:commPkgNo?'}
                             exact

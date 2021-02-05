@@ -13,3 +13,10 @@ export enum ComponentName {
     CreateAndEditIPO = 'CreateAndEditIPO',
     ParticipantsTable = 'ParticipantsTable'
 }
+
+export enum IpoStatusEnum {
+    PLANNED = 'Planned',
+    COMPLETED = 'Completed',
+    ACCEPTED = 'Accepted',
+    CANCELED = 'Canceled'
+}

@@ -1,7 +1,7 @@
-import { ComponentName, OrganizationsEnum } from '../../../../enums';
-import { IpoStatusEnum, OutlookResponseType } from '../../../enums';
+import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../../enums';
 import { fireEvent, render } from '@testing-library/react';
 
+import { OutlookResponseType } from '../../../enums';
 import ParticipantsTable from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';

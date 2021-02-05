@@ -1,0 +1,50 @@
+
+export interface SavedIPOFilter {
+    id: number;
+    title: string;
+    criteria: string;
+    defaultFilter: boolean;
+    rowVersion: string;
+}
+
+
+export interface IPO {
+    id: number;
+    title: string;
+    status: string;
+    type: string;
+    createdAtUtc: Date;
+    startTimeUtc: Date;
+    completedAtUtc?: Date;
+    acceptedAtUtc?: Date;
+    contractorRep: string;
+    constructionCompanyRep: string;
+    mcPkgNos?: string[];
+    commPkgNos?: string[];
+}
+
+export interface IPOs {
+    maxAvailable: number;
+    ipos: IPO[];
+}
+
+export type ProjectDetails = {
+    id: number;
+    name: string;
+    description: string;
+}
+
+export type Filter = {
+    ipoStatuses: string[];
+    functionalRoleCode: string;
+    personOid: string;
+    ipoIdStartsWith: string;
+    commPkgNoStartsWith: string;
+    mcPkgNoStartsWith: string;
+    titleStartsWith: string;
+    lastChangedAtFromUtc?: Date;
+    lastChangedAtToUtc?: Date;
+    punhcOutDateFromUtc?: Date;
+    punchOutDateToUtc?: Date;
+    punchOutDates: string[];
+};

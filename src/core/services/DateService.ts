@@ -31,3 +31,17 @@ export const getFormattedDateAndTime = (date: Date | null): string => {
     return '' + (d <= 9 ? '0' + d : d) + '.' + (m <= 9 ? '0' + m : m) + '.' + y + ' ' + (h <= 9 ? '0' + h : h) + ':' + (min <= 9 ? '0' + min : min);
 };
 
+
+export const getLocalDateAndTime = (date: Date | undefined): string => {
+    if (!date) {
+        return '';
+    }
+    return date.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+};
+
+export const getLocalDate = (date: Date | undefined): string => {
+    if (!date) {
+        return '';
+    }
+    return date.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
+};

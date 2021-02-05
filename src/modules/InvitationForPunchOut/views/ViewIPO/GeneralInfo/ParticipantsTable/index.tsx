@@ -1,13 +1,13 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
-import { ComponentName, OrganizationsEnum } from '../../../enums';
+import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../enums';
 import { Container, CustomTable, SpinnerContainer } from './style';
 import { ExternalEmail, FunctionalRole, Participant } from '../../types';
-import { IpoStatusEnum, OutlookResponseType } from '../../enums';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
+import { OutlookResponseType } from '../../enums';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';

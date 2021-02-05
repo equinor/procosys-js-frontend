@@ -269,7 +269,10 @@ const EditIPO = (): JSX.Element => {
 
                 await uploadOrRemoveAttachments(params.ipoId);
 
-                unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
+                unsetDirtyStateFor(ComponentName.GeneralInfo);
+                unsetDirtyStateFor(ComponentName.Scope);
+                unsetDirtyStateFor(ComponentName.Participants);
+                unsetDirtyStateFor(ComponentName.Attachments);
                 history.push('/' + params.ipoId);
             } catch (error) {
                 console.error('Save updated IPO failed: ', error.message, error.data);

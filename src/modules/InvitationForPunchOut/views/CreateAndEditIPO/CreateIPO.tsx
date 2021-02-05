@@ -296,7 +296,6 @@ const CreateIPO = (): JSX.Element => {
         steps={steps}
         setSteps={setSteps}
         generalInfo={generalInfo}
-        initialGeneralInfo={emptyGeneralInfo}
         setGeneralInfo={setGeneralInfo}
         selectedCommPkgScope={selectedCommPkgScope}
         setSelectedCommPkgScope={setSelectedCommPkgScope}

@@ -107,9 +107,9 @@ const CreateIPO = (): JSX.Element => {
 
     useEffect(() => {
         if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
-            setDirtyStateFor(ComponentName.CreateAndEditIPO);
+            setDirtyStateFor(ComponentName.GeneralInfo);
         } else {
-            unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
+            unsetDirtyStateFor(ComponentName.GeneralInfo);
         }
     }, [generalInfo]);
 

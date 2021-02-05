@@ -34,7 +34,7 @@ export type ProjectDetails = {
     description: string;
 }
 
-export type Filter = {
+export type IPOFilter = {
     ipoStatuses: string[];
     functionalRoleCode: string;
     personOid: string;
@@ -44,7 +44,7 @@ export type Filter = {
     titleStartsWith: string;
     lastChangedAtFromUtc?: Date;
     lastChangedAtToUtc?: Date;
-    punhcOutDateFromUtc?: Date;
+    punchOutDateFromUtc?: Date;
     punchOutDateToUtc?: Date;
     punchOutDates: string[];
 };

@@ -1,8 +1,8 @@
-import { CommPkg, IPO, McPkg } from '../types';
 import { Query, QueryResult } from 'material-table';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Container } from './index.style';
+import { IPO } from '../types';
 import { IpoStatusEnum } from '../../enums';
 import Table from '@procosys/components/Table';
 import { Typography } from '@equinor/eds-core-react';
@@ -55,26 +55,26 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
     };
 
-    const getMcPkgColumn = (mcPkgs: McPkg[] | undefined): JSX.Element => {
+    const getMcPkgColumn = (mcPkgs: string[] | undefined): JSX.Element => {
         return (
-            <div>{mcPkgs?.map((pkg, index) => {
+            <div>{mcPkgs?.map((pkgNo, index) => {
                 const separator: any = index < mcPkgs.length-1 ? 
                     index % 2 ? <><span>{', '}</span><br /></> : <span>{', '}</span> : '';
                 return (
-                    <span key={pkg.mcPkgNo + index}><Typography link href={getMcPkgUrl(pkg.mcPkgNo)} key={pkg.mcPkgNo}>{pkg.mcPkgNo}</Typography>{separator}</span>
+                    <span key={pkgNo + index}><Typography link href={getMcPkgUrl(pkgNo)} key={pkgNo}>{pkgNo}</Typography>{separator}</span>
                 );  
             })}
             </div>
         );
     };
 
-    const getCommPkgColumn = (commPkgs: CommPkg[] | undefined): JSX.Element => {
+    const getCommPkgColumn = (commPkgs: string[] | undefined): JSX.Element => {
         return (
-            <div>{commPkgs?.map((pkg, index) => {
+            <div>{commPkgs?.map((pkgNo, index) => {
                 const separator: any = index < commPkgs.length-1 ? 
                     index % 2 ? <><span>{', '}</span><br /></> : <span>{', '}</span> : '';
                 return (
-                    <span key={pkg.commPkgNo + index}><Typography link href={getCommPkgUrl(pkg.commPkgNo)} key={pkg.commPkgNo}>{pkg.commPkgNo}</Typography>{separator}</span>
+                    <span key={pkgNo + index}><Typography link href={getCommPkgUrl(pkgNo)} key={pkgNo}>{pkgNo}</Typography>{separator}</span>
                 );  
             })}</div>
         );
@@ -133,14 +133,14 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     { title: 'Title', render: (rowData: IPO): JSX.Element => getColumn(rowData.title) },
                     { title: 'Status', render: (rowData: IPO): JSX.Element => getColumn(rowData.status) },
                     { title: 'Type', render: (rowData: IPO): JSX.Element => getColumn(rowData.type) },
-                    { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getCommPkgColumn(rowData.commPkgs), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
-                    { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getMcPkgColumn(rowData.mcPkgs), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
-                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.sent)), defaultSort: 'desc' },
-                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.sent)) },
-                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.completed)) },
-                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.accepted)) },
-                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractor) },
-                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.construction) },
+                    { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getCommPkgColumn(rowData.commPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
+                    { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getMcPkgColumn(rowData.mcPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
+                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.createdAtUtc)), defaultSort: 'desc' },
+                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.startTimeUtc)) },
+                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.completedAtUtc)) },
+                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.acceptedAtUtc)) },
+                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractorRep) },
+                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.constructionCompanyRep) },
                 ]}
                 data={getIPOsByQuery}
                 options={{

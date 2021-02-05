@@ -7,26 +7,20 @@ export interface SavedIPOFilter {
     rowVersion: string;
 }
 
-type CommPkg = {
-    commPkgNo: string;
-};
-
-type McPkg = {
-    mcPkgNo: string;
-};
 
 export interface IPO {
     id: number;
     title: string;
     status: string;
     type: string;
-    commPkgs?: CommPkg[];
-    mcPkgs?: McPkg[];
-    sent: Date;
-    completed?: Date;
-    accepted?: Date;
-    contractor: string;
-    construction: string;
+    createdAtUtc: Date;
+    startTimeUtc: Date;
+    completedAtUtc?: Date;
+    acceptedAtUtc?: Date;
+    contractorRep: string;
+    constructionCompanyRep: string;
+    mcPkgNos?: string[];
+    commPkgNos?: string[];
 }
 
 export interface IPOs {
@@ -41,5 +35,16 @@ export type ProjectDetails = {
 }
 
 export type Filter = {
-
+    ipoStatuses: string[];
+    functionalRoleCode: string;
+    personOid: string;
+    ipoIdStartsWith: string;
+    commPkgNoStartsWith: string;
+    mcPkgNoStartsWith: string;
+    titleStartsWith: string;
+    lastChangedAtFromUtc?: Date;
+    lastChangedAtToUtc?: Date;
+    punhcOutDateFromUtc?: Date;
+    punchOutDateToUtc?: Date;
+    punchOutDates: string[];
 };

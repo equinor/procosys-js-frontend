@@ -12,7 +12,14 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 
 const emptyFilter = {
-
+    ipoStatuses: [],
+    functionalRoleCode: '',
+    personOid: '',
+    ipoIdStartsWith: '',
+    commPkgNoStartsWith: '',
+    mcPkgNoStartsWith: '',
+    titleStartsWith: '',
+    punchOutDates: []
 };
 
 const SearchIPO = (): JSX.Element => {

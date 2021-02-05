@@ -30,6 +30,10 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 setValidNext(props.steps[props.currentStep - 1].isCompleted);
     }, [props.steps, props.currentStep]);
 
+    const cancel = ():void => {
+        history.back();
+    };
+
     return (
         <Container>
             <HeaderContainer>
@@ -46,12 +50,13 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
                         </Link>
                     }
 
-                    {/* {!props.ipoId &&
+                    {!props.ipoId &&
                         <Button
+                            onClick={cancel}
                             variant='outlined'>
                             Cancel
                         </Button>
-                    } */}
+                    }
 
                     <ButtonSpacer />
 

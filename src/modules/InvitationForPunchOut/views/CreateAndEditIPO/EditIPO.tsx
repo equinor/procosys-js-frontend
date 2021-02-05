@@ -40,16 +40,24 @@ const EditIPO = (): JSX.Element => {
 
     const params = useParams<{ ipoId: any }>();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
+    const [initialAttachmentIds, setInitialAttachmentIds] = useState<number[]>([]);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [initialGeneralInfo, setInitialGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(true);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
+    const [initialSelectedCommPkgScope, setInitialSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         commPkgNoParent: null,
         multipleDisciplines: false,
         selected: []
     });
+    const [initialSelectedMcPkgScope, setInitialSelectedMcPkgScope] = useState<McScope>({
+        commPkgNoParent: null,
+        multipleDisciplines: false,
+        selected: []
+    });
     const [participants, setParticipants] = useState<Participant[]>([]);
+    const [initialParticipants, setInitialParticipants] = useState<Participant[]>([]);
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [invitation, setInvitation] = useState<Invitation>();
@@ -60,6 +68,54 @@ const EditIPO = (): JSX.Element => {
     const { history } = useRouter();
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
+
+    /**
+     * Check and set dirty state for all components
+     */
+    useEffect(() => {
+        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+            setDirtyStateFor(ComponentName.GeneralInfo);
+        } else {
+            unsetDirtyStateFor(ComponentName.GeneralInfo);
+        }
+    }, [generalInfo]);
+
+    useEffect(() => {
+        const newScope = selectedCommPkgScope.map(({commPkgNo}) => commPkgNo);
+        const initialScope = initialSelectedCommPkgScope.map(({commPkgNo}) => commPkgNo);
+        if (JSON.stringify(newScope) !== JSON.stringify(initialScope)) {
+            setDirtyStateFor(ComponentName.Scope);
+        } else {
+            unsetDirtyStateFor(ComponentName.Scope);
+        }
+    }, [selectedCommPkgScope]);
+
+    useEffect(() => {
+        const mcPkgs = selectedMcPkgScope.selected.map(({mcPkgNo}) => mcPkgNo);
+        const initialMcPkgs = initialSelectedMcPkgScope.selected.map(({mcPkgNo}) => mcPkgNo);
+        if (JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) || selectedMcPkgScope.commPkgNoParent !== initialSelectedMcPkgScope.commPkgNoParent) {
+            setDirtyStateFor(ComponentName.Scope);
+        } else {
+            unsetDirtyStateFor(ComponentName.Scope);
+        }
+    }, [selectedMcPkgScope]);
+
+    useEffect(() => {
+        if (participants !== initialParticipants) {
+            setDirtyStateFor(ComponentName.Participants);
+        } else {
+            unsetDirtyStateFor(ComponentName.Participants);
+        }
+    }, [participants]);
+
+    useEffect(() => {
+        const attachmentIds = attachments.map(({id}) => id);
+        if (JSON.stringify(attachmentIds) !== JSON.stringify(initialAttachmentIds)) {
+            setDirtyStateFor(ComponentName.Participants);
+        } else {
+            unsetDirtyStateFor(ComponentName.Participants);
+        }
+    }, [attachments]);
 
     /**
      * Fetch and set available functional roles 
@@ -182,6 +238,7 @@ const EditIPO = (): JSX.Element => {
         try {
             const response = await apiClient.getAttachments(params.ipoId, requestCanceller);
             setAttachments(response);
+            setInitialAttachmentIds(response.map(({id}) => id));
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
@@ -264,6 +321,7 @@ const EditIPO = (): JSX.Element => {
                     });
                 });
                 setSelectedCommPkgScope(commPkgScope);
+                setInitialSelectedCommPkgScope(commPkgScope);
             } else if (invitation.mcPkgScope && invitation.mcPkgScope.length > 0) {
                 //MCPkg
                 const mcPkgScope: McScope = { commPkgNoParent: null, multipleDisciplines: false, selected: [] };
@@ -279,6 +337,7 @@ const EditIPO = (): JSX.Element => {
                     });
                 });
                 setSelectedMcPkgScope(mcPkgScope);
+                setInitialSelectedMcPkgScope(mcPkgScope);
             }
 
             //Participants
@@ -346,6 +405,7 @@ const EditIPO = (): JSX.Element => {
             });
 
             setParticipants(participants);
+            setInitialParticipants(participants);
         }
     }, [invitation]);
 
@@ -389,7 +449,6 @@ const EditIPO = (): JSX.Element => {
         steps={steps}
         setSteps={setSteps}
         generalInfo={generalInfo}
-        initialGeneralInfo={initialGeneralInfo}
         setGeneralInfo={setGeneralInfo}
         selectedCommPkgScope={selectedCommPkgScope}
         setSelectedCommPkgScope={setSelectedCommPkgScope}

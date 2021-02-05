@@ -24,7 +24,6 @@ interface CreateAndEditProps {
     steps: Step[];
     setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
     generalInfo: GeneralInfoDetails;
-    initialGeneralInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: React.Dispatch<React.SetStateAction<CommPkgRow[]>>;
@@ -48,7 +47,6 @@ const CreateAndEditIPO = ({
     steps,
     setSteps,
     generalInfo,
-    initialGeneralInfo,
     setGeneralInfo,
     selectedCommPkgScope,
     setSelectedCommPkgScope,
@@ -68,16 +66,6 @@ const CreateAndEditIPO = ({
 }: CreateAndEditProps): JSX.Element => {
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
-
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
-    useEffect(() => {
-        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
-            setDirtyStateFor(ComponentName.CreateAndEditIPO);
-        } else {
-            unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
-        }
-    }, [generalInfo]);
 
     const goToNextStep = (): void => {
         if (currentStep > StepsEnum.Participants) {

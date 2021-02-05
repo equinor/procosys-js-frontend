@@ -99,10 +99,19 @@ const CreateIPO = (): JSX.Element => {
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
-    const { unsetDirtyStateFor } = useDirtyContext();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [projectNameFromMain] = useState<string | null>(params.projectName ? decodeURIComponent(params.projectName) : null);
     const [commPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+    useEffect(() => {
+        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+            setDirtyStateFor(ComponentName.CreateAndEditIPO);
+        } else {
+            unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
+        }
+    }, [generalInfo]);
 
     /**
      * Fetch available functional roles 

@@ -10,11 +10,11 @@ import CreateAndEditIPO from './CreateAndEditIPO';
 import Loading from '@procosys/components/Loading';
 import { OrganizationMap } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useCurrentUser } from '../../../../core/UserContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
-import { useCurrentUser } from '../../../../core/UserContext';
 
 const initialDate = getNextHalfHourTimeString(new Date());
 
@@ -83,7 +83,7 @@ const CreateIPO = (): JSX.Element => {
         { title: 'Summary & create', isCompleted: false }
     ];
 
-    const initialGeneralInfo = { ...emptyGeneralInfo, projectName: params.projectName };
+    const initialGeneralInfo = { ...emptyGeneralInfo, projectName: params.projectName ? params.projectName : '' };
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(initialGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
@@ -287,6 +287,7 @@ const CreateIPO = (): JSX.Element => {
         steps={steps}
         setSteps={setSteps}
         generalInfo={generalInfo}
+        initialGeneralInfo={emptyGeneralInfo}
         setGeneralInfo={setGeneralInfo}
         selectedCommPkgScope={selectedCommPkgScope}
         setSelectedCommPkgScope={setSelectedCommPkgScope}

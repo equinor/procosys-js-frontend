@@ -8,6 +8,8 @@ import { ComponentName } from '../enums';
 import CreateAndEditIPO from './CreateAndEditIPO';
 import { Invitation } from '../ViewIPO/types';
 import Loading from '@procosys/components/Loading';
+import { Organization } from '../../types';
+import { OrganizationMap } from '../utils';
 import { SelectItem } from '@procosys/components/Select';
 import { poTypes } from './GeneralInfo/GeneralInfo';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -15,14 +17,12 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
-import { OrganizationMap } from '../utils';
-import { Organization } from '../../types';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
-    projectName: null,
+    projectName: '',
     poType: null,
-    title: null,
-    description: null,
+    title: '',
+    description: '',
     startTime: new Date(),
     endTime: new Date(),
     location: ''
@@ -41,6 +41,7 @@ const EditIPO = (): JSX.Element => {
     const params = useParams<{ ipoId: any }>();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
+    const [initialGeneralInfo, setInitialGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(true);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
@@ -238,16 +239,18 @@ const EditIPO = (): JSX.Element => {
         if (invitation) {
             //General information
             const poType = poTypes.find((p: SelectItem) => p.value === invitation.type);
-            setGeneralInfo({
+            const info = {
                 ...emptyGeneralInfo,
-                projectName: invitation.projectName,
+                projectName: invitation.projectName ? invitation.projectName : '',
                 poType: poType ? poType : null,
-                title: invitation.title,
-                description: invitation.description,
+                title: invitation.title ? invitation.title : '',
+                description: invitation.description ? invitation.description : '',
                 startTime: new Date(invitation.startTimeUtc),
                 endTime: new Date(invitation.endTimeUtc),
-                location: invitation.location
-            });
+                location: invitation.location ? invitation.location : ''
+            };
+            setGeneralInfo({ ...info });
+            setInitialGeneralInfo({ ...info });
 
             //CommPkg
             const commPkgScope: CommPkgRow[] = [];
@@ -386,6 +389,7 @@ const EditIPO = (): JSX.Element => {
         steps={steps}
         setSteps={setSteps}
         generalInfo={generalInfo}
+        initialGeneralInfo={initialGeneralInfo}
         setGeneralInfo={setGeneralInfo}
         selectedCommPkgScope={selectedCommPkgScope}
         setSelectedCommPkgScope={setSelectedCommPkgScope}

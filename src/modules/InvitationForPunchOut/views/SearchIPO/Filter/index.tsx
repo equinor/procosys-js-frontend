@@ -1,38 +1,39 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { Collapse, CollapseInfo, Container, Header, Link, Section } from './index.style';
-import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
+import { IPOFilter, ProjectDetails } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 
-import AreaIcon from '@procosys/assets/icons/Area';
-import { Canceler } from 'axios';
-import CheckboxFilter from './CheckboxFilter';
+// import AreaIcon from '@procosys/assets/icons/Area';
+// import { Canceler } from 'axios';
+import CheckboxFilterWithDates from './CheckboxFilterWithDates';
 import CloseIcon from '@material-ui/icons/Close';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { IpoStatusEnum } from '../../enums';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import MultiSelectFilter from './SelectFilter';
-import Popover from '@material-ui/core/Popover';
-import RadioGroupFilter from './RadioGroupFilter';
-import SavedFilters from './SavedFilters';
-import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
-import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import SelectFilter from './SelectFilter';
 
-const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
+// import Popover from '@material-ui/core/Popover';
+// import RadioGroupFilter from './RadioGroupFilter';
+// import SavedFilters from './SavedFilters';
+// import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
+// import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+// import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+
+// const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
 
 interface InvitationsFilterProps {
-    project: ProjectDetails;
+    project: ProjectDetails | undefined;
     onCloseRequest: () => void;
     filter: IPOFilter;
     setFilter: (filter: IPOFilter) => void;
-    savedFilters: SavedIPOFilter[];
-    refreshSavedFilters: () => void;
-    selectedSavedFilterTitle: string | null;
-    setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
+    // savedFilters: SavedIPOFilter[];
+    // refreshSavedFilters: () => void;
+    // selectedSavedFilterTitle: string | null;
+    // setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfIPOs: number | undefined;
-    exportIPOsToExcel: () => void;
-    triggerFilterValuesRefresh: number;
+    // exportIPOsToExcel: () => void;
+    // triggerFilterValuesRefresh: number;
 }
 
 interface FilterInput {
@@ -48,6 +49,16 @@ export interface CheckboxFilterValue {
 export type filterParamType = 
     'ipoStatuses' |
     'punchOutDates';
+
+export type dateFilterParamType = 
+    'punchOutDateFromUtc' |
+    'punchOutDateToUtc' |
+    'lastChangedAtFromUtc' |
+    'lastChangedAtToUtc';
+
+export type rolePersonParamType = 
+    'personOid' |
+    'functionalRoleCode';
 
 const dueDates: FilterInput[] =
     [
@@ -86,6 +97,30 @@ const ipoStatuses: FilterInput[] =
         {
             id: IpoStatusEnum.ACCEPTED,
             title: 'Accepted',
+        }
+    ];
+
+const punchOutDateFields: FilterInput[] =
+    [
+        {
+            id: 'punchOutDateFromUtc',
+            title: 'Punch out from',
+        },
+        {
+            id: 'punchOutDateToUtc',
+            title: 'Punch out to'
+        }
+    ];
+
+const lastChangedDateFields: FilterInput[] =
+    [
+        {
+            id: 'lastChangedAtFromUtc',
+            title: 'Last changed from'
+        },
+        {
+            id: 'lastChangedAtToUtc',
+            title: 'Last changed to'
         }
     ];
 
@@ -138,13 +173,13 @@ const InvitationsFilter = ({
     onCloseRequest,
     filter,
     setFilter,
-    savedFilters,
-    refreshSavedFilters,
-    selectedSavedFilterTitle,
-    setSelectedSavedFilterTitle,
+    // savedFilters,
+    // refreshSavedFilters,
+    // selectedSavedFilterTitle,
+    // setSelectedSavedFilterTitle,
     numberOfIPOs,
-    exportIPOsToExcel,
-    triggerFilterValuesRefresh
+    // exportIPOsToExcel,
+    // triggerFilterValuesRefresh
 }: InvitationsFilterProps): JSX.Element => {
 
 
@@ -158,15 +193,13 @@ const InvitationsFilter = ({
     // const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
     // const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
     // const [areas, setAreas] = useState<FilterInput[]>([]);
-    const [personOids, setPersonOid] = useState<FilterInput[]>([]);
-    const [functionalRoles, setFunctionalRoles] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
-    const projectNameRef = useRef<string>(project.name);
+    const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
-    const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
-    const [anchorElement, setAnchorElement] = React.useState(null);
+    // const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
+    // const [anchorElement, setAnchorElement] = React.useState(null);
 
-    const { apiClient } = useInvitationForPunchOutContext();
+    // const { apiClient } = useInvitationForPunchOutContext();
 
     const KEYCODE_ENTER = 13;
 
@@ -291,11 +324,13 @@ const InvitationsFilter = ({
 
     useEffect(() => {
         // On project change - reset filters (triggers scope list update when filters were active)
-        if (projectNameRef.current !== project.name) {
-            resetFilter();
-        }
+        if (project) {
+            if (projectNameRef.current !== project.name) {
+                resetFilter();
+            }
 
-        projectNameRef.current = project.name;
+            projectNameRef.current = project.name;
+        }
     }, [project]);
 
     // TODO: check these function to IPOFilter type
@@ -307,6 +342,12 @@ const InvitationsFilter = ({
         } else {
             newIPOFilter[filterParam] = [...localFilter[filterParam].filter(item => item != id)];
         }
+        setLocalFilter(newIPOFilter);
+    };
+
+    const onDateChange = (filterParam: dateFilterParamType, value: Date): void => {
+        const newIPOFilter: IPOFilter = { ...localFilter };
+        newIPOFilter[filterParam] = value;
         setLocalFilter(newIPOFilter);
     };
 
@@ -331,13 +372,12 @@ const InvitationsFilter = ({
     // const areaFilterUpdated = (values: { id: string; title: string }[]): void => {
     //     setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => String(itm.id)) }; });
     // };
-    const personOidFilterUpdated = (value: { id: string; title: string }): void => {
-        setLocalFilter((old): IPOFilter => { return { ...old, personOid: value.id }; });
+    const onRolePersonChange = (filterParam: rolePersonParamType, value: string): void => {
+        const newIPOFilter: IPOFilter = { ...localFilter };
+        newIPOFilter[filterParam] = value;
+        setLocalFilter(newIPOFilter);
     };
 
-    const functionalRoleFilterUpdated = (value: { id: string; title: string }): void => {
-        setLocalFilter((old): IPOFilter => { return { ...old, functionalRoleCode: value.id }; });
-    };
 
 
     //Handle changes in text field filters
@@ -385,7 +425,7 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportIPOsToExcel}>
+                    {/* <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportIPOsToExcel}>
                         {ExcelIcon}
                     </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
@@ -393,13 +433,13 @@ const InvitationsFilter = ({
                         setAnchorElement(event.currentTarget);
                     }}>
                         <SavedFiltersIcon />
-                    </Button>
+                    </Button> */}
                     <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                         <CloseIcon />
                     </Button>
                 </div>
             </Header>
-            <Popover
+            {/* <Popover
                 id={'savedFilter-popover'}
                 open={showSavedFilters}
                 anchorEl={anchorElement}
@@ -421,7 +461,7 @@ const InvitationsFilter = ({
                     setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                     setFilter={setLocalFilter}
                     onCloseRequest={(): void => setShowSavedFilters(false)} />
-            </Popover >
+            </Popover > */}
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfIPOs} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>
@@ -498,14 +538,10 @@ const InvitationsFilter = ({
                 )
             }
 
-            {/* <RadioGroupFilter options={PUNCHOUT_DATES} onChange={onPunchOutDatesFilterChanged} value={filter.punchOutDates} label="Preservation status" icon={'calendar_today'} />
-            <RadioGroupFilter options={IPO_STATUS} onChange={onIPOStatusFilterChanged} value={filter.ipoStatuses} label="Preservation actions" icon={'notifications'} />
-            <RadioGroupFilter options={VOIDED} onChange={onVoidedFilterChanged} value={tagListFilter.voidedFilter} label="Voided/unvoided tags" icon={'delete_forever'} /> */}
 
-            <CheckboxFilter title='Punch out date' filterValues={dueDates} filterParam='punchOutDates' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
-            <CheckboxFilter title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.ipoStatuses} icon={'world'} />
-            <MultiSelectFilter headerLabel="Role" items={functionalRoles} onChange={functionalRoleFilterUpdated} selectedItem={localFilter.functionalRoleCode} inputLabel="Role" inputPlaceholder="Select" icon={<EdsIcon name='person' />} />
-            <MultiSelectFilter headerLabel="Person" items={personOids} onChange={personOidFilterUpdated} selectedItem={localFilter.personOid} inputLabel="Person" inputPlaceholder="Select" icon={<EdsIcon name="person" />} />
+            <CheckboxFilterWithDates title='Punch out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
+            <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.ipoStatuses} icon={'world'} />
+            <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} icon={<EdsIcon name='person' />} />
 
         </Container >
     );

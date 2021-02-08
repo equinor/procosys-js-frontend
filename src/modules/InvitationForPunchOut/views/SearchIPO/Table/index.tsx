@@ -1,5 +1,5 @@
 import { Query, QueryResult } from 'material-table';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Container } from './index.style';
 import { IPO } from '../types';
@@ -20,13 +20,16 @@ interface InvitationsTableProps {
     setOrderDirection: (orderDirection: string | null) => void;
     projectName?: string;
     height: number;
+    update: number;
+    forceUpdate: React.DispatchWithoutAction;
+    filterUpdate: number;
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, projectName, height }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, projectName, height, update, forceUpdate, filterUpdate }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
-    const [maxAvailable, setMaxAvailable] = useState<number>(0);
     const { plant } = useCurrentPlant();
+ 
 
     const getMcPkgUrl = (mcPkgNo: string): string => {
         return `/${plant.pathId}/Completion#McPkg|?projectName=${projectName}&mcpkgno=${mcPkgNo}`;
@@ -40,13 +43,13 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         if (refObject.current) {
             refObject.current.onSearchChangeDebounce();
         }
-    }, [projectName]);
+    }, [projectName, filterUpdate]);
 
     useEffect(() => {
         if (refObject.current) {
             refObject.current.props.options.maxBodyHeight = height;
         }     
-    }, [height, maxAvailable]);
+    }, [update, height]);
 
     const getIdColumn = (data: string):JSX.Element => {
         return (
@@ -112,7 +115,7 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
         return new Promise((resolve) => {
             return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
-                setMaxAvailable(result.maxAvailable);
+                forceUpdate();
                 resolve({
                     data: result.ipos,
                     page: query.page,

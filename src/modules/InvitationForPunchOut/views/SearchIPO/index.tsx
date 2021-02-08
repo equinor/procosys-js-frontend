@@ -1,8 +1,8 @@
 import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, StyledButton, TooltipText } from './index.style';
-import { IPOFilter, IPOs, SavedIPOFilter } from './types';
-import React, { useEffect, useRef, useState } from 'react';
+import { IPOFilter, IPOs } from './types';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 
-import CacheService from '@procosys/core/services/CacheService';
+// import CacheService from '@procosys/core/services/CacheService';
 import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -15,33 +15,33 @@ import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 
-const InvitationFilterCache = new CacheService('InvitationSearch');
+// const InvitationFilterCache = new CacheService('InvitationSearch');
 
-const getCachedFilter = (projectId: number): IPOFilter | null => {
-    try {
-        const cacheItem = InvitationFilterCache.getCache(projectId + '-filter');
-        if (cacheItem) {
-            return cacheItem.data;
-        }
-    } catch (error) {
-        showSnackbarNotification('An error occured retrieving default filter values');
-        console.error('Error while retrieving cached filter values: ', error);
-    }
-    return null;
-};
+// const getCachedFilter = (projectId: number): IPOFilter | null => {
+//     try {
+//         const cacheItem = InvitationFilterCache.getCache(projectId + '-filter');
+//         if (cacheItem) {
+//             return cacheItem.data;
+//         }
+//     } catch (error) {
+//         showSnackbarNotification('An error occured retrieving default filter values');
+//         console.error('Error while retrieving cached filter values: ', error);
+//     }
+//     return null;
+// };
 
-const setCachedFilter = (projectId: number, filter: IPOFilter): void => {
-    try {
-        InvitationFilterCache.setCache(projectId + '-filter', filter);
-    } catch (error) {
-        showSnackbarNotification('An error occured when saving default filter values');
-        console.error('Error while caching filter values: ', error);
-    }
-};
+// const setCachedFilter = (projectId: number, filter: IPOFilter): void => {
+//     try {
+//         InvitationFilterCache.setCache(projectId + '-filter', filter);
+//     } catch (error) {
+//         showSnackbarNotification('An error occured when saving default filter values');
+//         console.error('Error while caching filter values: ', error);
+//     }
+// };
 
-const deleteCachedFilter = (projectId: number): void => {
-    InvitationFilterCache.delete(projectId + '-filter');
-};
+// const deleteCachedFilter = (projectId: number): void => {
+//     InvitationFilterCache.delete(projectId + '-filter');
+// };
 
 const emptyFilter: IPOFilter = {
     ipoStatuses: [],
@@ -54,18 +54,17 @@ const emptyFilter: IPOFilter = {
     punchOutDates: []
 };
 
-const emptySavedFilter: SavedIPOFilter = {
-    id: 0,
-    title: 'savefilter',
-    criteria: 'none',
-    defaultFilter: false,
-    rowVersion: 'wda'
-};
+// const emptySavedFilter: SavedIPOFilter = {
+//     id: 0,
+//     title: 'savefilter',
+//     criteria: 'none',
+//     defaultFilter: false,
+//     rowVersion: 'wda'
+// };
 
 const SearchIPO = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
-    const [showActions, setShowActions] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
     const [filter, setFilter] = useState<IPOFilter>({ ...emptyFilter });
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
@@ -76,14 +75,19 @@ const SearchIPO = (): JSX.Element => {
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [project, setProject] = useState<ProjectDetails>();
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
-
-    const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
-    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
-    const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
-    const numberOfFilters = 0;
-
+    // const [showActions, setShowActions] = useState<boolean>(false);
+    // const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
+    // const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
+    // const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
     // const refreshListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
+
+    const isFirstRender = useRef<boolean>(true);
+    const [update, forceUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library conten
+    const [filterUpdate, forceFilterUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
+
+    const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
+    const numberOfFilters: number = Object.values(filter).filter(v => v && JSON.stringify(v) != '[]').length;
+
     const cancelerRef = useRef<Canceler | null>();
 
 
@@ -129,10 +133,7 @@ const SearchIPO = (): JSX.Element => {
             if (!displayFilter) {
                 setFilter({ ...emptyFilter });
             }
-        } else {
-            // No filters, regular scope list refresh.
-            // refreshList();
-        }
+        }     
     };
 
     const moduleHeaderContainerRef = useRef<HTMLDivElement>(null);
@@ -168,7 +169,7 @@ const SearchIPO = (): JSX.Element => {
     /** Update module header height on module header resize */
     useEffect(() => {
         updateModuleHeaderHeightReference();
-    }, [moduleHeaderContainerRef, displayFilter, showActions]);
+    }, [moduleHeaderContainerRef, displayFilter]);
 
     useEffect(() => {
         window.addEventListener('resize', updateModuleHeaderHeightReference);
@@ -178,74 +179,91 @@ const SearchIPO = (): JSX.Element => {
         };
     }, []);
 
+    useEffect(() => {
+        forceUpdate();
+    }, [displayFilter]);
 
-    const updateSavedFilters = async (): Promise<void> => {
-        setIsLoading(true);
-        try {
-            // const response = await apiClient.getSavedFilters(project.name);
-            // setSavedFilters(response);
-        } catch (error) {
-            console.error('Get saved filters failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
-        }
-        setIsLoading(false);
-    };
-
-    useEffect((): void => {
-        if (project && project.id != -1) {
-            updateSavedFilters();
-        }
-    }, [project]);
-
-    useEffect((): void => {
-        if (project && project.id === -1) {
+    useEffect(() => {
+        if (isFirstRender.current) {
+            // skip refreshing scope list on first render, when default/empty filters are set
+            isFirstRender.current = false;
             return;
-        } else if (project) {
-            const previousFilter = getCachedFilter(project.id);
-            if (previousFilter) {
-                setFilter({
-                    ...previousFilter
-                });
-            } else if (savedFilters) {
-                const defaultFilter = getDefaultFilter();
-                if (defaultFilter) {
-                    setFilter({
-                        ...defaultFilter
-                    });
-                } else {
-                // refreshIPOList();
-                }
-            }
-
         }
+        // setCachedFilter(project.id, filter);
 
-    }, [savedFilters, project]);
+        setResetTablePaging(true);
+        forceFilterUpdate();
+    }, [filter]);
 
-    const getDefaultFilter = (): IPOFilter | null => {
-        if (savedFilters) {
-            const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
-            if (defaultFilter) {
-                try {
-                    return JSON.parse(defaultFilter.criteria);
-                } catch (error) {
-                    console.error('Failed to parse default filter');
-                }
-            }
-        };
-        return null;
-    };
+
+    // const updateSavedFilters = async (): Promise<void> => {
+    //     setIsLoading(true);
+    //     try {
+    //         const response = await apiClient.getSavedFilters(project.name);
+    //         setSavedFilters(response);
+    //     } catch (error) {
+    //         console.error('Get saved filters failed: ', error.message, error.data);
+    //         showSnackbarNotification(error.message, 5000);
+    //     }
+    //     setIsLoading(false);
+    // };
+
+    // useEffect((): void => {
+    //     if (project && project.id != -1) {
+    //         updateSavedFilters();
+    //     }
+    // }, [project]);
+
+    // useEffect((): void => {
+    //     if (project && project.id === -1) {
+    //         return;
+    //     } else if (project) {
+    //         const previousFilter = getCachedFilter(project.id);
+    //         if (previousFilter) {
+    //             setFilter({
+    //                 ...previousFilter
+    //             });
+    //         } else if (savedFilters) {
+    //             const defaultFilter = getDefaultFilter();
+    //             if (defaultFilter) {
+    //                 setFilter({
+    //                     ...defaultFilter
+    //                 });
+    //             } else {
+    //             refreshIPOList();
+    //             }
+    //         }
+
+    //     }
+
+    // }, [savedFilters, project]);
+
+    // const getDefaultFilter = (): IPOFilter | null => {
+    //     if (savedFilters) {
+    //         const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
+    //         if (defaultFilter) {
+    //             try {
+    //                 return JSON.parse(defaultFilter.criteria);
+    //             } catch (error) {
+    //                 console.error('Failed to parse default filter');
+    //             }
+    //         }
+    //     };
+    //     return null;
+    // };
+
+    // const refreshFilterValues = (): void => {
+    //     setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
+    // };
 
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };
 
-    const refreshFilterValues = (): void => {
-        setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
-    };
 
 
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
-        if (!savedFilters && project) {  //to avoid getting ipos before we have set previous-/default filter
+        if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)
             try {
                 cancelerRef.current && cancelerRef.current();
                 return await apiClient.getIPOs(project.name, page, pageSize, orderBy, orderDirection, filter, (c) => { cancelerRef.current = c; }).then(
@@ -290,7 +308,7 @@ const SearchIPO = (): JSX.Element => {
                             })}
                         </Dropdown>}
                     </Header>
-                    <Tooltip title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfIPOs} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
+                    <Tooltip placement={'left'} title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfIPOs} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                         <div>
                             <StyledButton
                                 id='filterButton'
@@ -316,27 +334,30 @@ const SearchIPO = (): JSX.Element => {
                     setOrderDirection={setOrderDirection}
                     projectName={project?.name}
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
+                    update={update}
+                    forceUpdate={forceUpdate}
+                    filterUpdate={filterUpdate}
                 />
 
 
             </ContentContainer >
             {
-                // TODO: check savedFilters
-                displayFilter && project && (
+                displayFilter && (
                     <FilterContainer maxHeight={moduleAreaHeight}>
                         <InvitationsFilter
                             project={project}
-                            triggerFilterValuesRefresh={triggerFilterValuesRefresh}
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}
                             filter={filter} setFilter={setFilter}
-                            savedFilters={[emptySavedFilter]}
-                            refreshSavedFilters={updateSavedFilters}
-                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                            selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            // triggerFilterValuesRefresh={triggerFilterValuesRefresh}
+                            // savedFilters={[emptySavedFilter]}
+                            // refreshSavedFilters={updateSavedFilters}
+                            // setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            // selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            // exportIPOsToExcel={(): void => {return;}} />
                             numberOfIPOs={numberOfIPOs}
-                            exportIPOsToExcel={(): void => {return;}} />
+                        />
                     </FilterContainer>
                 )
             }

@@ -312,6 +312,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
         };
 
         this.setupRequestCanceler(settings, setRequestCanceller);
+        console.log(settings.params);
 
         // try {
         //     const result = await this.client.get<IPOsResponse>(endpoint, settings);

@@ -1,10 +1,21 @@
 import styled, { css } from 'styled-components';
 
+import { TextField } from '@material-ui/core';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
+`;
+
+export const DatesContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: calc(var(--grid-unit) * 2);
+`;
+
+export const DateField = styled(TextField)`
+    width: 48%;
 `;
 
 interface FilterProps {
@@ -62,6 +73,13 @@ export const Section = styled.div`
     padding-bottom: calc(var(--grid-unit) * 2);
 `;
 
+export const CheckboxSection = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: calc(var(--grid-unit) * 2);
+    padding-left: calc(var(--grid-unit) * 4);
+`;
+
 export const Link = styled.span<FilterProps>`
     cursor: ${(props): string => props.filterActive ? 'pointer' : 'not-allowed'};
     p {
@@ -70,6 +88,5 @@ export const Link = styled.span<FilterProps>`
 `;
 
 export const ExpandedContainer = styled.div`
-    padding-left: calc(var(--grid-unit) * 4);
 `;
 

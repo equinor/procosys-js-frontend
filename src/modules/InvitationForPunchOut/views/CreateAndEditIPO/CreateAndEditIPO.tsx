@@ -67,17 +67,6 @@ const CreateAndEditIPO = ({
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
 
-    const initialGeneralInfo = { ...generalInfo };
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
-    useEffect(() => {
-        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
-            setDirtyStateFor(ComponentName.CreateAndEditIPO);
-        } else {
-            unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
-        }
-    }, [generalInfo]);
-
     const goToNextStep = (): void => {
         if (currentStep > StepsEnum.Participants) {
             changeCompletedStatus(true, currentStep);

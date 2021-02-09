@@ -11,7 +11,11 @@ export enum OrganizationsEnum {
 
 export enum ComponentName {
     CreateAndEditIPO = 'CreateAndEditIPO',
-    ParticipantsTable = 'ParticipantsTable'
+    ParticipantsTable = 'ParticipantsTable',
+    GeneralInfo = 'GeneralInfo',
+    Scope = 'Scope',
+    Participants = 'Participants',
+    Attachments = 'Attachments'
 }
 
 export enum IpoStatusEnum {

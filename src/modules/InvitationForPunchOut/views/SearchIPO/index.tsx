@@ -65,7 +65,7 @@ const emptyFilter: IPOFilter = {
 const SearchIPO = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
-    const [pageSize, setPageSize] = useState<number>(50);
+    const [pageSize, setPageSize] = useState<number>(25);
     const [filter, setFilter] = useState<IPOFilter>({ ...emptyFilter });
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
@@ -280,7 +280,7 @@ const SearchIPO = (): JSX.Element => {
             }
         };
         setNumberOfIPOs(0);
-        return { maxAvailable: 0, ipos: [] };
+        return { maxAvailable: 0, invitations: [] };
     };
 
     return (

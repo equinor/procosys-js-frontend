@@ -92,14 +92,16 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
     const getIPOsByQuery = (query: Query<any>): Promise<QueryResult<any>> => {
         const sortFieldMap: { [key: string]: string } = {
-            'ID': 'id',
+            'ID': 'ipoNo',
             'Title': 'title',
             'Status': 'status',
             'Type': 'type',
-            'Sent': 'sent',
-            'Punch-out': 'punchOut',
-            'Completed': 'completed',
-            'Accepted': 'accepted',
+            'Sent': 'createdAtUtc',
+            'Punch-out': 'punchOutDateUtc',
+            'Completed': 'completedAtUtc',
+            'Accepted': 'acceptedAtUtc',
+            'Contractor rep': 'contractorRep',
+            'Construction rep': 'constructionCompanyRep',
         };
 
         if (shouldSelectFirstPage) {
@@ -109,7 +111,7 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         }
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
-        const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
+        const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'asc' : null;
         setOrderByField(orderByField);
         setOrderDirection(orderDirection);
 
@@ -117,7 +119,7 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
             return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
                 forceUpdate();
                 resolve({
-                    data: result.ipos,
+                    data: result.invitations,
                     page: query.page,
                     totalCount: result.maxAvailable
                 });
@@ -138,10 +140,10 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     { title: 'Type', render: (rowData: IPO): JSX.Element => getColumn(rowData.type) },
                     { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getCommPkgColumn(rowData.commPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
                     { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getMcPkgColumn(rowData.mcPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
-                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.createdAtUtc)), defaultSort: 'desc' },
-                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.startTimeUtc)) },
-                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.completedAtUtc)) },
-                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.acceptedAtUtc)) },
+                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(new Date(rowData.createdAtUtc))), defaultSort: 'desc' },
+                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(new Date(rowData.startTimeUtc))) },
+                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(rowData.completedAtUtc ? getLocalDate(new Date(rowData.completedAtUtc)) : '') },
+                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(rowData.acceptedAtUtc ? getLocalDate(new Date(rowData.acceptedAtUtc)): '') },
                     { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractorRep) },
                     { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.constructionCompanyRep) },
                 ]}
@@ -157,7 +159,7 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     padding: 'dense',
                     pageSize: pageSize,
                     emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 50, 100, 500, 1000],
+                    pageSizeOptions: [10, 25, 50, 100],
                     headerStyle: {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                         whiteSpace: 'nowrap',

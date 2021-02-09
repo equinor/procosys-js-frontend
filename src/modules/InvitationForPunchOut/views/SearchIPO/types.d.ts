@@ -25,7 +25,7 @@ export interface IPO {
 
 export interface IPOs {
     maxAvailable: number;
-    ipos: IPO[];
+    invitations: IPO[];
 }
 
 export type ProjectDetails = {

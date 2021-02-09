@@ -6,6 +6,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import PersonSelector from '../PersonSelector';
 import RoleSelector from '../RoleSelector';
+import { SelectItem } from '@procosys/components/Select';
 import { rolePersonParamType } from '..';
 
 type SelectProps = {
@@ -13,9 +14,10 @@ type SelectProps = {
     selectedItems: string[];
     onChange: (filterParam: rolePersonParamType, value: string) => void;
     icon: JSX.Element;
+    roles: SelectItem[];
 }
 
-const SelectFilter = ({headerLabel, selectedItems, onChange, icon}: SelectProps): JSX.Element => {
+const SelectFilter = ({headerLabel, selectedItems, onChange, icon, roles}: SelectProps): JSX.Element => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
@@ -35,7 +37,7 @@ const SelectFilter = ({headerLabel, selectedItems, onChange, icon}: SelectProps)
                 isExpanded && (
                     <>
                         <FilterContainer>
-                            <RoleSelector onChange={onChange} functionalRoleCode={selectedItems[0]} />
+                            <RoleSelector onChange={onChange} roles={roles} functionalRoleCode={selectedItems[0]} />
                         </FilterContainer>
                         <PersonSelector onChange={onChange} personOid={selectedItems[1]} />
                     </>

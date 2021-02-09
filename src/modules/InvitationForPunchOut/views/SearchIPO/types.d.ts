@@ -1,13 +1,3 @@
-
-export interface SavedIPOFilter {
-    id: number;
-    title: string;
-    criteria: string;
-    defaultFilter: boolean;
-    rowVersion: string;
-}
-
-
 export interface IPO {
     id: number;
     title: string;

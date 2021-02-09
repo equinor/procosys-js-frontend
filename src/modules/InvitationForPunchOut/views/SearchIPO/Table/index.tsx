@@ -1,5 +1,5 @@
 import { Query, QueryResult } from 'material-table';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { Container } from './index.style';
 import { IPO } from '../types';
@@ -16,8 +16,6 @@ interface InvitationsTableProps {
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
     shouldSelectFirstPage: boolean;
     setFirstPageSelected: () => void;
-    setOrderByField: (orderByField: string | null) => void;
-    setOrderDirection: (orderDirection: string | null) => void;
     projectName?: string;
     height: number;
     update: number;
@@ -26,7 +24,7 @@ interface InvitationsTableProps {
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, projectName, height, update, forceUpdate, filterUpdate }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, forceUpdate, filterUpdate }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
     const { plant } = useCurrentPlant();
  
@@ -112,8 +110,6 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
         const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'asc' : null;
-        setOrderByField(orderByField);
-        setOrderDirection(orderDirection);
 
         return new Promise((resolve) => {
             return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {

@@ -1,10 +1,12 @@
-import { Container, DropdownItem } from './index.style';
+import { ClearContainer, Container, DropdownItem } from './index.style';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown  from '@procosys/components/Dropdown';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
+import { TextField } from '@equinor/eds-core-react';
+import { Typography } from '@equinor/eds-core-react';
 import { rolePersonParamType } from '..';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
@@ -16,6 +18,7 @@ interface PersonSelectorProps {
     personOid: string;
     onChange: (filterParam: rolePersonParamType, value: string) => void;
 }
+
 
 const PersonSelector = ({
     personOid,
@@ -72,9 +75,7 @@ const PersonSelector = ({
     const setPerson = (event: React.MouseEvent, personIndex: number): void => {
         event.preventDefault();
         const person = filteredPersons[personIndex];
-        if (person) {
-            onChange('personOid', person.value);
-        }
+        onChange('personOid', person ? person.value : '');
     };
 
 
@@ -115,6 +116,9 @@ const PersonSelector = ({
                                                 );
                                             })}
         </Dropdown>
+        <ClearContainer onClick={(e): void => setPerson(e, -1)}>
+            <Typography variant='meta'>Clear</Typography>
+        </ClearContainer>
     </Container>);
 };
 

@@ -1,66 +1,35 @@
-import { Container, DropdownItem } from './index.style';
+import { ClearContainer, Container, DropdownItem } from './index.style';
 import React, { useEffect, useState } from 'react';
 
-import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown  from '@procosys/components/Dropdown';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
+import { Typography } from '@equinor/eds-core-react';
 import { rolePersonParamType } from '..';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
 interface RoleSelectorProps {
     functionalRoleCode: string;
     onChange: (filterParam: rolePersonParamType, value: string) => void;
+    roles: SelectItem[];
 }
 
 const RoleSelector = ({
     functionalRoleCode,
     onChange,
+    roles
 }: RoleSelectorProps): JSX.Element => {
-    const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
-    const { apiClient } = useInvitationForPunchOutContext();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [selectedRole, setSelectedRole] = useState<SelectItem>();
 
 
     useEffect(() => {
-        setSelectedRole(availableRoles.find(p => p.value === functionalRoleCode));
+        setSelectedRole(roles.find(p => p.value === functionalRoleCode));
     }, [functionalRoleCode]);
-
-    /**
-     * Fetch available functional roles 
-     */
-    useEffect(() => {
-        let requestCanceler: Canceler;
-        setIsLoading(true);
-        try {
-            (async (): Promise<void> => {
-                const functionalRoles = await apiClient.getFunctionalRolesAsync()
-                    .then(roles => roles.map((role): SelectItem => {
-                        return {
-                            text: role.code,
-                            value: role.code
-                        };
-                    }));
-                setAvailableRoles(functionalRoles);
-                setIsLoading(false);
-            })();
-            return (): void => requestCanceler && requestCanceler();
-        } catch (error) {
-            showSnackbarNotification(error.message);
-            setIsLoading(false);
-        }
-    }, []);
-
 
 
     const setRole = (event: React.MouseEvent, roleIndex: number): void => {
         event.preventDefault();
-        const role = availableRoles[roleIndex];
-        if (role) {
-            onChange('functionalRoleCode', role.value);
-        }
+        const role = roles[roleIndex];
+        onChange('functionalRoleCode', role ? role.value : '');
     };
 
 
@@ -71,9 +40,9 @@ const RoleSelector = ({
             variant='form'
             text={selectedRole ? selectedRole.text : 'Select'}
         >
-            {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
-            {!isLoading &&
-                                            availableRoles.map((role, i) => {
+            {roles.length < 1 && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+            {roles.length > 0 &&
+                                            roles.map((role, i) => {
                                                 return (
                                                     <DropdownItem
                                                         key={i}
@@ -86,6 +55,9 @@ const RoleSelector = ({
                                                 );
                                             })}
         </Dropdown>
+        <ClearContainer onClick={(e): void => setRole(e, -1)}>
+            <Typography variant='meta'>Clear</Typography>
+        </ClearContainer>
     </Container>);
 };
 

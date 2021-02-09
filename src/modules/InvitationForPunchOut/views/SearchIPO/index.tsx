@@ -2,46 +2,19 @@ import { Container, ContentContainer, DropdownItem, FilterContainer, Header, Hea
 import { IPOFilter, IPOs } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 
-// import CacheService from '@procosys/core/services/CacheService';
 import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { FunctionalRole } from '../ViewIPO/types';
 import InvitationsFilter from './Filter';
 import InvitationsTable from './Table';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
+import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
 import { Tooltip } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-
-// const InvitationFilterCache = new CacheService('InvitationSearch');
-
-// const getCachedFilter = (projectId: number): IPOFilter | null => {
-//     try {
-//         const cacheItem = InvitationFilterCache.getCache(projectId + '-filter');
-//         if (cacheItem) {
-//             return cacheItem.data;
-//         }
-//     } catch (error) {
-//         showSnackbarNotification('An error occured retrieving default filter values');
-//         console.error('Error while retrieving cached filter values: ', error);
-//     }
-//     return null;
-// };
-
-// const setCachedFilter = (projectId: number, filter: IPOFilter): void => {
-//     try {
-//         InvitationFilterCache.setCache(projectId + '-filter', filter);
-//     } catch (error) {
-//         showSnackbarNotification('An error occured when saving default filter values');
-//         console.error('Error while caching filter values: ', error);
-//     }
-// };
-
-// const deleteCachedFilter = (projectId: number): void => {
-//     InvitationFilterCache.delete(projectId + '-filter');
-// };
 
 const emptyFilter: IPOFilter = {
     ipoStatuses: [],
@@ -54,13 +27,6 @@ const emptyFilter: IPOFilter = {
     punchOutDates: []
 };
 
-// const emptySavedFilter: SavedIPOFilter = {
-//     id: 0,
-//     title: 'savefilter',
-//     criteria: 'none',
-//     defaultFilter: false,
-//     rowVersion: 'wda'
-// };
 
 const SearchIPO = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -68,27 +34,46 @@ const SearchIPO = (): JSX.Element => {
     const [pageSize, setPageSize] = useState<number>(25);
     const [filter, setFilter] = useState<IPOFilter>({ ...emptyFilter });
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
-    const [orderDirection, setOrderDirection] = useState<string | null>(null);
-    const [orderByField, setOrderByField] = useState<string | null>(null);
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [project, setProject] = useState<ProjectDetails>();
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    // const [showActions, setShowActions] = useState<boolean>(false);
-    // const [triggerFilterValuesRefresh, setTriggerFilterValuesRefresh] = useState<number>(0); //increment to trigger filter values to update
-    // const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
-    // const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
-    // const refreshListCallback = useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
 
     const isFirstRender = useRef<boolean>(true);
-    const [update, forceUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library conten
-    const [filterUpdate, forceFilterUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
+    const [update, forceUpdate] = useReducer(x => x + 1, 0); // Used to force an update on table
+    const [filterUpdate, forceFilterUpdate] = useReducer(x => x + 1, 0); // Used to force update on table with filter change
 
     const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
     const numberOfFilters: number = Object.values(filter).filter(v => v && JSON.stringify(v) != '[]').length;
 
     const cancelerRef = useRef<Canceler | null>();
+
+    const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
+
+    /**
+     * Fetch available functional roles 
+     */
+    useEffect(() => {
+        let requestCanceler: Canceler;
+        try {
+            (async (): Promise<void> => {
+                const functionalRoles = await apiClient.getFunctionalRolesAsync()
+                    .then((roles: any) => {
+                        return roles.map((role: FunctionalRole): SelectItem => {
+                            return {
+                                text: role.code,
+                                value: role.code
+                            };
+                        });
+                    });
+                setAvailableRoles(functionalRoles);
+            })();
+            return (): void => requestCanceler && requestCanceler();
+        } catch (error) {
+            showSnackbarNotification(error.message);
+        }
+    }, []);
 
 
     useEffect(() => {
@@ -189,72 +174,12 @@ const SearchIPO = (): JSX.Element => {
             isFirstRender.current = false;
             return;
         }
-        // setCachedFilter(project.id, filter);
 
         setResetTablePaging(true);
         forceFilterUpdate();
     }, [filter]);
 
 
-    // const updateSavedFilters = async (): Promise<void> => {
-    //     setIsLoading(true);
-    //     try {
-    //         const response = await apiClient.getSavedFilters(project.name);
-    //         setSavedFilters(response);
-    //     } catch (error) {
-    //         console.error('Get saved filters failed: ', error.message, error.data);
-    //         showSnackbarNotification(error.message, 5000);
-    //     }
-    //     setIsLoading(false);
-    // };
-
-    // useEffect((): void => {
-    //     if (project && project.id != -1) {
-    //         updateSavedFilters();
-    //     }
-    // }, [project]);
-
-    // useEffect((): void => {
-    //     if (project && project.id === -1) {
-    //         return;
-    //     } else if (project) {
-    //         const previousFilter = getCachedFilter(project.id);
-    //         if (previousFilter) {
-    //             setFilter({
-    //                 ...previousFilter
-    //             });
-    //         } else if (savedFilters) {
-    //             const defaultFilter = getDefaultFilter();
-    //             if (defaultFilter) {
-    //                 setFilter({
-    //                     ...defaultFilter
-    //                 });
-    //             } else {
-    //             refreshIPOList();
-    //             }
-    //         }
-
-    //     }
-
-    // }, [savedFilters, project]);
-
-    // const getDefaultFilter = (): IPOFilter | null => {
-    //     if (savedFilters) {
-    //         const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
-    //         if (defaultFilter) {
-    //             try {
-    //                 return JSON.parse(defaultFilter.criteria);
-    //             } catch (error) {
-    //                 console.error('Failed to parse default filter');
-    //             }
-    //         }
-    //     };
-    //     return null;
-    // };
-
-    // const refreshFilterValues = (): void => {
-    //     setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
-    // };
 
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
@@ -330,8 +255,6 @@ const SearchIPO = (): JSX.Element => {
                     setPageSize={setPageSize}
                     shouldSelectFirstPage={resetTablePaging}
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
-                    setOrderByField={setOrderByField}
-                    setOrderDirection={setOrderDirection}
                     projectName={project?.name}
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
                     update={update}
@@ -350,12 +273,7 @@ const SearchIPO = (): JSX.Element => {
                                 setDisplayFilter(false);
                             }}
                             filter={filter} setFilter={setFilter}
-                            // triggerFilterValuesRefresh={triggerFilterValuesRefresh}
-                            // savedFilters={[emptySavedFilter]}
-                            // refreshSavedFilters={updateSavedFilters}
-                            // setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                            // selectedSavedFilterTitle={selectedSavedFilterTitle}
-                            // exportIPOsToExcel={(): void => {return;}} />
+                            roles={availableRoles}
                             numberOfIPOs={numberOfIPOs}
                         />
                     </FilterContainer>

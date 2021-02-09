@@ -22,36 +22,14 @@ export const DropdownItem = styled.div<DropdownProps>`
 
 export const Container = styled.div`
     display: flex;
+    justify-content: space-between;
     width: 100%;
 `;
 
-export const FormContainer = styled.div`
+export const ClearContainer = styled.div`
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    margin-left: var(--grid-unit);
+    cursor: pointer;
 `;
-
-export const ParticipantRowsContainer = styled.div`
-    display: grid;
-    grid-template-columns: 250px 180px 300px auto; 
-    width: fit-content;
-    padding: var(--grid-unit);
-    align-items: flex-end;
-    > div {
-        display: flex;
-        margin-right: calc(var(--grid-unit) * 2);
-        padding-bottom: var(--grid-unit);
-        > * {
-            width: 100%;
-        }
-    }
-    .overflowControl {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-`;
-
-export const AddParticipantContainer = styled.div`
-    max-width: 300px;
-`;
-

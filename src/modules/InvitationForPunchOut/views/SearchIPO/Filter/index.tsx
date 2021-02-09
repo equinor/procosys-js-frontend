@@ -3,8 +3,6 @@ import { Collapse, CollapseInfo, Container, Header, Link, Section } from './inde
 import { IPOFilter, ProjectDetails } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 
-// import AreaIcon from '@procosys/assets/icons/Area';
-// import { Canceler } from 'axios';
 import CheckboxFilterWithDates from './CheckboxFilterWithDates';
 import CloseIcon from '@material-ui/icons/Close';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -12,28 +10,15 @@ import { IpoStatusEnum } from '../../enums';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import SelectFilter from './SelectFilter';
-
-// import Popover from '@material-ui/core/Popover';
-// import RadioGroupFilter from './RadioGroupFilter';
-// import SavedFilters from './SavedFilters';
-// import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-// import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
-// import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-
-// const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
+import { SelectItem } from '@procosys/components/Select';
 
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
     onCloseRequest: () => void;
     filter: IPOFilter;
     setFilter: (filter: IPOFilter) => void;
-    // savedFilters: SavedIPOFilter[];
-    // refreshSavedFilters: () => void;
-    // selectedSavedFilterTitle: string | null;
-    // setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
+    roles: SelectItem[];
     numberOfIPOs: number | undefined;
-    // exportIPOsToExcel: () => void;
-    // triggerFilterValuesRefresh: number;
 }
 
 interface FilterInput {
@@ -125,38 +110,6 @@ const lastChangedDateFields: FilterInput[] =
     ];
 
 
-// const ACTION_STATUS = [{
-//     title: 'All',
-//     value: 'no-filter',
-//     default: true
-// },
-// {
-//     title: 'Open actions',
-//     value: 'HasOpen'
-// },
-// {
-//     title: 'Closed actions',
-//     value: 'HasClosed'
-// },
-// {
-//     title: 'Overdue actions',
-//     value: 'HasOverDue'
-// }];
-
-// const VOIDED = [{
-//     title: 'All',
-//     value: 'All',
-// },
-// {
-//     title: 'Not voided (default)',
-//     value: 'NotVoided',
-//     default: true
-// },
-// {
-//     title: 'Voided',
-//     value: 'Voided'
-// }];
-
 const clearFilter: IPOFilter = {
     ipoStatuses: [],
     functionalRoleCode: '',
@@ -173,144 +126,20 @@ const InvitationsFilter = ({
     onCloseRequest,
     filter,
     setFilter,
-    // savedFilters,
-    // refreshSavedFilters,
-    // selectedSavedFilterTitle,
-    // setSelectedSavedFilterTitle,
     numberOfIPOs,
-    // exportIPOsToExcel,
-    // triggerFilterValuesRefresh
+    roles,
 }: InvitationsFilterProps): JSX.Element => {
 
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [localFilter, setLocalFilter] = useState<IPOFilter>({ ...filter });
 
-    // const [modes, setModes] = useState<CheckboxFilterValue[]>([]);
-    // const [journeys, setJourneys] = useState<CheckboxFilterValue[]>([]);
-    // const [requirements, setRequirements] = useState<CheckboxFilterValue[]>([]);
-    // const [tagFunctions, setTagFunctions] = useState<CheckboxFilterValue[]>([]);
-    // const [disciplines, setDisciplines] = useState<CheckboxFilterValue[]>([]);
-    // const [responsibles, setResponsibles] = useState<FilterInput[]>([]);
-    // const [areas, setAreas] = useState<FilterInput[]>([]);
     const isFirstRender = useRef<boolean>(true);
     const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
-    // const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
-    // const [anchorElement, setAnchorElement] = React.useState(null);
 
-    // const { apiClient } = useInvitationForPunchOutContext();
 
     const KEYCODE_ENTER = 13;
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler;
-
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const journeys = await apiClient.getIPOFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             setJourneys(journeys);
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-    //     return (): void => requestCancellor && requestCancellor();
-    // }, [project, triggerFilterValuesRefresh]);
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler;
-
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const response = await apiClient.getResponsiblesFilterForProject(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             setResponsibles(response.map(resp => { return { id: resp.id, title: resp.code }; }));
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-    //     return (): void => requestCancellor && requestCancellor();
-    // }, [project, triggerFilterValuesRefresh]);
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler;
-
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const response = await apiClient.getAreaFilterForProject(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             setAreas(response.map(resp => { return { id: resp.code, title: resp.code }; }));
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-    //     return (): void => requestCancellor && requestCancellor();
-    // }, [project, triggerFilterValuesRefresh]);
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler;
-
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const modes = await apiClient.getModeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             setModes(modes);
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-    //     return (): void => requestCancellor && requestCancellor();
-    // }, [project, triggerFilterValuesRefresh]);
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler;
-
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const requirements = await apiClient.getRequirementTypeFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             setRequirements(requirements);
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-    //     return (): void => requestCancellor && requestCancellor();
-    // }, [project, triggerFilterValuesRefresh]);
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler;
-
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const tagFunctionResp = await apiClient.getTagFunctionFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             const tagFunctions: CheckboxFilterValue[] = [];
-    //             tagFunctionResp.map((item) => {
-    //                 tagFunctions.push({ id: item.code, title: item.code });
-    //             });
-    //             setTagFunctions(tagFunctions);
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-    //     return (): void => requestCancellor && requestCancellor();
-    // }, [project, triggerFilterValuesRefresh]);
-
-    // useEffect(() => {
-    //     let requestCancellor: Canceler | null = null;
-    //     (async (): Promise<void> => {
-    //         try {
-    //             const disciplineResp = await apiClient.getDisciplineFilters(project.name, (cancel: Canceler) => requestCancellor = cancel);
-    //             const disciplines: CheckboxFilterValue[] = [];
-    //             disciplineResp.map((item) => {
-    //                 disciplines.push({ id: item.code, title: item.description ? item.description : item.code });
-    //             });
-    //             setDisciplines(disciplines);
-    //         } catch (error) {
-    //             !error.isCancel && showSnackbarNotification(error.message, 5000);
-    //         }
-    //     })();
-
-    //     return (): void => {
-    //         requestCancellor && requestCancellor();
-    //     };
-    // }, [project, triggerFilterValuesRefresh]);
-
 
     const triggerIPOListUpdate = (): void => {
         setFilter(localFilter);
@@ -333,7 +162,6 @@ const InvitationsFilter = ({
         }
     }, [project]);
 
-    // TODO: check these function to IPOFilter type
 
     const onCheckboxFilterChange = (filterParam: filterParamType, id: string, checked: boolean): void => {
         const newIPOFilter: IPOFilter = { ...localFilter };
@@ -351,34 +179,11 @@ const InvitationsFilter = ({
         setLocalFilter(newIPOFilter);
     };
 
-    // const onPreservationStatusFilterChanged = (value: string): void => {
-    //     const filter = value === 'no-filter' ? null : value;
-    //     setLocalFilter((old): IPOFilter => { return { ...old, preservationStatus: filter }; });
-    // };
-
-    // const onActionStatusFilterChanged = (value: string): void => {
-    //     const filter = value === 'no-filter' ? null : value;
-    //     setLocalTagListFilter((old): TagListFilter => { return { ...old, actionStatus: filter }; });
-    // };
-
-    // const onVoidedFilterChanged = (value: string): void => {
-    //     setLocalTagListFilter((old): TagListFilter => { return { ...old, voidedFilter: value }; });
-    // };
-
-    // const responsibleFilterUpdated = (values: { id: string; title: string }[]): void => {
-    //     setLocalTagListFilter((old): TagListFilter => { return { ...old, responsibleIds: values.map(itm => String(itm.id)) }; });
-    // };
-
-    // const areaFilterUpdated = (values: { id: string; title: string }[]): void => {
-    //     setLocalTagListFilter((old): TagListFilter => { return { ...old, areaCodes: values.map(itm => String(itm.id)) }; });
-    // };
     const onRolePersonChange = (filterParam: rolePersonParamType, value: string): void => {
         const newIPOFilter: IPOFilter = { ...localFilter };
         newIPOFilter[filterParam] = value;
         setLocalFilter(newIPOFilter);
     };
-
-
 
     //Handle changes in text field filters
     useEffect(() => {
@@ -425,43 +230,11 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    {/* <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportIPOsToExcel}>
-                        {ExcelIcon}
-                    </Button>
-                    <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
-                        showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
-                        setAnchorElement(event.currentTarget);
-                    }}>
-                        <SavedFiltersIcon />
-                    </Button> */}
                     <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                         <CloseIcon />
                     </Button>
                 </div>
             </Header>
-            {/* <Popover
-                id={'savedFilter-popover'}
-                open={showSavedFilters}
-                anchorEl={anchorElement}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                onClose={(): void => setShowSavedFilters(false)}
-            >
-                <SavedFilters
-                    savedFilters={savedFilters}
-                    refreshSavedFilters={refreshSavedFilters}
-                    filter={filter}
-                    selectedSavedFilterTitle={selectedSavedFilterTitle}
-                    setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                    setFilter={setLocalFilter}
-                    onCloseRequest={(): void => setShowSavedFilters(false)} />
-            </Popover > */}
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfIPOs} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>
@@ -541,7 +314,7 @@ const InvitationsFilter = ({
 
             <CheckboxFilterWithDates title='Punch out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
             <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.ipoStatuses} icon={'world'} />
-            <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} icon={<EdsIcon name='person' />} />
+            <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} roles={roles} icon={<EdsIcon name='person' />} />
 
         </Container >
     );

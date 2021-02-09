@@ -5,7 +5,7 @@ import Loading from '../components/Loading';
 import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 import { ThemeProvider } from 'styled-components';
 import { UserContextProvider } from '@procosys/core/UserContext';
-import withFeatureFlag from '@procosys/core/features/withFeatureFlag';
+import withAccessControl from '@procosys/core/security/withAccessControl';
 
 const GeneralRouter = React.lazy(() => import('./GeneralRouter'));
 
@@ -24,4 +24,4 @@ const App = (): JSX.Element => {
     );
 };
 
-export default withFeatureFlag(App, ['main']);
+export default withAccessControl(App, [], ['main']);

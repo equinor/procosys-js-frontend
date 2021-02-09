@@ -12,7 +12,7 @@ import Comments from './Comments';
 import EdsIcon from '@procosys/components/EdsIcon';
 import GeneralInfo from './GeneralInfo';
 import History from './History';
-import { IpoStatusEnum } from './enums';
+import { IpoStatusEnum } from '../enums';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';

@@ -19,12 +19,11 @@ interface InvitationsTableProps {
     projectName?: string;
     height: number;
     update: number;
-    forceUpdate: React.DispatchWithoutAction;
     filterUpdate: number;
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, forceUpdate, filterUpdate }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
     const { plant } = useCurrentPlant();
  
@@ -113,7 +112,9 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
         return new Promise((resolve) => {
             return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
-                forceUpdate();
+                if (refObject.current) {
+                    refObject.current.props.options.maxBodyHeight = height;
+                }
                 resolve({
                     data: result.invitations,
                     page: query.page,

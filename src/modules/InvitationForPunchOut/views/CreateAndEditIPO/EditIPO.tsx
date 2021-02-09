@@ -101,7 +101,7 @@ const EditIPO = (): JSX.Element => {
     }, [selectedMcPkgScope]);
 
     useEffect(() => {
-        if (participants !== initialParticipants) {
+        if (JSON.stringify(participants) !== JSON.stringify(initialParticipants)) {
             setDirtyStateFor(ComponentName.Participants);
         } else {
             unsetDirtyStateFor(ComponentName.Participants);

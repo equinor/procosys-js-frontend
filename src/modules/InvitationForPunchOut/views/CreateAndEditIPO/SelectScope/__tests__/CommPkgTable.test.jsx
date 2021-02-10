@@ -4,11 +4,11 @@ import CommPkgTable from '../CommPkgTable';
 import React from 'react';
 
 describe('<CommPkgTable />', () => {
-    it('should not render table when no filter is applied', () => {
+    it('should not render table', () => {
         const { queryByText } = render(<CommPkgTable />);
-        expect(queryByText('Description')).toBeNull();
-        expect(queryByText('Comm status')).toBeNull();
-        expect(queryByText('MC')).toBeNull();
+        expect(queryByText('Description')).toBeInTheDocument();
+        expect(queryByText('Comm status')).toBeInTheDocument();
+        expect(queryByText('Comm pkg')).toBeInTheDocument();
     });
 
     // TODO

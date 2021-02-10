@@ -75,7 +75,7 @@ const CommPkgTable = forwardRef(({
 
                 });
             }
-            return getCommPkgs(query.page, query.pageSize).then(result => {
+            return getCommPkgs(query.pageSize, query.page).then(result => {
                 setFilteredCommPkgs(result.commPkgs);
                 resolve({
                     data: result.commPkgs,

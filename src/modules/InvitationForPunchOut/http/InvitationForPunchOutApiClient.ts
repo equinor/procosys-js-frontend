@@ -42,6 +42,11 @@ type CommPkgScopeResponse = {
     status: string;
 }
 
+type CommPkgPagingResponse = {
+    maxAvailable: number;
+    commPkgs: CommPkgResponse[];
+}
+
 type ParticipantInvitationResponse = {
     organization: string;
     sortKey: number;
@@ -364,18 +369,20 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getCommPkgsAsync(projectName: string, startWith: string, setRequestCanceller?: RequestCanceler): Promise<CommPkgResponse[]> {
-        const endpoint = '/Scope/CommPkgs';
+    async getCommPkgsAsync(projectName: string, startWith: string, pageSize?: number, currentPage?: number, setRequestCanceller?: RequestCanceler): Promise<CommPkgPagingResponse> {
+        const endpoint = '/Scope/CommPkgsV2';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
-                startsWithCommPkgNo: startWith
+                startsWithCommPkgNo: startWith,
+                itemsPerPage: pageSize,
+                currentPage: currentPage
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<CommPkgResponse[]>(endpoint, settings);
+            const result = await this.client.get<CommPkgPagingResponse>(endpoint, settings);
             return result.data;
         } catch (error) {
             throw new IpoApiError(error);

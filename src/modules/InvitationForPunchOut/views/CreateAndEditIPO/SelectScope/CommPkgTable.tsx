@@ -1,14 +1,13 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { Container, Search, TopContainer } from './Table.style';
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { Query, QueryResult } from 'material-table';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import Loading from '@procosys/components/Loading';
 import Table from '@procosys/components/Table';
 import { Tooltip } from '@material-ui/core';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
@@ -35,45 +34,63 @@ const CommPkgTable = forwardRef(({
 }: CommPkgTableProps, ref): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [pageSize, setPageSize] = useState<number>(10);
+    const cancelerRef = useRef<Canceler | null>();
+    const refObject = useRef<any>();
 
-    const searchCommPkgs = (): Canceler | null => {
-        let requestCanceler: Canceler | null = null;
+    const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
         try {
-            (async (): Promise<void> => {
-                const filteredCommPkgs = await apiClient.getCommPkgsAsync(projectName, filter, (cancel: Canceler) => requestCanceler = cancel)
-                    .then(commPkgs => commPkgs.map((commPkg): CommPkgRow => {
-                        return {
-                            commPkgNo: commPkg.commPkgNo,
-                            description: commPkg.description,
-                            status: commPkg.status,
-                            tableData: {
-                                checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
-                            }
-                        };
-                    }));
-                setFilteredCommPkgs(filteredCommPkgs);
-                setIsLoading(false);
-            })();
+            const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
+            const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
+                return {
+                    commPkgNo: commPkg.commPkgNo,
+                    description: commPkg.description,
+                    status: commPkg.status,
+                    tableData: {
+                        checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+                    }
+                };
+            });
+            return {
+                maxAvailable: response.maxAvailable,
+                commPkgs: commPkgData
+            };
+
         } catch (error) {
-            showSnackbarNotification(error.message);
-            setIsLoading(false);
+            console.error(error);
+            return {
+                maxAvailable: 0,
+                commPkgs: []
+            };
         }
-        return (): void => {
-            requestCanceler && requestCanceler();
-        };
+    };
+
+    const getCommPkgsByQuery = async (query: Query<any>): Promise<QueryResult<any>> => {
+        return new Promise((resolve) => {
+            if (!filter.trim()) {
+                return resolve({
+                    data: [],
+                    page: 0,
+                    totalCount: 0
+
+                });
+            }
+            return getCommPkgs(query.page, query.pageSize).then(result => {
+                setFilteredCommPkgs(result.commPkgs);
+                resolve({
+                    data: result.commPkgs,
+                    page: query.page,
+                    totalCount: result.maxAvailable
+                });
+
+            });
+        });
     };
 
     useEffect(() => {
-        if (filter != '') {
-            setIsLoading(true);
-        } else {
-            setIsLoading(false);
-            setFilteredCommPkgs([]);
-        }
         const handleFilterChange = async (): Promise<void> => {
-            if (filter != '') {
-                searchCommPkgs();
+            if (refObject.current) {
+                refObject.current.onSearchChangeDebounce();
             }
         };
         const timer = setTimeout(() => {
@@ -82,6 +99,8 @@ const CommPkgTable = forwardRef(({
 
         return (): void => {
             clearTimeout(timer);
+            cancelerRef.current && cancelerRef.current();
+
         };
     }, [filter]);
 
@@ -191,41 +210,40 @@ const CommPkgTable = forwardRef(({
                     />
                 </Search>
             </TopContainer>
-            {
-                isLoading && <Loading title="Loading commissioning packages" />
-            }
-            { !isLoading && filter != '' &&
-                <Table
-                    columns={tableColumns}
-                    data={filteredCommPkgs}
-                    options={{
-                        toolbar: false,
-                        showTitle: false,
-                        search: false,
-                        draggable: false,
-                        pageSize: 10,
-                        emptyRowsWhenPaging: false,
-                        pageSizeOptions: [10, 50, 100],
-                        padding: 'dense',
-                        headerStyle: {
-                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                        },
-                        selection: type != 'DP',
-                        selectionProps: (data: CommPkgRow): any => ({
-                            disableRipple: true,
-                        }),
-                        rowStyle: (data): React.CSSProperties => ({
-                            backgroundColor: data.tableData.checked && '#e6faec'
-                        })
-                    }}
-                    style={{
-                        boxShadow: 'none'
-                    }}
-                    onSelectionChange={(rowData, row): void => {
-                        rowSelectionChanged(rowData, row);
-                    }}
-                />
-            }
+            
+            <Table
+                tableRef={refObject}
+                columns={tableColumns}
+                data={getCommPkgsByQuery}
+                options={{
+                    toolbar: false,
+                    showTitle: false,
+                    search: false,
+                    draggable: false,
+                    debounceInterval: 200,
+                    pageSize: pageSize,
+                    emptyRowsWhenPaging: false,
+                    padding: 'dense',
+                    headerStyle: {
+                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
+                    },
+                    selection: type != 'DP',
+                    selectionProps: (data: CommPkgRow): any => ({
+                        disableRipple: true,
+                    }),
+                    rowStyle: (data): React.CSSProperties => ({
+                        backgroundColor: data.tableData.checked && '#e6faec'
+                    })
+                }}
+                style={{
+                    boxShadow: 'none'
+                }}
+                onSelectionChange={(rowData, row): void => {
+                    rowSelectionChanged(rowData, row);
+                }}
+                onChangeRowsPerPage={setPageSize}
+            />
+            
         </Container>
     );
 });

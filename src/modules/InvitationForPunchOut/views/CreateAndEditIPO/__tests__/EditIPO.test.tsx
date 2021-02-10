@@ -25,6 +25,7 @@ const mockRoles = [
 ];
 
 const mockInvitation: Invitation = {
+    canEdit: false,
     projectName: 'projectName',
     title: 'titleA',
     description: 'descriptionA',

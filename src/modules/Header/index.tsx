@@ -179,11 +179,11 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            {/* { (ProCoSysSettings.featureIsEnabled('IPO')) &&
+                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
                                 <a href={`/${params.plant}/InvitationForPunchOut/`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </a>
-                            } */}
+                            }
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}
                             >

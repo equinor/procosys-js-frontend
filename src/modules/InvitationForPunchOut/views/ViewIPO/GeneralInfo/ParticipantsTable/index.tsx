@@ -13,6 +13,7 @@ import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+import CustomPopover from './CustomPopover/index';
 
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
@@ -64,6 +65,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const btnSignRef = useRef<HTMLButtonElement>();
+    const [popoverActive, setPopoverActive] = useState<string>('');
 
     useEffect(() => {
         const participant = participants.find(p => p.canSign);
@@ -318,6 +320,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         setAttNoteData([...updateData]);
     };
 
+    const handlePopoverChange = (newValue: string): void =>{
+        setPopoverActive(newValue);
+    };
+
 
     return (
         <Container>
@@ -363,13 +369,19 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                 participant.functionalRole.id :
                                 participant.externalEmail.id;
 
+                        const addPopover = participant.functionalRole ?
+                            participant.functionalRole.response? true:false : false;
+
                         return (
                             <Row key={participant.sortKey} as="tr">
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     {OrganizationMap.get(participant.organization as Organization)}
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>{representative}</Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>{response}</Cell>
+                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                    {response}
+                                    {addPopover && <CustomPopover participant={participant} activePopover={popoverActive} onChange={handlePopoverChange} />}
+                                </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     <Switch
                                         id={`attendance${id}`}

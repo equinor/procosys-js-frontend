@@ -24,12 +24,15 @@ type ProgressBarProps = {
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
+    //TODO: remove this
     const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
 
+    //TODO: remove this
     const closeFlyout = (): void => {
         setDisplayFlyout(false);
     };
 
+    //TODO: remove this
     const openFlyout = (): void => {
         setDisplayFlyout(true);
     };
@@ -45,7 +48,8 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
             props.cancelPunchOut,
             true);
     };
-
+    //TODO: the <EdsIcon> below + the button it belongs to
+    //TODO: remove the whole flyout thing from here
     return (
         <Container>
             <HeaderContainer>

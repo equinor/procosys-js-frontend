@@ -63,6 +63,7 @@ export type Invitation = {
     rowVersion: string;
     status: string;
     createdBy: {
+        azureOid: string;
         firstName: string;
         lastName: string;
     }

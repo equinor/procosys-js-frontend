@@ -32,7 +32,7 @@ const mockInvitation: Invitation = {
     type: 'DP',
     rowVersion: 'version1',
     status: '',
-    createdBy: { firstName: 'arild', lastName: 'bjerke' },
+    createdBy: { firstName: 'arild', lastName: 'bjerke', azureOid: 'dwaljawdawlkjawldjaw' },
     startTimeUtc: '2020-12-16 00:57:59',
     endTimeUtc: '2020-12-17 00:59:59',
     participants: [],

@@ -19,6 +19,7 @@ import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useCurrentUser } from '@procosys/core/UserContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 
@@ -56,6 +57,7 @@ const ViewIPO = (): JSX.Element => {
     const [showComments, setShowComments] = useState<boolean>(true);
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
+    const user = useCurrentUser();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -285,6 +287,7 @@ const ViewIPO = (): JSX.Element => {
         setLoading(false);
     };
 
+
     return (
         <Container ref={moduleContainerRef}>
             {loading ? (
@@ -302,6 +305,7 @@ const ViewIPO = (): JSX.Element => {
                             organizer={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
                             participants={invitation.participants}
                             isEditable={invitation.status == IpoStatusEnum.PLANNED}
+                            showEditButton={user.id === invitation.createdBy.azureOid}
                             isCancelable={invitation.status == IpoStatusEnum.PLANNED || invitation.status == IpoStatusEnum.COMPLETED}
                             cancelPunchOut={cancelPunchOut}
                         />

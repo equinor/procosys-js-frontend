@@ -285,6 +285,7 @@ const ViewIPO = (): JSX.Element => {
         setLoading(false);
     };
 
+
     return (
         <Container ref={moduleContainerRef}>
             {loading ? (
@@ -302,6 +303,7 @@ const ViewIPO = (): JSX.Element => {
                             organizer={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
                             participants={invitation.participants}
                             isEditable={invitation.status == IpoStatusEnum.PLANNED}
+                            showEditButton={invitation.canEdit}
                             isCancelable={invitation.status == IpoStatusEnum.PLANNED || invitation.status == IpoStatusEnum.COMPLETED}
                             cancelPunchOut={cancelPunchOut}
                         />

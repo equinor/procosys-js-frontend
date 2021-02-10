@@ -1,7 +1,6 @@
-import { render } from '@testing-library/react';
-
 import CommPkgTable from '../CommPkgTable';
 import React from 'react';
+import { render } from '@testing-library/react';
 
 describe('<CommPkgTable />', () => {
     it('Should render table', () => {

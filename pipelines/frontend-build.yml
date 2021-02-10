@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'procosys - github'
+    ref: tech/80922_add_test_reporting
 
 # Global variables for the pipeline
 variables:

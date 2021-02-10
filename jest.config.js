@@ -34,11 +34,12 @@ module.exports = {
     testPathIgnorePatterns: ['/node_modules/', '/build/'],
     setupFilesAfterEnv: ['./jest.setup.js'],
     collectCoverage: false,
+    coverageReporters: ["json", "lcov", "text", "clover", "cobertura"],
     collectCoverageFrom: [
         '**/src/**/*.{ts,tsx,js,jsx}',
         '!**/src/**/style.{ts,tsx,js,jsx}',
         '!**/node_modules/**',
         '!**/build/**',
     ],
-    coverageDirectory: '.coverage',
+    coverageDirectory: '.coverage'
 };

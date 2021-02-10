@@ -4,7 +4,7 @@ import CommPkgTable from '../CommPkgTable';
 import React from 'react';
 
 describe('<CommPkgTable />', () => {
-    it('should not render table', () => {
+    it('Should render table', () => {
         const { queryByText } = render(<CommPkgTable />);
         expect(queryByText('Description')).toBeInTheDocument();
         expect(queryByText('Comm status')).toBeInTheDocument();

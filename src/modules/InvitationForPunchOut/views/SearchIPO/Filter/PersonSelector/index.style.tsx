@@ -25,11 +25,3 @@ export const Container = styled.div`
     justify-content: space-between;
     width: 100%;
 `;
-
-export const ClearContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    margin-left: var(--grid-unit);
-    cursor: pointer;
-`;

@@ -1,12 +1,11 @@
-import { ClearContainer, Container, DropdownItem } from './index.style';
+import { Container, DropdownItem } from './index.style';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown  from '@procosys/components/Dropdown';
+import EdsIcon from '@procosys/components/EdsIcon';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
-import { TextField } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
 import { rolePersonParamType } from '..';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
@@ -71,6 +70,11 @@ const PersonSelector = ({
         };
     };
 
+    const clearPerson = (event: React.MouseEvent): void => {
+        event.preventDefault();
+        event.stopPropagation();
+        onChange('personOid', '');
+    };
 
     const setPerson = (event: React.MouseEvent, personIndex: number): void => {
         event.preventDefault();
@@ -100,6 +104,7 @@ const PersonSelector = ({
             variant='form'
             onFilter={(input: string): void => setPersonsFilter(input)}
             text={selectedPerson ? selectedPerson.text : 'Search to select'}
+            Icon={selectedPerson ? <div onClick={(e): void => clearPerson(e)}><EdsIcon name="clear" size={18} /></div> : undefined}
         >
             {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
             {!isLoading &&
@@ -116,9 +121,6 @@ const PersonSelector = ({
                                                 );
                                             })}
         </Dropdown>
-        <ClearContainer onClick={(e): void => setPerson(e, -1)}>
-            <Typography variant='meta'>Clear</Typography>
-        </ClearContainer>
     </Container>);
 };
 

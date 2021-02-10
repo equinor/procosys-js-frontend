@@ -1,7 +1,8 @@
-import { ClearContainer, Container, DropdownItem } from './index.style';
+import { Container, DropdownItem } from './index.style';
 import React, { useEffect, useState } from 'react';
 
 import Dropdown  from '@procosys/components/Dropdown';
+import EdsIcon from '@procosys/components/EdsIcon';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
 import { Typography } from '@equinor/eds-core-react';
@@ -26,6 +27,12 @@ const RoleSelector = ({
     }, [functionalRoleCode]);
 
 
+    const clearRole = (event: React.MouseEvent): void => {
+        event.preventDefault();
+        event.stopPropagation();
+        onChange('functionalRoleCode', '');
+    };
+
     const setRole = (event: React.MouseEvent, roleIndex: number): void => {
         event.preventDefault();
         const role = roles[roleIndex];
@@ -39,6 +46,7 @@ const RoleSelector = ({
             maxHeight='300px'
             variant='form'
             text={selectedRole ? selectedRole.text : 'Select'}
+            Icon={selectedRole ? <div onClick={(e): void => clearRole(e)}><EdsIcon name="clear" size={18}/></div> : undefined}
         >
             {roles.length < 1 && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
             {roles.length > 0 &&
@@ -55,9 +63,6 @@ const RoleSelector = ({
                                                 );
                                             })}
         </Dropdown>
-        <ClearContainer onClick={(e): void => setRole(e, -1)}>
-            <Typography variant='meta'>Clear</Typography>
-        </ClearContainer>
     </Container>);
 };
 

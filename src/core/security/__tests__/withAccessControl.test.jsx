@@ -12,7 +12,7 @@ jest.mock('../../../core/PlantContext',() => ({
     }
 }));
 
-jest.mock('../../ProcosysSettings',() => ({
+jest.mock('../../ProCoSysSettings',() => ({
     featureIsEnabled: () => {
         return mockFeatureIsEnabled();
     }

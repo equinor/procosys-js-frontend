@@ -29,8 +29,8 @@ const ProcosysRouter = (): JSX.Element => {
     const { plant } = useParams() as any;
 
     return (
-        <PlantContextProvider>
-            <AnalyticsContextProvider>
+        <AnalyticsContextProvider>
+            <PlantContextProvider>
                 <DirtyContextProvider>
                     <ProCoSysRootLayout>
                         <Header />
@@ -66,8 +66,8 @@ const ProcosysRouter = (): JSX.Element => {
                         </div>
                     </ProCoSysRootLayout>
                 </DirtyContextProvider>
-            </AnalyticsContextProvider>
-        </PlantContextProvider>
+            </PlantContextProvider>
+        </AnalyticsContextProvider>
     );
 };
 

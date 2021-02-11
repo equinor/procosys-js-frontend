@@ -12,7 +12,7 @@ class AppInsightsAnalytics implements IAnalytics {
     _service: ApplicationInsights;
     _plant: string;
 
-    constructor(history: H.History, plant: string) {
+    constructor(history: H.History) {
         const reactPlugin = new ReactPlugin();
         this._service = new ApplicationInsights({
             config: {
@@ -24,10 +24,10 @@ class AppInsightsAnalytics implements IAnalytics {
             }
         });
         this._service.loadAppInsights();
-        this._plant = plant;
+        this._plant = '';
     };
 
-    setPlant(plant: string): void {
+    setCurrentPlant(plant: string): void {
         this._plant = plant;
     }
 

@@ -1,4 +1,4 @@
-import { ConfirmationTextContainer, DateTimeContainer, DropdownItem, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
+import { ConfirmationTextContainer, DateTimeContainer, DropdownItem, ErrorContainer, FieldContainer, FormContainer, LocationContainer, PoTypeContainer, TextContainer } from './GeneralInfo.style';
 import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -9,13 +9,16 @@ import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Dropdown from '../../../../../components/Dropdown';
+import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { getEndTime } from '../utils';
+import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
     { text: 'MDP (Multi Discipline Punch)', value: 'MDP' }];
+
 
 interface GeneralInfoProps {
     generalInfo: GeneralInfoDetails;
@@ -24,7 +27,8 @@ interface GeneralInfoProps {
     isEditMode: boolean;
     clearScope: () => void;
     confirmationChecked: boolean;
-    setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>
+    setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>;
+    errors: Record<string, string> | null;
 }
 
 const GeneralInfo = ({
@@ -34,14 +38,15 @@ const GeneralInfo = ({
     isEditMode,
     clearScope,
     confirmationChecked,
-    setConfirmationChecked
+    setConfirmationChecked,
+    errors
 }: GeneralInfoProps): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<ProjectDetails[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [timeError, setTimeError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -101,27 +106,26 @@ const GeneralInfo = ({
                 const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
                 const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
                 setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
-                setTimeError(newTime >= newEndTime);
             } else {
                 const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
                 setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
-                setTimeError(generalInfo.startTime >= newEndTime);
             }
         }
     };
 
     return (
         <FormContainer>
-            <Dropdown
-                label={'Project'}
-                maxHeight='300px'
-                variant='form'
-                text={generalInfo.projectName || 'Select'}
-                onFilter={setFilterForProjects}
-                disabled={fromMain || isEditMode}
-            >
-                {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
-                {!isLoading &&
+            <FieldContainer>
+                <Dropdown
+                    label={'Project'}
+                    maxHeight='300px'
+                    variant='form'
+                    text={generalInfo.projectName || 'Select'}
+                    onFilter={setFilterForProjects}
+                    disabled={fromMain || isEditMode}
+                >
+                    {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                    {!isLoading &&
                     filteredProjects.map((projectItem, index) => {
                         return (
                             <DropdownItem
@@ -135,38 +139,74 @@ const GeneralInfo = ({
                             </DropdownItem>
                         );
                     })
+                    }
+                </Dropdown>
+                {errors && errors['projectName'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba}/>
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['projectName']}</Typography>
+                    </ErrorContainer>
+                    )
                 }
-            </Dropdown>
-            <PoTypeContainer id='po-type-select'>
-                <SelectInput
-                    onChange={setPoTypeForm}
-                    data={poTypes}
-                    label={'Type of punch round'}
-                >
-                    {(generalInfo.poType && generalInfo.poType.text) || 'Select'}
-                </SelectInput>
-            </PoTypeContainer>
-            <TextField
-                data-testid='title'
-                id={'title'}
-                label='Title'
-                placeholder='Write here'
-                defaultValue={generalInfo.title}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                    setGeneralInfo(gi => { return { ...gi, title: e.target.value }; });
-                }}
-            />
-            <TextField
-                id='description'
-                placeholder='Write here'
-                label='Description'
-                meta='Optional'
-                defaultValue={generalInfo.description}
-                multiline
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                    setGeneralInfo(gi => { return { ...gi, description: e.target.value }; });
-                }}
-            />
+
+            </FieldContainer>
+            <FieldContainer>
+                <PoTypeContainer id='po-type-select'>
+                    <SelectInput
+                        onChange={setPoTypeForm}
+                        data={poTypes}
+                        label={'Type of punch round'}
+                    >
+                        {(generalInfo.poType && generalInfo.poType.text) || 'Select'}
+                    </SelectInput>
+                </PoTypeContainer>
+                {errors && errors['poType'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba}/>
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['poType']}</Typography>
+                    </ErrorContainer>
+                    )
+                }
+            </FieldContainer>
+            <FieldContainer>
+                <TextField
+                    data-testid='title'
+                    id={'title'}
+                    label='Title'
+                    placeholder='Write here'
+                    defaultValue={generalInfo.title}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                        setGeneralInfo(gi => { return { ...gi, title: e.target.value }; });
+                    }}
+                />
+                {errors && errors['title'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba}/>
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['title']}</Typography>
+                    </ErrorContainer>
+                    )
+                }
+            </FieldContainer>
+            <FieldContainer>
+                <TextField
+                    id='description'
+                    placeholder='Write here'
+                    label='Description'
+                    meta='Optional'
+                    defaultValue={generalInfo.description}
+                    multiline
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                        setGeneralInfo(gi => { return { ...gi, description: e.target.value }; });
+                    }}
+                />
+                {errors && errors['description'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba}/>
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['description']}</Typography>
+                    </ErrorContainer>
+                    )
+                }
+            </FieldContainer>
             <Typography constiant='h5'>Date and time for punch round</Typography>
             <DateTimeContainer>
                 <DateTimeField
@@ -191,7 +231,7 @@ const GeneralInfo = ({
                     onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('start', event.target.value)}
                 />
                 <DateTimeField
-                    id='endDate'
+                    id='endTime'
                     label='End'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
@@ -201,37 +241,59 @@ const GeneralInfo = ({
                     }}
                     onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetTime('end', event.target.value)}
                 />
-                {timeError &&
-                    (<Typography variant="caption" color="danger">Start time must be before end time</Typography>)
+                {errors && errors['time'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba} />
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['time']}</Typography>
+                    </ErrorContainer>
+                    )
                 }
             </DateTimeContainer>
 
-            <LocationContainer>
-                <TextField
-                    data-testid='location'
-                    id='location'
-                    placeholder='Write here'
-                    label='Location'
-                    meta='Optional'
-                    defaultValue={generalInfo.location}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                        setGeneralInfo(gi => { return { ...gi, location: e.target.value }; });
-                    }}
-                />
-            </LocationContainer>
-            <ConfirmationTextContainer>
-                {isEditMode ? <Checkbox disabled checked /> : <Checkbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
-                <TextContainer>
-                    <Typography variant="body_short" fontWeight={400}>
+            <FieldContainer>
+                <LocationContainer>
+                    <TextField
+                        data-testid='location'
+                        id='location'
+                        placeholder='Write here'
+                        label='Location'
+                        meta='Optional'
+                        defaultValue={generalInfo.location}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                            setGeneralInfo(gi => { return { ...gi, location: e.target.value }; });
+                        }}
+                    />
+                </LocationContainer>
+                {errors && errors['location'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba} />
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['location']}</Typography>
+                    </ErrorContainer>
+                    )
+                }
+            </FieldContainer>
+            <FieldContainer>
+                <ConfirmationTextContainer>
+                    {isEditMode ? <Checkbox disabled checked /> : <Checkbox checked={confirmationChecked} onChange={(): void => setConfirmationChecked(confirmed => !confirmed)} />}
+                    <TextContainer>
+                        <Typography variant="body_short" fontWeight={400}>
                         I hereby confirm that prior to common punch-out all relevant MCCR shall be signed and all punch items registered.
-                    </Typography>
-                    <br />
-                    <Typography variant="body_short" fontWeight={400}>
+                        </Typography>
+                        <br />
+                        <Typography variant="body_short" fontWeight={400}>
                         Mechanical Completion means that the installation is built in accordance with relevant drawings and specifications.
                         All specified tests and inspections are carried out and documented in a uniform way.
-                    </Typography>
-                </TextContainer>
-            </ConfirmationTextContainer>
+                        </Typography>
+                    </TextContainer>
+                </ConfirmationTextContainer>
+                {errors && errors['confirmation'] &&
+                    (<ErrorContainer>
+                        <EdsIcon name="error_filled" size={16} color={tokens.colors.interactive.danger__text.rgba} />
+                        <Typography variant="caption" color={tokens.colors.interactive.danger__text.rgba}>{errors['confirmation']}</Typography>
+                    </ErrorContainer>
+                    )
+                }
+            </FieldContainer>
         </FormContainer>
     );
 };

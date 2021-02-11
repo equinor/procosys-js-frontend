@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
-import { tokens } from '@equinor/eds-tokens';
 import Checkbox from '@procosys/components/Checkbox';
+import { tokens } from '@equinor/eds-tokens';
 
 interface DropdownProps {
     disabled?: boolean;
@@ -21,8 +21,23 @@ export const DropdownItem = styled.div<DropdownProps>`
     `}
 `;
 
+export const ErrorContainer = styled.div`
+    display: flex;
+    margin: var(--grid-unit);
+    > * {
+        margin-right: var(--grid-unit);
+    }
+`;
+
+export const FieldContainer = styled.div`
+    > * {
+        width: 100%;
+    }
+`;
+
 export const DateTimeContainer = styled.div`
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     > div {
         margin-right: calc(var(--grid-unit) * 2);

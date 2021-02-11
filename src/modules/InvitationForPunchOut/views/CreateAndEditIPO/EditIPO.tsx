@@ -14,7 +14,6 @@ import { SelectItem } from '@procosys/components/Select';
 import { poTypes } from './GeneralInfo/GeneralInfo';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
-import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
@@ -69,7 +68,6 @@ const EditIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-    const { plant } = useCurrentPlant();
     const analystics = useAnalytics();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
 
@@ -270,7 +268,7 @@ const EditIPO = (): JSX.Element => {
                     commPkgScope,
                     invitation.rowVersion
                 );
-                analystics.trackUserAction(IpoCustomEvents.EDITED, { plant: plant, project: generalInfo.projectName, type: generalInfo.poType.value });
+                analystics.trackUserAction(IpoCustomEvents.EDITED, { project: generalInfo.projectName, type: generalInfo.poType.value });
 
                 await uploadOrRemoveAttachments(params.ipoId);
 

@@ -10,8 +10,9 @@ import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 class AppInsightsAnalytics implements IAnalytics {
 
     _service: ApplicationInsights;
+    _plant: string;
 
-    constructor(history: H.History) {
+    constructor(history: H.History, plant: string) {
         const reactPlugin = new ReactPlugin();
         this._service = new ApplicationInsights({
             config: {
@@ -23,10 +24,15 @@ class AppInsightsAnalytics implements IAnalytics {
             }
         });
         this._service.loadAppInsights();
+        this._plant = plant;
     };
 
+    setPlant(plant: string): void {
+        this._plant = plant;
+    }
+
     trackUserAction(name: string, data?: ICustomProperties): void {
-        this._service.trackEvent({ name: name }, data);
+        this._service.trackEvent({ name: name }, { plant: this._plant, ...data });
     }
 
     trackException(exception: Error, id?: string): void {

@@ -1,4 +1,3 @@
-import { AnalyticsContextProvider, useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
 import { ComponentName, IpoCustomEvents, OrganizationsEnum } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
@@ -11,7 +10,7 @@ import CreateAndEditIPO from './CreateAndEditIPO';
 import Loading from '@procosys/components/Loading';
 import { OrganizationMap } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useCurrentPlant } from '@procosys/core/PlantContext';
+import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useCurrentUser } from '../../../../core/UserContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
@@ -106,7 +105,6 @@ const CreateIPO = (): JSX.Element => {
     const [commPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
 
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-    const { plant } = useCurrentPlant();
     const analystics = useAnalytics();
 
     useEffect(() => {
@@ -266,7 +264,7 @@ const CreateIPO = (): JSX.Element => {
                     mcPkgScope,
                     commPkgScope
                 );
-                analystics.trackUserAction(IpoCustomEvents.CREATED, { plant: plant.title, project: generalInfo.projectName, type: generalInfo.poType.value });
+                analystics.trackUserAction(IpoCustomEvents.CREATED, { project: generalInfo.projectName, type: generalInfo.poType.value });
 
                 await uploadAllAttachments(newIpoId);
 

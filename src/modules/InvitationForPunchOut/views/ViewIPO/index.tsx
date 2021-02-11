@@ -1,6 +1,7 @@
 import { AcceptIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
 import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabStyle, TabsContainer } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
+import { IpoCustomEvents, IpoStatusEnum } from '../enums';
 import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
@@ -12,13 +13,14 @@ import Comments from './Comments';
 import EdsIcon from '@procosys/components/EdsIcon';
 import GeneralInfo from './GeneralInfo';
 import History from './History';
-import { IpoStatusEnum } from '../enums';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 
@@ -56,6 +58,8 @@ const ViewIPO = (): JSX.Element => {
     const [showComments, setShowComments] = useState<boolean>(true);
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
+    const { plant } = useCurrentPlant();
+    const analytics = useAnalytics();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -208,6 +212,7 @@ const ViewIPO = (): JSX.Element => {
                 participantRowVersion: signer.rowVersion,
                 participants: attNoteData
             });
+            analytics.trackUserAction(IpoCustomEvents.COMPLETED, { plant: plant.title, project: invitation.projectName, type: invitation.type });
             await getInvitation();
         } catch (error) {
             console.error(error.message, error.data);
@@ -230,6 +235,7 @@ const ViewIPO = (): JSX.Element => {
         try {
             setLoading(true);
             await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+            analytics.trackUserAction(IpoCustomEvents.ACCEPTED, { plant: plant.title, project: invitation.projectName, type: invitation.type });
             await getInvitation();
         } catch (error) {
             console.error(error.message, error.data);
@@ -262,6 +268,7 @@ const ViewIPO = (): JSX.Element => {
         try {
             setLoading(true);
             await apiClient.signPunchOut(params.ipoId, signDetails);
+            analytics.trackUserAction(IpoCustomEvents.SIGNED, { plant: plant.title, project: invitation.projectName, type: invitation.type });
             await getInvitation();
         } catch (error) {
             console.error(error.message, error.data);
@@ -275,6 +282,7 @@ const ViewIPO = (): JSX.Element => {
         if (invitation) {
             try {
                 await apiClient.cancelPunchOut(params.ipoId, invitation.rowVersion);
+                analytics.trackUserAction(IpoCustomEvents.CANCELED, { plant: plant.title, project: invitation.projectName, type: invitation.type });
                 await getInvitation();
                 showSnackbarNotification('Invitation for punch-out is cancelled.');
             } catch (error) {

@@ -89,7 +89,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
 
     useEffect(() => {
         setCurrentPlant(plantInPath);
-        analytics.setCurrentPlant(currentPlant.title);
+        analytics.setCurrentPlant(plantInPath);
     }, [plantInPath]);
 
     if (!currentPlant) {

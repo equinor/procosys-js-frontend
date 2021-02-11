@@ -1,6 +1,6 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../enums';
-import { Container, CustomTable, SpinnerContainer } from './style';
+import { Container, CustomTable, SpinnerContainer, ResponseWrapper } from './style';
 import { ExternalEmail, FunctionalRole, Participant } from '../../types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -13,6 +13,7 @@ import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+
 import CustomPopover from './CustomPopover/index';
 
 const { Head, Body, Cell, Row } = Table;
@@ -370,7 +371,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                 participant.externalEmail.id;
 
                         const addPopover = participant.functionalRole ?
-                            participant.functionalRole.response? true:false : false;
+                            participant.functionalRole.response?
+                                participant.functionalRole.persons.length? true : false
+                                : false
+                            : false;
 
                         return (
                             <Row key={participant.sortKey} as="tr">
@@ -379,8 +383,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>{representative}</Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>
-                                    {response}
-                                    {addPopover && <CustomPopover participant={participant} activePopover={popoverActive} onChange={handlePopoverChange} />}
+                                    <ResponseWrapper> 
+                                        {response} 
+                                        {addPopover && <CustomPopover participant={participant} activePopover={popoverActive} onChange={handlePopoverChange} />}
+                                    </ResponseWrapper>
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     <Switch

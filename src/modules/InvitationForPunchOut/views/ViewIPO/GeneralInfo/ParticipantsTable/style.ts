@@ -26,3 +26,8 @@ export const SpinnerContainer = styled.div`
     align-items: center;
     justify-content: center;
 `;
+
+export const ResponseWrapper = styled.div`
+    display: flex;
+    align-items: center;
+`;

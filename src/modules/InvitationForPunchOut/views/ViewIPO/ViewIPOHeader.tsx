@@ -1,6 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
 import { ButtonContainer, ButtonSpacer, Container, HeaderContainer, ProgressBarContainer } from './ViewIPOHeader.style';
-import OutlookInfo, { OutlookStatusType } from './OutlookInfo';
 import React, { useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -24,18 +23,6 @@ type ProgressBarProps = {
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
-    //TODO: remove this
-    const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
-
-    //TODO: remove this
-    const closeFlyout = (): void => {
-        setDisplayFlyout(false);
-    };
-
-    //TODO: remove this
-    const openFlyout = (): void => {
-        setDisplayFlyout(true);
-    };
 
     const confirmCancelIpo = (): void => {
         showModalDialog(
@@ -48,19 +35,12 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
             props.cancelPunchOut,
             true);
     };
-    //TODO: the <EdsIcon> below + the button it belongs to
-    //TODO: remove the whole flyout thing from here
+
     return (
         <Container>
             <HeaderContainer>
                 <ButtonContainer>
                     <Typography variant="h2">{`IPO-${props.ipoId}: ${props.title}`}</Typography>
-                    <Button
-                        variant='ghost_icon'
-                        onClick={(): void => openFlyout()}
-                    >
-                        <EdsIcon name='microsoft_outlook' color={tokens.colors.interactive.primary__resting.rgba} />
-                    </Button>
                 </ButtonContainer>
                 <ButtonContainer>
                     <Button
@@ -83,16 +63,6 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
             <ProgressBarContainer>
                 <ProgressBar steps={props.steps} currentStep={props.currentStep} />
             </ProgressBarContainer>
-            {
-                displayFlyout && (
-                    <OutlookInfo
-                        close={closeFlyout}
-                        organizer={props.organizer}
-                        participants={props.participants}
-                        status={OutlookStatusType.OK}
-                    />
-                )
-            }
         </Container>
     );
 };

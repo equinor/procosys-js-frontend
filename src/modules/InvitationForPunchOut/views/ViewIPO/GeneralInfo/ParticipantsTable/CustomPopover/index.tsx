@@ -4,7 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 import { Participant } from '../../../types';
-import { CustomPopoverCard, CustomPopoverContent, PersonRow } from './style';
+import { CustomPopoverCard, PersonItem, PersonRow, FloatingPopover, PersonItemRight } from './style';
 
 const { PopoverAnchor, PopoverTitle, PopoverContent } = Popover;
 
@@ -22,8 +22,9 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
     const closePopover = ():void => {
         onChange('');
     };
+
     return(
-        <Popover onClose={ closePopover } open={activePopover === participant.functionalRole.id.toString()} placement="right">
+        <FloatingPopover onClose={ closePopover } open={activePopover === participant.functionalRole.id.toString()} placement="right">
             <PopoverAnchor>
                 <Button 
                     variant='ghost_icon'
@@ -45,15 +46,15 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
                         participant.functionalRole.persons.map((person)=>{
                             return(
                                 <PersonRow key={ person.person.id }>
-                                    <div>{ person.person.firstName } { person.person.lastName }</div>
-                                    <div> { person.response } </div>
+                                    <PersonItem>{ person.person.firstName } { person.person.lastName }</PersonItem>
+                                    <PersonItemRight> { person.response } </PersonItemRight>
                                 </PersonRow>
                             );
                         })
                     }
                 </PopoverContent>
             </CustomPopoverCard>
-        </Popover>
+        </FloatingPopover>
     );
 };
 

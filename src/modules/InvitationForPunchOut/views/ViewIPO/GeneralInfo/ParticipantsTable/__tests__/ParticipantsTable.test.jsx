@@ -482,5 +482,18 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
         expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
     });
-    
+    describe('Custom popover rendering', () => {
+        it.todo('Should not render a popover anchor if there are no functional roles', () => {
+
+        });
+        it.todo('Should not render a popover anchor if the funcitonal role has no persons', () => {
+            
+        });
+        it.todo('Should render a popover anchor if there is a functional role with at least one person', () => {
+            
+        });
+        it.todo('Should render one popover anchor for eact functional role with at least one person', () => {
+
+        });
+    });
 });

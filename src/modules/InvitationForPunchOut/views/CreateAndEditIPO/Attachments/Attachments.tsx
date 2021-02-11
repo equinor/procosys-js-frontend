@@ -3,12 +3,12 @@ import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
 import { getFileName, getFileTypeIconName } from '../../utils';
 
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
-import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -69,7 +69,7 @@ const Attachments = ({
 
     const getAttachmentName = (attachment: Attachment): JSX.Element => {
         return (
-            <div>{getFileName(attachment.fileName)}</div>
+            <Typography link target='_blank' href={URL.createObjectURL(attachment.file)}>{getFileName(attachment.fileName)}</Typography>
         );
     };
 

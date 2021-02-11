@@ -2,13 +2,14 @@ import { Attachment, CommPkgRow, GeneralInfoDetails, Participant, Person } from 
 import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
 import { getFileName, getFileTypeIconName } from '../../utils';
-import EdsIcon from '@procosys/components/EdsIcon';
-import React from 'react';
-import { format } from 'date-fns';
-import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
-import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
+
 import CommPkgsTable from '../../ViewIPO/Scope/CommPkgsTable';
+import EdsIcon from '@procosys/components/EdsIcon';
 import { McPkgScope } from '../../ViewIPO/types';
+import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
+import React from 'react';
+import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
+import { format } from 'date-fns';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -75,7 +76,9 @@ const Summary = ({
     const attachmentList = attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment, index) => (
         <Row key={index}>
             <Cell><EdsIcon name={getFileTypeIconName(attachment.fileName)} /></Cell>
-            <Cell>{getFileName(attachment.fileName)}</Cell>
+            <Cell>
+                <Typography link target='_blank' href={URL.createObjectURL(attachment.file)}>{getFileName(attachment.fileName)}</Typography>
+            </Cell>
         </Row>
     ));
 

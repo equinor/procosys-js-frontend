@@ -19,6 +19,7 @@ type ProgressBarProps = {
     participants: Participant[];
     organizer: string;
     isEditable: boolean;
+    showEditButton: boolean;
     isCancelable: boolean;
     cancelPunchOut: () => void;
 }
@@ -66,14 +67,18 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                     >
                         <EdsIcon name='calendar_reject' /> Cancel IPO
                     </Button>
-                    <ButtonSpacer />
-                    <Link to={`/EditIPO/${props.ipoId}`}>
-                        <Button
-                            disabled={!props.isEditable}
-                            variant='outlined'>
-                            <EdsIcon name='edit' /> Edit
-                        </Button>
-                    </Link>
+                    { props.showEditButton && (
+                        <>
+                            <ButtonSpacer />
+                            <Link to={`/EditIPO/${props.ipoId}`}>
+                                <Button
+                                    disabled={!props.isEditable}
+                                    variant='outlined'>
+                                    <EdsIcon name='edit' /> Edit
+                                </Button>
+                            </Link>
+                        </>
+                    )}
                 </ButtonContainer>
             </HeaderContainer>
             <ProgressBarContainer>

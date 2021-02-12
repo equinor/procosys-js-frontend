@@ -9,7 +9,43 @@ import GeneralInfo from './GeneralInfo/GeneralInfo';
 import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
+import { isEmptyObject } from './utils';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+
+const validateGeneralInfo = (info: GeneralInfoDetails, confirmationChecked?: boolean): Record<string, string> | null => {
+    let errors = {};
+    const { title, description, location, poType, projectName, startTime, endTime } = info;
+
+    // when function is called with 'confirmationChecked', additional validation is performed
+    // that would produce errors on initial state, or interfere when entering info
+    if (typeof confirmationChecked === 'boolean') {
+        !projectName && (errors = { ...errors, projectName: 'Required field.' });
+        !poType && (errors = { ...errors, poType: 'Required field.' });
+        
+        !title ? (errors = { ...errors, title: 'Required field.' }) :
+            title.trim().length < 3 && (errors = { ...errors, title: 'Title is too short. Minimum 3 characters.' });
+        
+        (!startTime || !endTime) && (errors = { ...errors, time: 'Start and end time is required.'});
+
+        !confirmationChecked && (errors = { ...errors, confirmation: 'Confirmation required.'});
+    };
+
+    if (title) {
+        title.length > 250 && (errors = { ...errors, title: 'Title is too long. Maximum 250 characters.' });
+    }
+    if (description) {
+        description.length > 4096 && (errors = { ...errors, description: 'Description is too long. Maximum 4096 characters.' });
+    }
+    if (location) {
+        location.length > 250 && (errors = { ...errors, location: 'Location is too long. Maximum 250 characters.' });
+    }
+    if (startTime && endTime) {
+        startTime >= endTime && (errors = { ...errors, time: 'Start time must precede end time.'});
+    }
+
+    if (isEmptyObject(errors)) return null;
+    return errors;
+};
 
 export enum StepsEnum {
     GeneralInfo = 1,
@@ -66,19 +102,16 @@ const CreateAndEditIPO = ({
 }: CreateAndEditProps): JSX.Element => {
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.GeneralInfo);
     const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
-
-    const initialGeneralInfo = { ...generalInfo };
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
-    useEffect(() => {
-        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
-            setDirtyStateFor(ComponentName.CreateAndEditIPO);
-        } else {
-            unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
-        }
-    }, [generalInfo]);
+    const [generalInfoErrors, setGeneralInfoErrors] = useState<Record<string, string> | null>(null);
 
     const goToNextStep = (): void => {
+        if (currentStep === StepsEnum.GeneralInfo) {
+            const errors = validateGeneralInfo(generalInfo, confirmationChecked);
+            if (errors) {
+                setGeneralInfoErrors(errors);
+                return;
+            }
+        }
         if (currentStep > StepsEnum.Participants) {
             changeCompletedStatus(true, currentStep);
             if (currentStep == StepsEnum.UploadAttachments) {
@@ -103,6 +136,13 @@ const CreateAndEditIPO = ({
     };
 
     const goToStep = (stepNo: number): void => {
+        if (currentStep === StepsEnum.GeneralInfo) {
+            const errors = validateGeneralInfo(generalInfo, confirmationChecked);
+            if (errors) {
+                setGeneralInfoErrors(errors);
+                return;
+            }
+        }
         if (steps[stepNo >= 2 ? stepNo - 2 : 0].isCompleted) {
             if (stepNo > StepsEnum.Participants) {
                 changeCompletedStatus(true, stepNo);
@@ -120,13 +160,13 @@ const CreateAndEditIPO = ({
     };
 
     useEffect(() => {
-        if (confirmationChecked && generalInfo.poType && generalInfo.projectName &&
-            generalInfo.title && generalInfo.startTime && generalInfo.endTime && 
-            (generalInfo.startTime < generalInfo.endTime)) {
+        const errors = validateGeneralInfo(generalInfo);
+        if (!errors) {
             changeCompletedStatus(true, StepsEnum.GeneralInfo);
         } else {
             changeCompletedStatus(false, StepsEnum.GeneralInfo);
         }
+        setGeneralInfoErrors(errors);
     }, [generalInfo, confirmationChecked]);
 
     useEffect(() => {
@@ -186,6 +226,7 @@ const CreateAndEditIPO = ({
                 clearScope={clearScope}
                 confirmationChecked={confirmationChecked}
                 setConfirmationChecked={setConfirmationChecked}
+                errors={generalInfoErrors}
             />
         }
         { (currentStep == StepsEnum.Scope && generalInfo.poType != null && generalInfo.projectName != null) &&

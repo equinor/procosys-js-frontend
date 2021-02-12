@@ -16,6 +16,7 @@ public/
 
 # Jest test runner coverage files
 .coverage/
+junit.xml
 
 # Dependency directories
 node_modules/

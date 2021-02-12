@@ -8,7 +8,7 @@ export const CustomPopoverCard = styled.div`
 `;
 
 export const PersonItem = styled.div`
-    margin-right: 32px;
+    margin-right: calc(var(--grid-unit) * 4);
 `;
 
 export const PersonItemRight = styled.div`

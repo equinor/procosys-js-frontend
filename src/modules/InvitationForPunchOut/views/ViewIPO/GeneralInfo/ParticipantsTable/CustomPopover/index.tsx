@@ -45,7 +45,7 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
                     {
                         participant.functionalRole.persons.map((person)=>{
                             return(
-                                <PersonRow key={ person.person.id }>
+                                <PersonRow key={ person.person.id } data-testid={ person.person.id } >
                                     <PersonItem> { person.person.firstName } { person.person.lastName } </PersonItem>
                                     <PersonItemRight> { person.response } </PersonItemRight>
                                 </PersonRow>

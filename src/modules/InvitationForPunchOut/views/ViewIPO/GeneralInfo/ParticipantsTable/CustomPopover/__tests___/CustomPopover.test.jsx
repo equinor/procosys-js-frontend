@@ -62,19 +62,37 @@ const participants = [
 
 describe('<CustomPopover />', () => {
     //TODO: change names to something better
-    it.todo('Should open the popover on click', () => {
-        //should this be here or in the parent??
-    });
-    it.todo('Should render every person in the functional role in the popover', () => {
-        const { queryAllByText } = renderWithTheme(<CustomPopover 
+    it('Should be open when activePopover is the same as the functional\'s id', () => {
+        const { getAllByRole } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
             onChange={()=>{}}
-            activePopover = {1}
+            activePopover = {participants[0].functionalRole.id.toString()}
         />);
-        const persons = queryAllByText();
-        expect(persons).toBeInTheDocument();
+        const buttons = getAllByRole('button');
+        expect(buttons).toHaveLength(2);
     });
-    it.todo('Should render the correct responses', () => {
-
+    it.todo('Should not be open when activePopover is not the same as the functional\'s id');
+    it('Should render every person in the functional role in the popover', () => {
+        const { getByText } = renderWithTheme(<CustomPopover 
+            participant = { participants[0] }
+            onChange={()=>{}}
+            activePopover = {participants[0].functionalRole.id.toString()}
+        />);
+        participants[0].functionalRole.persons.forEach((person) => {
+            const response = getByText(person.person.firstName + ' ' + person.person.lastName, { exact: false });
+            expect(response).toBeValid();
+        });
+    });
+    it('Should render the correct responses for the correct people', () => {
+        const { getByTestId } = renderWithTheme(<CustomPopover 
+            participant = { participants[0] }
+            onChange={()=>{}}
+            activePopover = {participants[0].functionalRole.id.toString()}
+        />);
+        participants[0].functionalRole.persons.forEach((person) => {
+            const response = getByTestId(person.person.id.toString(), { exact: false });
+            expect(response).toHaveTextContent(person.person.firstName);
+            expect(response).toHaveTextContent(person.response);
+        });
     });
 });

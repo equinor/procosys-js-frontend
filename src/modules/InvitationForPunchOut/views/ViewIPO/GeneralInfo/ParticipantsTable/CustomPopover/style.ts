@@ -8,16 +8,16 @@ export const CustomPopoverCard = styled.div`
 `;
 
 export const PersonItem = styled.div`
-    margin-right: calc(var(--grid-unit) * 4);
+    margin: 0;
 `;
 
 export const PersonItemRight = styled.div`
-    margin-left: auto;
+    margin: 0;
+    color: red;
 `;
 
 export const PersonRow = styled.div`
-    display: flex;
-    align-items: center;
+    position: relative;
 `;
 
 export const FloatingPopover = styled(Popover)`

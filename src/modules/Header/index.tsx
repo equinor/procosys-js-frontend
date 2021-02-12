@@ -10,6 +10,7 @@ import {
     ShowOnDesktop,
     ShowOnMobile
 } from './style';
+import { NavLink, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -22,7 +23,6 @@ import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
-import { useParams } from 'react-router-dom';
 import { useProcosysContext } from '../../core/ProcosysContext';
 
 type PlantItem = {
@@ -111,9 +111,12 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Document</DropdownItem>
                             </a>
                             { (ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
+                                <NavLink
+                                    activeClassName={'active'}
+                                    to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}
+                                >
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
-                                </a>
+                                </NavLink>
                             }
                             <a href={`/${params.plant}/Hookup/New`}>
                                 <DropdownItem>Certificate</DropdownItem>
@@ -180,9 +183,12 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
                             { (ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <a href={`/${params.plant}/InvitationForPunchOut/`}>
+                                <NavLink
+                                    activeClassName={'active'}
+                                    to={`/${params.plant}/InvitationForPunchOut`}
+                                >
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
-                                </a>
+                                </NavLink>
                             }
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}

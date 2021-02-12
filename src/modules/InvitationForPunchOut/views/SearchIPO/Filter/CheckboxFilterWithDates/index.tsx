@@ -1,5 +1,5 @@
 import { CheckboxFilterValue, dateFilterParamType, filterParamType } from '../index';
-import { CheckboxSection, DateField, DatesContainer, ExpandedContainer } from './index.style';
+import { CheckboxSection, DateField, DatesContainer } from './index.style';
 import { Collapse, CollapseInfo } from '../index.style';
 import React, { ChangeEvent, useState } from 'react';
 
@@ -51,7 +51,7 @@ const CheckboxFilterWithDates = ({
             </Collapse>
             {
                 isExpanded && (
-                    <ExpandedContainer>
+                    <div>
                         {
                             filterValues.map(value => {
                                 return (<CheckboxSection key={value.id}>
@@ -88,7 +88,7 @@ const CheckboxFilterWithDates = ({
                             }
 
                         </DatesContainer>
-                    </ExpandedContainer>
+                    </div>
                 )
             }
         </>

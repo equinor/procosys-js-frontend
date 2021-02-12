@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { Container } from './index.style';
 import { IPO } from '../types';
 import { IpoStatusEnum } from '../../enums';
+import { NavLink } from 'react-router-dom';
 import Table from '@procosys/components/Table';
 import { Typography } from '@equinor/eds-core-react';
 import { getLocalDate } from '@procosys/core/services/DateService';
@@ -50,7 +51,12 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
     const getIdColumn = (data: string):JSX.Element => {
         return (
-            <div className='controlOverflow'><Typography link href={`/${plant.pathId}/InvitationForPunchOut/${data}`}>{data}</Typography></div>
+            <div className='controlOverflow'>
+                <NavLink to={`/${data}`}>
+                    <Typography link>{data}</Typography>
+                </NavLink>
+            </div>
+
         );
 
     };

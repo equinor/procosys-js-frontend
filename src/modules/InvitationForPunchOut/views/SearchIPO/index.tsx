@@ -58,16 +58,13 @@ const SearchIPO = (): JSX.Element => {
         let requestCanceler: Canceler;
         try {
             (async (): Promise<void> => {
-                const functionalRoles = await apiClient.getFunctionalRolesAsync()
-                    .then((roles: any) => {
-                        return roles.map((role: FunctionalRole): SelectItem => {
-                            return {
-                                text: role.code,
-                                value: role.code
-                            };
-                        });
+                const functionalRoles = await apiClient.getFunctionalRolesAsync();
+                setAvailableRoles(functionalRoles.map((role): SelectItem => {
+                    return ({
+                        text: role.code,
+                        value: role.code
                     });
-                setAvailableRoles(functionalRoles);
+                }));
             })();
             return (): void => requestCanceler && requestCanceler();
         } catch (error) {

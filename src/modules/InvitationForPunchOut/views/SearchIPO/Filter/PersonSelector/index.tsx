@@ -45,16 +45,15 @@ const PersonSelector = ({
                 (async (): Promise<void> => {
                     setIsLoading(true);
 
-                    const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
-                        .then(persons => persons.map((person): SelectItem => {
-                            return {
-                                text: nameCombiner(person.firstName, person.lastName),
-                                value: person.azureOid,
-                                email: person.email
-                            };
-                        })
-                        );
-                    setFilteredPersons(persons);
+                    const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel);
+                    setFilteredPersons(persons.map((person): SelectItem => {
+                        return {
+                            text: nameCombiner(person.firstName, person.lastName),
+                            value: person.azureOid,
+                            email: person.email
+                        };
+                    })
+                    );
                     setIsLoading(false);
                 })();
             } catch (error) {

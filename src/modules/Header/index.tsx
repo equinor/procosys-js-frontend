@@ -10,7 +10,7 @@ import {
     ShowOnDesktop,
     ShowOnMobile
 } from './style';
-import { NavLink, useParams } from 'react-router-dom';
+import { Link, NavLink, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -111,12 +111,9 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Document</DropdownItem>
                             </a>
                             { (ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <NavLink
-                                    activeClassName={'active'}
-                                    to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}
-                                >
+                                <Link to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
-                                </NavLink>
+                                </Link>
                             }
                             <a href={`/${params.plant}/Hookup/New`}>
                                 <DropdownItem>Certificate</DropdownItem>
@@ -183,12 +180,9 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
                             { (ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <NavLink
-                                    activeClassName={'active'}
-                                    to={`/${params.plant}/InvitationForPunchOut`}
-                                >
+                                <Link to={`/${params.plant}/InvitationForPunchOut`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
-                                </NavLink>
+                                </Link>
                             }
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}

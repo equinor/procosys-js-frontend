@@ -23,3 +23,7 @@ export const getNextHalfHourTimeString = (date: Date): Date => {
         return set(nextDay, { hours: 7, minutes: 0 });
     }
 };
+
+export const isEmptyObject = (obj: Record<string, string>): boolean => {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+};

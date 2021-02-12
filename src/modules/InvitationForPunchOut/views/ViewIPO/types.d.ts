@@ -55,6 +55,7 @@ type ExternalEmail = {
 }
 
 export type Invitation = {
+    canEdit: boolean;
     projectName: string;
     title: string;
     description: string;
@@ -63,6 +64,7 @@ export type Invitation = {
     rowVersion: string;
     status: string;
     createdBy: {
+        azureOid?: string;
         firstName: string;
         lastName: string;
     }

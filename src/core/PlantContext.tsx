@@ -60,6 +60,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         const plant = plantsFiltered[0] as PlantContextDetails;
         plant.pathId = normalizedPlantId;
         cache.setCache('plant', plant);
+        analytics.setCurrentPlant(plant.id);
         setCurrentPlantInContext(plant);
     };
 
@@ -72,7 +73,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
 
     useEffect(() => {
         procosysApiClient.setCurrentPlant(currentPlant.id);
-        analytics.setCurrentPlant(currentPlant.id);
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
             try {

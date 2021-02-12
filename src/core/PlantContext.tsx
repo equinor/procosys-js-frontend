@@ -72,6 +72,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
 
     useEffect(() => {
         procosysApiClient.setCurrentPlant(currentPlant.id);
+        analytics.setCurrentPlant(currentPlant.id);
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
             try {
@@ -89,8 +90,9 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
 
     useEffect(() => {
         setCurrentPlant(plantInPath);
-        analytics.setCurrentPlant(plantInPath);
     }, [plantInPath]);
+
+
 
     if (!currentPlant) {
         return (<Loading title="Loading plant information" />);

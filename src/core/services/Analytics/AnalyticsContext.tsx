@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-
 import AnalyticsService from './AppInsightsAnalytics';
 import IAnalytics from './IAnalytics';
+import React from 'react';
 import propTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 

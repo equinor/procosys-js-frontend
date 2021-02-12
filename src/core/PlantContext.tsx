@@ -92,8 +92,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         setCurrentPlant(plantInPath);
     }, [plantInPath]);
 
-
-
     if (!currentPlant) {
         return (<Loading title="Loading plant information" />);
     }

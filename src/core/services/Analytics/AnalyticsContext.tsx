@@ -8,6 +8,7 @@ const AnalyticsContext = React.createContext<IAnalytics>({} as IAnalytics);
 AnalyticsContext.displayName = 'AnalyticsContext';
 
 const AnalyticsContextProvider: React.FC = ({ children }): JSX.Element => {
+
     const history = useHistory();
     const analytics = new AnalyticsService(history);
 

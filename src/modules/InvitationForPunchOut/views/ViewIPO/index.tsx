@@ -154,6 +154,7 @@ const ViewIPO = (): JSX.Element => {
         setLoadingComments(true);
         try {
             await apiClient.addComment(params.ipoId, comment);
+            invitation && analytics.trackUserAction(IpoCustomEvents.COMMENT_ADDED, { project: invitation.projectName, type: invitation.type });
             await getComments();
         } catch (error) {
             console.error(error.message, error.data);
@@ -189,6 +190,7 @@ const ViewIPO = (): JSX.Element => {
         try {
             setLoading(true);
             await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
+            invitation && analytics.trackUserAction(IpoCustomEvents.UPDATED_PARTICIPANTS, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
         } catch (error) {
             console.error(error.message, error.data);
@@ -249,6 +251,7 @@ const ViewIPO = (): JSX.Element => {
         if (!signer || !invitation) return;
 
         await apiClient.unacceptPunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
+        analytics.trackUserAction(IpoCustomEvents.UNACCEPTED, { project: invitation.projectName, type: invitation.type });
         await getInvitation();
     };
 

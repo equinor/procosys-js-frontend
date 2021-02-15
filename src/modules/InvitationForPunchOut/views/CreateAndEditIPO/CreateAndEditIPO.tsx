@@ -2,7 +2,6 @@ import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleP
 import React, { useEffect, useState } from 'react';
 
 import Attachments from './Attachments/Attachments';
-import { ComponentName } from '../enums';
 import { Container } from './CreateAndEditIPO.style';
 import CreateAndEditIPOHeader from './CreateAndEditIPOHeader';
 import GeneralInfo from './GeneralInfo/GeneralInfo';
@@ -10,7 +9,6 @@ import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
 import { isEmptyObject } from './utils';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const validateGeneralInfo = (info: GeneralInfoDetails, confirmationChecked?: boolean): Record<string, string> | null => {
     let errors = {};

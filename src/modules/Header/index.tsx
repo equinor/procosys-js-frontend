@@ -10,6 +10,7 @@ import {
     ShowOnDesktop,
     ShowOnMobile
 } from './style';
+import { Link, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -22,7 +23,6 @@ import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
-import { useParams } from 'react-router-dom';
 import { useProcosysContext } from '../../core/ProcosysContext';
 
 type PlantItem = {
@@ -111,9 +111,9 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Document</DropdownItem>
                             </a>
                             { (ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <a href={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
+                                <Link to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
-                                </a>
+                                </Link>
                             }
                             <a href={`/${params.plant}/Hookup/New`}>
                                 <DropdownItem>Certificate</DropdownItem>
@@ -179,11 +179,11 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            {/* { (ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <a href={`/${params.plant}/InvitationForPunchOut/`}>
+                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
+                                <Link to={`/${params.plant}/InvitationForPunchOut`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
-                                </a>
-                            } */}
+                                </Link>
+                            }
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}
                             >

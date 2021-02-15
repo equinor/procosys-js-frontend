@@ -189,7 +189,7 @@ type IPOFilter = {
 
 interface IPOsResponse {
     maxAvailable: number;
-    ipos: IPO[];
+    invitations: IPO[];
 }
 
 export type PersonDto = {
@@ -319,32 +319,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
 
         this.setupRequestCanceler(settings, setRequestCanceller);
 
-        // try {
-        //     const result = await this.client.get<IPOsResponse>(endpoint, settings);
-        //     return result.data;
-        // } catch (error) {
-        //     throw new IpoApiError(error);
-        // }
-        return await new Promise<IPOsResponse>(resolve => setTimeout(() => resolve(
-            { maxAvailable: 20, ipos: [
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-                {id: 0, title: 'IPO-11', status: 'Planned', type: 'MDP', mcPkgNos: ['1001-D03','25221-D01', '32133-A03','32133-A03'], createdAtUtc: new Date(), startTimeUtc: new Date(), contractorRep: 'asdasd asd ', constructionCompanyRep: 'dawdada dwa adw '},
-            ] }), 100));
+        try {
+            const result = await this.client.get<IPOsResponse>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
     }
 
     /**

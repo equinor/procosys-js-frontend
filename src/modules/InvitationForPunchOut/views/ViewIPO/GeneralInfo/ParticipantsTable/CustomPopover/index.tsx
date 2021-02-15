@@ -4,7 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 import { Participant } from '../../../types';
-import { CustomPopoverCard, PersonItem, PersonRow, FloatingPopover, PersonItemRight } from './style';
+import { CustomTable, FloatingPopover, TableRow, TableCell, TableCellRight} from './style';
 
 const { PopoverAnchor, PopoverTitle, PopoverContent } = Popover;
 
@@ -37,23 +37,23 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
                     />
                 </Button>
             </PopoverAnchor>
-            <CustomPopoverCard>
-                <PopoverTitle>
-                    { participant.functionalRole.code }
-                </PopoverTitle>
-                <PopoverContent>
+            <PopoverTitle>
+                { participant.functionalRole.code }
+            </PopoverTitle>
+            <PopoverContent>
+                <CustomTable>
                     {
                         participant.functionalRole.persons.map((person)=>{
                             return(
-                                <PersonRow key={ person.person.id } data-testid={ person.person.id } >
-                                    <PersonItem> { person.person.firstName } { person.person.lastName } </PersonItem>
-                                    <PersonItemRight> { person.response } </PersonItemRight>
-                                </PersonRow>
+                                <TableRow key={ person.person.id } data-testid={ person.person.id }>
+                                    <TableCell> { person.person.firstName } { person.person.lastName } </TableCell>
+                                    <TableCellRight> { person.response } </TableCellRight>
+                                </TableRow>
                             );
                         })
                     }
-                </PopoverContent>
-            </CustomPopoverCard>
+                </CustomTable>
+            </PopoverContent>
         </FloatingPopover>
     );
 };

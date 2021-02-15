@@ -1,9 +1,10 @@
 import { Query, QueryResult } from 'material-table';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { Container } from './index.style';
 import { IPO } from '../types';
 import { IpoStatusEnum } from '../../enums';
+import { Link } from 'react-router-dom';
 import Table from '@procosys/components/Table';
 import { Typography } from '@equinor/eds-core-react';
 import { getLocalDate } from '@procosys/core/services/DateService';
@@ -16,17 +17,17 @@ interface InvitationsTableProps {
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
     shouldSelectFirstPage: boolean;
     setFirstPageSelected: () => void;
-    setOrderByField: (orderByField: string | null) => void;
-    setOrderDirection: (orderDirection: string | null) => void;
     projectName?: string;
     height: number;
+    update: number;
+    filterUpdate: number;
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, setOrderByField, setOrderDirection, projectName, height }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
-    const [maxAvailable, setMaxAvailable] = useState<number>(0);
     const { plant } = useCurrentPlant();
+ 
 
     const getMcPkgUrl = (mcPkgNo: string): string => {
         return `/${plant.pathId}/Completion#McPkg|?projectName=${projectName}&mcpkgno=${mcPkgNo}`;
@@ -40,17 +41,22 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         if (refObject.current) {
             refObject.current.onSearchChangeDebounce();
         }
-    }, [projectName]);
+    }, [projectName, filterUpdate]);
 
     useEffect(() => {
         if (refObject.current) {
             refObject.current.props.options.maxBodyHeight = height;
         }     
-    }, [height, maxAvailable]);
+    }, [update, height]);
 
     const getIdColumn = (data: string):JSX.Element => {
         return (
-            <div className='controlOverflow'><Typography link href={`/${plant.pathId}/InvitationForPunchOut/${data}`}>{data}</Typography></div>
+            <div className='controlOverflow'>
+                <Link to={`/${data}`}>
+                    <Typography link>{data}</Typography>
+                </Link>
+            </div>
+
         );
 
     };
@@ -89,14 +95,16 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
     const getIPOsByQuery = (query: Query<any>): Promise<QueryResult<any>> => {
         const sortFieldMap: { [key: string]: string } = {
-            'ID': 'id',
+            'ID': 'ipoNo',
             'Title': 'title',
             'Status': 'status',
             'Type': 'type',
-            'Sent': 'sent',
-            'Punch-out': 'punchOut',
-            'Completed': 'completed',
-            'Accepted': 'accepted',
+            'Sent': 'createdAtUtc',
+            'Punch-out': 'punchOutDateUtc',
+            'Completed': 'completedAtUtc',
+            'Accepted': 'acceptedAtUtc',
+            'Contractor rep': 'contractorRep',
+            'Construction rep': 'constructionCompanyRep',
         };
 
         if (shouldSelectFirstPage) {
@@ -106,21 +114,20 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         }
 
         const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
-        const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'Asc' : null;
-        setOrderByField(orderByField);
-        setOrderDirection(orderDirection);
+        const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'asc' : null;
 
         return new Promise((resolve) => {
             return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
-                setMaxAvailable(result.maxAvailable);
+                if (refObject.current) {
+                    refObject.current.props.options.maxBodyHeight = height;
+                }
                 resolve({
-                    data: result.ipos,
+                    data: result.invitations,
                     page: query.page,
                     totalCount: result.maxAvailable
                 });
 
             });
-            // }
         });
     };
 
@@ -135,10 +142,10 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     { title: 'Type', render: (rowData: IPO): JSX.Element => getColumn(rowData.type) },
                     { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getCommPkgColumn(rowData.commPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
                     { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getMcPkgColumn(rowData.mcPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
-                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.createdAtUtc)), defaultSort: 'desc' },
-                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.startTimeUtc)) },
-                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.completedAtUtc)) },
-                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(rowData.acceptedAtUtc)) },
+                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(new Date(rowData.createdAtUtc))), defaultSort: 'desc' },
+                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(new Date(rowData.startTimeUtc))) },
+                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(rowData.completedAtUtc ? getLocalDate(new Date(rowData.completedAtUtc)) : '') },
+                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(rowData.acceptedAtUtc ? getLocalDate(new Date(rowData.acceptedAtUtc)): '') },
                     { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractorRep) },
                     { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.constructionCompanyRep) },
                 ]}
@@ -154,7 +161,7 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     padding: 'dense',
                     pageSize: pageSize,
                     emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 50, 100, 500, 1000],
+                    pageSizeOptions: [10, 25, 50, 100],
                     headerStyle: {
                         backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                         whiteSpace: 'nowrap',

@@ -24,11 +24,11 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
     };
 
     return(
-        <FloatingPopover onClose={ closePopover } open={activePopover === participant.functionalRole.id.toString()} placement="right">
-            <PopoverAnchor>
+        <FloatingPopover onClose={ closePopover } open={activePopover === `popover${participant.functionalRole.id.toString()}`} placement="right">
+            <PopoverAnchor id={ participant.sortKey.toString() + 'test' }>
                 <Button 
                     variant='ghost_icon'
-                    id={ participant.functionalRole.id } 
+                    id={`popover${participant.functionalRole.id}` } 
                     onClick={ openPopover }
                 >
                     <EdsIcon
@@ -37,7 +37,7 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
                     />
                 </Button>
             </PopoverAnchor>
-            <PopoverTitle>
+            <PopoverTitle id={ participant.sortKey.toString() + 'title' } >
                 { participant.functionalRole.code }
             </PopoverTitle>
             <PopoverContent>
@@ -45,7 +45,7 @@ const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverPro
                     {
                         participant.functionalRole.persons.map((person)=>{
                             return(
-                                <TableRow key={ person.person.id } data-testid={ person.person.id }>
+                                <TableRow key={ person.person.id } data-testid={ person.person.id.toString() + 'row' }>
                                     <TableCell> { person.person.firstName } { person.person.lastName } </TableCell>
                                     <TableCellRight> { person.response } </TableCellRight>
                                 </TableRow>

@@ -61,36 +61,34 @@ const participants = [
 ];
 
 describe('<CustomPopover />', () => {
-    //TODO: change names to something better
-    it('Should be open when activePopover is the same as the functional\'s id', () => {
+    it('Should be open when activePopover is the same as the functional role\'s id', () => {
         const { getAllByRole } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
             onChange={()=>{}}
-            activePopover = {participants[0].functionalRole.id.toString()}
+            activePopover = {`popover${participants[0].functionalRole.id.toString()}`}
         />);
         const buttons = getAllByRole('button');
         expect(buttons).toHaveLength(2);
     });
-    it.todo('Should not be open when activePopover is not the same as the functional\'s id');
-    it('Should render every person in the functional role in the popover', () => {
-        const { getByText } = renderWithTheme(<CustomPopover 
+
+    it('Should not be open when activePopover is not the same as the functional role\'s id', () => {
+        const { getAllByRole } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
             onChange={()=>{}}
-            activePopover = {participants[0].functionalRole.id.toString()}
+            activePopover = {'-1'}
         />);
-        participants[0].functionalRole.persons.forEach((person) => {
-            const response = getByText(person.person.firstName + ' ' + person.person.lastName, { exact: false });
-            expect(response).toBeValid();
-        });
+        const buttons = getAllByRole('button');
+        expect(buttons).toHaveLength(1);
     });
-    it('Should render the correct responses for the correct people', () => {
+
+    it('Should render every person and the correct responses for the correct people', () => {
         const { getByTestId } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
             onChange={()=>{}}
-            activePopover = {participants[0].functionalRole.id.toString()}
+            activePopover = {`popover${participants[0].functionalRole.id.toString()}`}
         />);
         participants[0].functionalRole.persons.forEach((person) => {
-            const response = getByTestId(person.person.id.toString(), { exact: false });
+            const response = getByTestId(person.person.id.toString() + 'row', { exact: false });
             expect(response).toHaveTextContent(person.person.firstName);
             expect(response).toHaveTextContent(person.response);
         });

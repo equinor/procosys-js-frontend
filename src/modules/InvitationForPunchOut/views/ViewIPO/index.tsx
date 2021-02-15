@@ -188,15 +188,14 @@ const ViewIPO = (): JSX.Element => {
 
     const updateParticipants = async (attNoteData: AttNoteData[]): Promise<any> => {
         try {
-            setLoading(true);
             await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
             invitation && analytics.trackUserAction(IpoCustomEvents.UPDATED_PARTICIPANTS, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Participants updated');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -206,7 +205,6 @@ const ViewIPO = (): JSX.Element => {
         if (!signer || !invitation) return;
 
         try {
-            setLoading(true);
             await apiClient.completePunchOut(params.ipoId, {
                 invitationRowVersion: invitation.rowVersion,
                 participantRowVersion: signer.rowVersion,
@@ -214,11 +212,11 @@ const ViewIPO = (): JSX.Element => {
             });
             analytics.trackUserAction(IpoCustomEvents.COMPLETED, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Punch-out completed');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -233,15 +231,14 @@ const ViewIPO = (): JSX.Element => {
             participants: attNoteData
         };
         try {
-            setLoading(true);
             await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
             analytics.trackUserAction(IpoCustomEvents.ACCEPTED, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Punch-out accepted');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const unacceptPunchOut = async (participant: Participant): Promise<any> => {
@@ -250,9 +247,15 @@ const ViewIPO = (): JSX.Element => {
 
         if (!signer || !invitation) return;
 
-        await apiClient.unacceptPunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
-        analytics.trackUserAction(IpoCustomEvents.UNACCEPTED, { project: invitation.projectName, type: invitation.type });
-        await getInvitation();
+        try {
+            await apiClient.unacceptPunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
+            analytics.trackUserAction(IpoCustomEvents.UNACCEPTED, { project: invitation.projectName, type: invitation.type });
+            await getInvitation();
+            showSnackbarNotification('Punch-out unaccepted');
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
     };
 
     const signPunchOut = async (participant: Participant): Promise<any> => {
@@ -267,19 +270,17 @@ const ViewIPO = (): JSX.Element => {
         };
 
         try {
-            setLoading(true);
             await apiClient.signPunchOut(params.ipoId, signDetails);
             analytics.trackUserAction(IpoCustomEvents.SIGNED, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Punch-out signed');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const cancelPunchOut = async (): Promise<any> => {
-        setLoading(true);
         if (invitation) {
             try {
                 await apiClient.cancelPunchOut(params.ipoId, invitation.rowVersion);
@@ -291,7 +292,6 @@ const ViewIPO = (): JSX.Element => {
                 showSnackbarNotification(error.message);
             }
         }
-        setLoading(false);
     };
 
 

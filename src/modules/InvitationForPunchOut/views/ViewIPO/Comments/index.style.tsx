@@ -2,6 +2,7 @@ import { Button } from '@equinor/eds-core-react';
 import styled from 'styled-components';
 
 export const Container = styled.div`
+    position: relative;
 `;
 
 export const HeaderContainer = styled.div`
@@ -28,6 +29,7 @@ export const CommentHeaderContainer = styled.div`
 export const SpinnerContainer = styled.div`
     position: absolute;
     display: flex;
+    background: rgba(255, 255, 255, 0.5);
     top: 0;
     left: 0;
     width: 100%;

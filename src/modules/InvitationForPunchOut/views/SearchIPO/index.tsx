@@ -5,7 +5,6 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
-import { FunctionalRole } from '../ViewIPO/types';
 import InvitationsFilter from './Filter';
 import InvitationsTable from './Table';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
@@ -58,7 +57,7 @@ const SearchIPO = (): JSX.Element => {
         let requestCanceler: Canceler;
         try {
             (async (): Promise<void> => {
-                const functionalRoles = await apiClient.getFunctionalRolesAsync();
+                const functionalRoles = await apiClient.getFunctionalRolesAsync((cancelerCallback) => requestCanceler = cancelerCallback);
                 setAvailableRoles(functionalRoles.map((role): SelectItem => {
                     return ({
                         text: role.code,
@@ -182,7 +181,13 @@ const SearchIPO = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
-
+    useEffect(() => {
+        return (): void => {
+            if (cancelerRef.current) {
+                cancelerRef.current();
+            } 
+        };
+    }, [cancelerRef.current]);
 
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
         if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)

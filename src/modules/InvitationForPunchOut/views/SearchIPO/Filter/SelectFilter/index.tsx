@@ -22,7 +22,7 @@ const SelectFilter = ({headerLabel, selectedItems, onChange, icon, roles}: Selec
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="MultiSelectHeader" filterActive={!!selectedItems[0] || !!selectedItems[1]} >
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="selectfilter-collapse" filterActive={!!selectedItems[0] || !!selectedItems[1]} >
                 {icon}
                 <CollapseInfo>
                     {headerLabel}

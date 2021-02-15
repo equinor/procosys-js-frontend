@@ -10,7 +10,7 @@ import {
     ShowOnDesktop,
     ShowOnMobile
 } from './style';
-import { Link, NavLink, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';

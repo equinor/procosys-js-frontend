@@ -38,7 +38,7 @@ const CheckboxFilterWithDates = ({
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="CheckboxHeader" filterActive={itemsChecked.length > 0} >
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="checkbox-collapse" filterActive={itemsChecked.length > 0} >
                 <EdsIcon name={icon} />
                 <CollapseInfo >
                     {title}

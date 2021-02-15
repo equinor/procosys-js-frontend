@@ -241,7 +241,7 @@ const InvitationsFilter = ({
                     <Typography variant='caption'>Reset filter</Typography>
                 </Link>
             </Section>
-            <Collapse isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)} filterActive={checkSearchFilter()}>
+            <Collapse data-testid={'search-fields'} isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)} filterActive={checkSearchFilter()}>
                 <EdsIcon name='search' />
                 <CollapseInfo>
                     Search
@@ -312,7 +312,7 @@ const InvitationsFilter = ({
             }
 
 
-            <CheckboxFilterWithDates title='Punch out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
+            <CheckboxFilterWithDates title='Punch-out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
             <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.ipoStatuses} icon={'world'} />
             <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} roles={roles} icon={<EdsIcon name='person' />} />
 

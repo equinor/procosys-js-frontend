@@ -128,7 +128,6 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                 });
 
             });
-            // }
         });
     };
 

@@ -24,3 +24,15 @@ export enum IpoStatusEnum {
     ACCEPTED = 'Accepted',
     CANCELED = 'Canceled'
 }
+
+export enum IpoCustomEvents {
+    CREATED = 'IPO_Created',
+    EDITED = 'IPO_Edited',
+    CANCELED = 'IPO_Canceled',
+    COMPLETED = 'IPO_Completed',
+    ACCEPTED = 'IPO_Accepted',
+    UNACCEPTED = 'IPO_Unaccepted',
+    UPDATED_PARTICIPANTS = 'IPO_UpdatedParticipants',
+    SIGNED = 'IPO_Signed',
+    COMMENT_ADDED = 'IPO_CommentAdded'
+}

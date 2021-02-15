@@ -60,6 +60,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         const plant = plantsFiltered[0] as PlantContextDetails;
         plant.pathId = normalizedPlantId;
         cache.setCache('plant', plant);
+        analytics.setCurrentPlant(plant.id);
         setCurrentPlantInContext(plant);
     };
 

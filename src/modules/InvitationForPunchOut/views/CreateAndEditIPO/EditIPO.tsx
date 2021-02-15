@@ -1,10 +1,10 @@
 import { Attachment, CommPkgRow, ExternalEmail, GeneralInfoDetails, McScope, Participant, Person, RoleParticipant, Step } from '../../types';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
+import { ComponentName, IpoCustomEvents } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
-import { ComponentName } from '../enums';
 import CreateAndEditIPO from './CreateAndEditIPO';
 import { Invitation } from '../ViewIPO/types';
 import Loading from '@procosys/components/Loading';
@@ -13,6 +13,7 @@ import { OrganizationMap } from '../utils';
 import { SelectItem } from '@procosys/components/Select';
 import { poTypes } from './GeneralInfo/GeneralInfo';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
@@ -67,6 +68,7 @@ const EditIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+    const analystics = useAnalytics();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
 
     /**
@@ -266,6 +268,7 @@ const EditIPO = (): JSX.Element => {
                     commPkgScope,
                     invitation.rowVersion
                 );
+                analystics.trackUserAction(IpoCustomEvents.EDITED, { project: generalInfo.projectName, type: generalInfo.poType.value });
 
                 await uploadOrRemoveAttachments(params.ipoId);
 

@@ -181,13 +181,6 @@ const SearchIPO = (): JSX.Element => {
         setDisplayFilter(!displayFilter);
     };
 
-    useEffect(() => {
-        return (): void => {
-            if (cancelerRef.current) {
-                cancelerRef.current();
-            } 
-        };
-    }, [cancelerRef.current]);
 
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
         if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)

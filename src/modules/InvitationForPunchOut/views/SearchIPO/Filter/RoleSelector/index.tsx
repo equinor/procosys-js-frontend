@@ -5,7 +5,6 @@ import Dropdown  from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
-import { Typography } from '@equinor/eds-core-react';
 import { rolePersonParamType } from '..';
 
 interface RoleSelectorProps {

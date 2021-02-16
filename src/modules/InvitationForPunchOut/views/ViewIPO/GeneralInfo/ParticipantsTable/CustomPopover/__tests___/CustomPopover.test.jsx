@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 
 import CustomPopover from '../index';
@@ -60,32 +60,31 @@ const participants = [
 ];
 
 describe('<CustomPopover />', () => {
-    it('Should be open when activePopover is the same as the functional role\'s id', () => {
-        const { getAllByRole } = renderWithTheme(<CustomPopover 
+    it('Should open the popover on click', () => {
+        const { getByRole, getAllByRole } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
-            onChange={()=>{}}
-            activePopover = {`popover${participants[0].functionalRole.id.toString()}`}
         />);
+        const button = getByRole('button');
+        fireEvent.click(button);
         const buttons = getAllByRole('button');
         expect(buttons).toHaveLength(2);
     });
-
-    it('Should not be open when activePopover is not the same as the functional role\'s id', () => {
-        const { getAllByRole } = renderWithTheme(<CustomPopover 
+    it('Should close the popover on click', () => {
+        const { getByRole, getAllByRole } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
-            onChange={()=>{}}
-            activePopover = {'-1'}
         />);
+        const button = getByRole('button');
+        fireEvent.click(button);
+        fireEvent.click(button);
         const buttons = getAllByRole('button');
         expect(buttons).toHaveLength(1);
     });
-
     it('Should render every person and the correct responses for the correct people', () => {
-        const { getByTestId } = renderWithTheme(<CustomPopover 
+        const { getByTestId, getByRole } = renderWithTheme(<CustomPopover 
             participant = { participants[0] }
-            onChange={()=>{}}
-            activePopover = {`popover${participants[0].functionalRole.id.toString()}`}
         />);
+        const button = getByRole('button');
+        fireEvent.click(button);
         participants[0].functionalRole.persons.forEach((person) => {
             const response = getByTestId(person.person.id.toString() + 'row', { exact: false });
             expect(response).toHaveTextContent(person.person.firstName);

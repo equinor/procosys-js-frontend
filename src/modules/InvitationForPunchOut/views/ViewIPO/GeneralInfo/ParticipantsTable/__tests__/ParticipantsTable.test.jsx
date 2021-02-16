@@ -571,25 +571,5 @@ describe('<ParticipantsTable />', () => {
                 }
             });
         });
-        it('Should open the popover on click', () => {
-            const { queryByTestId } = renderWithTheme(<ParticipantsTable 
-                participants={participants} 
-                status={IpoStatusEnum.ACCEPTED}
-                accept={acceptPunchOut}
-                complete={completePunchOut} />);
-            participants.forEach((participant) => {
-            
-                if(participant.functionalRole != null){
-                    if(participant.functionalRole.persons.length > 0){
-                        const anchor = queryByTestId(`popover${participant.functionalRole.id}`, { exact: false });
-                        let cardTitle = queryByTestId(participant.sortKey.toString() + 'title', { exact: false });
-                        expect(cardTitle).not.toBeInTheDocument();
-                        fireEvent.click(anchor);
-                        cardTitle = queryByTestId(participant.sortKey.toString() + 'title', { exact: false });
-                        expect(cardTitle).toBeInTheDocument();
-                    }
-                }
-            });
-        });
     });
 });

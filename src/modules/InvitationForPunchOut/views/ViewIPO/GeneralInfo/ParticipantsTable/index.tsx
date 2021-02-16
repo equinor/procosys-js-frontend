@@ -65,7 +65,6 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const btnSignRef = useRef<HTMLButtonElement>();
-    const [popoverActive, setPopoverActive] = useState<string>('');
 
     useEffect(() => {
         const participant = participants.find(p => p.canSign);
@@ -299,11 +298,6 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         updateData[index] = { ...updateData[index], note: event.target.value };
         setAttNoteData([...updateData]);
     };
-
-    const handlePopoverChange = (newValue: string): void =>{
-        setPopoverActive(newValue);
-    };
-
 
     return (
         <Container>

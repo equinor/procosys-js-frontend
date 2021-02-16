@@ -15,7 +15,7 @@ interface CustomPopoverProps {
 const CustomPopover = ( {participant} : CustomPopoverProps ): JSX.Element =>{
     const [isActive, setIsActive] = useState(false);
 
-    const togglePopover = (event: React.SyntheticEvent): void =>{
+    const togglePopover = (): void =>{
         setIsActive(!isActive);
     };
 
@@ -32,7 +32,7 @@ const CustomPopover = ( {participant} : CustomPopoverProps ): JSX.Element =>{
                     />
                 </Button>
             </PopoverAnchor>
-            <PopoverTitle id={ participant.sortKey.toString() + 'title' } >
+            <PopoverTitle >
                 { participant.functionalRole.code }
             </PopoverTitle>
             <PopoverContent>

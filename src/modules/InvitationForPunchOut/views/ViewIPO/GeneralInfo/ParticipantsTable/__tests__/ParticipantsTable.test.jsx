@@ -549,10 +549,8 @@ describe('<ParticipantsTable />', () => {
                 accept={acceptPunchOut}
                 complete={completePunchOut} />);
             participants.forEach((participant) => {
-                if(participant.functionalRole !== null){
-                    if(participant.functionalRole.persons.length <= 0){
-                        expect(queryByTestId(participant.sortKey.toString() + 'test', { exact: false })).not.toBeInTheDocument();
-                    }
+                if(participant.functionalRole !== null && participant.functionalRole.persons.length <= 0 ){
+                    expect(queryByTestId(participant.sortKey.toString() + 'test', { exact: false })).not.toBeInTheDocument();
                 }
             });
         });
@@ -564,10 +562,8 @@ describe('<ParticipantsTable />', () => {
                 complete={completePunchOut} />);
             participants.forEach((participant) => {
                 const anchor = queryByTestId(participant.sortKey.toString() + 'test', { exact: false });
-                if(participant.functionalRole !== null){
-                    if(participant.functionalRole.persons.length > 0){
-                        expect(anchor).toBeInTheDocument();
-                    }
+                if(participant.functionalRole !== null && participant.functionalRole.persons.length > 0 ){
+                    expect(anchor).toBeInTheDocument();
                 }
             });
         });

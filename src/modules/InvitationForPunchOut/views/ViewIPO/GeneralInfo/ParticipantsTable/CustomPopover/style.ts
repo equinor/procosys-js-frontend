@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Popover } from '@equinor/eds-core-react';
-const { PopoverContent } = Popover;
 
 export const CustomTable = styled.div`
     display:table;
@@ -9,9 +8,6 @@ export const CustomTable = styled.div`
 
 export const TableRow = styled.div`
     display: table-row;
-    :first-child{
-        padding-right: calc(var(--grid-unit) * 4);
-    }
 `;
 
 export const TableCell = styled.div`

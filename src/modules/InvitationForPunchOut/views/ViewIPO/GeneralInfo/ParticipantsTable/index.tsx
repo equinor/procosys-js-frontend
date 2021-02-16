@@ -11,7 +11,6 @@ import { OutlookResponseType } from '../../enums';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 import CustomPopover from './CustomPopover/index';

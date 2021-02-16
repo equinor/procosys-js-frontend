@@ -12,6 +12,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 
+//TODO: add saved filters to props, like in ScopeFilter + import types
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
     onCloseRequest: () => void;
@@ -121,6 +122,7 @@ const clearFilter: IPOFilter = {
     punchOutDates: []
 };
 
+//TODO: include the savedFilter stuff from the interface above
 const InvitationsFilter = ({
     project,
     onCloseRequest,
@@ -137,7 +139,7 @@ const InvitationsFilter = ({
     const isFirstRender = useRef<boolean>(true);
     const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
-
+    // TODO: add saved filter stuff and anchor element stuff
 
     const KEYCODE_ENTER = 13;
 
@@ -225,6 +227,7 @@ const InvitationsFilter = ({
         return true;
     };
 
+    //TODO: add the button and popover for the saved filter stuff
     return (
         <Container>
             <Header filterActive={filterActive}>

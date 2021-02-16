@@ -3,6 +3,7 @@ import { Collapse, CollapseInfo, Container, Header, Link, Section } from './Scop
 import React, { useEffect, useRef, useState } from 'react';
 import { SavedTagListFilter, TagListFilter } from '../types';
 
+// TODO: change popover to the Equinor one!
 import AreaIcon from '@procosys/assets/icons/Area';
 import { Canceler } from 'axios';
 import CheckboxFilter from './CheckboxFilter';

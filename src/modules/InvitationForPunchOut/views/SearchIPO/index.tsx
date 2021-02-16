@@ -15,6 +15,8 @@ import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 
+//TODO: create todos
+
 const emptyFilter: IPOFilter = {
     ipoStatuses: [],
     functionalRoleCode: '',

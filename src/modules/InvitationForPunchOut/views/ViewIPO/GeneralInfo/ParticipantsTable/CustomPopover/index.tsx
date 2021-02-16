@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Popover, Button} from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -10,26 +10,21 @@ const { PopoverAnchor, PopoverTitle, PopoverContent } = Popover;
 
 interface CustomPopoverProps {
     participant: Participant;
-    activePopover: string,
-    onChange: (value:string) => void;
 }
 
-const CustomPopover = ( {participant, activePopover, onChange}: CustomPopoverProps ): JSX.Element =>{
-    const openPopover = (event: React.SyntheticEvent): void =>{
-        onChange(event.currentTarget.id);
-    };
+const CustomPopover = ( {participant} : CustomPopoverProps ): JSX.Element =>{
+    const [isActive, setIsActive] = useState(false);
 
-    const closePopover = ():void => {
-        onChange('');
+    const togglePopover = (event: React.SyntheticEvent): void =>{
+        setIsActive(!isActive);
     };
 
     return(
-        <FloatingPopover onClose={ closePopover } open={activePopover === `popover${participant.functionalRole.id.toString()}`} placement="right">
+        <FloatingPopover onClose={ togglePopover } open={isActive} placement="right">
             <PopoverAnchor id={ participant.sortKey.toString() + 'test' }>
                 <Button 
                     variant='ghost_icon'
-                    id={`popover${participant.functionalRole.id}` } 
-                    onClick={ openPopover }
+                    onClick={ togglePopover }
                 >
                     <EdsIcon
                         name="info_circle"

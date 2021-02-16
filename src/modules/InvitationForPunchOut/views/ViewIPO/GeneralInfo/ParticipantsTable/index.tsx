@@ -364,7 +364,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <ResponseWrapper> 
                                         {response} 
-                                        {addPopover && <CustomPopover participant={participant} activePopover={popoverActive} onChange={handlePopoverChange} />}
+                                        {addPopover && <CustomPopover participant={participant} />}
                                     </ResponseWrapper>
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>

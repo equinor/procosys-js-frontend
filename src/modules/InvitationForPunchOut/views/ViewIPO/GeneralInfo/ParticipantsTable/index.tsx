@@ -215,12 +215,8 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnCompleteRef.current) {
             btnCompleteRef.current.setAttribute('disabled', 'disabled');
         }
-        try {
-            await complete(participants[index], attNoteData);
-            showSnackbarNotification('Punch-out completed', 2000, true);
-        } catch (error) {
-            showSnackbarNotification(error.message, 2000, true);
-        }
+        await complete(participants[index], attNoteData);
+
         if (btnCompleteRef.current) {
             btnCompleteRef.current.removeAttribute('disabled');
         }
@@ -233,17 +229,13 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnAcceptRef.current) {
             btnAcceptRef.current.setAttribute('disabled', 'disabled');
         }
-        try {
-            await accept(participants[index], attNoteData);
-            if (btnUnAcceptRef.current) {
-                btnUnAcceptRef.current.removeAttribute('disabled');
-            }
-            showSnackbarNotification('Punch-out accepted', 2000, true);
-        } catch (error) {
-            if (btnAcceptRef.current) {
-                btnAcceptRef.current.removeAttribute('disabled');
-            }
-            showSnackbarNotification(error.message, 2000, true);
+        await accept(participants[index], attNoteData);
+        
+        if (btnUnAcceptRef.current) {
+            btnUnAcceptRef.current.removeAttribute('disabled');
+        }
+        if (btnAcceptRef.current) {
+            btnAcceptRef.current.removeAttribute('disabled');
         }
         setLoading(false);
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
@@ -254,17 +246,13 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnUnAcceptRef.current) {
             btnUnAcceptRef.current.setAttribute('disabled', 'disabled');
         }
-        try {
-            await unaccept(participants[index]);
-            showSnackbarNotification('Punch-out unaccepted', 2000, true);
-            if (btnAcceptRef.current) {
-                btnAcceptRef.current.removeAttribute('disabled');
-            }
-        } catch (error) {
-            if (btnUnAcceptRef.current) {
-                btnUnAcceptRef.current.removeAttribute('disabled');
-            }
-            showSnackbarNotification(error.message, 2000, true);
+        await unaccept(participants[index]);
+
+        if (btnAcceptRef.current) {
+            btnAcceptRef.current.removeAttribute('disabled');
+        }
+        if (btnUnAcceptRef.current) {
+            btnUnAcceptRef.current.removeAttribute('disabled');
         }
         setLoading(false);
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
@@ -275,14 +263,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnUpdateRef.current) {
             btnUpdateRef.current.setAttribute('disabled', 'disabled');
         }
-        try {
-            await update(attNoteData);
-            showSnackbarNotification('Participants updated', 2000, true);
-        } catch (error) {
-            if (btnUpdateRef.current) {
-                btnUpdateRef.current.removeAttribute('disabled');
-            }
-            showSnackbarNotification(error.message, 2000, true);
+
+        await update(attNoteData);
+        if (btnUpdateRef.current) {
+            btnUpdateRef.current.removeAttribute('disabled');
         }
         setLoading(false);
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
@@ -294,14 +278,10 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnSignRef.current) {
             btnSignRef.current.setAttribute('disabled', 'disabled');
         }
-        try {
-            await sign(participants[index]);
-            showSnackbarNotification('Punch-out signed', 2000, true);
-        } catch (error) {
-            if (btnSignRef.current) {
-                btnSignRef.current.removeAttribute('disabled');
-            }
-            showSnackbarNotification(error.message, 2000, true);
+
+        await sign(participants[index]);
+        if (btnSignRef.current) {
+            btnSignRef.current.removeAttribute('disabled');
         }
         setLoading(false);
     };

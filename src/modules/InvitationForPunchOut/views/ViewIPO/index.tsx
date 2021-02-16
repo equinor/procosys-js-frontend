@@ -1,6 +1,7 @@
 import { AcceptIPODto, SignIPODto } from '../../http/InvitationForPunchOutApiClient';
 import { CenterContainer, CommentsContainer, CommentsIconContainer, Container, InvitationContainer, InvitationContentContainer, TabStyle, TabsContainer } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
+import { IpoCustomEvents, IpoStatusEnum } from '../enums';
 import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
@@ -12,13 +13,13 @@ import Comments from './Comments';
 import EdsIcon from '@procosys/components/EdsIcon';
 import GeneralInfo from './GeneralInfo';
 import History from './History';
-import { IpoStatusEnum } from '../enums';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
 import { Step } from '../../types';
 import ViewIPOHeader from './ViewIPOHeader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 
@@ -56,6 +57,7 @@ const ViewIPO = (): JSX.Element => {
     const [showComments, setShowComments] = useState<boolean>(true);
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
+    const analytics = useAnalytics();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -152,6 +154,7 @@ const ViewIPO = (): JSX.Element => {
         setLoadingComments(true);
         try {
             await apiClient.addComment(params.ipoId, comment);
+            invitation && analytics.trackUserAction(IpoCustomEvents.COMMENT_ADDED, { project: invitation.projectName, type: invitation.type });
             await getComments();
         } catch (error) {
             console.error(error.message, error.data);
@@ -185,14 +188,14 @@ const ViewIPO = (): JSX.Element => {
 
     const updateParticipants = async (attNoteData: AttNoteData[]): Promise<any> => {
         try {
-            setLoading(true);
             await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
+            invitation && analytics.trackUserAction(IpoCustomEvents.UPDATED_PARTICIPANTS, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Participants updated');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const completePunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -202,18 +205,18 @@ const ViewIPO = (): JSX.Element => {
         if (!signer || !invitation) return;
 
         try {
-            setLoading(true);
             await apiClient.completePunchOut(params.ipoId, {
                 invitationRowVersion: invitation.rowVersion,
                 participantRowVersion: signer.rowVersion,
                 participants: attNoteData
             });
+            analytics.trackUserAction(IpoCustomEvents.COMPLETED, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Punch-out completed');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
@@ -228,14 +231,14 @@ const ViewIPO = (): JSX.Element => {
             participants: attNoteData
         };
         try {
-            setLoading(true);
             await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+            analytics.trackUserAction(IpoCustomEvents.ACCEPTED, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Punch-out accepted');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const unacceptPunchOut = async (participant: Participant): Promise<any> => {
@@ -244,8 +247,15 @@ const ViewIPO = (): JSX.Element => {
 
         if (!signer || !invitation) return;
 
-        await apiClient.unacceptPunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
-        await getInvitation();
+        try {
+            await apiClient.unacceptPunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
+            analytics.trackUserAction(IpoCustomEvents.UNACCEPTED, { project: invitation.projectName, type: invitation.type });
+            await getInvitation();
+            showSnackbarNotification('Punch-out unaccepted');
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
     };
 
     const signPunchOut = async (participant: Participant): Promise<any> => {
@@ -260,21 +270,21 @@ const ViewIPO = (): JSX.Element => {
         };
 
         try {
-            setLoading(true);
             await apiClient.signPunchOut(params.ipoId, signDetails);
+            analytics.trackUserAction(IpoCustomEvents.SIGNED, { project: invitation.projectName, type: invitation.type });
             await getInvitation();
+            showSnackbarNotification('Punch-out signed');
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-        setLoading(false);
     };
 
     const cancelPunchOut = async (): Promise<any> => {
-        setLoading(true);
         if (invitation) {
             try {
                 await apiClient.cancelPunchOut(params.ipoId, invitation.rowVersion);
+                analytics.trackUserAction(IpoCustomEvents.CANCELED, { project: invitation.projectName, type: invitation.type });
                 await getInvitation();
                 showSnackbarNotification('Invitation for punch-out is cancelled.');
             } catch (error) {
@@ -282,7 +292,6 @@ const ViewIPO = (): JSX.Element => {
                 showSnackbarNotification(error.message);
             }
         }
-        setLoading(false);
     };
 
 

@@ -21,7 +21,7 @@ export const SpinnerContainer = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.01);
+    background: rgba(255, 255, 255, 0.5);
     z-index: 9999;
     align-items: center;
     justify-content: center;

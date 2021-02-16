@@ -1,13 +1,3 @@
-
-export interface SavedIPOFilter {
-    id: number;
-    title: string;
-    criteria: string;
-    defaultFilter: boolean;
-    rowVersion: string;
-}
-
-
 export interface IPO {
     id: number;
     title: string;
@@ -25,7 +15,7 @@ export interface IPO {
 
 export interface IPOs {
     maxAvailable: number;
-    ipos: IPO[];
+    invitations: IPO[];
 }
 
 export type ProjectDetails = {
@@ -34,7 +24,7 @@ export type ProjectDetails = {
     description: string;
 }
 
-export type Filter = {
+export type IPOFilter = {
     ipoStatuses: string[];
     functionalRoleCode: string;
     personOid: string;
@@ -44,7 +34,8 @@ export type Filter = {
     titleStartsWith: string;
     lastChangedAtFromUtc?: Date;
     lastChangedAtToUtc?: Date;
-    punhcOutDateFromUtc?: Date;
+    punchOutDateFromUtc?: Date;
     punchOutDateToUtc?: Date;
     punchOutDates: string[];
 };
+

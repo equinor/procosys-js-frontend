@@ -3,7 +3,6 @@ import { render } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 
 import CustomPopover from '../index';
-//import { OrganizationsEnum } from '../../../../../enums';
 import { OutlookResponseType } from '../../../../enums';
 import theme from '../../../../../../../../assets/theme';
 

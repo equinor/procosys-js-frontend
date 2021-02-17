@@ -1,4 +1,6 @@
 import ProCoSysSettings, {AsyncState} from '@procosys/core/ProCoSysSettings';
+// const favicon = require('./assets/icons/ProCoSys_favicon16x16.png');
+import favicon from './assets/icons/ProCoSys_favicon16x16.png';
 
 import AuthService from './auth/AuthService';
 import Error from './components/Error';
@@ -7,13 +9,23 @@ import Login from './modules/Login';
 import React from 'react';
 import Root from './app/Root';
 import { render } from 'react-dom';
+import Helmet from 'react-helmet';
 
 const element = document.createElement('div');
 element.setAttribute('id', 'app-container');
 document.body.appendChild(element);
 
+const getHelmetBaseConfig = (): JSX.Element => {
+    return <Helmet titleTemplate="ProCoSys - %s">
+        <title>Authenticating</title>
+        <link rel="icon" type="image/png" href={favicon} sizes="16x16" />
+    </Helmet>;
+};
+
 render(
-    <Loading title="Loading configuration" />,
+    <>{getHelmetBaseConfig()}
+        <Loading title="Loading configuration" />
+    </>,
     element);
 
 const validateConfigurationState = async (): Promise<void> => {
@@ -22,7 +34,10 @@ const validateConfigurationState = async (): Promise<void> => {
 
     if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
         render(
-            <Error title="Failed to initialize auth config" large />,
+            <>
+                {getHelmetBaseConfig()}
+                <Error title="Failed to initialize auth config" large />
+            </>,
             element);
     } else {
         const authService = new AuthService();
@@ -37,11 +52,17 @@ const validateConfigurationState = async (): Promise<void> => {
             if (authService.getCurrentUser() === null) {
                 authService.login();
                 render(
-                    <Login />,
+                    <>
+                        {getHelmetBaseConfig()}
+                        <Login />
+                    </>,
                     element);
             } else {
                 render(
-                    <Root authService={authService} />,
+                    <>
+                        {getHelmetBaseConfig()}
+                        <Root authService={authService} />
+                    </>,
                     element);
             }
         }

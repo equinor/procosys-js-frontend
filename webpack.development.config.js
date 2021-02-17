@@ -10,7 +10,13 @@ module.exports = {
         rules: [
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
-                loader: 'file-loader',
+                use: [{
+                    loader: 'file-loader', 
+                    options: {
+                        name: '[name].[ext]',
+                        outputPath: 'v2-assets/images/'
+                    }
+                }]
             },
             {
                 test: /\.(ts|tsx)$/,
@@ -90,7 +96,6 @@ module.exports = {
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',
-            favicon: 'src/assets/icons/ProCoSys_favicon16x16.png',
             meta: {
                 viewport: 'width=device-width, height=device-height, initial-scale=1'
             }

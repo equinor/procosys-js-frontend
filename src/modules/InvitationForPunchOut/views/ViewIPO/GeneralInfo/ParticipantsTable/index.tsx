@@ -1,6 +1,6 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../enums';
-import { Container, CustomTable, SpinnerContainer } from './style';
+import { Container, CustomTable, SpinnerContainer, ResponseWrapper } from './style';
 import { ExternalEmail, FunctionalRole, Participant } from '../../types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -11,8 +11,9 @@ import { OutlookResponseType } from '../../enums';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { format } from 'date-fns';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+
+import CustomPopover from './CustomPopover/index';
 
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
@@ -298,7 +299,6 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         setAttNoteData([...updateData]);
     };
 
-
     return (
         <Container>
             {loading && (
@@ -343,13 +343,24 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                 participant.functionalRole.id :
                                 participant.externalEmail.id;
 
+                        const addPopover = participant.functionalRole ?
+                            participant.functionalRole.response?
+                                participant.functionalRole.persons.length? true : false
+                                : false
+                            : false;
+
                         return (
                             <Row key={participant.sortKey} as="tr">
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     {OrganizationMap.get(participant.organization as Organization)}
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>{representative}</Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>{response}</Cell>
+                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                    <ResponseWrapper> 
+                                        {response} 
+                                        {addPopover && <CustomPopover participant={participant} />}
+                                    </ResponseWrapper>
+                                </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     <Switch
                                         id={`attendance${id}`}

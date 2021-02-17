@@ -1,6 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
 import { ButtonContainer, ButtonSpacer, Container, HeaderContainer, ProgressBarContainer } from './ViewIPOHeader.style';
-import OutlookInfo, { OutlookStatusType } from './OutlookInfo';
 import React, { useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -25,15 +24,6 @@ type ProgressBarProps = {
 }
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
-    const [displayFlyout, setDisplayFlyout] = useState<boolean>(false);
-
-    const closeFlyout = (): void => {
-        setDisplayFlyout(false);
-    };
-
-    const openFlyout = (): void => {
-        setDisplayFlyout(true);
-    };
 
     const confirmCancelIpo = (): void => {
         showModalDialog(
@@ -52,12 +42,6 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
             <HeaderContainer>
                 <ButtonContainer>
                     <Typography variant="h2">{`IPO-${props.ipoId}: ${props.title}`}</Typography>
-                    <Button
-                        variant='ghost_icon'
-                        onClick={(): void => openFlyout()}
-                    >
-                        <EdsIcon name='microsoft_outlook' color={tokens.colors.interactive.primary__resting.rgba} />
-                    </Button>
                 </ButtonContainer>
                 <ButtonContainer>
                     <Button
@@ -84,16 +68,6 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
             <ProgressBarContainer>
                 <ProgressBar steps={props.steps} currentStep={props.currentStep} />
             </ProgressBarContainer>
-            {
-                displayFlyout && (
-                    <OutlookInfo
-                        close={closeFlyout}
-                        organizer={props.organizer}
-                        participants={props.participants}
-                        status={OutlookStatusType.OK}
-                    />
-                )
-            }
         </Container>
     );
 };

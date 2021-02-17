@@ -192,6 +192,14 @@ interface IPOsResponse {
     invitations: IPO[];
 }
 
+interface SavedIPOFilterResponse {
+    id: number;
+    title: string;
+    defaultFilter: boolean;
+    criteria: string;
+    rowVersion: string;
+}
+
 export type PersonDto = {
     id?: number;
     azureOid: string | null;
@@ -911,6 +919,115 @@ class InvitationForPunchOutApiClient extends ApiClient {
         }
     }
 
-    //TODO: add mocks for the API calls used in save filter!!
+    /**
+     * Get saved IPO filters
+     */
+    async getSavedIPOFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedIPOFilterResponse[]> {
+        // TODO: Fill this filter with some actual values
+        const filter = {
+
+        };
+        const resp: SavedIPOFilterResponse[] = await [
+            {
+                id: 1,
+                title: 'Mock',
+                defaultFilter: true,
+                criteria: JSON.stringify(filter),
+                rowVersion: ''
+            }
+        ];
+        return resp;
+        /*
+        const endpoint = '/SavedFilters';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<SavedIPOFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw new IpoApiError(error);
+        }
+        */
+    }
+    /**
+     * Add saved IPO filter
+     */
+    async addSavedIPOFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        // TODO: create and return some kind of mock response
+        /*
+        const endpoint = '/SavedFilter';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.post(
+                endpoint,
+                {
+                    projectName: projectName,
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    criteria: criteria
+                },
+                settings
+            );
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+        */
+    }
+
+    /**
+    * Update saved IPO filter
+    */
+    async updateSavedIPOFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        // TODO: create and return some kind of mock response
+        /*
+        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    defaultFilter: defaultFilter,
+                    criteria: criteria,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+        */
+    }
+
+    /**
+    * Delete saved IPO filter 
+    */
+    async deleteSavedIPOFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        // TODO: create and return some kind of mock response
+        /*
+        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+        */
+    }
 
 } export default InvitationForPunchOutApiClient;

@@ -204,7 +204,7 @@ const SearchIPO = (): JSX.Element => {
         setNumberOfIPOs(0);
         return { maxAvailable: 0, invitations: [] };
     };
-
+    //TO-DO: make sure filter gets all props it needs, might need to add some funcitons to this component
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>

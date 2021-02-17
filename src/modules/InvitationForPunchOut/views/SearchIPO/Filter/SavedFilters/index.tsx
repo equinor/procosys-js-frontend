@@ -1,24 +1,24 @@
-// TODO: change imports to use correct for this module
 import React, { useState, useEffect } from 'react';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import Checkbox from '../../../../../components/Checkbox';
+import Checkbox from '@procosys/components/Checkbox';
 import { ListContainer, Container, Header, Divider, Link, Row } from './index.style';
-import { SavedTagListFilter, TagListFilter } from '../types';
+import { SavedIPOFilter, IPOFilter } from '../../types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import CloseIcon from '@material-ui/icons/Close';
-import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const defaultTrueIcon = <EdsIcon name='star_filled' size={16} />;
 const defaultFalseIcon = <EdsIcon name='star_outlined' size={16} />;
 
-//TODO: change to use the IPOFilter instead of TagListFilter
 interface SavedFiltersProps {
-    savedTagListFilters: SavedTagListFilter[];
-    refreshSavedTagListFilters: () => void;
-    tagListFilter: TagListFilter;
-    setTagListFilter: (tagListFilter: TagListFilter) => void;
+    project: ProjectDetails;
+    savedIPOFilters: SavedIPOFilter[];
+    refreshSavedIPOFilters: () => void;
+    ipoFilter: IPOFilter;
+    setIPOFilter: (ipoFilter: IPOFilter) => void;
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     onCloseRequest: () => void;
@@ -31,84 +31,74 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     const [newFilterIsDefault, setNewFilterIsDefault] = useState<boolean>(false);
     const [selectedFilterIndex, setSelectedFilterIndex] = useState<number | null>();
 
-    //TODO: change to use IPO
-    const {
-        project,
-        apiClient
-    } = usePreservationContext();
+    const { apiClient } = useInvitationForPunchOutContext();
 
-    //TODO: use IPOFilter not TagListFilter
     //Set selected filter to null, if filter values are changed
     useEffect((): void => {
-        if (props.savedTagListFilters && props.selectedSavedFilterTitle) {
-            const selectedFilterIndex = props.savedTagListFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
+        if (props.savedIPOFilters && props.selectedSavedFilterTitle) {
+            const selectedFilterIndex = props.savedIPOFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
             setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != JSON.stringify(props.savedTagListFilters[selectedFilterIndex].criteria)) {
+            if (props.selectedSavedFilterTitle && JSON.stringify(props.ipoFilter) != JSON.stringify(props.savedIPOFilters[selectedFilterIndex].criteria)) {
                 props.setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }
         }
-    }, [props.savedTagListFilters, props.tagListFilter]);
+    }, [props.savedIPOFilters, props.ipoFilter]);
 
-    //TODO: use IPOFilter not TagListFilter
     const onSaveFilter = async (): Promise<void> => {
         try {
-            // NOTE: needs a mock for now, as the API doesn't have all that I need
-            await apiClient.addSavedTagListFilter(project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.tagListFilter));
-            props.refreshSavedTagListFilters();
+            // TODO: create mock of this function in the api client
+            await apiClient.addSavedIPOFilter(props.project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.ipoFilter));
+            props.refreshSavedIPOFilters();
             showSnackbarNotification('Filter is saved.', 5000);
             setSaveFilterMode(false);
         } catch (error) {
-            console.error('Add scope filter failed: ', error.message, error.data);
+            console.error('Add IPO filter failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
 
-    //TODO: use IPOFilter not TagListFilter
     const onDeleteFilter = async (index: number): Promise<void> => {
         try {
-            const filter = props.savedTagListFilters && props.savedTagListFilters[index];
+            const filter = props.savedIPOFilters && props.savedIPOFilters[index];
             if (filter) {
-                // NOTE: needs a mock for now, as the API doesn't have all that I need
-                await apiClient.deleteSavedTagListFilter(filter.id, filter.rowVersion);
-                props.refreshSavedTagListFilters();
+                // TODO: create mock of this function in the api client
+                await apiClient.deleteSavedIPOFilter(filter.id, filter.rowVersion);
+                props.refreshSavedIPOFilters();
                 showSnackbarNotification('Filter is deleted.', 5000);
             }
         } catch (error) {
-            console.error('Delete scope filter failed: ', error.message, error.data);
+            console.error('Delete IPO filter failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
 
-    //TODO: use IPOFilter not TagListFilter
-    const updateSavedFilter = async (filter: SavedTagListFilter): Promise<void> => {
+    const updateSavedFilter = async (filter: SavedIPOFilter): Promise<void> => {
         try {
-            // NOTE: needs a mock for now, as the API doesn't have all that I need
-            await apiClient.updateSavedTagListFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
-            props.refreshSavedTagListFilters();
+            // TODO: create mock of this function in the api client
+            await apiClient.updateSavedIPOFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
+            props.refreshSavedIPOFilters();
             showSnackbarNotification('Filter is updated.', 5000);
         } catch (error) {
-            console.error('Update scope filter failed: ', error.message, error.data);
+            console.error('Update IPO filter failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
 
-    //TODO: use IPOFilter not TagListFilter
     const onSetDefaultValue = async (defaultValue: boolean, index: number): Promise<void> => {
-        if (props.savedTagListFilters) {
-            const filter = props.savedTagListFilters[index];
+        if (props.savedIPOFilters) {
+            const filter = props.savedIPOFilters[index];
             filter.defaultFilter = defaultValue;
             updateSavedFilter(filter);
             showSnackbarNotification('Filter is no longer default.', 5000);
-            props.refreshSavedTagListFilters();
+            props.refreshSavedIPOFilters();
         }
     };
 
-    //TODO: use IPOFilter not TagListFilter
     const onSelectFilter = (index: number): void => {
-        if (props.savedTagListFilters) {
-            props.setSelectedSavedFilterTitle(props.savedTagListFilters[index].title);
-            props.setTagListFilter(JSON.parse(props.savedTagListFilters[index].criteria));
+        if (props.savedIPOFilters) {
+            props.setSelectedSavedFilterTitle(props.savedIPOFilters[index].title);
+            props.setIPOFilter(JSON.parse(props.savedIPOFilters[index].criteria));
             props.onCloseRequest();
         }
     };
@@ -151,7 +141,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         );
     }
 
-    //TODO: use IPOFilter not TagListFilter
     return (
         <Container>
             <Header>
@@ -168,7 +157,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
             </div>
 
             <ListContainer>
-                {props.savedTagListFilters && props.savedTagListFilters.map((filter, index) => {
+                {props.savedIPOFilters && props.savedIPOFilters.map((filter, index) => {
                     return (
                         <React.Fragment key={`filter._${index}`}>
                             <Row isSelectedFilter={index == selectedFilterIndex} >

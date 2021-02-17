@@ -13,6 +13,7 @@ import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 
 //TODO: add saved filters to props, like in ScopeFilter + import types
+//TODO: check if needs any other props
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
     onCloseRequest: () => void;
@@ -228,6 +229,7 @@ const InvitationsFilter = ({
     };
 
     //TODO: add the button and popover for the saved filter stuff
+    //TODO: make sure that saved filters component gets all the props it needs, might need to add some functions to this component
     return (
         <Container>
             <Header filterActive={filterActive}>

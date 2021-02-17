@@ -9,6 +9,7 @@ import Error from '@procosys/components/Error';
 import { IAuthService } from 'src/auth/AuthService';
 import Loading from '@procosys/components/Loading';
 import { hot } from 'react-hot-loader';
+import { Helmet } from 'react-helmet';
 
 type AppProps = {
     authService: IAuthService;
@@ -56,6 +57,9 @@ const Root = (props: AppProps): JSX.Element => {
 
     return (
         <ProcosysContext.Provider value={context}>
+            <Helmet>
+                <title>&nbsp;</title>
+            </Helmet>
             <div id="procosys-root" ref={rootRef}>
                 <App />
             </div>

@@ -114,6 +114,50 @@ const participants = [
         signedAtUtc: new Date(2020, 11, 6, 12), 
         attended: true,
         note: ''
+    },
+    {
+        organization: OrganizationsEnum.Contractor,
+        sortKey: 4,
+        canSign: false,
+        externalEmail: null,
+        person: null,
+        functionalRole: {
+            id: 12,
+            code: 'one',
+            email: 'funcitonalRole@asd.com',
+            persons: [
+                {
+                    person: {
+                        id: 1,
+                        firstName: 'First',
+                        lastName: 'ASdsklandasnd',
+                        azureOid: 'azure1',
+                        email: 'asdadasd@dwwdwd.com',
+                        rowVersion: '123123',
+                    },
+                    required: true,
+                    response: OutlookResponseType.NONE,
+        
+                },
+                {
+                    person: {
+                        id: 2,
+                        firstName: 'Second',
+                        lastName: 'ASdsklandasnd',
+                        azureOid: 'azure2',
+                        email: 'asdadasd2@dwwdwd.com',
+                        rowVersion: '1231234',
+                    },
+                    required: true,
+                    response: OutlookResponseType.NONE,
+        
+                },
+            ],
+            response: OutlookResponseType.NONE,
+            rowVersion: '123o875'
+        },
+        note: '',
+        attended: false,
     }
 ];
 
@@ -408,7 +452,7 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryAllByText('Attended').length).toBe(3); // +1 for table header
-        expect(queryAllByText('Did not attend').length).toBe(2);
+        expect(queryAllByText('Did not attend').length).toBe(3);
     });
 
     it('Should set attended from participant status when not in planned state', async () => {
@@ -419,7 +463,7 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryAllByText('Attended').length).toBe(3); // +1 for table header
-        expect(queryAllByText('Did not attend').length).toBe(2);
+        expect(queryAllByText('Did not attend').length).toBe(3);
     });
 
     it('Should set dirty state when entering text', async () => {
@@ -482,5 +526,46 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
         expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
     });
-    
+
+    describe('Custom popover rendering', () => {
+        it('Should not render a popover anchor if the participant is not a functional role', () => {
+            const { queryByTestId } = renderWithTheme(<ParticipantsTable 
+                participants={participants} 
+                status={IpoStatusEnum.ACCEPTED}
+                accept={acceptPunchOut}
+                complete={completePunchOut} />);
+            participants.forEach((participant) => {
+                const anchor = queryByTestId(participant.sortKey.toString() + 'test');
+                if(participant.functionalRole === null){
+                    expect(anchor).not.toBeInTheDocument();
+                }
+            });
+        });
+
+        it('Should not render a popover anchor if the functional role has no persons', () => {
+            const { queryByTestId} = renderWithTheme(<ParticipantsTable 
+                participants={participants} 
+                status={IpoStatusEnum.ACCEPTED}
+                accept={acceptPunchOut}
+                complete={completePunchOut} />);
+            participants.forEach((participant) => {
+                if(participant.functionalRole !== null && participant.functionalRole.persons.length <= 0 ){
+                    expect(queryByTestId(participant.sortKey.toString() + 'test', { exact: false })).not.toBeInTheDocument();
+                }
+            });
+        });
+        it('Should render one popover anchor for each functional role with at least one person', () => {
+            const { queryByTestId } = renderWithTheme(<ParticipantsTable 
+                participants={participants} 
+                status={IpoStatusEnum.ACCEPTED}
+                accept={acceptPunchOut}
+                complete={completePunchOut} />);
+            participants.forEach((participant) => {
+                const anchor = queryByTestId(participant.sortKey.toString() + 'test', { exact: false });
+                if(participant.functionalRole !== null && participant.functionalRole.persons.length > 0 ){
+                    expect(anchor).toBeInTheDocument();
+                }
+            });
+        });
+    });
 });

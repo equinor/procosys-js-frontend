@@ -85,7 +85,6 @@ const SearchIPO = (): JSX.Element => {
                     return JSON.parse(defaultFilter.criteria);
                 } catch (error) {
                     console.error('Failed to parse default filter');
-                    //analytics.trackException(error);
                 }
             }
         };

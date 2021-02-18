@@ -126,7 +126,6 @@ const clearFilter: IPOFilter = {
     punchOutDates: []
 };
 
-//TODO: include the savedFilter stuff from the interface above
 const InvitationsFilter = ({
     project,
     onCloseRequest,

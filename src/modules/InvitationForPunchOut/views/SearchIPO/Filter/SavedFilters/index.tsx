@@ -5,7 +5,6 @@ import Checkbox from '@procosys/components/Checkbox';
 import { ListContainer, Container, Link, Row } from './index.style';
 import { SavedIPOFilter, IPOFilter } from '../../types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import CloseIcon from '@material-ui/icons/Close';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 
@@ -49,7 +48,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onSaveFilter = async (): Promise<void> => {
         try {
-            // TODO: create mock of this function in the api client
             await apiClient.addSavedIPOFilter(props.project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.ipoFilter));
             props.refreshSavedIPOFilters();
             showSnackbarNotification('Filter is saved.', 5000);
@@ -64,7 +62,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         try {
             const filter = props.savedIPOFilters && props.savedIPOFilters[index];
             if (filter) {
-                // TODO: create mock of this function in the api client
                 await apiClient.deleteSavedIPOFilter(filter.id, filter.rowVersion);
                 props.refreshSavedIPOFilters();
                 showSnackbarNotification('Filter is deleted.', 5000);
@@ -77,7 +74,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const updateSavedFilter = async (filter: SavedIPOFilter): Promise<void> => {
         try {
-            // TODO: create mock of this function in the api client
             await apiClient.updateSavedIPOFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
             props.refreshSavedIPOFilters();
             showSnackbarNotification('Filter is updated.', 5000);

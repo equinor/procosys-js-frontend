@@ -5,7 +5,6 @@ import Checkbox from '../../../../../components/Checkbox';
 import { ListContainer, Container, Link, Row } from './SavedFilters.style';
 import { SavedTagListFilter, TagListFilter } from '../types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import CloseIcon from '@material-ui/icons/Close';
 import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
 
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
@@ -108,11 +107,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
             <Container>
                 <PopoverTitle>
                     <Typography variant='h6'>Save as new filter</Typography>
-                    <Button variant='ghost' title='Close' onClick={(): void => { props.onCloseRequest(); }}>
-                        <CloseIcon />
-                    </Button>
                 </PopoverTitle>
-
                 <PopoverContent style={{margin: 'calc(var(--grid-unit) * 2)'}}>
                     <div style={{ justifyContent: 'space-between', margin: '16px 0 24px', width: '300px' }}>
                         <TextField

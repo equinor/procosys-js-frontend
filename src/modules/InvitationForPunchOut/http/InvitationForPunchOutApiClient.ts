@@ -14,6 +14,10 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
+// TODO: remove this once mock is no longer needed
+// This is a mock of a list of saved filters from API
+const mockFilters: SavedIPOFilterResponse[] = [];
+
 type InvitationResponse = {
     canEdit: boolean;
     projectName: string;
@@ -918,24 +922,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
             throw new IpoApiError(error);
         }
     }
-
+    
     /**
      * Get saved IPO filters
      */
     async getSavedIPOFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedIPOFilterResponse[]> {
-        // TODO: Fill this filter with some actual values
-        const filter = {
-
-        };
-        const resp: SavedIPOFilterResponse[] = await [
-            {
-                id: 1,
-                title: 'Mock',
-                defaultFilter: true,
-                criteria: JSON.stringify(filter),
-                rowVersion: ''
-            }
-        ];
+        const resp: SavedIPOFilterResponse[] = await mockFilters;
         return resp;
         /*
         const endpoint = '/SavedFilters';
@@ -959,7 +951,13 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * Add saved IPO filter
      */
     async addSavedIPOFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        // TODO: create and return some kind of mock response
+        await mockFilters.push({
+            id: mockFilters.length,
+            title: title,
+            defaultFilter:defaultFilter,
+            criteria: criteria,
+            rowVersion: '1'
+        });
         /*
         const endpoint = '/SavedFilter';
         const settings: AxiosRequestConfig = {};
@@ -985,10 +983,16 @@ class InvitationForPunchOutApiClient extends ApiClient {
     /**
     * Update saved IPO filter
     */
-    async updateSavedIPOFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        // TODO: create and return some kind of mock response
+    async updateSavedIPOFilter(savedFilterId: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        mockFilters[savedFilterId] = {
+            id: savedFilterId,
+            title: title,
+            defaultFilter: defaultFilter,
+            criteria: criteria,
+            rowVersion: rowVersion
+        };
         /*
-        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const endpoint = `/SavedFilters/${savedFilterId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
@@ -1012,7 +1016,13 @@ class InvitationForPunchOutApiClient extends ApiClient {
     * Delete saved IPO filter 
     */
     async deleteSavedIPOFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        // TODO: create and return some kind of mock response
+        mockFilters[savedFilterId] = {
+            id: savedFilterId,
+            title: 'Deleted filter',
+            defaultFilter: false,
+            criteria: mockFilters[savedFilterId].criteria,
+            rowVersion: rowVersion
+        };
         /*
         const endpoint = `/SavedFilters/${savedFilterId}`;
         const settings: AxiosRequestConfig = {};

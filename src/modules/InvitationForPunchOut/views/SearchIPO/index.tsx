@@ -1,5 +1,5 @@
 import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, StyledButton, TooltipText } from './index.style';
-import { IPOFilter, IPOs } from './types';
+import { IPOFilter, IPOs, SavedIPOFilter } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -14,8 +14,6 @@ import { Tooltip } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-
-//TODO: create todos
 
 const emptyFilter: IPOFilter = {
     ipoStatuses: [],
@@ -51,6 +49,62 @@ const SearchIPO = (): JSX.Element => {
     const cancelerRef = useRef<Canceler | null>();
 
     const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
+
+    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
+    const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
+
+    const updateSavedFilters = async (): Promise<void> => {
+        setIsLoading(true);
+        if(project === undefined){
+            console.error('The project is of type undefined');
+            showSnackbarNotification('The project is of type undefined', 5000);
+            setIsLoading(false);
+            return;
+        }
+        try {
+            const response = await apiClient.getSavedIPOFilters(project.name);
+            setSavedFilters(response);
+        } catch (error) {
+            console.error('Get saved filters failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        setIsLoading(false);
+    };
+
+    useEffect((): void => {
+        if (project && project.id != -1) {
+            updateSavedFilters();
+        }
+    }, [project]);
+
+    const getDefaultFilter = (): IPOFilter | null => {
+        if (savedFilters) {
+            const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
+            if (defaultFilter) {
+                try {
+                    return JSON.parse(defaultFilter.criteria);
+                } catch (error) {
+                    console.error('Failed to parse default filter');
+                    //analytics.trackException(error);
+                }
+            }
+        };
+        return null;
+    };
+
+    useEffect((): void => {
+        if (project && project.id === -1) return;
+
+        if(savedFilters) {
+            const defaultFilter = getDefaultFilter();
+            if (defaultFilter) {
+                setFilter({
+                    ...defaultFilter
+                });
+            }
+        }
+    }, [savedFilters, project]);
+
 
     /**
      * Fetch available functional roles 
@@ -204,7 +258,7 @@ const SearchIPO = (): JSX.Element => {
         setNumberOfIPOs(0);
         return { maxAvailable: 0, invitations: [] };
     };
-    //TO-DO: make sure filter gets all props it needs, might need to add some funcitons to this component
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -269,6 +323,10 @@ const SearchIPO = (): JSX.Element => {
                                 setDisplayFilter(false);
                             }}
                             filter={filter} setFilter={setFilter}
+                            savedFilters={savedFilters}
+                            refreshSavedFilters={updateSavedFilters}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
                             roles={availableRoles}
                             numberOfIPOs={numberOfIPOs}
                         />

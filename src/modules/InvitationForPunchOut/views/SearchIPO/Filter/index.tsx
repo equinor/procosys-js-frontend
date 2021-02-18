@@ -1,6 +1,6 @@
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Button, TextField, Typography, Popover } from '@equinor/eds-core-react';
 import { Collapse, CollapseInfo, Container, Header, Link, Section } from './index.style';
-import { IPOFilter, ProjectDetails } from '../types';
+import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 
 import CheckboxFilterWithDates from './CheckboxFilterWithDates';
@@ -12,13 +12,16 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 
-//TODO: add saved filters to props, like in ScopeFilter + import types
 //TODO: check if needs any other props
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
     onCloseRequest: () => void;
     filter: IPOFilter;
     setFilter: (filter: IPOFilter) => void;
+    savedFilters: SavedIPOFilter[] | null;
+    refreshSavedFilters: () => void;
+    selectedSavedFilterTitle: string | null;
+    setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     roles: SelectItem[];
     numberOfIPOs: number | undefined;
 }
@@ -129,6 +132,10 @@ const InvitationsFilter = ({
     onCloseRequest,
     filter,
     setFilter,
+    savedFilters,
+    refreshSavedFilters,
+    selectedSavedFilterTitle,
+    setSelectedSavedFilterTitle,
     numberOfIPOs,
     roles,
 }: InvitationsFilterProps): JSX.Element => {
@@ -140,7 +147,8 @@ const InvitationsFilter = ({
     const isFirstRender = useRef<boolean>(true);
     const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
-    // TODO: add saved filter stuff and anchor element stuff
+    const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
+    const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
 

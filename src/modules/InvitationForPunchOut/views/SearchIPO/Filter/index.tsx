@@ -1,4 +1,4 @@
-import { Button, TextField, Typography, Popover } from '@equinor/eds-core-react';
+import { Button, TextField, Typography} from '@equinor/eds-core-react';
 import { Collapse, CollapseInfo, Container, Header, Link, Section } from './index.style';
 import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,8 +13,7 @@ import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-
-const { PopoverAnchor } = Popover;
+import Popover from '@material-ui/core/Popover';
 
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
@@ -150,6 +149,7 @@ const InvitationsFilter = ({
     const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
+    const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
 
@@ -246,34 +246,41 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    <Popover 
-                        placement="bottomRight"
-                        id={'savedFilter-popover'}
-                        onClose={(): void => setShowSavedFilters(false)}
-                        open={showSavedFilters}
-                    >
-                        <PopoverAnchor>
-                            <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
-                                setShowSavedFilters(!showSavedFilters);
-                            }}>
-                                <SavedFiltersIcon />
-                            </Button>
-                        </PopoverAnchor>
-                        <SavedFilters
-                            project={project}
-                            savedIPOFilters={savedFilters}
-                            refreshSavedIPOFilters={refreshSavedFilters}
-                            ipoFilter={filter}
-                            selectedSavedFilterTitle={selectedSavedFilterTitle}
-                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                            setIPOFilter={setLocalFilter}
-                            onCloseRequest={(): void => setShowSavedFilters(false)} />
-                    </Popover>
+                    <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
+                        showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
+                        setAnchorElement(event.currentTarget);
+                    }}>
+                        <SavedFiltersIcon />
+                    </Button>
                     <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                         <CloseIcon />
                     </Button>
                 </div>
             </Header>
+            <Popover
+                id={'savedFilter-popover'}
+                open={showSavedFilters}
+                anchorEl={anchorElement}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                onClose={(): void => setShowSavedFilters(false)}
+            >
+                <SavedFilters
+                    project={project}
+                    savedIPOFilters={savedFilters}
+                    refreshSavedIPOFilters={refreshSavedFilters}
+                    ipoFilter={filter}
+                    selectedSavedFilterTitle={selectedSavedFilterTitle}
+                    setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                    setIPOFilter={setLocalFilter}
+                    onCloseRequest={(): void => setShowSavedFilters(false)} />
+            </Popover >
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfIPOs} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>

@@ -1,4 +1,4 @@
-import { Button, TextField, Typography, Popover } from '@equinor/eds-core-react';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { Collapse, CollapseInfo, Container, Header, Link, Section } from './ScopeFilter.style';
 import React, { useEffect, useRef, useState } from 'react';
 import { SavedTagListFilter, TagListFilter } from '../types';
@@ -11,6 +11,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
+import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
@@ -18,8 +19,6 @@ import { showSnackbarNotification } from '../../../../../core/services/Notificat
 import { usePreservationContext } from '../../../context/PreservationContext';
 
 const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
-
-const { PopoverAnchor } = Popover;
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
@@ -386,34 +385,40 @@ const ScopeFilter = ({
                     <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportTagsToExcel}>
                         {ExcelIcon}
                     </Button>
-                    <Popover 
-                        placement="bottomRight"
-                        id={'savedFilter-popover'}
-                        onClose={(): void => setShowSavedFilters(false)}
-                        open={showSavedFilters}
-                    >
-                        <PopoverAnchor>
-                            <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
-                                setShowSavedFilters(!showSavedFilters);
-                            }}>
-                                <SavedFiltersIcon />
-                            </Button>
-                        </PopoverAnchor>
-                        <SavedFilters
-                            savedTagListFilters={savedTagListFilters}
-                            refreshSavedTagListFilters={refreshSavedTagListFilters}
-                            tagListFilter={tagListFilter}
-                            selectedSavedFilterTitle={selectedSavedFilterTitle}
-                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
-                            setTagListFilter={setLocalTagListFilter}
-                            onCloseRequest={(): void => setShowSavedFilters(false)} />
-                    </Popover>
-                    
+                    <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
+                        showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
+                        setAnchorElement(event.currentTarget);
+                    }}>
+                        <SavedFiltersIcon />
+                    </Button>
                     <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                         <CloseIcon />
                     </Button>
                 </div>
             </Header>
+            <Popover
+                id={'savedFilter-popover'}
+                open={showSavedFilters}
+                anchorEl={anchorElement}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                onClose={(): void => setShowSavedFilters(false)}
+            >
+                <SavedFilters
+                    savedTagListFilters={savedTagListFilters}
+                    refreshSavedTagListFilters={refreshSavedTagListFilters}
+                    tagListFilter={tagListFilter}
+                    selectedSavedFilterTitle={selectedSavedFilterTitle}
+                    setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                    setTagListFilter={setLocalTagListFilter}
+                    onCloseRequest={(): void => setShowSavedFilters(false)} />
+            </Popover >
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfTags} items` : 'No active filters'}</Typography>
                 <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>

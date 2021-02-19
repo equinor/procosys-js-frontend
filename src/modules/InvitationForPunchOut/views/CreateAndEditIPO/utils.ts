@@ -1,5 +1,7 @@
 import { addDays, addHours, addMinutes, set } from 'date-fns';
 
+import { Attachment } from '../../types';
+
 export const getEndTime = (date: Date): Date => {
     if (date.getHours() === 23) {
         const minutes = date.getMinutes();
@@ -26,4 +28,16 @@ export const getNextHalfHourTimeString = (date: Date): Date => {
 
 export const isEmptyObject = (obj: Record<string, string>): boolean => {
     return Object.keys(obj).length === 0 && obj.constructor === Object;
+};
+
+export const getAttachmentDownloadLink = (attachment: Attachment): string | undefined => {
+    if (attachment.downloadUri) {
+        return attachment.downloadUri;
+    }
+
+    if (attachment.file && typeof window.URL.createObjectURL !== 'undefined') {
+        window.URL.createObjectURL(attachment.file);
+    }
+
+    return undefined;
 };

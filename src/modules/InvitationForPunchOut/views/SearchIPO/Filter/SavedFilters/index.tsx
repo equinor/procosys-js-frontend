@@ -15,8 +15,8 @@ const defaultFalseIcon = <EdsIcon name='star_outlined' size={16} />;
 const { PopoverTitle, PopoverContent } = Popover;
 
 interface SavedFiltersProps {
-    project: ProjectDetails;
-    savedIPOFilters: SavedIPOFilter[];
+    project: ProjectDetails | undefined;
+    savedIPOFilters: SavedIPOFilter[] | null;
     refreshSavedIPOFilters: () => void;
     ipoFilter: IPOFilter;
     setIPOFilter: (ipoFilter: IPOFilter) => void;
@@ -47,6 +47,11 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     }, [props.savedIPOFilters, props.ipoFilter]);
 
     const onSaveFilter = async (): Promise<void> => {
+        if(props.project === undefined){
+            console.error('Add IPO filter failed: project is undefined');
+            showSnackbarNotification('Filter couln\'t save, project is undefined', 5000);
+            return;
+        }
         try {
             await apiClient.addSavedIPOFilter(props.project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.ipoFilter));
             props.refreshSavedIPOFilters();

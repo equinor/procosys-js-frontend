@@ -11,8 +11,11 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
+import SavedFilters from './SavedFilters';
+import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 
-//TODO: check if needs any other props
+const { PopoverAnchor } = Popover;
+
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
     onCloseRequest: () => void;
@@ -147,9 +150,10 @@ const InvitationsFilter = ({
     const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
-    const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
+
+
 
     const triggerIPOListUpdate = (): void => {
         setFilter(localFilter);
@@ -242,6 +246,29 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
+                    <Popover 
+                        placement="bottomRight"
+                        id={'savedFilter-popover'}
+                        onClose={(): void => setShowSavedFilters(false)}
+                        open={showSavedFilters}
+                    >
+                        <PopoverAnchor>
+                            <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
+                                setShowSavedFilters(!showSavedFilters);
+                            }}>
+                                <SavedFiltersIcon />
+                            </Button>
+                        </PopoverAnchor>
+                        <SavedFilters
+                            project={project}
+                            savedIPOFilters={savedFilters}
+                            refreshSavedIPOFilters={refreshSavedFilters}
+                            ipoFilter={filter}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            setIPOFilter={setLocalFilter}
+                            onCloseRequest={(): void => setShowSavedFilters(false)} />
+                    </Popover>
                     <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
                         <CloseIcon />
                     </Button>

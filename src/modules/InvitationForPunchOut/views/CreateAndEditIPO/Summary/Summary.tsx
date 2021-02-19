@@ -10,6 +10,7 @@ import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
 import React from 'react';
 import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
 import { format } from 'date-fns';
+import { getAttachmentDownloadLink } from '../utils';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -73,14 +74,16 @@ const Summary = ({
             </Row>);
     };
 
-    const attachmentList = attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment, index) => (
-        <Row key={index}>
+    const attachmentList = attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment, index) => {
+        const link = getAttachmentDownloadLink(attachment);
+
+        return (<Row key={index}>
             <Cell><EdsIcon name={getFileTypeIconName(attachment.fileName)} /></Cell>
             <Cell>
-                <Typography link target='_blank' href={URL.createObjectURL(attachment.file)}>{getFileName(attachment.fileName)}</Typography>
+                <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
             </Cell>
-        </Row>
-    ));
+        </Row>);
+    });
 
     return (<Container>
         <FormContainer>

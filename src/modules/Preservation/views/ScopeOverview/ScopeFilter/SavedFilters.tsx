@@ -39,7 +39,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         if (props.savedTagListFilters && props.selectedSavedFilterTitle) {
             const selectedFilterIndex = props.savedTagListFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
             setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != JSON.stringify(props.savedTagListFilters[selectedFilterIndex].criteria)) {
+            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != props.savedTagListFilters[selectedFilterIndex].criteria) {
                 props.setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }

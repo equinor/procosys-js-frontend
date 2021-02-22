@@ -2,8 +2,6 @@ import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
 
-//TODO: check if there is something in scope filter style that's needed here!
-
 export const Container = styled.div`
     display: flex;
     flex-direction: column;

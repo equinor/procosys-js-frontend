@@ -38,7 +38,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         if (props.savedIPOFilters && props.selectedSavedFilterTitle) {
             const selectedFilterIndex = props.savedIPOFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
             setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterTitle && JSON.stringify(props.ipoFilter) != JSON.stringify(props.savedIPOFilters[selectedFilterIndex].criteria)) {
+            if (props.selectedSavedFilterTitle && JSON.stringify(props.ipoFilter) != props.savedIPOFilters[selectedFilterIndex].criteria) {
                 props.setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }
@@ -99,6 +99,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onSelectFilter = (index: number): void => {
         if (props.savedIPOFilters) {
+            console.log('setting selected filter title');
             props.setSelectedSavedFilterTitle(props.savedIPOFilters[index].title);
             props.setIPOFilter(JSON.parse(props.savedIPOFilters[index].criteria));
             props.onCloseRequest();

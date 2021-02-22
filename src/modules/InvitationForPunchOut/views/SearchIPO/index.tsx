@@ -57,7 +57,7 @@ const SearchIPO = (): JSX.Element => {
         setIsLoading(true);
         if(project === undefined){
             console.error('The project is of type undefined');
-            showSnackbarNotification('The project is of type undefined', 5000);
+            showSnackbarNotification('Get saved filters failed: The project is of type undefined', 5000);
             setIsLoading(false);
             return;
         }

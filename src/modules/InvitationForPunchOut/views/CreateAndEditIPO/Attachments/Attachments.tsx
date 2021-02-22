@@ -7,6 +7,7 @@ import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
+import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 
@@ -68,8 +69,10 @@ const Attachments = ({
     };
 
     const getAttachmentName = (attachment: Attachment): JSX.Element => {
+        const link = getAttachmentDownloadLink(attachment);
+
         return (
-            <Typography link target='_blank' href={URL.createObjectURL(attachment.file)}>{getFileName(attachment.fileName)}</Typography>
+            <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
         );
     };
 

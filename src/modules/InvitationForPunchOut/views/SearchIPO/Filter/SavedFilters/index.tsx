@@ -99,7 +99,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onSelectFilter = (index: number): void => {
         if (props.savedIPOFilters) {
-            console.log('setting selected filter title');
             props.setSelectedSavedFilterTitle(props.savedIPOFilters[index].title);
             props.setIPOFilter(JSON.parse(props.savedIPOFilters[index].criteria));
             props.onCloseRequest();

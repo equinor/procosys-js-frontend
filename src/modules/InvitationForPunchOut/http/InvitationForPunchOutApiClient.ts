@@ -925,12 +925,11 @@ class InvitationForPunchOutApiClient extends ApiClient {
     
     /**
      * Get saved IPO filters
+     * 
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getSavedIPOFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedIPOFilterResponse[]> {
-        const resp: SavedIPOFilterResponse[] = await mockFilters;
-        return resp;
-        /*
-        const endpoint = '/SavedFilters';
+        const endpoint = '/Persons/SavedFilters';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName
@@ -945,63 +944,49 @@ class InvitationForPunchOutApiClient extends ApiClient {
         catch (error) {
             throw new IpoApiError(error);
         }
-        */
     }
     /**
      * Add saved IPO filter
+     * 
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async addSavedIPOFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        await mockFilters.push({
-            id: mockFilters.length,
-            title: title,
-            defaultFilter:defaultFilter,
-            criteria: criteria,
-            rowVersion: '1'
-        });
-        /*
-        const endpoint = '/SavedFilter';
+        const endpoint = '/Persons/SavedFilter';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            await this.client.post(
+            const result = await this.client.post(
                 endpoint,
                 {
                     projectName: projectName,
                     title: title,
+                    criteria: criteria,
                     defaultFilter: defaultFilter,
-                    criteria: criteria
                 },
                 settings
             );
         } catch (error) {
             throw new IpoApiError(error);
         }
-        */
     }
 
     /**
     * Update saved IPO filter
+    * 
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
     */
     async updateSavedIPOFilter(savedFilterId: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        mockFilters[savedFilterId] = {
-            id: savedFilterId,
-            title: title,
-            defaultFilter: defaultFilter,
-            criteria: criteria,
-            rowVersion: rowVersion
-        };
-        /*
-        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const endpoint = `/Persons/SavedFilters/${savedFilterId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
-            await this.client.put(
+            const result = await this.client.put(
                 endpoint,
                 {
                     title: title,
-                    defaultFilter: defaultFilter,
                     criteria: criteria,
+                    defaultFilter: defaultFilter,
                     rowVersion: rowVersion
                 },
                 settings
@@ -1009,26 +994,19 @@ class InvitationForPunchOutApiClient extends ApiClient {
         } catch (error) {
             throw new IpoApiError(error);
         }
-        */
     }
 
     /**
     * Delete saved IPO filter 
+    * 
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
     */
     async deleteSavedIPOFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        mockFilters[savedFilterId] = {
-            id: savedFilterId,
-            title: 'Deleted filter',
-            defaultFilter: false,
-            criteria: mockFilters[savedFilterId].criteria,
-            rowVersion: rowVersion
-        };
-        /*
-        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const endpoint = `/Persons/SavedFilters/${savedFilterId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
-            await this.client.delete(
+            const result = await this.client.delete(
                 endpoint,
                 {
                     data: { rowVersion: rowVersion }
@@ -1037,7 +1015,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
         } catch (error) {
             throw new IpoApiError(error);
         }
-        */
     }
 
 } export default InvitationForPunchOutApiClient;

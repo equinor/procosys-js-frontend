@@ -37,7 +37,6 @@ const EditTagProperties = (): JSX.Element => {
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [step, setStep] = useState<Step | null>();
 
-    const tagDescriptionInputRef = useRef<HTMLInputElement>(null);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
 
@@ -281,10 +280,10 @@ const EditTagProperties = (): JSX.Element => {
     };
 
     /**
-     * Check if any changes have been made to journey, step or requirements
+     * Check if any changes have been made to journey, step requirements, or description
      */
     useEffect(() => {
-        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
+        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements) || (description && description != tag.description))) {
             setTagJourneyOrRequirementsEdited(true);
         } else {
             setTagJourneyOrRequirementsEdited(false);
@@ -324,7 +323,7 @@ const EditTagProperties = (): JSX.Element => {
                 await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements);
             }
         } catch (error) {
-            handleErrorFromBackend(error, 'Error updating journey, step or requirements');
+            handleErrorFromBackend(error, 'Error updating journey, step, requirements, or description');
         }
     };
 

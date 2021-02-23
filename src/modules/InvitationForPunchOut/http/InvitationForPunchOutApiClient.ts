@@ -14,10 +14,6 @@ export class IpoApiError extends ProCoSysApiError {
     }
 }
 
-// TODO: remove this once mock is no longer needed
-// This is a mock of a list of saved filters from API
-const mockFilters: SavedIPOFilterResponse[] = [];
-
 type InvitationResponse = {
     canEdit: boolean;
     projectName: string;

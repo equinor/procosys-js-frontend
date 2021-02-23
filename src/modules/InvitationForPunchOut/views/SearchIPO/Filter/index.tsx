@@ -1,4 +1,4 @@
-import { Button, TextField, Typography} from '@equinor/eds-core-react';
+import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { Collapse, CollapseInfo, Container, Header, Link, Section } from './index.style';
 import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -152,8 +152,6 @@ const InvitationsFilter = ({
     const [anchorElement, setAnchorElement] = React.useState(null);
 
     const KEYCODE_ENTER = 13;
-
-
 
     const triggerIPOListUpdate = (): void => {
         setFilter(localFilter);

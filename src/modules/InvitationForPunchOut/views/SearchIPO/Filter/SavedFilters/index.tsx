@@ -47,8 +47,8 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const onSaveFilter = async (): Promise<void> => {
         if(props.project === undefined){
-            console.error('Add IPO filter failed: project is undefined');
-            showSnackbarNotification('Filter couln\'t save, project is undefined', 5000);
+            console.error('The project is of type undefined');
+            showSnackbarNotification('Add IPO filter failed: Project is undefined', 5000);
             return;
         }
         try {

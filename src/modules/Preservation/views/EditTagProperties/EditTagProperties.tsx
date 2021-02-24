@@ -37,10 +37,10 @@ const EditTagProperties = (): JSX.Element => {
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [step, setStep] = useState<Step | null>();
 
-    const tagDescriptionInputRef = useRef<HTMLInputElement>(null);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
 
+    const [description, setDescription] = useState<string | null>(null);
     const [tag, setTag] = useState<TagDetails>();
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
@@ -73,6 +73,7 @@ const EditTagProperties = (): JSX.Element => {
                         setPoTag(true);
                     }
                     setRowVersion(details.rowVersion);
+                    setDescription(details.description);
                 } catch (error) {
                     console.error('Get tag details failed: ', error.message, error.data);
                     showSnackbarNotification(error.message);
@@ -278,24 +279,16 @@ const EditTagProperties = (): JSX.Element => {
         }
     };
 
-    const tagDescriptionChange = (): void => {
-        if (tag && tagDescriptionInputRef.current && tagDescriptionInputRef.current.value != tag.description) {
-            setTagJourneyOrRequirementsEdited(true);
-        } else {
-            setTagJourneyOrRequirementsEdited(false);
-        }
-    };
-
     /**
-     * Check if any changes have been made to journey, step or requirements
+     * Check if any changes have been made to journey, step requirements, or description
      */
     useEffect(() => {
-        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements))) {
+        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements) || (description && description != tag.description))) {
             setTagJourneyOrRequirementsEdited(true);
         } else {
             setTagJourneyOrRequirementsEdited(false);
         }
-    }, [requirements, step, journey, originalRequirements]);
+    }, [requirements, step, journey, originalRequirements, description]);
 
     const updateRemarkAndStorageArea = async (): Promise<string> => {
         try {
@@ -313,7 +306,7 @@ const EditTagProperties = (): JSX.Element => {
 
     const updateTagJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
         try {
-            if (tag && step && tagDescriptionInputRef.current) {
+            if (tag && step && description) {
                 let newRequirements: RequirementFormInput[] = [];
                 const numberOfNewReq = requirements.length - originalRequirements.length;
                 if (requirements.length > originalRequirements.length) {
@@ -327,10 +320,10 @@ const EditTagProperties = (): JSX.Element => {
                         rowVersion: req.rowVersion
                     };
                 });
-                await apiClient.updateTagStepAndRequirements(tag.id, tagDescriptionInputRef.current.value, step.id, currentRowVersion, updatedRequirements, newRequirements);
+                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements);
             }
         } catch (error) {
-            handleErrorFromBackend(error, 'Error updating journey, step or requirements');
+            handleErrorFromBackend(error, 'Error updating journey, step, requirements, or description');
         }
     };
 
@@ -400,10 +393,9 @@ const EditTagProperties = (): JSX.Element => {
                                     id={'Description'}
                                     label='Tag description'
                                     defaultValue={tag ? tag.description : ''}
-                                    inputRef={tagDescriptionInputRef}
                                     disabled={tag && !dummyTagTypes.includes(tag.tagType)}
                                     placeholder={'Write here'}
-                                    onChange={tagDescriptionChange}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.target.value)}
                                 />
                             </InputContainer>
                             <InputContainer>

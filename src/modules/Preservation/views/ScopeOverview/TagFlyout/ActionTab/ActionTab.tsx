@@ -90,8 +90,8 @@ const ActionTab = ({
 
         return (
             <ActionContainer isClosed={action.isClosed} key={action.id}>
-                <Collapse isClosed={action.isClosed}>
-                    <Button data-testid={`toggle-icon-${action.id}`} variant='ghost' onClick={(): void => toggleDetails(action.id)}>
+                <Collapse isClosed={action.isClosed} onClick={(): void => toggleDetails(action.id)} >
+                    <Button data-testid={`toggle-icon-${action.id}`} variant='ghost_icon'>
                         {
                             isExpanded
                                 ? <KeyboardArrowUpIcon />

@@ -87,4 +87,22 @@ describe('<ActionTab />', () => {
         fireEvent.click(clickableElement);
         expect(queryByText('Description 1')).not.toBeInTheDocument();
     });
+
+    it('Should open and show action details when clicking the action header',async () => {
+        const {queryByText, findByText } = render(<ActionTab tagId={100}/>);
+        const clickableElement = await findByText('Action 1');
+
+        fireEvent.click(clickableElement);
+        await findByText('01.05.2020');
+
+        expect(queryByText('01.05.2020')).toBeInTheDocument();
+        expect(queryByText('01.03.2020')).toBeInTheDocument();
+        expect(queryByText('Donald Duck')).toBeInTheDocument();
+        expect(queryByText('Description 1')).toBeInTheDocument();
+        expect(queryByText('aFileAttachment.png')).toBeInTheDocument();
+        expect(queryByText('Close action')).toBeInTheDocument();
+
+        fireEvent.click(clickableElement);
+        expect(queryByText('Description 1')).not.toBeInTheDocument();
+    });
 });

@@ -6,6 +6,7 @@ import ParticipantsTable from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { configure } from '@testing-library/dom';
+import { getFormattedDateAndTime } from '../../../../../../../core/services/DateService';
 import theme from '../../../../../../../assets/theme';
 
 configure({ testIdAttribute: 'id' });
@@ -324,7 +325,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Update')).toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
-        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
     });
 
     it('Renders completed status for accepter', async () => {
@@ -340,7 +341,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).toBeInTheDocument();
         expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
-        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
     });
 
     it('Renders completed status for signer', async () => {
@@ -356,7 +357,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
-        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
     });
 
     it('Renders accepted status for completer', async () => {
@@ -375,8 +376,8 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText('Unaccept punch-out')).not.toBeInTheDocument();
-        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
-        expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.ACCEPTER].signedAtUtc))).toBeInTheDocument();
     });
 
     it('Renders accepted status for accepter', async () => {
@@ -394,8 +395,8 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
         expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
-        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
-        expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.ACCEPTER].signedAtUtc))).toBeInTheDocument();
     });
 
     it('Renders accepted status for signer', async () => {
@@ -411,8 +412,8 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
         expect(queryByText('Unaccept punch-out')).not.toBeInTheDocument();
-        expect(queryByText('06/12/2020 11:00')).toBeInTheDocument();
-        expect(queryByText('06/12/2020 12:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
+        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.ACCEPTER].signedAtUtc))).toBeInTheDocument();
     });
 
 

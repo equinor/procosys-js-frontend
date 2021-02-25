@@ -274,7 +274,6 @@ const SearchIPO = (): JSX.Element => {
                 )
             }
         </Container >
-
     );
 };
 

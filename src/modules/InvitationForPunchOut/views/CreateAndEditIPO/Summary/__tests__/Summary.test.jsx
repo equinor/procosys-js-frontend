@@ -1,6 +1,7 @@
+import { getFormattedDate, getFormattedTime } from '@procosys/core/services/DateService';
+
 import React from 'react';
 import Summary from '../Summary';
-import { format } from 'date-fns';
 import { render } from '@testing-library/react';
 
 const generalInfo = {
@@ -73,9 +74,9 @@ describe('Module: <Summary />', () => {
         expect(getByText(generalInfo.poType.text)).toBeInTheDocument();
         expect(getByText(generalInfo.title)).toBeInTheDocument();
         expect(getByText(generalInfo.description)).toBeInTheDocument();
-        expect(getByText(format(generalInfo.startTime, 'dd/MM/yyyy'))).toBeInTheDocument();
-        expect(getAllByText(format(generalInfo.startTime, 'HH:mm')).length).toBeGreaterThan(0);
-        expect(getAllByText(format(generalInfo.endTime, 'HH:mm')).length).toBeGreaterThan(0);
+        expect(getByText(getFormattedDate(generalInfo.startTime))).toBeInTheDocument();
+        expect(getAllByText(getFormattedTime(generalInfo.startTime)).length).toBeGreaterThan(0);
+        expect(getAllByText(getFormattedTime(generalInfo.endTime)).length).toBeGreaterThan(0);
         expect(getByText(generalInfo.location)).toBeInTheDocument();
     });
 

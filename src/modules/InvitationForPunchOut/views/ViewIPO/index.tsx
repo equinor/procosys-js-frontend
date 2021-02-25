@@ -369,7 +369,8 @@ const ViewIPO = (): JSX.Element => {
                         <Typography>No invitation found</Typography>
                     )
             }
-        </Container >);
+        </Container>
+    );
 };
 
 export default ViewIPO;

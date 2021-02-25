@@ -8,7 +8,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { Typography } from '@equinor/eds-core-react';
-import { format } from 'date-fns';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 interface CheckboxFilterWithDatesProps {
     title: string;
@@ -77,7 +77,7 @@ const CheckboxFilterWithDates = ({
                                             key={value.id}
                                             label={value.title}
                                             type='date'
-                                            value={dateValue ? format(dateValue, 'yyyy-MM-dd'): ''}
+                                            value={dateValue ? getFormattedDate(dateValue): ''}
                                             InputLabelProps={{
                                                 shrink: true,
                                             }}

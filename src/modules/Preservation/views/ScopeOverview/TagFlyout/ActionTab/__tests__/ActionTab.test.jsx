@@ -95,10 +95,10 @@ describe('<ActionTab />', () => {
         const clickableElement = await findByText('Action 1');
 
         fireEvent.click(clickableElement);
-        await findByText('01.05.2020');
+        await findByText(getFormattedDate('2020-05-01'));
 
-        expect(queryByText('01.05.2020')).toBeInTheDocument();
-        expect(queryByText('01.03.2020')).toBeInTheDocument();
+        expect(queryByText(getFormattedDate('2020-05-01'))).toBeInTheDocument();
+        expect(queryByText(getFormattedDate('2020-03-01'))).toBeInTheDocument();
         expect(queryByText('Donald Duck')).toBeInTheDocument();
         expect(queryByText('Description 1')).toBeInTheDocument();
         expect(queryByText('aFileAttachment.png')).toBeInTheDocument();

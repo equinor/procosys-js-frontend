@@ -6442,9 +6442,9 @@ ms@^2.1.1:
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
 msal@^1.4.0:
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/msal/-/msal-1.4.4.tgz#3f9b5a4442aa711c12ab8e88b8ed89b293f99711"
-  integrity sha512-aOBD/L6jAsizDFzKxxvXxH0FEDjp6Inr3Ufi/Y2o7KCFKN+akoE2sLeszEb/0Y3VxHxK0F0ea7xQ/HHTomKivw==
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/msal/-/msal-1.4.6.tgz#add7d81d5c931c3a6722bf0ff3315a1d6c67a724"
+  integrity sha512-tPwgKoWBRf+d2YG4CgCm2C9MiRUwzdn2aOwlLtaBCj3ekM1afkWMKbAsbKuuWSdoMPhhxrvALIOV0FfX3WKJlg==
   dependencies:
     tslib "^1.9.3"
 

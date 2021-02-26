@@ -77,18 +77,13 @@ const SearchIPO = (): JSX.Element => {
         }
     }, [project]);
 
-    const getDefaultFilter = (): IPOFilter | null => {
+    
+    const getDefaultFilter = (): SavedIPOFilter | undefined => {
         if (savedFilters) {
             const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
-            if (defaultFilter) {
-                try {
-                    return JSON.parse(defaultFilter.criteria);
-                } catch (error) {
-                    console.error('Failed to parse default filter');
-                }
-            }
+            return defaultFilter;
         };
-        return null;
+        return undefined;
     };
 
     useEffect((): void => {
@@ -97,14 +92,23 @@ const SearchIPO = (): JSX.Element => {
         if(savedFilters) {
             const defaultFilter = getDefaultFilter();
             if (defaultFilter) {
+                setSelectedSavedFilterTitle(defaultFilter.title);
+                try{
+                    setFilter({
+                        ...JSON.parse(defaultFilter.criteria)
+                    });
+                }catch (error) {
+                    console.error('Failed to parse default filter');
+                }
+            }else{
                 setFilter({
-                    ...defaultFilter
+                    ...emptyFilter
                 });
             }
         }
-    }, [savedFilters, project]);
+    }, [savedFilters]);
 
-
+    
     /**
      * Fetch available functional roles 
      */

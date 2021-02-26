@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import Checkbox from '@procosys/components/Checkbox';
@@ -22,6 +22,7 @@ interface SavedFiltersProps {
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     onCloseRequest: () => void;
+    selectedFilterIndex: number | null | undefined;
 }
 
 const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
@@ -29,21 +30,8 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     const [saveFilterMode, setSaveFilterMode] = useState<boolean>(false);
     const [newFilterTitle, setNewFilterTitle] = useState<string>('');
     const [newFilterIsDefault, setNewFilterIsDefault] = useState<boolean>(false);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState<number | null>();
 
     const { apiClient } = useInvitationForPunchOutContext();
-
-    //Set selected filter to null, if filter values are changed
-    useEffect((): void => {
-        if (props.savedIPOFilters && props.selectedSavedFilterTitle) {
-            const selectedFilterIndex = props.savedIPOFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
-            setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterTitle && JSON.stringify(props.ipoFilter) != props.savedIPOFilters[selectedFilterIndex].criteria) {
-                props.setSelectedSavedFilterTitle(null);
-                setSelectedFilterIndex(null);
-            }
-        }
-    }, [props.savedIPOFilters, props.ipoFilter]);
 
     const onSaveFilter = async (): Promise<void> => {
         if(props.project === undefined){
@@ -161,7 +149,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                 {props.savedIPOFilters && props.savedIPOFilters.map((filter, index) => {
                     return (
                         <React.Fragment key={`filter._${index}`}>
-                            <Row isSelectedFilter={index == selectedFilterIndex} >
+                            <Row isSelectedFilter={index == props.selectedFilterIndex} >
                                 <Link onClick={(): void => onSelectFilter(index)}>
                                     {filter.title}
                                 </Link>

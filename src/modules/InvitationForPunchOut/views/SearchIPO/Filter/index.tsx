@@ -146,10 +146,10 @@ const InvitationsFilter = ({
     const [localFilter, setLocalFilter] = useState<IPOFilter>({ ...filter });
 
     const isFirstRender = useRef<boolean>(true);
-    const projectNameRef = useRef<string>(project ? project.name : '');
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
     const [anchorElement, setAnchorElement] = React.useState(null);
+    const [selectedFilterIndex, setSelectedFilterIndex] = useState<number | null>();
 
     const KEYCODE_ENTER = 13;
 
@@ -162,18 +162,27 @@ const InvitationsFilter = ({
         setLocalFilter(newFilter);
         setFilter(newFilter);
     };
+    
+    useEffect((): void => {
+        setLocalFilter(filter);
+    }, [filter]);
 
-    useEffect(() => {
-        // On project change - reset filters (triggers scope list update when filters were active)
-        if (project) {
-            if (projectNameRef.current !== project.name) {
-                resetFilter();
+    useEffect((): void => {
+        if (savedFilters && selectedSavedFilterTitle) {
+            if(savedFilters.length != 0) {
+                const filterIndex = savedFilters.findIndex((filter) => filter.title == selectedSavedFilterTitle);
+                setSelectedFilterIndex(filterIndex);
+                if ( filterIndex && selectedSavedFilterTitle && JSON.stringify(localFilter) != savedFilters[filterIndex].criteria) {
+                    setSelectedSavedFilterTitle(null);
+                    setSelectedFilterIndex(null);
+                }
+            }else{
+                setSelectedSavedFilterTitle(null);
+                setSelectedFilterIndex(null);
             }
-
-            projectNameRef.current = project.name;
         }
-    }, [project]);
-
+            
+    }, [savedFilters, localFilter]);
 
     const onCheckboxFilterChange = (filterParam: filterParamType, id: string, checked: boolean): void => {
         const newIPOFilter: IPOFilter = { ...localFilter };
@@ -275,7 +284,9 @@ const InvitationsFilter = ({
                     selectedSavedFilterTitle={selectedSavedFilterTitle}
                     setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                     setIPOFilter={setLocalFilter}
-                    onCloseRequest={(): void => setShowSavedFilters(false)} />
+                    onCloseRequest={(): void => setShowSavedFilters(false)} 
+                    selectedFilterIndex={selectedFilterIndex}
+                />
             </Popover >
             <Section>
                 <Typography variant='caption'>{filterActive ? `Filter result ${numberOfIPOs} items` : 'No active filters'}</Typography>

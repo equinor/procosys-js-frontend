@@ -67,6 +67,7 @@ describe('<SavedFilters />', () => {
                 selectedSavedFilterTitle={null}
                 setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                 onCloseRequest={onCloseRequest}
+                selectedFilterIndex={null}
             />
         );
         expect(queryByText('Saved filters')).toBeInTheDocument();
@@ -88,6 +89,7 @@ describe('<SavedFilters />', () => {
                 selectedSavedFilterTitle={null}
                 setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                 onCloseRequest={onCloseRequest}
+                selectedFilterIndex={null}
             />
         );
         const filters = queryAllByText('Test', {exact: false});

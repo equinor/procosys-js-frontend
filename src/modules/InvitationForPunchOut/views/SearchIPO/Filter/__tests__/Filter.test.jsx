@@ -58,6 +58,10 @@ describe('<InvitationsFilter />', () => {
                     filter={emptyFilter} setFilter={jest.fn()}
                     roles={roles}
                     numberOfIPOs={0}
+                    savedFilters={savedFilters}
+                    refreshSavedFilters={jest.fn}
+                    selectedSavedFilterTitle={null}
+                    setSelectedSavedFilterTitle={jest.fn}
                 />
             );          
             expect(getByText('No active filters')).toBeInTheDocument();
@@ -72,6 +76,10 @@ describe('<InvitationsFilter />', () => {
                 filter={emptyFilter} setFilter={jest.fn()}
                 roles={roles}
                 numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
             />
         );          
         expect(getByText('Search')).toBeInTheDocument();
@@ -88,6 +96,10 @@ describe('<InvitationsFilter />', () => {
                 filter={emptyFilter} setFilter={jest.fn()}
                 roles={roles}
                 numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
             />
         );          
         fireEvent.click(getByTestId('search-fields'));

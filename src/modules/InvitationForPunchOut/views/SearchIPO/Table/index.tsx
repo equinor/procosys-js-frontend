@@ -40,7 +40,6 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
     const getIdColumn = (data: string):JSX.Element => {
         return (
-            // TODO: meka link turquoise!!
             <CustomLink to={`/${data}`}>
                 {data}
             </CustomLink>

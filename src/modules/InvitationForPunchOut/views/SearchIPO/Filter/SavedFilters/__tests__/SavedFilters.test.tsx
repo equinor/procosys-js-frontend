@@ -44,6 +44,7 @@ const refreshSavedIPOFilters = jest.fn;
 const setIPOFilter = jest.fn;
 const setSelectedSavedFilterTitle = jest.fn;
 const onCloseRequest = jest.fn;
+const setSelectedFilterIndex = jest.fn;
 
 const renderWithTheme = (Component: JSX.Element): any => {
     return render(
@@ -68,6 +69,7 @@ describe('<SavedFilters />', () => {
                 setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                 onCloseRequest={onCloseRequest}
                 selectedFilterIndex={null}
+                setSelectedFilterIndex={setSelectedFilterIndex}
             />
         );
         expect(queryByText('Saved filters')).toBeInTheDocument();
@@ -90,6 +92,7 @@ describe('<SavedFilters />', () => {
                 setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                 onCloseRequest={onCloseRequest}
                 selectedFilterIndex={null}
+                setSelectedFilterIndex={setSelectedFilterIndex}
             />
         );
         const filters = queryAllByText('Test', {exact: false});

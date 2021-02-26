@@ -23,6 +23,7 @@ interface SavedFiltersProps {
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     onCloseRequest: () => void;
     selectedFilterIndex: number | null | undefined;
+    setSelectedFilterIndex: (selectedFilterIndex: number | null | undefined) => void;
 }
 
 const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
@@ -33,7 +34,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
 
     const { apiClient } = useInvitationForPunchOutContext();
 
-    const onSaveFilter = async (): Promise<void> => {
+    const saveFilter= async (): Promise<void> => {
         if(props.project === undefined){
             console.error('The project is of type undefined');
             showSnackbarNotification('Add IPO filter failed: Project is undefined', 5000);
@@ -41,7 +42,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         }
         try {
             await apiClient.addSavedIPOFilter(props.project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.ipoFilter));
-            props.refreshSavedIPOFilters();
+            props.setSelectedSavedFilterTitle(newFilterTitle);
             showSnackbarNotification('Filter is saved.', 5000);
             setSaveFilterMode(false);
         } catch (error) {
@@ -50,12 +51,16 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         }
     };
 
-    const onDeleteFilter = async (index: number): Promise<void> => {
+    const onSaveFilter = async (): Promise<void> => {
+        await saveFilter();
+        props.refreshSavedIPOFilters();
+    };
+
+    const deleteFilter = async (index: number): Promise<void> => {
         try {
             const filter = props.savedIPOFilters && props.savedIPOFilters[index];
             if (filter) {
                 await apiClient.deleteSavedIPOFilter(filter.id, filter.rowVersion);
-                props.refreshSavedIPOFilters();
                 showSnackbarNotification('Filter is deleted.', 5000);
             }
         } catch (error) {
@@ -64,10 +69,18 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         }
     };
 
+    const onDeleteFilter = async (index: number): Promise<void> => {
+        await deleteFilter(index);
+        if(index === props.selectedFilterIndex){
+            props.setSelectedSavedFilterTitle(null);
+            props.setSelectedFilterIndex(null);
+        }
+        props.refreshSavedIPOFilters();
+    };
+
     const updateSavedFilter = async (filter: SavedIPOFilter): Promise<void> => {
         try {
             await apiClient.updateSavedIPOFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
-            props.refreshSavedIPOFilters();
             showSnackbarNotification('Filter is updated.', 5000);
         } catch (error) {
             console.error('Update IPO filter failed: ', error.message, error.data);
@@ -79,7 +92,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         if (props.savedIPOFilters) {
             const filter = props.savedIPOFilters[index];
             filter.defaultFilter = defaultValue;
-            updateSavedFilter(filter);
+            await updateSavedFilter(filter);
             showSnackbarNotification('Filter is no longer default.', 5000);
             props.refreshSavedIPOFilters();
         }

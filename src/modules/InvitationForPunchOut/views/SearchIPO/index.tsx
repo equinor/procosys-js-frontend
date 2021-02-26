@@ -52,6 +52,7 @@ const SearchIPO = (): JSX.Element => {
 
     const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
     const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
+    const [hasProjectChanged, setHasProjectChanged] = useState<boolean>(true);
 
     const updateSavedFilters = async (): Promise<void> => {
         setIsLoading(true);
@@ -87,24 +88,27 @@ const SearchIPO = (): JSX.Element => {
     };
 
     useEffect((): void => {
-        if (project && project.id === -1) return;
+        if(hasProjectChanged){
+            if (project && project.id === -1) return;
 
-        if(savedFilters) {
-            const defaultFilter = getDefaultFilter();
-            if (defaultFilter) {
-                setSelectedSavedFilterTitle(defaultFilter.title);
-                try{
+            if(savedFilters) {
+                const defaultFilter = getDefaultFilter();
+                if (defaultFilter) {
+                    setSelectedSavedFilterTitle(defaultFilter.title);
+                    try{
+                        setFilter({
+                            ...JSON.parse(defaultFilter.criteria)
+                        });
+                    }catch (error) {
+                        console.error('Failed to parse default filter');
+                    }
+                }else{
                     setFilter({
-                        ...JSON.parse(defaultFilter.criteria)
+                        ...emptyFilter
                     });
-                }catch (error) {
-                    console.error('Failed to parse default filter');
                 }
-            }else{
-                setFilter({
-                    ...emptyFilter
-                });
             }
+            setHasProjectChanged(false);
         }
     }, [savedFilters]);
 
@@ -164,6 +168,7 @@ const SearchIPO = (): JSX.Element => {
 
         setProject(filteredProjects[index]);
         setResetTablePaging(true);
+        setHasProjectChanged(true);
 
         if (numberOfFilters > 0) {
             // Reset filters on project change:

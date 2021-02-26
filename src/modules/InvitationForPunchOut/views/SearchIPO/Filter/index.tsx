@@ -172,7 +172,7 @@ const InvitationsFilter = ({
             if(savedFilters.length != 0) {
                 const filterIndex = savedFilters.findIndex((filter) => filter.title == selectedSavedFilterTitle);
                 setSelectedFilterIndex(filterIndex);
-                if ( filterIndex && selectedSavedFilterTitle && JSON.stringify(localFilter) != savedFilters[filterIndex].criteria) {
+                if(JSON.stringify(localFilter) != savedFilters[filterIndex].criteria) {
                     setSelectedSavedFilterTitle(null);
                     setSelectedFilterIndex(null);
                 }
@@ -180,8 +180,10 @@ const InvitationsFilter = ({
                 setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }
+        }else{
+            setSelectedSavedFilterTitle(null);
+            setSelectedFilterIndex(null);
         }
-            
     }, [savedFilters, localFilter]);
 
     const onCheckboxFilterChange = (filterParam: filterParamType, id: string, checked: boolean): void => {
@@ -286,6 +288,7 @@ const InvitationsFilter = ({
                     setIPOFilter={setLocalFilter}
                     onCloseRequest={(): void => setShowSavedFilters(false)} 
                     selectedFilterIndex={selectedFilterIndex}
+                    setSelectedFilterIndex={setSelectedFilterIndex}
                 />
             </Popover >
             <Section>

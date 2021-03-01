@@ -55,7 +55,7 @@ stages:
     envName: 'dev'
     envLabel: 'pr'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envLabel }}'
-    prNumber: '$(System.PullRequest.PullRequestId)'
+    prNumber: '$(System.PullRequest.pullRequestNumber)'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
 

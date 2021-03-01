@@ -50,7 +50,7 @@ stages:
 - stage: pr
   displayName: 'Setup PR Environment'
   dependsOn: 'build_and_test'
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), neq(variables['Build.RequestedFor'],'dependabot[bot]'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.RequestedFor'],'dependabot[bot]'))
   variables:
     envName: 'dev'
     envLabel: 'pr'

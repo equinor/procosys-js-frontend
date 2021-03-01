@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'procosys - github'
+    ref: pr-env-poc
 
 # Global variables for the pipeline
 variables:
@@ -44,6 +45,33 @@ stages:
       buildContext: '$(Build.SourcesDirectory)'
       repository: ${{ variables.repositoryName }}
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+
+# Setup PR Environment
+- stage: pr
+  displayName: 'Setup PR Environment'
+  dependsOn: 'build_and_test'
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), neq(variables['Build.RequestedFor'],'dependabot[bot]'))
+  variables:
+    envName: 'dev'
+    envLabel: 'pr'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envLabel }}'
+    prNumber: '$(System.PullRequest.PullRequestId)'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+
+  jobs:
+  - template: /templates/pipelines/kubernetes/frontend-deploy-pr.yml@templates
+    parameters:
+      deploymentName: 'deploy_to_k8s'
+      dependsOn: ''
+      serviceConnection: '${{ variables.serviceConnection }}'
+      env: '${{ variables.envLabel }}-${{ variables.prNumber }}'
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
+      clusterName: 'pcs-aks-test'
+      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
+      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
 
 # Deploy to dev environment
 - stage: dev

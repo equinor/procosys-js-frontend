@@ -93,7 +93,8 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
             const filter = props.savedIPOFilters[index];
             filter.defaultFilter = defaultValue;
             await updateSavedFilter(filter);
-            showSnackbarNotification('Filter is no longer default.', 5000);
+            defaultValue? showSnackbarNotification('Filter is set to default.', 5000)
+                : showSnackbarNotification('Filter is no longer default.', 5000);
             props.refreshSavedIPOFilters();
         }
     };

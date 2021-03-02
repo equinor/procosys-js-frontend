@@ -35,8 +35,16 @@ const CommPkgsTable = ({ commPkgScope, projectName }: CommPkgsTableProps ): JSX.
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <Typography href={getCommPkgUrl(commPkg.commPkgNo)} variant="body_short" link>{commPkg.commPkgNo}</Typography>
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.description}</Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{commPkg.status}</Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle'}}>
+                                <Typography variant="body_short">
+                                    {commPkg.description}
+                                </Typography>
+                            </Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle'}}>
+                                <Typography variant="body_short">
+                                    {commPkg.status}
+                                </Typography>
+                            </Cell>
                         </Row>
                     )) : (
                         <Row>

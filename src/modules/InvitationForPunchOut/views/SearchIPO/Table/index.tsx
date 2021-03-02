@@ -1,15 +1,14 @@
+import { Container, CustomLink } from './index.style';
 import { Query, QueryResult } from 'material-table';
 import React, { useEffect, useRef } from 'react';
 
-import { Container } from './index.style';
 import { IPO } from '../types';
 import { IpoStatusEnum } from '../../enums';
-import { Link } from 'react-router-dom';
 import Table from '@procosys/components/Table';
+import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
-import { getLocalDate } from '@procosys/core/services/DateService';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 import { tokens } from '@equinor/eds-tokens';
-import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 interface InvitationsTableProps {
     getIPOs: (page: number, pageSize: number, orderByField: string | null, orderDirection: string | null) => Promise<any>;
@@ -26,16 +25,6 @@ interface InvitationsTableProps {
 
 const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
-    const { plant } = useCurrentPlant();
- 
-
-    const getMcPkgUrl = (mcPkgNo: string): string => {
-        return `/${plant.pathId}/Completion#McPkg|?projectName=${projectName}&mcpkgno=${mcPkgNo}`;
-    };
-
-    const getCommPkgUrl = (commPkgNo: string): string => {
-        return `/${plant.pathId}/Completion#CommPkg|?projectName=${projectName}&commpkgno=${commPkgNo}`;
-    };
 
     useEffect(() => {
         if (refObject.current) {
@@ -51,45 +40,33 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
 
     const getIdColumn = (data: string):JSX.Element => {
         return (
-            <div className='controlOverflow'>
-                <Link to={`/${data}`}>
-                    <Typography link>{data}</Typography>
-                </Link>
-            </div>
+            <CustomLink to={`/${data}`}>
+                {data}
+            </CustomLink>
 
-        );
-
-    };
-
-    const getMcPkgColumn = (mcPkgs: string[] | undefined): JSX.Element => {
-        return (
-            <div>{mcPkgs?.map((pkgNo, index) => {
-                const separator: any = index < mcPkgs.length-1 ? 
-                    index % 2 ? <><span>{', '}</span><br /></> : <span>{', '}</span> : '';
-                return (
-                    <span key={pkgNo + index}><Typography link href={getMcPkgUrl(pkgNo)} key={pkgNo}>{pkgNo}</Typography>{separator}</span>
-                );  
-            })}
-            </div>
         );
     };
 
-    const getCommPkgColumn = (commPkgs: string[] | undefined): JSX.Element => {
+    const getPkgColumn = (pkgs: string[] | undefined): JSX.Element => {
+        const pkgsString = pkgs?.join(', ');
+
         return (
-            <div>{commPkgs?.map((pkgNo, index) => {
-                const separator: any = index < commPkgs.length-1 ? 
-                    index % 2 ? <><span>{', '}</span><br /></> : <span>{', '}</span> : '';
-                return (
-                    <span key={pkgNo + index}><Typography link href={getCommPkgUrl(pkgNo)} key={pkgNo}>{pkgNo}</Typography>{separator}</span>
-                );  
-            })}</div>
+            <Tooltip title={<div>{pkgsString}</div>} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <Typography className='controlOverflow'>{pkgsString}</Typography>
+            </Tooltip>
+        );
+    };
+
+    const getTooltipColumn = (data: string): JSX.Element => {
+        return (
+            <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <Typography className='controlOverflow'>{data}</Typography>
+            </Tooltip>
         );
     };
 
     const getColumn = (data: string): JSX.Element => {
-        return (
-            <div className='controlOverflow'><Typography>{data}</Typography></div>
-        );
+        return <Typography>{data}</Typography>;
     };
 
 
@@ -137,17 +114,17 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                 tableRef={refObject} //reference will be used by parent, to trigger rendering
                 columns={[
                     { title: 'ID', render: (rowData: IPO): JSX.Element => getIdColumn(rowData.id.toString()) },
-                    { title: 'Title', render: (rowData: IPO): JSX.Element => getColumn(rowData.title) },
+                    { title: 'Title', render: (rowData: IPO): JSX.Element => getTooltipColumn(rowData.title), cellStyle: { minWidth: '220px', maxWidth: '220px'}},
                     { title: 'Status', render: (rowData: IPO): JSX.Element => getColumn(rowData.status) },
                     { title: 'Type', render: (rowData: IPO): JSX.Element => getColumn(rowData.type) },
-                    { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getCommPkgColumn(rowData.commPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
-                    { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getMcPkgColumn(rowData.mcPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
-                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(new Date(rowData.createdAtUtc))), defaultSort: 'desc' },
-                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getLocalDate(new Date(rowData.startTimeUtc))) },
-                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(rowData.completedAtUtc ? getLocalDate(new Date(rowData.completedAtUtc)) : '') },
-                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(rowData.acceptedAtUtc ? getLocalDate(new Date(rowData.acceptedAtUtc)): '') },
-                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.contractorRep) },
-                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getColumn(rowData.constructionCompanyRep) },
+                    { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getPkgColumn(rowData.commPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
+                    { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getPkgColumn(rowData.mcPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
+                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getFormattedDate(rowData.createdAtUtc)), defaultSort: 'desc' },
+                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getFormattedDate(rowData.startTimeUtc)) },
+                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(rowData.completedAtUtc ? getFormattedDate(rowData.completedAtUtc) : '') },
+                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(rowData.acceptedAtUtc ? getFormattedDate(rowData.acceptedAtUtc): '') },
+                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getTooltipColumn(rowData.contractorRep), cellStyle: { minWidth: '220px', maxWidth: '220px'} },
+                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getTooltipColumn(rowData.constructionCompanyRep), cellStyle: { minWidth: '220px', maxWidth: '220px'} },
                 ]}
                 data={getIPOsByQuery}
                 options={{
@@ -169,7 +146,6 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
                     },
                     rowStyle: (rowData): any => ({
                         opacity: rowData.status === IpoStatusEnum.CANCELED && 0.5,
-                        color: rowData.status === IpoStatusEnum.CANCELED && tokens.colors.interactive.danger__text.rgba,
                     }),
                     thirdSortClick: false
                 }}

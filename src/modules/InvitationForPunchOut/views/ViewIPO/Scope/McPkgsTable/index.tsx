@@ -39,7 +39,11 @@ const McPkgsTable = ({ mcPkgScope, projectName }: McPkgsTableProps ): JSX.Elemen
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <Typography href={getMcPkgUrl(mcPkg.mcPkgNo)} variant="body_short" link>{mcPkg.mcPkgNo}</Typography>
                             </Cell>
-                            <Cell as="td" style={{verticalAlign: 'middle'}}>{mcPkg.description}</Cell>
+                            <Cell as="td" style={{verticalAlign: 'middle'}}>
+                                <Typography variant="body_short">
+                                    {mcPkg.description}
+                                </Typography>
+                            </Cell>
                             <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
                                 <Typography href={getCommPkgUrl(mcPkg.commPkgNo)} variant="body_short" link>{mcPkg.commPkgNo}</Typography>
                             </Cell>

@@ -10,7 +10,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
-import { format } from 'date-fns';
+import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
@@ -162,7 +162,7 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                                 </CustomTooltip>
                             </Cell>
                             <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
-                                <Typography variant="body_short">{attachment.uploadedAt && format(new Date(attachment.uploadedAt), 'dd/MM/yyyy HH:mm')}</Typography>
+                                <Typography variant="body_short">{attachment.uploadedAt && getFormattedDateAndTime(attachment.uploadedAt)}</Typography>
                             </Cell>
                             <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                                 <Typography variant="body_short">{attachment.uploadedBy && `${attachment.uploadedBy.firstName} ${attachment.uploadedBy.lastName}`}</Typography>

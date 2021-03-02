@@ -1,3 +1,5 @@
+import { getFormattedDate, getFormattedTime } from '../../../../../../core/services/DateService';
+
 import GeneralInfo from '../index';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
@@ -55,9 +57,9 @@ describe('<GeneralInfo />', () => {
         expect(queryByText(invitation.title)).toBeInTheDocument();
         expect(queryByText(invitation.description)).toBeInTheDocument();
         expect(queryByText(invitation.location)).toBeInTheDocument();
-        expect(queryByText('06/12/2020')).toBeInTheDocument();
-        expect(queryByText('11:00')).toBeInTheDocument();
-        expect(queryByText('13:00')).toBeInTheDocument();
+        expect(queryByText(getFormattedDate(invitation.startTimeUtc))).toBeInTheDocument();
+        expect(queryByText(getFormattedTime(invitation.startTimeUtc))).toBeInTheDocument();
+        expect(queryByText(getFormattedTime(invitation.endTimeUtc))).toBeInTheDocument();
     });
 });
 

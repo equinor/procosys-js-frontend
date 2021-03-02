@@ -6,7 +6,7 @@ import { HistoryItem } from '../types';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
-import { format } from 'date-fns';
+import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 
@@ -66,13 +66,19 @@ const History = ({ ipoId }: HistoryProps): JSX.Element => {
                             {history && history.length > 0 ? history.map((historyItem) => (
                                 <Row key={historyItem.id}>
                                     <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                        {format(new Date(historyItem.createdAtUtc), 'dd/MM/yyyy HH:mm')}
+                                        <Typography variant="body_short">
+                                            {getFormattedDateAndTime(new Date(historyItem.createdAtUtc))}
+                                        </Typography>
                                     </Cell>
                                     <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                        {`${historyItem.createdBy.userName}`}
+                                        <Typography variant="body_short">
+                                            {`${historyItem.createdBy.userName}`}
+                                        </Typography>
                                     </Cell>
                                     <Cell as="td" style={{verticalAlign: 'middle', lineHeight: '1em'}}>
-                                        {`${historyItem.description}`}
+                                        <Typography variant="body_short">
+                                            {`${historyItem.description}`}
+                                        </Typography>
                                     </Cell>
                                 </Row>
                             )) : (

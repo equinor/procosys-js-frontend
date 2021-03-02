@@ -7,6 +7,7 @@ export interface IDirtyContext {
     isDirty: boolean;
     setDirtyStateFor: (componentName: string) => void;
     unsetDirtyStateFor: (componentName: string) => void;
+    unsetDirtyStateForMany: (componentNames: string[]) => void;
     clearDirtyState: () => void;
 }
 
@@ -31,6 +32,13 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         newDirtyList.delete(componentName) && setDirtyList(newDirtyList);
     }
 
+    function unsetDirtyStateForMany(componentNames: string[]): void {
+        const newDirtyList = new Set(dirtyList);
+        // Only changes the state if there actually was a item removed
+        componentNames.forEach(componentName => newDirtyList.delete(componentName));
+        setDirtyList(newDirtyList);
+    }
+
     function clearDirtyState(): void {
         setDirtyList(new Set());
     }
@@ -46,6 +54,7 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     return (<DirtyContext.Provider value={{
         setDirtyStateFor: setDirtyStateFor,
         unsetDirtyStateFor,
+        unsetDirtyStateForMany,
         clearDirtyState,
         isDirty,
     }}>

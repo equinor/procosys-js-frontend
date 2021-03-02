@@ -2,6 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 
 import History from '../index';
 import React from 'react';
+import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 
 const dummyHistory = [
     {
@@ -44,7 +45,8 @@ describe('Module: <History ipoId={} />', () => {
         const { getByText } = render(<History ipoId={0} />);
 
         await waitFor(() => expect(getByText(dummyHistory[1].description)).toBeInTheDocument());
-        await waitFor(() => expect(getByText('28/12/2020 10:24')).toBeInTheDocument());
+        await waitFor(() => expect(getByText(getFormattedDateAndTime(dummyHistory[0].createdAtUtc))).toBeInTheDocument());
+        await waitFor(() => expect(getByText(getFormattedDateAndTime(dummyHistory[1].createdAtUtc))).toBeInTheDocument());
         await waitFor(() => expect(getByText(`${dummyHistory[0].createdBy.userName}`)).toBeInTheDocument());
         await waitFor(() => expect(getByText(`${dummyHistory[1].createdBy.userName}`)).toBeInTheDocument());
     });

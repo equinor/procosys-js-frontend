@@ -63,7 +63,11 @@ const ReportsTable = ({ mcPkgNumbers, commPkgNumbers }: ReportsTableProps): JSX.
                         <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             <Typography href={getReportUrl(ReportIdEnum.MC32D)} variant="body_short" link>MC32D</Typography>
                         </Cell>
-                        <Cell as="td" style={{ verticalAlign: 'middle' }}>MC Scope</Cell>
+                        <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                            <Typography variant="body_short">
+                            MC Scope
+                            </Typography>
+                        </Cell>
                         <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             {' '}
                         </Cell>
@@ -72,7 +76,11 @@ const ReportsTable = ({ mcPkgNumbers, commPkgNumbers }: ReportsTableProps): JSX.
                         <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             <Typography href={getReportUrl(ReportIdEnum.MC84)} variant="body_short" link>MC84</Typography>
                         </Cell>
-                        <Cell as="td" style={{ verticalAlign: 'middle' }}>Punch List</Cell>
+                        <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                            <Typography variant="body_short">
+                            Punch List
+                            </Typography>
+                        </Cell>
                         <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             {' '}
                         </Cell>
@@ -81,7 +89,11 @@ const ReportsTable = ({ mcPkgNumbers, commPkgNumbers }: ReportsTableProps): JSX.
                         <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             <Typography href={getReportUrl(ReportIdEnum.CDP06)} variant="body_short" link>CDP06</Typography>
                         </Cell>
-                        <Cell as="td" style={{ verticalAlign: 'middle' }}>Concession Deviation Permit</Cell>
+                        <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                            <Typography variant="body_short">
+                            Concession Deviation Permit
+                            </Typography>
+                        </Cell>
                         <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
                             {' '}
                         </Cell>

@@ -36,7 +36,11 @@
                 "**/*.tsx"
             ],
             "extends": [
-                "plugin:prettier/recommended"
+                "plugin:@typescript-eslint/recommended",
+                "prettier/@typescript-eslint"
+            ],
+            "plugins": [
+                "@typescript-eslint"
             ],
             "rules": {
                 "require-atomic-updates": "off",

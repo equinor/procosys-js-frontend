@@ -1,6 +1,7 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, StyledButton, TooltipText } from './index.style';
+import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, StyledButton, TooltipText } from './index.style';
 import { IPOFilter, IPOs, SavedIPOFilter } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
@@ -11,9 +12,11 @@ import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
 import { Tooltip } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
+import { Typography, Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
+
+const addIcon = <EdsIcon name='add' />;
 
 const emptyFilter: IPOFilter = {
     ipoStatuses: [],
@@ -271,27 +274,36 @@ const SearchIPO = (): JSX.Element => {
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
                 <HeaderContainer ref={moduleHeaderContainerRef}>
-                    <Header>
-                        <Typography variant="h1">Invitation for punch-out</Typography>
-                        { <Dropdown
-                            maxHeight='300px'
-                            text={project ? project.name : 'Select project'}
-                            onFilter={setFilterForProjects}
-                        >
-                            {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
-                            {!isLoading && filteredProjects.map((projectItem, index) => {
-                                return (
-                                    <DropdownItem
-                                        key={index}
-                                        onClick={(event): void => changeProject(event, index)}
-                                    >
-                                        <div>{projectItem.description}</div>
-                                        <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
-                                    </DropdownItem>
-                                );
-                            })}
-                        </Dropdown>}
-                    </Header>
+                    <LeftPartOfHeader>
+                        <Header>
+                            <Typography variant="h1">Invitation for punch-out</Typography>
+                        </Header>
+                        <IconBar>
+                            { <Dropdown
+                                maxHeight='300px'
+                                text={project ? project.name : 'Select project'}
+                                onFilter={setFilterForProjects}
+                            >
+                                {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                                {!isLoading && filteredProjects.map((projectItem, index) => {
+                                    return (
+                                        <DropdownItem
+                                            key={index}
+                                            onClick={(event): void => changeProject(event, index)}
+                                        >
+                                            <div>{projectItem.description}</div>
+                                            <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>}
+                            <Link to={'/InvitationForPunchOut/CreateIPO'}>
+                                <Button variant='ghost' >
+                                    {addIcon} New IPO
+                                </Button>
+                            </Link>
+                        </IconBar>
+                    </ LeftPartOfHeader>
                     <Tooltip placement={'left'} title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfIPOs} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                         <div>
                             <StyledButton

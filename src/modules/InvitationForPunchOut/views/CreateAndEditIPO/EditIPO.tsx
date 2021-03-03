@@ -2,7 +2,7 @@ import { Attachment, CommPkgRow, ExternalEmail, GeneralInfoDetails, McScope, Par
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { ComponentName, IpoCustomEvents } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Canceler } from 'axios';
 import CreateAndEditIPO from './CreateAndEditIPO';
@@ -41,7 +41,6 @@ const EditIPO = (): JSX.Element => {
 
     const params = useParams<{ ipoId: any }>();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
-    const [initialAttachmentIds, setInitialAttachmentIds] = useState<number[]>([]);
     const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [initialGeneralInfo, setInitialGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(true);
@@ -67,7 +66,7 @@ const EditIPO = (): JSX.Element => {
 
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } = useDirtyContext();
     const analystics = useAnalytics();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
 
@@ -109,15 +108,6 @@ const EditIPO = (): JSX.Element => {
             unsetDirtyStateFor(ComponentName.Participants);
         }
     }, [participants]);
-
-    useEffect(() => {
-        const attachmentIds = attachments.map(({id}) => id);
-        if (JSON.stringify(attachmentIds) !== JSON.stringify(initialAttachmentIds)) {
-            setDirtyStateFor(ComponentName.Participants);
-        } else {
-            unsetDirtyStateFor(ComponentName.Participants);
-        }
-    }, [attachments]);
 
     /**
      * Fetch and set available functional roles 
@@ -236,16 +226,15 @@ const EditIPO = (): JSX.Element => {
         }));
     };
 
-    const getAttachments = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    const getAttachments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
         try {
             const response = await apiClient.getAttachments(params.ipoId, requestCanceller);
             setAttachments(response);
-            setInitialAttachmentIds(response.map(({id}) => id));
         } catch (error) {
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
-    }, [params.ipoId]);
+    };
 
     const saveUpdatedIpo = async (): Promise<void> => {
         setIsSaving(true);
@@ -272,10 +261,11 @@ const EditIPO = (): JSX.Element => {
 
                 await uploadOrRemoveAttachments(params.ipoId);
 
-                unsetDirtyStateFor(ComponentName.GeneralInfo);
-                unsetDirtyStateFor(ComponentName.Scope);
-                unsetDirtyStateFor(ComponentName.Participants);
-                unsetDirtyStateFor(ComponentName.Attachments);
+                unsetDirtyStateForMany([
+                    ComponentName.GeneralInfo,
+                    ComponentName.Scope,
+                    ComponentName.Participants,
+                    ComponentName.Attachments]);
                 history.push('/' + params.ipoId);
             } catch (error) {
                 console.error('Save updated IPO failed: ', error.message, error.data);
@@ -450,27 +440,29 @@ const EditIPO = (): JSX.Element => {
         );
     };
 
-    return (<CreateAndEditIPO
-        saveIpo={saveUpdatedIpo}
-        steps={steps}
-        setSteps={setSteps}
-        generalInfo={generalInfo}
-        setGeneralInfo={setGeneralInfo}
-        selectedCommPkgScope={selectedCommPkgScope}
-        setSelectedCommPkgScope={setSelectedCommPkgScope}
-        selectedMcPkgScope={selectedMcPkgScope}
-        setSelectedMcPkgScope={setSelectedMcPkgScope}
-        participants={participants}
-        setParticipants={setParticipants}
-        attachments={attachments}
-        setAttachments={setAttachments}
-        availableRoles={availableRoles}
-        fromMain={false}
-        confirmationChecked={confirmationChecked}
-        setConfirmationChecked={setConfirmationChecked}
-        isEditMode={true}
-        ipoId={params.ipoId}
-    />);
+    return (
+        <CreateAndEditIPO
+            saveIpo={saveUpdatedIpo}
+            steps={steps}
+            setSteps={setSteps}
+            generalInfo={generalInfo}
+            setGeneralInfo={setGeneralInfo}
+            selectedCommPkgScope={selectedCommPkgScope}
+            setSelectedCommPkgScope={setSelectedCommPkgScope}
+            selectedMcPkgScope={selectedMcPkgScope}
+            setSelectedMcPkgScope={setSelectedMcPkgScope}
+            participants={participants}
+            setParticipants={setParticipants}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            availableRoles={availableRoles}
+            fromMain={false}
+            confirmationChecked={confirmationChecked}
+            setConfirmationChecked={setConfirmationChecked}
+            isEditMode={true}
+            ipoId={params.ipoId}
+        />
+    );
 };
 
 export default EditIPO;

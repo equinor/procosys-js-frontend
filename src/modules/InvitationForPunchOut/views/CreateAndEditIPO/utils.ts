@@ -34,9 +34,8 @@ export const getAttachmentDownloadLink = (attachment: Attachment): string | unde
     if (attachment.downloadUri) {
         return attachment.downloadUri;
     }
-
-    if (attachment.file && typeof window.URL.createObjectURL !== 'undefined') {
-        window.URL.createObjectURL(attachment.file);
+    if (attachment.file !== undefined && typeof window.URL.createObjectURL !== 'undefined') {
+        return window.URL.createObjectURL(attachment.file);
     }
 
     return undefined;

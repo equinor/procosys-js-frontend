@@ -1,19 +1,19 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../enums';
-import { Container, CustomTable, SpinnerContainer, ResponseWrapper } from './style';
+import { Container, CustomTable, ResponseWrapper, SpinnerContainer } from './style';
 import { ExternalEmail, FunctionalRole, Participant } from '../../types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import CustomPopover from './CustomPopover/index';
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
 import { OutlookResponseType } from '../../enums';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
-import { format } from 'date-fns';
+import { Typography } from '@equinor/eds-core-react';
+import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-
-import CustomPopover from './CustomPopover/index';
 
 const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
@@ -352,12 +352,20 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                         return (
                             <Row key={participant.sortKey} as="tr">
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>
-                                    {OrganizationMap.get(participant.organization as Organization)}
+                                    <Typography variant="body_short">
+                                        {OrganizationMap.get(participant.organization as Organization)}
+                                    </Typography>
                                 </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>{representative}</Cell>
+                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                    <Typography variant="body_short">
+                                        {representative}
+                                    </Typography>
+                                </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <ResponseWrapper> 
-                                        {response} 
+                                        <Typography variant="body_short">
+                                            {response} 
+                                        </Typography>
                                         {addPopover && <CustomPopover participant={participant} />}
                                     </ResponseWrapper>
                                 </Cell>
@@ -378,19 +386,23 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
-                                    {getSignedProperty(
-                                        participant, status,
-                                        () => handleCompletePunchOut(index),
-                                        () => handleAcceptPunchOut(index),
-                                        () => handleUpdateParticipants(),
-                                        () => handleSignPunchOut(index),
-                                        () => handleUnAcceptPunchOut(index))}
+                                    <Typography variant="body_short">
+                                        {getSignedProperty(
+                                            participant, status,
+                                            () => handleCompletePunchOut(index),
+                                            () => handleAcceptPunchOut(index),
+                                            () => handleUpdateParticipants(),
+                                            () => handleSignPunchOut(index),
+                                            () => handleUnAcceptPunchOut(index))}
+                                    </Typography>
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
-                                    {participant.signedAtUtc ?
-                                        `${format(new Date(participant.signedAtUtc), 'dd/MM/yyyy HH:mm')}` :
-                                        '-'
-                                    }
+                                    <Typography variant="body_short">
+                                        {participant.signedAtUtc ?
+                                            `${getFormattedDateAndTime(new Date(participant.signedAtUtc))}` :
+                                            '-'
+                                        }
+                                    </Typography>
                                 </Cell>
                             </Row>
                         );

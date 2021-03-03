@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
@@ -28,4 +29,8 @@ export const Container = styled.div`
         text-overflow: ellipsis;
         color: inherit;
     }
+`;
+
+export const CustomLink = styled(Link)`
+    color: ${tokens.colors.interactive.primary__resting.rgba};
 `;

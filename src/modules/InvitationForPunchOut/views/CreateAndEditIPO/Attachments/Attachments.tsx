@@ -4,12 +4,14 @@ import React, { useRef } from 'react';
 import { getFileName, getFileTypeIconName } from '../../utils';
 
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
+import { ComponentName } from '../../enums';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -21,6 +23,7 @@ const Attachments = ({
     setAttachments
 }: AttachmentsProps): JSX.Element => {
     const inputFileRef = useRef<HTMLInputElement>(null);
+    const { setDirtyStateFor } = useDirtyContext();
 
     const handleSubmitFile = (e: any): void => {
         e.preventDefault();
@@ -49,6 +52,7 @@ const Attachments = ({
                 [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
             );
         }
+        setDirtyStateFor(ComponentName.Attachments);
     };
 
     const addAttachments = (files: FileList | null): void => {
@@ -66,6 +70,7 @@ const Attachments = ({
             }
 
         });
+        setDirtyStateFor(ComponentName.Attachments);
     };
 
     const getAttachmentName = (attachment: Attachment): JSX.Element => {

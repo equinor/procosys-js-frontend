@@ -39,3 +39,10 @@ export type IPOFilter = {
     punchOutDates: string[];
 };
 
+export interface SavedIPOFilter {
+    id: number;
+    title: string;
+    criteria: string;
+    defaultFilter: boolean;
+    rowVersion: string;
+}

@@ -192,6 +192,14 @@ interface IPOsResponse {
     invitations: IPO[];
 }
 
+interface SavedIPOFilterResponse {
+    id: number;
+    title: string;
+    defaultFilter: boolean;
+    criteria: string;
+    rowVersion: string;
+}
+
 export type PersonDto = {
     id?: number;
     azureOid: string | null;
@@ -906,6 +914,100 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 endpoint,
                 participantDetails,
                 settings);
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+    
+    /**
+     * Get saved IPO filters
+     * 
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getSavedIPOFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedIPOFilterResponse[]> {
+        const endpoint = '/Persons/SavedFilters';
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName
+            }
+        };
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<SavedIPOFilterResponse[]>(endpoint, settings);
+            return result.data;
+        }
+        catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+    /**
+     * Add saved IPO filter
+     * 
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async addSavedIPOFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = '/Persons/SavedFilter';
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.post(
+                endpoint,
+                {
+                    projectName: projectName,
+                    title: title,
+                    criteria: criteria,
+                    defaultFilter: defaultFilter,
+                },
+                settings
+            );
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+    * Update saved IPO filter
+    * 
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async updateSavedIPOFilter(savedFilterId: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Persons/SavedFilters/${savedFilterId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.put(
+                endpoint,
+                {
+                    title: title,
+                    criteria: criteria,
+                    defaultFilter: defaultFilter,
+                    rowVersion: rowVersion
+                },
+                settings
+            );
+        } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    /**
+    * Delete saved IPO filter 
+    * 
+    * @param setRequestCanceller Returns a function that can be called to cancel the request
+    */
+    async deleteSavedIPOFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
+        const endpoint = `/Persons/SavedFilters/${savedFilterId}`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.delete(
+                endpoint,
+                {
+                    data: { rowVersion: rowVersion }
+                }
+            );
         } catch (error) {
             throw new IpoApiError(error);
         }

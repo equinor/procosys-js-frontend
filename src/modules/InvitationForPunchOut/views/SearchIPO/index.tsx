@@ -297,7 +297,7 @@ const SearchIPO = (): JSX.Element => {
                                     );
                                 })}
                             </Dropdown>}
-                            <Link to={'/InvitationForPunchOut/CreateIPO'}>
+                            <Link to={'/CreateIPO'}>
                                 <Button variant='ghost' >
                                     {addIcon} New IPO
                                 </Button>

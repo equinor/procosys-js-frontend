@@ -1,12 +1,11 @@
 import { AttachmentsContainer, ButtonContainer, ButtonSpacer, Container, Header, InputContainer } from './CreateOrEditAction.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import ActionAttachments from './ActionAttachments';
-import DateFnsUtils from '@date-io/date-fns';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { TextField as DateTimeField } from '@material-ui/core';
 import Spinner from '@procosys/components/Spinner';
+import { format } from 'date-fns';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 
@@ -110,18 +109,16 @@ const CreateOrEditAction = ({
                 />
             </InputContainer>
             <InputContainer>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} >
-                    <KeyboardDatePicker
-                        label="Due date"
-                        value={newDueTimeUtc}
-                        onChange={(date: MaterialUiPickersDate): void => setNewDueTimeUtc(date)}
-                        disablePast={false}
-                        format='dd.MM.yyyy'
-                        variant='inline'
-                        inputVariant='outlined'
-                        placeholder='dd.mm.yyyy'
-                    />
-                </MuiPickersUtilsProvider>
+                <DateTimeField
+                    id='actionDate'
+                    label='Date'
+                    type='date'
+                    value={newDueTimeUtc && format(newDueTimeUtc, 'yyyy-MM-dd')}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => setNewDueTimeUtc(new Date(event.target.value))}
+                />
             </InputContainer>
 
             {actionId &&

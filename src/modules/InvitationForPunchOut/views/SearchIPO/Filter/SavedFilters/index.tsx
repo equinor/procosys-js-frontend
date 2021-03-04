@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TextField, Typography, Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import Checkbox from '../../../../../components/Checkbox';
-import { ListContainer, Container, Header, Divider, Link, Row } from './SavedFilters.style';
-import { SavedTagListFilter, TagListFilter } from '../types';
+import Checkbox from '@procosys/components/Checkbox';
+import { ListContainer, Container, Header, Divider, Link, Row } from './index.style';
+import { SavedIPOFilter, IPOFilter } from '../../types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import CloseIcon from '@material-ui/icons/Close';
-import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
+import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const defaultTrueIcon = <EdsIcon name='star_filled' size={16} />;
 const defaultFalseIcon = <EdsIcon name='star_outlined' size={16} />;
 
 interface SavedFiltersProps {
-    savedTagListFilters: SavedTagListFilter[];
-    refreshSavedTagListFilters: () => void;
-    tagListFilter: TagListFilter;
-    setTagListFilter: (tagListFilter: TagListFilter) => void;
+    project: ProjectDetails | undefined;
+    savedIPOFilters: SavedIPOFilter[] | null;
+    refreshSavedIPOFilters: () => void;
+    ipoFilter: IPOFilter;
+    setIPOFilter: (ipoFilter: IPOFilter) => void;
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     onCloseRequest: () => void;
+    selectedFilterIndex: number | null | undefined;
+    setSelectedFilterIndex: (selectedFilterIndex: number | null | undefined) => void;
 }
 
 const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
@@ -27,76 +31,78 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
     const [saveFilterMode, setSaveFilterMode] = useState<boolean>(false);
     const [newFilterTitle, setNewFilterTitle] = useState<string>('');
     const [newFilterIsDefault, setNewFilterIsDefault] = useState<boolean>(false);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState<number | null>();
 
-    const {
-        project,
-        apiClient
-    } = usePreservationContext();
+    const { apiClient } = useInvitationForPunchOutContext();
 
-    //Set selected filter to null, if filter values are changed
-    useEffect((): void => {
-        if (props.savedTagListFilters && props.selectedSavedFilterTitle) {
-            const selectedFilterIndex = props.savedTagListFilters.findIndex((filter) => filter.title == props.selectedSavedFilterTitle);
-            setSelectedFilterIndex(selectedFilterIndex);
-            if (props.selectedSavedFilterTitle && JSON.stringify(props.tagListFilter) != props.savedTagListFilters[selectedFilterIndex].criteria) {
-                props.setSelectedSavedFilterTitle(null);
-                setSelectedFilterIndex(null);
-            }
+    const saveFilter= async (): Promise<void> => {
+        if(props.project === undefined){
+            console.error('The project is of type undefined');
+            showSnackbarNotification('Add IPO filter failed: Project is undefined', 5000);
+            return;
         }
-    }, [props.savedTagListFilters, props.tagListFilter]);
-
-    const onSaveFilter = async (): Promise<void> => {
         try {
-            await apiClient.addSavedTagListFilter(project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.tagListFilter));
-            props.refreshSavedTagListFilters();
+            await apiClient.addSavedIPOFilter(props.project.name, newFilterTitle, newFilterIsDefault, JSON.stringify(props.ipoFilter));
+            props.setSelectedSavedFilterTitle(newFilterTitle);
             showSnackbarNotification('Filter is saved.', 5000);
             setSaveFilterMode(false);
         } catch (error) {
-            console.error('Add scope filter failed: ', error.message, error.data);
+            console.error('Add IPO filter failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+    };
+
+    const onSaveFilter = async (): Promise<void> => {
+        await saveFilter();
+        props.refreshSavedIPOFilters();
+    };
+
+    const deleteFilter = async (index: number): Promise<void> => {
+        try {
+            const filter = props.savedIPOFilters && props.savedIPOFilters[index];
+            if (filter) {
+                await apiClient.deleteSavedIPOFilter(filter.id, filter.rowVersion);
+                showSnackbarNotification('Filter is deleted.', 5000);
+            }
+        } catch (error) {
+            console.error('Delete IPO filter failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
 
     const onDeleteFilter = async (index: number): Promise<void> => {
-        try {
-            const filter = props.savedTagListFilters && props.savedTagListFilters[index];
-            if (filter) {
-                await apiClient.deleteSavedTagListFilter(filter.id, filter.rowVersion);
-                props.refreshSavedTagListFilters();
-                showSnackbarNotification('Filter is deleted.', 5000);
-            }
-        } catch (error) {
-            console.error('Delete scope filter failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+        await deleteFilter(index);
+        if(index === props.selectedFilterIndex){
+            props.setSelectedSavedFilterTitle(null);
+            props.setSelectedFilterIndex(null);
         }
+        props.refreshSavedIPOFilters();
     };
 
-    const updateSavedFilter = async (filter: SavedTagListFilter): Promise<void> => {
+    const updateSavedFilter = async (filter: SavedIPOFilter): Promise<void> => {
         try {
-            await apiClient.updateSavedTagListFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
-            props.refreshSavedTagListFilters();
+            await apiClient.updateSavedIPOFilter(filter.id, filter.title, filter.defaultFilter, filter.criteria, filter.rowVersion);
             showSnackbarNotification('Filter is updated.', 5000);
         } catch (error) {
-            console.error('Update scope filter failed: ', error.message, error.data);
+            console.error('Update IPO filter failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
         }
     };
 
     const onSetDefaultValue = async (defaultValue: boolean, index: number): Promise<void> => {
-        if (props.savedTagListFilters) {
-            const filter = props.savedTagListFilters[index];
+        if (props.savedIPOFilters) {
+            const filter = props.savedIPOFilters[index];
             filter.defaultFilter = defaultValue;
-            updateSavedFilter(filter);
-            showSnackbarNotification('Filter is no longer default.', 5000);
-            props.refreshSavedTagListFilters();
+            await updateSavedFilter(filter);
+            defaultValue? showSnackbarNotification('Filter is set to default.', 5000)
+                : showSnackbarNotification('Filter is no longer default.', 5000);
+            props.refreshSavedIPOFilters();
         }
     };
 
     const onSelectFilter = (index: number): void => {
-        if (props.savedTagListFilters) {
-            props.setSelectedSavedFilterTitle(props.savedTagListFilters[index].title);
-            props.setTagListFilter(JSON.parse(props.savedTagListFilters[index].criteria));
+        if (props.savedIPOFilters) {
+            props.setSelectedSavedFilterTitle(props.savedIPOFilters[index].title);
+            props.setIPOFilter(JSON.parse(props.savedIPOFilters[index].criteria));
             props.onCloseRequest();
         }
     };
@@ -110,7 +116,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                         <CloseIcon />
                     </Button>
                 </Header>
-
                 <Divider />
                 <div style={{ justifyContent: 'space-between', margin: '16px 0 24px', width: '300px' }}>
                     <TextField
@@ -155,10 +160,10 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
             </div>
 
             <ListContainer>
-                {props.savedTagListFilters && props.savedTagListFilters.map((filter, index) => {
+                {props.savedIPOFilters && props.savedIPOFilters.map((filter, index) => {
                     return (
                         <React.Fragment key={`filter._${index}`}>
-                            <Row isSelectedFilter={index == selectedFilterIndex} >
+                            <Row isSelectedFilter={index == props.selectedFilterIndex} >
                                 <Link onClick={(): void => onSelectFilter(index)}>
                                     {filter.title}
                                 </Link>
@@ -183,7 +188,6 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                     );
                 })}
             </ListContainer>
-
         </Container >
     );
 };

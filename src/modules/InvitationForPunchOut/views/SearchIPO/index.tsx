@@ -1,5 +1,5 @@
 import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, StyledButton, TooltipText } from './index.style';
-import { IPOFilter, IPOs } from './types';
+import { IPOFilter, IPOs, SavedIPOFilter } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -50,6 +50,69 @@ const SearchIPO = (): JSX.Element => {
 
     const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
 
+    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
+    const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
+    const [hasProjectChanged, setHasProjectChanged] = useState<boolean>(true);
+
+    const updateSavedFilters = async (): Promise<void> => {
+        setIsLoading(true);
+        if(project === undefined){
+            console.error('The project is of type undefined');
+            showSnackbarNotification('Get saved filters failed: The project is of type undefined', 5000);
+            setIsLoading(false);
+            return;
+        }
+        try {
+            const response = await apiClient.getSavedIPOFilters(project.name);
+            setSavedFilters(response);
+        } catch (error) {
+            console.error('Get saved filters failed: ', error.message, error.data);
+            showSnackbarNotification(error.message, 5000);
+        }
+        setIsLoading(false);
+    };
+
+    useEffect((): void => {
+        if (project && project.id != -1) {
+            updateSavedFilters();
+        }
+    }, [project]);
+
+    
+    const getDefaultFilter = (): SavedIPOFilter | undefined => {
+        if (savedFilters) {
+            const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
+            return defaultFilter;
+        };
+        return undefined;
+    };
+
+    useEffect((): void => {
+        if(hasProjectChanged){
+            if (project && project.id === -1) return;
+
+            if(savedFilters) {
+                const defaultFilter = getDefaultFilter();
+                if (defaultFilter) {
+                    setSelectedSavedFilterTitle(defaultFilter.title);
+                    try{
+                        setFilter({
+                            ...JSON.parse(defaultFilter.criteria)
+                        });
+                    }catch (error) {
+                        console.error('Failed to parse default filter');
+                    }
+                }else{
+                    setFilter({
+                        ...emptyFilter
+                    });
+                }
+            }
+            setHasProjectChanged(false);
+        }
+    }, [savedFilters]);
+
+    
     /**
      * Fetch available functional roles 
      */
@@ -105,6 +168,7 @@ const SearchIPO = (): JSX.Element => {
 
         setProject(filteredProjects[index]);
         setResetTablePaging(true);
+        setHasProjectChanged(true);
 
         if (numberOfFilters > 0) {
             // Reset filters on project change:
@@ -267,6 +331,10 @@ const SearchIPO = (): JSX.Element => {
                                 setDisplayFilter(false);
                             }}
                             filter={filter} setFilter={setFilter}
+                            savedFilters={savedFilters}
+                            refreshSavedFilters={updateSavedFilters}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
                             roles={availableRoles}
                             numberOfIPOs={numberOfIPOs}
                         />

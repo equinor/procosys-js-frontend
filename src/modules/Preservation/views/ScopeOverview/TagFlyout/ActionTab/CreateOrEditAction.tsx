@@ -79,6 +79,10 @@ const CreateOrEditAction = ({
         return (<Spinner />);
     }
 
+    const handleSetDate = (value: string): void => {
+        setNewDueTimeUtc(new Date(value));
+    };
+
     return (
         <Container>
 
@@ -113,11 +117,11 @@ const CreateOrEditAction = ({
                     id='actionDate'
                     label='Date'
                     type='date'
-                    value={newDueTimeUtc && format(newDueTimeUtc, 'yyyy-MM-dd')}
+                    value={newDueTimeUtc ? format(newDueTimeUtc, 'yyyy-MM-dd') : ''}
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => setNewDueTimeUtc(new Date(event.target.value))}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => handleSetDate(event.target.value)}
                 />
             </InputContainer>
 

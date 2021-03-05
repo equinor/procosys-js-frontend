@@ -51,7 +51,8 @@ import {
   declare module 'react-table' {
     // take this file as-is, or comment out the sections that don't apply to your plugin configuration
   
-    export interface TableOptions<D extends Record<string, unknown>>
+    //eslint-disable-next-line
+    export interface TableOptions<D extends object>
       extends UseExpandedOptions<D>,
         UseFiltersOptions<D>,
         UseGlobalFiltersOptions<D>,
@@ -66,13 +67,15 @@ import {
         // feature set, this is a safe default.
         Record<string, any> {}
   
-    export interface Hooks<D extends Record<string, unknown> = Record<string, unknown>>
+        //eslint-disable-next-line
+    export interface Hooks<D extends object = {}>
       extends UseExpandedHooks<D>,
         UseGroupByHooks<D>,
         UseRowSelectHooks<D>,
         UseSortByHooks<D> {}
   
-    export interface TableInstance<D extends Record<string, unknown> = Record<string, unknown>>
+        //eslint-disable-next-line
+    export interface TableInstance<D extends object = {}>
       extends UseColumnOrderInstanceProps<D>,
         UseExpandedInstanceProps<D>,
         UseFiltersInstanceProps<D>,
@@ -83,7 +86,8 @@ import {
         UseRowStateInstanceProps<D>,
         UseSortByInstanceProps<D> {}
   
-    export interface TableState<D extends Record<string, unknown> = Record<string, unknown>>
+        //eslint-disable-next-line
+    export interface TableState<D extends object = {}>
       extends UseColumnOrderState<D>,
         UseExpandedState<D>,
         UseFiltersState<D>,
@@ -97,7 +101,8 @@ import {
             rowCount: number
         }
   
-    export interface ColumnInterface<D extends Record<string, unknown> = Record<string, unknown>>
+        //eslint-disable-next-line
+    export interface ColumnInterface<D extends object = {}>
       extends UseFiltersColumnOptions<D>,
         UseGlobalFiltersColumnOptions<D>,
         UseGroupByColumnOptions<D>,
@@ -106,17 +111,20 @@ import {
             align?: string
         }
   
-    export interface ColumnInstance<D extends Record<string, unknown> = Record<string, unknown>>
+        //eslint-disable-next-line
+    export interface ColumnInstance<D extends object = {}>
       extends UseFiltersColumnProps<D>,
         UseGroupByColumnProps<D>,
         UseResizeColumnsColumnProps<D>,
         UseSortByColumnProps<D> {}
   
-    export interface Cell<D extends Record<string, unknown> = Record<string, unknown>, V = any>
+        //eslint-disable-next-line
+    export interface Cell<D extends object = {}, V = any>
       extends UseGroupByCellProps<D>,
         UseRowStateCellProps<D> {}
   
-    export interface Row<D extends Record<string, unknown> = Record<string, unknown>>
+   //eslint-disable-next-line
+        export interface Row<D extends object = {}>
       extends UseExpandedRowProps<D>,
         UseGroupByRowProps<D>,
         UseRowSelectRowProps<D>,

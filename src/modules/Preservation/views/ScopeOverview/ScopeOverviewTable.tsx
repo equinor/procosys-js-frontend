@@ -1,0 +1,340 @@
+import React, { useEffect, useState, useMemo, forwardRef, useRef } from 'react';
+import { Tooltip } from '@material-ui/core';
+import { PreservedTags, PreservedTag } from '@procosys/modules/Preservation/views/ScopeOverview/types';
+import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
+import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
+import { SingleIconContainer, TagLink, Container } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
+import { tokens } from '@equinor/eds-tokens';
+import EdsIcon from '@procosys/components/EdsIcon';
+import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import { Typography } from '@equinor/eds-core-react';
+
+interface ScopeOverviewTableProps {
+    getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
+    setRefreshScopeListCallback: (callback: (maxHeight: number, refreshOnResize?: boolean) => void) => void;
+    pageSize: number;
+    pageIndex: number;
+    showTagDetails: (tag: PreservedTag) => void;
+    setSelectedTags: (tags: PreservedTag[]) => void;
+    selectedTags: PreservedTag[];
+    setOrderByField: (orderByField: string | null) => void;
+    setOrderDirection: (orderDirection: string | null) => void;
+}
+
+const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
+
+    enum ActionStatus {
+        Closed = 'HasClosed',
+        Open = 'HasOpen',
+        OverDue = 'HasOverdue'
+    }
+
+    const getRequirementColumn = React.memo(function getRequirementColumn(value: any): JSX.Element {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <div
+                style={{ cursor: 'pointer' }}
+
+                onClick={(): void => props.showTagDetails(tag)} >
+                <RequirementIcons tag={tag} />
+            </ div>
+        );
+    });
+
+    const getResponsibleColumn = useMemo(() => (value: any): JSX.Element => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>{tag.responsibleCode}</div>
+            </Tooltip>
+        );
+    }, []);
+
+    const getDueColumn = useMemo(() => (value: any): JSX.Element => {
+        const requirement = getFirstUpcomingRequirement(value.data[value.row.index] as PreservedTag);
+        return (
+            <div className='controlOverflow' style={{color: requirement && isTagOverdue((value.data[value.row.index] as PreservedTag)) ? tokens.colors.interactive.danger__text.rgba : ''}}>
+                {(!requirement || (value.data[value.row.index] as PreservedTag).isVoided) ? null : requirement.nextDueWeeks}
+            </div>);
+    }, []);
+
+    const getNextColumn = useMemo(() => (value: any): JSX.Element => {
+        const requirement = getFirstUpcomingRequirement(value.data[value.row.index] as PreservedTag);
+        return (
+            <div className='controlOverflow' style={{color: requirement && isTagOverdue((value.data[value.row.index] as PreservedTag)) ? tokens.colors.interactive.danger__text.rgba : ''}}>
+                {(!requirement || (value.data[value.row.index] as PreservedTag).isVoided) ? null : requirement.nextDueAsYearAndWeek}
+            </div>);
+    }, []);
+
+    const getActionsHeader = (): JSX.Element => {
+        return (
+            <SingleIconContainer>
+                <EdsIcon name='notifications' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
+            </SingleIconContainer>
+        );
+    };
+
+    const getActionsColumn = useMemo(() => (value: any): JSX.Element => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        if (!tag.actionStatus || tag.actionStatus === ActionStatus.Closed) {
+            return <div></div>;
+        }
+
+        return (
+            <Tooltip
+                title={tag.actionStatus === ActionStatus.OverDue ? 'Overdue action(s)' : 'Open action(s)'}
+                arrow={true}
+                enterDelay={200}
+                enterNextDelay={100}
+            >
+                <SingleIconContainer>
+                    <EdsIcon
+                        name='notifications'
+                        size={24}
+                        color={
+                            tag.actionStatus === ActionStatus.OverDue
+                                ? tokens.colors.interactive.danger__text.rgba
+                                : tokens.colors.text.static_icons__tertiary.rgba
+                        }
+                    />
+                </SingleIconContainer>
+            </Tooltip>
+        );
+    }, []);
+
+    const getTagNoColumn = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <TagLink
+                isOverdue={isTagOverdue(tag)}
+                isVoided={tag.isVoided}
+                onClick={(): void => props.showTagDetails(tag)}
+            >
+                <span style={{ color: 'inherit' }}>{tag.tagNo}</span>
+            </TagLink>
+        );
+    }, []);
+
+    const getDescriptionColumn = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>
+                {tag.description}
+            </div>
+        );
+    }, []);
+
+    const getPOColumn = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (<Tooltip title={tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo ? tag.purchaseOrderNo : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>
+                {tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo}
+            </div>
+        </Tooltip>);
+    }, []);
+
+    const getAreaCode = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>
+                {tag.areaCode}
+            </div>);
+    }, []);
+
+    const getDisciplineCode = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>
+                {tag.disciplineCode}
+            </div>);
+    }, []);
+
+    const getMode = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>
+                {tag.mode}
+            </div>);
+    }, []);
+
+    const getStatus = useMemo(() => (value: any) => {
+        const tag = value.data[value.row.index] as PreservedTag;
+        return (
+            <div className='controlOverflow' style={{color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)'}}>
+                {tag.status}
+            </div>);
+    }, []);
+
+
+    const columns = React.useMemo(() => [
+        {
+            Header: 'Tag nr',
+            accessor: (d: any) => d,
+            id: 'tagNo',
+            Cell: getTagNoColumn,
+        },
+        {
+            Header: 'Description',
+            accessor: 'description',
+            Cell: getDescriptionColumn,
+            width: 250,
+            maxWidth: 400,
+            minWidth: 150
+        },
+        {
+            Header: 'Due',
+            accessor: (d: any) => d,
+            id: 'due',
+            Cell: getDueColumn,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 50
+        },
+        {
+            Header: 'Next',
+            accessor: (d: any) => d,
+            id: 'Due',
+            Cell: getNextColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50
+        },
+        {
+            Header: 'Mode',
+            accessor: (d: any) => d,
+            Cell: getMode,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 50,
+        },
+        {
+            Header: 'PO',
+            accessor: (d: any) => d,
+            id: 'PO',
+            Cell: getPOColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Area',
+            accessor: (d: any) => d,
+            id: 'Area',
+            Cell: getAreaCode,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50
+        },
+        {
+            Header: 'Resp',
+            id: 'responsible',
+            accessor: (d: any) => d,
+            Cell: getResponsibleColumn
+        },
+        {
+            Header: 'Disc',
+            id: 'discipline',
+            accessor: (d: any) => d,
+            Cell: getDisciplineCode
+        },
+        {
+            Header: 'Status',
+            accessor: (d: any) => d,
+            Cell: getStatus
+        },
+        {
+            Header: 'Req type',
+            accessor: (d: any) => d,
+            id: 'reqtype',
+            Cell: getRequirementColumn,
+            defaultCanSort: false,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 150
+        },
+        {
+            Header: getActionsHeader(),
+            accessor: (d: any) => d,
+            id: 'actions',
+            Cell: getActionsColumn,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 30
+        },
+
+    ], []);
+
+    const [data, setData] = useState<PreservedTag[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [pageCount, setPageCount] = useState<number>(0);
+    const [maxRows, setMaxRows] = useState<number>(0);
+    const [pageIndex, setPageIndex] = useState(props.pageIndex);
+    const [pageSize, setPageSize] = useState(props.pageSize);
+    const fetchIdRef = useRef(0);
+    const myRef = useRef();
+    const [sortBy, setSortBy] = useState({ id: null, desc: false });
+
+    const getData = ({ pageIndex, pageSize }: any, sortField = 'Due', sortDir = 'asc') => {
+        if (!pageSize && !pageIndex) return;
+        const fetchId = ++fetchIdRef.current;
+        setLoading(true);
+
+        if(sortBy.id) {
+            sortField = sortBy.id!;
+            sortDir = sortBy.desc ? 'desc' : 'asc';
+            props.setOrderByField(sortField);
+            props.setOrderDirection(sortDir);
+        }
+
+        if (fetchId === fetchIdRef.current) {
+            props.getData(pageIndex, pageSize, sortField, sortDir).then((res) => {
+                setData(res.tags);
+                setMaxRows(res.maxAvailable);
+                setPageCount(Math.ceil(res.maxAvailable / pageSize));
+                setLoading(false);
+            });
+        }
+    };
+
+    useEffect(() => {
+        if(sortBy.id) {
+            getData({ pageIndex: 0, pageSize: pageSize }, sortBy.id!, sortBy.desc ? 'desc' : 'asc');
+            props.setOrderByField(sortBy.id!);
+            props.setOrderDirection(sortBy.desc ? 'desc' : 'asc');
+        } else {
+            getData({ pageIndex: 0, pageSize: pageSize });
+        }
+
+    }, [sortBy]);
+
+    useEffect(() => {
+        props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
+            const req = { pageIndex: 0, pageSize: pageSize };
+            setPageIndex(0);
+            if (myRef.current)
+                ((myRef.current) as any).resetPageIndex(true);
+            getData(req);
+        });
+    });
+
+    const setSorting = (input: any[]) => {
+        if (input.length > 0 && sortBy && (sortBy.id !== input[0].id || sortBy.desc !== input[0].desc)) {
+            setSortBy(input[0]);
+            props.setOrderByField(input[0]);
+        }
+        if (input.length === 0 && sortBy.id) {   
+            setSortBy({ id: null, desc: false });
+        }
+    };
+
+    return (
+        <Container>
+            <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
+            <ProcosysTable setPageSize={setPageSize} onSort={setSorting} onSelectedChange={props.setSelectedTags} ref={myRef} pageIndex={pageIndex} pageSize={pageSize} columns={columns} maxRowCount={maxRows} data={data} fetchData={getData} loading={loading} pageCount={pageCount} />
+        </Container>
+    );
+
+});
+
+export default ScopeOverviewTable;
+

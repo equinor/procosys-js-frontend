@@ -33,6 +33,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
+import ScopeOverviewTable from './ScopeOverviewTable';
 
 export const getFirstUpcomingRequirement = (tag: PreservedTag): Requirement | null => {
     if (!tag.requirements || tag.requirements.length === 0) {
@@ -122,6 +123,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [flyoutTagId, setFlyoutTagId] = useState<number>(0);
     const [scopeIsDirty, setScopeIsDirty] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<number>(50);
+    const [pageIndex, setPageIndex] = useState<number>(0);
     const [tagListFilter, setTagListFilter] = useState<TagListFilter>({ ...emptyTagListFilter });
 
     const [numberOfTags, setNumberOfTags] = useState<number>();
@@ -167,11 +169,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         try {
             const response = await apiClient.getSavedTagListFilters(project.name);
             setSavedTagListFilters(response);
+            setIsLoading(false);
         } catch (error) {
             console.error('Get saved filters failed: ', error.message, error.data);
             showSnackbarNotification(error.message, 5000);
+            setIsLoading(false);
         }
-        setIsLoading(false);
+
     };
 
     useEffect((): void => {
@@ -311,6 +315,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 cancelerRef.current && cancelerRef.current();
                 return await apiClient.getPreservedTags(project.name, page, pageSize, orderBy, orderDirection, tagListFilter, (c) => { cancelerRef.current = c; }).then(
                     (response) => {
+                        setPageIndex(0);
                         setNumberOfTags(response.maxAvailable);
                         setSelectedTags([]);
                         return response;
@@ -752,6 +757,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeList();
     };
 
+    
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -923,7 +929,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     )
                 }
 
-                <ScopeTable
+                {/* <ScopeTable
                     getTags={getTags}
                     data-testId='scopeTable'
                     setSelectedTags={setSelectedTags}
@@ -935,7 +941,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setFirstPageSelected={(): void => setResetTablePaging(false)}
                     setOrderByField={setOrderByField}
                     setOrderDirection={setOrderDirection}
-                />
+                /> */}
+
+
+                {
+                    savedTagListFilters &&
+                    <ScopeOverviewTable setOrderDirection={setOrderDirection} setOrderByField={setOrderByField} selectedTags={selectedTags} setSelectedTags={setSelectedTags} showTagDetails={openFlyout} getData={getTags} pageSize={pageSize} pageIndex={pageIndex} setRefreshScopeListCallback={setRefreshScopeListCallback}></ScopeOverviewTable>
+                }
 
                 {
                     displayFlyout && (
@@ -959,7 +971,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}
-                            tagListFilter={tagListFilter} setTagListFilter={setTagListFilter}
+                            tagListFilter={tagListFilter} 
+                            setTagListFilter={setTagListFilter}
                             savedTagListFilters={savedTagListFilters}
                             refreshSavedTagListFilters={updateSavedTagListFilters}
                             setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}

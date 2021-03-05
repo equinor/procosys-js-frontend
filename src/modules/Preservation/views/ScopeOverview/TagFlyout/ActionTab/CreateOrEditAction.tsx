@@ -49,7 +49,7 @@ const CreateOrEditAction = ({
         descriptionInputRef.current && description ? descriptionInputRef.current.value = description : null;
 
     }, []);
-
+    
     const saveAction = async (): Promise<void> => {
         setIsLoading(true);
         try {
@@ -113,7 +113,7 @@ const CreateOrEditAction = ({
                     id='actionDate'
                     label='Date'
                     type='date'
-                    value={newDueTimeUtc ? format(newDueTimeUtc, 'yyyy-MM-dd') : ''}
+                    value={newDueTimeUtc ? format(new Date(newDueTimeUtc), 'yyyy-MM-dd') : ''}
                     InputLabelProps={{
                         shrink: true,
                     }}

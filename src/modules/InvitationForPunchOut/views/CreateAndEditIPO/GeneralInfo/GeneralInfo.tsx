@@ -213,7 +213,7 @@ const GeneralInfo = ({
                     id='startDate'
                     label='Date'
                     type='date'
-                    value={format(generalInfo.startTime, 'yyyy-MM-dd')}
+                    value={format(new Date(generalInfo.startTime), 'yyyy-MM-dd')}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -224,7 +224,7 @@ const GeneralInfo = ({
                     label='Start'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
-                    value={format(generalInfo.startTime, 'HH:mm')}
+                    value={format(new Date(generalInfo.startTime), 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -235,7 +235,7 @@ const GeneralInfo = ({
                     label='End'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
-                    value={format(generalInfo.endTime, 'HH:mm')}
+                    value={format(new Date(generalInfo.endTime), 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}

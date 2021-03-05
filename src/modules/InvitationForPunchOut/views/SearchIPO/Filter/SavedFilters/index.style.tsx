@@ -32,7 +32,8 @@ export const ListContainer = styled.div`
 
 export const Link = styled.div`
     display: flex;
-    align-items:center;
+    align-items: center;
+    width: 100%;
     :hover {
         cursor: pointer;
     }
@@ -40,7 +41,6 @@ export const Link = styled.div`
 
 export const Row = styled.div<SavedFiltersProps>`
     display: flex;
-    justify-content: space-between;
     ${ ({ isSelectedFilter }): any => isSelectedFilter && css`
         background:${tokens.colors.interactive.primary__selected_highlight.rgba};
     `};

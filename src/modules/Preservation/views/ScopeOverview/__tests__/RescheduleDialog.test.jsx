@@ -1,6 +1,6 @@
 import React from 'react';
 import RescheduleDialog from '../RescheduleDialog';
-import {fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 const reschedulableTags = [
     {
@@ -69,10 +69,10 @@ describe('<RescheduleDialog />', () => {
     
     it('Should enable Reschedule button only if every field has a value and the time field has a valid value', async () => {
         const onCloseSpy = jest.fn();
-        const {getByText, getByTitle, getByPlaceholderText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
+        const { getByText, getByTitle, getByTestId } = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
      
         //Set time to a valid value
-        const noOfWeeksField = getByPlaceholderText('No. of weeks');
+        const noOfWeeksField = getByTestId('No. of weeks');
         fireEvent.change(noOfWeeksField, {target : {value : '5'}});
                 
         //Set direction
@@ -81,7 +81,7 @@ describe('<RescheduleDialog />', () => {
         getByText('Later').click();
         
         //Set comment
-        const commentField = getByPlaceholderText('Write comment here');
+        const commentField = getByTestId('comment');
         fireEvent.change(commentField, {target : {value : 'test comment'}});
 
         //Verify button
@@ -102,10 +102,10 @@ describe('<RescheduleDialog />', () => {
 
     it('Should call onClose function when the enabled Reschedule button is clicked', async () => {
         const onCloseSpy = jest.fn();
-        const {getByText, getByTitle, getByPlaceholderText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
+        const { getByText, getByTitle, getByTestId } = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
      
         //Set time to a valid value
-        const noOfWeeksField = getByPlaceholderText('No. of weeks');
+        const noOfWeeksField = getByTestId('No. of weeks');
         fireEvent.change(noOfWeeksField, {target : {value : '5'}});
                 
         //Set direction
@@ -114,8 +114,10 @@ describe('<RescheduleDialog />', () => {
         getByText('Later').click();
         
         //Set comment
-        const commentField = getByPlaceholderText('Write comment here');
+        const commentField = getByTestId('comment');
         fireEvent.change(commentField, {target : {value : 'test comment'}});
+
+        //Verify button and call to onClose
         await waitFor(() => expect(getByText('Reschedule').closest('button')).toHaveProperty('disabled', false));
         getByText('Reschedule').closest('button').click();
         await waitFor( () => expect(onCloseSpy).toBeCalledTimes(1));

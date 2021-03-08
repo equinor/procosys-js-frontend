@@ -137,8 +137,10 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                             <InputContainer>
                                 <FormFieldSpacer>
                                     <TextField
+                                        label="No. of weeks"
+                                        data-testid="No. of weeks"
                                         meta="Required"
-                                        placeholder="No. of weeks"
+                                        placeholder="Write here"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                                             handleNoOfWeeksChanged(e.target.value);
                                         }}
@@ -157,9 +159,10 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
                                     <TextField
-                                        id="comment"
+                                        label="Comment"
+                                        data-testid="comment"
                                         meta="Required"
-                                        placeholder="Write comment here"
+                                        placeholder="Write here"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                                             setComment(e.target.value);
                                         }}

@@ -139,7 +139,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                     <TextField
                                         id="noOfWeeks"
                                         meta="Required"
-                                        placeholder="Write Weeks Here"
+                                        placeholder="No. of weeks"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                                             handleNoOfWeeksChanged(e.target.value);
                                         }}

@@ -62,21 +62,18 @@ describe('<RescheduleDialog />', () => {
         expect(queryByText('Reschedule preservation')).not.toBeInTheDocument();        
     });
 
-    it('Reschedule button is disabled of input is not given', async () => {
+    it('Reschedule button is disabled if input is not given', async () => {
         const {getByText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={()=>{}} />);
         expect(getByText('Reschedule').closest('button').disabled).toBeTruthy();        
     });  
     
-    // TODO: change this test to work with new time setter
-    it('Reschedule button is enabled if all three input fields is populated, and clicking it will fire onClose', async () => {
+    it('Should enable Reschedule button only if every field has a value and the time field has a valid value', async () => {
         const onCloseSpy = jest.fn();
-        const {getByText,getByTitle, getByPlaceholderText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
+        const {getByText, getByTitle, getByPlaceholderText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
      
-        //Set time
-        getByTitle('time').click();
-        expect(getByText('1 week')).toBeInTheDocument();
-        getByText('1 week').click();
-        expect(getByText('1 week')).toBeInTheDocument();
+        //Set time to a valid value
+        const noOfWeeksField = getByPlaceholderText('No. of weeks');
+        fireEvent.change(noOfWeeksField, {target : {value : '5'}});
                 
         //Set direction
         getByTitle('direction').click();
@@ -84,14 +81,45 @@ describe('<RescheduleDialog />', () => {
         getByText('Later').click();
         
         //Set comment
-        const commentField = getByPlaceholderText('Write here');
+        const commentField = getByPlaceholderText('Write comment here');
         fireEvent.change(commentField, {target : {value : 'test comment'}});
 
         //Verify button
         await waitFor(() => expect(getByText('Reschedule').closest('button')).toHaveProperty('disabled', false));
+
+        //Set time to a non-valid value
+        fireEvent.change(noOfWeeksField, {target : {value : '-1'}});
+
+        //Verify button is disabled
+        await waitFor(() => expect(getByText('Reschedule').closest('button')).toHaveProperty('disabled', true));
+
+        //Set time to a valid number again
+        fireEvent.change(noOfWeeksField, {target : {value : '1'}});
+
+        //Verify button
+        await waitFor(() => expect(getByText('Reschedule').closest('button')).toHaveProperty('disabled', false));
+    });
+
+    it('Should call onClose function when the enabled Reschedule button is clicked', async () => {
+        const onCloseSpy = jest.fn();
+        const {getByText, getByTitle, getByPlaceholderText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);
+     
+        //Set time to a valid value
+        const noOfWeeksField = getByPlaceholderText('No. of weeks');
+        fireEvent.change(noOfWeeksField, {target : {value : '5'}});
+                
+        //Set direction
+        getByTitle('direction').click();
+        expect(getByText('Later')).toBeInTheDocument();
+        getByText('Later').click();
+        
+        //Set comment
+        const commentField = getByPlaceholderText('Write comment here');
+        fireEvent.change(commentField, {target : {value : 'test comment'}});
+        await waitFor(() => expect(getByText('Reschedule').closest('button')).toHaveProperty('disabled', false));
         getByText('Reschedule').closest('button').click();
         await waitFor( () => expect(onCloseSpy).toBeCalledTimes(1));
-    });  
+    });
 
     it('Cancel button will fire the onClose function', async () => {
         const onCloseSpy = jest.fn();

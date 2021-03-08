@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
@@ -137,7 +137,6 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                             <InputContainer>
                                 <FormFieldSpacer>
                                     <TextField
-                                        id="noOfWeeks"
                                         meta="Required"
                                         placeholder="No. of weeks"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {

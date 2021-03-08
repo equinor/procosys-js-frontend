@@ -3,7 +3,7 @@ import { GeneralInfoDetails, ProjectDetails } from '@procosys/modules/Invitation
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Typography } from '@equinor/eds-core-react';
-import { format, set } from 'date-fns';
+import { formatForDatePicker, isValidDate } from '@procosys/core/services/DateService';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
@@ -12,6 +12,7 @@ import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { getEndTime } from '../utils';
+import { set } from 'date-fns';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 
@@ -46,7 +47,6 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>([]);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -94,20 +94,24 @@ const GeneralInfo = ({
 
     const handleSetDate = (dateString: string): void => {
         const date = new Date(dateString);
-        const newStart = set(generalInfo.startTime, { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
-        const newEnd = set(generalInfo.endTime, { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
-        setGeneralInfo(gi => { return { ...gi, startTime: newStart, endTime: newEnd }; });
+        if (!isValidDate(date)) {
+            setGeneralInfo(gi => { return { ...gi, startTime: undefined, endTime: undefined }; });
+        } else {
+            const newStart = set(generalInfo.startTime ? generalInfo.startTime : new Date(), { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
+            const newEnd = set(generalInfo.endTime ? generalInfo.endTime : new Date(), { year: date.getFullYear(), month: date.getMonth(), date: date.getDate() });
+            setGeneralInfo(gi => { return { ...gi, startTime: newStart, endTime: newEnd }; });
+        }
     };
 
     const handleSetTime = (from: 'start' | 'end', timeString: string): void => {
         const timeSplit = timeString.split(':');
         if (timeSplit[0] && timeSplit[1]) {
             if (from === 'start') {
-                const newTime = set(generalInfo.startTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
-                const newEndTime = newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime;
+                const newTime = set(generalInfo.startTime ? generalInfo.startTime : new Date(), { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+                const newEndTime = generalInfo.endTime ? newTime > generalInfo.endTime ? getEndTime(newTime) : generalInfo.endTime : getEndTime(newTime);
                 setGeneralInfo(gi => { return { ...gi, startTime: newTime, endTime: newEndTime }; });
             } else {
-                const newEndTime = set(generalInfo.endTime, { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
+                const newEndTime = set(generalInfo.endTime ? generalInfo.endTime : new Date(), { hours: Number(timeSplit[0]), minutes: Number(timeSplit[1]) });
                 setGeneralInfo(gi => { return { ...gi, endTime: newEndTime }; });
             }
         }
@@ -213,7 +217,7 @@ const GeneralInfo = ({
                     id='startDate'
                     label='Date'
                     type='date'
-                    value={format(new Date(generalInfo.startTime), 'yyyy-MM-dd')}
+                    value={formatForDatePicker(generalInfo.startTime, 'yyyy-MM-dd')}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -224,7 +228,7 @@ const GeneralInfo = ({
                     label='Start'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
-                    value={format(new Date(generalInfo.startTime), 'HH:mm')}
+                    value={formatForDatePicker(generalInfo.startTime, 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -235,7 +239,7 @@ const GeneralInfo = ({
                     label='End'
                     type='time'
                     onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.preventDefault()}
-                    value={format(new Date(generalInfo.endTime), 'HH:mm')}
+                    value={formatForDatePicker(generalInfo.endTime, 'HH:mm')}
                     InputLabelProps={{
                         shrink: true,
                     }}

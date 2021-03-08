@@ -8,7 +8,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { Typography } from '@equinor/eds-core-react';
-import { format } from 'date-fns';
+import { formatForDatePicker } from '@procosys/core/services/DateService';
 
 interface CheckboxFilterWithDatesProps {
     title: string;
@@ -17,7 +17,7 @@ interface CheckboxFilterWithDatesProps {
     filterParam: filterParamType;
     dateFields: CheckboxFilterValue[];
     dateValues: (Date|undefined)[];
-    onDateChange: (filterParam: dateFilterParamType, value: Date) => void;
+    onDateChange: (filterParam: dateFilterParamType, value: string) => void;
     onCheckboxFilterChange: (filterParam: filterParamType, id: string, checked: boolean) => void;
     icon: string;
 }
@@ -77,11 +77,11 @@ const CheckboxFilterWithDates = ({
                                             key={value.id}
                                             label={value.title}
                                             type='date'
-                                            value={dateValue ? format(new Date(dateValue), 'yyyy-MM-dd'): ''}
+                                            value={formatForDatePicker(dateValue, 'yyyy-MM-dd')}
                                             InputLabelProps={{
                                                 shrink: true,
                                             }}
-                                            onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => onDateChange(value.id as dateFilterParamType, new Date(event.target.value))}
+                                            onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => onDateChange(value.id as dateFilterParamType, event.target.value)}
                                         />
                                     );
                                 })

@@ -16,8 +16,8 @@ export type GeneralInfoDetails = {
     poType: SelectItem | null;
     title: string | null;
     description?: string | null;
-    startTime: Date;
-    endTime: Date;
+    startTime: Date | undefined;
+    endTime: Date | undefined;
     location?: string | null;
 }
 

@@ -6,6 +6,7 @@ import ActionAttachments from './ActionAttachments';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Spinner from '@procosys/components/Spinner';
 import { format } from 'date-fns';
+import { formatForDatePicker } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 
@@ -113,7 +114,7 @@ const CreateOrEditAction = ({
                     id='actionDate'
                     label='Date'
                     type='date'
-                    value={newDueTimeUtc ? format(new Date(newDueTimeUtc), 'yyyy-MM-dd') : ''}
+                    value={formatForDatePicker(newDueTimeUtc, 'yyyy-MM-dd')}
                     InputLabelProps={{
                         shrink: true,
                     }}

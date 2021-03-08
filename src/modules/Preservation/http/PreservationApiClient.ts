@@ -100,7 +100,7 @@ interface ModeResponse {
     id: number;
     title: string;
     forSupplier: boolean;
-    inUse: boolean;
+    isInUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -185,7 +185,7 @@ interface JourneyResponse {
                 title: string;
                 isVoided: boolean,
                 forSupplier: boolean,
-                inUse: boolean,
+                isInUse: boolean,
                 rowVersion: string;
             };
             responsible: {

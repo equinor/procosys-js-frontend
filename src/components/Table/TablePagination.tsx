@@ -1,16 +1,9 @@
-import { TablePagination as _MuiTablePagination } from '@material-ui/core';
 import React, { PropsWithChildren, ReactElement, useCallback, useEffect } from 'react';
+
 import { TableInstance } from 'react-table';
+import { TablePagination as _MuiTablePagination } from '@material-ui/core';
 
 const rowsPerPageOptions = [10, 50, 100, 500, 1000];
-
-// avoid all of the redraws caused by the internal withStyles
-const interestingPropsEqual = (prevProps: any, nextProps: any) =>
-    prevProps.count === nextProps.count &&
-  prevProps.rowsPerPage === nextProps.rowsPerPage &&
-  prevProps.page === nextProps.page &&
-  prevProps.onChangePage === nextProps.onChangePage &&
-  prevProps.onChangeRowsPerPage === nextProps.onChangeRowsPerPage;
 
 // a bit of a type hack to keep OverridableComponent working as desired
 type T = typeof _MuiTablePagination

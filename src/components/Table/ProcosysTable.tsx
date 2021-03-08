@@ -1,7 +1,6 @@
-import React, { useEffect, PropsWithChildren, CSSProperties, forwardRef, useImperativeHandle, memo, useState, useRef } from 'react';
+import React, { useEffect, PropsWithChildren, CSSProperties, forwardRef, useImperativeHandle, memo, useRef } from 'react';
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import styled from 'styled-components';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import cx from 'classnames';
 import {
@@ -12,13 +11,13 @@ import {
     Hooks,
     Meta,
     TableOptions,
-    useColumnOrder,
     useFlexLayout,
     usePagination,
     useResizeColumns,
     useRowSelect,
     useSortBy,
-    useTable
+    useTable,
+    ColumnInstance
 } from 'react-table';
 import { TablePagination } from './TablePagination';
 import { makeStyles, createStyles, Theme, TableSortLabel } from '@material-ui/core';
@@ -28,22 +27,20 @@ import { ResizeHandle } from './ResizeHandle';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
-    fetchData: any;
-    columns: any;
-    pageCount: any;
+    fetchData: (args: any) => void;
+    columns: ColumnInstance<any>[];
+    pageCount: number;
     loading: boolean;
-    data: any;
+    data: any[];
     maxRowCount: number;
-    tableRef?: any;
     pageSize: number;
     pageIndex: number;
-    onSelectedChange: any;
-    onSort: any;
+    onSelectedChange: (args: any[]) => void;
+    onSort: (args: string) => void;
 }
 
 const selectionHook = (hooks: Hooks<any>): void => {
     hooks.allColumns.push((columns) => [
-        // Let's make a column for selection
         {
             id: 'selection',
             disableResizing: true,
@@ -61,7 +58,6 @@ const selectionHook = (hooks: Hooks<any>): void => {
 };
 
 const hooks = [
-    useColumnOrder,
     useFlexLayout,
     useSortBy,
     usePagination,
@@ -273,47 +269,43 @@ const ProcosysTable = forwardRef((<T extends Record<string, unknown>>(props: Pro
                 {row.cells.map((cell) => (
                     //eslint-disable-next-line
                     <div {...cell.getCellProps(cellProps)} onClick={cellClickHandler(cell)} className={classes.tableCell}>
-                        {cell.isGrouped ? (
-                            <>
-                                <TableSortLabel
-                                    classes={{
-                                        iconDirectionAsc: classes.iconDirectionAsc,
-                                        iconDirectionDesc: classes.iconDirectionDesc,
-                                    }}
-                                    active
-                                    direction={row.isExpanded ? 'desc' : 'asc'}
-                                    IconComponent={KeyboardArrowUp}
-                                    {...row.getToggleRowExpandedProps()}
-                                    className={classes.cellIcon}
-                                />{' '}
-                                {cell.render('Cell')} ({row.subRows.length})
-                            </>
-                        ) : cell.isAggregated ? (
-                            cell.render('Aggregated')
-                        ) : cell.isPlaceholder ? null : (
+                        {
                             cell.render('Cell')
-                        )}
+                        }
                     </div>
                 ))}
             </div>
         );
-
     }, areEqual);
 
     const listRef = useRef(null);
+    const headerRef = useRef(null);
 
     const scrollHeader = (props: any): void => {
-        if(document.getElementById('table-header')) {
-            (document.getElementById('table-header') as HTMLElement).scrollLeft = props.target.scrollLeft;
-        }        
+        if (headerRef.current) {
+            (headerRef.current as any).scrollLeft = props.target.scrollLeft;
+        }
     };
 
     const addScrollEventHandler = (props: any): void => {
+        // fix to make table-header scroll with list
         setTimeout(() => {
             if (listRef.current && listRef.current) {
                 ((listRef.current) as any)._outerRef.onscroll = scrollHeader;
             }
-        }, 500);
+        }, 50);
+
+        // fix to set header with when no scroll-bar
+        setTimeout(() => {
+            if (listRef.current && listRef.current) {
+                if (((listRef.current) as any)._outerRef.scrollHeight <= ((listRef.current) as any)._outerRef.clientHeight) {
+                    if (headerRef && headerRef.current) {
+                        const headref = (headerRef.current) as any;
+                        headref.style.width = (parseInt(headref.style.width.replace('px', '')) + 8) + 'px';
+                    }
+                }
+            }
+        }, 50);
     };
 
     return (
@@ -322,38 +314,23 @@ const ProcosysTable = forwardRef((<T extends Record<string, unknown>>(props: Pro
                 loading ? (
                     <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
                 ) : (
-
                     <div style={{ height: 'calc(90vh - 305px)' }}>
-
                         <AutoSizer>
                             {({ height, width }): JSX.Element => (
-
                                 <div>
                                     <div {...getTableProps()}>
                                         {
                                             headerGroups.map((headerGroup) => (
                                                 //eslint-disable-next-line
-                                                <div {...headerGroup.getHeaderGroupProps()} style={{ width: width - 8, display: 'flex' }} className={classes.tableHeadRow} id='table-header'>
+                                                    <div {...headerGroup.getHeaderGroupProps()} ref={headerRef} style={{ width: width - 8, display: 'flex' }} className={classes.tableHeadRow}>
                                                     {headerGroup.headers.map((column) => {
                                                         const style = {
                                                             textAlign: column.align ? column.align : 'left '
                                                         } as CSSProperties;
 
                                                         return (
-                                                            //eslint-disable-next-line
-                                                            <div {...column.getHeaderProps(headerProps)} className={classes.tableHeadCell}>
-                                                                {
-                                                                }
-                                                                {
-                                                                    column.canGroupBy && (
-                                                                        <TableSortLabel
-                                                                            active
-                                                                            direction={column.isGrouped ? 'desc' : 'asc'}
-                                                                            IconComponent={KeyboardArrowRight}
-                                                                            {...column.getGroupByToggleProps()}
-                                                                            className={classes.headerIcon}
-                                                                        />
-                                                                    )}
+                                                        //eslint-disable-next-line
+                                                                <div {...column.getHeaderProps(headerProps)} className={classes.tableHeadCell}>
                                                                 {column.canSort && column.defaultCanSort !== false ? (
                                                                     <TableSortLabel
                                                                         active={column.isSorted}
@@ -386,7 +363,6 @@ const ProcosysTable = forwardRef((<T extends Record<string, unknown>>(props: Pro
                                                 ref={listRef}
                                                 onItemsRendered={addScrollEventHandler}
                                             >
-
                                                 {RenderRow}
                                             </List>
                                         </div>
@@ -394,24 +370,15 @@ const ProcosysTable = forwardRef((<T extends Record<string, unknown>>(props: Pro
                                             <TablePagination<T> instance={tableInstance} />
                                         </div>
                                     </div>
-
                                 </div>
                             )}
                         </AutoSizer>
-
-
-
                     </div>
-
                 )
             }
-
         </>
     );
-
 }));
-
-
 
 export default ProcosysTable;
 

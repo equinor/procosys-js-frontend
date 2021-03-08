@@ -928,27 +928,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
                     )
                 }
-
-                {/* <ScopeTable
-                    getTags={getTags}
-                    data-testId='scopeTable'
-                    setSelectedTags={setSelectedTags}
-                    showTagDetails={openFlyout}
-                    setRefreshScopeListCallback={setRefreshScopeListCallback}
-                    pageSize={pageSize}
-                    setPageSize={setPageSize}
-                    shouldSelectFirstPage={resetTablePaging}
-                    setFirstPageSelected={(): void => setResetTablePaging(false)}
-                    setOrderByField={setOrderByField}
-                    setOrderDirection={setOrderDirection}
-                /> */}
-
-
                 {
                     savedTagListFilters &&
                     <ScopeOverviewTable setOrderDirection={setOrderDirection} setOrderByField={setOrderByField} selectedTags={selectedTags} setSelectedTags={setSelectedTags} showTagDetails={openFlyout} getData={getTags} pageSize={pageSize} pageIndex={pageIndex} setRefreshScopeListCallback={setRefreshScopeListCallback}></ScopeOverviewTable>
                 }
-
                 {
                     displayFlyout && (
                         <Flyout

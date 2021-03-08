@@ -66,7 +66,8 @@ describe('<RescheduleDialog />', () => {
         const {getByText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={()=>{}} />);
         expect(getByText('Reschedule').closest('button').disabled).toBeTruthy();        
     });  
- 
+    
+    // TODO: change this test to work with new time setter
     it('Reschedule button is enabled if all three input fields is populated, and clicking it will fire onClose', async () => {
         const onCloseSpy = jest.fn();
         const {getByText,getByTitle, getByPlaceholderText} = render(<RescheduleDialog tags={reschedulableTags} open={true} onClose={onCloseSpy} />);

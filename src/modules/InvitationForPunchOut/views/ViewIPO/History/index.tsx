@@ -57,8 +57,8 @@ const History = ({ ipoId }: HistoryProps): JSX.Element => {
                     <HistoryTable>
                         <Head>
                             <Row>
-                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="12%">Date</Cell>
-                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="12%">Changed by</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="160px">Date</Cell>
+                                <Cell as="th" scope="col" style={{verticalAlign: 'middle'}} width="90px">Changed by</Cell>
                                 <Cell as="th" scope="col" style={{verticalAlign: 'middle'}}>Description</Cell>
                             </Row>
                         </Head>

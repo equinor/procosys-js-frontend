@@ -13,7 +13,7 @@ import { formatForDatePicker } from '@procosys/core/services/DateService';
 interface CheckboxFilterWithDatesProps {
     title: string;
     filterValues: CheckboxFilterValue[];
-    itemsChecked: string[];
+    itemsChecked: any[];
     filterParam: filterParamType;
     dateFields: CheckboxFilterValue[];
     dateValues: (Date|undefined)[];
@@ -35,10 +35,11 @@ const CheckboxFilterWithDates = ({
 }: CheckboxFilterWithDatesProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const filterActive = itemsChecked.find(item => item !== undefined) && itemsChecked.length > 0;
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="checkbox-collapse" filterActive={itemsChecked.length > 0} >
+            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="checkbox-collapse" filterActive={filterActive} >
                 <EdsIcon name={icon} />
                 <CollapseInfo >
                     {title}

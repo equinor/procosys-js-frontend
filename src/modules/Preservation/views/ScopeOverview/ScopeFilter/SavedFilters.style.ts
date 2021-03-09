@@ -44,9 +44,6 @@ export const Row = styled.div<SavedFiltersProps>`
     ${ ({ isSelectedFilter }): any => isSelectedFilter && css`
         background:${tokens.colors.interactive.primary__selected_highlight.rgba};
     `};
-    :hover {
-        cursor: pointer;
-    }
 `;
 
 

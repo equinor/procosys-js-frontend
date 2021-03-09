@@ -313,6 +313,7 @@ const EditIPO = (): JSX.Element => {
                     commPkgScope.push({
                         commPkgNo: commPkg.commPkgNo,
                         description: commPkg.description,
+                        system: commPkg.system,
                         status: commPkg.status
                     });
                 });

@@ -40,6 +40,7 @@ type McPkgScopeResponse = {
 type CommPkgScopeResponse = {
     commPkgNo: string;
     description: string;
+    system: string;
     status: string;
 }
 

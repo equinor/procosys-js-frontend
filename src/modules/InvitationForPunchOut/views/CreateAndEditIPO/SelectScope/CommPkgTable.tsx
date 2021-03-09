@@ -48,12 +48,11 @@ const CommPkgTable = forwardRef(({
         return currentCommPkg ? 
             currentCommPkg.system === system :
             selectedCommPkgScope[0].system === system;
-        // const currentSystems = currentCommPkg ? currentCommPkg.system.split('|') : selectedCommPkgScope[0].system.split('|');
-        // const commPkgSystems = system.split('|');
 
-        // console.log(currentSystems);
-        // console.log(commPkgSystems);
-        // return false;
+        // TODO: check if system is on MC PKG SCOPE 
+        // TODO: undo currentCommpkg as CommPkgRow back to commpkgNo
+
+
     }, [selectedCommPkgScope]);
 
     const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
@@ -203,7 +202,7 @@ const CommPkgTable = forwardRef(({
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
         return (
             <div className='tableCell goToMcCol'>
-                <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg)}>
+                <Button variant="ghost_icon" disabled={!hasValidSystem(commPkg.system)}onClick={(): void => getMcPkgs(commPkg)}>
                     <EdsIcon name='chevron_right' />
                 </Button>
             </div>
@@ -251,7 +250,7 @@ const CommPkgTable = forwardRef(({
                     },
                     selection: type != 'DP',
                     selectionProps: (data: CommPkgRow): any => ({
-                        disabled: hasValidSystem(data.system),
+                        disabled: !hasValidSystem(data.system),
                         disableRipple: true,
                     }),
                     rowStyle: (data): React.CSSProperties => ({

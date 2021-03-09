@@ -19,6 +19,7 @@ interface OnChangeRequirementData {
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    isDeleted?: boolean,
     rowVersion?: string;
 }
 
@@ -37,6 +38,8 @@ interface RequirementFormInput {
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    isInUse?: boolean;
+    isDeleted?: boolean;
     rowVersion?: string;
 }
 
@@ -83,7 +86,8 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
             const hasMatchingRequirement = props.requirements.some(
                 oldReq => {
                     return (oldReq.requirementDefinitionId === req.requirementDefinitionId
-                        && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided && oldReq.requirementId === req.requirementId);
+                        && oldReq.intervalWeeks === req.intervalWeeks && oldReq.isVoided === req.isVoided 
+                        && oldReq.requirementId === req.requirementId && oldReq.isDeleted === req.isDeleted);
                 });
             return !hasMatchingRequirement;
         }) || requirements.length !== props.requirements.length;
@@ -99,6 +103,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                     requirementDefinitionTitle: req.requirementDefinitionTitle,
                     editingRequirements: req.editingRequirements,
                     isVoided: req.isVoided,
+                    isDeleted: req.isDeleted,
                     rowVersion: req.rowVersion
                 });
             });
@@ -227,6 +232,16 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         });
     };
 
+    const deleteVoidedRequirement = (index: number): void => {
+        // Do I need to check whether voided first? (Would be just in case, as delete button is only visible if voided)
+        console.log('DeletingVoidedRequirement');
+        setRequirements(oldReq => {
+            const copy = [...oldReq];
+            copy[index].isDeleted = true;
+            return copy;
+        });
+    };
+
     const getDefaultInputText = (req: RequirementFormInput): string => {
         const value = mappedIntervals.find(el => el.value === req.intervalWeeks);
         if (!value) return 'Select';
@@ -237,6 +252,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         return `${req.requirementTypeTitle} - ${req.requirementDefinitionTitle}`;
     };
 
+    // TODO: check whether the requirement is deleted and figure out whether or not to show anything when deleted.
     return (
         <>
             {requirements.map((requirement, index) => {
@@ -269,10 +285,16 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                             <FormFieldSpacer>
                                 {requirement.editingRequirements ?
                                     (requirement.isVoided ?
-                                        <Button disabled={props.disabled} className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
-                                            <EdsIcon name='restore_from_trash' />
-                                            Unvoid
-                                        </Button>
+                                        <>
+                                            <Button disabled={props.disabled} className='voidUnvoid' title="Unvoid" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => unvoidRequirement(index)}>
+                                                <EdsIcon name='restore_from_trash' />
+                                                Unvoid
+                                            </Button>
+                                            <Button disabled={requirement.isInUse && props.disabled} title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteVoidedRequirement(index)}>
+                                                <EdsIcon name='delete_to_trash' />
+                                                Delete
+                                            </Button>
+                                        </>
                                         :
                                         <Button disabled={props.disabled} className='voidUnvoid' title="Void" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => voidRequirement(index)}>
                                             <EdsIcon name='delete_forever' />

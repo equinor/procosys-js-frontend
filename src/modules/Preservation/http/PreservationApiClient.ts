@@ -316,6 +316,7 @@ interface TagRequirementsResponse {
     ];
     comment: string;
     isVoided: boolean;
+    isInUse: boolean;
     rowVersion: string;
 }
 

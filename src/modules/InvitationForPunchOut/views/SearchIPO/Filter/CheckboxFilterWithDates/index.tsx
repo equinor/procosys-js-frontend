@@ -74,6 +74,7 @@ const CheckboxFilterWithDates = ({
                                     const dateValue = dateValues[index];
                                     return (
                                         <DateField
+                                            InputProps={{inputProps: { max: '2121-01-01'} }}
                                             key={value.id}
                                             label={value.title}
                                             type='date'

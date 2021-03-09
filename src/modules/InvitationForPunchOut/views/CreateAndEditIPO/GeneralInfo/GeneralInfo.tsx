@@ -214,6 +214,7 @@ const GeneralInfo = ({
             <Typography constiant='h5'>Date and time for punch round</Typography>
             <DateTimeContainer>
                 <DateTimeField
+                    InputProps={{inputProps: { max: '2121-01-01'} }}
                     id='startDate'
                     label='Date'
                     type='date'

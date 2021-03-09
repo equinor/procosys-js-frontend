@@ -12,6 +12,9 @@ import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
+import EdsIcon from '@procosys/components/EdsIcon';
+
+const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
 
 interface RescheduleDialogProps {
     tags: PreservedTag[];
@@ -47,6 +50,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
     const [canReschedule, setCanReschedule] = useState<boolean>(true);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
+    const [error, setError] = useState<string>('');
 
     const handleReschedule = (async (): Promise<void> => {
         setShowSpinner(true);
@@ -102,22 +106,28 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     const handleNoOfWeeksChanged = (newValue: string): void => {
         setNoOfWeeks(newValue);
+        if(newValue === ''){
+            setError('');
+            setNoOfWeeksIsValid(false);
+            return;
+        }
         const newWeekNumber = Number(newValue);
         if(!isNaN(newWeekNumber)){
             if(Number.isInteger(newWeekNumber)){
                 if(0 < newWeekNumber && newWeekNumber < 53){
                     setNoOfWeeksIsValid(true);
+                    setError('');
                 }else{
                     setNoOfWeeksIsValid(false);
-                    showSnackbarNotification('The number of weeks has to be at least 1 and at most 52', 5000);
+                    setError('Has to be between 0 and 53');
                 }
             }else{
                 setNoOfWeeksIsValid(false);
-                showSnackbarNotification('The number of weeks has to be a whole number', 5000);
+                setError('Has to be a whole number');
             }
         }else{
             setNoOfWeeksIsValid(false);
-            showSnackbarNotification('The number of weeks has to be a number', 5000);
+            setError('Has to be a number');
         }
     };
 
@@ -145,6 +155,9 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                             handleNoOfWeeksChanged(e.target.value);
                                         }}
                                         value={noOfWeeks || ''}
+                                        helperText={error}
+                                        variant={error? 'error': 'default'}
+                                        helperIcon={error? errorIcon: ''}
                                     />
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>

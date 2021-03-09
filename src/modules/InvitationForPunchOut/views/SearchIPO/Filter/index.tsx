@@ -9,11 +9,12 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { IpoStatusEnum } from '../../enums';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import SelectFilter from './SelectFilter';
-import { SelectItem } from '@procosys/components/Select';
+import Popover from '@material-ui/core/Popover';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import Popover from '@material-ui/core/Popover';
+import SelectFilter from './SelectFilter';
+import { SelectItem } from '@procosys/components/Select';
+import { isValidDate } from '@procosys/core/services/DateService';
 
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
@@ -196,9 +197,11 @@ const InvitationsFilter = ({
         setLocalFilter(newIPOFilter);
     };
 
-    const onDateChange = (filterParam: dateFilterParamType, value: Date): void => {
+    const onDateChange = (filterParam: dateFilterParamType, value: string): void => {
+        const date = new Date(value);
+
         const newIPOFilter: IPOFilter = { ...localFilter };
-        newIPOFilter[filterParam] = value;
+        newIPOFilter[filterParam] = isValidDate(date) ? date : undefined;
         setLocalFilter(newIPOFilter);
     };
 

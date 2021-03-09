@@ -5,7 +5,6 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import ActionAttachments from './ActionAttachments';
 import { TextField as DateTimeField } from '@material-ui/core';
 import Spinner from '@procosys/components/Spinner';
-import { format } from 'date-fns';
 import { formatForDatePicker } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';

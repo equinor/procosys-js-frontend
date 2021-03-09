@@ -1,7 +1,7 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { Container, Search, TopContainer } from './Table.style';
 import { Query, QueryResult } from 'material-table';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
@@ -14,7 +14,9 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
-    setCurrentCommPkg: (commPkgNo: string | null) => void;
+    currentCommPkg: CommPkgRow | null;
+    setCurrentCommPkg: (commPkgNo: CommPkgRow | null) => void;
+    commPkgNoFromMain: string | null;
     type: string;
     projectName: string;
     filter: string;
@@ -26,7 +28,9 @@ const WAIT_INTERVAL = 300;
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
     setSelectedCommPkgScope,
+    currentCommPkg,
     setCurrentCommPkg,
+    commPkgNoFromMain,
     type,
     projectName,
     filter,
@@ -38,18 +42,37 @@ const CommPkgTable = forwardRef(({
     const cancelerRef = useRef<Canceler | null>();
     const refObject = useRef<any>();
 
+    const hasValidSystem = useCallback((system: string): boolean => {
+        if (selectedCommPkgScope.length < 1 && !currentCommPkg) return true;
+
+        return currentCommPkg ? 
+            currentCommPkg.system === system :
+            selectedCommPkgScope[0].system === system;
+        // const currentSystems = currentCommPkg ? currentCommPkg.system.split('|') : selectedCommPkgScope[0].system.split('|');
+        // const commPkgSystems = system.split('|');
+
+        // console.log(currentSystems);
+        // console.log(commPkgSystems);
+        // return false;
+    }, [selectedCommPkgScope]);
+
     const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
         try {
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
             const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
-                return {
+                const commPkgRow: CommPkgRow =  {
                     commPkgNo: commPkg.commPkgNo,
                     description: commPkg.description,
                     status: commPkg.status,
+                    system: commPkg.system,
                     tableData: {
                         checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
                     }
                 };
+                if (commPkgRow.commPkgNo === commPkgNoFromMain) {
+                    setCurrentCommPkg(commPkgRow);
+                }
+                return commPkgRow;
             });
             return {
                 maxAvailable: response.maxAvailable,
@@ -72,7 +95,6 @@ const CommPkgTable = forwardRef(({
                     data: [],
                     page: 0,
                     totalCount: 0
-
                 });
             }
             return getCommPkgs(query.pageSize, query.page).then(result => {
@@ -174,14 +196,14 @@ const CommPkgTable = forwardRef(({
         );
     };
 
-    const getMcPkgs = (commPkgNo: string): void => {
-        setCurrentCommPkg(commPkgNo);
+    const getMcPkgs = (commPkg: CommPkgRow): void => {
+        setCurrentCommPkg(commPkg);
     };
 
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
         return (
             <div className='tableCell goToMcCol'>
-                <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
+                <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg)}>
                     <EdsIcon name='chevron_right' />
                 </Button>
             </div>
@@ -229,6 +251,7 @@ const CommPkgTable = forwardRef(({
                     },
                     selection: type != 'DP',
                     selectionProps: (data: CommPkgRow): any => ({
+                        disabled: hasValidSystem(data.system),
                         disableRipple: true,
                     }),
                     rowStyle: (data): React.CSSProperties => ({

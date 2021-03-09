@@ -77,6 +77,7 @@ export interface CommPkgRow {
     commPkgNo: string;
     description: string;
     status: string;
+    system: string;
     tableData?: {
         checked: boolean;
     };

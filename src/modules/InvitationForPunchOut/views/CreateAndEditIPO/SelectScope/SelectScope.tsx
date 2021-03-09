@@ -27,16 +27,16 @@ const SelectScope = ({
     commPkgNo,
     projectName
 }: SelectScopeProps): JSX.Element => {
-    const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
+    const [currentCommPkg, setCurrentCommPkg] = useState<CommPkgRow | null>(null);
     const commPkgRef = useRef<any>();
     const mcPkgRef = useRef<any>();
     const [commPkgFilter, setCommPkgFilter] = useState<string>('');
 
-    useEffect(() => {
-        if (commPkgNo) {
-            setCurrentCommPkg(commPkgNo);
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (commPkgNo) {
+    //         setCurrentCommPkg(commPkgNo);
+    //     }
+    // }, []);
 
     const handleRemoveMcPkg = (mcPkgNo: string): void => {
         if (mcPkgRef.current) {
@@ -88,6 +88,8 @@ const SelectScope = ({
                             ref={commPkgRef}
                             selectedCommPkgScope={selectedCommPkgScope}
                             setSelectedCommPkgScope={setSelectedCommPkgScope}
+                            currentCommPkg={currentCommPkg}
+                            commPkgNoFromMain={commPkgNo}
                             setCurrentCommPkg={setCurrentCommPkg}
                             type={type}
                             projectName={projectName}
@@ -96,13 +98,13 @@ const SelectScope = ({
                         />
                     </div>
                 }
-                {currentCommPkg != null &&
+                {currentCommPkg &&
                     <McPkgTable
                         ref={mcPkgRef}
                         selectedMcPkgScope={selectedMcPkgScope}
                         setSelectedMcPkgScope={setSelectedMcPkgScope}
                         projectName={projectName}
-                        commPkgNo={currentCommPkg}
+                        commPkg={currentCommPkg}
                     />
                 }
             </SelectComponent>

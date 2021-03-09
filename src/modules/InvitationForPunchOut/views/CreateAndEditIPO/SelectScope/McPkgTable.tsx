@@ -1,5 +1,5 @@
+import { CommPkgRow, McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Search, TopContainer } from './Table.style';
-import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
@@ -15,7 +15,7 @@ interface McPkgTableProps {
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: (selectedCommPkgScope: McScope) => void;
     projectName: string;
-    commPkgNo: string;
+    commPkg: CommPkgRow;
 }
 
 const KEYCODE_ENTER = 13;
@@ -34,26 +34,26 @@ const McPkgTable = forwardRef(({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
     projectName,
-    commPkgNo
+    commPkg
 }: McPkgTableProps, ref): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
     const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
     const [filter, setFilter] = useState<string>('');
-    const [enabled, setEnabled] = useState<boolean>(false);
+    // const [enabled, setEnabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        if(selectedMcPkgScope.selected.length < 1 || selectedMcPkgScope.commPkgNoParent == commPkgNo || selectedMcPkgScope.commPkgNoParent == null) {
-            setEnabled(true);
-        }
-    }, [selectedMcPkgScope]);
+    // useEffect(() => {
+    //     if(selectedMcPkgScope.selected.length < 1 || selectedMcPkgScope.commPkgNoParent == commPkgNo || selectedMcPkgScope.commPkgNoParent == null) {
+    //         setEnabled(true);
+    //     }
+    // }, [selectedMcPkgScope]);
 
     useEffect(() => {
         try {
             let requestCanceler: Canceler;
             (async (): Promise<void> => {
-                const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkgNo)
+                const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkg.commPkgNo)
                     .then(mcPkgs => mcPkgs.map((mcPkg): McPkgRow => {
                         return {
                             mcPkgNo: mcPkg.mcPkgNo,
@@ -117,14 +117,14 @@ const McPkgTable = forwardRef(({
             unselectMcPkg(row.mcPkgNo);
         } else {
             const newSelected = [...selectedMcPkgScope.selected, row];
-            setSelectedMcPkgScope({commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
+            setSelectedMcPkgScope({commPkgNoParent: commPkg.commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
         }
     };
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
         const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.selected.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
         const newSelected = [...selectedMcPkgScope.selected, ...rowsToAdd];
-        setSelectedMcPkgScope({commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
+        setSelectedMcPkgScope({commPkgNoParent: commPkg.commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {
@@ -162,7 +162,7 @@ const McPkgTable = forwardRef(({
     ];
 
     return ( 
-        <Container disableSelectAll={!enabled}>
+        <Container disableSelectAll={false}>
             <TopContainer>
                 <Search>
                     <TextField
@@ -199,10 +199,10 @@ const McPkgTable = forwardRef(({
                             backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                         },
                         selection: true,
-                        selectionProps: (): any => ({
-                            disabled: !enabled,
-                            disableRipple: true,
-                        }),
+                        // selectionProps: (): any => ({
+                        //     disabled: !enabled,
+                        //     disableRipple: true,
+                        // }),
                         rowStyle: (data): React.CSSProperties => ({
                             backgroundColor: data.tableData.checked && '#e6faec'
                         })

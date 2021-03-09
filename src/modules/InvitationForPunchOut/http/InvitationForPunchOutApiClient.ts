@@ -120,6 +120,7 @@ interface CommPkgResponse {
     id: number;
     commPkgNo: string;
     description: string;
+    system: string;
     status: string;
 }
 

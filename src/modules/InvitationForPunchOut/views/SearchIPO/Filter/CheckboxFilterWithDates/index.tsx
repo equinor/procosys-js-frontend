@@ -35,7 +35,7 @@ const CheckboxFilterWithDates = ({
 }: CheckboxFilterWithDatesProps): JSX.Element => {
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const filterActive = itemsChecked.find(item => item !== undefined) && itemsChecked.length > 0;
+    const filterActive = itemsChecked.find(item => item !== undefined) !== undefined;
 
     return (
         <>

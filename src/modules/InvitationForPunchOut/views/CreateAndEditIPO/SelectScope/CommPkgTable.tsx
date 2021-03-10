@@ -2,7 +2,7 @@ import { Button, TextField } from '@equinor/eds-core-react';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Search, TopContainer } from './Table.style';
 import { Query, QueryResult } from 'material-table';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -40,7 +40,7 @@ const CommPkgTable = forwardRef(({
     const cancelerRef = useRef<Canceler | null>();
     const refObject = useRef<any>();
 
-    const hasValidSystem = useCallback((system: string): boolean => {
+    const hasValidSystem = (system: string): boolean => {
         if (selectedCommPkgScope.length < 1 && selectedMcPkgScope.length < 1) return true;
 
         if (selectedCommPkgScope.length > 0) {
@@ -48,13 +48,7 @@ const CommPkgTable = forwardRef(({
         } else {
             return selectedMcPkgScope[0].system === system;
         }
-
-
-        // TODO: check if system is on MC PKG SCOPE 
-        // TODO: undo currentCommpkg as CommPkgRow back to commpkgNo
-
-
-    }, [selectedCommPkgScope]);
+    };
 
     const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
         try {

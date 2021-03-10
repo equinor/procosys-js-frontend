@@ -54,7 +54,7 @@ const CommPkgTable = forwardRef(({
         try {
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
             const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
-                return  {
+                return {
                     commPkgNo: commPkg.commPkgNo,
                     description: commPkg.description,
                     status: commPkg.status,

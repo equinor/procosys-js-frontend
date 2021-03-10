@@ -97,7 +97,7 @@ const SelectScope = ({
                         />
                     </div>
                 }
-                {currentCommPkg &&
+                {currentCommPkg != null &&
                     <McPkgTable
                         ref={mcPkgRef}
                         selectedMcPkgScope={selectedMcPkgScope}

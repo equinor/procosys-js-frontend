@@ -1,5 +1,5 @@
-import { CommPkgRow, McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Search, TopContainer } from './Table.style';
+import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
@@ -40,14 +40,7 @@ const McPkgTable = forwardRef(({
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
     const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
     const [filter, setFilter] = useState<string>('');
-    // const [enabled, setEnabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-
-    // useEffect(() => {
-    //     if(selectedMcPkgScope.selected.length < 1 || selectedMcPkgScope.commPkgNoParent == commPkgNo || selectedMcPkgScope.commPkgNoParent == null) {
-    //         setEnabled(true);
-    //     }
-    // }, [selectedMcPkgScope]);
 
     useEffect(() => {
         try {
@@ -200,10 +193,6 @@ const McPkgTable = forwardRef(({
                             backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                         },
                         selection: true,
-                        // selectionProps: (): any => ({
-                        //     disabled: !enabled,
-                        //     disableRipple: true,
-                        // }),
                         rowStyle: (data): React.CSSProperties => ({
                             backgroundColor: data.tableData.checked && '#e6faec'
                         })

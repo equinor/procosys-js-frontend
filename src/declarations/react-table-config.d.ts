@@ -56,7 +56,6 @@ declare module 'react-table' {
     extends UseExpandedOptions<D>,
     UseFiltersOptions<D>,
     UseGlobalFiltersOptions<D>,
-    UseGroupByOptions<D>,
     UsePaginationOptions<D>,
     UseResizeColumnsOptions<D>,
     UseRowSelectOptions<D>,
@@ -68,9 +67,8 @@ declare module 'react-table' {
     Record<string, any> { }
 
   //eslint-disable-next-line
-  export interface Hooks<D extends object = {}>
+  export interface Hooks<D extends object>
     extends UseExpandedHooks<D>,
-    UseGroupByHooks<D>,
     UseRowSelectHooks<D>,
     UseSortByHooks<D> { }
 

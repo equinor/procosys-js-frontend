@@ -26,6 +26,11 @@ interface RequirementFormInput {
     rowVersion?: string;
 }
 
+interface RequirementForDelete {
+    requirementId: number | undefined;
+    rowVersion: string | undefined;
+}
+
 const EditTagProperties = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
@@ -314,7 +319,6 @@ const EditTagProperties = (): JSX.Element => {
                 if (requirements.length > originalRequirements.length) {
                     newRequirements = [...requirements.slice(-numberOfNewReq)];
                 }
-                // Does this return all rhe requirements, not only the updated ones???
                 const updatedRequirements = requirements.slice(0, originalRequirements.length).map(req => {
                     return {
                         requirementId: req.requirementId,
@@ -323,10 +327,16 @@ const EditTagProperties = (): JSX.Element => {
                         rowVersion: req.rowVersion
                     };
                 });
-                console.log(originalRequirements);
-                console.log(updatedRequirements);
-                // Create a thing called deleted requirements & add only those that have isDeleted = true?
-                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements);
+                const deletedRequirements = requirements.filter(req => req.isVoided && req.isDeleted)
+                    .map(
+                        req =>  {
+                            return {
+                                requirementId: req.requirementId,
+                                rowVersion: req.rowVersion
+                            };
+                        }
+                    );
+                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements, deletedRequirements);
             }
         } catch (error) {
             handleErrorFromBackend(error, 'Error updating journey, step, requirements, or description');

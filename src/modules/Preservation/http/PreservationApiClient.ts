@@ -256,6 +256,11 @@ interface RequirementForUpdate {
     rowVersion: string | undefined;
 }
 
+interface RequirementForDelete {
+    requirementId: number | undefined;
+    rowVersion: string | undefined;
+}
+
 interface FieldsFormInput {
     id: number | null;
     rowVersion: string | null;
@@ -521,10 +526,12 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], deletedRequirements: RequirementForDelete[], setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
+        console.log(deletedRequirements);
+        // TODO: add deleted requirements to the put thing
         try {
             const result = await this.client.put(endpoint, {
                 description,

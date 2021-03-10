@@ -79,4 +79,7 @@ describe('<RequirementsSelector />', () => {
         await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
     });
 
+    it.todo('Triggers onchange when a requirement is voided');
+    it.todo('Triggers onchange when a requirement is unvoided');
+    it.todo('Triggers onchange when a requirement is deleted');
 });

@@ -190,8 +190,7 @@ describe('Module: <EditTagProperties />', () => {
         expect(expect(components.length).toBe(2));
     });
 
-
-    it('Should remove requirement input when clicking on delete', async () => {
+    it('Should remove a new requirement when clicking on the delete button', async () => {
         const { queryAllByText, getByText, getByTitle } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
@@ -211,6 +210,8 @@ describe('Module: <EditTagProperties />', () => {
         expect(components.length).toBe(1);
         expect(getByText('Unvoid')).toBeInTheDocument();
     });
+
+    it.todo('Should delete a voided requirement when the delete button is clicked');
 
     it('Should enable Save button when changes are made', async () => {
         const { getByText, getByTitle } = render(<EditTagProperties />);

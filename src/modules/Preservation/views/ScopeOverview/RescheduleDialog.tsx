@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
@@ -12,6 +12,9 @@ import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
+import EdsIcon from '@procosys/components/EdsIcon';
+
+const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
 
 interface RescheduleDialogProps {
     tags: PreservedTag[];
@@ -32,12 +35,6 @@ const columns: Column<any>[] = [
     { title: 'Req type', render: getRequirementIcons }
 ];
 
-const timeItems: SelectItem[] = [
-    { text: '1 week', value: 1 },
-    { text: '2 weeks', value: 2 },
-    { text: '3 weeks', value: 3 },
-    { text: '4 weeks', value: 4 }];
-
 const directionItems: SelectItem[] = [
     { text: 'Earlier', value: 'Earlier' },
     { text: 'Later', value: 'Later' }];
@@ -45,27 +42,30 @@ const directionItems: SelectItem[] = [
 const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     const [directionItem, setDirectionItem] = useState<SelectItem | null>();
-    const [timeItem, setTimeItem] = useState<SelectItem | null>();
+    const [noOfWeeks, setNoOfWeeks] = useState<string>('');
+    const [noOfWeeksIsValid, setNoOfWeeksIsValid] = useState<boolean>(false);
     const [comment, setComment] = useState<string>('');
     const [reschedulableTags, setReschedulableTags] = useState<PreservedTag[]>([]);
     const [nonReschedulableTags, setNonReschedulableTags] = useState<PreservedTag[]>([]);
     const [canReschedule, setCanReschedule] = useState<boolean>(true);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
+    const [error, setError] = useState<string>('');
 
     const handleReschedule = (async (): Promise<void> => {
         setShowSpinner(true);
         try {
-            if (timeItem && directionItem && canReschedule) {
+            if (noOfWeeks && directionItem && canReschedule && noOfWeeksIsValid) {
                 await apiClient.reschedule(reschedulableTags.map(t => ({
                     id: t.id,
                     rowVersion: t.rowVersion
-                })), timeItem.value, directionItem.value, comment);
+                })), Number(noOfWeeks), directionItem.value, comment);
                 showSnackbarNotification(`${reschedulableTags.length} tag(s) have been successfully rescheduled.`);
             } else {
-                showSnackbarNotification('Tags have not been rescheduled. Time, direction and comment is required.');
+                showSnackbarNotification('Tag(s) have not been rescheduled. Number of weeks, direction and comment is required. Number of weeks must be a whole number in the range 1 to 52.');
             }
-            setTimeItem(null);
+            setNoOfWeeks('');
+            setNoOfWeeksIsValid(false);
             setDirectionItem(null);
             setComment('');
             setShowSpinner(false);
@@ -97,12 +97,39 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     /** Set canReschedule */
     useEffect((): void => {
-        setCanReschedule((timeItem && timeItem.text && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
-    }, [timeItem, directionItem, comment]);
+        setCanReschedule((noOfWeeksIsValid && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
+    }, [noOfWeeks, directionItem, comment]);
 
     if (!props.open) {
         return null;
     }
+
+    const handleNoOfWeeksChanged = (newValue: string): void => {
+        setNoOfWeeks(newValue);
+        if(newValue === ''){
+            setError('');
+            setNoOfWeeksIsValid(false);
+            return;
+        }
+        const newWeekNumber = Number(newValue);
+        if(!isNaN(newWeekNumber)){
+            if(Number.isInteger(newWeekNumber)){
+                if(0 < newWeekNumber && newWeekNumber < 53){
+                    setNoOfWeeksIsValid(true);
+                    setError('');
+                }else{
+                    setNoOfWeeksIsValid(false);
+                    setError('Has to be between 0 and 53');
+                }
+            }else{
+                setNoOfWeeksIsValid(false);
+                setError('Has to be a whole number');
+            }
+        }else{
+            setNoOfWeeksIsValid(false);
+            setError('Has to be a number');
+        }
+    };
 
     return (
         <Scrim>
@@ -119,14 +146,19 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                         reschedulableTags.length > 0 && (
                             <InputContainer>
                                 <FormFieldSpacer>
-                                    <SelectInput
-                                        title='time'
-                                        onChange={(value): void => setTimeItem(timeItems.find((p: SelectItem) => p.value === value))}
-                                        data={timeItems}
-                                        label='Time'
-                                    >
-                                        {timeItem && timeItem.text || 'Select'}
-                                    </SelectInput>
+                                    <TextField
+                                        label="No. of weeks"
+                                        data-testid="No. of weeks"
+                                        meta="Required"
+                                        placeholder="Write here"
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                            handleNoOfWeeksChanged(e.target.value);
+                                        }}
+                                        value={noOfWeeks || ''}
+                                        helperText={error}
+                                        variant={error? 'error': 'default'}
+                                        helperIcon={error? errorIcon: ''}
+                                    />
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
                                     <SelectInput
@@ -140,7 +172,8 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
                                     <TextField
-                                        id="comment"
+                                        label="Comment"
+                                        data-testid="comment"
                                         meta="Required"
                                         placeholder="Write here"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {

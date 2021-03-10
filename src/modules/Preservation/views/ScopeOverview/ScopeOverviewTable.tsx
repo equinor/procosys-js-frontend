@@ -9,6 +9,7 @@ import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview
 import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
+import { TableOptions, UseTableInstanceProps, UseTableRowProps } from 'react-table';
 
 interface ScopeOverviewTableProps {
     getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
@@ -30,8 +31,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         OverDue = 'HasOverdue'
     }
 
-    const getRequirementColumn = React.memo(function getRequirementColumn(value: any): JSX.Element {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getRequirementColumn = React.memo(function getRequirementColumn(row: TableOptions<PreservedTag>): JSX.Element {
+        const tag = row.value as PreservedTag;
         return (
             <div
                 style={{ cursor: 'pointer', opacity: tag.isVoided ? '0.5' : '1' }}
@@ -42,8 +43,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         );
     });
 
-    const getResponsibleColumn = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getResponsibleColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.responsibleCode}</div>
@@ -51,19 +52,19 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         );
     }, []);
 
-    const getDueColumn = useMemo(() => (value: any): JSX.Element => {
-        const requirement = getFirstUpcomingRequirement(value.data[value.row.index] as PreservedTag);
+    const getDueColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const requirement = getFirstUpcomingRequirement(row.value as PreservedTag);
         return (
-            <div className='controlOverflow' style={{ color: requirement && isTagOverdue((value.data[value.row.index] as PreservedTag)) ? tokens.colors.interactive.danger__text.rgba : '' }}>
-                {(!requirement || (value.data[value.row.index] as PreservedTag).isVoided) ? null : requirement.nextDueWeeks}
+            <div className='controlOverflow' style={{ color: requirement && isTagOverdue((row.value as PreservedTag)) ? tokens.colors.interactive.danger__text.rgba : '' }}>
+                {(!requirement || (row.value as PreservedTag).isVoided) ? null : requirement.nextDueWeeks}
             </div>);
     }, []);
 
-    const getNextColumn = useMemo(() => (value: any): JSX.Element => {
-        const requirement = getFirstUpcomingRequirement(value.data[value.row.index] as PreservedTag);
+    const getNextColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const requirement = getFirstUpcomingRequirement(row.value as PreservedTag);
         return (
-            <div className='controlOverflow' style={{ color: requirement && isTagOverdue((value.data[value.row.index] as PreservedTag)) ? tokens.colors.interactive.danger__text.rgba : '' }}>
-                {(!requirement || (value.data[value.row.index] as PreservedTag).isVoided) ? null : requirement.nextDueAsYearAndWeek}
+            <div className='controlOverflow' style={{ color: requirement && isTagOverdue((row.value as PreservedTag)) ? tokens.colors.interactive.danger__text.rgba : '' }}>
+                {(!requirement || (row.value as PreservedTag).isVoided) ? null : requirement.nextDueAsYearAndWeek}
             </div>);
     }, []);
 
@@ -75,8 +76,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         );
     };
 
-    const getActionsColumn = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getActionsColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         if (!tag.actionStatus || tag.actionStatus === ActionStatus.Closed) {
             return <div></div>;
         }
@@ -105,8 +106,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         );
     }, []);
 
-    const getTagNoColumn = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getTagNoColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <TagLink
                 isOverdue={isTagOverdue(tag)}
@@ -118,8 +119,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         );
     }, []);
 
-    const getDescriptionColumn = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getDescriptionColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.description}
@@ -127,8 +128,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         );
     }, []);
 
-    const getPOColumn = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getPOColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (<Tooltip title={tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo ? tag.purchaseOrderNo : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.calloffNo ? `${tag.purchaseOrderNo}/${tag.calloffNo}` : tag.purchaseOrderNo}
@@ -136,32 +137,32 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         </Tooltip>);
     }, []);
 
-    const getAreaCode = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getAreaCode = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.areaCode}
             </div>);
     }, []);
 
-    const getDisciplineCode = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getDisciplineCode = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.disciplineCode}
             </div>);
     }, []);
 
-    const getMode = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getMode = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.mode}
             </div>);
     }, []);
 
-    const getStatus = useMemo(() => (value: any): JSX.Element => {
-        const tag = value.data[value.row.index] as PreservedTag;
+    const getStatus = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
+        const tag = row.value as PreservedTag;
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.status}
@@ -172,12 +173,13 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     const columns = React.useMemo(() => [
         {
             Header: 'Tag nr',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'tagNo',
             Cell: getTagNoColumn,
             width: 180,
             maxWidth: 400,
-            minWidth: 150
+            minWidth: 150,
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string) => rows.filter((row) => {return row.original.tagNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1})
         },
         {
             Header: 'Description',
@@ -189,7 +191,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Due',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'due',
             Cell: getDueColumn,
             width: 60,
@@ -198,7 +200,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Next',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'Due',
             Cell: getNextColumn,
             width: 100,
@@ -207,7 +209,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Mode',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             Cell: getMode,
             width: 200,
             maxWidth: 400,
@@ -215,7 +217,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'PO',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'PO',
             Cell: getPOColumn,
             width: 100,
@@ -224,7 +226,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Area',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'Area',
             Cell: getAreaCode,
             width: 100,
@@ -234,23 +236,23 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         {
             Header: 'Resp',
             id: 'responsible',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             Cell: getResponsibleColumn
         },
         {
             Header: 'Disc',
             id: 'discipline',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             Cell: getDisciplineCode
         },
         {
             Header: 'Status',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             Cell: getStatus
         },
         {
             Header: 'Req type',
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'reqtype',
             Cell: getRequirementColumn,
             defaultCanSort: false,
@@ -260,7 +262,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: getActionsHeader(),
-            accessor: (d: any): any => d,
+            accessor: (d: UseTableRowProps<PreservedTag>) => d,
             id: 'actions',
             Cell: getActionsColumn,
             defaultCanSort: false,

@@ -7,6 +7,7 @@ import {
     Hooks,
     Meta,
     TableOptions,
+    useFilters,
     useFlexLayout,
     usePagination,
     useResizeColumns,
@@ -17,7 +18,7 @@ import {
 import { HeaderCheckbox, RowCheckbox } from './TableStyles';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import React, { CSSProperties, PropsWithChildren, forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
-import { TableSortLabel, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { TableSortLabel } from '@material-ui/core';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ResizeHandle } from './ResizeHandle';
@@ -59,6 +60,7 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
 
 const hooks = [
     useFlexLayout,
+    useFilters,
     useSortBy,
     usePagination,
     useResizeColumns,
@@ -66,134 +68,6 @@ const hooks = [
     selectionHook,
 ];
 
-const Styles = styled.div`
-        &.tableTable: {
-            border-spacing: 0;
-            border: '1px solid rgba(224; 224; 224; 1)';
-            overflow-y: 'auto';
-            max-height: '100%'
-        }
-        &.tableHeadRow: {
-            outline: 0;
-            overflow: 'hidden';
-            vertical-align: 'middle';
-            height: '40px';
-            background-color: theme.palette.background.default;
-            color: theme.palette.text.primary;
-            font-weight: 500;
-            line-height: '1.5rem';
-            position: 'sticky';
-            z-index: 10;
-            top: 0;
-            border-bottom: '1px solid rgba(224; 224; 224; 1)';
-            '&:hover $resizeHandle': {
-                opacity: 1;
-            }
-        }
-        &.tableHeadCell: {
-            padding: '16px 1px 16px 16px';
-            font-size: '0.875rem';
-            text-align: 'left';
-            vertical-align: 'inherit';
-            color: theme.palette.text.primary;
-            font-weight: 500;
-            line-height: '1.5rem';
-            border-right: '1px solid rgba(224; 224; 224; 1)';
-            '&:last-child': {
-                border-right: 'none';
-                margin-right: '2px';
-                margin-left: '-2px'
-            }
-        }
-        &.resizeHandle: {
-            position: 'absolute';
-            cursor: 'col-resize';
-            z-index: 100;
-            opacity: 0;
-            border-left: '1px solid ';
-            border-right: '1px solid';
-            height: '50%';
-            top: '25%';
-            transition: 'all linear 100ms';
-            right: -2;
-            width: 3;
-            '&.handleActive': {
-                opacity: '1';
-                border: 'none';
-                background-color: theme.palette.primary.light;
-                height: 'calc(100% - 4px)';
-                top: '2px';
-                right: -1;
-                width: 1;
-            }
-        }
-        tableRow: {
-            color: 'inherit';
-            outline: 0;
-            vertical-align: 'middle';
-            '&:hover': {
-                background-color: 'rgba(0, 0, 0, 0.07)';
-            }
-            border-bottom: '1px solid rgba(224, 224, 224, 1)';
-            '&:last-child': {
-                border-bottom: 'none';
-            }
-            '&.rowSelected': {
-                background-color: 'rgba(0, 0, 0, 0.04)';
-                '&:hover': {
-                    background-color: 'rgba(0, 0, 0, 0.07)';
-                }
-            }
-        }
-        tableCell: {
-            padding: 16;
-            font-size: '0.875rem';
-            text-align: 'left';
-            font-weight: 400;
-            line-height: 1.43;
-            vertical-align: 'inherit';
-            color: theme.palette.text.primary;
-            border-right: '1px solid rgba(224, 224, 224, 1)';
-            '&:last-child': {
-                border-right: 'none';
-            }
-            border-bottom: '1px solid rgba(224, 224, 224, 1)'
-        }
-        tableSortLabel: {
-            '& svg': {
-                width: 16;
-                height: 16;
-                margin-top: 0;
-                margin-left: 2;
-            }
-        }
-        headerIcon: {
-            '& svg': {
-                width: 16;
-                height: 16;
-                margin-top: 4;
-                margin-right: 0;
-            }
-        }
-        iconDirectionAsc: {
-            transform: 'rotate(90deg)';
-        }
-        iconDirectionDesc: {
-            transform: 'rotate(180deg)';
-        }
-        tableBody: {
-            display: 'flex';
-            flex: '1 1 auto';
-            flex-direction: 'column';
-        }
-        tableLabel: {};
-        cellIcon: {
-            '& svg': {
-                width: 16;
-                height: 16;
-                margin-top: 3;
-            }
-        }`;
 
 const getStyles = (props: any, disableResizing = false, align = 'left'): any => [
     props,
@@ -237,7 +111,7 @@ const Table = styled.div`
 `;
 
 const TableHeadCell = styled.div`
-    padding: 16px 1px 16px 16px;
+    padding: 8px 1px 1px 16px;
     font-size: 0.875rem;
     text-align: left;
     vertical-align: inherit;
@@ -258,7 +132,6 @@ const TableRow = styled.div`
     &:hover {
         background-color: rgba(0, 0, 0, 0.07);
     }
-    border-bottom: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-bottom: none;
     }
@@ -272,24 +145,43 @@ const TableRow = styled.div`
 
 
 const TableCell = styled.div`
-    padding: 16;
-    font-size: 0.875rem;
+    padding: 12px 16px 16px 16px;
+    font-size: inherit;
     text-align: left;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
     font-weight: 400;
     line-height: 1.43;
     vertical-align: inherit;
-    border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
     }
-    border-bottom: 1px solid rgba(224, 224, 224, 1);
 `;
+
+const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: unknown[], setFilter: (a: string | undefined) => void } }) => {
+    const count = preFilteredRows.length
+
+    return (
+        <input
+            value={filterValue || ''}
+            onChange={e => {
+                setFilter(e.target.value || undefined)
+            }}
+            placeholder={`Search ${count} records...`}
+        />
+    )
+}
+
+function customFilter(rows: any[], id: number, filterValue: string) {
+    console.log('rows', rows)
+    return rows.filter((row: any) => {
+        const rowValue = row.values[id];
+        return rowValue >= filterValue
+    })
+}
+
 
 
 const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Record<string, unknown>>>, ref?: React.Ref<void>) => {
-
-
-
     useImperativeHandle(ref, () => ({
         resetPageIndex(doReset = false): void {
             if (doReset)
@@ -297,7 +189,34 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         }
     }), [props.pageIndex]);
 
-    const tableInstance = useTable<Record<string, unknown>>({ ...props, manualPagination: true, manualSortBy: true, initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize } }, ...hooks);
+    const defaultColumn = React.useMemo(
+        () => ({
+            // Let's set up our default Filter UI
+            Filter: DefaultColumnFilter,
+        }),
+        []
+    )
+
+    const filterTypes = React.useMemo(
+        () => ({
+            // Or, override the default text filter to use
+            // "startWith"
+            text: (rows: any, id: number, filterValue: string) => {
+                return rows.filter((row: any) => {
+                    const rowValue = row.values[id]
+                    console.log('rowValue', rowValue)
+                    return rowValue !== undefined
+                        ? String(rowValue)
+                            .toLowerCase()
+                            .startsWith(String(filterValue).toLowerCase())
+                        : true
+                })
+            },
+        }),
+        []
+    )
+
+    const tableInstance = useTable<Record<string, unknown>>({ ...props, filterTypes, manualPagination: true, defaultColumn, manualSortBy: true, initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize } }, ...hooks);
 
     const {
         getTableProps,
@@ -329,8 +248,6 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     const cellClickHandler = (cell: Cell<Record<string, unknown>>) => (): void => {
         onClick && cell.column.id !== '_selector' && onClick(cell.row);
     };
-
-
 
     const RenderRow = memo(({ index, style }: {
         index: number,
@@ -369,7 +286,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             if (listRef && listRef.current) {
                 ((listRef.current) as any)._outerRef.onscroll = scrollHeader;
             }
-        }, 500);
+        }, 50);
 
         // fix to set header width when no scroll-bar
         setTimeout(() => {
@@ -380,7 +297,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                     }
                 }
             }
-        }, 500);
+        }, 50);
     };
 
     return (
@@ -389,69 +306,67 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                 loading ? (
                     <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
                 ) : (
-                    <Styles>
-                        <div style={{ height: 'calc(90vh - 305px)' }}>
-                            <AutoSizer>
-                                {({ height, width }): JSX.Element => (
-                                    <div>
-                                        <Table {...getTableProps()}>
-                                            {
-                                                headerGroups.map((headerGroup, i) => (
-                                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display:'flex' }}>
+                    <div style={{ height: 'calc(90vh - 305px)' }}>
+                        <AutoSizer>
+                            {({ height, width }): JSX.Element => (
+                                <div>
+                                    <Table {...getTableProps()}>
+                                        {
+                                            headerGroups.map((headerGroup, i) => (
+                                                <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display: 'flex' }}>
 
-                                                        {headerGroup.headers.map((column) => {
-                                                            const style = {
-                                                                textAlign: column.align ? column.align : 'left '
-                                                            } as CSSProperties;
+                                                    {headerGroup.headers.map((column) => {
+                                                        const style = {
+                                                            textAlign: column.align ? column.align : 'left '
+                                                        } as CSSProperties;
 
-                                                            return (
-                                                                <TableHeadCell {...column.getHeaderProps(headerProps)} key={column.getHeaderProps(headerProps).key} >
+                                                        return (
+                                                            <TableHeadCell {...column.getHeaderProps(headerProps)} key={column.getHeaderProps(headerProps).key} >
+                                                                {column.canSort && column.defaultCanSort !== false ? (
+                                                                    <TableSortLabel
+                                                                        active={column.isSorted}
+                                                                        direction={column.isSortedDesc ? 'desc' : 'asc'}
+                                                                        {...column.getSortByToggleProps()}
+                                                                        className={'tableSortLabel'}
+                                                                        style={style}
+                                                                    >
+                                                                        {column.render('Header')}
+                                                                    </TableSortLabel>
+                                                                ) : (
+                                                                    <div style={style} className={'tableLabel'}>
+                                                                        {column.render('Header')}
+                                                                    </div>
+                                                                )}
+                                                                {column.canResize && <ResizeHandle column={column} />}
+                                                                <div>{column.canFilter ? column.render('Filter') : null}</div>
+                                                            </TableHeadCell>
+                                                        );
+                                                    })}
 
-                                                                    {column.canSort && column.defaultCanSort !== false ? (
-                                                                        <TableSortLabel
-                                                                            active={column.isSorted}
-                                                                            direction={column.isSortedDesc ? 'desc' : 'asc'}
-                                                                            {...column.getSortByToggleProps()}
-                                                                            className={'tableSortLabel'}
-                                                                            style={style}
-                                                                        >
-                                                                            {column.render('Header')}
-                                                                        </TableSortLabel>
-                                                                    ) : (
-                                                                        <div style={style} className={'tableLabel'}>
-                                                                            {column.render('Header')}
-                                                                        </div>
-                                                                    )}
-                                                                    {column.canResize && <ResizeHandle column={column} />}
-                                                                </TableHeadCell>
-                                                            );
-                                                        })}
+                                                </TableHeader>
+                                            ))
+                                        }
 
-                                                    </TableHeader>
-                                                ))
-                                            }
-
-                                            <div {...getTableBodyProps()} className={'tableBody'}>
-                                                <List
-                                                    height={height}
-                                                    itemCount={tableInstance.data.length}
-                                                    itemSize={40}
-                                                    width={width}
-                                                    ref={listRef}
-                                                    onItemsRendered={addScrollEventHandler}
-                                                >
-                                                    {RenderRow}
-                                                </List>
-                                            </div>
-                                            <div style={{ width: width }}>
-                                                <TablePagination<Record<string, unknown>> instance={tableInstance} />
-                                            </div>
-                                        </Table>
-                                    </div>
-                                )}
-                            </AutoSizer>
-                        </div>
-                    </Styles>
+                                        <div {...getTableBodyProps()}>
+                                            <List
+                                                height={height}
+                                                itemCount={tableInstance.data.length}
+                                                itemSize={40}
+                                                width={width}
+                                                ref={listRef}
+                                                onItemsRendered={addScrollEventHandler}
+                                            >
+                                                {RenderRow}
+                                            </List>
+                                        </div>
+                                        <div style={{ width: width }}>
+                                            <TablePagination<Record<string, unknown>> instance={tableInstance} />
+                                        </div>
+                                    </Table>
+                                </div>
+                            )}
+                        </AutoSizer>
+                    </div>
                 )
             }
         </>

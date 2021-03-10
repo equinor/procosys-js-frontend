@@ -35,13 +35,14 @@ type McPkgScopeResponse = {
     mcPkgNo: string;
     description: string;
     commPkgNo: string;
+    system: string;
 }
 
 type CommPkgScopeResponse = {
     commPkgNo: string;
     description: string;
-    system: string;
     status: string;
+    system: string;
 }
 
 type CommPkgPagingResponse = {
@@ -129,6 +130,7 @@ interface McPkgResponse {
     id: number;
     mcPkgNo: string;
     description: string;
+    system: string;
     disciplineCode: string;
 }
 

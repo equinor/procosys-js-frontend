@@ -1,6 +1,7 @@
 export type McPkgScope = {
     mcPkgNo: string;
     description: string;
+    system: string;
     commPkgNo: string;
 }
 

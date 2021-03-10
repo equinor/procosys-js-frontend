@@ -15,7 +15,7 @@ interface McPkgTableProps {
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: (selectedCommPkgScope: McScope) => void;
     projectName: string;
-    commPkg: CommPkgRow;
+    commPkgNo: string;
 }
 
 const KEYCODE_ENTER = 13;
@@ -34,7 +34,7 @@ const McPkgTable = forwardRef(({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
     projectName,
-    commPkg
+    commPkgNo
 }: McPkgTableProps, ref): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
@@ -53,12 +53,13 @@ const McPkgTable = forwardRef(({
         try {
             let requestCanceler: Canceler;
             (async (): Promise<void> => {
-                const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkg.commPkgNo)
+                const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkgNo)
                     .then(mcPkgs => mcPkgs.map((mcPkg): McPkgRow => {
                         return {
                             mcPkgNo: mcPkg.mcPkgNo,
                             description: mcPkg.description,
                             discipline: mcPkg.disciplineCode,
+                            system: mcPkg.system,
                             tableData: {
                                 checked: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
                             }
@@ -117,14 +118,14 @@ const McPkgTable = forwardRef(({
             unselectMcPkg(row.mcPkgNo);
         } else {
             const newSelected = [...selectedMcPkgScope.selected, row];
-            setSelectedMcPkgScope({commPkgNoParent: commPkg.commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
+            setSelectedMcPkgScope({commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
         }
     };
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
         const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.selected.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
         const newSelected = [...selectedMcPkgScope.selected, ...rowsToAdd];
-        setSelectedMcPkgScope({commPkgNoParent: commPkg.commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
+        setSelectedMcPkgScope({commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected});
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {

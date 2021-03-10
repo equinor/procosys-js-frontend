@@ -87,6 +87,7 @@ export interface McPkgRow {
     mcPkgNo: string;
     description: string;
     discipline: string;
+    system: string;
     tableData?: {
         checked: boolean;
     };

@@ -1,10 +1,10 @@
 import { Button, TextField } from '@equinor/eds-core-react';
+import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Search, TopContainer } from './Table.style';
 import { Query, QueryResult } from 'material-table';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
-import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Table from '@procosys/components/Table';
 import { Tooltip } from '@material-ui/core';
@@ -14,9 +14,8 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
-    currentCommPkg: CommPkgRow | null;
-    setCurrentCommPkg: (commPkgNo: CommPkgRow | null) => void;
-    commPkgNoFromMain: string | null;
+    selectedMcPkgScope: McPkgRow[];
+    setCurrentCommPkg: (commPkgNo: string) => void;
     type: string;
     projectName: string;
     filter: string;
@@ -27,10 +26,9 @@ const WAIT_INTERVAL = 300;
 
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
+    selectedMcPkgScope,
     setSelectedCommPkgScope,
-    currentCommPkg,
     setCurrentCommPkg,
-    commPkgNoFromMain,
     type,
     projectName,
     filter,
@@ -43,11 +41,14 @@ const CommPkgTable = forwardRef(({
     const refObject = useRef<any>();
 
     const hasValidSystem = useCallback((system: string): boolean => {
-        if (selectedCommPkgScope.length < 1 && !currentCommPkg) return true;
+        if (selectedCommPkgScope.length < 1 && selectedMcPkgScope.length < 1) return true;
 
-        return currentCommPkg ? 
-            currentCommPkg.system === system :
-            selectedCommPkgScope[0].system === system;
+        if (selectedCommPkgScope.length > 0) {
+            return selectedCommPkgScope[0].system === system;
+        } else {
+            return selectedMcPkgScope[0].system === system;
+        }
+
 
         // TODO: check if system is on MC PKG SCOPE 
         // TODO: undo currentCommpkg as CommPkgRow back to commpkgNo
@@ -68,9 +69,6 @@ const CommPkgTable = forwardRef(({
                         checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
                     }
                 };
-                if (commPkgRow.commPkgNo === commPkgNoFromMain) {
-                    setCurrentCommPkg(commPkgRow);
-                }
                 return commPkgRow;
             });
             return {
@@ -196,7 +194,7 @@ const CommPkgTable = forwardRef(({
     };
 
     const getMcPkgs = (commPkg: CommPkgRow): void => {
-        setCurrentCommPkg(commPkg);
+        setCurrentCommPkg(commPkg.commPkgNo);
     };
 
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {

@@ -330,6 +330,7 @@ const EditIPO = (): JSX.Element => {
                     mcPkgScope.selected.push({
                         mcPkgNo: mcPkg.mcPkgNo,
                         description: mcPkg.description,
+                        system: mcPkg.system,
                         discipline: ''
                     });
                 });

@@ -18,14 +18,14 @@ import {
 import { HeaderCheckbox, RowCheckbox } from './TableStyles';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import React, { CSSProperties, PropsWithChildren, forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
-import { TableSortLabel } from '@material-ui/core';
+import { RowFilter, Table, TableCell, TableHeadCell, TableHeader, TableRow } from './style';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ResizeHandle } from './ResizeHandle';
 import Spinner from '../Spinner';
 import { TablePagination } from './TablePagination';
+import { TableSortLabel } from '@material-ui/core';
 import cx from 'classnames';
-import styled from 'styled-components';
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
     fetchData: (args: any) => void;
@@ -86,100 +86,23 @@ const headerProps = <T extends Record<string, unknown>>(props: T, { column }: Me
 const cellProps = <T extends Record<string, unknown>>(props: T, { cell }: Meta<T, { cell: Cell<T> }>): T =>
     getStyles(props, cell.column && cell.column.disableResizing, cell.column && cell.column.align);
 
-const TableHeader = styled.div`
-    outline: 0;
-    overflow: hidden;
-    vertical-align: middle;
-    height: 40px;
-    background-color: rgb(247, 247, 247);
-    font-weight: 500;
-    line-height: 1.5rem;
-    position: sticky;
-    z-index: 10;
-    top: 0;
-    border-bottom: 1px solid rgba(224, 224, 224, 1);
-    &:hover $resizeHandle: {
-        opacity: 1;
-    }
-`;
-
-const Table = styled.div`
-    border-spacing: 0;
-    overflow-y: auto;
-    max-height: 100%;
-    width: 100vw;
-`;
-
-const TableHeadCell = styled.div`
-    padding: 8px 1px 1px 16px;
-    font-size: 0.875rem;
-    text-align: left;
-    vertical-align: inherit;
-    font-weight: 500;
-    line-height: 1.5rem;
-    border-right: 1px solid rgba(224, 224, 224, 1);
-    :last-child {
-        border-right: none;
-        margin-right: 2px;
-        margin-left: -2px
-    }
-`;
-
-const TableRow = styled.div`
-    color: inherit;
-    outline: 0;
-    vertical-align: middle;
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.07);
-    }
-    :last-child {
-        border-bottom: none;
-    }
-    &.rowSelected {
-        background-color: rgba(0, 0, 0, 0.04);
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.07);
-        }
-    }
-`;
 
 
-const TableCell = styled.div`
-    padding: 12px 16px 16px 16px;
-    font-size: inherit;
-    text-align: left;
-    border-bottom: 1px solid rgba(224, 224, 224, 1);
-    font-weight: 400;
-    line-height: 1.43;
-    vertical-align: inherit;
-    :last-child {
-        border-right: none;
-    }
-`;
-
-const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: unknown[], setFilter: (a: string | undefined) => void } }) => {
-    const count = preFilteredRows.length
+const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: unknown[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
+    const count = preFilteredRows.length;
 
     return (
-        <input
-            value={filterValue || ''}
-            onChange={e => {
-                setFilter(e.target.value || undefined)
-            }}
-            placeholder={`Search ${count} records...`}
-        />
-    )
-}
-
-function customFilter(rows: any[], id: number, filterValue: string) {
-    console.log('rows', rows)
-    return rows.filter((row: any) => {
-        const rowValue = row.values[id];
-        return rowValue >= filterValue
-    })
-}
-
-
+        <RowFilter>
+            <input
+                value={filterValue || ''}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                    setFilter(e.target.value || undefined);
+                }}
+                placeholder={`Search ${count} records...`}
+            />
+        </RowFilter>
+    );
+};
 
 const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Record<string, unknown>>>, ref?: React.Ref<void>) => {
     useImperativeHandle(ref, () => ({
@@ -191,32 +114,13 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
     const defaultColumn = React.useMemo(
         () => ({
-            // Let's set up our default Filter UI
             Filter: DefaultColumnFilter,
         }),
         []
-    )
+    );
 
-    const filterTypes = React.useMemo(
-        () => ({
-            // Or, override the default text filter to use
-            // "startWith"
-            text: (rows: any, id: number, filterValue: string) => {
-                return rows.filter((row: any) => {
-                    const rowValue = row.values[id]
-                    console.log('rowValue', rowValue)
-                    return rowValue !== undefined
-                        ? String(rowValue)
-                            .toLowerCase()
-                            .startsWith(String(filterValue).toLowerCase())
-                        : true
-                })
-            },
-        }),
-        []
-    )
 
-    const tableInstance = useTable<Record<string, unknown>>({ ...props, filterTypes, manualPagination: true, defaultColumn, manualSortBy: true, initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize } }, ...hooks);
+    const tableInstance = useTable<Record<string, unknown>>({ ...props, manualPagination: true, defaultColumn, manualSortBy: true, initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize } }, ...hooks);
 
     const {
         getTableProps,
@@ -322,23 +226,26 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
                                                         return (
                                                             <TableHeadCell {...column.getHeaderProps(headerProps)} key={column.getHeaderProps(headerProps).key} >
-                                                                {column.canSort && column.defaultCanSort !== false ? (
-                                                                    <TableSortLabel
-                                                                        active={column.isSorted}
-                                                                        direction={column.isSortedDesc ? 'desc' : 'asc'}
-                                                                        {...column.getSortByToggleProps()}
-                                                                        className={'tableSortLabel'}
-                                                                        style={style}
-                                                                    >
-                                                                        {column.render('Header')}
-                                                                    </TableSortLabel>
-                                                                ) : (
-                                                                    <div style={style} className={'tableLabel'}>
-                                                                        {column.render('Header')}
-                                                                    </div>
-                                                                )}
-                                                                {column.canResize && <ResizeHandle column={column} />}
-                                                                <div>{column.canFilter ? column.render('Filter') : null}</div>
+                                                                <div>
+                                                                    {column.canSort && column.defaultCanSort !== false ? (
+                                                                        <TableSortLabel
+                                                                            active={column.isSorted}
+                                                                            direction={column.isSortedDesc ? 'desc' : 'asc'}
+                                                                            {...column.getSortByToggleProps()}
+                                                                            className={'tableSortLabel'}
+                                                                            style={style}
+                                                                        >
+                                                                            {column.render('Header')}
+                                                                        </TableSortLabel>
+                                                                    ) : (
+                                                                        <div style={style} className={'tableLabel'}>
+                                                                            {column.render('Header')}
+                                                                        </div>
+                                                                    )}
+                                                                    {column.canResize && <ResizeHandle column={column} />}
+                                                                </div>
+                                                                
+                                                                {column.filter && column.render('Filter')}
                                                             </TableHeadCell>
                                                         );
                                                     })}

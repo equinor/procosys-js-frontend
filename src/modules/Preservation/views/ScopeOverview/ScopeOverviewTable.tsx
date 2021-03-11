@@ -1,6 +1,7 @@
 import { Container, SingleIconContainer, TagLink } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
 import { PreservedTag, PreservedTags } from '@procosys/modules/Preservation/views/ScopeOverview/types';
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { TableOptions, UseTableInstanceProps, UseTableRowProps } from 'react-table';
 import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
 
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -9,7 +10,6 @@ import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview
 import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import { TableOptions, UseTableInstanceProps, UseTableRowProps } from 'react-table';
 
 interface ScopeOverviewTableProps {
     getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
@@ -173,25 +173,30 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     const columns = React.useMemo(() => [
         {
             Header: 'Tag nr',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'tagNo',
             Cell: getTagNoColumn,
             width: 180,
             maxWidth: 400,
             minWidth: 150,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string) => rows.filter((row) => {return row.original.tagNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1})
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
+                return rows.filter((row) => { return row.original.tagNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+            }
         },
         {
             Header: 'Description',
-            accessor: 'description',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getDescriptionColumn,
             width: 250,
             maxWidth: 400,
-            minWidth: 150
+            minWidth: 150,
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
+                return rows.filter((row) => { return row.original.description.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+            }
         },
         {
             Header: 'Due',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'due',
             Cell: getDueColumn,
             width: 60,
@@ -200,7 +205,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Next',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'Due',
             Cell: getNextColumn,
             width: 100,
@@ -209,15 +214,18 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Mode',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getMode,
             width: 200,
             maxWidth: 400,
             minWidth: 50,
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
+                return rows.filter((row) => { return row.original.mode.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+            }
         },
         {
             Header: 'PO',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'PO',
             Cell: getPOColumn,
             width: 100,
@@ -226,7 +234,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Area',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'Area',
             Cell: getAreaCode,
             width: 100,
@@ -236,23 +244,23 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         {
             Header: 'Resp',
             id: 'responsible',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getResponsibleColumn
         },
         {
             Header: 'Disc',
             id: 'discipline',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getDisciplineCode
         },
         {
             Header: 'Status',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getStatus
         },
         {
             Header: 'Req type',
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'reqtype',
             Cell: getRequirementColumn,
             defaultCanSort: false,
@@ -262,7 +270,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: getActionsHeader(),
-            accessor: (d: UseTableRowProps<PreservedTag>) => d,
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'actions',
             Cell: getActionsColumn,
             defaultCanSort: false,

@@ -4,7 +4,6 @@ export const TableHeader = styled.div`
     outline: 0;
     overflow: hidden;
     vertical-align: middle;
-    background-color: rgb(247, 247, 247);
     font-weight: 500;
     line-height: 1.5rem;
     position: sticky;
@@ -31,13 +30,23 @@ export const TableHeadCell = styled.div`
     text-align: left;
     vertical-align: inherit;
     font-weight: 500;
+    background-color: rgb(247, 247, 247);
     line-height: 1.5rem;
     border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
-        margin-right: 2px;
-        margin-left: -2px
     }
+`;
+
+export const TableHeadFilterCell = styled.div`
+    padding: 8px 1px 8px 16px;
+    font-size: 0.875rem;
+    min-height: 40px;
+    flex-direction: column;
+    text-align: left;
+    vertical-align: inherit;
+    font-weight: 500;
+    line-height: 1.5rem;
 `;
 
 export const TableRow = styled.div`
@@ -72,9 +81,7 @@ export const TableCell = styled.div`
     }
 `;
 
-export const RowFilter = styled.div`
-    font-size: 14px;
-    & > input {
-        font-size: 14px;
-    }
+export const ColumnFilter = styled.div`
+    display: block;
+    width: 100%;
 `;

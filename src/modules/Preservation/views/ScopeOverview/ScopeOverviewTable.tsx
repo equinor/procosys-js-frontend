@@ -254,7 +254,10 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
             maxWidth: 150,
             minWidth: 50,
             filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.areaCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+                return rows.filter((row) => {
+                    if (row.original.areaCode)
+                        return row.original.areaCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
+                });
             }
         },
         {
@@ -263,7 +266,9 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getResponsibleColumn,
             filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.responsibleCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1 || row.original.responsibleDescription.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+                return rows.filter((row) => {
+                    return row.original.responsibleCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1 || row.original.responsibleDescription.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
+                });
             }
         },
         {

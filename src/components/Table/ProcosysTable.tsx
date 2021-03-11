@@ -18,14 +18,16 @@ import {
 import { HeaderCheckbox, RowCheckbox } from './TableStyles';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import React, { CSSProperties, PropsWithChildren, forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
-import { RowFilter, Table, TableCell, TableHeadCell, TableHeader, TableRow } from './style';
+import { ColumnFilter, Table, TableCell, TableHeadCell, TableHeader, TableHeadFilterCell, TableRow } from './style';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ResizeHandle } from './ResizeHandle';
 import Spinner from '../Spinner';
 import { TablePagination } from './TablePagination';
-import { TableSortLabel } from '@material-ui/core';
+import { TableSortLabel, TextField } from '@material-ui/core';
 import cx from 'classnames';
+import { InputAdornment } from '@material-ui/core';
+import FilterListIcon from '@material-ui/icons/FilterList';
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
     fetchData: (args: any) => void;
@@ -68,7 +70,6 @@ const hooks = [
     selectionHook,
 ];
 
-
 const getStyles = (props: any, disableResizing = false, align = 'left'): any => [
     props,
     {
@@ -87,20 +88,25 @@ const cellProps = <T extends Record<string, unknown>>(props: T, { cell }: Meta<T
     getStyles(props, cell.column && cell.column.disableResizing, cell.column && cell.column.align);
 
 
-
 const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: unknown[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
     const count = preFilteredRows.length;
 
     return (
-        <RowFilter>
-            <input
-                value={filterValue || ''}
+        <ColumnFilter>
+            <TextField
+                style={{ width: 'calc(100% - 14px)' }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setFilter(e.target.value || undefined);
                 }}
-                placeholder={`Search ${count} records...`}
-            />
-        </RowFilter>
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <FilterListIcon />
+                        </InputAdornment>
+                    )
+                }}
+                type="search" />
+        </ColumnFilter>
     );
 };
 
@@ -119,8 +125,24 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         []
     );
 
+    const hasFilters = (): boolean => {
+        let i = 0;
+        let filterFound = false;
+        while (i < headerGroups.length && !filterFound) {
+            filterFound = headerGroups[i].headers.filter((h) => h.filter).length > 0;
+            i++;
+        }
+        return filterFound;
+    };
 
-    const tableInstance = useTable<Record<string, unknown>>({ ...props, manualPagination: true, defaultColumn, manualSortBy: true, initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize } }, ...hooks);
+    const tableInstance = useTable<Record<string, unknown>>(
+        {
+            ...props,
+            manualPagination: true,
+            defaultColumn,
+            manualSortBy: true,
+            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize }
+        }, ...hooks);
 
     const {
         getTableProps,
@@ -144,9 +166,11 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     }, [pageIndex, pageSize]);
 
     useEffect(() => {
-        const selectedRows = tableInstance.data.filter((d: Record<string, unknown>, ix: number) => { return Object.keys(selectedRowIds).map(Number).indexOf(ix) >= 0; });
-        props.onSelectedChange(selectedRows);
+        const selectedRows = tableInstance.data.filter((d: Record<string, unknown>, ix: number) => {
+            return Object.keys(selectedRowIds).map(Number).indexOf(ix) >= 0;
+        });
 
+        props.onSelectedChange(selectedRows);
     }, [selectedRowIds, tableInstance]);
 
     const cellClickHandler = (cell: Cell<Record<string, unknown>>) => (): void => {
@@ -162,7 +186,6 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         prepareRow(row);
         return (
             <TableRow {...row.getRowProps({ style })} className={cx('tableRow', { rowSelected: row.isSelected })}>
-
                 {row.cells.map((cell) => (
                     <TableCell {...cell.getCellProps(cellProps)} key={cell.getCellProps(cellProps).key} onClick={cellClickHandler(cell)}>
                         {
@@ -170,17 +193,21 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                         }
                     </TableCell>
                 ))}
-
             </TableRow>
         );
     }, areEqual);
 
     const listRef = useRef(null);
     const headerRef = useRef(null);
+    const headerFiltersRef = useRef(null);
 
     const scrollHeader = (props: Event): void => {
         if (headerRef.current) {
             (headerRef.current as unknown as Element).scrollLeft = (props.target as Element).scrollLeft;
+        }
+
+        if (headerFiltersRef.current) {
+            (headerFiltersRef.current as unknown as Element).scrollLeft = (props.target as Element).scrollLeft;
         }
     };
 
@@ -199,6 +226,10 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                     if (headerRef && headerRef.current) {
                         ((headerRef.current) as any).style.width = (parseInt(((headerRef.current) as any).style.width.replace('px', '')) + 8) + 'px';
                     }
+
+                    if (headerFiltersRef && headerFiltersRef.current) {
+                        ((headerFiltersRef.current) as any).style.width = (parseInt(((headerFiltersRef.current) as any).style.width.replace('px', '')) + 8) + 'px';
+                    }
                 }
             }
         }, 50);
@@ -216,6 +247,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                 <div>
                                     <Table {...getTableProps()}>
                                         {
+                                            // render table header
                                             headerGroups.map((headerGroup, i) => (
                                                 <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display: 'flex' }}>
 
@@ -232,20 +264,16 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                                                             active={column.isSorted}
                                                                             direction={column.isSortedDesc ? 'desc' : 'asc'}
                                                                             {...column.getSortByToggleProps()}
-                                                                            className={'tableSortLabel'}
-                                                                            style={style}
                                                                         >
                                                                             {column.render('Header')}
                                                                         </TableSortLabel>
                                                                     ) : (
-                                                                        <div style={style} className={'tableLabel'}>
+                                                                        <div style={style}>
                                                                             {column.render('Header')}
                                                                         </div>
                                                                     )}
                                                                     {column.canResize && <ResizeHandle column={column} />}
                                                                 </div>
-                                                                
-                                                                {column.filter && column.render('Filter')}
                                                             </TableHeadCell>
                                                         );
                                                     })}
@@ -253,7 +281,27 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                                 </TableHeader>
                                             ))
                                         }
+                                        {
+                                            // show client side filtering if any cols specify it
+                                            hasFilters() && headerGroups.map((headerGroup, i) => (
+                                                <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerFiltersRef} style={{ width: width - 8, display: 'flex' }}>
+                                                    {
+                                                        headerGroup.headers.filter((c) => c.filter).length > 0 &&
+                                                        headerGroup.headers.map((column) => {
+                                                            return (
+                                                                <TableHeadFilterCell
+                                                                    {...column.getHeaderProps(headerProps)}
+                                                                    key={column.getHeaderProps(headerProps).key}
+                                                                >
+                                                                    {column.filter && column.render('Filter')}
+                                                                </TableHeadFilterCell>
+                                                            );
+                                                        })}
+                                                </TableHeader>
+                                            ))
+                                        }
 
+                                        {/* render table */}
                                         <div {...getTableBodyProps()}>
                                             <List
                                                 height={height}

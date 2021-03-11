@@ -1,4 +1,4 @@
-import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
+import { Breadcrumbs, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -12,6 +12,7 @@ import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
 const addIcon = <EdsIcon name='add' />;
 const upIcon = <EdsIcon name='arrow_up' />;
@@ -406,6 +407,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const initNewJourney = (): void => {
+        if (canSave && !confirm('Do you want to discard changes without saving?')) {
+            return;
+        }
         setNewJourney(createNewJourney());
         setJourney(cloneJourney(newJourney));
         setIsEditMode(true);
@@ -629,40 +633,52 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             {newJourney.isVoided &&
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }
+
             <ButtonContainer>
-                {newJourney.isVoided && newJourney.id != -1 &&
-                    <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
-                        {deleteIcon} Delete
+                <ButtonContainerLeft>
+                    <Button variant='ghost' onClick={initNewJourney}>
+                        {addIcon} New preservation journey
                     </Button>
-                }
-                <ButtonSpacer />
-                {!newJourney.isVoided && newJourney.id != -1 &&
-                    < Button variant="outlined" onClick={duplicateJourney}>
-                        {duplicateIcon} Duplicate
+                </ButtonContainerLeft>
+                <ButtonContainerRight>
+                    {newJourney.isVoided && newJourney.id != -1 &&
+                        <>
+                            <ButtonSpacer />
+                            <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
+                                {deleteIcon} Delete
+                            </Button>
+                        </>
+                    }
+                    <ButtonSpacer />
+                    {!newJourney.isVoided && newJourney.id != -1 &&
+                        < Button variant="outlined" onClick={duplicateJourney}>
+                            {duplicateIcon} Duplicate
+                        </Button>
+                    }
+                    <ButtonSpacer />
+                    {newJourney.isVoided &&
+                        <Button variant="outlined" onClick={unvoidJourney}>
+                            {unvoidIcon} Unvoid
+                        </Button>
+                    }
+                    {!newJourney.isVoided && newJourney.id != -1 &&
+                        <Button variant="outlined" onClick={voidJourney}>
+                            {voidIcon} Void
+                        </Button>
+                    }
+                    <ButtonSpacer />
+                    <Button variant="outlined" onClick={cancel} disabled={newJourney.isVoided}>
+                        Cancel
                     </Button>
-                }
-                <ButtonSpacer />
-                {newJourney.isVoided &&
-                    <Button variant="outlined" onClick={unvoidJourney}>
-                        {unvoidIcon} Unvoid
+                    <ButtonSpacer />
+                    <Button onClick={handleSave} disabled={newJourney.isVoided || !canSave} title={canSave ? '' : saveTitle}>
+                        Save
                     </Button>
-                }
-                {!newJourney.isVoided && newJourney.id != -1 &&
-                    <Button variant="outlined" onClick={voidJourney}>
-                        {voidIcon} Void
-                    </Button>
-                }
-                <ButtonSpacer />
-                <Button variant="outlined" onClick={cancel} disabled={newJourney.isVoided}>
-                    Cancel
-                </Button>
-                <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided || !canSave} title={canSave ? '' : saveTitle}>
-                    Save
-                </Button>
+                </ButtonContainerRight>
+
             </ButtonContainer>
 
-            <InputContainer style={{ width: '280px' }}>
+            <InputContainer style={{ marginTop: 'calc(var(--grid-unit) * 3)', width: '280px' }}>
                 <TextField
                     id={'title'}
                     label='Title for this journey'

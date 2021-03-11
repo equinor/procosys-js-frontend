@@ -219,6 +219,23 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
+    const uncompletePunchOut = async (participant: Participant): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        try {
+            await apiClient.uncompletePunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
+            analytics.trackUserAction(IpoCustomEvents.UNCOMPLETED, { project: invitation.projectName, type: invitation.type });
+            await getInvitation();
+            showSnackbarNotification('Punch-out uncompleted');
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
@@ -329,7 +346,7 @@ const ViewIPO = (): JSX.Element => {
                                     <TabStyle maxHeight={tabModuleHeight + 67}>
                                         <TabPanels>
                                             <TabPanel>
-                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unaccept={unacceptPunchOut} />
+                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unaccept={unacceptPunchOut} uncomplete={uncompletePunchOut}/>
                                             </TabPanel>
                                             <TabPanel>
                                                 <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />

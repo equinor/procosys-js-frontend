@@ -36,10 +36,11 @@ interface ParticipantsTableProps {
     update: (attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
+    uncomplete: (p: Participant) => Promise<any>;
 }
 
 
-const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unaccept }: ParticipantsTableProps): JSX.Element => {
+const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unaccept, uncomplete }: ParticipantsTableProps): JSX.Element => {
     const cleanData = participants.map(p => {
         const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
         const attendedStatus = status === IpoStatusEnum.PLANNED ?
@@ -59,6 +60,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const [editAttendedDisabled, setEditAttendedDisabled] = useState<boolean>(true);
     const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
+    const btnUnCompleteRef = useRef<HTMLButtonElement>();
     const btnAcceptRef = useRef<HTMLButtonElement>();
     const btnUnAcceptRef = useRef<HTMLButtonElement>();
     const btnUpdateRef = useRef<HTMLButtonElement>();
@@ -102,15 +104,22 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         );
     };
 
-    const getUpdateParticipantsButton = (updateParticipants: (index: number) => void): JSX.Element => {
+
+    const getUnCompleteAndUpdateParticipantsButton = (updateParticipants: (index: number) => void, unCompletePunchout: (index: number) => void): JSX.Element => {
         return (
-            <CustomTooltip title={tooltipUpdate} arrow>
-                <span>
-                    <Button ref={btnUpdateRef} onClick={updateParticipants}>
+            <>
+                <CustomTooltip title={tooltipUpdate} arrow>
+                    <span>
+                        <Button ref={btnUpdateRef} onClick={updateParticipants}>
                         Update
-                    </Button>
-                </span>
-            </CustomTooltip>
+                        </Button>
+                    </span>
+                </CustomTooltip>
+                <span>{' '}</span>
+                <Button ref={btnUnCompleteRef} onClick={unCompletePunchout}>
+                Uncomplete
+                </Button>
+            </>
         );
     };
 
@@ -150,7 +159,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         handleAcceptPunchOut: (index: number) => void,
         handleUpdateParticipants: (index: number) => void,
         handleSignPunchOut: (index: number) => void,
-        handleUnAcceptPunchOut: (index: number) => void): JSX.Element => {
+        handleUnAcceptPunchOut: (index: number) => void,
+        handleUnCompletePunchOut: (index: number) => void
+    ): JSX.Element => {
 
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
@@ -160,7 +171,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                     } else if (participant.canSign && status === IpoStatusEnum.PLANNED) {
                         return getCompleteButton(handleCompletePunchOut);
                     } else if (participant.canSign && status === IpoStatusEnum.COMPLETED) {
-                        return getUpdateParticipantsButton(handleUpdateParticipants);
+                        return getUnCompleteAndUpdateParticipantsButton(handleUpdateParticipants, handleUnCompletePunchOut);
                     }
                 } else {
                     if (participant.signedBy) {
@@ -217,6 +228,23 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
         if (btnCompleteRef.current) {
             btnCompleteRef.current.removeAttribute('disabled');
+        }
+        setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
+    };
+
+    const handleUnCompletePunchOut = async (index: number): Promise<any> => {
+        setLoading(true);
+        if (btnUnCompleteRef.current) {
+            btnUnCompleteRef.current.setAttribute('disabled', 'disabled');
+        }
+        await uncomplete(participants[index]);
+
+        if (btnCompleteRef.current) {
+            btnCompleteRef.current.removeAttribute('disabled');
+        }
+        if (btnUnCompleteRef.current) {
+            btnUnCompleteRef.current.removeAttribute('disabled');
         }
         setLoading(false);
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
@@ -393,7 +421,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                             () => handleAcceptPunchOut(index),
                                             () => handleUpdateParticipants(),
                                             () => handleSignPunchOut(index),
-                                            () => handleUnAcceptPunchOut(index))}
+                                            () => handleUnAcceptPunchOut(index),
+                                            () => handleUnCompletePunchOut(index)
+                                        )}
                                     </Typography>
                                 </Cell>
                                 <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>

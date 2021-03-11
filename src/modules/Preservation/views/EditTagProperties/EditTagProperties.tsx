@@ -26,11 +26,6 @@ interface RequirementFormInput {
     rowVersion?: string;
 }
 
-interface RequirementForDelete {
-    requirementId: number | undefined;
-    rowVersion: string | undefined;
-}
-
 const EditTagProperties = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();

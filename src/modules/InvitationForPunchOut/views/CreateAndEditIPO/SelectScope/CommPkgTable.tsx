@@ -39,6 +39,7 @@ const CommPkgTable = forwardRef(({
     const [pageSize, setPageSize] = useState<number>(10);
     const cancelerRef = useRef<Canceler | null>();
     const refObject = useRef<any>();
+    const [selectAll, setSelectAll] = useState<boolean>(false);
 
     const hasValidSystem = (system: string): boolean => {
         if (selectedCommPkgScope.length < 1 && selectedMcPkgScope.length < 1) return true;
@@ -50,7 +51,7 @@ const CommPkgTable = forwardRef(({
         }
     };
 
-    const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
+    const getCommPkgs = async (pageSize: number, page: number): Promise<{maxAvailable: number, commPkgs: CommPkgRow[]}> => {
         try {
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
             const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
@@ -89,6 +90,7 @@ const CommPkgTable = forwardRef(({
             }
             return getCommPkgs(query.pageSize, query.page).then(result => {
                 setFilteredCommPkgs(result.commPkgs);
+                setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
                 resolve({
                     data: result.commPkgs,
                     page: query.page,
@@ -208,7 +210,7 @@ const CommPkgTable = forwardRef(({
     ];
 
     return (
-        <Container disableSelectAll={true} mcColumn={type == 'DP'}>
+        <Container disableSelectAll={!selectAll} mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>
                     <TextField

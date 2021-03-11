@@ -49,6 +49,7 @@ const AddScope = (): JSX.Element => {
 
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [selectedTableRows, setSelectedTableRows] = useState<Record<string, boolean>>({});
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [migrationTableData, setMigrationTableData] = useState<TagMigrationRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
@@ -347,6 +348,8 @@ const AddScope = (): JSX.Element => {
                     <SelectTags
                         nextStep={goToNextStep}
                         setSelectedTags={setSelectedTags}
+                        selectedTableRows={selectedTableRows}
+                        setSelectedTableRows={setSelectedTableRows}
                         searchTags={searchTags}
                         selectedTags={selectedTags}
                         scopeTableData={scopeTableData}
@@ -364,6 +367,8 @@ const AddScope = (): JSX.Element => {
                     <SelectTags
                         nextStep={goToNextStep}
                         setSelectedTags={setSelectedTags}
+                        setSelectedTableRows={setSelectedTableRows}
+                        selectedTableRows={selectedTableRows}
                         searchTags={searchTags}
                         selectedTags={selectedTags}
                         scopeTableData={scopeTableData}

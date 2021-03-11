@@ -11,6 +11,7 @@ export interface Tag {
 }
 
 export interface TagRow {
+    noCheckbox?: boolean;
     tagNo: string;
     description: string;
     purchaseOrderTitle: string;

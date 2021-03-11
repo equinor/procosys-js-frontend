@@ -30,7 +30,7 @@ import { InputAdornment } from '@material-ui/core';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
-    fetchData: (args: any) => void;
+    fetchData?: (args: any) => void;
     columns: ColumnInstance<T>[];
     pageCount: number;
     loading: boolean;
@@ -38,8 +38,11 @@ export interface TableProperties<T extends Record<string, unknown>> extends Tabl
     maxRowCount: number;
     pageSize: number;
     pageIndex: number;
-    onSelectedChange: (args: any[]) => void;
+    onSelectedChange: (args: any[], ids: Record<string, boolean>) => void;
     onSort: (args: string) => void;
+    clientPagination?: boolean;
+    clientSorting?: boolean;
+    selectedRows?: Record<string, boolean>;
 }
 
 const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
@@ -54,7 +57,7 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
             Header: ({ getToggleAllRowsSelectedProps }: HeaderProps<Record<string, unknown>>): JSX.Element => (
                 <HeaderCheckbox {...getToggleAllRowsSelectedProps()} />
             ),
-            Cell: ({ row }: CellProps<Record<string, unknown>>): JSX.Element => <RowCheckbox {...row.getToggleRowSelectedProps()} />,
+            Cell: ({ row }: CellProps<Record<string, unknown>>): JSX.Element => row.original.noCheckbox ? <></> : <RowCheckbox {...row.getToggleRowSelectedProps()} />,
         },
         ...columns,
     ]);
@@ -138,12 +141,13 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     const tableInstance = useTable<Record<string, unknown>>(
         {
             ...props,
-            manualPagination: true,
+            manualPagination: props.clientPagination ? false : true,
             defaultColumn,
-            manualSortBy: true,
-            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize }
+            manualSortBy: props.clientSorting ? false : true,
+            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {} }
         }, ...hooks);
 
+        
     const {
         getTableProps,
         getTableBodyProps,
@@ -161,7 +165,9 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     }, [tableInstance.onSort, sortBy]);
 
     useEffect(() => {
-        props.fetchData({ pageIndex, pageSize, orderBy: 'due', orderDirection: 'asc' });
+        if (props.fetchData) {
+            props.fetchData({ pageIndex, pageSize, orderBy: 'due', orderDirection: 'asc' });
+        }
         props.setPageSize(pageSize);
     }, [pageIndex, pageSize]);
 
@@ -170,11 +176,12 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             return Object.keys(selectedRowIds).map(Number).indexOf(ix) >= 0;
         });
 
-        props.onSelectedChange(selectedRows);
+        props.onSelectedChange(selectedRows, selectedRowIds);
     }, [selectedRowIds, tableInstance]);
 
+
     const cellClickHandler = (cell: Cell<Record<string, unknown>>) => (): void => {
-        onClick && cell.column.id !== '_selector' && onClick(cell.row);
+        onClick && cell.column.id !== 'selection' && onClick(cell.row);
     };
 
     const RenderRow = memo(({ index, style }: {
@@ -187,7 +194,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         return (
             <TableRow {...row.getRowProps({ style })} className={cx('tableRow', { rowSelected: row.isSelected })}>
                 {row.cells.map((cell) => (
-                    <TableCell {...cell.getCellProps(cellProps)} key={cell.getCellProps(cellProps).key} onClick={cellClickHandler(cell)}>
+                    <TableCell {...cell.getCellProps(cellProps)} key={cell.getCellProps(cellProps).key} >
                         {
                             cell.render('Cell')
                         }

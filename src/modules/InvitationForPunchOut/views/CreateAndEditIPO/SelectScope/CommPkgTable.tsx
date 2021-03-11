@@ -127,7 +127,7 @@ const CommPkgTable = forwardRef(({
 
     const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
         if (type != 'DP') {
-            const rowsToAdd = rowData.filter(row => !selectedCommPkgScope.some(commPkg => commPkg.commPkgNo === row.commPkgNo));
+            const rowsToAdd = rowData.filter(row => hasValidSystem(row.system));
             setSelectedCommPkgScope([...selectedCommPkgScope, ...rowsToAdd]);
         }
     };
@@ -208,7 +208,7 @@ const CommPkgTable = forwardRef(({
     ];
 
     return (
-        <Container disableSelectAll={type == 'DP'} mcColumn={type == 'DP'}>
+        <Container disableSelectAll={true} mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>
                     <TextField

@@ -79,7 +79,44 @@ describe('<RequirementsSelector />', () => {
         await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
     });
 
-    it.todo('Triggers onchange when a requirement is voided');
-    it.todo('Triggers onchange when a requirement is unvoided');
-    it.todo('Triggers onchange when a requirement is deleted');
+    it('Triggers onchange when a requirement is voided', async () => {
+        const mySpy = jest.fn();
+        const selectedItems = [{
+            requirementDefinitionId: 1,
+            intervalWeeks: 2,
+            editingRequirements: true,
+        }];
+        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        getByText('Void').click();
+
+        await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
+    });
+
+    it('Triggers onchange when a requirement is unvoided', async () => {
+        const mySpy = jest.fn();
+        const selectedItems = [{
+            requirementDefinitionId: 1,
+            intervalWeeks: 2,
+            isVoided: true,
+            editingRequirements: true,
+        }];
+        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        getByText('Unvoid').click();
+
+        await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
+    });
+
+    it('Triggers onchange when a requirement is deleted', async () => {
+        const mySpy = jest.fn();
+        const selectedItems = [{
+            requirementDefinitionId: 1,
+            intervalWeeks: 2,
+            isVoided: true,
+            editingRequirements: true,
+        }];
+        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        getByText('Delete').click();
+
+        await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
+    });
 });

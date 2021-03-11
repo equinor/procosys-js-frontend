@@ -211,7 +211,14 @@ describe('Module: <EditTagProperties />', () => {
         expect(getByText('Unvoid')).toBeInTheDocument();
     });
 
-    it.todo('Should delete a voided requirement when the delete button is clicked');
+    it('Should delete a voided requirement when the delete button is clicked', async () => {
+        const { getByText, getByTitle, queryAllByText } = render(<EditTagProperties />);
+        await waitForElementToBeRemoved(getByTitle('Loading'));
+        expect(queryAllByText('Requirement').length).toBe(1);
+        getByText('Void').click();
+        getByText('Delete').click();
+        expect(queryAllByText('Requirement').length).toBe(0);
+    });
 
     it('Should enable Save button when changes are made', async () => {
         const { getByText, getByTitle } = render(<EditTagProperties />);

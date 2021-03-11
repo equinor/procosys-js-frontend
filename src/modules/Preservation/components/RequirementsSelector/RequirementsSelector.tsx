@@ -256,6 +256,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         <>
             {requirements.map((requirement, index) => {
                 if(requirement.isDeleted){
+                    console.log('A deleted requirement');
                     return;
                 }
                 const title = getTitle(requirement);
@@ -296,7 +297,7 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
                                                 <EdsIcon name='restore_from_trash' />
                                                 Unvoid
                                             </Button>
-                                            <Button disabled={requirement.isInUse || props.disabled} className='voidUnvoidDelete' title="DeleteOld" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteVoidedRequirement(index)}>
+                                            <Button disabled={requirement.isInUse || props.disabled} className='voidUnvoidDelete' title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteVoidedRequirement(index)}>
                                                 <EdsIcon name='delete_to_trash' />
                                                 Delete
                                             </Button>

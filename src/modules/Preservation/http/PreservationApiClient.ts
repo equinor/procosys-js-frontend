@@ -530,14 +530,13 @@ class PreservationApiClient extends ApiClient {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
-        console.log(deletedRequirements);
-        // TODO: add deleted requirements to the put thing
         try {
             const result = await this.client.put(endpoint, {
                 description,
                 stepId,
                 newRequirements,
                 updatedRequirements,
+                deletedRequirements,
                 rowVersion
             }, settings);
             return result.data;

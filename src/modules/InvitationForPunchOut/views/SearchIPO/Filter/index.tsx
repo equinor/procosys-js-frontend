@@ -66,10 +66,6 @@ const dueDates: FilterInput[] =
         {
             id: 'NextWeek',
             title: 'Next week',
-        },
-        {
-            id: 'Custom',
-            title: 'Custom',
         }
     ];
 
@@ -371,8 +367,8 @@ const InvitationsFilter = ({
             }
 
 
-            <CheckboxFilterWithDates title='Punch-out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
-            <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.ipoStatuses} icon={'world'} />
+            <CheckboxFilterWithDates title='Punch-out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={[...filter.punchOutDates, filter.punchOutDateFromUtc, filter.punchOutDateToUtc]} icon={'alarm_on'} />
+            <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={[...filter.ipoStatuses, filter.lastChangedAtFromUtc, filter.lastChangedAtToUtc]} icon={'world'} />
             <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} roles={roles} icon={<EdsIcon name='person' />} />
 
         </Container >

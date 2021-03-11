@@ -231,6 +231,19 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
             width: 100,
             maxWidth: 150,
             minWidth: 50,
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
+                return rows.filter((row) => {
+                    if (row.original.purchaseOrderNo) {
+                        if (row.original.calloffNo) {
+                            const searchField = `${row.original.purchaseOrderNo}/${row.original.calloffNo}`;
+                            return searchField.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
+                        } else {
+                            return row.original.purchaseOrderNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
+                        }
+                    }
+                }
+                );
+            }
         },
         {
             Header: 'Area',
@@ -239,13 +252,19 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
             Cell: getAreaCode,
             width: 100,
             maxWidth: 150,
-            minWidth: 50
+            minWidth: 50,
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
+                return rows.filter((row) => { return row.original.areaCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+            }
         },
         {
             Header: 'Resp',
             id: 'responsible',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            Cell: getResponsibleColumn
+            Cell: getResponsibleColumn,
+            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
+                return rows.filter((row) => { return row.original.responsibleCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1 || row.original.responsibleDescription.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+            }
         },
         {
             Header: 'Disc',

@@ -76,6 +76,10 @@ export const TableCell = styled.div`
     font-weight: 400;
     line-height: 1.43;
     vertical-align: inherit;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: inherit;
     :last-child {
         border-right: none;
     }

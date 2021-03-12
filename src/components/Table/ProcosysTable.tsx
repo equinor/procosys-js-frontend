@@ -146,7 +146,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         if (props.fetchData) {
             props.fetchData({ ix: pageIndex, sz: pageSize, orderBy: 'due', orderDirection: 'asc' });
         }
-        
+
     }, [pageIndex, pageSize]);
 
     useEffect(() => {
@@ -156,7 +156,6 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
         props.onSelectedChange(selectedRows, selectedRowIds);
     }, [selectedRowIds, tableInstance]);
-
 
     const cellClickHandler = (cell: Cell<Record<string, unknown>>) => (): void => {
         onClick && cell.column.id !== 'selection' && onClick(cell.row);
@@ -172,7 +171,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         return (
             <TableRow {...row.getRowProps({ style })} className={cx('tableRow', { rowSelected: row.isSelected })}>
                 {row.cells.map((cell) => (
-                    <TableCell {...cell.getCellProps(cellProps)} key={cell.getCellProps(cellProps).key} >
+                    <TableCell {...cell.getCellProps(cellProps)} key={cell.getCellProps(cellProps).key} onClick={cellClickHandler(cell)}>
                         {
                             cell.render('Cell')
                         }
@@ -220,96 +219,92 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         }, 50);
     };
 
+    const parentRef = useRef(null);
+
     return (
-        <>
-            {
-                loading ? (
-                    <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
-                ) : (
-                    <div style={{ height: 'calc(90vh - 305px)' }}>
-                        <AutoSizer>
-                            {({ height, width }): JSX.Element => (
-                                <div>
-                                    <Table {...getTableProps()}>
+        loading ? (
+            <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
+        ) : (
+            <AutoSizer>
+                {({ height, width }): JSX.Element => (
+                    <div>
+                        <Table {...getTableProps()}>
+                            {
+                                // render table header
+                                headerGroups.map((headerGroup, i) => (
+                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display: 'flex' }}>
+
+                                        {headerGroup.headers.map((column) => {
+                                            const style = {
+                                                textAlign: column.align ? column.align : 'left '
+                                            } as CSSProperties;
+
+                                            return (
+                                                <TableHeadCell {...column.getHeaderProps(headerProps)} key={column.getHeaderProps(headerProps).key} >
+                                                    <div>
+                                                        {column.canSort && column.defaultCanSort !== false ? (
+                                                            <TableSortLabel
+                                                                active={column.isSorted}
+                                                                direction={column.isSortedDesc ? 'desc' : 'asc'}
+                                                                {...column.getSortByToggleProps()}
+                                                            >
+                                                                {column.render('Header')}
+                                                            </TableSortLabel>
+                                                        ) : (
+                                                            <div style={style}>
+                                                                {column.render('Header')}
+                                                            </div>
+                                                        )}
+                                                        {column.canResize && <ResizeHandle column={column} />}
+                                                    </div>
+                                                </TableHeadCell>
+                                            );
+                                        })}
+
+                                    </TableHeader>
+                                ))
+                            }
+                            {
+                                // show client side filtering if any cols specify it
+                                hasFilters() && headerGroups.map((headerGroup, i) => (
+                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerFiltersRef} style={{ width: width - 8, display: 'flex' }}>
                                         {
-                                            // render table header
-                                            headerGroups.map((headerGroup, i) => (
-                                                <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display: 'flex' }}>
+                                            headerGroup.headers.filter((c) => c.filter).length > 0 &&
+                                            headerGroup.headers.map((column) => {
+                                                return (
+                                                    <TableHeadFilterCell
+                                                        {...column.getHeaderProps(headerProps)}
+                                                        key={column.getHeaderProps(headerProps).key}
+                                                    >
+                                                        {column.filter && column.render('Filter')}
+                                                    </TableHeadFilterCell>
+                                                );
+                                            })}
+                                    </TableHeader>
+                                ))
+                            }
 
-                                                    {headerGroup.headers.map((column) => {
-                                                        const style = {
-                                                            textAlign: column.align ? column.align : 'left '
-                                                        } as CSSProperties;
-
-                                                        return (
-                                                            <TableHeadCell {...column.getHeaderProps(headerProps)} key={column.getHeaderProps(headerProps).key} >
-                                                                <div>
-                                                                    {column.canSort && column.defaultCanSort !== false ? (
-                                                                        <TableSortLabel
-                                                                            active={column.isSorted}
-                                                                            direction={column.isSortedDesc ? 'desc' : 'asc'}
-                                                                            {...column.getSortByToggleProps()}
-                                                                        >
-                                                                            {column.render('Header')}
-                                                                        </TableSortLabel>
-                                                                    ) : (
-                                                                        <div style={style}>
-                                                                            {column.render('Header')}
-                                                                        </div>
-                                                                    )}
-                                                                    {column.canResize && <ResizeHandle column={column} />}
-                                                                </div>
-                                                            </TableHeadCell>
-                                                        );
-                                                    })}
-
-                                                </TableHeader>
-                                            ))
-                                        }
-                                        {
-                                            // show client side filtering if any cols specify it
-                                            hasFilters() && headerGroups.map((headerGroup, i) => (
-                                                <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerFiltersRef} style={{ width: width - 8, display: 'flex' }}>
-                                                    {
-                                                        headerGroup.headers.filter((c) => c.filter).length > 0 &&
-                                                        headerGroup.headers.map((column) => {
-                                                            return (
-                                                                <TableHeadFilterCell
-                                                                    {...column.getHeaderProps(headerProps)}
-                                                                    key={column.getHeaderProps(headerProps).key}
-                                                                >
-                                                                    {column.filter && column.render('Filter')}
-                                                                </TableHeadFilterCell>
-                                                            );
-                                                        })}
-                                                </TableHeader>
-                                            ))
-                                        }
-
-                                        {/* render table */}
-                                        <div {...getTableBodyProps()}>
-                                            <List
-                                                height={height}
-                                                itemCount={tableInstance.data.length}
-                                                itemSize={40}
-                                                width={width}
-                                                ref={listRef}
-                                                onItemsRendered={addScrollEventHandler}
-                                            >
-                                                {RenderRow}
-                                            </List>
-                                        </div>
-                                        <div style={{ width: width }}>
-                                            <TablePagination<Record<string, unknown>> instance={tableInstance} />
-                                        </div>
-                                    </Table>
+                            {/* render table */}
+                            <div {...getTableBodyProps()}>
+                                <List
+                                    height={height}
+                                    itemCount={tableInstance.data.length}
+                                    itemSize={40}
+                                    width={width}
+                                    ref={listRef}
+                                    onItemsRendered={addScrollEventHandler}
+                                >
+                                    {RenderRow}
+                                </List>
+                                <div style={{ width: width }}>
+                                    <TablePagination<Record<string, unknown>> instance={tableInstance} />
                                 </div>
-                            )}
-                        </AutoSizer>
+                            </div>
+                        </Table>
                     </div>
-                )
-            }
-        </>
+                )}
+            </AutoSizer>
+        )
     );
 }));
 

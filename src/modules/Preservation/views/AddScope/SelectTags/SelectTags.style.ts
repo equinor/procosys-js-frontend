@@ -5,6 +5,9 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     width:100%;
+    flex-grow: 1;
+    max-height: calc(100% - 130px);
+
     input + svg {
         width: 24px;
         height: 24px;

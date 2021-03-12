@@ -73,9 +73,9 @@ const tableColumns = [
     },
     {
         Header: 'Preserved',
-        accessor: (d: TagRow): string | undefined => {return d.isPreserved ? 'Preserved' : 'Not preserved'; },
+        accessor: (d: TagRow): string | undefined => { return d.isPreserved ? 'Preserved' : 'Not preserved'; },
         field: 'isPreserved',
-        Cell: (rowData: TableOptions<TagRow>): JSX.Element => {return rowData.row.values.Preserved === 'Preserved' ? <CheckBoxIcon /> : <></>;},
+        Cell: (rowData: TableOptions<TagRow>): JSX.Element => { return rowData.row.values.Preserved === 'Preserved' ? <CheckBoxIcon color='disabled' /> : <></>; },
         Filter: SelectColumnFilter,
         filter: 'equals'
     },
@@ -184,61 +184,22 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             }
             {
                 !props.isLoading &&
-
-                <ProcosysTable
-                    setPageSize={() => { }}
-                    onSort={() => { }}
-                    onSelectedChange={(rowData: TagRow[], ids: any): void => { rowSelectionChanged(rowData, ids) }}
-                    pageIndex={0}
-                    pageSize={10}
-                    columns={tableColumns}
-                    maxRowCount={props.scopeTableData.length}
-                    data={props.scopeTableData}
-                    clientPagination={true}
-                    clientSorting={true}
-                    loading={false}
-                    selectedRows={props.selectedTableRows}
-                    pageCount={Math.ceil(props.scopeTableData.length / 10)} />
-
-
-
-
-                // <Table
-                //     columns={tableColumns}
-                //     data={props.scopeTableData}
-                //     options={{
-                //         toolbar: false,
-                //         showHeader: false,
-                //         filtering: true,
-                //         search: false,
-                //         draggable: false,
-                //         pageSize: 10,
-                //         emptyRowsWhenPaging: false,
-                //         pageSizeOptions: [10, 50, 100],
-                //         padding: 'dense',
-                //         headerStyle: {
-                //             backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                //         },
-                //         selection: true,
-                //         selectionProps: (data: TagRow): any => ({
-                //             // Disable and hide selection checkbox for preserved tags.
-                //             // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
-                //             // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
-                //             disabled: data.isPreserved,
-                //             style: { display: data.isPreserved && 'none' },
-                //             disableRipple: true
-                //         }),
-                //         rowStyle: (data): any => ({
-                //             backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
-                //         })
-                //     }}
-                //     style={{
-                //         boxShadow: 'none'
-                //     }}
-                //     onSelectionChange={(rowData, row): void => {
-                //         rowSelectionChanged(rowData, row);
-                //     }}
-                // />
+                <div style={{ height: '100%' }}>
+                    <ProcosysTable
+                        setPageSize={(): void => { }}
+                        onSort={(): void => { }}
+                        onSelectedChange={(rowData: TagRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
+                        pageIndex={0}
+                        pageSize={10}
+                        columns={tableColumns}
+                        maxRowCount={props.scopeTableData.length}
+                        data={props.scopeTableData}
+                        clientPagination={true}
+                        clientSorting={true}
+                        loading={false}
+                        selectedRows={props.selectedTableRows}
+                        pageCount={Math.ceil(props.scopeTableData.length / 10)} />
+                </div>
             }
         </Container >
     );

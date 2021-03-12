@@ -30,7 +30,7 @@ export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, se
 
 
 export const CheckBoxColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, id } }: { column: { filterValue: string, preFilteredRows: UseTableRowProps<Record<IdType<any>, CellValue>>[], setFilter: (a: string | undefined) => void, id: number } }): JSX.Element => {
-    
+
     return (
         <Checkbox
             id="filterCheck"
@@ -50,7 +50,12 @@ export const SelectColumnFilter = ({ column: { filterValue, preFilteredRows, set
     const options = React.useMemo(() => {
         const options = new Set<string>();
         preFilteredRows.forEach((row: Record<IdType<any>, CellValue>) => {
-            options.add(row.values[id]);
+            if (typeof (row.values[id]) === 'object') {
+                if (row.values[id][id])
+                    options.add(row.values[id][id]);
+            }
+            else if (row.values[id])
+                options.add(row.values[id]);
         });
         return [...options.values()];
     }, [id, preFilteredRows]);
@@ -58,15 +63,14 @@ export const SelectColumnFilter = ({ column: { filterValue, preFilteredRows, set
     return (
         <Select
             id="custom-select"
-            type="select"
-            value={filterValue}
+            value={filterValue || '_all_'}
             onChange={(e: React.ChangeEvent<{ value: unknown }>): void => {
-                setFilter(e.target.value as string || undefined);
+                setFilter((e.target.value as string) === '_all_' ? undefined : (e.target.value as string));
             }}
         >
-            <option value="">All</option>
-            {options.map(option => (
-                <option key={option} value={option}>
+            <option value="_all_">All</option>
+            {options.map((option, i) => (
+                <option key={i} value={option}>
                     {option}
                 </option>
             ))}

@@ -163,7 +163,8 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     }, []);
 
     const getStatus = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
-        const tag = row.value as PreservedTag;
+        const tag = row.row.original as PreservedTag;
+        
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.status}
@@ -280,10 +281,12 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Status',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            accessor: (d: PreservedTag): string | undefined => {return d.status; },
+            // accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'status',
             Cell: getStatus,
             Filter: SelectColumnFilter,
-            filter: 'equals'
+            filter: 'text'
         },
         {
             Header: 'Req type',
@@ -350,18 +353,18 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
 
     useEffect(() => {
         if (sortBy.id) {
-            getData({ pageIndex: 0, pageSize: pageSize }, (sortBy as any).id, sortBy.desc ? 'desc' : 'asc');
+            getData({ ix: 0, sz: pageSize }, (sortBy as any).id, sortBy.desc ? 'desc' : 'asc');
             props.setOrderByField(sortBy.id);
             props.setOrderDirection(sortBy.desc ? 'desc' : 'asc');
         } else {
-            getData({ pageIndex: 0, pageSize: pageSize });
+            getData({ ix: 0, sz: pageSize });
         }
 
     }, [sortBy]);
 
     useEffect(() => {
         props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
-            const req = { pageIndex: 0, pageSize: pageSize };
+            const req = { ix: 0, sz: pageSize };
             setPageIndex(0);
             if (tableRef.current)
                 ((tableRef.current) as any).resetPageIndex(true);
@@ -380,8 +383,9 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     };
 
     return (
-        <Container>
+        <Container >
             <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
+            <div style={{height: '100%'}}>
             <ProcosysTable
                 setPageSize={setPageSize}
                 onSort={setSorting}
@@ -390,12 +394,16 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
                 pageIndex={pageIndex}
                 pageSize={pageSize}
                 columns={columns}
+                clientPagination={false}
+                clientSorting={false}
                 maxRowCount={maxRows}
                 data={data}
                 fetchData={getData}
                 loading={loading}
                 pageCount={pageCount} />
+            </div>
         </Container>
+        
     );
 
 });

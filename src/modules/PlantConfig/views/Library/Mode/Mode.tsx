@@ -20,7 +20,7 @@ interface ModeItem {
     id: number;
     title: string;
     forSupplier: boolean;
-    inUse: boolean;
+    isInUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -34,7 +34,7 @@ type ModeProps = {
 const Mode = (props: ModeProps): JSX.Element => {
 
     const createNewMode = (): ModeItem => {
-        return { id: -1, title: '', isVoided: false, forSupplier: false, inUse: false, rowVersion: '' };
+        return { id: -1, title: '', isVoided: false, forSupplier: false, isInUse: false, rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -263,7 +263,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                     {newMode.isVoided &&
                         <>
                             <ButtonSpacer />
-                            <Button variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
+                            <Button variant="outlined" onClick={deleteMode} disabled={newMode.isInUse} title={newMode.isInUse ? 'Mode that is in use cannot be deleted' : ''}>
                                 {deleteIcon} Delete
                             </Button>
                         </>

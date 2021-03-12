@@ -100,7 +100,7 @@ interface ModeResponse {
     id: number;
     title: string;
     forSupplier: boolean;
-    inUse: boolean;
+    isInUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -185,7 +185,7 @@ interface JourneyResponse {
                 title: string;
                 isVoided: boolean,
                 forSupplier: boolean,
-                inUse: boolean,
+                isInUse: boolean,
                 rowVersion: string;
             };
             responsible: {
@@ -256,6 +256,11 @@ interface RequirementForUpdate {
     rowVersion: string | undefined;
 }
 
+interface RequirementForDelete {
+    requirementId: number | undefined;
+    rowVersion: string | undefined;
+}
+
 interface FieldsFormInput {
     id: number | null;
     rowVersion: string | null;
@@ -316,6 +321,7 @@ interface TagRequirementsResponse {
     ];
     comment: string;
     isVoided: boolean;
+    isInUse: boolean;
     rowVersion: string;
 }
 
@@ -520,7 +526,7 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], deletedRequirements: RequirementForDelete[], setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -530,6 +536,7 @@ class PreservationApiClient extends ApiClient {
                 stepId,
                 newRequirements,
                 updatedRequirements,
+                deletedRequirements,
                 rowVersion
             }, settings);
             return result.data;

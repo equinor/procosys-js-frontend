@@ -1,33 +1,86 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TagsHeader, TopContainer } from './SelectTags.style';
+import { CheckBoxColumnFilter, SelectColumnFilter } from '@procosys/components/Table/filters';
+import React, { useEffect, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagRow } from '../types';
 
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
-import React, { useEffect, useState } from 'react';
+import ProcosysTable from '@procosys/components/Table/ProcosysTable';
 import Table from '../../../../../components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
 
 const tableColumns = [
-    { Header: 'Tag no', field: 'tagNo', accessor: 'tagNo' },
-    { Header: 'Description', field: 'description', accessor: 'description' },
-    { Header: 'MC pkg', field: 'mcPkgNo', accessor: 'mcPkgNo' },
-    { Header: 'MCCR resp', field: 'mccrResponsibleCodes', accessor: 'mccrResponsibleCodes' },
-    { Header: 'PO', field: 'purchaseOrderHeader', accessor: 'purchaseOrderHeader' },
-    { Header: 'Comm pkg', field: 'commPkgNo', accessor: 'commPkgNo' },
-    { Header: 'Tag function', field: 'tagFunctionCode', accessor: 'tagFunctionCode' },
+    {
+        Header: 'Tag no',
+        field: 'tagNo',
+        accessor: 'tagNo',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.tagNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Description',
+        field: 'description',
+        accessor: 'description',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.description?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'MC pkg',
+        field: 'mcPkgNo',
+        accessor: 'mcPkgNo',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.mcPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'MCCR resp',
+        field: 'mccrResponsibleCodes',
+        accessor: 'mccrResponsibleCodes',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.mccrResponsibleCodes?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'PO',
+        field: 'purchaseOrderTitle',
+        accessor: 'purchaseOrderTitle',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.purchaseOrderTitle?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Comm pkg',
+        field: 'commPkgNo',
+        accessor: 'commPkgNo',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.commPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Tag function',
+        field: 'tagFunctionCode',
+        accessor: 'tagFunctionCode',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.tagFunctionCode?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
     {
         Header: 'Preserved',
+        accessor: (d: TagRow): string | undefined => {return d.isPreserved ? 'Preserved' : 'Not preserved'; },
         field: 'isPreserved',
-        accessor: 'isPreserved',
-        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
+        Cell: (rowData: TableOptions<TagRow>): JSX.Element => {return rowData.row.values.Preserved === 'Preserved' ? <CheckBoxIcon /> : <></>;},
+        Filter: SelectColumnFilter,
+        filter: 'equals'
     },
 ];
+
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -46,7 +99,6 @@ const KEYCODE_ENTER = 13;
 
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
-    console.log('props', props)
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
 
@@ -75,7 +127,6 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
     };
 
     const rowSelectionChanged = (rowData: TagRow[], ids: Record<string, boolean>): void => {
-        console.log('rowselection changed')
         if (rowData.length == 0 && props.scopeTableData && props.scopeTableData.length > 0) {
             removeAllSelectedTagsInScope();
         } else {

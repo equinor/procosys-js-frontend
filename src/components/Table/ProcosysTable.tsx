@@ -18,16 +18,15 @@ import {
 import { HeaderCheckbox, RowCheckbox } from './TableStyles';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import React, { CSSProperties, PropsWithChildren, forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
-import { ColumnFilter, Table, TableCell, TableHeadCell, TableHeader, TableHeadFilterCell, TableRow } from './style';
+import { Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow } from './style';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { DefaultColumnFilter } from './filters';
 import { ResizeHandle } from './ResizeHandle';
 import Spinner from '../Spinner';
 import { TablePagination } from './TablePagination';
-import { TableSortLabel, TextField } from '@material-ui/core';
+import { TableSortLabel } from '@material-ui/core';
 import cx from 'classnames';
-import { InputAdornment } from '@material-ui/core';
-import FilterListIcon from '@material-ui/icons/FilterList';
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
     fetchData?: (args: any) => void;
@@ -91,27 +90,7 @@ const cellProps = <T extends Record<string, unknown>>(props: T, { cell }: Meta<T
     getStyles(props, cell.column && cell.column.disableResizing, cell.column && cell.column.align);
 
 
-const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: unknown[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
-    const count = preFilteredRows.length;
 
-    return (
-        <ColumnFilter>
-            <TextField
-                style={{ width: 'calc(100% - 14px)' }}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                    setFilter(e.target.value || undefined);
-                }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <FilterListIcon />
-                        </InputAdornment>
-                    )
-                }}
-                type="search" />
-        </ColumnFilter>
-    );
-};
 
 const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Record<string, unknown>>>, ref?: React.Ref<void>) => {
     useImperativeHandle(ref, () => ({
@@ -124,8 +103,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     const defaultColumn = React.useMemo(
         () => ({
             Filter: DefaultColumnFilter,
-        }),
-        []
+        }), []
     );
 
     const hasFilters = (): boolean => {
@@ -147,7 +125,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {} }
         }, ...hooks);
 
-        
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -166,9 +144,9 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
     useEffect(() => {
         if (props.fetchData) {
-            props.fetchData({ pageIndex, pageSize, orderBy: 'due', orderDirection: 'asc' });
+            props.fetchData({ ix: pageIndex, sz: pageSize, orderBy: 'due', orderDirection: 'asc' });
         }
-        props.setPageSize(pageSize);
+        
     }, [pageIndex, pageSize]);
 
     useEffect(() => {

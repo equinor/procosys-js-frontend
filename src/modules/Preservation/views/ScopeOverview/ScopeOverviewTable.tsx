@@ -7,6 +7,7 @@ import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeO
 import EdsIcon from '@procosys/components/EdsIcon';
 import ProcosysTable from '@procosys/components/Table/ProcosysTable';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
+import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
@@ -280,7 +281,9 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         {
             Header: 'Status',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            Cell: getStatus
+            Cell: getStatus,
+            Filter: SelectColumnFilter,
+            filter: 'equals'
         },
         {
             Header: 'Req type',
@@ -315,8 +318,16 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     const tableRef = useRef();
     const [sortBy, setSortBy] = useState({ id: null, desc: false });
 
-    const getData = ({ pageIndex, pageSize }: any, sortField = 'Due', sortDir = 'asc'): void => {
-        if (!pageSize && !pageIndex) return;
+    const getData = ({ ix, sz }: any, sortField = 'Due', sortDir = 'asc'): void => {
+        if (!sz && !ix) return;
+        if (ix !== pageIndex)
+            setPageIndex(ix);
+
+        if(sz !== pageSize) {
+            setPageIndex(0);
+            setPageSize(sz);
+        }
+        
         const fetchId = ++fetchIdRef.current;
         setLoading(true);
 
@@ -328,7 +339,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         }
 
         if (fetchId === fetchIdRef.current) {
-            props.getData(pageIndex, pageSize, sortField, sortDir).then((res) => {
+            props.getData(ix, sz, sortField, sortDir).then((res) => {
                 setData(res.tags);
                 setMaxRows(res.maxAvailable);
                 setPageCount(Math.ceil(res.maxAvailable / pageSize));

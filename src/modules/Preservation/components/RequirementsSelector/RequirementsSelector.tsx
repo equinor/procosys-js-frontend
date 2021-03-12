@@ -234,7 +234,6 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
     };
 
     const deleteVoidedRequirement = (index: number): void => {
-        // Do I need to check whether voided first? (Would be just in case, as delete button is only visible if voided)
         setRequirements(oldReq => {
             const copy = [...oldReq];
             copy[index].isDeleted = true;
@@ -256,7 +255,6 @@ const RequirementsSelector = (props: RequirementsSelectorProps): JSX.Element => 
         <>
             {requirements.map((requirement, index) => {
                 if(requirement.isDeleted){
-                    console.log('A deleted requirement');
                     return;
                 }
                 const title = getTitle(requirement);

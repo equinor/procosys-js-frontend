@@ -46,6 +46,10 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
             return <PreservationRequirementType
                 requirementTypeId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
+                addNewRequirementDefinition={(): void => {
+                    props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT_DEFINITION);
+                    props.setSelectedLibraryItem('-1');
+                }}
                 cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
             />;
         case LibraryType.PRES_REQUIREMENT_DEFINITION:
@@ -53,6 +57,11 @@ const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
                 requirementDefinitionId={Number(props.libraryItem)}
                 setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
                 cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
+                addNewRequirementType={(): void => {
+                    props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT_TYPE);
+                    props.setSelectedLibraryItem('-1');
+                }}
+
             />;
         default:
             return <Breadcrumbs>Library /</Breadcrumbs>;

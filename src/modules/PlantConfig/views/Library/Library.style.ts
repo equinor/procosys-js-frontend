@@ -1,4 +1,4 @@
-import styled, {css} from 'styled-components';
+import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -32,4 +32,21 @@ export const Breadcrumbs = styled.section`
     align-items: center;
     width: 100%;
     padding: calc(var(--grid-unit) * 2);
+`;
+
+export const ButtonContainer = styled.div`
+    display: flex;
+    justify-content:space-between;
+    width:100%;
+    flex-wrap: wrap;     
+`;
+
+export const ButtonContainerRight = styled.div`
+    display: flex;
+    justify-content: flex-end;
+`;
+
+export const ButtonContainerLeft = styled.div`
+    display: flex;
+    justify-content: flex-start;
 `;

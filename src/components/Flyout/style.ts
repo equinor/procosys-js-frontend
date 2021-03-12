@@ -14,6 +14,7 @@ export const Overlay = styled.div`
 
 export const FlyoutContainer = styled.div<{ position: string, minWidth: string, maxWidth: string }>`
     background: ${tokens.colors.ui.background__default.rgba};
+    box-shadow: ${tokens.elevation.above_scrim}; 
     position: fixed;
        
     ${({ position }): FlattenSimpleInterpolation => {

@@ -2,6 +2,7 @@ import { Area, Discipline, Journey, PurchaseOrder, Requirement, RequirementType,
 import { Container, Divider, LargerComponent, SelectedTags } from './AddScope.style';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+
 import { Canceler } from 'axios';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
 import { SelectItem } from '../../../../components/Select';
@@ -440,6 +441,7 @@ const AddScope = (): JSX.Element => {
                 return (<Container>
                     <SelectMigrateTags
                         nextStep={goToNextStep}
+                        setSelectedTableRows={setSelectedTableRows}
                         setSelectedTags={setSelectedTags}
                         searchTags={searchTags}
                         selectedTags={selectedTags}

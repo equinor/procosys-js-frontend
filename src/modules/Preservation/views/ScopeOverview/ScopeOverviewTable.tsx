@@ -164,7 +164,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
 
     const getStatus = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.row.original as PreservedTag;
-        
+
         return (
             <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                 {tag.status}
@@ -174,7 +174,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
 
     const columns = React.useMemo(() => [
         {
-            Header: 'Tag nr',
+            Header: 'Tag no',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'tagNo',
             Cell: getTagNoColumn,
@@ -281,7 +281,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         },
         {
             Header: 'Status',
-            accessor: (d: PreservedTag): string | undefined => {return d.status; },
+            accessor: (d: PreservedTag): string | undefined => { return d.status; },
             // accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'status',
             Cell: getStatus,
@@ -326,11 +326,11 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         if (ix !== pageIndex)
             setPageIndex(ix);
 
-        if(sz !== pageSize) {
+        if (sz !== pageSize) {
             setPageIndex(0);
             setPageSize(sz);
         }
-        
+
         const fetchId = ++fetchIdRef.current;
         setLoading(true);
 
@@ -385,25 +385,26 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     return (
         <Container >
             <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
-            <div style={{height: '100%'}}>
-            <ProcosysTable
-                setPageSize={setPageSize}
-                onSort={setSorting}
-                onSelectedChange={props.setSelectedTags}
-                ref={tableRef}
-                pageIndex={pageIndex}
-                pageSize={pageSize}
-                columns={columns}
-                clientPagination={false}
-                clientSorting={false}
-                maxRowCount={maxRows}
-                data={data}
-                fetchData={getData}
-                loading={loading}
-                pageCount={pageCount} />
+            <div style={{ height: '100%' }}>
+                <ProcosysTable
+                    setPageSize={setPageSize}
+                    onSort={setSorting}
+                    onSelectedChange={props.setSelectedTags}
+                    ref={tableRef}
+                    pageIndex={pageIndex}
+                    pageSize={pageSize}
+                    columns={columns}
+                    clientPagination={false}
+                    clientSorting={false}
+                    maxRowCount={maxRows}
+                    data={data}
+                    fetchData={getData}
+                    loading={loading}
+                    rowSelect={true}
+                    pageCount={pageCount} />
             </div>
         </Container>
-        
+
     );
 
 });

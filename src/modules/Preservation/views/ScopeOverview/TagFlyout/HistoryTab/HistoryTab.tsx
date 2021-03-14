@@ -1,10 +1,12 @@
 import { Container, DetailsContainer, DueContainer } from './HistoryTab.style';
 import React, { useEffect, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 import { Canceler } from 'axios';
 import EdsIcon from '@procosys/components/EdsIcon';
 import HistoryDetails from './HistoryDetails';
 import PreservedRequirement from './PreservedRequirement';
+import ProcosysTable from '@procosys/components/Table/ProcosysTable';
 import Spinner from '@procosys/components/Spinner';
 import Table from '../../../../../../components/Table';
 import { Tooltip } from '@material-ui/core';
@@ -86,7 +88,8 @@ const HistoryTab = ({
         setShowRequirementDialog(false);
     };
 
-    const getDateColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getDateColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         return (
             <DueContainer isOverdue={historyItem.dueWeeks < 0}>
                 {getFormattedDate(historyItem.createdAtUtc)}
@@ -94,7 +97,8 @@ const HistoryTab = ({
         );
     };
 
-    const getUserColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getUserColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         return (
             <div>
                 {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
@@ -102,7 +106,8 @@ const HistoryTab = ({
         );
     };
 
-    const getDueColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getDueColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         return (
             <DueContainer isOverdue={historyItem.dueWeeks < 0}>
                 {historyItem.dueWeeks}
@@ -110,7 +115,8 @@ const HistoryTab = ({
         );
     };
 
-    const getDetailsColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getDetailsColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         if (historyItem.eventType === 'RequirementPreserved') {
             return (
                 <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
@@ -130,10 +136,52 @@ const HistoryTab = ({
         );
     }
 
+
+    const columns = [
+        {
+            Header: 'Date',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDateColumn
+        },
+        {
+            Header: 'User',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getUserColumn
+        },
+        {
+            Header: 'Due',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDueColumn
+        },
+        {
+            Header: 'Description',
+            field: 'description',
+            accessor: 'description'
+        },
+        {
+            Header: ' ',
+            field: 'eventType',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDetailsColumn
+        },
+    ];
+
     return (
         <>
             <Container>
-                <Table
+                <div style={{ height: '500px' }} id="kake">
+                    <ProcosysTable
+                        onSelectedChange={(rowData: HistoryLogItem[], ids: any): void => { }}
+                        pageIndex={0}
+                        pageSize={10}
+                        columns={columns}
+                        maxRowCount={historyLog.length}
+                        data={historyLog}
+                        clientPagination={true}
+                        clientSorting={true}
+                        loading={false}
+                        pageCount={Math.ceil(historyLog.length / 10)} />
+                    {/* <Table
                     columns={[
                         { title: 'Date', render: getDateColumn, width: '5%', cellStyle: tableCellStyling },
                         { title: 'User', render: getUserColumn, width: '20%', cellStyle: tableCellStyling },
@@ -168,7 +216,8 @@ const HistoryTab = ({
                         )
                     }}
                     style={{ boxShadow: 'none' }}
-                />
+                /> */}
+                </div>
             </Container>
             {
                 showRequirementDialog && (

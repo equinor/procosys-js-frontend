@@ -26,6 +26,7 @@ export interface TagRow {
 }
 
 export interface TagMigrationRow {
+    noCheckbox?: boolean;
     id: number;
     tagNo: string;
     description: string;

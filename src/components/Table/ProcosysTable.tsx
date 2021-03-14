@@ -38,10 +38,11 @@ export interface TableProperties<T extends Record<string, unknown>> extends Tabl
     pageSize: number;
     pageIndex: number;
     onSelectedChange: (args: any[], ids: Record<string, boolean>) => void;
-    onSort: (args: string) => void;
+    onSort?: (args: string) => void;
     clientPagination?: boolean;
     clientSorting?: boolean;
     selectedRows?: Record<string, boolean>;
+    rowSelect?: boolean;
 }
 
 const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
@@ -62,15 +63,7 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
     ]);
 };
 
-const hooks = [
-    useFlexLayout,
-    useFilters,
-    useSortBy,
-    usePagination,
-    useResizeColumns,
-    useRowSelect,
-    selectionHook,
-];
+
 
 const getStyles = (props: any, disableResizing = false, align = 'left'): any => [
     props,
@@ -116,6 +109,23 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         return filterFound;
     };
 
+    const hooks = [];
+
+    hooks.push(
+        useFlexLayout,
+        useFilters,
+        useSortBy,
+        usePagination,
+        useResizeColumns,
+        useRowSelect);
+
+    if (props.rowSelect) {
+        hooks.push(
+            selectionHook
+        );
+    }
+
+
     const tableInstance = useTable<Record<string, unknown>>(
         {
             ...props,
@@ -139,7 +149,8 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     } = tableInstance;
 
     useEffect(() => {
-        tableInstance.onSort(sortBy);
+        if (tableInstance.onSort)
+            tableInstance.onSort(sortBy);
     }, [tableInstance.onSort, sortBy]);
 
     useEffect(() => {
@@ -288,7 +299,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                             <div {...getTableBodyProps()}>
                                 <List
                                     height={height}
-                                    itemCount={tableInstance.data.length}
+                                    itemCount={pageSize}
                                     itemSize={40}
                                     width={width}
                                     ref={listRef}
@@ -296,9 +307,9 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                 >
                                     {RenderRow}
                                 </List>
-                                <div style={{ width: width }}>
-                                    <TablePagination<Record<string, unknown>> instance={tableInstance} />
-                                </div>
+                            </div>
+                            <div style={{ width: width }}>
+                                <TablePagination<Record<string, unknown>> instance={tableInstance} />
                             </div>
                         </Table>
                     </div>

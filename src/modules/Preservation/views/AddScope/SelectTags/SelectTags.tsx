@@ -186,8 +186,6 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 !props.isLoading &&
                 <div style={{ height: '100%' }}>
                     <ProcosysTable
-                        setPageSize={(): void => { }}
-                        onSort={(): void => { }}
                         onSelectedChange={(rowData: TagRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
                         pageIndex={0}
                         pageSize={10}
@@ -197,6 +195,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         clientPagination={true}
                         clientSorting={true}
                         loading={false}
+                        rowSelect={true}
                         selectedRows={props.selectedTableRows}
                         pageCount={Math.ceil(props.scopeTableData.length / 10)} />
                 </div>

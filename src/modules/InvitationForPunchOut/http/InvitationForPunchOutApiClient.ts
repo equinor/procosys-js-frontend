@@ -1038,4 +1038,47 @@ class InvitationForPunchOutApiClient extends ApiClient {
         }
     }
 
+    
+    /**
+     * Export invitations to excel
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async exportInvitationsToExcel(
+        projectName: string,
+        sortProperty: string | null,
+        sortDirection: string | null,
+        iPOFilter: IPOFilter,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<BlobPart> {
+        const endpoint = '/Invitations/ExportInvitationsToExcel';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                property: sortProperty,
+                direction: sortDirection,
+                ...iPOFilter,
+            },
+            responseType: 'blob'
+        };
+
+        settings.paramsSerializer = (p): string => {
+            return Qs.stringify(p);
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<BlobPart>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
 } export default InvitationForPunchOutApiClient;

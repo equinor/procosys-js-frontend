@@ -57,6 +57,9 @@ const SearchIPO = (): JSX.Element => {
     const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
     const [hasProjectChanged, setHasProjectChanged] = useState<boolean>(true);
 
+    const [orderByField, setOrderByField] = useState<string | null>(null);
+    const [orderDirection, setOrderDirection] = useState<string | null>(null);
+
     const updateSavedFilters = async (): Promise<void> => {
         setIsLoading(true);
         if(project === undefined){
@@ -270,6 +273,33 @@ const SearchIPO = (): JSX.Element => {
         return { maxAvailable: 0, invitations: [] };
     };
 
+    const exportInvitationsToExcel = async (): Promise<void> => {
+        if(project){
+            try {
+                showSnackbarNotification('Exporting filtered IPOs to Excel...');
+                await apiClient.exportInvitationsToExcel(project.name, orderByField, orderDirection, filter).then(
+                    (response) => {
+                        const outputFilename = `Invitations for Punch Out-${project.name}.xlsx`;
+                        const tempUrl = window.URL.createObjectURL(new Blob([response]));
+                        const tempLink = document.createElement('a');
+                        tempLink.style.display = 'none';
+                        tempLink.href = tempUrl;
+                        tempLink.setAttribute('download', outputFilename);
+                        document.body.appendChild(tempLink);
+                        tempLink.click();
+                        tempLink.remove();
+                    }
+                );
+                showSnackbarNotification('IPOs are exported to Excel');
+            } catch (error) {
+                console.error('Export IPOs to excel failed: ', error.message, error.data);
+                if (!error.isCancel) {
+                    showSnackbarNotification(error.message);
+                }
+            }
+        }
+    };
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -330,6 +360,8 @@ const SearchIPO = (): JSX.Element => {
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
                     update={update}
                     filterUpdate={filterUpdate}
+                    setOrderByField={setOrderByField}
+                    setOrderDirection={setOrderDirection}
                 />
 
 
@@ -349,6 +381,7 @@ const SearchIPO = (): JSX.Element => {
                             selectedSavedFilterTitle={selectedSavedFilterTitle}
                             roles={availableRoles}
                             numberOfIPOs={numberOfIPOs}
+                            exportInvitationsToExcel={exportInvitationsToExcel}
                         />
                     </FilterContainer>
                 )

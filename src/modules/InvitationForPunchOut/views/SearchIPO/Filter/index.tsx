@@ -16,6 +16,8 @@ import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 import { isValidDate } from '@procosys/core/services/DateService';
 
+const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
+
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
     onCloseRequest: () => void;
@@ -27,6 +29,7 @@ interface InvitationsFilterProps {
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     roles: SelectItem[];
     numberOfIPOs: number | undefined;
+    exportInvitationsToExcel: () => void;
 }
 
 interface FilterInput {
@@ -136,6 +139,7 @@ const InvitationsFilter = ({
     setSelectedSavedFilterTitle,
     numberOfIPOs,
     roles,
+    exportInvitationsToExcel,
 }: InvitationsFilterProps): JSX.Element => {
 
 
@@ -252,6 +256,9 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportInvitationsToExcel}>
+                        {ExcelIcon}
+                    </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
                         setAnchorElement(event.currentTarget);

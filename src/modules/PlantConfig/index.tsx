@@ -12,9 +12,7 @@ const Preservation = (): JSX.Element => {
     const { url } = useRouteMatch();
     return (
         <PlantConfigContextProvider>
-            <Helmet titleTemplate={'ProCoSys - Library %s'}>
-                <title>&nbsp;</title>
-            </Helmet>
+            <Helmet titleTemplate={'ProCoSys - Library %s'} />
             <Container>
                 <BrowserRouter basename={url}>
                     <Switch>

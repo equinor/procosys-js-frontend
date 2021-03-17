@@ -7,7 +7,6 @@ import { Loading } from './components';
 import Login from './modules/Login';
 import React from 'react';
 import Root from './app/Root';
-// const favicon = require('./assets/icons/ProCoSys_favicon16x16.png');
 import favicon from './assets/icons/ProCoSys_favicon16x16.png';
 import { render } from 'react-dom';
 

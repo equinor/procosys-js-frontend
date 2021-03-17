@@ -49,8 +49,29 @@ import {
 } from 'react-table';
 
 declare module 'react-table' {
-  // take this file as-is, or comment out the sections that don't apply to your plugin configuration
+  //eslint-disable-next-line
+  export interface Filter<RowData extends object> {
+    column: Column<RowData>;
+    operator: '=';
+    value: any;
+  }
 
+  export interface ErrorState {
+    message: string;
+    errorCause: 'query' | 'add' | 'update' | 'delete';
+  }
+
+  //eslint-disable-next-line
+  export interface Query<RowData extends object> {
+    filters: Filter<RowData>[];
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    search: string;
+    orderBy: {title: string};
+    orderDirection: 'asc' | 'desc';
+    error?: ErrorState;
+  }
   //eslint-disable-next-line
   export interface TableOptions<D extends object>
     extends UseExpandedOptions<D>,

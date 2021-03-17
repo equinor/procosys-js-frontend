@@ -4,28 +4,29 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
-import { Column } from 'material-table';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 interface TransferDialogProps {
     transferableTags: PreservedTag[];
     nonTransferableTags: PreservedTag[];
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'From mode', field: 'mode' },
-    { title: 'From resp', field: 'responsibleCode' },
-    { title: 'To mode', field: 'nextMode' },
-    { title: 'To resp', field: 'nextResponsibleCode' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo' },
+    { Header: 'Description', accessor: 'description' },
+    { Header: 'From mode', accessor: 'mode' },
+    { Header: 'From resp', accessor: 'responsibleCode' },
+    { Header: 'To mode', accessor: 'nextMode' },
+    { Header: 'To resp', accessor: 'nextResponsibleCode' },
+    { Header: 'Status', accessor: 'status' },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 
 const TransferDialog = ({
@@ -33,7 +34,7 @@ const TransferDialog = ({
     nonTransferableTags
 }: TransferDialogProps): JSX.Element => {
 
-    return (<div>
+    return (<div style={{ height: '65vh' }}>
         {nonTransferableTags.length > 0 && (
             <div>
                 <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>

@@ -3,33 +3,35 @@ import { PreservedTag } from './types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
-import { Column } from 'material-table';
 import DialogTable from './DialogTable';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 interface PreservedDialogProps {
     preservableTags: PreservedTag[];
     nonPreservableTags: PreservedTag[];
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo', cellStyle: { whiteSpace: 'nowrap' } },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status', cellStyle: { whiteSpace: 'nowrap' } },
-    { title: 'Req type', render: getRequirementIcons, cellStyle: { whiteSpace: 'nowrap' } },
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo', id: 'tagNo' },
+    { Header: 'Description', accessor: 'description', id: 'description' },
+    { Header: 'Status', accessor: 'status', id: 'status' },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
+
 
 const PreservedDialog = ({
     preservableTags,
     nonPreservableTags
 }: PreservedDialogProps): JSX.Element => {
 
-    return (<div>
+    return (<div style={{ height: '65vh' }}>
         {nonPreservableTags.length > 0 && (
             <div>
                 <Typography variant="meta">{nonPreservableTags.length} tag(s) cannot be preserved this week.</Typography>

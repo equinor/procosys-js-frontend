@@ -38,9 +38,6 @@ const Preservation = (): JSX.Element => {
                             exact
                             component={(): ReactElement => (
                                 <>
-                                    <Helmet>
-                                        <title>{'- ScopeOverview'}</title>
-                                    </Helmet>
                                     <ErrorBoundary><ScopeOverview /></ErrorBoundary>
                                 </>)}
                         />

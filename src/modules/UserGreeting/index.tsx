@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
 import { Container } from './style';
-import { Helmet } from 'react-helmet';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
@@ -55,9 +54,6 @@ const UserGreeting = (): JSX.Element => {
 
     return (
         <Container>
-            <Helmet>
-                <title>{'- Welcome'}</title>
-            </Helmet>
             <Typography variant="h1">{user.name}</Typography>
             <Typography variant="h2">{(profileData && profileData.jobTitle) || 'Loading user data'}</Typography>
             {(imageUrl && <img src={imageUrl} />) || 'Loading image'}

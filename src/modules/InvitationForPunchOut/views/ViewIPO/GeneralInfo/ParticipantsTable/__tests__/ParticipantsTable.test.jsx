@@ -323,6 +323,7 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryByText('Update')).toBeInTheDocument();
+        expect(queryByText('Uncomplete')).toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
@@ -338,6 +339,7 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).toBeInTheDocument();
         expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
@@ -354,6 +356,7 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
@@ -372,6 +375,7 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
@@ -391,6 +395,7 @@ describe('<ParticipantsTable />', () => {
             complete={completePunchOut} />);
 
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText(`${participants[ParticipantIndex.COMPLETER].signedBy.userName}`)).toBeInTheDocument();
@@ -408,6 +413,7 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(getByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
@@ -429,6 +435,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
 
@@ -442,6 +449,7 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
         expect(queryByText('Update')).not.toBeInTheDocument();
+        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
 

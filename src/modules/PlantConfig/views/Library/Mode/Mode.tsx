@@ -1,4 +1,4 @@
-import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, IconContainer, InputContainer } from './Mode.style';
+import { Breadcrumbs, ButtonSpacer, Container, IconContainer, InputContainer } from './Mode.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useState } from 'react';
 
@@ -8,18 +8,19 @@ import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
-const deleteIcon = <EdsIcon name='delete_to_trash'/>;
-const addIcon = <EdsIcon name='add'/>;
-const voidIcon = <EdsIcon name='delete_forever'/>;
-const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
+const deleteIcon = <EdsIcon name='delete_to_trash' />;
+const addIcon = <EdsIcon name='add' />;
+const voidIcon = <EdsIcon name='delete_forever' />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 const baseBreadcrumb = 'Library / Modes';
 
 interface ModeItem {
     id: number;
     title: string;
     forSupplier: boolean;
-    inUse: boolean;
+    isInUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -33,7 +34,7 @@ type ModeProps = {
 const Mode = (props: ModeProps): JSX.Element => {
 
     const createNewMode = (): ModeItem => {
-        return { id: -1, title: '', isVoided: false, forSupplier: false, inUse: false, rowVersion: '' };
+        return { id: -1, title: '', isVoided: false, forSupplier: false, isInUse: false, rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -206,6 +207,10 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     const initNewMode = (): void => {
+        if (isDirty && !confirm('Do you want to discard changes without saving?')) {
+            return;
+        }
+
         setNewMode(createNewMode());
         setIsEditMode(true);
     };
@@ -249,33 +254,43 @@ const Mode = (props: ModeProps): JSX.Element => {
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Mode is voided</Typography>
             }
             <ButtonContainer>
-                {newMode.isVoided &&
-                    <Button variant="outlined" onClick={deleteMode} disabled={newMode.inUse} title={newMode.inUse ? 'Mode that is in use cannot be deleted' : ''}>
-                        {deleteIcon} Delete
+                <ButtonContainerLeft>
+                    <Button variant='ghost' onClick={initNewMode}>
+                        {addIcon} New mode
                     </Button>
-                }
-                <ButtonSpacer />
-                {newMode.isVoided &&
-                    <Button variant="outlined" onClick={unvoidMode}>
-                        {unvoidIcon} Unvoid
+                </ButtonContainerLeft>
+                <ButtonContainerRight>
+                    {newMode.isVoided &&
+                        <>
+                            <ButtonSpacer />
+                            <Button variant="outlined" onClick={deleteMode} disabled={newMode.isInUse} title={newMode.isInUse ? 'Mode that is in use cannot be deleted' : ''}>
+                                {deleteIcon} Delete
+                            </Button>
+                        </>
+                    }
+                    <ButtonSpacer />
+                    {newMode.isVoided &&
+                        <Button variant="outlined" onClick={unvoidMode}>
+                            {unvoidIcon} Unvoid
+                        </Button>
+                    }
+                    {!newMode.isVoided && newMode.id != -1 &&
+                        <Button variant="outlined" onClick={voidMode}>
+                            {voidIcon} Void
+                        </Button>
+                    }
+                    <ButtonSpacer />
+                    <Button variant="outlined" onClick={cancel} disabled={newMode.isVoided}>
+                        Cancel
                     </Button>
-                }
-                {!newMode.isVoided && newMode.id != -1 &&
-                    <Button variant="outlined" onClick={voidMode}>
-                        {voidIcon} Void
+                    <ButtonSpacer />
+                    <Button onClick={handleSave} disabled={newMode.isVoided || !isDirty}>
+                        Save
                     </Button>
-                }
-                <ButtonSpacer />
-                <Button variant="outlined" onClick={cancel} disabled={newMode.isVoided}>
-                    Cancel
-                </Button>
-                <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newMode.isVoided || !isDirty}>
-                    Save
-                </Button>
+                </ButtonContainerRight>
             </ButtonContainer>
 
-            <InputContainer style={{ width: '280px' }}>
+            <InputContainer style={{ marginTop: 'calc(var(--grid-unit) * 3)', width: '280px' }}>
                 <TextField
                     id={'title'}
                     label='Title for this mode'
@@ -297,10 +312,7 @@ const Mode = (props: ModeProps): JSX.Element => {
                     <Typography variant='body_long'>For supplier preservation</Typography>
                 </Checkbox>
             </InputContainer>
-
-
         </Container >
-
     );
 };
 

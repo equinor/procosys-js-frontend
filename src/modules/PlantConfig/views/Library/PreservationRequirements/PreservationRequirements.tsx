@@ -1,6 +1,5 @@
 import { Breadcrumbs, Container, IconContainer } from './PreservationRequirements.style';
 import React, { useEffect, useState } from 'react';
-
 import { Button } from '@equinor/eds-core-react';
 import EdsIcon from '../../../../../components/EdsIcon';
 import PreservationRequirementDefinition from './PreservationRequirementDefinition';
@@ -49,6 +48,9 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
                 requirementTypeId={-1}
                 setDirtyLibraryType={props.setDirtyLibraryType}
                 cancel={(): void => setNodeType(NodeTypes.REQUIREMENT)}
+                addNewRequirementDefinition={(): void => {
+                    setNodeType(NodeTypes.REQUIREMENT_DEFINITION);
+                }}
             />
         );
     }
@@ -59,6 +61,9 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
                 requirementDefinitionId={-1}
                 setDirtyLibraryType={props.setDirtyLibraryType}
                 cancel={(): void => setNodeType(NodeTypes.REQUIREMENT)}
+                addNewRequirementType={(): void => {
+                    setNodeType(NodeTypes.REQUIREMENT_TYPE);
+                }}
             />
         );
 

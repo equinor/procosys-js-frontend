@@ -22,6 +22,7 @@ interface RequirementFormInput {
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    isDeleted?: boolean;
     rowVersion?: string;
 }
 
@@ -104,6 +105,7 @@ const EditTagProperties = (): JSX.Element => {
                             requirementDefinitionTitle: itm.requirementDefinition.title,
                             editingRequirements: true,
                             isVoided: itm.isVoided,
+                            isInUse: itm.isInUse,
                             rowVersion: itm.rowVersion
                         };
                     });
@@ -320,7 +322,16 @@ const EditTagProperties = (): JSX.Element => {
                         rowVersion: req.rowVersion
                     };
                 });
-                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements);
+                const deletedRequirements = requirements.filter(req => req.isVoided && req.isDeleted)
+                    .map(
+                        req =>  {
+                            return {
+                                requirementId: req.requirementId,
+                                rowVersion: req.rowVersion
+                            };
+                        }
+                    );
+                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements, deletedRequirements);
             }
         } catch (error) {
             handleErrorFromBackend(error, 'Error updating journey, step, requirements, or description');

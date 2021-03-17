@@ -1,4 +1,4 @@
-import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, FieldsContainer, FormFieldSpacer, FormHeader, IconContainer, InputContainer, SelectText } from './PreservationRequirements.style';
+import { Breadcrumbs, ButtonSpacer, Container, FieldsContainer, FormFieldSpacer, FormHeader, IconContainer, InputContainer, SelectText } from './PreservationRequirements.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -13,13 +13,14 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { tokens } from '@equinor/eds-tokens';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
-const addIcon = <EdsIcon name='add'/>;
-const upIcon = <EdsIcon name='arrow_up'/>;
-const downIcon = <EdsIcon name='arrow_down'/>;
-const deleteIcon = <EdsIcon name='delete_to_trash'/>;
-const voidIcon = <EdsIcon name='delete_forever'/>;
-const unvoidIcon = <EdsIcon name='restore_from_trash'/>;
+const addIcon = <EdsIcon name='add' />;
+const upIcon = <EdsIcon name='arrow_up' />;
+const downIcon = <EdsIcon name='arrow_down' />;
+const deleteIcon = <EdsIcon name='delete_to_trash' />;
+const voidIcon = <EdsIcon name='delete_forever' />;
+const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 
 interface RequirementDefinitionItem {
     id: number;
@@ -73,6 +74,7 @@ type PreservationRequirementDefinitionProps = {
     requirementDefinitionId: number;
     setDirtyLibraryType: () => void;
     cancel: () => void;
+    addNewRequirementType: () => void;
 };
 
 const PreservationRequirementDefinition = (props: PreservationRequirementDefinitionProps): JSX.Element => {
@@ -93,6 +95,10 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             };
         });
     });
+
+    const createNewRequirementDefinition = (): RequirementDefinitionItem => {
+        return { id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false };
+    };
 
     const {
         preservationApiClient,
@@ -217,12 +223,8 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     }
                 }
             } else {
-                setNewRequirementDefinition({
-                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
-                });
-                setRequirementDefinition({
-                    id: -1, title: '', icon: '', requirementTypeTitle: '', isInUse: false, isVoided: false, sortKey: -1, requirementTypeId: -1, usage: '', defaultIntervalWeeks: - 1, rowVersion: '', fields: [], needsUserInput: false
-                });
+                setNewRequirementDefinition(createNewRequirementDefinition());
+                setRequirementDefinition(createNewRequirementDefinition());
             }
         })();
         return (): void => {
@@ -300,6 +302,20 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
         setRequirementDefinition(null);
         props.cancel();
+    };
+
+    const initNewRequirementType = (): void => {
+        if (isDirty() && !confirm('Do you want to discard changes without saving?')) {
+            return;
+        }
+        props.addNewRequirementType();
+    };
+
+    const initNewRequirementDefinition = (): void => {
+        if (isDirty() && !confirm('Do you want to discard changes without saving?')) {
+            return;
+        }
+        setNewRequirementDefinition(createNewRequirementDefinition());
     };
 
     const voidRequirementDefinition = async (): Promise<void> => {
@@ -448,34 +464,44 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 <Typography variant='caption' style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Requirement definition is voided</Typography>
             }
             <ButtonContainer>
-                {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
-                    <>
-                        <Button variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef()} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
-                            {deleteIcon} Delete
+                <ButtonContainerLeft>
+                    <Button variant='ghost' onClick={(): void => { initNewRequirementType(); }}>
+                        {addIcon} New requirement type
+                    </Button>
+                    <Button variant='ghost' onClick={(): void => { initNewRequirementDefinition(); }}>
+                        {addIcon} New requirement definition
+                    </Button>
+                </ButtonContainerLeft>
+                <ButtonContainerRight>
+                    {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
+                        <>
+                            <Button variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef()} title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
+                                {deleteIcon} Delete
+                            </Button>
+                            <ButtonSpacer />
+                        </>
+                    }
+                    {newRequirementDefinition.isVoided &&
+                        <Button variant='outlined' onClick={unvoidRequirementDefinition}>
+                            {unvoidIcon} Unvoid
                         </Button>
-                        <ButtonSpacer />
-                    </>
-                }
-                {newRequirementDefinition.isVoided &&
-                    <Button variant='outlined' onClick={unvoidRequirementDefinition}>
-                        {unvoidIcon} Unvoid
+                    }
+                    {!newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
+                        < Button variant='outlined' onClick={voidRequirementDefinition}>
+                            {voidIcon} Void
+                        </Button>
+                    }
+                    <ButtonSpacer />
+                    <Button variant='outlined' onClick={cancelChanges} disabled={newRequirementDefinition.isVoided}>
+                        Cancel
                     </Button>
-                }
-                {!newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 &&
-                    < Button variant='outlined' onClick={voidRequirementDefinition}>
-                        {voidIcon} Void
+                    <ButtonSpacer />
+                    <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid}>
+                        Save
                     </Button>
-                }
-                <ButtonSpacer />
-                <Button variant='outlined' onClick={cancelChanges} disabled={newRequirementDefinition.isVoided}>
-                    Cancel
-                </Button>
-                <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid}>
-                    Save
-                </Button>
+                </ButtonContainerRight>
             </ButtonContainer>
-            <InputContainer>
+            <InputContainer style={{ marginTop: 'calc(var(--grid-unit) * 3)' }}>
                 <FormFieldSpacer style={{ marginTop: '-3px', width: '100px' }}>
                     <TextField
                         id={'sortKey'}

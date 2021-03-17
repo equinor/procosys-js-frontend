@@ -106,6 +106,7 @@ const Select: React.FC<DropdownProps> = ({
                                     role="option"
                                     onClick={toggleDropdown}
                                     tabIndex={0}
+                                    data-testid={item}
                                 >
                                     {item}
                                 </DropdownItem>

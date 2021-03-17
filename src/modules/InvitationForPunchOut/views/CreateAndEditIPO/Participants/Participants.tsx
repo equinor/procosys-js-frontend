@@ -256,10 +256,8 @@ const Participants = ({
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
             if (isSignerParticipant(personsFilter.value)) {
-                console.log('first');
                 getSignerPersons(personsFilter.text);
             } else {
-                console.log('last');
                 getPersons(personsFilter.text);
             }
         };

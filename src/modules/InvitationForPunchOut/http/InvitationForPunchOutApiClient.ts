@@ -716,7 +716,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the privilege group IPO_SIGN ??? (Get persons who can sign(?)) andre var IPO_PLAN
+     * Get persons with the privilege group IPO_SIGN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */

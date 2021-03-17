@@ -16,7 +16,7 @@ const Preservation = (): JSX.Element => {
 
     return (
         <>
-            <Helmet titleTemplate={'ProCoSys - Preservation - %s'}>
+            <Helmet titleTemplate={'ProCoSys - Preservation %s'}>
             </Helmet>
             <PreservationContextProvider>
                 <ClosedProjectWarning />
@@ -28,7 +28,7 @@ const Preservation = (): JSX.Element => {
                             component={(): ReactElement => (
                                 <>
                                     <Helmet>
-                                        <title>{'AddScope'}</title>
+                                        <title>{'- AddScope'}</title>
                                     </Helmet>
                                     <ErrorBoundary><AddScope /></ErrorBoundary>
                                 </>)}
@@ -39,7 +39,7 @@ const Preservation = (): JSX.Element => {
                             component={(): ReactElement => (
                                 <>
                                     <Helmet>
-                                        <title>{'ScopeOverview'}</title>
+                                        <title>{'- ScopeOverview'}</title>
                                     </Helmet>
                                     <ErrorBoundary><ScopeOverview /></ErrorBoundary>
                                 </>)}
@@ -50,7 +50,7 @@ const Preservation = (): JSX.Element => {
                             component={(): ReactElement => (
                                 <>
                                     <Helmet>
-                                        <title>{'EditTag'}</title>
+                                        <title>{'- EditTag'}</title>
                                     </Helmet>
                                     <ErrorBoundary><EditTagProperties /></ErrorBoundary>
                                 </>)}

@@ -1,14 +1,12 @@
 import { Container, CustomLink } from './index.style';
-import { Query, QueryResult } from 'material-table';
-import React, { useEffect, useRef } from 'react';
-
+import { Query } from 'material-table';
+import React, { useEffect, useState } from 'react';
 import { IPO } from '../types';
-import { IpoStatusEnum } from '../../enums';
-import Table from '@procosys/components/Table';
 import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDate } from '@procosys/core/services/DateService';
-import { tokens } from '@equinor/eds-tokens';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import ProcosysTable, { TableSorting } from '@procosys/components/Table/ProcosysTable';
 
 interface InvitationsTableProps {
     getIPOs: (page: number, pageSize: number, orderByField: string | null, orderDirection: string | null) => Promise<any>;
@@ -23,22 +21,44 @@ interface InvitationsTableProps {
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
-    const refObject = useRef<any>();
+const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
+    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'createdAtUtc', desc: true });
+    const [pageIndex, setPageIndex] = useState(0);
+    const [maxRows, setMaxRows] = useState<number>(0);
+    const [data, setData] = useState<IPO[]>([]);
+    const [pageCount, setPageCount] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        if (refObject.current) {
-            refObject.current.onSearchChangeDebounce();
-        }
+        const req = { page: 0, pageSize: pageSize, orderBy: { title: 'createdAtUtc' }, orderDirection: 'desc' } as Query<any>;
+        getIPOsByQuery(req);
     }, [projectName, filterUpdate]);
 
+    
     useEffect(() => {
-        if (refObject.current) {
-            refObject.current.props.options.maxBodyHeight = height;
-        }     
-    }, [update, height]);
+        const req = { page: pageIndex, pageSize: pageSize, orderBy: { title: sortBy.id }, orderDirection: sortBy.desc ? 'desc' : 'asc' } as Query<any>;
+        getIPOsByQuery(req);
 
-    const getIdColumn = (data: string):JSX.Element => {
+    }, [pageSize, pageIndex]);
+
+    useEffect(() => {
+        const req = { page: pageIndex, pageSize: pageSize, orderBy: { title: sortBy.id || 'createdAtUtc' }, orderDirection: sortBy.desc ? 'desc' : 'asc' } as Query<any>;
+        getIPOsByQuery(req);
+    }, [sortBy]);
+
+
+    const getIPOsByQuery = (query: Query<any>): void => {
+        setLoading(true);
+        getIPOs(query.page, query.pageSize, query.orderBy.title as string, query.orderDirection).then(result => {
+            setData(result.invitations);
+            setMaxRows(result.maxAvailable);
+            setPageCount(Math.ceil(result.maxAvailable / pageSize));
+            setLoading(false);
+        });
+    };
+
+    const getIdColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const data = (row.value as IPO).id.toString();
         return (
             <CustomLink to={`/${data}`}>
                 {data}
@@ -47,7 +67,17 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         );
     };
 
-    const getPkgColumn = (pkgs: string[] | undefined): JSX.Element => {
+    const getTitleColum = (row: TableOptions<IPO>): JSX.Element => {
+        const data = (row.value as IPO).title;
+        return (
+            <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <Typography className='controlOverflow'>{data}</Typography>
+            </Tooltip>
+        );
+    };
+
+    const getPkgColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const pkgs = (row.value as IPO).commPkgNos;
         const pkgsString = pkgs?.join(', ');
 
         return (
@@ -57,7 +87,19 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         );
     };
 
-    const getTooltipColumn = (data: string): JSX.Element => {
+    const getMCPkgColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const pkgs = (row.value as IPO).mcPkgNos;
+        const pkgsString = pkgs?.join(', ');
+
+        return (
+            <Tooltip title={<div>{pkgsString}</div>} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <Typography className='controlOverflow'>{pkgsString}</Typography>
+            </Tooltip>
+        );
+    };
+
+    const getContractorRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const data = (row.value as IPO).contractorRep;
         return (
             <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <Typography className='controlOverflow'>{data}</Typography>
@@ -65,96 +107,124 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
         );
     };
 
-    const getColumn = (data: string): JSX.Element => {
-        return <Typography>{data}</Typography>;
+    const getConstructionRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const data = (row.value as IPO).constructionCompanyRep;
+        return (
+            <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <Typography className='controlOverflow'>{data}</Typography>
+            </Tooltip>
+        );
     };
 
+    const tableColumns = [
+        {
+            Header: 'ID',
+            id: 'ipoNo',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getIdColumn
+        },
+        {
+            Header: 'Title',
+            id: 'title',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getTitleColum,
+            width: 220
+        },
+        {
+            Header: 'Status',
+            id: 'status',
+            accessor: (d: IPO): string | undefined => { return d.status; },
+            Cell: (rowData: TableOptions<IPO>): JSX.Element => { return <Typography>{rowData.row.values.status}</Typography>; },
+        },
+        {
+            Header: 'Type',
+            id: 'type',
+            accessor: (d: IPO): string | undefined => { return d.type; },
+            Cell: (rowData: TableOptions<IPO>): JSX.Element => { return <Typography>{rowData.row.values.type}</Typography>; },
+        },
+        {
+            Header: 'Comm pkg',
+            defaultCanSort: false,
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getPkgColumn,
+            width: 220
+        },
+        {
+            Header: 'MC pkg',
+            defaultCanSort: false,
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getMCPkgColumn,
+            width: 220
+        },
+        {
+            Header: 'Sent',
+            id: 'createdAtUtc',
+            accessor: (d: IPO): Date => { return d.createdAtUtc; },
+            Cell: (rowData: TableOptions<IPO>): JSX.Element => { return <Typography>{getFormattedDate(rowData.row.values.createdAtUtc)}</Typography>; },
+        },
+        {
+            Header: 'Punch-out',
+            id: 'punchOutDateUtc',
+            accessor: (d: IPO): Date => { return d.startTimeUtc; },
+            Cell: (rowData: TableOptions<IPO>): JSX.Element => { return <Typography>{getFormattedDate(rowData.row.values.punchOutDateUtc)}</Typography>; },
+        },
+        {
+            Header: 'Completed',
+            id: 'completedAtUtc',
+            accessor: (d: IPO): Date | undefined => { return d.completedAtUtc; },
+            Cell: (rowData: TableOptions<IPO>): JSX.Element => { return <Typography>{rowData.row.values.completedAtUtc ? getFormattedDate(rowData.row.values.completedAtUtc) : ''}</Typography>; },
+        },
+        {
+            Header: 'Accepted',
+            id: 'acceptedAtUtc',
+            accessor: (d: IPO): Date | undefined => { return d.acceptedAtUtc; },
+            Cell: (rowData: TableOptions<IPO>): JSX.Element => { return <Typography>{rowData.row.values.acceptedAtUtc ? getFormattedDate(rowData.row.values.acceptedAtUtc) : ''}</Typography>; },
+        },
+        {
+            Header: 'Contractor rep',
+            id: 'contractorRep',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getContractorRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Construction rep',
+            id: 'constructionCompanyRep',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getConstructionRepColumn,
+            width: 220
+        },
+    ];
 
-    const getIPOsByQuery = (query: Query<any>): Promise<QueryResult<any>> => {
-        const sortFieldMap: { [key: string]: string } = {
-            'ID': 'ipoNo',
-            'Title': 'title',
-            'Status': 'status',
-            'Type': 'type',
-            'Sent': 'createdAtUtc',
-            'Punch-out': 'punchOutDateUtc',
-            'Completed': 'completedAtUtc',
-            'Accepted': 'acceptedAtUtc',
-            'Contractor rep': 'contractorRep',
-            'Construction rep': 'constructionCompanyRep',
-        };
-
-        if (shouldSelectFirstPage) {
-            // set query to first page = 0
-            query.page = 0;
-            setFirstPageSelected();
+    const setSorting = (input: TableSorting): void => {
+        if (input) {
+            if ((sortBy.id !== input.id || sortBy.desc !== input.desc)) {
+                setSortBy(input);
+            }
         }
-
-        const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
-        const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'asc' : null;
-
-        return new Promise((resolve) => {
-            return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {
-                if (refObject.current) {
-                    refObject.current.props.options.maxBodyHeight = height;
-                }
-                resolve({
-                    data: result.invitations,
-                    page: query.page,
-                    totalCount: result.maxAvailable
-                });
-
-            });
-        });
     };
 
     return (
         <Container>
-            <Table
-                tableRef={refObject} //reference will be used by parent, to trigger rendering
-                columns={[
-                    { title: 'ID', render: (rowData: IPO): JSX.Element => getIdColumn(rowData.id.toString()) },
-                    { title: 'Title', render: (rowData: IPO): JSX.Element => getTooltipColumn(rowData.title), cellStyle: { minWidth: '220px', maxWidth: '220px'}},
-                    { title: 'Status', render: (rowData: IPO): JSX.Element => getColumn(rowData.status) },
-                    { title: 'Type', render: (rowData: IPO): JSX.Element => getColumn(rowData.type) },
-                    { title: 'Comm pkg', render: (rowData: IPO): JSX.Element => getPkgColumn(rowData.commPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false }, 
-                    { title: 'MC pkg', render: (rowData: IPO): JSX.Element => getPkgColumn(rowData.mcPkgNos), cellStyle: { minWidth: '220px', maxWidth: '220px' }, sorting: false },
-                    { title: 'Sent', render: (rowData: IPO): JSX.Element => getColumn(getFormattedDate(rowData.createdAtUtc)), defaultSort: 'desc' },
-                    { title: 'Punch-out', render: (rowData: IPO): JSX.Element => getColumn(getFormattedDate(rowData.startTimeUtc)) },
-                    { title: 'Completed', render: (rowData: IPO): JSX.Element => getColumn(rowData.completedAtUtc ? getFormattedDate(rowData.completedAtUtc) : '') },
-                    { title: 'Accepted', render: (rowData: IPO): JSX.Element => getColumn(rowData.acceptedAtUtc ? getFormattedDate(rowData.acceptedAtUtc): '') },
-                    { title: 'Contractor rep', render: (rowData: IPO): JSX.Element => getTooltipColumn(rowData.contractorRep), cellStyle: { minWidth: '220px', maxWidth: '220px'} },
-                    { title: 'Construction rep', render: (rowData: IPO): JSX.Element => getTooltipColumn(rowData.constructionCompanyRep), cellStyle: { minWidth: '220px', maxWidth: '220px'} },
-                ]}
-                data={getIPOsByQuery}
-                options={{
-                    showTitle: false,
-                    toolbar: false,
-                    draggable: false,
-                    selection: false,
-                    search: false,
-                    debounceInterval: 200,
-                    selectionProps: { disableRipple: true },
-                    padding: 'dense',
-                    pageSize: pageSize,
-                    emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 25, 50, 100],
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                        whiteSpace: 'nowrap',
-                        fontFamily: 'Equinor',
-                    },
-                    rowStyle: (rowData): any => ({
-                        opacity: rowData.status === IpoStatusEnum.CANCELED && 0.5,
-                    }),
-                    thirdSortClick: false
-                }}
-                style={{ boxShadow: 'none' }}
-                onChangeRowsPerPage={setPageSize}
-            />
+            <div style={{ height: '60vh' }}>
+                <ProcosysTable
+                    setPageSize={setPageSize}
+                    onSort={setSorting}
+                    setPageIndex={setPageIndex}
+                    orderBy={sortBy}
+                    pageIndex={pageIndex}
+                    pageSize={pageSize}
+                    maxRowCount={maxRows}
+                    columns={tableColumns}
+                    data={data}
+                    loading={loading}
+                    rowSelect={false}
+                    pageCount={pageCount} />
+            </div>
         </Container>
     );
 };
 
 export default InvitationsTable;
+
 

@@ -272,6 +272,7 @@ const AddScope = (): JSX.Element => {
     };
 
     const removeSelectedTag = (tagNo: string): void => {
+        console.log('her');
         const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
         const tableDataIndex = scopeTableData.findIndex(tag => tag.tagNo === tagNo);
         if (selectedIndex > -1) {
@@ -287,11 +288,21 @@ const AddScope = (): JSX.Element => {
             const newScopeTableData = [...scopeTableData];
             if (tableDataIndex > -1) {
                 const tagToUncheck = newScopeTableData[tableDataIndex];
-                if (tagToUncheck.tableData) {
-                    tagToUncheck.tableData.checked = false;
-                    setScopeTableData(newScopeTableData);
-                }
+                tagToUncheck.isSelected = false;
+                setScopeTableData(newScopeTableData);
+
+                const newSelectedTags = selectedTags.filter(x => x.tagNo !== tagToUncheck.tagNo);
+
+                const selectedRows: Record<string, boolean> = {};
+
+                newSelectedTags.map((row) => {
+                    const index = newScopeTableData.indexOf(newScopeTableData.find(t => t.tagNo === row.tagNo) as TagRow);
+                    selectedRows[index] = true;
+                });
+
+                setSelectedTableRows(selectedRows);
             }
+
 
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
         }

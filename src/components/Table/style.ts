@@ -19,7 +19,7 @@ export const Table = styled.div`
     border-spacing: 0;
     overflow-y: auto;
     max-height: 100%;
-    width: 100vw;
+    width: fit-content;
 `;
 
 export const TableHeadCell = styled.div`
@@ -32,7 +32,7 @@ export const TableHeadCell = styled.div`
     font-weight: 500;
     background-color: rgb(247, 247, 247);
     line-height: 1.5rem;
-    border-right: 1px solid rgba(224, 224, 224, 1);
+    // border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
     }
@@ -89,3 +89,4 @@ export const ColumnFilter = styled.div`
     display: block;
     width: 100%;
 `;
+

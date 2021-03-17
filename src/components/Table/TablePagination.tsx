@@ -3,7 +3,7 @@ import React, { PropsWithChildren, ReactElement, useCallback } from 'react';
 import { TableInstance } from 'react-table';
 import { TablePagination as _MuiTablePagination } from '@material-ui/core';
 
-const rowsPerPageOptions = [10, 50, 100, 500, 1000];
+const rowsPerPageOptions = [10, 25, 50, 100, 500, 1000];
 
 type T = typeof _MuiTablePagination
 const MuiTablePagination: T = React.memo(_MuiTablePagination) as T;

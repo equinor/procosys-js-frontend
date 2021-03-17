@@ -32,6 +32,7 @@ export const DialogContainer = styled.div<{ width: string }>`
     ${(props): any => `
         display: block;
         max-height: 90%;
+        height: 70%;
         overflow: auto;
         width: ${props.width};
         background-color: ${tokens.colors.ui.background__default.rgba};       

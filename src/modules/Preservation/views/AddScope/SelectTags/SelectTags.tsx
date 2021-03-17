@@ -1,7 +1,7 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TagsHeader, TopContainer } from './SelectTags.style';
-import { CheckBoxColumnFilter, SelectColumnFilter } from '@procosys/components/Table/filters';
-import React, { useEffect, useState } from 'react';
+import { SelectColumnFilter } from '@procosys/components/Table/filters';
+import React, { useEffect } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagRow } from '../types';
 
@@ -9,8 +9,6 @@ import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
 import ProcosysTable from '@procosys/components/Table/ProcosysTable';
-import Table from '../../../../../components/Table';
-import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 
@@ -97,11 +95,26 @@ type SelectTagsProps = {
 
 const KEYCODE_ENTER = 13;
 
+type tplotOptions = {
+    [key: number]: boolean
+}
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
 
+
+    useEffect(() => {
+        const selectedRows: Record<string, boolean> = {};
+
+        props.selectedTags.map((tag) => {
+            const index = props.scopeTableData.indexOf(props.scopeTableData.find(t => t.tagNo === tag.tagNo) as TagRow);
+            selectedRows[index] = true;
+        });
+
+        props.setSelectedTableRows(selectedRows);
+
+    }, [props.selectedTags]);
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];

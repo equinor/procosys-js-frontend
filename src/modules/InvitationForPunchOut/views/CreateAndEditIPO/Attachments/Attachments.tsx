@@ -6,12 +6,12 @@ import { getFileName, getFileTypeIconName } from '../../utils';
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import { ComponentName } from '../../enums';
 import EdsIcon from '@procosys/components/EdsIcon';
-import Table from '@procosys/components/Table';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { tokens } from '@equinor/eds-tokens';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -73,7 +73,8 @@ const Attachments = ({
         setDirtyStateFor(ComponentName.Attachments);
     };
 
-    const getAttachmentName = (attachment: Attachment): JSX.Element => {
+    const getAttachmentName = (row: TableOptions<Attachment>): JSX.Element => {
+        const attachment = row.value as Attachment;
         const link = getAttachmentDownloadLink(attachment);
 
         return (
@@ -81,7 +82,8 @@ const Attachments = ({
         );
     };
 
-    const getAttachmentIcon = (attachment: Attachment): JSX.Element => {
+    const getAttachmentIcon = (row: TableOptions<Attachment>): JSX.Element => {
+        const attachment = row.value as Attachment;
         const iconName = getFileTypeIconName(attachment.fileName);
         return (
             <EdsIcon name={iconName} size={24} />
@@ -97,6 +99,33 @@ const Attachments = ({
         addAttachments(event.dataTransfer.files);
 
     };
+
+    const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
+        return (
+            <div onClick={(): void => removeAttachment(row.row.index)} >
+                <EdsIcon name='delete_to_trash' />
+            </div>
+        );
+    };
+
+    const columns = [
+        {
+            Header: 'Type',
+            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+            Cell: getAttachmentIcon,
+            width: 30
+        },
+        {
+            Header: 'Title',
+            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+            Cell: getAttachmentName
+        },
+        {
+            Header: ' ',
+            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+            Cell: getRemoveAttachmentColumn
+        },
+    ];
 
     return (<Container>
         <FormContainer>
@@ -118,36 +147,16 @@ const Attachments = ({
                 <EdsIcon name='cloud_download' size={48} color='#DADADA' />
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
-            <Table
-                columns={[{ title: 'Type', render: getAttachmentIcon, width: '30px' }, { title: 'Title', render: getAttachmentName }]}
+
+            <ProcosysTable
+                columns={columns}
                 data={attachments.filter((attachment) => !attachment.toBeDeleted)}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    search: false,
-                    draggable: false,
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    actionsColumnIndex: -1,
-                    paging: false
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                localization={{
-                    header: {
-                        actions: ''
-                    }
-                }}
-                actions={[
-                    {
-                        icon: (): JSX.Element => <EdsIcon name='delete_to_trash' />,
-                        tooltip: 'Remove attachment',
-                        onClick: (_, rowData): void => removeAttachment(rowData.tableData.id)
-                    }
-                ]}
+                clientPagination={true}
+                clientSorting={true}
+                maxRowCount={attachments.filter((attachment) => !attachment.toBeDeleted).length || 0}
+                pageIndex={0}
+                pageSize={10}
+                rowSelect={false}
             />
         </FormContainer>
     </Container>);

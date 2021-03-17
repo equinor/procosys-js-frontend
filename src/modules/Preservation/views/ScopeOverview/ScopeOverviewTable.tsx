@@ -1,8 +1,8 @@
 import { Container, SingleIconContainer, TagLink } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
 import { PreservedTag, PreservedTags } from '@procosys/modules/Preservation/views/ScopeOverview/types';
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
-import { TableOptions, UseTableInstanceProps, UseTableRowProps } from 'react-table';
-import { getFirstUpcomingRequirement, isTagOverdue, isTagVoided } from './ScopeOverview';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import ProcosysTable from '@procosys/components/Table/ProcosysTable';
@@ -24,7 +24,7 @@ interface ScopeOverviewTableProps {
     setOrderDirection: (orderDirection: string | null) => void;
 }
 
-const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
+const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
     enum ActionStatus {
         Closed = 'HasClosed',
@@ -32,7 +32,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         OverDue = 'HasOverdue'
     }
 
-    const getRequirementColumn = React.memo(function getRequirementColumn(row: TableOptions<PreservedTag>): JSX.Element {
+    const getRequirementColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
             <div
@@ -42,7 +42,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
                 <RequirementIcons tag={tag} />
             </ div>
         );
-    });
+    }, []);
 
     const getResponsibleColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
@@ -171,8 +171,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
             </div>);
     }, []);
 
-
-    const columns = React.useMemo(() => [
+    const columns = useMemo(() => [
         {
             Header: 'Tag no',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
@@ -282,7 +281,6 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         {
             Header: 'Status',
             accessor: (d: PreservedTag): string | undefined => { return d.status; },
-            // accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             id: 'status',
             Cell: getStatus,
             Filter: SelectColumnFilter,
@@ -312,14 +310,13 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
     ], []);
 
     const [data, setData] = useState<PreservedTag[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
     const [pageCount, setPageCount] = useState<number>(0);
     const [maxRows, setMaxRows] = useState<number>(0);
     const [pageIndex, setPageIndex] = useState(props.pageIndex);
     const [pageSize, setPageSize] = useState(props.pageSize);
     const fetchIdRef = useRef(0);
     const tableRef = useRef();
-    const [sortBy, setSortBy] = useState({ id: null, desc: false });
+    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
 
     const getData = ({ ix, sz }: any, sortField = 'Due', sortDir = 'asc'): void => {
         if (!sz && !ix) return;
@@ -332,7 +329,6 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         }
 
         const fetchId = ++fetchIdRef.current;
-        setLoading(true);
 
         if (sortBy.id) {
             sortField = (sortBy as any).id;
@@ -346,7 +342,6 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
                 setData(res.tags);
                 setMaxRows(res.maxAvailable);
                 setPageCount(Math.ceil(res.maxAvailable / pageSize));
-                setLoading(false);
             });
         }
     };
@@ -372,13 +367,18 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
         });
     });
 
-    const setSorting = (input: any[]): void => {
-        if (input.length > 0 && sortBy && (sortBy.id !== input[0].id || sortBy.desc !== input[0].desc)) {
-            setSortBy(input[0]);
-            props.setOrderByField(input[0]);
-        }
-        if (input.length === 0 && sortBy.id) {
-            setSortBy({ id: null, desc: false });
+    useEffect(() => {
+        getData({ ix: pageIndex, sz: pageSize }, sortBy.id, sortBy.desc ? 'desc' : 'asc');
+    }, [pageIndex, pageSize, sortBy]);
+
+    const setSorting = (input: { id: string, desc: boolean }): void => {
+        if (input) {
+            if ((sortBy.id !== input.id || sortBy.desc !== input.desc)) {
+                setSortBy(input);
+                props.setOrderByField(input.id);
+            }
+        } else if (sortBy.id) {
+            setSortBy({ id: '', desc: false });
         }
     };
 
@@ -392,14 +392,13 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
                     onSelectedChange={props.setSelectedTags}
                     ref={tableRef}
                     pageIndex={pageIndex}
+                    setPageIndex={setPageIndex}
                     pageSize={pageSize}
                     columns={columns}
                     clientPagination={false}
                     clientSorting={false}
                     maxRowCount={maxRows}
                     data={data}
-                    fetchData={getData}
-                    loading={loading}
                     rowSelect={true}
                     pageCount={pageCount} />
             </div>
@@ -407,7 +406,7 @@ const ScopeOverviewTable = forwardRef((props: ScopeOverviewTableProps, ref) => {
 
     );
 
-});
+};
 
 export default ScopeOverviewTable;
 

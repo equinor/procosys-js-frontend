@@ -19,7 +19,6 @@ import Qs from 'qs';
 import RemoveDialog from './RemoveDialog';
 import RescheduleDialog from './RescheduleDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
-import ScopeTable from './ScopeTable';
 import Spinner from '@procosys/components/Spinner';
 import StartPreservationDialog from './StartPreservationDialog';
 import TagFlyout from './TagFlyout/TagFlyout';
@@ -757,7 +756,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         refreshScopeList();
     };
 
-    
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
@@ -930,7 +929,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }
                 {
                     savedTagListFilters &&
-                    <ScopeOverviewTable setOrderDirection={setOrderDirection} setOrderByField={setOrderByField} selectedTags={selectedTags} setSelectedTags={setSelectedTags} showTagDetails={openFlyout} getData={getTags} pageSize={pageSize} pageIndex={pageIndex} setRefreshScopeListCallback={setRefreshScopeListCallback}></ScopeOverviewTable>
+                    <ScopeOverviewTable
+                        setOrderDirection={setOrderDirection}
+                        setOrderByField={setOrderByField}
+                        selectedTags={selectedTags}
+                        setSelectedTags={setSelectedTags}
+                        showTagDetails={openFlyout}
+                        getData={getTags}
+                        pageSize={pageSize}
+                        pageIndex={pageIndex}
+                        setRefreshScopeListCallback={setRefreshScopeListCallback} />
                 }
                 {
                     displayFlyout && (
@@ -954,7 +962,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             onCloseRequest={(): void => {
                                 setDisplayFilter(false);
                             }}
-                            tagListFilter={tagListFilter} 
+                            tagListFilter={tagListFilter}
                             setTagListFilter={setTagListFilter}
                             savedTagListFilters={savedTagListFilters}
                             refreshSavedTagListFilters={updateSavedTagListFilters}

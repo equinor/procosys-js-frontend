@@ -1,15 +1,14 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { Container, Search, TopContainer } from './Table.style';
-import { Query, QueryResult } from 'material-table';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import Table from '@procosys/components/Table';
 import { Tooltip } from '@material-ui/core';
-import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import ProcosysTable, { DataQuery } from '@procosys/components/Table/ProcosysTable';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
@@ -35,11 +34,15 @@ const CommPkgTable = forwardRef(({
     const { apiClient } = useInvitationForPunchOutContext();
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
     const [pageSize, setPageSize] = useState<number>(10);
+    const [pageIndex, setPageIndex] = useState<number>(0);
     const cancelerRef = useRef<Canceler | null>();
-    const refObject = useRef<any>();
+    const [data, setData] = useState<CommPkgRow[]>([]);
+    const [maxRows, setMaxRows] = useState<number>(0);
+
 
     const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
         try {
+            if (!filter) return;
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
             const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
                 return {
@@ -65,34 +68,24 @@ const CommPkgTable = forwardRef(({
         }
     };
 
-    const getCommPkgsByQuery = async (query: Query<any>): Promise<QueryResult<any>> => {
-        return new Promise((resolve) => {
-            if (!filter.trim()) {
-                return resolve({
-                    data: [],
-                    page: 0,
-                    totalCount: 0
-
-                });
-            }
-            return getCommPkgs(query.pageSize, query.page).then(result => {
+    const getCommPkgsByQuery = (query: DataQuery): void => {
+        if (!filter.trim()) {
+            setData([]);
+            setMaxRows(0);
+        } else {
+            getCommPkgs(query.pageSize, query.pageIndex).then(result => {
                 setFilteredCommPkgs(result.commPkgs);
-                resolve({
-                    data: result.commPkgs,
-                    page: query.page,
-                    totalCount: result.maxAvailable
-                });
-
+                setData(result.commPkgs);
+                setMaxRows(result.maxAvailable);
             });
-        });
+        }
     };
 
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
-            if (refObject.current) {
-                refObject.current.onSearchChangeDebounce();
-            }
+            getCommPkgsByQuery({ pageIndex: pageIndex, pageSize: pageSize, orderField: '', orderDirection: '' });
         };
+
         const timer = setTimeout(() => {
             handleFilterChange();
         }, WAIT_INTERVAL);
@@ -164,7 +157,8 @@ const CommPkgTable = forwardRef(({
         }
     };
 
-    const getDescriptionColumn = (commPkg: CommPkgRow): JSX.Element => {
+    const getDescriptionColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {
+        const commPkg = row.value as CommPkgRow;
         return (
             <div className='tableCell'>
                 <Tooltip title={commPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
@@ -178,9 +172,10 @@ const CommPkgTable = forwardRef(({
         setCurrentCommPkg(commPkgNo);
     };
 
-    const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
+    const getToMcPkgsColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {
+        const commPkg = row.value as CommPkgRow;
         return (
-            <div className='tableCell goToMcCol'>
+            <div className='goToMcCol'>
                 <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
                     <EdsIcon name='chevron_right' />
                 </Button>
@@ -188,11 +183,23 @@ const CommPkgTable = forwardRef(({
         );
     };
 
-    const tableColumns = [
-        { title: 'Comm pkg', field: 'commPkgNo' },
-        { title: 'Description', render: getDescriptionColumn, cellStyle: { minWidth: '200px', maxWidth: '500px' } },
-        { title: 'Comm status', field: 'status' },
-        ...type == 'DP' ? [{ title: 'MC', render: getToMcPkgsColumn, sorting: false, width: '50px' }] : []
+    const columns = [
+        {
+            Header: 'Comm pkg',
+            accessor: 'commPkgNo'
+        },
+        {
+            Header: 'Description',
+            accessor: (d: UseTableRowProps<CommPkgRow>): UseTableRowProps<CommPkgRow> => d,
+            Cell: getDescriptionColumn,
+            width: 200,
+            maxWidth: 500
+        },
+        {
+            Header: 'Comm status',
+            accessor: 'status'
+        },
+        ...type == 'DP' ? [{ Header: 'MC', accessor: (d: UseTableRowProps<CommPkgRow>): UseTableRowProps<CommPkgRow> => d, Cell: getToMcPkgsColumn, defaultCanSort: false, width: 50 }] : []
     ];
 
     return (
@@ -210,40 +217,20 @@ const CommPkgTable = forwardRef(({
                     />
                 </Search>
             </TopContainer>
-            
-            <Table
-                tableRef={refObject}
-                columns={tableColumns}
-                data={getCommPkgsByQuery}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    search: false,
-                    draggable: false,
-                    debounceInterval: 200,
-                    pageSize: pageSize,
-                    emptyRowsWhenPaging: false,
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    selection: type != 'DP',
-                    selectionProps: (data: CommPkgRow): any => ({
-                        disableRipple: true,
-                    }),
-                    rowStyle: (data): React.CSSProperties => ({
-                        backgroundColor: data.tableData.checked && '#e6faec'
-                    })
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                onSelectionChange={(rowData, row): void => {
-                    rowSelectionChanged(rowData, row);
-                }}
-                onChangeRowsPerPage={setPageSize}
+
+            <ProcosysTable
+                setPageSize={setPageSize}
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                setPageIndex={setPageIndex}
+                rowSelect={false}
+                columns={columns}
+                data={data}
+                clientPagination={true}
+                clientSorting={true}
+                maxRowCount={maxRows}
             />
-            
+
         </Container>
     );
 });

@@ -61,7 +61,8 @@ export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boole
     }
 
     .goToMcCol {
-        justify-content: flex-end;
+        position: relative;
+        bottom: 12px;
     }
 `;
 

@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import Table from './../Table';
 import { Container, AttachmentLink, AddFile, StyledButton } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import ProcosysTable from '../Table/ProcosysTable';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
-const deletIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
 export interface Attachment {
     id: number;
@@ -29,7 +29,8 @@ const AttachmentList = ({
     downloadAttachment,
 }: AttachmentListProps): JSX.Element => {
 
-    const getFilenameColumn = (attachment: Attachment): JSX.Element => {
+    const getFilenameColumn = (row: TableOptions<Attachment>): JSX.Element => {
+        const attachment = row.value as Attachment;
         return (
             <AttachmentLink>
                 <div onClick={(): void => { downloadAttachment(attachment.id); }}>
@@ -63,34 +64,44 @@ const AttachmentList = ({
         }
     };
 
+    const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
+        const attachment = row.value as Attachment;
+        return (
+            deleteAttachment ? (
+                <div aria-disabled={disabled} onClick={(): void => handleDelete(attachment)} >
+                    <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />
+                </div>
+            ) : <></>
+        );
+    };
+
+    const columns = [
+        {
+            Header: ' ',
+            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+            Cell: getFilenameColumn
+        },
+        {
+            Header: '  ',
+            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+            align: 'right',
+            Cell: getRemoveAttachmentColumn
+        }
+    ];
+
     return (
         <Container>
-            <Table
-                columns={[
-                    { render: getFilenameColumn },
-                ]}
-                data={attachments}
-                options={{
-                    showTitle: false,
-                    draggable: false,
-                    selection: false,
-                    header: false,
-                    padding: 'dense',
-                    search: false,
-                    paging: false,
-                    emptyRowsWhenPaging: false,
-                    actionsColumnIndex: -1,
-                }}
-                actions={[
-                    {
-                        icon: (): JSX.Element => deleteAttachment ? deletIcon : <></>,
-                        tooltip: disabled ? '' : 'Delete attachment',
-                        onClick: (event, rowData): void => handleDelete(rowData),
-                        disabled: disabled
-                    },
-                ]}
-                components={{
-                    Toolbar: (): any => (
+            <div style={{ height: '40vh' }}>
+                <ProcosysTable
+                    columns={columns}
+                    data={attachments}
+                    noHeader={true}
+                    pageIndex={0}
+                    pageSize={25}
+                    clientPagination={true}
+                    clientSorting={true}
+                    rowSelect={false}
+                    toolbar={
                         <AddFile>
                             {addAttachment && (
                                 <form>
@@ -104,13 +115,11 @@ const AttachmentList = ({
                                 </form>
                             )}
                         </AddFile>
-                    )
-                }}
-
-                style={{ boxShadow: 'none' }}
-            />
+                    }
+                />
+            </div>
         </Container >
     );
 };
 
-export default AttachmentList; 
+export default AttachmentList;

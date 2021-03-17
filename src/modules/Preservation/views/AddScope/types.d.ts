@@ -20,6 +20,7 @@ export interface TagRow {
     mccrResponsibleCodes: string;
     tagFunctionCode: string;
     isPreserved: boolean;
+    isSelected?: boolean;
     tableData?: {
         checked: boolean;
     };

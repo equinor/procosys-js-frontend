@@ -27,9 +27,21 @@ import Spinner from '../Spinner';
 import { TablePagination } from './TablePagination';
 import { TableSortLabel } from '@material-ui/core';
 import cx from 'classnames';
+import { Typography } from '@equinor/eds-core-react';
+
+export interface DataQuery {
+    pageSize: number;
+    pageIndex: number;
+    orderField: string;
+    orderDirection: string;
+}
+
+export interface TableSorting {
+    id: string;
+    desc: boolean;
+}
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
-    fetchData?: (args: any) => void;
     columns: ColumnInstance<T>[];
     pageCount: number;
     loading: boolean;
@@ -37,12 +49,19 @@ export interface TableProperties<T extends Record<string, unknown>> extends Tabl
     maxRowCount: number;
     pageSize: number;
     pageIndex: number;
-    onSelectedChange: (args: any[], ids: Record<string, boolean>) => void;
-    onSort?: (args: string) => void;
+    onSelectedChange?: (args: T[], ids: Record<string, boolean>) => void;
+    onSort?: (sorting: TableSorting) => void;
     clientPagination?: boolean;
     clientSorting?: boolean;
     selectedRows?: Record<string, boolean>;
     rowSelect?: boolean;
+    toolbarText?: string;
+    toolbarColor?: string;
+    orderBy?: TableSorting;
+    setPageIndex?: (ix: number) => void;
+    setPageSize?: (size: number) => void;
+    noHeader?: boolean;
+    toolbar?: React.ComponentType<any>;
 }
 
 const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
@@ -83,16 +102,7 @@ const cellProps = <T extends Record<string, unknown>>(props: T, { cell }: Meta<T
     getStyles(props, cell.column && cell.column.disableResizing, cell.column && cell.column.align);
 
 
-
-
-const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Record<string, unknown>>>, ref?: React.Ref<void>) => {
-    useImperativeHandle(ref, () => ({
-        resetPageIndex(doReset = false): void {
-            if (doReset)
-                gotoPage(props.pageIndex);
-        }
-    }), [props.pageIndex]);
-
+const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Record<string, unknown>>>, ref: any) => {
     const defaultColumn = React.useMemo(
         () => ({
             Filter: DefaultColumnFilter,
@@ -126,6 +136,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     }
 
 
+
     const tableInstance = useTable<Record<string, unknown>>(
         {
             ...props,
@@ -144,33 +155,39 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         page,
         onClick,
         loading,
-        gotoPage,
         state: { pageIndex, pageSize, selectedRowIds, sortBy },
     } = tableInstance;
 
     useEffect(() => {
         if (tableInstance.onSort)
-            tableInstance.onSort(sortBy);
+            tableInstance.onSort(sortBy[0]);
     }, [tableInstance.onSort, sortBy]);
 
+
     useEffect(() => {
-        if (props.fetchData) {
-            props.fetchData({ ix: pageIndex, sz: pageSize, orderBy: 'due', orderDirection: 'asc' });
+        if (props.onSelectedChange) {
+            const selectedRows = tableInstance.data.filter((d: Record<string, unknown>, ix: number) => {
+                return Object.keys(selectedRowIds).map(Number).indexOf(ix) >= 0;
+            });
+
+            props.onSelectedChange(selectedRows, selectedRowIds);
         }
-
-    }, [pageIndex, pageSize]);
+    }, [selectedRowIds, tableInstance]);
 
     useEffect(() => {
-        const selectedRows = tableInstance.data.filter((d: Record<string, unknown>, ix: number) => {
-            return Object.keys(selectedRowIds).map(Number).indexOf(ix) >= 0;
-        });
+        if (props.setPageIndex)
+            props.setPageIndex(pageIndex);
+    }, [pageIndex]);
 
-        props.onSelectedChange(selectedRows, selectedRowIds);
-    }, [selectedRowIds, tableInstance]);
+    useEffect(() => {
+        if (props.setPageSize)
+            props.setPageSize(pageSize);
+    }, [pageSize]);
 
     const cellClickHandler = (cell: Cell<Record<string, unknown>>) => (): void => {
         onClick && cell.column.id !== 'selection' && onClick(cell.row);
     };
+
 
     const RenderRow = memo(({ index, style }: {
         index: number,
@@ -206,6 +223,8 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         }
     };
 
+    const noDataRef = useRef(null);
+
     const addScrollEventHandler = (): void => {
         // fix to make table-header scroll with list
         setTimeout(() => {
@@ -230,7 +249,6 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         }, 50);
     };
 
-    const parentRef = useRef(null);
 
     return (
         loading ? (
@@ -239,8 +257,13 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             <AutoSizer>
                 {({ height, width }): JSX.Element => (
                     <div>
+                        <div style={{ justifyContent: 'flex-end', width: width }}>
+                            {props.toolbar ? props.toolbar : null}
+                            {props.toolbarText && <Typography style={{ color: props.toolbarColor, width: 'max-content' }} variant='h6' >{props.toolbarText}</Typography>}
+                        </div>
                         <Table {...getTableProps()}>
                             {
+                                !props.noHeader &&
                                 // render table header
                                 headerGroups.map((headerGroup, i) => (
                                     <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display: 'flex' }}>
@@ -254,9 +277,10 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                                 <TableHeadCell {...column.getHeaderProps(headerProps)} key={column.getHeaderProps(headerProps).key} >
                                                     <div>
                                                         {column.canSort && column.defaultCanSort !== false ? (
+
                                                             <TableSortLabel
-                                                                active={column.isSorted}
-                                                                direction={column.isSortedDesc ? 'desc' : 'asc'}
+                                                                active={column.isSorted || column.id === props.orderBy?.id.toString()}
+                                                                direction={column.id === props.orderBy?.id.toString() ? props.orderBy?.desc ? 'desc' : 'asc' : column.isSortedDesc ? 'desc' : 'asc'}
                                                                 {...column.getSortByToggleProps()}
                                                             >
                                                                 {column.render('Header')}
@@ -276,6 +300,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                 ))
                             }
                             {
+                                !props.noHeader &&
                                 // show client side filtering if any cols specify it
                                 hasFilters() && headerGroups.map((headerGroup, i) => (
                                     <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerFiltersRef} style={{ width: width - 8, display: 'flex' }}>
@@ -297,9 +322,10 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
                             {/* render table */}
                             <div {...getTableBodyProps()}>
+                                {props.data.length === 0 && (<div>No records found.</div>)}
                                 <List
                                     height={height}
-                                    itemCount={pageSize}
+                                    itemCount={pageSize > props.data.length ? props.data.length : pageSize}
                                     itemSize={40}
                                     width={width}
                                     ref={listRef}

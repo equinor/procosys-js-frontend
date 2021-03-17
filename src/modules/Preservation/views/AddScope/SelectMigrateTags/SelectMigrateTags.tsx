@@ -1,17 +1,14 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, TagsHeader, TopContainer } from './SelectMigrateTags.style';
+import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, TagsHeader, TopContainer } from './SelectMigrateTags.style';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagMigrationRow } from '../types';
 
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Loading from '../../../../../components/Loading';
 import ProcosysTable from '@procosys/components/Table/ProcosysTable';
 import React from 'react';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
-import Table from '../../../../../components/Table';
 import { getFormattedDate } from '@procosys/core/services/DateService';
-import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 

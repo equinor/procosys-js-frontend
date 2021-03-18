@@ -25,6 +25,8 @@ const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 const baseBreadcrumb = 'Library / Preservation journeys';
 
+const WAIT_INTERVAL = 300;
+
 enum AutoTransferMethod {
     NONE = 'None',
     RFCC = 'OnRfccSign',
@@ -147,6 +149,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
                 responsibles.forEach(resp => mappedResponsibles.push({ text: (resp.code + ' - ' + resp.description), value: resp.code, selected: false }));
                 setMappedResponsibles(mappedResponsibles);
+                setFilteredResponsibles(mappedResponsibles);
             } catch (error) {
                 console.error('Get responsibles failed: ', error.message, error.data);
                 if (error instanceof ProCoSysApiError) {
@@ -559,12 +562,23 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     /** Update list of responsibled based on filter */
     useEffect(() => {
-        if (filterForResponsibles.length <= 0) {
-            setFilteredResponsibles(mappedResponsibles);
-            return;
-        }
-        setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
-    }, [filterForResponsibles, mappedResponsibles]);
+        const handleFilterChange = async (): Promise<void> => {
+
+            if (filterForResponsibles.length <= 0) {
+                setFilteredResponsibles(mappedResponsibles);
+                return;
+            }
+            setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
+        };
+
+        const timer = setTimeout(() => {
+            handleFilterChange();
+        }, WAIT_INTERVAL);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
+    }, [filterForResponsibles]);
 
     /** Update isDirtyAndValid when newJourney changes */
     useEffect(() => {

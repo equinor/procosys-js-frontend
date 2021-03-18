@@ -68,7 +68,7 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         if (isDirty) {
             window.addEventListener('beforeunload', handleBeforeUnloadEvent);
             return (): void => {
-                window.onbeforeunload = handleBeforeUnloadEvent;
+                window.removeEventListener('beforeunload', handleBeforeUnloadEvent);
             };
         }
     }, [isDirty]);

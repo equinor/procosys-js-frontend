@@ -4,7 +4,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
 import Spinner from '../Spinner';
-import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -33,15 +32,17 @@ interface TreeViewProps {
     rootNodes: TreeViewNode[];
     dirtyNodeId?: number | string;
     resetDirtyNode?: () => void;
+    hasUnsavedChanges?: boolean;
+    unsavedChangesConfirmationMessage?: string;
 }
 
 const TreeView = ({
     rootNodes,
     dirtyNodeId,
-    resetDirtyNode
+    resetDirtyNode,
+    hasUnsavedChanges = false,
+    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?'
 }: TreeViewProps): JSX.Element => {
-
-    const { isDirty } = useDirtyContext();
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -221,7 +222,7 @@ const TreeView = ({
     };
 
     const handleOnClick = (node: NodeData): void => {
-        if (!isDirty || confirm(unsavedChangesConfirmationMessage)) {
+        if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
             selectNode(node);
         }
     };

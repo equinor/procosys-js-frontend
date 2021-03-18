@@ -1,6 +1,6 @@
 import { Breadcrumbs, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import { Canceler } from 'axios';
@@ -91,6 +91,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     useEffect(() => {
         setIsEditMode(false);
     }, [props.forceUpdate]);
+
+    const isDirty = useMemo((): boolean => {
+        return JSON.stringify(journey) != JSON.stringify(newJourney);
+    }, [journey, newJourney]);
 
     const {
         preservationApiClient,
@@ -331,12 +335,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
-    const isDirty = (): boolean => {
-        return JSON.stringify(journey) != JSON.stringify(newJourney);
-    };
-
     const confirmDiscardingChangesIfExist = (): boolean => {
-        return !isDirty() || confirm(unsavedChangesConfirmationMessage);
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
     };
 
     const cancel = (): void => {
@@ -572,7 +572,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     /** Update canSave and isDirty when newJourney or journey changes */
     useEffect(() => {
-        if (journey == null || !isDirty()) {
+        if (journey == null || !isDirty) {
             setCanSave(false);
             unsetDirtyStateFor(moduleName);
             return;

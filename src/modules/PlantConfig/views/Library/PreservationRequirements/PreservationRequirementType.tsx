@@ -1,7 +1,7 @@
 import { Breadcrumbs, ButtonSpacer, Container, FormFieldSpacer, InputContainer, SelectText } from './PreservationRequirements.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import PreservationIcon, { PreservationTypeIcon, preservationIconList } from '@procosys/components/PreservationIcon';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import EdsIcon from '../../../../../components/EdsIcon';
@@ -57,19 +57,17 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         setIconList(items);
     }, []);
 
-    const isDirty = (): boolean => {
+    const isDirty = useMemo((): boolean => {
         return JSON.stringify(requirementType) != JSON.stringify(newRequirementType);
-    };
+    }, [requirementType, newRequirementType]);
 
     const confirmDiscardingChangesIfExist = (): boolean => {
-        return !isDirty() || confirm(unsavedChangesConfirmationMessage);
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
     };
 
     //Set dirty when forms is updated
     useEffect(() => {
-        const hasUnsavedChanges = isDirty();
-
-        if (requirementType == null || !hasUnsavedChanges) {
+        if (requirementType == null || !isDirty) {
             setIsDirtyAndValid(false);
         } else {
             if (newRequirementType.code && newRequirementType.icon && newRequirementType.sortKey && newRequirementType.title) {
@@ -77,10 +75,9 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
             } else {
                 setIsDirtyAndValid(false);
             }
-
         }
 
-        if (hasUnsavedChanges) {
+        if (isDirty) {
             setDirtyStateFor(moduleName);
         } else {
             unsetDirtyStateFor(moduleName);

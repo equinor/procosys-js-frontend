@@ -1,6 +1,6 @@
 import { Breadcrumbs, ButtonSpacer, Container, FieldsContainer, FormFieldSpacer, FormHeader, IconContainer, InputContainer, SelectText } from './PreservationRequirements.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import { Canceler } from 'axios';
@@ -149,9 +149,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
     }, [requirementTypes, requirementDefinition]);
 
-    const isDirty = (): boolean => {
+    const isDirty = useMemo((): boolean => {
         return JSON.stringify(requirementDefinition) !== JSON.stringify(newRequirementDefinition);
-    };
+    }, [requirementDefinition, newRequirementDefinition]);
 
     //Set dirty when forms is updated
     useEffect(() => {
@@ -171,9 +171,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             return;
         }
 
-        const hasUnsavedChanges = isDirty();
-
-        if (!hasUnsavedChanges) {
+        if (!isDirty) {
             setIsDirtyAndValid(false);
         } else if (newRequirementDefinition.sortKey != -1 && newRequirementDefinition.usage && newRequirementDefinition.requirementTypeId != -1
             && newRequirementDefinition.title && newRequirementDefinition.defaultIntervalWeeks != -1) {
@@ -183,7 +181,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             setIsDirtyAndValid(false);
         }
 
-        if (hasUnsavedChanges) {
+        if (isDirty) {
             setDirtyStateFor(moduleName);
         } else {
             unsetDirtyStateFor(moduleName);
@@ -301,7 +299,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
     };
 
     const confirmDiscardingChangesIfExist = (): boolean => {
-        return !isDirty() || confirm(unsavedChangesConfirmationMessage);
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
     };
 
     const cancelChanges = (): void => {

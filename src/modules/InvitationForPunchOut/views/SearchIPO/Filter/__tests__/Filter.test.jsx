@@ -48,24 +48,29 @@ const savedFilters = [
     },
 ];
 
+const exportInvitationsToExcel = jest.fn();
+
 describe('<InvitationsFilter />', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('Should render with no active filters', async () => {
-        async () => {
-            const { getByText } = render(
-                <InvitationsFilter 
-                    project={project}
-                    onCloseRequest={jest.fn()}
-                    filter={emptyFilter} setFilter={jest.fn()}
-                    roles={roles}
-                    numberOfIPOs={0}
-                    savedFilters={savedFilters}
-                    refreshSavedFilters={jest.fn}
-                    selectedSavedFilterTitle={null}
-                    setSelectedSavedFilterTitle={jest.fn}
-                />
-            );          
-            expect(getByText('No active filters')).toBeInTheDocument();
-        };        
+        const { getByText } = render(
+            <InvitationsFilter 
+                project={project}
+                onCloseRequest={jest.fn()}
+                filter={emptyFilter} setFilter={jest.fn()}
+                roles={roles}
+                numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
+            />
+        );          
+        expect(getByText('No active filters')).toBeInTheDocument();    
     });
 
     it('Should render with filters sections', async () => {
@@ -80,6 +85,7 @@ describe('<InvitationsFilter />', () => {
                 refreshSavedFilters={jest.fn}
                 selectedSavedFilterTitle={null}
                 setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
             />
         );          
         expect(getByText('Search')).toBeInTheDocument();
@@ -100,6 +106,7 @@ describe('<InvitationsFilter />', () => {
                 refreshSavedFilters={jest.fn}
                 selectedSavedFilterTitle={null}
                 setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
             />
         );          
         fireEvent.click(getByTestId('search-fields'));
@@ -110,50 +117,84 @@ describe('<InvitationsFilter />', () => {
     });
 
     it('Should only open the saved filters popover after the button for saved filters has been clicked', async () => {
-        async () => {
-            const { getByTitle, getByText } = render(
-                <InvitationsFilter 
-                    project={project}
-                    onCloseRequest={jest.fn()}
-                    filter={emptyFilter} setFilter={jest.fn()}
-                    roles={roles}
-                    numberOfIPOs={0}
-                    savedFilters={savedFilters}
-                    refreshSavedFilters={jest.fn}
-                    selectedSavedFilterTitle={null}
-                    setSelectedSavedFilterTitle={jest.fn}
-                />
-            );
-            expect(getByText('Saved filters')).not.toBeInTheDocument();
-            const openButton = getByTitle('Open saved filters');
-            fireEvent.click(openButton);
-            expect(getByText('Saved filters')).toBeInTheDocument();
-        };        
+        const { getByTitle, queryByText } = render(
+            <InvitationsFilter 
+                project={project}
+                onCloseRequest={jest.fn()}
+                filter={emptyFilter} setFilter={jest.fn()}
+                roles={roles}
+                numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
+            />
+        );
+        expect(queryByText('Saved filters')).not.toBeInTheDocument();
+        const openButton = getByTitle('Open saved filters');
+        fireEvent.click(openButton);
+        expect(queryByText('Saved filters')).toBeInTheDocument();      
     });
 
     it('Should change filter value if a saved filter is clicked', async () => {
-        async () => {
-            const { getByTitle, queryByText } = render(
-                <InvitationsFilter 
-                    project={project}
-                    onCloseRequest={jest.fn()}
-                    filter={emptyFilter} setFilter={jest.fn()}
-                    roles={roles}
-                    numberOfIPOs={0}
-                    savedFilters={savedFilters}
-                    refreshSavedFilters={jest.fn}
-                    selectedSavedFilterTitle={null}
-                    setSelectedSavedFilterTitle={jest.fn}
-                />
-            );
-            expect(queryByText('No active filters')).toBeInTheDocument();
-            const openButton = getByTitle('Open saved filters');
-            fireEvent.click(openButton);
-            const savedFilter = queryByText('Not empty');
-            fireEvent.click(savedFilter);
-            expect(queryByText('No active filters')).not.toBeInTheDocument();
-        };        
+        const { getByTitle, queryByText } = render(
+            <InvitationsFilter 
+                project={project}
+                onCloseRequest={jest.fn()}
+                filter={emptyFilter} setFilter={jest.fn()}
+                roles={roles}
+                numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
+            />
+        );
+        expect(queryByText('No active filters')).toBeInTheDocument();
+        const openButton = getByTitle('Open saved filters');
+        fireEvent.click(openButton);
+        const savedFilter = queryByText('Not empty');
+        fireEvent.click(savedFilter);
+        expect(queryByText('No active filters')).not.toBeInTheDocument();     
+    });
+
+    it('Should render with the export to excel button', async () => {
+        const { getByTitle } = render(
+            <InvitationsFilter 
+                project={project}
+                onCloseRequest={jest.fn()}
+                filter={emptyFilter} setFilter={jest.fn()}
+                roles={roles}
+                numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
+            />
+        );
+        expect(getByTitle('Export filtered tags to Excel')).toBeInTheDocument();
+    });
+
+    it('Should call the export to excel function when excel button is clicked', async () => {
+        const { getByTitle } = render(
+            <InvitationsFilter 
+                project={project}
+                onCloseRequest={jest.fn()}
+                filter={emptyFilter} setFilter={jest.fn()}
+                roles={roles}
+                numberOfIPOs={0}
+                savedFilters={savedFilters}
+                refreshSavedFilters={jest.fn}
+                selectedSavedFilterTitle={null}
+                setSelectedSavedFilterTitle={jest.fn}
+                exportInvitationsToExcel={exportInvitationsToExcel}
+            />
+        );
+        expect(exportInvitationsToExcel).toHaveBeenCalledTimes(0);
+        getByTitle('Export filtered tags to Excel').click();
+        expect(exportInvitationsToExcel).toHaveBeenCalledTimes(1);
     });
 });
-
-

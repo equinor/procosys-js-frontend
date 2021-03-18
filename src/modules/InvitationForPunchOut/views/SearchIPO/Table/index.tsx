@@ -20,10 +20,24 @@ interface InvitationsTableProps {
     height: number;
     update: number;
     filterUpdate: number;
+    setOrderByField: (orderByField: string | null) => void;
+    setOrderDirection: (orderDirection: string | null) => void;
 }
 
 
-const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({
+    getIPOs, 
+    pageSize, 
+    setPageSize, 
+    shouldSelectFirstPage, 
+    setFirstPageSelected, 
+    projectName, 
+    height, 
+    update, 
+    filterUpdate,
+    setOrderByField,
+    setOrderDirection
+}: InvitationsTableProps): JSX.Element => {
     const refObject = useRef<any>();
 
     useEffect(() => {
@@ -90,8 +104,10 @@ const InvitationsTable = ({getIPOs, pageSize, setPageSize, shouldSelectFirstPage
             setFirstPageSelected();
         }
 
-        const orderByField: string | null = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
+        const orderByField = query.orderBy ? sortFieldMap[query.orderBy.title as string] : null;
+        setOrderByField(orderByField);
         const orderDirection: string | null = orderByField ? query.orderDirection ? query.orderDirection : 'asc' : null;
+        setOrderDirection(orderDirection);
 
         return new Promise((resolve) => {
             return getIPOs(query.page, query.pageSize, orderByField, orderDirection).then(result => {

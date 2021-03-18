@@ -6,7 +6,7 @@ import Checkbox from './../../../../../components/Checkbox';
 import EdsIcon from '../../../../../components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
@@ -15,6 +15,7 @@ const addIcon = <EdsIcon name='add' />;
 const voidIcon = <EdsIcon name='delete_forever' />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 const baseBreadcrumb = 'Library / Modes';
+const moduleName = 'ModeForm';
 
 interface ModeItem {
     id: number;
@@ -76,14 +77,18 @@ const Mode = (props: ModeProps): JSX.Element => {
 
     useEffect(() => {
         if (isDirty) {
-            setDirtyStateFor('ModeForm');
+            setDirtyStateFor(moduleName);
         } else {
-            unsetDirtyStateFor('ModeForm');
+            unsetDirtyStateFor(moduleName);
         }
         return (): void => {
-            unsetDirtyStateFor('ModeForm');
+            unsetDirtyStateFor(moduleName);
         };
     }, [isDirty]);
+
+    const confirmDiscardingChangesIfExist = (): boolean => {
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
+    };
 
     useEffect((): void => {
         if (props.modeId) {
@@ -92,6 +97,7 @@ const Mode = (props: ModeProps): JSX.Element => {
         } else {
             setMode(null);
             setIsEditMode(false);
+            setIsDirty(false);
         }
     }, [props.modeId]);
 
@@ -149,11 +155,11 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     const cancel = (): void => {
-        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setMode(null);
+            setIsEditMode(false);
+            setIsDirty(false);
         }
-        setMode(null);
-        setIsEditMode(false);
     };
 
     const deleteMode = async (): Promise<void> => {
@@ -175,7 +181,7 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     const voidMode = async (): Promise<void> => {
-        if (mode) {
+        if (mode && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.voidMode(mode.id, mode.rowVersion);
@@ -207,12 +213,10 @@ const Mode = (props: ModeProps): JSX.Element => {
     };
 
     const initNewMode = (): void => {
-        if (isDirty && !confirm('Do you want to discard changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setNewMode(createNewMode());
+            setIsEditMode(true);
         }
-
-        setNewMode(createNewMode());
-        setIsEditMode(true);
     };
 
     const setTitleValue = (value: string): void => {

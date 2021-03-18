@@ -10,7 +10,7 @@ import EdsIcon from '../../../../../components/EdsIcon';
 import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
@@ -24,6 +24,7 @@ const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 const baseBreadcrumb = 'Library / Preservation journeys';
+const moduleName = 'PreservationJourneyForm';
 
 enum AutoTransferMethod {
     NONE = 'None',
@@ -71,14 +72,14 @@ type PreservationJourneyProps = {
 
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
-    const createNewJourney = (): Journey => {
+    const getInitialJourney = (): Journey => {
         return { id: -1, title: '', isVoided: false, isInUse: false, steps: [], rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [journey, setJourney] = useState<Journey | null>(null);
-    const [newJourney, setNewJourney] = useState<Journey>(createNewJourney);
+    const [newJourney, setNewJourney] = useState<Journey>(getInitialJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [modes, setModes] = useState<Mode[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
@@ -90,7 +91,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     useEffect(() => {
         setIsEditMode(false);
     }, [props.forceUpdate]);
-
 
     const {
         preservationApiClient,
@@ -331,17 +331,23 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
+    const isDirty = (): boolean => {
+        return JSON.stringify(journey) != JSON.stringify(newJourney);
+    };
+
+    const confirmDiscardingChangesIfExist = (): boolean => {
+        return !isDirty() || confirm(unsavedChangesConfirmationMessage);
+    };
+
     const cancel = (): void => {
-        if (canSave && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setJourney(null);
+            setIsEditMode(false);
         }
-        setJourney(null);
-        setCanSave(false);
-        setIsEditMode(false);
     };
 
     const voidJourney = async (): Promise<void> => {
-        if (journey) {
+        if (journey && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.voidJourney(journey.id, journey.rowVersion);
@@ -391,7 +397,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const duplicateJourney = async (): Promise<void> => {
-        if (journey) {
+        if (journey && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.duplicateJourney(journey.id);
@@ -407,12 +413,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const initNewJourney = (): void => {
-        if (canSave && !confirm('Do you want to discard changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setNewJourney(getInitialJourney());
+            setJourney(cloneJourney(newJourney));
+            setIsEditMode(true);
         }
-        setNewJourney(createNewJourney());
-        setJourney(cloneJourney(newJourney));
-        setIsEditMode(true);
     };
 
     const setJourneyTitleValue = (value: string): void => {
@@ -541,7 +546,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
-
     const unvoidStep = async (step: Step): Promise<void> => {
         if (journey) {
             setIsLoading(true);
@@ -566,14 +570,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
     }, [filterForResponsibles, mappedResponsibles]);
 
-    /** Update isDirtyAndValid when newJourney changes */
+    /** Update canSave and isDirty when newJourney or journey changes */
     useEffect(() => {
-        if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
+        if (journey == null || !isDirty()) {
             setCanSave(false);
-            unsetDirtyStateFor('PreservationJourneyForm');
+            unsetDirtyStateFor(moduleName);
             return;
         } else {
-            setDirtyStateFor('PreservationJourneyForm');
+            setDirtyStateFor(moduleName);
         }
         if (newJourney.title.length < 3) {
             setCanSave(false);
@@ -605,7 +609,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
 
         setCanSave(true);
-    }, [newJourney]);
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [newJourney, journey]);
 
     if (isLoading) {
         return (

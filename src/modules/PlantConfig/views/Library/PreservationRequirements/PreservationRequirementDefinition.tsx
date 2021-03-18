@@ -11,7 +11,7 @@ import { RequirementType } from './types';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
@@ -21,6 +21,7 @@ const downIcon = <EdsIcon name='arrow_down' />;
 const deleteIcon = <EdsIcon name='delete_to_trash' />;
 const voidIcon = <EdsIcon name='delete_forever' />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' />;
+const moduleName = 'PreservationRequirementDefinition';
 
 interface RequirementDefinitionItem {
     id: number;
@@ -183,12 +184,15 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
 
         if (hasUnsavedChanges) {
-            setDirtyStateFor('PreservationRequirementDefinition');
+            setDirtyStateFor(moduleName);
         } else {
-            unsetDirtyStateFor('PreservationRequirementDefinition');
+            unsetDirtyStateFor(moduleName);
         }
 
-    }, [newRequirementDefinition]);
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [newRequirementDefinition, requirementDefinition]);
 
     const cloneRequirementDefinition = (reqDef: RequirementDefinitionItem): RequirementDefinitionItem => {
         return JSON.parse(JSON.stringify(reqDef));
@@ -296,30 +300,31 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
         }
     };
 
+    const confirmDiscardingChangesIfExist = (): boolean => {
+        return !isDirty() || confirm(unsavedChangesConfirmationMessage);
+    };
+
     const cancelChanges = (): void => {
-        if (isDirty() && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setRequirementDefinition(null);
+            props.cancel();
         }
-        setRequirementDefinition(null);
-        props.cancel();
     };
 
     const initNewRequirementType = (): void => {
-        if (isDirty() && !confirm('Do you want to discard changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            props.addNewRequirementType();
         }
-        props.addNewRequirementType();
     };
 
     const initNewRequirementDefinition = (): void => {
-        if (isDirty() && !confirm('Do you want to discard changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setNewRequirementDefinition(createNewRequirementDefinition());
         }
-        setNewRequirementDefinition(createNewRequirementDefinition());
     };
 
     const voidRequirementDefinition = async (): Promise<void> => {
-        if (newRequirementDefinition) {
+        if (newRequirementDefinition && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.voidRequirementDefinition(newRequirementDefinition.requirementTypeId, newRequirementDefinition.id, newRequirementDefinition.rowVersion);

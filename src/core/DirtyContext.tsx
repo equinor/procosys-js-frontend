@@ -11,6 +11,8 @@ export interface IDirtyContext {
     clearDirtyState: () => void;
 }
 
+export const unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?';
+
 const DirtyContext = React.createContext<IDirtyContext>({} as IDirtyContext);
 
 export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
@@ -21,22 +23,26 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     }, [dirtyList]);
 
     function setDirtyStateFor(componentName: string): void {
-        const newDirtyList = new Set(dirtyList);
-        newDirtyList.add(componentName);
-        setDirtyList(newDirtyList);
+        setDirtyList(oldDirtyList => {
+            const newList = new Set(oldDirtyList);
+            return newList.add(componentName);
+        });
     }
 
     function unsetDirtyStateFor(componentName: string): void {
-        const newDirtyList = new Set(dirtyList);
-        // Only changes the state if there actually was a item removed
-        newDirtyList.delete(componentName) && setDirtyList(newDirtyList);
+        setDirtyList(oldDirtyList => {
+            const newList = new Set(oldDirtyList);
+            newList.delete(componentName);
+            return newList;
+        });
     }
 
     function unsetDirtyStateForMany(componentNames: string[]): void {
-        const newDirtyList = new Set(dirtyList);
-        // Only changes the state if there actually was a item removed
-        componentNames.forEach(componentName => newDirtyList.delete(componentName));
-        setDirtyList(newDirtyList);
+        setDirtyList(oldDirtyList => {
+            const newList = new Set(oldDirtyList);
+            componentNames.forEach(componentName => newList.delete(componentName));
+            return newList;
+        });
     }
 
     function clearDirtyState(): void {
@@ -50,6 +56,22 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         };
     }, [location]);
 
+    function handleBeforeUnloadEvent(e: BeforeUnloadEvent): void {
+        e.preventDefault();
+        //On older browsers, the return value will be displayed in the dialog box. For newer browser, the text is 
+        //controlled by the browser. 
+        e.returnValue = unsavedChangesConfirmationMessage;
+    }
+
+    /** Handle dirty state when trying to navigate outside application */
+    useEffect(() => {
+        if (isDirty) {
+            window.addEventListener('beforeunload', handleBeforeUnloadEvent);
+            return (): void => {
+                window.onbeforeunload = handleBeforeUnloadEvent;
+            };
+        }
+    }, [isDirty]);
 
     return (<DirtyContext.Provider value={{
         setDirtyStateFor: setDirtyStateFor,
@@ -58,7 +80,7 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         clearDirtyState,
         isDirty,
     }}>
-        <Prompt message="You have unsaved changes, are you sure you want to continue?" when={isDirty} />
+        <Prompt message={unsavedChangesConfirmationMessage} when={isDirty} />
         {children}
     </DirtyContext.Provider>);
 };

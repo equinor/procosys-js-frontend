@@ -4,6 +4,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
 import Spinner from '../Spinner';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -40,7 +41,7 @@ const TreeView = ({
     resetDirtyNode
 }: TreeViewProps): JSX.Element => {
 
-
+    const { isDirty } = useDirtyContext();
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -207,7 +208,7 @@ const TreeView = ({
         );
     };
 
-    const handleOnClick = (node: NodeData): void => {
+    const selectNode = (node: NodeData): void => {
         if (selectedNodeId) {
             const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
             if (currentSelectedNodeIndex != -1) {
@@ -217,6 +218,12 @@ const TreeView = ({
         node.isSelected = true;
         setSelectedNodeId(node.id);
         node.onClick && node.onClick();
+    };
+
+    const handleOnClick = (node: NodeData): void => {
+        if (!isDirty || confirm(unsavedChangesConfirmationMessage)) {
+            selectNode(node);
+        }
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {

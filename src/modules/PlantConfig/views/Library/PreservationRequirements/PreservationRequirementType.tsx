@@ -8,7 +8,7 @@ import EdsIcon from '../../../../../components/EdsIcon';
 import { RequirementType } from './types';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
@@ -16,6 +16,7 @@ const voidIcon = <EdsIcon name='delete_forever' size={16} />;
 const unvoidIcon = <EdsIcon name='restore_from_trash' size={16} />;
 const deleteIcon = <EdsIcon name='delete_to_trash' size={16} />;
 const addIcon = <EdsIcon name='add' size={16} />;
+const moduleName = 'PreservationRequirementType';
 
 type PreservationRequirementTypeProps = {
     requirementTypeId: number;
@@ -28,14 +29,14 @@ const baseBreadcrumb = 'Library / Preservation requirements /';
 
 const PreservationRequirementType = (props: PreservationRequirementTypeProps): JSX.Element => {
 
-    const createNewRequirementType = (): RequirementType => {
+    const getInitialRequirementType = (): RequirementType => {
         return { id: -1, code: '', title: '', icon: '', isVoided: false, sortKey: -1, rowVersion: '', isInUse: false, requirementDefinitions: [] };
     };
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [requirementType, setRequirementType] = useState<RequirementType | null>(null);
-    const [newRequirementType, setNewRequirementType] = useState<RequirementType>(createNewRequirementType());
-    const [isDirty, setIsDirty] = useState<boolean>(false);
+    const [newRequirementType, setNewRequirementType] = useState<RequirementType>(getInitialRequirementType());
+    const [isDirtyAndValid, setIsDirtyAndValid] = useState<boolean>(false);
     const [iconList, setIconList] = useState<SelectItem[]>([]);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
@@ -56,20 +57,39 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         setIconList(items);
     }, []);
 
+    const isDirty = (): boolean => {
+        return JSON.stringify(requirementType) != JSON.stringify(newRequirementType);
+    };
+
+    const confirmDiscardingChangesIfExist = (): boolean => {
+        return !isDirty() || confirm(unsavedChangesConfirmationMessage);
+    };
+
     //Set dirty when forms is updated
     useEffect(() => {
-        if (JSON.stringify(requirementType) == JSON.stringify(newRequirementType)) {
-            setIsDirty(false);
-            unsetDirtyStateFor('PreservationRequirementType');
+        const hasUnsavedChanges = isDirty();
+
+        if (requirementType == null || !hasUnsavedChanges) {
+            setIsDirtyAndValid(false);
         } else {
-            setDirtyStateFor('PreservationRequirementType');
             if (newRequirementType.code && newRequirementType.icon && newRequirementType.sortKey && newRequirementType.title) {
-                setIsDirty(true);
+                setIsDirtyAndValid(true);
             } else {
-                setIsDirty(false);
+                setIsDirtyAndValid(false);
             }
+
         }
-    }, [newRequirementType]);
+
+        if (hasUnsavedChanges) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [newRequirementType, requirementType]);
 
     const cloneRequirementType = (requirementType: RequirementType): RequirementType => {
         return JSON.parse(JSON.stringify(requirementType));
@@ -95,7 +115,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         if (props.requirementTypeId > -1) {
             getRequirementType(props.requirementTypeId);
         } else {
-            setNewRequirementType(createNewRequirementType());
+            setNewRequirementType(getInitialRequirementType());
         }
     }, [props.requirementTypeId]);
 
@@ -149,29 +169,26 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     };
 
     const cancelChanges = (): void => {
-        if (isDirty && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setRequirementType(null);
+            props.cancel();
         }
-        setRequirementType(null);
-        props.cancel();
     };
 
     const initNewRequirementType = (): void => {
-        if (isDirty && !confirm('Do you want to discard changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setNewRequirementType(getInitialRequirementType());
         }
-        setNewRequirementType(createNewRequirementType());
     };
 
     const initNewRequirementDefinition = (): void => {
-        if (isDirty && !confirm('Do you want to discard changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            props.addNewRequirementDefinition();
         }
-        props.addNewRequirementDefinition();
     };
 
     const voidRequirementType = async (): Promise<void> => {
-        if (requirementType) {
+        if (requirementType && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.voidRequirementType(requirementType.id, requirementType.rowVersion);
@@ -265,7 +282,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
                         Cancel
                     </Button>
                     <ButtonSpacer />
-                    <Button onClick={handleSave} disabled={newRequirementType.isVoided || !isDirty}>
+                    <Button onClick={handleSave} disabled={newRequirementType.isVoided || !isDirtyAndValid}>
                         Save
                     </Button>
                 </ButtonContainerRight>

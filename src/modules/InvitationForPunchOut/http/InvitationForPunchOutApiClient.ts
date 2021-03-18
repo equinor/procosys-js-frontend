@@ -716,34 +716,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the privilege group IPO_PLAN
+     * Get persons with the privilege group IPO_SIGN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
-        const endpoint = '/Participants/Persons/ByPrivileges/RequiredSigners';
-        const settings: AxiosRequestConfig = {
-            params: {
-                searchString: searchString
-            }
-        };
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
-            return result.data;
-        } catch (error) {
-            throw new IpoApiError(error);
-        }
-    }
-
-    /**
-     * Get persons with the user group IPO_SIGN
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
-        const endpoint = '/Participants/Persons/ByPrivileges/AdditionalSigners';
+    async getSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
+        const endpoint = '/Participants/Persons/ByPrivileges/Signers';
         const settings: AxiosRequestConfig = {
             params: {
                 searchString: searchString

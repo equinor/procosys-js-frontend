@@ -1,23 +1,22 @@
 import ProCoSysSettings, {AsyncState} from '@procosys/core/ProCoSysSettings';
-// const favicon = require('./assets/icons/ProCoSys_favicon16x16.png');
-import favicon from './assets/icons/ProCoSys_favicon16x16.png';
 
 import AuthService from './auth/AuthService';
 import Error from './components/Error';
+import Helmet from 'react-helmet';
 import { Loading } from './components';
 import Login from './modules/Login';
 import React from 'react';
 import Root from './app/Root';
+import favicon from './assets/icons/ProCoSys_favicon16x16.png';
 import { render } from 'react-dom';
-import Helmet from 'react-helmet';
 
 const element = document.createElement('div');
 element.setAttribute('id', 'app-container');
 document.body.appendChild(element);
 
 const getHelmetBaseConfig = (): JSX.Element => {
-    return <Helmet titleTemplate="ProCoSys - %s">
-        <title>Authenticating</title>
+    return <Helmet titleTemplate="ProCoSys %s">
+        <title>- Authenticating</title>
         <link rel="icon" type="image/png" href={favicon} sizes="16x16" />
     </Helmet>;
 };

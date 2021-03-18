@@ -1,6 +1,6 @@
 import React from 'react';
 import ScopeOverview from '../ScopeOverview';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 
@@ -70,8 +70,7 @@ jest.mock('../../../context/PreservationContext', () => ({
 describe('<ScopeOverview />', () => {
 
     it('Should display description column', async () => {
-
-        async () => {
+        await act(async () => {
             const history = createMemoryHistory();
             const { getByText } = render(
                 <Router history={history}>
@@ -79,7 +78,7 @@ describe('<ScopeOverview />', () => {
                 </Router>
             );          
             expect(getByText('Description')).toBeInTheDocument();
-        };        
+        });        
     });
     
 });

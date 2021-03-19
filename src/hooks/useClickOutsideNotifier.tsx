@@ -10,8 +10,12 @@ const useClickOutsideNotifier = (
     targetRef: MutableRefObject<HTMLElement | null>
 ): void => {
 
-    const handleClickOutsideTarget = (event: Event): void => {
-        if (targetRef.current && !targetRef.current.contains((event.target as Node))) {
+    const handleClickOutsideTarget = (event: any): void => {
+        //The event is a MouseEvent, but the 'clientWidth' property is missing in the definition
+        if (targetRef.current
+            && !targetRef.current.contains((event.target as Node))
+            && event.offsetX <= event.target.clientWidth) //This condition ensures that clicking the scrollbar does not trigger the event
+        {
             cb(event);
         }
     };

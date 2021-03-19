@@ -1,12 +1,15 @@
 import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-interface CheckboxStyleProps {
+interface ContainerStyleProps{
     disabled: boolean;
-    checked?: boolean;
 }
 
-export const Container = styled.label<CheckboxStyleProps>`
+interface CheckboxStyleProps {
+    size?: string;
+}
+
+export const Container = styled.label<ContainerStyleProps>`
     /* The container */
     display: flex;
     align-items: center;
@@ -35,8 +38,8 @@ export const CheckmarkWrapper = styled.span<CheckboxStyleProps>`
     /* Create the hover state for the checkbox */
     border-radius: 50%;
     background-color: ${tokens.colors.ui.background__default.rgba};
-    height: calc(var(--grid-unit) * 6);
-    width: calc(var(--grid-unit) * 6);
+    height: calc(var(--grid-unit) * ${(props): string => props.size? props.size : '6'});
+    width: calc(var(--grid-unit) *  ${(props): string => props.size? props.size : '6'});
 
     /* Position checkbox inside the circle */
     display: flex;

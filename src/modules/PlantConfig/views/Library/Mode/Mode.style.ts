@@ -5,7 +5,6 @@ export const ButtonSpacer = styled.div`
 `;
 
 export const InputContainer = styled.div`
-    margin: var(--grid-unit) 0px;
     display: flex;
     flex-direction: row;
     padding: var(--grid-unit);

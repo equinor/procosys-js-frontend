@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Collapse, CollapseInfo, Section, ExpandedContainer } from './ScopeFilter.style';
+import { Collapse, CollapseInfo } from './ScopeFilter.style';
 import { Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Checkbox from '../../../../../components/Checkbox';
 import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { ExpandedContainer } from './CheckboxFilter.style';
 
 interface CheckboxFilterProps {
     title: string;
@@ -45,8 +46,9 @@ const CheckboxFilter = ({
                     <ExpandedContainer>
                         {
                             filterValues.map(value => {
-                                return (<Section key={value.id}>
+                                return (
                                     <Checkbox
+                                        key={value.id}
                                         checked={itemsChecked.some(elementId => {
                                             return String(value.id) === String(elementId);
                                         })}
@@ -56,7 +58,7 @@ const CheckboxFilter = ({
                                     >
                                         <Typography variant='body_long'>{value.title}</Typography>
                                     </Checkbox>
-                                </Section>);
+                                );
                             })
                         }
                     </ExpandedContainer>

@@ -632,7 +632,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                                 <div></div>
                             }
                             {field.fieldType == 'Number' &&
-                                <div style={{ paddingLeft: 'calc(var(--grid-unit) * 2) ', paddingRight: 'calc(var(--grid-unit) * 2)', paddingBottom: 'calc(var(--grid-unit) + 6px)' }}>
+                                <div style={{ paddingRight: 'calc(var(--grid-unit) * 2)' }}>
                                     <Checkbox
                                         checked={field.showPrevious}
                                         disabled={newRequirementDefinition.isVoided || field.isVoided}

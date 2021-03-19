@@ -127,7 +127,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                     />
                 </div>
 
-                < div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                < div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
                     <Checkbox
                         checked={newFilterIsDefault}
                         onChange={(checked: boolean): void => {

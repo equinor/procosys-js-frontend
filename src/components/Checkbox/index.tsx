@@ -13,13 +13,15 @@ interface CheckboxProps {
     onChange?: (checked: boolean) => void;
     checked?: boolean;
     disabled?: boolean;
+    heightInGridUnits?: number
 }
 
 const Checkbox = ({
     children,
     onChange,
     checked = false,
-    disabled = false
+    disabled = false,
+    heightInGridUnits = 6
 }: CheckboxProps): JSX.Element => {
 
     const iconType = disabled?
@@ -38,7 +40,7 @@ const Checkbox = ({
                 disabled={disabled}
                 onChange={handleOnChange}
             />
-            <CheckmarkWrapper className="checkmarkWrapper" disabled={disabled}>
+            <CheckmarkWrapper className="checkmarkWrapper" size={heightInGridUnits.toString()}>
                 {iconType}
             </CheckmarkWrapper>
             {children}

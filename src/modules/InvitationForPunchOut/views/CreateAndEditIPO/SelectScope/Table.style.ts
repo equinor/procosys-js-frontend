@@ -1,7 +1,8 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boolean}>`
+export const Container = styled.div<{disableSelectAll?: boolean, mcColumn?: boolean}>`
     input + svg {
         width: 24px;
         height: 24px;

@@ -156,7 +156,7 @@ const McPkgTable = forwardRef(({
     ];
 
     return ( 
-        <Container disableSelectAll={false}>
+        <Container>
             <TopContainer>
                 <Search>
                     <TextField

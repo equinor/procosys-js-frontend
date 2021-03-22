@@ -34,15 +34,15 @@ type InvitationResponse = {
 type McPkgScopeResponse = {
     mcPkgNo: string;
     description: string;
-    commPkgNo: string;
     system: string;
+    commPkgNo: string;
 }
 
 type CommPkgScopeResponse = {
     commPkgNo: string;
     description: string;
-    status: string;
     system: string;
+    status: string;
 }
 
 type CommPkgPagingResponse = {

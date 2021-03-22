@@ -42,7 +42,7 @@ const CommPkgTable = forwardRef(({
     const [selectAll, setSelectAll] = useState<boolean>(false);
 
     const hasValidSystem = (system: string): boolean => {
-        if (selectedCommPkgScope.length < 1 && selectedMcPkgScope.length < 1) return true;
+        if (selectedCommPkgScope.length == 0 && selectedMcPkgScope.length == 0) return true;
 
         if (selectedCommPkgScope.length > 0) {
             return selectedCommPkgScope[0].system === system;
@@ -58,8 +58,8 @@ const CommPkgTable = forwardRef(({
                 return {
                     commPkgNo: commPkg.commPkgNo,
                     description: commPkg.description,
-                    status: commPkg.status,
                     system: commPkg.system,
+                    status: commPkg.status,
                     tableData: {
                         checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
                     }
@@ -188,14 +188,14 @@ const CommPkgTable = forwardRef(({
         );
     };
 
-    const getMcPkgs = (commPkg: CommPkgRow): void => {
-        setCurrentCommPkg(commPkg.commPkgNo);
+    const getMcPkgs = (commPkgNo: string): void => {
+        setCurrentCommPkg(commPkgNo);
     };
 
     const getToMcPkgsColumn = (commPkg: CommPkgRow): JSX.Element => {
         return (
             <div className='tableCell goToMcCol'>
-                <Button variant="ghost_icon" disabled={!hasValidSystem(commPkg.system)}onClick={(): void => getMcPkgs(commPkg)}>
+                <Button variant="ghost_icon" disabled={!hasValidSystem(commPkg.system)}onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
                     <EdsIcon name='chevron_right' />
                 </Button>
             </div>

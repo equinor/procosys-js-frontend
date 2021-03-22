@@ -25,8 +25,10 @@ const Checkbox = ({
 }: CheckboxProps): JSX.Element => {
 
     const iconType = disabled?
-        checked? disabledCheckedIcon : disabledIcon
-        : checked? checkedCheckboxIcon: checkboxIcon;
+        checked?
+            disabledCheckedIcon : disabledIcon
+        : checked?
+            checkedCheckboxIcon: checkboxIcon;
 
     const handleOnChange = (event: React.FormEvent<HTMLInputElement>): void => {
         onChange && onChange(event.currentTarget.checked);

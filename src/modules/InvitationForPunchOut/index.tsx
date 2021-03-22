@@ -14,7 +14,7 @@ const InvitationForPunchOut = (): JSX.Element => {
     const { url } = useRouteMatch();
     return (
         <>
-            <Helmet titleTemplate={'ProCoSys - IPO - %s'}>
+            <Helmet titleTemplate={'ProCoSys - IPO %s'}>
             </Helmet>
             <InvitationForPunchOutContextProvider>
                 <Container>
@@ -26,7 +26,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                                 component={(): ReactElement => (
                                     <>
                                         <Helmet>
-                                            <title>{'Search'}</title>
+                                            <title>{'- Search'}</title>
                                         </Helmet>
                                         <SearchIPO />
                                     </>)}
@@ -37,7 +37,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                                 component={(): ReactElement => (
                                     <>
                                         <Helmet>
-                                            <title>{'Create'}</title>
+                                            <title>{'- Create'}</title>
                                         </Helmet>
                                         <CreateIPO />
                                     </>)}
@@ -48,7 +48,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                                 component={(): ReactElement => (
                                     <>
                                         <Helmet>
-                                            <title>{'Edit'}</title>
+                                            <title>{'- Edit'}</title>
                                         </Helmet>
                                         <EditIPO />
                                     </>)}
@@ -60,7 +60,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                                 component={(): ReactElement => (
                                     <>
                                         <Helmet>
-                                            <title>{'View'}</title>
+                                            <title>{'- View'}</title>
                                         </Helmet>
                                         <ViewIPO />
                                     </>)}
@@ -69,7 +69,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                                 component={(): ReactElement => (
                                     <>
                                         <Helmet>
-                                            <title>{'NotFound'}</title>
+                                            <title>{'- NotFound'}</title>
                                         </Helmet>
                                         <h2>Sorry, this page does not exist</h2>
                                     </>)}

@@ -716,34 +716,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Get persons with the privilege group IPO_PLAN
+     * Get persons with the privilege group IPO_SIGN
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getRequiredSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
-        const endpoint = '/Participants/Persons/ByPrivileges/RequiredSigners';
-        const settings: AxiosRequestConfig = {
-            params: {
-                searchString: searchString
-            }
-        };
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.get<PersonResponse[]>(endpoint, settings);
-            return result.data;
-        } catch (error) {
-            throw new IpoApiError(error);
-        }
-    }
-
-    /**
-     * Get persons with the user group IPO_SIGN
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async getAdditionalSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
-        const endpoint = '/Participants/Persons/ByPrivileges/AdditionalSigners';
+    async getSignerPersonsAsync(searchString: string, setRequestCanceller?: RequestCanceler): Promise<ParticipantPersonResponse[]> {
+        const endpoint = '/Participants/Persons/ByPrivileges/Signers';
         const settings: AxiosRequestConfig = {
             params: {
                 searchString: searchString
@@ -1034,6 +1012,49 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 }
             );
         } catch (error) {
+            throw new IpoApiError(error);
+        }
+    }
+
+    
+    /**
+     * Export invitations to excel
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async exportInvitationsToExcel(
+        projectName: string,
+        sortProperty: string | null,
+        sortDirection: string | null,
+        iPOFilter: IPOFilter,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<BlobPart> {
+        const endpoint = '/Invitations/ExportInvitationsToExcel';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                property: sortProperty,
+                direction: sortDirection,
+                ...iPOFilter,
+            },
+            responseType: 'blob'
+        };
+
+        settings.paramsSerializer = (p): string => {
+            return Qs.stringify(p);
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<BlobPart>(
+                endpoint,
+                settings
+            );
+            return result.data;
+        }
+        catch (error) {
             throw new IpoApiError(error);
         }
     }

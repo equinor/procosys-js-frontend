@@ -32,15 +32,17 @@ interface TreeViewProps {
     rootNodes: TreeViewNode[];
     dirtyNodeId?: number | string;
     resetDirtyNode?: () => void;
+    hasUnsavedChanges?: boolean;
+    unsavedChangesConfirmationMessage?: string;
 }
 
 const TreeView = ({
     rootNodes,
     dirtyNodeId,
-    resetDirtyNode
+    resetDirtyNode,
+    hasUnsavedChanges = false,
+    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?'
 }: TreeViewProps): JSX.Element => {
-
-
 
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -207,7 +209,7 @@ const TreeView = ({
         );
     };
 
-    const handleOnClick = (node: NodeData): void => {
+    const selectNode = (node: NodeData): void => {
         if (selectedNodeId) {
             const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
             if (currentSelectedNodeIndex != -1) {
@@ -217,6 +219,12 @@ const TreeView = ({
         node.isSelected = true;
         setSelectedNodeId(node.id);
         node.onClick && node.onClick();
+    };
+
+    const handleOnClick = (node: NodeData): void => {
+        if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
+            selectNode(node);
+        }
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {

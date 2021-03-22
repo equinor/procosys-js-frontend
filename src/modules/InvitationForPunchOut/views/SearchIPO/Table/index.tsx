@@ -17,6 +17,8 @@ interface InvitationsTableProps {
     height: number;
     update: number;
     filterUpdate: number;
+    setOrderByField: (orderByField: string | null) => void;
+    setOrderDirection: (orderDirection: string | null) => void;
 }
 
 

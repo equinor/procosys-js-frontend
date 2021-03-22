@@ -6,10 +6,10 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import App from './index';
 import Error from '@procosys/components/Error';
+import { Helmet } from 'react-helmet';
 import { IAuthService } from 'src/auth/AuthService';
 import Loading from '@procosys/components/Loading';
 import { hot } from 'react-hot-loader';
-import { Helmet } from 'react-helmet';
 
 type AppProps = {
     authService: IAuthService;

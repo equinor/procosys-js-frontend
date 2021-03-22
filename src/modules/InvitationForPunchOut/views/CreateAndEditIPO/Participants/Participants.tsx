@@ -237,17 +237,11 @@ const Participants = ({
     };
 
     const isSignerParticipant = (index: number): boolean => {
-        if(index < 2){
-            return true;
-        }
-        if (index < 5 && (participants[index].organization.value == Organizations[0].value ||
+        if (participants[index].organization.value == Organizations[0].value ||
+            participants[index].organization.value == Organizations[1].value ||
+            participants[index].organization.value == Organizations[2].value ||
             participants[index].organization.value == Organizations[3].value ||
-            participants[index].organization.value == Organizations[4].value)) {
-            for (let i = 2; i < index; i++) {
-                if (participants[i].organization.value == participants[index].organization.value) {
-                    return false;
-                }
-            }
+            participants[index].organization.value == Organizations[4].value) {
             return true;
         }
         return false;

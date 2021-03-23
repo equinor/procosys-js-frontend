@@ -40,14 +40,7 @@ const McPkgTable = forwardRef(({
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
     const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
     const [filter, setFilter] = useState<string>('');
-    const [enabled, setEnabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        if(selectedMcPkgScope.selected.length < 1 || selectedMcPkgScope.commPkgNoParent == commPkgNo || selectedMcPkgScope.commPkgNoParent == null) {
-            setEnabled(true);
-        }
-    }, [selectedMcPkgScope]);
 
     useEffect(() => {
         try {
@@ -59,6 +52,7 @@ const McPkgTable = forwardRef(({
                             mcPkgNo: mcPkg.mcPkgNo,
                             description: mcPkg.description,
                             discipline: mcPkg.disciplineCode,
+                            system: mcPkg.system,
                             tableData: {
                                 checked: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
                             }
@@ -162,7 +156,7 @@ const McPkgTable = forwardRef(({
     ];
 
     return ( 
-        <Container disableSelectAll={!enabled}>
+        <Container>
             <TopContainer>
                 <Search>
                     <TextField
@@ -199,10 +193,6 @@ const McPkgTable = forwardRef(({
                             backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
                         },
                         selection: true,
-                        selectionProps: (): any => ({
-                            disabled: !enabled,
-                            disableRipple: true,
-                        }),
                         rowStyle: (data): React.CSSProperties => ({
                             backgroundColor: data.tableData.checked && '#e6faec'
                         })

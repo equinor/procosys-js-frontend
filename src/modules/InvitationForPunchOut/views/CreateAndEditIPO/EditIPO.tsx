@@ -313,6 +313,7 @@ const EditIPO = (): JSX.Element => {
                     commPkgScope.push({
                         commPkgNo: commPkg.commPkgNo,
                         description: commPkg.description,
+                        system: commPkg.system,
                         status: commPkg.status
                     });
                 });
@@ -329,6 +330,7 @@ const EditIPO = (): JSX.Element => {
                     mcPkgScope.selected.push({
                         mcPkgNo: mcPkg.mcPkgNo,
                         description: mcPkg.description,
+                        system: mcPkg.system,
                         discipline: ''
                     });
                 });

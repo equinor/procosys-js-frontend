@@ -29,7 +29,6 @@ const moduleName = 'PreservationJourneyForm';
 const WAIT_INTERVAL = 300;
 
 const checkboxHeightInGridUnits = 4;
-const checkboxWrapperMaxHeight = 'calc(var(--grid-unit) * 4)';
 
 enum AutoTransferMethod {
     NONE = 'None',
@@ -776,7 +775,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     {index != 100 &&
                                         <div style={{ fontSize: '12px', paddingBottom: 'var(--grid-unit)' }}>Automatic transfer on signing</div>
                                     }
-                                    <div style={{ display: 'flex', flexDirection: 'row', maxHeight: checkboxWrapperMaxHeight }}>
+                                    <div style={{ display: 'flex', flexDirection: 'row', maxHeight: `calc(var(--grid-unit) * ${checkboxHeightInGridUnits})` }}>
                                         <FormFieldSpacer>
                                             <Checkbox
                                                 checked={step.autoTransferMethod == AutoTransferMethod.RFCC}

@@ -127,7 +127,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                     />
                 </div>
 
-                < div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems:'center' }}>
                     <Checkbox
                         checked={newFilterIsDefault}
                         onChange={(checked: boolean): void => {
@@ -140,7 +140,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                         Save filter
                     </Button>
                 </div>
-            </Container >
+            </Container>
         );
     }
 
@@ -182,13 +182,12 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                                         {deleteIcon}
                                     </Button>
                                 </div>
-
                             </Row>
                         </React.Fragment>
                     );
                 })}
             </ListContainer>
-        </Container >
+        </Container>
     );
 };
 

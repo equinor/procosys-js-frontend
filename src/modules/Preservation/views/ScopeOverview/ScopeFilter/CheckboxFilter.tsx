@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Collapse, CollapseInfo } from './ScopeFilter.style';
+import { ExpandedContainer } from './CheckboxFilter.style';
 import { Typography } from '@equinor/eds-core-react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Checkbox from '../../../../../components/Checkbox';
 import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
 import EdsIcon from '@procosys/components/EdsIcon';
-import { ExpandedContainer } from './CheckboxFilter.style';
 
 interface CheckboxFilterProps {
     title: string;

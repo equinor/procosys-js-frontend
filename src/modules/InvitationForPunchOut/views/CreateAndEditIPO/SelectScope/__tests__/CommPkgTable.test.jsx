@@ -31,4 +31,9 @@ describe('<CommPkgTable />', () => {
     test.todo('Should render with selected comm pkgs');
     test.todo('Should be able to add comm packages to selected scope');
 
+    it('Should render the search field as disabled if the type is MDP and the commPkgNo is in the URL', () => {
+        const { queryByPlaceholderText } = render(<CommPkgTable type='MDP' commPkgNo={50}/>);
+        expect(queryByPlaceholderText('Search')).toBeDisabled();
+    });
+
 });

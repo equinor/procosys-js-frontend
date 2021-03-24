@@ -97,7 +97,7 @@ const CommPkgTable = forwardRef(({
                     };
                 });
                 return {
-                    maxAvailable: response.maxAvailable,
+                    maxAvailable: 1,
                     commPkgs: commPkgData
                 };
             } catch (error) {
@@ -145,7 +145,7 @@ const CommPkgTable = forwardRef(({
                     resolve({
                         data: thisCommPkg,
                         page: 0,
-                        totalCount: 1
+                        totalCount: result.maxAvailable
                     });
                 });
             }

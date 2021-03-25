@@ -64,7 +64,7 @@ const SearchIPO = (): JSX.Element => {
         setIsLoading(true);
         if(project === undefined){
             console.error('The project is of type undefined');
-            showSnackbarNotification('Get saved filters failed: The project is of type undefined', 5000);
+            showSnackbarNotification('Get saved filters failed: The project is of type undefined');
             setIsLoading(false);
             return;
         }
@@ -73,7 +73,7 @@ const SearchIPO = (): JSX.Element => {
             setSavedFilters(response);
         } catch (error) {
             console.error('Get saved filters failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         setIsLoading(false);
     };
@@ -83,8 +83,8 @@ const SearchIPO = (): JSX.Element => {
             updateSavedFilters();
         }
     }, [project]);
-
     
+
     const getDefaultFilter = (): SavedIPOFilter | undefined => {
         if (savedFilters) {
             const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
@@ -117,8 +117,8 @@ const SearchIPO = (): JSX.Element => {
             setHasProjectChanged(false);
         }
     }, [savedFilters]);
-
     
+
     /**
      * Fetch available functional roles 
      */
@@ -246,7 +246,7 @@ const SearchIPO = (): JSX.Element => {
     }, [filter]);
 
 
-
+    
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };

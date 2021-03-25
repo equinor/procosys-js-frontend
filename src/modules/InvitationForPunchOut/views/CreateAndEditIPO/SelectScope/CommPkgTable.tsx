@@ -55,7 +55,7 @@ const CommPkgTable = forwardRef(({
 
     const getCommPkgs = async (pageSize: number, page: number): Promise<{maxAvailable: number, commPkgs: CommPkgRow[]}> => {
         try {
-            if (!filter) return;
+            if (!filter) return {maxAvailable: 0, commPkgs: []};
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
             const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
                 return {

@@ -322,7 +322,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
                             {/* render table */}
                             <div {...getTableBodyProps()}>
-                                {props.data.length === 0 && (<div>No records found.</div>)}
+                                {props.data.length === 0 && (<div>No records to display</div>)}
                                 <List
                                     height={height}
                                     itemCount={pageSize > props.data.length ? props.data.length : pageSize}

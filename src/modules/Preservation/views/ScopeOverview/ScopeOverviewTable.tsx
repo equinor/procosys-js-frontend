@@ -22,6 +22,8 @@ interface ScopeOverviewTableProps {
     selectedTags: PreservedTag[];
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
+    // data: PreservedTag[];
+    // maxRows: number;
 }
 
 const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
@@ -309,24 +311,18 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
     ], []);
 
-    const [data, setData] = useState<PreservedTag[]>([]);
     const [pageCount, setPageCount] = useState<number>(0);
     const [maxRows, setMaxRows] = useState<number>(0);
+
     const [pageIndex, setPageIndex] = useState(props.pageIndex);
     const [pageSize, setPageSize] = useState(props.pageSize);
     const fetchIdRef = useRef(0);
     const tableRef = useRef();
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
+    const [data, setData] = useState<PreservedTag[]>([]);
 
     const getData = ({ ix, sz }: any, sortField = 'Due', sortDir = 'asc'): void => {
         if (!sz && !ix) return;
-        if (ix !== pageIndex)
-            setPageIndex(ix);
-
-        if (sz !== pageSize) {
-            setPageIndex(0);
-            setPageSize(sz);
-        }
 
         const fetchId = ++fetchIdRef.current;
 
@@ -341,21 +337,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             props.getData(ix, sz, sortField, sortDir).then((res) => {
                 setData(res.tags);
                 setMaxRows(res.maxAvailable);
-                setPageCount(Math.ceil(res.maxAvailable / pageSize));
             });
         }
     };
-
-    useEffect(() => {
-        if (sortBy.id) {
-            getData({ ix: 0, sz: pageSize }, (sortBy as any).id, sortBy.desc ? 'desc' : 'asc');
-            props.setOrderByField(sortBy.id);
-            props.setOrderDirection(sortBy.desc ? 'desc' : 'asc');
-        } else {
-            getData({ ix: 0, sz: pageSize });
-        }
-
-    }, [sortBy]);
 
     useEffect(() => {
         props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
@@ -369,7 +353,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
     useEffect(() => {
         getData({ ix: pageIndex, sz: pageSize }, sortBy.id, sortBy.desc ? 'desc' : 'asc');
-    }, [pageIndex, pageSize, sortBy]);
+    }, [pageSize, sortBy, pageIndex]);
+
+    
 
     const setSorting = (input: { id: string, desc: boolean }): void => {
         if (input) {
@@ -378,7 +364,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 props.setOrderByField(input.id);
             }
         } else if (sortBy.id) {
-            setSortBy({ id: '', desc: false });
+            setSortBy({ id: undefined, desc: false });
         }
     };
 
@@ -398,7 +384,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                     clientPagination={false}
                     clientSorting={false}
                     maxRowCount={maxRows}
-                    data={data}
+                    data={data || []}
                     rowSelect={true}
                     pageCount={pageCount} />
             </div>

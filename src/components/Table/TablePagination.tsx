@@ -10,13 +10,14 @@ const MuiTablePagination: T = React.memo(_MuiTablePagination) as T;
 
 export function TablePagination<T extends Record<string, unknown>>({
     instance
-}: PropsWithChildren<{ instance: TableInstance<T>}>): ReactElement | null {
+}: PropsWithChildren<{ instance: TableInstance<T> }>): ReactElement | null {
     const {
         state: { pageIndex, pageSize, rowCount = instance.maxRowCount },
         gotoPage,
         nextPage,
         previousPage,
         setPageSize,
+        setPageIndex
     } = instance;
 
 
@@ -29,6 +30,8 @@ export function TablePagination<T extends Record<string, unknown>>({
             } else {
                 gotoPage(newPage);
             }
+
+            setPageIndex(newPage);
         },
         [gotoPage, nextPage, pageIndex, previousPage]
     );

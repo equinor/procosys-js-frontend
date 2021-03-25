@@ -14,6 +14,17 @@ const attachmentsMock = [
     }
 ];
 
+jest.mock('react-virtualized-auto-sizer', () => {
+    return (props) => {
+        const renderCallback = props.children;
+
+        return renderCallback({
+            width: 1200,
+            height: 900
+        });
+    };
+});
+
 describe('Module: <Attachments />', () => {
     it('Should render embty table when no attachments', () => {
         const { getByText } = render(<Attachments attachments={[]}/>);

@@ -2,6 +2,17 @@ import CommPkgTable from '../CommPkgTable';
 import React from 'react';
 import { render } from '@testing-library/react';
 
+jest.mock('react-virtualized-auto-sizer', () => {
+    return (props) => {
+        const renderCallback = props.children;
+
+        return renderCallback({
+            width: 1200,
+            height: 900
+        });
+    };
+});
+
 describe('<CommPkgTable />', () => {
     it('Should render table', () => {
         const { queryByText } = render(<CommPkgTable />);

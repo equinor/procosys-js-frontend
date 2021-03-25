@@ -43,8 +43,6 @@ const McPkgTable = forwardRef(({
     const [enabled, setEnabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    console.log('selectedMcPkgScope', selectedMcPkgScope);
-
     useEffect(() => {
         if (selectedMcPkgScope.selected.length < 1 || selectedMcPkgScope.commPkgNoParent == commPkgNo || selectedMcPkgScope.commPkgNoParent == null) {
             setEnabled(true);

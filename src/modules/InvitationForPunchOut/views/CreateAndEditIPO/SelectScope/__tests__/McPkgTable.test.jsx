@@ -54,18 +54,31 @@ jest.mock('../../../../context/InvitationForPunchOutContext',() => ({
     }
 }));
 
+jest.mock('react-virtualized-auto-sizer', () => {
+    return (props) => {
+        const renderCallback = props.children;
+
+        return renderCallback({
+            width: 1200,
+            height: 900
+        });
+    };
+});
+
 describe('<McPkgTable />', () => {
     it('Should render McPkg table headers', async () => {
+        var propFunc = jest.fn();
         await act(async () => {
-            const { getByText } = render(<McPkgTable selectedMcPkgScope={mockSelectedMcPkgs} />);
+            const { getByText } = render(<McPkgTable setSelectedMcPkgScope={propFunc} selectedMcPkgScope={mockSelectedMcPkgs} />);
             await waitFor(() => expect(getByText('Mc pkg')).toBeInTheDocument());
             expect(getByText('Description')).toBeInTheDocument();
         });
     });
 
     it('Should render table data', async () => {
+        var propFunc = jest.fn();
         await act(async () => {
-            const { getByText, container } = render(<McPkgTable selectedMcPkgScope={mockSelectedMcPkgs}/>);
+            const { getByText, container } = render(<McPkgTable setSelectedMcPkgScope={propFunc} selectedMcPkgScope={mockSelectedMcPkgs}/>);
             await waitFor(() => expect(getByText('Mc pkg')).toBeInTheDocument());
             expect(getByText('Mc pkg 1')).toBeInTheDocument();
             expect(getByText('Mc pkg 2')).toBeInTheDocument();

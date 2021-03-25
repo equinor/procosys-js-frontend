@@ -25,6 +25,18 @@ const nonStartableTags = [
     }
 ];
 
+jest.mock('react-virtualized-auto-sizer', () => {
+    return (props) => {
+        const renderCallback = props.children;
+
+        return renderCallback({
+            width: 1200,
+            height: 900
+        });
+    };
+});
+
+
 describe('<StartPreservationDialog />', () => {
 
     it('Should only display nonstartable tags when no startable tags are selected', async () => {

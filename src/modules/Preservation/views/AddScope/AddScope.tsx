@@ -272,7 +272,6 @@ const AddScope = (): JSX.Element => {
     };
 
     const removeSelectedTag = (tagNo: string): void => {
-        console.log('her');
         const selectedIndex = selectedTags.findIndex(tag => tag.tagNo === tagNo);
         const tableDataIndex = scopeTableData.findIndex(tag => tag.tagNo === tagNo);
         if (selectedIndex > -1) {

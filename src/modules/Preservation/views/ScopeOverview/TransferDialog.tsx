@@ -34,15 +34,17 @@ const TransferDialog = ({
     nonTransferableTags
 }: TransferDialogProps): JSX.Element => {
 
-    return (<div style={{ height: '65vh' }}>
+    return (<div style={{ height: '70vh' }}>
         {nonTransferableTags.length > 0 && (
-            <div>
+            <div style={{ height: '50%' }}>
                 <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
                 <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
             </div>
         )}
         {transferableTags.length > 0 && (
-            <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+            <div style={{ height: '50%' }}>
+                <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+            </div>
         )}
     </div>
     );

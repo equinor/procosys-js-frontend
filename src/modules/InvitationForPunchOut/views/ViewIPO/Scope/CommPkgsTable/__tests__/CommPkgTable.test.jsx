@@ -22,6 +22,17 @@ const commPkgScope = [
     }
 ];
 
+jest.mock('react-virtualized-auto-sizer', () => {
+    return (props) => {
+        const renderCallback = props.children;
+
+        return renderCallback({
+            width: 1200,
+            height: 900
+        });
+    };
+});
+
 jest.mock('@procosys/core/PlantContext',() => ({
     useCurrentPlant: () => {
         return {

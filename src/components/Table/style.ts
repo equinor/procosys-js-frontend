@@ -60,7 +60,7 @@ export const TableRow = styled.div`
         border-bottom: none;
     }
     &.rowSelected {
-        background-color: rgba(0, 0, 0, 0.04);
+        background-color: rgb(230, 250, 236);
         &:hover {
             background-color: rgba(0, 0, 0, 0.07);
         }

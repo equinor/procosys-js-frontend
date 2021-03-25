@@ -360,8 +360,6 @@ const SearchIPO = (): JSX.Element => {
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
                     update={update}
                     filterUpdate={filterUpdate}
-                    setOrderByField={setOrderByField}
-                    setOrderDirection={setOrderDirection}
                 />
 
 

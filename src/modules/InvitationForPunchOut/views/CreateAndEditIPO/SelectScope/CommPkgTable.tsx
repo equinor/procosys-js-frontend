@@ -1,9 +1,9 @@
 import { Button, TextField } from '@equinor/eds-core-react';
+import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Search, TopContainer } from './Table.style';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
-import { CommPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
@@ -13,7 +13,8 @@ import ProcosysTable, { DataQuery } from '@procosys/components/Table/ProcosysTab
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
-    setCurrentCommPkg: (commPkgNo: string | null) => void;
+    selectedMcPkgScope: McPkgRow[];
+    setCurrentCommPkg: (commPkgNo: string) => void;
     type: string;
     projectName: string;
     filter: string;
@@ -24,6 +25,7 @@ const WAIT_INTERVAL = 300;
 
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
+    selectedMcPkgScope,
     setSelectedCommPkgScope,
     setCurrentCommPkg,
     type,
@@ -36,11 +38,22 @@ const CommPkgTable = forwardRef(({
     const [pageSize, setPageSize] = useState<number>(10);
     const [pageIndex, setPageIndex] = useState<number>(0);
     const cancelerRef = useRef<Canceler | null>();
+    const refObject = useRef<any>();
+    const [selectAll, setSelectAll] = useState<boolean>(false);
     const [data, setData] = useState<CommPkgRow[]>([]);
     const [maxRows, setMaxRows] = useState<number>(0);
 
+    const hasValidSystem = (system: string): boolean => {
+        if (selectedCommPkgScope.length == 0 && selectedMcPkgScope.length == 0) return true;
 
-    const getCommPkgs = async (pageSize: number, page: number): Promise<any> => {
+        if (selectedCommPkgScope.length > 0) {
+            return selectedCommPkgScope[0].system === system;
+        } else {
+            return selectedMcPkgScope[0].system === system;
+        }
+    };
+
+    const getCommPkgs = async (pageSize: number, page: number): Promise<{maxAvailable: number, commPkgs: CommPkgRow[]}> => {
         try {
             if (!filter) return;
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
@@ -48,6 +61,7 @@ const CommPkgTable = forwardRef(({
                 return {
                     commPkgNo: commPkg.commPkgNo,
                     description: commPkg.description,
+                    system: commPkg.system,
                     status: commPkg.status,
                     tableData: {
                         checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
@@ -75,8 +89,10 @@ const CommPkgTable = forwardRef(({
         } else {
             getCommPkgs(query.pageSize, query.pageIndex).then(result => {
                 setFilteredCommPkgs(result.commPkgs);
+                setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
                 setData(result.commPkgs);
                 setMaxRows(result.maxAvailable);
+
             });
         }
     };
@@ -108,7 +124,7 @@ const CommPkgTable = forwardRef(({
 
     const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
         if (type != 'DP') {
-            const rowsToAdd = rowData.filter(row => !selectedCommPkgScope.some(commPkg => commPkg.commPkgNo === row.commPkgNo));
+            const rowsToAdd = rowData.filter(row => hasValidSystem(row.system));
             setSelectedCommPkgScope([...selectedCommPkgScope, ...rowsToAdd]);
         }
     };
@@ -175,8 +191,8 @@ const CommPkgTable = forwardRef(({
     const getToMcPkgsColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {
         const commPkg = row.value as CommPkgRow;
         return (
-            <div className='goToMcCol'>
-                <Button variant="ghost_icon" onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
+            <div className='tableCell goToMcCol'>
+                <Button variant="ghost_icon" disabled={!hasValidSystem(commPkg.system)}onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
                     <EdsIcon name='chevron_right' />
                 </Button>
             </div>
@@ -203,7 +219,7 @@ const CommPkgTable = forwardRef(({
     ];
 
     return (
-        <Container disableSelectAll={type == 'DP'} mcColumn={type == 'DP'}>
+        <Container disableSelectAll={!selectAll} mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>
                     <TextField

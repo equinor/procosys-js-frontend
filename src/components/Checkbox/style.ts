@@ -1,16 +1,18 @@
 import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
-interface CheckboxStyleProps {
+interface ContainerStyleProps{
     disabled: boolean;
-    checked?: boolean;
 }
 
-export const Container = styled.label<CheckboxStyleProps>`
+interface CheckboxStyleProps {
+    size?: string;
+}
+
+export const Container = styled.label<ContainerStyleProps>`
     /* The container */
-    display: block;
-    position: relative;
-    padding-left: calc(var(--grid-unit) * 4);
+    display: flex;
+    align-items: center;
     
     cursor: ${(props): string => props.disabled ? 'not-allowed' : 'pointer'};
 
@@ -25,53 +27,22 @@ export const Container = styled.label<CheckboxStyleProps>`
 
     /* On mouse-over, add a background color */
     ${(props): any => !props.disabled && css`
-        :hover input ~ .checkmark {
+        :hover input ~ .checkmarkWrapper {
             background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
         }
     `}
-
-    /* When the checkbox is checked, add a fill background */
-    input:checked ~ .checkmark {
-        background-color: ${tokens.colors.interactive.primary__resting.rgba};
-    }
-
-    /* Show the checkmark when checked */
-    input:checked ~ .checkmark:after {
-        display: block;
-    }
-
-    /* Style the checkmark/indicator */
-    .checkmark:after {
-        left: 4px;
-        top: 0px;
-        width: 6px;
-        height: 11px;
-        border: solid ${tokens.colors.ui.background__default.rgba};
-        border-width: 0 2px 2px 0;
-        -webkit-transform: rotate(40deg);
-        -ms-transform: rotate(40deg);
-        transform: rotate(40deg);
-    }
 `;
 
-export const Checkmark = styled.span<CheckboxStyleProps>`
-    /* Create a custom checkbox */
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: calc(var(--grid-unit) * 2);
-    width: calc(var(--grid-unit) * 2);
+
+export const CheckmarkWrapper = styled.span<CheckboxStyleProps>`
+    /* Create the hover state for the checkbox */
+    border-radius: 50%;
     background-color: ${tokens.colors.ui.background__default.rgba};
-    border-radius: 3px;
+    height: calc(var(--grid-unit) * ${(props): string => props.size? props.size : '6'});
+    width: calc(var(--grid-unit) *  ${(props): string => props.size? props.size : '6'});
 
-    border: solid 2px ${(props): string => props.disabled && !props.checked
-        ? tokens.colors.interactive.disabled__fill.rgba
-        : tokens.colors.interactive.primary__resting.rgba};
-
-    /* Create the checkmark/indicator (hidden when not checked) */
-    :after {
-        content: "";
-        position: absolute;
-        display: none;
-    }
+    /* Position checkbox inside the circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;

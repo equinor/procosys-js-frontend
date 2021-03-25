@@ -34,12 +34,14 @@ type InvitationResponse = {
 type McPkgScopeResponse = {
     mcPkgNo: string;
     description: string;
+    system: string;
     commPkgNo: string;
 }
 
 type CommPkgScopeResponse = {
     commPkgNo: string;
     description: string;
+    system: string;
     status: string;
 }
 
@@ -120,6 +122,7 @@ interface CommPkgResponse {
     id: number;
     commPkgNo: string;
     description: string;
+    system: string;
     status: string;
 }
 
@@ -127,6 +130,7 @@ interface McPkgResponse {
     id: number;
     mcPkgNo: string;
     description: string;
+    system: string;
     disciplineCode: string;
 }
 

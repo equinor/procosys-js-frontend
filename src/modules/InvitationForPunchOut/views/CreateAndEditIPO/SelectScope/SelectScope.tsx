@@ -88,6 +88,7 @@ const SelectScope = ({
                             ref={commPkgRef}
                             selectedCommPkgScope={selectedCommPkgScope}
                             setSelectedCommPkgScope={setSelectedCommPkgScope}
+                            selectedMcPkgScope={selectedMcPkgScope.selected}
                             setCurrentCommPkg={setCurrentCommPkg}
                             type={type}
                             projectName={projectName}

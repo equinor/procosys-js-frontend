@@ -146,7 +146,7 @@ const Summary = ({
                 <>
                     <Section>
                         <Typography variant="h5">Included MC Packages</Typography>
-                        <McPkgsTable mcPkgScope={mcPkgScope.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: mcPkg.commPkgNo }; })} projectName={generalInfo.projectName} />
+                        <McPkgsTable mcPkgScope={mcPkgScope.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: mcPkg.commPkgNo, system: mcPkg.system }; })} projectName={generalInfo.projectName} />
                     </Section>
                 </>
             )}

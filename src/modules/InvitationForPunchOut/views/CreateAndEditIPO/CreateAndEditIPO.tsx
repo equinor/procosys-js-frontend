@@ -254,7 +254,7 @@ const CreateAndEditIPO = ({
         {currentStep == StepsEnum.SummaryAndCreate &&
             <Summary
                 generalInfo={generalInfo}
-                mcPkgScope={selectedMcPkgScope.selected.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: selectedMcPkgScope.commPkgNoParent ? selectedMcPkgScope.commPkgNoParent : '' }; })}
+                mcPkgScope={selectedMcPkgScope.selected.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: selectedMcPkgScope.commPkgNoParent ? selectedMcPkgScope.commPkgNoParent : '', system: mcPkg.system }; })}
                 commPkgScope={selectedCommPkgScope}
                 participants={participants}
                 attachments={attachments}

@@ -29,7 +29,6 @@ const emptyFilter: IPOFilter = {
     punchOutDates: []
 };
 
-
 const SearchIPO = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
@@ -84,7 +83,6 @@ const SearchIPO = (): JSX.Element => {
         }
     }, [project]);
     
-
     const getDefaultFilter = (): SavedIPOFilter | undefined => {
         if (savedFilters) {
             const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
@@ -118,7 +116,6 @@ const SearchIPO = (): JSX.Element => {
         }
     }, [savedFilters]);
     
-
     /**
      * Fetch available functional roles 
      */
@@ -139,7 +136,6 @@ const SearchIPO = (): JSX.Element => {
             showSnackbarNotification(error.message);
         }
     }, []);
-
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -216,7 +212,6 @@ const SearchIPO = (): JSX.Element => {
         };
     }, []);
 
-
     /** Update module header height on module header resize */
     useEffect(() => {
         updateModuleHeaderHeightReference();
@@ -245,12 +240,9 @@ const SearchIPO = (): JSX.Element => {
         forceFilterUpdate();
     }, [filter]);
 
-
-    
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };
-
 
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
         if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)

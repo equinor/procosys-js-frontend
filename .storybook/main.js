@@ -1,6 +1,7 @@
 const path = require('path');
 
 
+// Export a function. Accept the base config as the only param.
 module.exports = {
   'stories': [
     '../src/**/*.stories.mdx',
@@ -8,10 +9,33 @@ module.exports = {
   ],
   'addons': [
     '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    'storybook-addon-material-ui'
+    '@storybook/addon-essentials'
   ],
-  'webpack': async (config) => {
+
+  webpackFinal: async (config, { configType }) => {
+    // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
+    // You can change the configuration based on that.
+    // 'PRODUCTION' is used when building the static version of storybook.
+
+    // Make whatever fine-grained changes you need
+    config.module.rules.push({
+      test: /\.(scss)$/,
+      use: ['style-loader', 'css-loader', 'sass-loader'],
+      include: path.resolve(__dirname, '../'),
+    });
+
+  //   config.module.rules.push({
+  //     test: /\.(jpe?g|png|gif|svg)$/,
+  //     use: [{
+  //         loader: 'file-loader', 
+  //         options: {
+  //             name: '[name].[ext]',
+  //             outputPath: 'static/media/'
+  //         }
+  //     }]
+  // });
+
+
     config.resolve.alias = {
       '@procosys/core': path.resolve(__dirname, '../src/core/'),
       'react-dom': '@hot-loader/react-dom',
@@ -20,19 +44,10 @@ module.exports = {
       '@procosys/components': path.resolve(__dirname, '../src/components/'),
       '@procosys/assets': path.resolve(__dirname, '../src/assets/'),
       '@procosys/http': path.resolve(__dirname, '../src/http/'),
-      '@procosys/util': path.resolve(__dirname, '../src/util/'),
-    },
-      config.resolve.modules = [
-        path.resolve(__dirname, '..', 'src'),
-        path.resolve(__dirname, '..', 'node_modules'),
-      ];
-
-    config.module.rules.push(
-      {
-        test: /\.(ttf|eot|svg)(\?[a-z0-9#=&.]+)?$/,
-        loaders: ["file-loader"]
-      });
-
+      '@procosys/util': path.resolve(__dirname, '../src/util/')
+    };
+    
+    // Return the altered config
     return config;
-  }
-}
+  },
+};

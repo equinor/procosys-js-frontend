@@ -11,6 +11,7 @@ export interface DropdownProps {
     Icon?: JSX.Element;
     onFilter?: (input: string) => void;
     label?: string;
+    /** empty value and 'form' are the only implemented variants */
     variant?: string;
     meta?: string;
     maxHeight?: string;
@@ -21,7 +22,7 @@ const KEYCODE_ESCAPE = 27;
 const Dropdown: React.FC<DropdownProps> = ({
     disabled = false,
     text = '',
-    Icon = <KeyboardArrowDownIcon />,
+    Icon,
     children,
     onFilter,
     label,
@@ -33,6 +34,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     children = children ? React.Children.toArray(children) : [];
+
+    if(!Icon) Icon = <KeyboardArrowDownIcon />;
 
     useClickOutsideNotifier(() => {
         if (onFilter) {

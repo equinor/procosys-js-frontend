@@ -1,21 +1,95 @@
-import React from 'react';
-import Dropdown, {DropdownProps} from '../components/Dropdown/index';
+import React, { useState } from 'react';
+import Dropdown, { DropdownProps } from '@procosys/components/Dropdown';
 import { Story, Meta } from '@storybook/react';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import styled from 'styled-components';
 
+
+
+const Wrapper = styled.div`
+  margin: 32px;
+  display: grid;
+  grid-gap: 32px;
+  grid-template-columns: repeat(4, fit-content(100%));
+`;
+
+const DropdownItem = styled.div<DropdownProps>`
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+`;
+
+const generateOptions = (size: number): string[] => {
+    const optionsArr: string[] = [];
+    let i = 0;
+    while (i < size) {
+        optionsArr.push('Option ' + (i + 1));
+        i++;
+    }
+    return optionsArr;
+};
+
+const optionsArr = generateOptions(6);
 
 export default {
     title: 'Procosys/DropDown',
     component: Dropdown,
-    argTypes: {
-      text: { control: 'text' },
+    parameters: {
+        docs: {
+            description: {
+                component: `Dropdown component used in Procosys.
+        `,
+            },
+        }
     },
-  } as Meta;
+    argTypes:{
+        Icon:{
+            control:false
+        }
+    }
+} as Meta;
 
-  const Template: Story<DropdownProps> = (args) => <Dropdown {...args} />;
+export const Default: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & DropdownProps & { children?: React.ReactNode; }) => {
+    return (
+        <Wrapper>
+            <Dropdown text="I am a dropdown" {...args} >
+                {optionsArr.map((option, index) => {
+                    return (
+                        <DropdownItem key={index}>
+                            <div>{option}</div>
+                            <div>Subtext {option}</div>
+                        </DropdownItem>
+                    );
+                })}
+            </Dropdown>
+        </Wrapper>
+    );
+};
 
-  export const Primary = Template.bind({});
+export const Filtered: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & DropdownProps & { children?: React.ReactNode; }) => {
+    const [filteredOptions, setFilteredOptions] = useState<string[]>(generateOptions(7));
+    const [selectedText, setSelectedText] = useState<string>('I am a dropdown');
 
-  Primary.args = {
-    label: 'Button'
-  };
+    const handleChange = (val: string) => {
+        const _filteredOptions = JSON.parse(JSON.stringify(optionsArr)).filter((p: string) => {
+            return p.toLowerCase().indexOf(val.toLowerCase()) > -1;
+        });
+        setFilteredOptions(_filteredOptions);
+    };
+
+    const setSelected = (event: React.MouseEvent, index: number): void => {
+        setSelectedText(filteredOptions[index]);
+    };
+
+    return (
+        <Wrapper>
+            <Dropdown text={selectedText} onFilter={handleChange} {...args}>
+                {filteredOptions && filteredOptions.length > 0 &&  filteredOptions.map((option, index) => {
+                    return (
+                        <DropdownItem key={index} onClick={(event): void => setSelected(event, index)}>
+                            <div>{option}</div>
+                            <div>Subtext {option}</div>
+                        </DropdownItem>
+                    );
+                })}
+            </Dropdown>
+        </Wrapper>
+    );
+};

@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 
 import { Container, Checkmark } from './style';
 
-interface CheckboxProps {
+export interface CheckboxProps {
     children?: ReactNode;
     onChange?: (checked: boolean) => void;
     checked?: boolean;

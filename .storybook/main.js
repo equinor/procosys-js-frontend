@@ -9,7 +9,8 @@ module.exports = {
   ],
   'addons': [
     '@storybook/addon-links',
-    '@storybook/addon-essentials'
+    '@storybook/addon-essentials',
+    'storybook-addon-jsx',
   ],
 
   webpackFinal: async (config, { configType }) => {

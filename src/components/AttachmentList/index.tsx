@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Table from './../Table';
-import { Container, AttachmentLink, AddFile, StyledButton } from './style';
+import { Container, AttachmentLink, AddFile, StyledButton, DragAndDropContainer, DragAndDropTitle } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 
@@ -62,10 +62,22 @@ const AttachmentList = ({
         }
     };
 
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
+        event.preventDefault();
+    };
+
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
+        event.preventDefault();
+        if(addAttachments){
+            addAttachments(event.dataTransfer.files);
+        }
+    };
+
     /* TODO: once table component is ready and I've been able to ask someone about design and
     ** it makes sense to use this component for all the different attachment components:
     ** Change columns based on which type
     ** Change options (header especially)
+    ** Add type icons
     */
     return (
         <Container>
@@ -112,6 +124,19 @@ const AttachmentList = ({
                 }}
                 style={{ boxShadow: 'none' }}
             />
+            { addAttachments && 
+                <div>
+                    <DragAndDropTitle>
+                        Drag and drop to add files, or click on the button above
+                    </DragAndDropTitle>
+                    <DragAndDropContainer
+                        onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
+                        onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
+                    >
+                        <EdsIcon name='cloud_download' size={48} color='#DADADA' />
+                    </DragAndDropContainer>
+                </div>
+            }
         </Container >
     );
 };

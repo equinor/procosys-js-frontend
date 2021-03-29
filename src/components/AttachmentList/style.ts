@@ -38,3 +38,16 @@ export const StyledButton = styled(Button)`
     }
 `;
 
+export const DragAndDropContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 500px;
+    height: 200px;
+    background-color: ${tokens.colors.ui.background__light.rgba};
+`;
+
+export const DragAndDropTitle = styled.div`
+    padding-top: calc(var(--grid-unit) * 4);
+    padding-bottom: calc(var(--grid-unit) * 2);
+`;

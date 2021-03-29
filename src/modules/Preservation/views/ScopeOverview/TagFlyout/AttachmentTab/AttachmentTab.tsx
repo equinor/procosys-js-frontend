@@ -50,19 +50,24 @@ const AttachmentTab = ({
         };
     }, []);
 
-    const addAttachment = async (file: File): Promise<void> => {
-
-        try {
-            if (tagId != null) {
-                setIsLoading(true);
-                await apiClient.addAttachmentToTag(tagId, file, false);
-                getAttachments();
-                showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag.`, 5000, true);
-            }
-        } catch (error) {
-            console.error('Upload file attachment failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000, true);
+    const addAttachments = async (files: FileList): Promise<void> => {
+        if (!files) {
+            showSnackbarNotification('No files to upload');
+            return;
         }
+        setIsLoading(true);
+        Array.from(files).forEach(async file => {
+            try {
+                if (tagId != null) {
+                    await apiClient.addAttachmentToTag(tagId, file, false);
+                    getAttachments();
+                    showSnackbarNotification(`Attachment with filename '${file.name}' is added to tag.`, 5000, true);
+                }
+            } catch (error) {
+                console.error('Upload file attachment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message, 5000, true);
+            }
+        });
         setIsLoading(false);
     };
 
@@ -105,7 +110,7 @@ const AttachmentTab = ({
             <AttachmentList
                 attachments={attachments}
                 disabled={isVoided}
-                addAttachment={addAttachment}
+                addAttachments={addAttachments}
                 deleteAttachment={deleteAttachment}
                 downloadAttachment={downloadAttachment}
             />

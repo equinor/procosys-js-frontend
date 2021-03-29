@@ -63,16 +63,22 @@ const ActionAttachments = ({
         }
     };
 
-    const addAttachment = async (file: File): Promise<void> => {
-        try {
-            setIsLoading(true);
-            await apiClient.addAttachmentToAction(tagId, actionId, file, false);
-            getAttachments();
-            showSnackbarNotification(`Attachment with filename '${file.name}' is added to action.`, 5000, true);
-        } catch (error) {
-            console.error('Upload file attachment failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000, true);
+    const addAttachments = async (files: FileList | null): Promise<void> => {
+        if (!files) {
+            showSnackbarNotification('No files to upload');
+            return;
         }
+        setIsLoading(true);
+        Array.from(files).forEach(async file => {
+            try {
+                await apiClient.addAttachmentToAction(tagId, actionId, file, false);
+                getAttachments();
+                showSnackbarNotification(`Attachment with filename '${file.name}' is added to action.`, 5000, true);
+            } catch (error) {
+                console.error('Upload file attachment failed: ', error.message, error.data);
+                showSnackbarNotification(error.message, 5000, true);
+            }
+        });
         setIsLoading(false);
     };
 
@@ -101,7 +107,7 @@ const ActionAttachments = ({
             <AttachmentList
                 attachments={attachments}
                 disabled={isVoided}
-                addAttachment={enableActions ? addAttachment : undefined}
+                addAttachments={enableActions ? addAttachments : undefined}
                 deleteAttachment={enableActions ? deleteAttachment : undefined}
                 downloadAttachment={downloadAttachment}
             />

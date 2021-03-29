@@ -16,7 +16,7 @@ export interface Attachment {
 interface AttachmentListProps {
     attachments: Attachment[];
     disabled: boolean;
-    addAttachment?: (file: File) => void;
+    addAttachments?: (files: FileList) => void;
     deleteAttachment?: (attachment: Attachment) => void;
     downloadAttachment: (id: number) => void;
 }
@@ -24,7 +24,7 @@ interface AttachmentListProps {
 const AttachmentList = ({
     attachments,
     disabled,
-    addAttachment,
+    addAttachments,
     deleteAttachment,
     downloadAttachment,
 }: AttachmentListProps): JSX.Element => {
@@ -47,11 +47,10 @@ const AttachmentList = ({
         }
     };
 
-    const handleSubmitFile = (e: any): void => {
-        if (addAttachment) {
+    const handleSubmitFiles = (e: any): void => {
+        if (addAttachments) {
             e.preventDefault();
-            const file = e.target.files[0];
-            addAttachment(file);
+            addAttachments(e.target.files);
         }
     };
 
@@ -63,6 +62,11 @@ const AttachmentList = ({
         }
     };
 
+    /* TODO: once table component is ready and I've been able to ask someone about design and
+    ** it makes sense to use this component for all the different attachment components:
+    ** Change columns based on which type
+    ** Change options (header especially)
+    */
     return (
         <Container>
             <Table
@@ -92,21 +96,20 @@ const AttachmentList = ({
                 components={{
                     Toolbar: (): any => (
                         <AddFile>
-                            {addAttachment && (
+                            {addAttachments && (
                                 <form>
                                     <StyledButton
                                         variant='ghost'
                                         disabled={disabled}
                                         onClick={handleAddFile}>
-                                        {addIcon} Add file
+                                        {addIcon} Add files
                                     </StyledButton>
-                                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
+                                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
                                 </form>
                             )}
                         </AddFile>
                     )
                 }}
-
                 style={{ boxShadow: 'none' }}
             />
         </Container >

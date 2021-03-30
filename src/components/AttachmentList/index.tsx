@@ -102,7 +102,7 @@ const AttachmentList = ({
                         icon: (): JSX.Element => deleteAttachment ? deletIcon : <></>,
                         tooltip: disabled ? '' : 'Delete attachment',
                         onClick: (event, rowData): void => handleDelete(rowData),
-                        disabled: disabled
+                        disabled: disabled,
                     },
                 ]}
                 components={{
@@ -116,7 +116,7 @@ const AttachmentList = ({
                                         onClick={handleAddFile}>
                                         {addIcon} Add files
                                     </StyledButton>
-                                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
+                                    <input id="addFile" data-testid="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
                                 </form>
                             )}
                         </AddFile>
@@ -132,6 +132,7 @@ const AttachmentList = ({
                     <DragAndDropContainer
                         onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
                         onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
+                        data-testid="DnDField"
                     >
                         <EdsIcon name='cloud_download' size={48} color='#DADADA' />
                     </DragAndDropContainer>

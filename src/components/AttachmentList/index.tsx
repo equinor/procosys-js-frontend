@@ -5,7 +5,7 @@ import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
-const deletIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
+const deleteIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
 export interface Attachment {
     id: number;
@@ -99,7 +99,7 @@ const AttachmentList = ({
                 }}
                 actions={[
                     {
-                        icon: (): JSX.Element => deleteAttachment ? deletIcon : <></>,
+                        icon: (): JSX.Element => deleteAttachment ? deleteIcon : <></>,
                         tooltip: disabled ? '' : 'Delete attachment',
                         onClick: (event, rowData): void => handleDelete(rowData),
                         disabled: disabled,

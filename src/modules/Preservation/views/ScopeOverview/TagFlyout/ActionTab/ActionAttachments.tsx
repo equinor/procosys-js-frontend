@@ -51,7 +51,6 @@ const ActionAttachments = ({
         };
     }, []);
 
-
     const downloadAttachment = async (attachmentId: number): Promise<void> => {
         try {
             const url = await apiClient.getDownloadUrlForActionAttachment(tagId, actionId, attachmentId);
@@ -81,7 +80,6 @@ const ActionAttachments = ({
         });
         setIsLoading(false);
     };
-
 
     const deleteAttachment = async (attachment: Attachment): Promise<void> => {
         try {

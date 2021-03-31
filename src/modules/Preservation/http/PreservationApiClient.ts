@@ -886,7 +886,7 @@ class PreservationApiClient extends ApiClient {
      * Get saved tag list filters
      */
     async getSavedTagListFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
-        const endpoint = '/SavedFilters';
+        const endpoint = '/Persons/SavedFilters';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName
@@ -906,7 +906,7 @@ class PreservationApiClient extends ApiClient {
      * Add saved tag list filter
      */
     async addSavedTagListFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = '/SavedFilter';
+        const endpoint = '/Persons/SavedFilter';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -931,7 +931,7 @@ class PreservationApiClient extends ApiClient {
     */
     async updateSavedTagListFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
 
-        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const endpoint = `/Persons/SavedFilters/${savedFilterid}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
@@ -954,7 +954,7 @@ class PreservationApiClient extends ApiClient {
     * Delete saved tag list filter 
     */
     async deleteSavedTagListFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const endpoint = `/Persons/SavedFilters/${savedFilterId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {

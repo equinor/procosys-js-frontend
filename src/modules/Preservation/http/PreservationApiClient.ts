@@ -838,7 +838,6 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
     /**
      * Export tags to excel
      *
@@ -881,7 +880,6 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
     /**
      * Get saved tag list filters
      */
@@ -902,6 +900,7 @@ class PreservationApiClient extends ApiClient {
             throw new PreservationApiError(error);
         }
     }
+
     /**
      * Add saved tag list filter
      */

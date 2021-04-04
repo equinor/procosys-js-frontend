@@ -345,8 +345,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
         props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
             const req = { ix: 0, sz: pageSize };
             setPageIndex(0);
-            if (tableRef.current)
-                ((tableRef.current) as any).resetPageIndex(true);
             getData(req);
         });
     });

@@ -1,3 +1,5 @@
+import { Checkbox } from '@equinor/eds-core-react';
+import React from 'react';
 import styled, { css } from 'styled-components';
 
 export const TableHeader = styled.div`
@@ -6,6 +8,7 @@ export const TableHeader = styled.div`
     vertical-align: middle;
     font-weight: 500;
     line-height: 1.5rem;
+    align-items: center;
     position: sticky;
     z-index: 10;
     top: 0;
@@ -22,24 +25,27 @@ export const Table = styled.div`
     width: fit-content;
 `;
 
-export const TableHeadCell = styled.div`
-    padding: 8px 1px 1px 16px;
+export const TableHeadCell = styled.div<{ align?: string }>`
+    padding: 6px 0px 0px 4px;
     font-size: 0.875rem;
     min-height: 40px;
     flex-direction: column;
-    text-align: left;
     vertical-align: inherit;
     font-weight: 500;
     background-color: rgb(247, 247, 247);
     line-height: 1.5rem;
+    justifyContent: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
+    alignItems: 'flex-start';
+    display: 'flex';
+    text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     // border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
-    }
+    }    
 `;
 
 export const TableHeadFilterCell = styled.div`
-    padding: 8px 1px 8px 16px;
+    padding: 8px 1px 8px 10px;
     font-size: 0.875rem;
     min-height: 40px;
     flex-direction: column;
@@ -49,7 +55,7 @@ export const TableHeadFilterCell = styled.div`
     line-height: 1.5rem;
 `;
 
-export const TableRow = styled.div`
+export const TableRow = styled.div<{ selected: boolean }>`
     color: inherit;
     outline: 0;
     vertical-align: middle;
@@ -59,19 +65,19 @@ export const TableRow = styled.div`
     :last-child {
         border-bottom: none;
     }
-    &.rowSelected {
+    ${(props): any => props.selected && css`
         background-color: rgb(230, 250, 236);
         &:hover {
             background-color: rgba(0, 0, 0, 0.07);
         }
-    }
+    `}
+
 `;
 
 
-export const TableCell = styled.div`
-    padding: 12px 16px 16px 16px;
+export const TableCell = styled.div<{ align?: string }>`
+    padding: 6px 4px 0px 6px;
     font-size: inherit;
-    text-align: left;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
     font-weight: 400;
     line-height: 1.43;
@@ -80,6 +86,10 @@ export const TableCell = styled.div`
     white-space: nowrap;
     text-overflow: ellipsis;
     color: inherit;
+    justifyContent: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
+    alignItems: 'flex-start';
+    display: 'flex';
+    text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     :last-child {
         border-right: none;
     }
@@ -90,3 +100,49 @@ export const ColumnFilter = styled.div`
     width: 100%;
 `;
 
+export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
+    position: absolute;
+    cursor: col-resize;
+    z-index: 100;
+    opacity: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.5);
+    border-right: 1px solid rgba(0, 0, 0, 0.5);
+    height: 50%;
+    top: 25%;
+    transition: all linear 100ms;
+    right: -2px;
+    width: 3px;
+    ${(props): any => props.handleActive && css`
+        opacity: 1;
+        border: none;
+        background-color: rgba(0, 0, 0, 0.5);
+        height: calc(100% - 4px);
+        top: 2px;
+        right: -1px;
+        width: 1px;
+    `}
+`;
+
+const areEqual = (prevProps: any, nextProps: any): boolean =>
+    prevProps.checked === nextProps.checked && prevProps.indeterminate === nextProps.indeterminate;
+
+export const HeaderCheckbox = React.memo(
+    styled(Checkbox)({
+        padding: '0px',
+        '& span': {
+            padding: '2px 0px 0px 2px'
+
+        }
+    }),
+    areEqual
+);
+
+export const RowCheckbox = React.memo(
+    styled(Checkbox)({
+        padding: '0px',
+        '& span': {
+            padding: '0px'
+        }
+    }),
+    areEqual
+);

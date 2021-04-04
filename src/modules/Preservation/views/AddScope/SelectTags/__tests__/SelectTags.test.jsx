@@ -19,18 +19,6 @@ jest.mock('react-router-dom', () => ({
 }));
 
 
-jest.mock('react-virtualized-auto-sizer', () => {
-    return (props) => {
-        const renderCallback = props.children;
-
-        return renderCallback({
-            width: 1200,
-            height: 900
-        });
-    };
-});
-
-
 const tableData = [
     {
         tagNo: 'tagno-test',

@@ -260,6 +260,7 @@ const AddScope = (): JSX.Element => {
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
                     tagFunctionCode: r.tagFunctionCode,
                     isPreserved: r.isPreserved,
+                    noCheckbox: r.isPreserved,
                     tableData: { checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1 }
                 };
             });
@@ -301,8 +302,6 @@ const AddScope = (): JSX.Element => {
 
                 setSelectedTableRows(selectedRows);
             }
-
-
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
         }
     };
@@ -341,10 +340,19 @@ const AddScope = (): JSX.Element => {
             const newMigrationTableData = [...migrationTableData];
             if (tableDataIndex > -1) {
                 const tagToUncheck = newMigrationTableData[tableDataIndex];
-                if (tagToUncheck.tableData) {
-                    tagToUncheck.tableData.checked = false;
-                    setMigrationTableData(newMigrationTableData);
-                }
+                tagToUncheck.isSelected = false;
+                setMigrationTableData(newMigrationTableData);
+
+                const newSelectedTags = selectedTags.filter(x => x.tagNo !== tagToUncheck.tagNo);
+
+                const selectedRows: Record<string, boolean> = {};
+
+                newSelectedTags.map((row) => {
+                    const index = newMigrationTableData.indexOf(newMigrationTableData.find(t => t.tagNo === row.tagNo) as TagMigrationRow);
+                    selectedRows[index] = true;
+                });
+
+                setSelectedTableRows(selectedRows);
             }
 
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
@@ -451,8 +459,9 @@ const AddScope = (): JSX.Element => {
                 return (<Container>
                     <SelectMigrateTags
                         nextStep={goToNextStep}
-                        setSelectedTableRows={setSelectedTableRows}
                         setSelectedTags={setSelectedTags}
+                        setSelectedTableRows={setSelectedTableRows}
+                        selectedTableRows={selectedTableRows}
                         searchTags={searchTags}
                         selectedTags={selectedTags}
                         migrationTableData={migrationTableData}

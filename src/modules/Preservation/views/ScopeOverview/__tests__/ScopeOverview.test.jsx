@@ -54,17 +54,6 @@ const mockProject = {
     description: 'project'
 };
 
-jest.mock('react-virtualized-auto-sizer', () => {
-    return (props) => {
-        const renderCallback = props.children;
-
-        return renderCallback({
-            width: 1200,
-            height: 900
-        });
-    };
-});
-
 
 jest.mock('../../../context/PreservationContext', () => ({
     usePreservationContext: () => {

@@ -6,7 +6,7 @@ import { Tag, TagMigrationRow } from '../types';
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import ProcosysTable from '@procosys/components/Table/ProcosysTable';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { useHistory } from 'react-router-dom';
@@ -23,40 +23,8 @@ type SelectMigrateTagsProps = {
     removeTag: (tagNo: string) => void;
     removeFromMigrationScope: () => void;
     setSelectedTableRows: (ids: Record<string, boolean>) => void;
+    selectedTableRows: Record<string, boolean>;
 }
-
-const getFormattedDueDate = (tag: TagMigrationRow): string => {
-    return getFormattedDate(tag.nextUpcommingDueTime);
-};
-
-const getFormattedsStartDate = (tag: TagMigrationRow): string => {
-    return getFormattedDate(tag.startDate);
-};
-
-const tableColumns = [
-    { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
-    { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
-    { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
-    { title: 'Due', render: getFormattedDueDate },
-    { title: 'Start date', render: getFormattedsStartDate },
-    { title: 'Storage area', field: 'storageArea' },
-    { title: 'Mode', field: 'modeCode' },
-    {
-        title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
-    },
-    { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
-    {
-        title: 'Preserved',
-        field: 'isPreserved',
-        render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
-    },
-    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'MC pkg', field: 'mcPkgNo' },
-    { title: 'Tag function', field: 'tagFunctionCode' },
-];
 
 const columns = [
     {
@@ -187,43 +155,25 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
 
+    useEffect(() => {
+        const selectedRows: Record<string, boolean> = {};
+
+        props.selectedTags.map((tag) => {
+            const index = props.migrationTableData.indexOf(props.migrationTableData.find(t => t.tagNo === tag.tagNo) as TagMigrationRow);
+            selectedRows[index] = true;
+        });
+
+        props.setSelectedTableRows(selectedRows);
+
+    }, [props.selectedTags]);
+
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
         props.migrationTableData.forEach(l => {
             tagNos.push(l.tagNo);
-            l.noCheckbox = l.isPreserved;
         });
         const newSelectedTags = props.selectedTags.filter(item => !tagNos.includes(item.tagNo));
         props.setSelectedTags(newSelectedTags);
-    };
-
-    const addAllTagsInScope = (rowData: TagMigrationRow[]): void => {
-        const allRows = rowData
-            .filter(row => !row.isPreserved)
-            .map(row => {
-                return {
-                    tagId: row.id,
-                    tagNo: row.tagNo,
-                    description: row.description,
-                    mcPkgNo: row.mcPkgNo
-                };
-            });
-        const rowsToAdd = allRows.filter(row => !props.selectedTags.some(tag => tag.tagNo === row.tagNo));
-        props.setSelectedTags([...props.selectedTags, ...rowsToAdd]);
-    };
-
-    const handleSingleTag = (row: TagMigrationRow): void => {
-        const tagToHandle = {
-            tagId: row.id,
-            tagNo: row.tagNo,
-            description: row.description,
-            mcPkgNo: row.mcPkgNo
-        };
-        if (row.tableData && !row.tableData.checked) {
-            props.removeTag(row.tagNo);
-        } else {
-            props.setSelectedTags([...props.selectedTags, tagToHandle]);
-        }
     };
 
     const addTagsInScope = (rowData: TagMigrationRow[]): void => {
@@ -277,10 +227,8 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                 </ButtonsContainer>
             </TopContainer>
 
-            <div style={{ height: '65%' }}>
+            <div style={{ height: '60vh' }}>
                 <ProcosysTable
-                    // setPageSize={(): void => { }}
-                    // onSort={(): void => { }}
                     onSelectedChange={(rowData: TagMigrationRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
                     pageIndex={0}
                     pageSize={50}
@@ -291,7 +239,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                     clientSorting={true}
                     loading={props.isLoading}
                     rowSelect={true}
-                    selectedRows={props.selectedTags}
+                    selectedRows={props.selectedTableRows}
                     pageCount={Math.ceil(props.migrationTableData.length / 50)} />
             </div>
         </Container >

@@ -55,6 +55,7 @@ export const Search = styled.div`
     display: flex;    
     flex: 1;
     padding-bottom: calc(var(--grid-unit) * 3);
+    padding-left: 2px;
     input {
         width: 500px;
     }

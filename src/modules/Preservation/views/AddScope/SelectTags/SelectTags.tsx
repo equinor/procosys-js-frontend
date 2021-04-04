@@ -95,10 +95,6 @@ type SelectTagsProps = {
 
 const KEYCODE_ENTER = 13;
 
-type tplotOptions = {
-    [key: number]: boolean
-}
-
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
@@ -106,6 +102,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
 
     useEffect(() => {
         const selectedRows: Record<string, boolean> = {};
+
+        console.log('props.selectedTags', props.selectedTags);
+        console.log('props.scopeTableData', props.scopeTableData);
 
         props.selectedTags.map((tag) => {
             const index = props.scopeTableData.indexOf(props.scopeTableData.find(t => t.tagNo === tag.tagNo) as TagRow);
@@ -120,7 +119,6 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         const tagNos: string[] = [];
         props.scopeTableData.forEach(l => {
             tagNos.push(l.tagNo);
-            l.noCheckbox = l.isPreserved;
         });
         const newSelectedTags = props.selectedTags.filter(item => !tagNos.includes(item.tagNo));
         props.setSelectedTags(newSelectedTags);
@@ -197,7 +195,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             }
             {
                 !props.isLoading &&
-                <div style={{ height: '100%' }}>
+                <div style={{ height: '50vh' }}>
                     <ProcosysTable
                         onSelectedChange={(rowData: TagRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
                         pageIndex={0}

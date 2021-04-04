@@ -1,6 +1,6 @@
 import { Container, Search, TopContainer } from './Table.style';
 import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Loading from '@procosys/components/Loading';
@@ -41,6 +41,7 @@ const McPkgTable = forwardRef(({
     const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
     const [filter, setFilter] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const tableRef = useRef<any>();
 
     useEffect(() => {
         try {
@@ -54,7 +55,7 @@ const McPkgTable = forwardRef(({
                             discipline: mcPkg.disciplineCode,
                             system: mcPkg.system,
                             tableData: {
-                                checked: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
+                                isSelected: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
                             }
                         };
                     }));
@@ -88,15 +89,7 @@ const McPkgTable = forwardRef(({
             const newSelectedMcPkgScope = { commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
             setSelectedMcPkgScope(newSelectedMcPkgScope);
 
-            // remove checked state from table data (needed to reflect change when navigating to "previous" step)
-            const copyAvailableMcPkgs = [...availableMcPkgs];
-            if (tableDataIndex > -1) {
-                const mckgToUncheck = copyAvailableMcPkgs[tableDataIndex];
-                if (mckgToUncheck.tableData) {
-                    mckgToUncheck.tableData.checked = false;
-                    setAvailableMcPkgs(copyAvailableMcPkgs);
-                }
-            }
+            tableRef && tableRef.current && tableRef.current.UnselectRow(tableDataIndex);
         }
     };
 
@@ -106,19 +99,9 @@ const McPkgTable = forwardRef(({
         }
     }));
 
-    const handleSingleMcPkg = (row: McPkgRow): void => {
-        if (row.tableData && !row.tableData.checked) {
-            unselectMcPkg(row.mcPkgNo);
-        } else {
-            const newSelected = [...selectedMcPkgScope.selected, row];
-            setSelectedMcPkgScope({ commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected });
-        }
-    };
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
-        const rowsToAdd = rowData.filter(row => !selectedMcPkgScope.selected.some(mcPkg => mcPkg.mcPkgNo === row.mcPkgNo));
-        const newSelected = [...selectedMcPkgScope.selected, ...rowsToAdd];
-        setSelectedMcPkgScope({ commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected });
+        setSelectedMcPkgScope({ commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(rowData), selected: rowData });
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {
@@ -136,7 +119,7 @@ const McPkgTable = forwardRef(({
             removeAllSelectedMcPkgsInScope();
         } else {
             addAllMcPkgsInScope(rowData);
-        } 
+        }
     };
 
     const getDescriptionColumn = (row: TableOptions<McPkgRow>): JSX.Element => {
@@ -164,7 +147,9 @@ const McPkgTable = forwardRef(({
         },
     ];
 
-    return ( 
+
+
+    return (
         <Container>
             <TopContainer>
                 <Search>
@@ -187,7 +172,8 @@ const McPkgTable = forwardRef(({
             }
             { !isLoading &&
 
-                <ProcosysTable 
+                <ProcosysTable
+                    ref={tableRef}
                     columns={columns}
                     data={filteredMcPkgs}
                     clientPagination={true}
@@ -196,7 +182,13 @@ const McPkgTable = forwardRef(({
                     pageIndex={0}
                     rowSelect={true}
                     onSelectedChange={(rowData: McPkgRow[], ids: any): void => { rowSelectionChangedMc(rowData, ids); }}
-                    selectedRows={selectedMcPkgScope.selected}
+                    selectedRows={
+                        filteredMcPkgs.filter((x: McPkgRow) => x.tableData?.isSelected)
+                            .map((a: McPkgRow) => filteredMcPkgs.indexOf(a))
+                            .reduce((obj: any, item) => {
+                                return { ...obj, [item]: true };
+                            }, true)
+                    }
                     pageSize={10}
                 />
             }

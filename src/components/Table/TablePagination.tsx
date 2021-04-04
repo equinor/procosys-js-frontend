@@ -31,7 +31,8 @@ export function TablePagination<T extends Record<string, unknown>>({
                 gotoPage(newPage);
             }
 
-            setPageIndex(newPage);
+            if (setPageIndex)
+                setPageIndex(newPage);
         },
         [gotoPage, nextPage, pageIndex, previousPage]
     );

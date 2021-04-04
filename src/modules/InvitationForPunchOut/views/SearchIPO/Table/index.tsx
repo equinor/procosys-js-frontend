@@ -19,6 +19,12 @@ interface InvitationsTableProps {
     filterUpdate: number;
 }
 
+interface IPOQuery {
+    page: number;
+    pageSize: number;
+    orderBy: { title: string, orderDirection: string };
+}
+
 
 const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'createdAtUtc', desc: true });
@@ -29,24 +35,24 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const req = { page: 0, pageSize: pageSize, orderBy: { title: 'createdAtUtc' }, orderDirection: 'desc' } as Query<any>;
+        const req = { page: 0, pageSize: pageSize, orderBy: { title: 'createdAtUtc' }, orderDirection: 'desc' } as Query<IPOQuery>;
         getIPOsByQuery(req);
     }, [projectName, filterUpdate]);
 
-    
+
     useEffect(() => {
-        const req = { page: pageIndex, pageSize: pageSize, orderBy: { title: sortBy.id }, orderDirection: sortBy.desc ? 'desc' : 'asc' } as Query<any>;
+        const req = { page: pageIndex, pageSize: pageSize, orderBy: { title: sortBy.id }, orderDirection: sortBy.desc ? 'desc' : 'asc' } as Query<IPOQuery>;
         getIPOsByQuery(req);
 
     }, [pageSize, pageIndex]);
 
     useEffect(() => {
-        const req = { page: pageIndex, pageSize: pageSize, orderBy: { title: sortBy.id || 'createdAtUtc' }, orderDirection: sortBy.desc ? 'desc' : 'asc' } as Query<any>;
+        const req = { page: pageIndex, pageSize: pageSize, orderBy: { title: sortBy.id || 'createdAtUtc' }, orderDirection: sortBy.desc ? 'desc' : 'asc' } as Query<IPOQuery>;
         getIPOsByQuery(req);
     }, [sortBy]);
 
 
-    const getIPOsByQuery = (query: Query<any>): void => {
+    const getIPOsByQuery = (query: Query<IPOQuery>): void => {
         setLoading(true);
         getIPOs(query.page, query.pageSize, query.orderBy.title as string, query.orderDirection).then(result => {
             setData(result.invitations);

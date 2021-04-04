@@ -3,17 +3,6 @@ import SelectScope from '../SelectScope';
 import { render } from '@testing-library/react';
 
 
-jest.mock('react-virtualized-auto-sizer', () => {
-    return (props) => {
-        const renderCallback = props.children;
-
-        return renderCallback({
-            width: 1200,
-            height: 900
-        });
-    };
-});
-
 describe('<SelectScope />', () => {
 
     it('Renders with title for MDP', async () => {

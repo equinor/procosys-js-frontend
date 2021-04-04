@@ -79,7 +79,7 @@ export interface CommPkgRow {
     system: string;
     status: string;
     tableData?: {
-        checked: boolean;
+        isSelected: boolean;
     };
 }
 
@@ -89,7 +89,7 @@ export interface McPkgRow {
     system: string;
     discipline: string;
     tableData?: {
-        checked: boolean;
+        isSelected: boolean;
     };
 }
 

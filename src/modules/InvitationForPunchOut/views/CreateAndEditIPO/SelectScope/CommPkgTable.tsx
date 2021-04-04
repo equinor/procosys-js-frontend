@@ -2,7 +2,6 @@ import { Button, TextField } from '@equinor/eds-core-react';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { Container, Search, TopContainer } from './Table.style';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
@@ -38,10 +37,11 @@ const CommPkgTable = forwardRef(({
     const [pageSize, setPageSize] = useState<number>(10);
     const [pageIndex, setPageIndex] = useState<number>(0);
     const cancelerRef = useRef<Canceler | null>();
-    const refObject = useRef<any>();
     const [selectAll, setSelectAll] = useState<boolean>(false);
     const [data, setData] = useState<CommPkgRow[]>([]);
     const [maxRows, setMaxRows] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
+    const tableRef = useRef<any>();
 
     const hasValidSystem = (system: string): boolean => {
         if (selectedCommPkgScope.length == 0 && selectedMcPkgScope.length == 0) return true;
@@ -53,9 +53,10 @@ const CommPkgTable = forwardRef(({
         }
     };
 
-    const getCommPkgs = async (pageSize: number, page: number): Promise<{maxAvailable: number, commPkgs: CommPkgRow[]}> => {
+    const getCommPkgs = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
         try {
-            if (!filter) return {maxAvailable: 0, commPkgs: []};
+            setLoading(true);
+            if (!filter) return { maxAvailable: 0, commPkgs: [] };
             const response = await apiClient.getCommPkgsAsync(projectName, filter, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
             const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
                 return {
@@ -64,7 +65,7 @@ const CommPkgTable = forwardRef(({
                     system: commPkg.system,
                     status: commPkg.status,
                     tableData: {
-                        checked: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
+                        isSelected: selectedCommPkgScope.some(c => c.commPkgNo == commPkg.commPkgNo)
                     }
                 };
             });
@@ -79,6 +80,8 @@ const CommPkgTable = forwardRef(({
                 maxAvailable: 0,
                 commPkgs: []
             };
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -92,7 +95,6 @@ const CommPkgTable = forwardRef(({
                 setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
                 setData(result.commPkgs);
                 setMaxRows(result.maxAvailable);
-
             });
         }
     };
@@ -111,7 +113,7 @@ const CommPkgTable = forwardRef(({
             cancelerRef.current && cancelerRef.current();
 
         };
-    }, [filter]);
+    }, [filter, pageSize, pageIndex]);
 
     const removeAllSelectedCommPkgsInScope = (): void => {
         const commPkgNos: string[] = [];
@@ -125,7 +127,7 @@ const CommPkgTable = forwardRef(({
     const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
         if (type != 'DP') {
             const rowsToAdd = rowData.filter(row => hasValidSystem(row.system));
-            setSelectedCommPkgScope([...selectedCommPkgScope, ...rowsToAdd]);
+            setSelectedCommPkgScope(rowsToAdd);
         }
     };
 
@@ -136,16 +138,7 @@ const CommPkgTable = forwardRef(({
             // remove from selected commPkgs
             const newSelectedCommPkgScope = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
             setSelectedCommPkgScope(newSelectedCommPkgScope);
-
-            // remove checked state from table data (needed to reflect change when navigating to "previous" step)
-            const copyAvailableCommPkgs = [...filteredCommPkgs];
-            if (tableDataIndex > -1) {
-                const commPkgToUncheck = copyAvailableCommPkgs[tableDataIndex];
-                if (commPkgToUncheck.tableData) {
-                    commPkgToUncheck.tableData.checked = false;
-                    setFilteredCommPkgs(copyAvailableCommPkgs);
-                }
-            }
+            tableRef && tableRef.current && tableRef.current.UnselectRow(tableDataIndex);
         }
     };
 
@@ -155,21 +148,13 @@ const CommPkgTable = forwardRef(({
         }
     }));
 
-    const handleSingleCommPkg = (row: CommPkgRow): void => {
-        if (row.tableData && !row.tableData.checked) {
-            unselectCommPkg(row.commPkgNo);
-        } else {
-            setSelectedCommPkgScope([...selectedCommPkgScope, row]);
-        }
-    };
 
     const rowSelectionChanged = (rowData: CommPkgRow[], row: CommPkgRow): void => {
         if (rowData.length == 0 && filteredCommPkgs.length > 0) {
             removeAllSelectedCommPkgsInScope();
-        } else if (rowData.length > 0 && rowData[0].tableData && !row) {
-            addAllCommPkgsInScope(rowData);
-        } else if (rowData.length > 0) {
-            handleSingleCommPkg(row);
+        } else {
+            if (rowData.length > 0)
+                addAllCommPkgsInScope(rowData);
         }
     };
 
@@ -192,7 +177,7 @@ const CommPkgTable = forwardRef(({
         const commPkg = row.value as CommPkgRow;
         return (
             <div className='tableCell goToMcCol'>
-                <Button variant="ghost_icon" disabled={!hasValidSystem(commPkg.system)}onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
+                <Button variant="ghost_icon" disabled={!hasValidSystem(commPkg.system)} onClick={(): void => getMcPkgs(commPkg.commPkgNo)}>
                     <EdsIcon name='chevron_right' />
                 </Button>
             </div>
@@ -234,18 +219,30 @@ const CommPkgTable = forwardRef(({
                 </Search>
             </TopContainer>
 
-            <ProcosysTable
-                setPageSize={setPageSize}
-                pageIndex={pageIndex}
-                pageSize={pageSize}
-                setPageIndex={setPageIndex}
-                rowSelect={false}
-                columns={columns}
-                data={data}
-                clientPagination={true}
-                clientSorting={true}
-                maxRowCount={maxRows}
-            />
+            <div style={{ height: '50vh' }}>
+                <ProcosysTable
+                    ref={tableRef}
+                    setPageSize={setPageSize}
+                    pageIndex={pageIndex}
+                    pageSize={pageSize}
+                    setPageIndex={setPageIndex}
+                    rowSelect={type === 'DP' ? false : true}
+                    onSelectedChange={(rowData: CommPkgRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
+                    selectedRows={
+                        filteredCommPkgs.filter((x: CommPkgRow) => x.tableData?.isSelected)
+                            .map((a: CommPkgRow) => filteredCommPkgs.indexOf(a))
+                            .reduce((obj: any, item) => {
+                                return { ...obj, [item]: true };
+                            }, true)
+                    }
+                    columns={columns}
+                    data={data}
+                    clientPagination={false}
+                    clientSorting={true}
+                    maxRowCount={maxRows}
+                    loading={loading}
+                />
+            </div>
 
         </Container>
     );

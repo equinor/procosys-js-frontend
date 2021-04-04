@@ -46,6 +46,7 @@ export interface TagMigrationRow {
     heating: boolean;
     special: boolean;
     isPreserved: boolean;
+    isSelected?: boolean;
     tableData?: {
         checked: boolean;
     };

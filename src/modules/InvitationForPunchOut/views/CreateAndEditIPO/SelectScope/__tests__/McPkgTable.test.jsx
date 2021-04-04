@@ -54,17 +54,6 @@ jest.mock('../../../../context/InvitationForPunchOutContext',() => ({
     }
 }));
 
-jest.mock('react-virtualized-auto-sizer', () => {
-    return (props) => {
-        const renderCallback = props.children;
-
-        return renderCallback({
-            width: 1200,
-            height: 900
-        });
-    };
-});
-
 describe('<McPkgTable />', () => {
     it('Should render McPkg table headers', async () => {
         var propFunc = jest.fn();

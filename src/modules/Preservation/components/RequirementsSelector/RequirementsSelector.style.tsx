@@ -1,3 +1,4 @@
+import SelectInput from '@procosys/components/Select';
 import styled from 'styled-components';
 
 export const Header = styled.header`
@@ -10,19 +11,31 @@ export const Header = styled.header`
 `;
 
 export const InputContainer = styled.div`
-    display: grid;
+    display: flex;
     margin-bottom: calc(var(--grid-unit) *2);
-    grid-template-columns: 3fr 1fr 1fr;
-    max-width: 50vw;
 `;
 
 export const FormFieldSpacer = styled.div`
     margin-left: calc(var(--grid-unit) * 2);
-    .voidUnvoid svg {
+    .voidUnvoidDelete svg {
         padding-right: var(--grid-unit);
     }
 `;
 
 export const ActionContainer = styled.div`
     max-width: 300px;
+`;
+
+export const ButtonContainer = styled.div`
+    display: flex;
+`;
+
+export const RequirementSelectorContainer = styled.div`
+    max-width: 30vw;
+    min-width: 30vw;
+`;
+
+export const IntervalSelectorContainer = styled.div`
+    max-width: 10vw;
+    min-width: 10vw;
 `;

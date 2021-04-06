@@ -2,7 +2,7 @@ import { Attachment, CommPkgRow, ExternalEmail, GeneralInfoDetails, McScope, Par
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { ComponentName, IpoCustomEvents } from '../enums';
 import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
 import CreateAndEditIPO from './CreateAndEditIPO';
@@ -248,8 +248,8 @@ const EditIPO = (): JSX.Element => {
                     params.ipoId,
                     generalInfo.title,
                     generalInfo.poType.value,
-                    generalInfo.startTime,
-                    generalInfo.endTime,
+                    generalInfo.startTime as Date,
+                    generalInfo.endTime as Date,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
@@ -313,6 +313,7 @@ const EditIPO = (): JSX.Element => {
                     commPkgScope.push({
                         commPkgNo: commPkg.commPkgNo,
                         description: commPkg.description,
+                        system: commPkg.system,
                         status: commPkg.status
                     });
                 });
@@ -329,6 +330,7 @@ const EditIPO = (): JSX.Element => {
                     mcPkgScope.selected.push({
                         mcPkgNo: mcPkg.mcPkgNo,
                         description: mcPkg.description,
+                        system: mcPkg.system,
                         discipline: ''
                     });
                 });

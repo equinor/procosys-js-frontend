@@ -33,12 +33,6 @@ export const StepsContainer = styled.div`
     align-items:flex-end;
 `;
 
-export const ButtonContainer = styled.div`
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-`;
-
 export const IconContainer = styled.div`
     display: flex;
 `;

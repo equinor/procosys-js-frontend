@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import CacheService from '../../core/services/CacheService';
 import { Container } from './style';
+import { Helmet } from 'react-helmet';
 import { Redirect } from 'react-router-dom';
 import Spinner from '../../components/Spinner';
 import { Typography } from '@equinor/eds-core-react';
@@ -36,7 +37,12 @@ const NoPlant = (): JSX.Element => {
     }, [plants]);
 
     if (plants.length <= 0) {
-        return (<Container><Typography variant="h1">You dont have access to any plants</Typography></Container>);
+        return (
+            <Container>
+                <Helmet>
+                    <title>{'- NoPlants'}</title>
+                </Helmet>
+                <Typography variant="h1">You dont have access to any plants</Typography></Container>);
     }
 
     if (selectedPlant) {
@@ -51,6 +57,9 @@ const NoPlant = (): JSX.Element => {
 
     return (
         <Container>
+            <Helmet>
+                <title>{'- Initializing'}</title>
+            </Helmet>
             <div><Spinner large /></div>
             <div><Typography variant="h1">Initializing application...</Typography></div>
         </Container>);

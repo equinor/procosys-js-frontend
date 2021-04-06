@@ -10,7 +10,7 @@ import Spinner from '@procosys/components/Spinner';
 import { hot } from 'react-hot-loader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 interface TagFunction {
@@ -37,6 +37,8 @@ interface RequirementFormInput {
     intervalWeeks: number;
     isVoided?: boolean;
 }
+
+const moduleName = 'TagFunctionForm';
 
 const PreservationTab = (props: PreservationTabProps): JSX.Element => {
 
@@ -86,8 +88,12 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         setIsLoading(false);
     };
 
+    const confirmDiscardingChangesIfExist = (): boolean => {
+        return !unsavedRequirements || confirm(unsavedChangesConfirmationMessage);
+    };
+
     const voidTagFunction = async (): Promise<void> => {
-        if (!tagFunctionDetails) return;
+        if (!tagFunctionDetails || !confirmDiscardingChangesIfExist()) return;
         try {
             await apiClient.voidUnvoidTagFunction(tagFunctionDetails.code, tagFunctionDetails.registerCode, 'VOID', tagFunctionDetails.rowVersion);
             updateTagFunctionDetails();
@@ -119,12 +125,12 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
      */
     useEffect(() => {
         if (unsavedRequirements) {
-            setDirtyStateFor('TagFunctionForm');
+            setDirtyStateFor(moduleName);
         } else {
-            unsetDirtyStateFor('TagFunctionForm');
+            unsetDirtyStateFor(moduleName);
         }
         return (): void => {
-            unsetDirtyStateFor('TagFunctionForm');
+            unsetDirtyStateFor(moduleName);
         };
     }, [unsavedRequirements]);
 

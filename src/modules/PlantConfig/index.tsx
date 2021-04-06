@@ -1,16 +1,18 @@
-import { Route, BrowserRouter, Switch, useRouteMatch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, useRouteMatch } from 'react-router-dom';
+import React, { ReactElement } from 'react';
 
-import React from 'react';
+import { Container } from './style';
+import { Helmet } from 'react-helmet';
+import Library from './views/Library/Library';
 import { PlantConfigContextProvider } from './context/PlantConfigContext';
 import withAccessControl from '../../core/security/withAccessControl';
-import { Container } from './style';
-import Library from './views/Library/Library';
 
 const Preservation = (): JSX.Element => {
 
     const { url } = useRouteMatch();
     return (
         <PlantConfigContextProvider>
+            <Helmet titleTemplate={'ProCoSys - Library %s'} />
             <Container>
                 <BrowserRouter basename={url}>
                     <Switch>

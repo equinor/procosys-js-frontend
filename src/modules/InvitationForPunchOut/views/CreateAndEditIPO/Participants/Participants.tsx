@@ -52,43 +52,13 @@ const Participants = ({
         return `${firstName} ${lastName}`;
     };
 
-    const getPlannerPersons = (input: string): Canceler | null => {
-        let requestCanceler: Canceler | null = null;
-        if (input != '') {
-            try {
-                (async (): Promise<void> => {
-                    setIsLoading(true);
-                    const plannerPersons = await apiClient.getRequiredSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
-                        .then(persons => persons.map((person): SelectItem => {
-                            return {
-                                text: nameCombiner(person.firstName, person.lastName),
-                                value: person.azureOid,
-                                email: person.email
-                            };
-                        })
-                        );
-                    setFilteredPersons(plannerPersons);
-                    setIsLoading(false);
-                })();
-            } catch (error) {
-                showSnackbarNotification(error.message);
-                setIsLoading(false);
-            }
-        } else {
-            setFilteredPersons([]);
-        }
-        return (): void => {
-            requestCanceler && requestCanceler();
-        };
-    };
-
     const getSignerPersons = (input: string): Canceler | null => {
         let requestCanceler: Canceler | null = null;
         if (input != '') {
             try {
                 (async (): Promise<void> => {
                     setIsLoading(true);
-                    const signerPersons = await apiClient.getAdditionalSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
+                    const signerPersons = await apiClient.getSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
                         .then(persons => persons.map((person): SelectItem => {
                             return {
                                 text: nameCombiner(person.firstName, person.lastName),
@@ -267,14 +237,11 @@ const Participants = ({
     };
 
     const isSignerParticipant = (index: number): boolean => {
-        if (index < 5 && (participants[index].organization.value == Organizations[0].value ||
+        if (participants[index].organization.value == Organizations[0].value ||
+            participants[index].organization.value == Organizations[1].value ||
+            participants[index].organization.value == Organizations[2].value ||
             participants[index].organization.value == Organizations[3].value ||
-            participants[index].organization.value == Organizations[4].value)) {
-            for (let i = 2; i < index; i++) {
-                if (participants[i].organization.value == participants[index].organization.value) {
-                    return false;
-                }
-            }
+            participants[index].organization.value == Organizations[4].value) {
             return true;
         }
         return false;
@@ -282,9 +249,7 @@ const Participants = ({
 
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
-            if (personsFilter.value < 2) {
-                getPlannerPersons(personsFilter.text);
-            } else if (isSignerParticipant(personsFilter.value)) {
+            if (isSignerParticipant(personsFilter.value)) {
                 getSignerPersons(personsFilter.text);
             } else {
                 getPersons(personsFilter.text);

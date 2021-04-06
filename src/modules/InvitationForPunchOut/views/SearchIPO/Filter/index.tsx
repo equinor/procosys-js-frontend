@@ -9,11 +9,14 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { IpoStatusEnum } from '../../enums';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import SelectFilter from './SelectFilter';
-import { SelectItem } from '@procosys/components/Select';
+import Popover from '@material-ui/core/Popover';
 import SavedFilters from './SavedFilters';
 import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
-import Popover from '@material-ui/core/Popover';
+import SelectFilter from './SelectFilter';
+import { SelectItem } from '@procosys/components/Select';
+import { isValidDate } from '@procosys/core/services/DateService';
+
+const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
 
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
@@ -26,6 +29,7 @@ interface InvitationsFilterProps {
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     roles: SelectItem[];
     numberOfIPOs: number | undefined;
+    exportInvitationsToExcel: () => void;
 }
 
 interface FilterInput {
@@ -65,10 +69,6 @@ const dueDates: FilterInput[] =
         {
             id: 'NextWeek',
             title: 'Next week',
-        },
-        {
-            id: 'Custom',
-            title: 'Custom',
         }
     ];
 
@@ -139,6 +139,7 @@ const InvitationsFilter = ({
     setSelectedSavedFilterTitle,
     numberOfIPOs,
     roles,
+    exportInvitationsToExcel,
 }: InvitationsFilterProps): JSX.Element => {
 
 
@@ -196,9 +197,11 @@ const InvitationsFilter = ({
         setLocalFilter(newIPOFilter);
     };
 
-    const onDateChange = (filterParam: dateFilterParamType, value: Date): void => {
+    const onDateChange = (filterParam: dateFilterParamType, value: string): void => {
+        const date = new Date(value);
+
         const newIPOFilter: IPOFilter = { ...localFilter };
-        newIPOFilter[filterParam] = value;
+        newIPOFilter[filterParam] = isValidDate(date) ? date : undefined;
         setLocalFilter(newIPOFilter);
     };
 
@@ -253,6 +256,9 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
+                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportInvitationsToExcel}>
+                        {ExcelIcon}
+                    </Button>
                     <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
                         showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
                         setAnchorElement(event.currentTarget);
@@ -368,8 +374,8 @@ const InvitationsFilter = ({
             }
 
 
-            <CheckboxFilterWithDates title='Punch-out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.punchOutDates} icon={'alarm_on'} />
-            <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={filter.ipoStatuses} icon={'world'} />
+            <CheckboxFilterWithDates title='Punch-out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={[...filter.punchOutDates, filter.punchOutDateFromUtc, filter.punchOutDateToUtc]} icon={'alarm_on'} />
+            <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={[...filter.ipoStatuses, filter.lastChangedAtFromUtc, filter.lastChangedAtToUtc]} icon={'world'} />
             <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} roles={roles} icon={<EdsIcon name='person' />} />
 
         </Container >

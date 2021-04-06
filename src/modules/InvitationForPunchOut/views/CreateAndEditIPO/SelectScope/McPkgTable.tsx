@@ -9,7 +9,7 @@ import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable from '@procosys/components/Table';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;

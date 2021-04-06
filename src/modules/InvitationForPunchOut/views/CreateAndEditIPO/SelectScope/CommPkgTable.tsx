@@ -7,7 +7,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable, { DataQuery } from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable, { DataQuery } from '@procosys/components/Table';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];

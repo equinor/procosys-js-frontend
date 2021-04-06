@@ -1,4 +1,4 @@
-import ProcosysTable from '../ProcosysTable';
+import ProcosysTable from '..';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { render } from '@testing-library/react';

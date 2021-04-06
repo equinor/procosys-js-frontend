@@ -10,7 +10,7 @@ import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable from '@procosys/components/Table';
 import { TableOptions, UseTableRowProps } from 'react-table';
 
 interface AttachmentsProps {

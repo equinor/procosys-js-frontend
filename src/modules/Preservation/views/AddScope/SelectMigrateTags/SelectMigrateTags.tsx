@@ -5,7 +5,7 @@ import { Tag, TagMigrationRow } from '../types';
 
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable from '@procosys/components/Table';
 import React, { useEffect } from 'react';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { getFormattedDate } from '@procosys/core/services/DateService';

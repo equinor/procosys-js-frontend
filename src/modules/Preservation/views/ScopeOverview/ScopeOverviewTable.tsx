@@ -5,7 +5,7 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
 
 import EdsIcon from '@procosys/components/EdsIcon';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable from '@procosys/components/Table';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { Tooltip } from '@material-ui/core';

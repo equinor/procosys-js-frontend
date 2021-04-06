@@ -8,7 +8,7 @@ import { Tag, TagRow } from '../types';
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable from '@procosys/components/Table';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 

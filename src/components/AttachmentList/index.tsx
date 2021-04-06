@@ -3,7 +3,7 @@ import { Container, AttachmentLink, AddFile, StyledButton } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable from '../Table/ProcosysTable';
+import ProcosysTable from '../Table';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 

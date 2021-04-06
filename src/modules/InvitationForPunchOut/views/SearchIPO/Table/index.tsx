@@ -5,7 +5,7 @@ import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { Query, TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable, { TableSorting } from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable, { TableSorting } from '@procosys/components/Table';
 
 interface InvitationsTableProps {
     getIPOs: (page: number, pageSize: number, orderByField: string | null, orderDirection: string | null) => Promise<any>;

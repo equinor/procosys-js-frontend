@@ -6,7 +6,7 @@ import { Canceler } from 'axios';
 import EdsIcon from '@procosys/components/EdsIcon';
 import HistoryDetails from './HistoryDetails';
 import PreservedRequirement from './PreservedRequirement';
-import ProcosysTable from '@procosys/components/Table/ProcosysTable';
+import ProcosysTable from '@procosys/components/Table';
 import Spinner from '@procosys/components/Spinner';
 import { Tooltip } from '@material-ui/core';
 import { getFormattedDate } from '@procosys/core/services/DateService';

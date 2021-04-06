@@ -30,6 +30,14 @@ export default {
         ],
         currentStep: 1
     },
+    argTypes: {
+        currentStep: {
+            control: {
+                type: 'select',
+                options: [1, 2, 3]
+            }
+        }
+    },
     parameters: {
         docs: {
             description: {
@@ -41,7 +49,7 @@ export default {
     },
 } as Meta;
 
-export const Default: Story<ProgressBarProps> = (args: JSX.IntrinsicAttributes & ProgressBarProps & { children?: React.ReactNode; }) => {
+export const Default: Story<ProgressBarProps> = (args: JSX.IntrinsicAttributes & ProgressBarProps) => {
     return (
         <Wrapper>
             <ProgressBar {...args} ></ProgressBar>

@@ -37,7 +37,7 @@ export default {
                 type: 'select',
                 options: icons.sort(),
             },
-        },
+        }
     },
     parameters: {
         docs: {
@@ -51,9 +51,10 @@ export default {
 } as Meta;
 
 export const Default: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & DropdownProps & { children?: React.ReactNode; }) => {
+    args.text = 'More options';
     return (
         <Wrapper>
-            <OptionsDropdown text="More options" variant='ghost' {...args} >
+            <OptionsDropdown variant='ghost' {...args} >
                 <DropdownItem disabled={false} >
                     <EdsIcon name='edit_text' color={tokens.colors.text.static_icons__tertiary.rgba} />
                     Edit

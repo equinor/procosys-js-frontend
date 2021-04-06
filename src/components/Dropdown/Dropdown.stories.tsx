@@ -47,9 +47,10 @@ export default {
 } as Meta;
 
 export const Default: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & DropdownProps & { children?: React.ReactNode; }) => {
+    args.text = 'I am a dropdown';
     return (
         <Wrapper>
-            <Dropdown text="I am a dropdown" {...args} >
+            <Dropdown {...args} >
                 {optionsArr.map((option, index) => {
                     return (
                         <DropdownItem key={index}>
@@ -67,7 +68,7 @@ export const Filtered: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & D
     const [filteredOptions, setFilteredOptions] = useState<string[]>(generateOptions(7));
     const [selectedText, setSelectedText] = useState<string>('I am a dropdown');
 
-    const handleChange = (val: string) => {
+    const handleChange = (val: string): void => {
         const _filteredOptions = JSON.parse(JSON.stringify(optionsArr)).filter((p: string) => {
             return p.toLowerCase().indexOf(val.toLowerCase()) > -1;
         });
@@ -78,9 +79,11 @@ export const Filtered: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & D
         setSelectedText(filteredOptions[index]);
     };
 
+    args.text = selectedText;
+
     return (
         <Wrapper>
-            <Dropdown text={selectedText} onFilter={handleChange} {...args}>
+            <Dropdown onFilter={handleChange} {...args}>
                 {filteredOptions && filteredOptions.length > 0 &&  filteredOptions.map((option, index) => {
                     return (
                         <DropdownItem key={index} onClick={(event): void => setSelected(event, index)}>

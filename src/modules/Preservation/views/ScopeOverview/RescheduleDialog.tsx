@@ -13,8 +13,10 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
+const moduleName = 'PreservationRescheduleDialog';
 
 interface RescheduleDialogProps {
     tags: PreservedTag[];
@@ -51,6 +53,8 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
     const [error, setError] = useState<string>('');
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const handleReschedule = (async (): Promise<void> => {
         setShowSpinner(true);
@@ -95,9 +99,22 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
     }, [props.tags]);
 
 
-    /** Set canReschedule */
-    useEffect((): void => {
+    const hasUnsavedChanges = (): boolean => {
+        return (noOfWeeks || (directionItem && directionItem.text) || (comment && comment.length > 0)) ? true : false;
+    };
+
+    /** Set canReschedule and set global dirty state */
+    useEffect(() => {
         setCanReschedule((noOfWeeksIsValid && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
+
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
     }, [noOfWeeks, directionItem, comment]);
 
     if (!props.open) {
@@ -106,26 +123,26 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     const handleNoOfWeeksChanged = (newValue: string): void => {
         setNoOfWeeks(newValue);
-        if(newValue === ''){
+        if (newValue === '') {
             setError('');
             setNoOfWeeksIsValid(false);
             return;
         }
         const newWeekNumber = Number(newValue);
-        if(!isNaN(newWeekNumber)){
-            if(Number.isInteger(newWeekNumber)){
-                if(0 < newWeekNumber && newWeekNumber < 53){
+        if (!isNaN(newWeekNumber)) {
+            if (Number.isInteger(newWeekNumber)) {
+                if (0 < newWeekNumber && newWeekNumber < 53) {
                     setNoOfWeeksIsValid(true);
                     setError('');
-                }else{
+                } else {
                     setNoOfWeeksIsValid(false);
                     setError('Has to be between 0 and 53');
                 }
-            }else{
+            } else {
                 setNoOfWeeksIsValid(false);
                 setError('Has to be a whole number');
             }
-        }else{
+        } else {
             setNoOfWeeksIsValid(false);
             setError('Has to be a number');
         }
@@ -156,8 +173,8 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                         }}
                                         value={noOfWeeks || ''}
                                         helperText={error}
-                                        variant={error? 'error': 'default'}
-                                        helperIcon={error? errorIcon: ''}
+                                        variant={error ? 'error' : 'default'}
+                                        helperIcon={error ? errorIcon : ''}
                                     />
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>

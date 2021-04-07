@@ -5,11 +5,12 @@ import { Tag, TagRow } from '../types';
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Table from '../../../../../components/Table';
 import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const tableColumns = [
     { title: 'Tag no', field: 'tagNo' },
@@ -39,11 +40,12 @@ type SelectTagsProps = {
 }
 
 const KEYCODE_ENTER = 13;
-
+const moduleName = 'PreservationAddScopeSelectTags';
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -92,6 +94,18 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             handleSingleTag(row);
         }
     };
+
+    /** Update global dirty state */
+    useEffect(() => {
+        if (props.selectedTags.length > 0) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [props.selectedTags]);
 
     const cancel = (): void => {
         history.push('/');

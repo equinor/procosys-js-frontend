@@ -52,11 +52,7 @@ const CommPkgTable = forwardRef(({
             return selectedMcPkgScope[0].system === system;
         }
     };
-
-    const hasValidSystem2 = (chosenSystem: string, system: string): boolean => {
-        return chosenSystem === system;
-    };
-
+    
     const getCommPkgs = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
         try {
             setLoading(true);

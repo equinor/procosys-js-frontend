@@ -63,7 +63,7 @@ export const Container = styled.div<{disableSelectAll?: boolean, mcColumn?: bool
 
     .goToMcCol {
         position: relative;
-        bottom: 12px;
+        bottom: 6px;
     }
 `;
 

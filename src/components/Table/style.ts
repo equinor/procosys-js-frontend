@@ -78,6 +78,9 @@ export const LoadingDiv = styled.div`
     display: flex;
     justify-content: center;
     width: 100%;
+    > div {
+        text-align: center;
+    }
 `;
 
 

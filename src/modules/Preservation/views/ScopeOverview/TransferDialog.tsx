@@ -5,6 +5,7 @@ import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
 
 interface TransferDialogProps {
     transferableTags: PreservedTag[];
@@ -29,24 +30,33 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 
+const MainContainer = styled.div`
+    height: 70vh;
+`;
+
+const TableContainer = styled.div`
+    height: 50%;
+`;
+
 const TransferDialog = ({
     transferableTags,
     nonTransferableTags
 }: TransferDialogProps): JSX.Element => {
 
-    return (<div style={{ height: '70vh' }}>
-        {nonTransferableTags.length > 0 && (
-            <div style={{ height: '50%' }}>
-                <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
-                <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>
-        )}
-        {transferableTags.length > 0 && (
-            <div style={{ height: '50%' }}>
-                <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-            </div>
-        )}
-    </div>
+    return (
+        <MainContainer>
+            {nonTransferableTags.length > 0 && (
+                <TableContainer>
+                    <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
+                    <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </TableContainer>
+            )}
+            {transferableTags.length > 0 && (
+                <TableContainer>
+                    <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                </TableContainer>
+            )}
+        </MainContainer>
     );
 };
 

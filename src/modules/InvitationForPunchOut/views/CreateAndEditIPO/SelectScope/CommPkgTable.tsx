@@ -1,6 +1,6 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
-import { Container, MCHeader, Search, TopContainer } from './Table.style';
+import { CommPkgTableContainer, Container, MCHeader, Search, TopContainer } from './Table.style';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -52,7 +52,7 @@ const CommPkgTable = forwardRef(({
             return selectedMcPkgScope[0].system === system;
         }
     };
-    
+
     const getCommPkgs = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
         try {
             setLoading(true);
@@ -231,7 +231,7 @@ const CommPkgTable = forwardRef(({
                 </Search>
             </TopContainer>
 
-            <div style={{ height: '50vh' }}>
+            <CommPkgTableContainer>
                 <ProcosysTable
                     disableSelectAll
                     ref={tableRef}
@@ -255,7 +255,7 @@ const CommPkgTable = forwardRef(({
                     maxRowCount={maxRows}
                     loading={loading}
                 />
-            </div>
+            </CommPkgTableContainer>
 
         </Container>
     );

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Container, AttachmentLink, AddFile, StyledButton } from './style';
+import { AttachmentLink, AddFile, StyledButton, TableContainer } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -90,35 +90,33 @@ const AttachmentList = ({
     ];
 
     return (
-        <Container>
-            <div style={{ height: '40vh' }}>
-                <ProcosysTable
-                    columns={columns}
-                    data={attachments}
-                    noHeader={true}
-                    pageIndex={0}
-                    pageSize={25}
-                    clientPagination={true}
-                    clientSorting={true}
-                    rowSelect={false}
-                    toolbar={
-                        <AddFile>
-                            {addAttachment && (
-                                <form>
-                                    <StyledButton
-                                        variant='ghost'
-                                        disabled={disabled}
-                                        onClick={handleAddFile}>
-                                        {addIcon} Add file
-                                    </StyledButton>
-                                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
-                                </form>
-                            )}
-                        </AddFile>
-                    }
-                />
-            </div>
-        </Container >
+        <TableContainer>
+            <ProcosysTable
+                columns={columns}
+                data={attachments}
+                noHeader={true}
+                pageIndex={0}
+                pageSize={25}
+                clientPagination={true}
+                clientSorting={true}
+                rowSelect={false}
+                toolbar={
+                    <AddFile>
+                        {addAttachment && (
+                            <form>
+                                <StyledButton
+                                    variant='ghost'
+                                    disabled={disabled}
+                                    onClick={handleAddFile}>
+                                    {addIcon} Add file
+                                </StyledButton>
+                                <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFile} />
+                            </form>
+                        )}
+                    </AddFile>
+                }
+            />
+        </TableContainer>
     );
 };
 

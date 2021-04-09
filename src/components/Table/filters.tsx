@@ -1,48 +1,26 @@
 import { CellValue, IdType, UseTableRowProps } from 'react-table';
-import { Checkbox, InputAdornment, Select } from '@material-ui/core';
+import { Select } from '@material-ui/core';
 
 import { ColumnFilter } from './style';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import React from 'react';
-import { TextField } from '@material-ui/core';
+import styled from 'styled-components';
+import { TextField } from '@equinor/eds-core-react';
+
+const TableFilterField = styled(TextField)`
+    width: calc(100% - 14px);
+`;
 
 export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: any[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
-    const count = preFilteredRows.length;
-
     return (
         <ColumnFilter>
-            <TextField
-                style={{ width: 'calc(100% - 14px)' }}
+            <TableFilterField
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setFilter(e.target.value || undefined);
                 }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position='start'>
-                            <FilterListIcon />
-                        </InputAdornment>
-                    )
-                }}
+                inputIcon={<FilterListIcon />}
                 type='search' />
         </ColumnFilter>
-    );
-};
-
-
-export const CheckBoxColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, id } }: { column: { filterValue: string, preFilteredRows: UseTableRowProps<Record<IdType<any>, CellValue>>[], setFilter: (a: string | undefined) => void, id: number } }): JSX.Element => {
-
-    return (
-        <Checkbox
-            id="filterCheck"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                if (e.target.checked)
-                    setFilter('true');
-                else
-                    setFilter(undefined);
-            }}
-            color="primary"
-            inputProps={{ 'aria-label': 'secondary checkbox' }}
-        />
     );
 };
 

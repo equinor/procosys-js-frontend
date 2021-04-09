@@ -39,6 +39,14 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 
+const MainContainer = styled.div`
+    height: 65vh;
+`;
+
+const TableContainer = styled.div`
+    height: 35vh;
+`;
+
 const VoidDialog = ({
     voidableTags,
     unvoidableTags,
@@ -51,21 +59,21 @@ const VoidDialog = ({
     const unvoidingText = 'Note that tag(s) have been removed from preservation during the period the tag(s) have been voided. Preservation will be started in the same step of the journey as when they were voided.';
 
     return (
-        <div style={{ height: '65vh' }}>
+        <MainContainer>
             {topTable.length > 0 && (
-                <div style={{ height: '35vh' }}>
+                <TableContainer>
                     <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
                     <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                </div>)}
+                </TableContainer>)}
             {bottomTable.length > 0 && (
-                <div style={{ height: '35vh' }}>
+                <TableContainer>
                     <TopText>
                         <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba} />
                         <Typography variant='h6' style={{ color: tokens.colors.interactive.danger__text.rgba }}>{voiding ? voidingText : unvoidingText}</Typography>
                     </TopText>
                     <DialogTable tags={bottomTable} columns={columns} />
-                </div>)}
-        </div>);
+                </TableContainer>)}
+        </MainContainer>);
 };
 
 export default VoidDialog;

@@ -26,7 +26,7 @@ export const Table = styled.div`
 `;
 
 export const TableHeadCell = styled.div<{ align?: string }>`
-    padding: 6px 0px 0px 4px;
+    padding: 10px 0px 0px 4px;
     font-size: 0.875rem;
     min-height: 40px;
     flex-direction: column;
@@ -82,7 +82,7 @@ export const LoadingDiv = styled.div`
 
 
 export const TableCell = styled.div<{ align?: string }>`
-    padding: 6px 4px 0px 6px;
+    padding: 10px 4px 0px 6px;
     font-size: inherit;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
     font-weight: 400;
@@ -129,26 +129,17 @@ export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
     `}
 `;
 
-const areEqual = (prevProps: any, nextProps: any): boolean =>
-    prevProps.checked === nextProps.checked && prevProps.indeterminate === nextProps.indeterminate;
+export const HeaderCheckbox = styled(Checkbox)`
+    padding: 0;
+    > span {
+        padding: 2px 0px 0px 2px;
+    }
+`;
 
-export const HeaderCheckbox = React.memo(
-    styled(Checkbox)({
-        padding: '0px',
-        '& span': {
-            padding: '2px 0px 0px 2px'
-
-        }
-    }),
-    areEqual
-);
-
-export const RowCheckbox = React.memo(
-    styled(Checkbox)({
-        padding: '0px',
-        '& span': {
-            padding: '0px'
-        }
-    }),
-    areEqual
-);
+export const RowCheckbox = styled(Checkbox)`
+    padding: 0px;
+    margin-top: -2px;
+    > span {
+        padding: 0;
+    }
+`;

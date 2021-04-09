@@ -39,7 +39,7 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 export const Container = styled.div`
     display: flex;
     flex-grow: 1;
-    max-height: calc(100% - 205px);
+    max-height: calc(100% - 230px);
     flex-direction: column;
     
     input + svg {

@@ -22,8 +22,6 @@ interface ScopeOverviewTableProps {
     selectedTags: PreservedTag[];
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
-    // data: PreservedTag[];
-    // maxRows: number;
 }
 
 const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
@@ -376,26 +374,24 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     };
 
     return (
-        <Container >
+        <Container>
             <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
-            <div style={{ height: '100%' }}>
-                <ProcosysTable
-                    loading={loading}
-                    setPageSize={setPageSize}
-                    onSort={setSorting}
-                    onSelectedChange={props.setSelectedTags}
-                    ref={tableRef}
-                    pageIndex={pageIndex}
-                    setPageIndex={setPageIndex}
-                    pageSize={pageSize}
-                    columns={columns}
-                    clientPagination={false}
-                    clientSorting={false}
-                    maxRowCount={maxRows}
-                    data={data || []}
-                    rowSelect={true}
-                    pageCount={0} />
-            </div>
+            <ProcosysTable
+                loading={loading}
+                setPageSize={setPageSize}
+                onSort={setSorting}
+                onSelectedChange={props.setSelectedTags}
+                ref={tableRef}
+                pageIndex={pageIndex}
+                setPageIndex={setPageIndex}
+                pageSize={pageSize}
+                columns={columns}
+                clientPagination={false}
+                clientSorting={false}
+                maxRowCount={maxRows}
+                data={data || []}
+                rowSelect={true}
+                pageCount={0} />
         </Container>
 
     );

@@ -38,3 +38,6 @@ export const StyledButton = styled(Button)`
     }
 `;
 
+export const TableContainer = styled(Container)`
+    height: 40vh;
+`;

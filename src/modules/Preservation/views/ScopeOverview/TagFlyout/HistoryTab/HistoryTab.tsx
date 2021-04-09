@@ -163,18 +163,16 @@ const HistoryTab = ({
     return (
         <>
             <Container>
-                <div style={{ height: '500px' }} id="kake">
-                    <ProcosysTable
-                        pageIndex={0}
-                        pageSize={10}
-                        columns={columns}
-                        maxRowCount={historyLog.length}
-                        data={historyLog}
-                        clientPagination={true}
-                        clientSorting={true}
-                        loading={false}
-                        pageCount={Math.ceil(historyLog.length / 10)} />
-                </div>
+                <ProcosysTable
+                    pageIndex={0}
+                    pageSize={10}
+                    columns={columns}
+                    maxRowCount={historyLog.length}
+                    data={historyLog}
+                    clientPagination={true}
+                    clientSorting={true}
+                    loading={false}
+                    pageCount={Math.ceil(historyLog.length / 10)} />
             </Container>
             {
                 showRequirementDialog && (

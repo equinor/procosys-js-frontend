@@ -211,21 +211,19 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
 
     return (
         <Container>
-            <div style={{ height: '60vh' }}>
-                <ProcosysTable
-                    setPageSize={setPageSize}
-                    onSort={setSorting}
-                    setPageIndex={setPageIndex}
-                    orderBy={sortBy}
-                    pageIndex={pageIndex}
-                    pageSize={pageSize}
-                    maxRowCount={maxRows}
-                    columns={tableColumns}
-                    data={data || []}
-                    loading={loading}
-                    rowSelect={false}
-                    pageCount={pageCount} />
-            </div>
+            <ProcosysTable
+                setPageSize={setPageSize}
+                onSort={setSorting}
+                setPageIndex={setPageIndex}
+                orderBy={sortBy}
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                maxRowCount={maxRows}
+                columns={tableColumns}
+                data={data || []}
+                loading={loading}
+                rowSelect={false}
+                pageCount={pageCount} />
         </Container>
     );
 };

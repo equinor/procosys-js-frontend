@@ -5,6 +5,7 @@ import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
 
 interface CompleteDialogProps {
     completableTags: PreservedTag[];
@@ -25,23 +26,32 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
 
+const MainContainer = styled.div`
+    height: 70vh;
+`;
+
+const TableContainer = styled.div`
+    height: 70vh;
+`;
+
 const CompleteDialog = ({
     completableTags,
     nonCompletableTags
 }: CompleteDialogProps): JSX.Element => {
-    return (<div style={{ height: '70vh' }}>
-        {nonCompletableTags.length > 0 && (
-            <div style={{ height: '50%' }}>
-                <Typography variant="meta">{nonCompletableTags.length} tag(s) cannot be completed. Tags are not started, already completed or voided.</Typography>
-                <DialogTable tags={nonCompletableTags} columns={columns} toolbarText='tag(s) will not be completed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>
-        )}
-        {completableTags.length > 0 && (
-            <div style={{ height: '50%' }}>
-                <DialogTable tags={completableTags} columns={columns} toolbarText='tag(s) will be completed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-            </div>
-        )}
-    </div>
+    return (
+        <MainContainer>
+            {nonCompletableTags.length > 0 && (
+                <TableContainer>
+                    <Typography variant="meta">{nonCompletableTags.length} tag(s) cannot be completed. Tags are not started, already completed or voided.</Typography>
+                    <DialogTable tags={nonCompletableTags} columns={columns} toolbarText='tag(s) will not be completed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </TableContainer>
+            )}
+            {completableTags.length > 0 && (
+                <TableContainer>
+                    <DialogTable tags={completableTags} columns={columns} toolbarText='tag(s) will be completed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                </TableContainer>
+            )}
+        </MainContainer>
     );
 };
 

@@ -5,6 +5,7 @@ import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
 
 interface PreservedDialogProps {
     preservableTags: PreservedTag[];
@@ -25,23 +26,27 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
 
+const Container = styled.div`
+    height: 65vh;
+`;
 
 const PreservedDialog = ({
     preservableTags,
     nonPreservableTags
 }: PreservedDialogProps): JSX.Element => {
 
-    return (<div style={{ height: '65vh' }}>
-        {nonPreservableTags.length > 0 && (
-            <div>
-                <Typography variant="meta">{nonPreservableTags.length} tag(s) cannot be preserved this week.</Typography>
-                <DialogTable tags={nonPreservableTags} columns={columns} toolbarText='tag(s) will not be preserved for this week' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>
-        )}
-        {preservableTags.length > 0 && (
-            <DialogTable tags={preservableTags} columns={columns} toolbarText='tag(s) will be preserved for this week' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-        )}
-    </div>
+    return (
+        <Container>
+            {nonPreservableTags.length > 0 && (
+                <div>
+                    <Typography variant="meta">{nonPreservableTags.length} tag(s) cannot be preserved this week.</Typography>
+                    <DialogTable tags={nonPreservableTags} columns={columns} toolbarText='tag(s) will not be preserved for this week' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </div>
+            )}
+            {preservableTags.length > 0 && (
+                <DialogTable tags={preservableTags} columns={columns} toolbarText='tag(s) will be preserved for this week' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+            )}
+        </Container>
     );
 };
 

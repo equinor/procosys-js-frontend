@@ -1,5 +1,5 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TagsHeader, TopContainer } from './SelectTags.style';
+import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TableContainer, TagsHeader, TopContainer } from './SelectTags.style';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import React, { useEffect } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -192,7 +192,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             }
             {
                 !props.isLoading &&
-                <div style={{ height: '50vh' }}>
+                <TableContainer>
                     <ProcosysTable
                         onSelectedChange={(rowData: TagRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
                         pageIndex={0}
@@ -206,7 +206,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         rowSelect={true}
                         selectedRows={props.selectedTableRows}
                         pageCount={Math.ceil(props.scopeTableData.length / 10)} />
-                </div>
+                </TableContainer>
             }
         </Container >
     );

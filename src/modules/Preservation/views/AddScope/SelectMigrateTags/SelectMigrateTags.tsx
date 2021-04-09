@@ -1,5 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, TagsHeader, TopContainer } from './SelectMigrateTags.style';
+import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, TagsHeader, TopContainer, TableContainer } from './SelectMigrateTags.style';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagMigrationRow } from '../types';
 
@@ -227,7 +227,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                 </ButtonsContainer>
             </TopContainer>
 
-            <div style={{ height: '60vh' }}>
+            <TableContainer>
                 <ProcosysTable
                     onSelectedChange={(rowData: TagMigrationRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
                     pageIndex={0}
@@ -241,7 +241,7 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                     rowSelect={true}
                     selectedRows={props.selectedTableRows}
                     pageCount={Math.ceil(props.migrationTableData.length / 50)} />
-            </div>
+            </TableContainer>
         </Container >
     );
 };

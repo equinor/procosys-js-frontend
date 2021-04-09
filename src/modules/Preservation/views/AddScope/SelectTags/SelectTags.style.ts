@@ -92,3 +92,7 @@ export const LoadingContainer = styled.div`
         font-size: calc(var(--grid-unit) * 3);
     }
 `;
+
+export const TableContainer = styled.div`
+    height: 50vh;
+`;

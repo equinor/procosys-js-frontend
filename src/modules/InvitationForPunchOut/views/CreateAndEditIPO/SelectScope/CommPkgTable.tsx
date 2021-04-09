@@ -1,6 +1,6 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
-import { Container, Search, TopContainer } from './Table.style';
+import { Container, MCHeader, Search, TopContainer } from './Table.style';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -51,6 +51,10 @@ const CommPkgTable = forwardRef(({
         } else {
             return selectedMcPkgScope[0].system === system;
         }
+    };
+
+    const hasValidSystem2 = (chosenSystem: string, system: string): boolean => {
+        return chosenSystem === system;
     };
 
     const getCommPkgs = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
@@ -131,6 +135,14 @@ const CommPkgTable = forwardRef(({
         }
     };
 
+    useEffect(() => {
+        const _data = [...data];
+        _data.forEach((d) => {
+            d.disableCheckbox = !hasValidSystem(d.system);
+        });
+        setFilteredCommPkgs(_data);
+    }, [selectedCommPkgScope]);
+
     const unselectCommPkg = (commPkgNo: string): void => {
         const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
         const tableDataIndex = filteredCommPkgs.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
@@ -184,6 +196,10 @@ const CommPkgTable = forwardRef(({
         );
     };
 
+    const getPaddedMCHeader = (): JSX.Element => {
+        return <MCHeader>MC</MCHeader>;
+    };
+
     const columns = [
         {
             Header: 'Comm pkg',
@@ -200,11 +216,11 @@ const CommPkgTable = forwardRef(({
             Header: 'Comm status',
             accessor: 'status'
         },
-        ...type == 'DP' ? [{ Header: 'MC', accessor: (d: UseTableRowProps<CommPkgRow>): UseTableRowProps<CommPkgRow> => d, Cell: getToMcPkgsColumn, defaultCanSort: false, width: 50 }] : []
+        ...type == 'DP' ? [{ Header: getPaddedMCHeader(), id: 'MC', accessor: (d: UseTableRowProps<CommPkgRow>): UseTableRowProps<CommPkgRow> => d, Cell: getToMcPkgsColumn, defaultCanSort: false, width: 50 }] : []
     ];
 
     return (
-        <Container disableSelectAll={!selectAll} mcColumn={type == 'DP'}>
+        <Container disableSelectAll={type === 'DP'} mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>
                     <TextField
@@ -221,6 +237,7 @@ const CommPkgTable = forwardRef(({
 
             <div style={{ height: '50vh' }}>
                 <ProcosysTable
+                    disableSelectAll
                     ref={tableRef}
                     setPageSize={setPageSize}
                     pageIndex={pageIndex}

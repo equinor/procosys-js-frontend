@@ -68,7 +68,7 @@ declare module 'react-table' {
     pageSize: number;
     totalCount: number;
     search: string;
-    orderBy: {title: string};
+    orderBy: { title: string };
     orderDirection: 'asc' | 'desc';
     error?: ErrorState;
   }
@@ -117,6 +117,7 @@ declare module 'react-table' {
     UseRowSelectState<D>,
     UseRowStateState<D>,
     UseSortByState<D> {
+    disableSelectAll: boolean
     rowCount: number
   }
 

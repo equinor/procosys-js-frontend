@@ -13,7 +13,7 @@ export const TableHeader = styled.div`
     z-index: 10;
     top: 0;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
-    &:hover $resizeHandle: {
+    &:hover {
         opacity: 1;
     }
 `;
@@ -34,8 +34,8 @@ export const TableHeadCell = styled.div<{ align?: string }>`
     font-weight: 500;
     background-color: rgb(247, 247, 247);
     line-height: 1.5rem;
-    justifyContent: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
-    alignItems: 'flex-start';
+    justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
+    align-items: 'flex-start';
     display: 'flex';
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     // border-right: 1px solid rgba(224, 224, 224, 1);
@@ -74,6 +74,12 @@ export const TableRow = styled.div<{ selected: boolean }>`
 
 `;
 
+export const LoadingDiv = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+`;
+
 
 export const TableCell = styled.div<{ align?: string }>`
     padding: 6px 4px 0px 6px;
@@ -86,8 +92,8 @@ export const TableCell = styled.div<{ align?: string }>`
     white-space: nowrap;
     text-overflow: ellipsis;
     color: inherit;
-    justifyContent: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
-    alignItems: 'flex-start';
+    justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
+    align-items: 'flex-start';
     display: 'flex';
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     :last-child {

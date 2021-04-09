@@ -15,7 +15,7 @@ import {
 } from 'react-table';
 import { FixedSizeList as List, areEqual, FixedSizeList } from 'react-window';
 import React, { CSSProperties, PropsWithChildren, forwardRef, memo, useEffect, useRef, useImperativeHandle } from 'react';
-import { Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow, HeaderCheckbox, RowCheckbox } from './style';
+import { Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow, HeaderCheckbox, RowCheckbox, LoadingDiv } from './style';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { DefaultColumnFilter } from './filters';
@@ -58,6 +58,7 @@ export interface TableProperties<T extends Record<string, unknown>> extends Tabl
     setPageSize?: (size: number) => void;
     noHeader?: boolean;
     toolbar?: React.ComponentType<any>;
+    disableSelectAll?: boolean;
 }
 
 const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
@@ -69,10 +70,10 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
             minWidth: 50,
             width: 50,
             maxWidth: 50,
-            Header: ({ getToggleAllRowsSelectedProps }: HeaderProps<Record<string, unknown>>): JSX.Element => (
-                <HeaderCheckbox {...getToggleAllRowsSelectedProps()} />
+            Header: ({ getToggleAllRowsSelectedProps, state }: HeaderProps<Record<string, unknown>>): JSX.Element => (
+                <HeaderCheckbox {...getToggleAllRowsSelectedProps()} disabled={state.disableSelectAll} />
             ),
-            Cell: ({ row }: CellProps<Record<string, unknown>>): JSX.Element => row.original.noCheckbox ? <></> : <RowCheckbox {...row.getToggleRowSelectedProps()} />,
+            Cell: ({ row }: CellProps<Record<string, unknown>>): JSX.Element => row.original.noCheckbox ? <></> : <RowCheckbox disabled={row.original.disableCheckbox} {...row.getToggleRowSelectedProps()} />,
         },
         ...columns,
     ]);
@@ -116,7 +117,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             manualPagination: props.clientPagination ? false : true,
             defaultColumn,
             manualSortBy: props.clientSorting ? false : true,
-            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {} }
+            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {}, disableSelectAll: props.disableSelectAll }
         }, ...hooks);
 
     const {
@@ -126,7 +127,8 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         prepareRow,
         page,
         onClick,
-        loading,
+        loading = props.loading,
+        selectedFlatRows,
         state: { pageIndex, pageSize, selectedRowIds, sortBy },
     } = tableInstance;
 
@@ -141,9 +143,10 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             const selectedRows = tableInstance.data.filter((d: Record<string, unknown>, ix: number) => {
                 return Object.keys(selectedRowIds).map(Number).indexOf(ix) >= 0;
             });
+
             props.onSelectedChange(selectedRows, selectedRowIds);
         }
-    }, [selectedRowIds, tableInstance]);
+    }, [selectedFlatRows.length]);
 
 
     useImperativeHandle(ref, () => ({
@@ -228,7 +231,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
 
     return (
         loading ? (
-            <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
+            <LoadingDiv><Spinner large /></LoadingDiv>
         ) : (
             <AutoSizer>
                 {({ height, width }): JSX.Element => (

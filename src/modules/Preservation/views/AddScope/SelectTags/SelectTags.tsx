@@ -103,10 +103,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
     useEffect(() => {
         const selectedRows: Record<string, boolean> = {};
 
-        console.log('props.selectedTags', props.selectedTags);
-        console.log('props.scopeTableData', props.scopeTableData);
-
-        props.selectedTags.map((tag) => {
+        props.selectedTags.forEach((tag) => {
             const index = props.scopeTableData.indexOf(props.scopeTableData.find(t => t.tagNo === tag.tagNo) as TagRow);
             selectedRows[index] = true;
         });

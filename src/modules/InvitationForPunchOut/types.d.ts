@@ -78,6 +78,7 @@ export interface CommPkgRow {
     description: string;
     system: string;
     status: string;
+    disableCheckbox?: boolean;
     tableData?: {
         isSelected: boolean;
     };

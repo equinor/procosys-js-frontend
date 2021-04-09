@@ -82,3 +82,7 @@ export const TopContainer = styled.div`
     margin: calc(var(--grid-unit) * 3) 0;
     align-items: center;
 `;
+
+export const MCHeader = styled.div`
+    padding-left: 12px;
+`;

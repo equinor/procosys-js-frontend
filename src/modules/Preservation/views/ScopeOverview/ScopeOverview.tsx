@@ -1,4 +1,4 @@
-import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, OldPreservationLink, ShowActionsButton, StyledButton, TooltipText } from './ScopeOverview.style';
+import { ActionsContainer, Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, OldPreservationLink, StyledButton, TooltipText } from './ScopeOverview.style';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PreservedTag, PreservedTags, Requirement, SavedTagListFilter, TagListFilter } from './types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -308,7 +308,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const cancelerRef = useRef<Canceler | null>();
 
-    const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags> => {
+    const getTags = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<PreservedTags | undefined> => {
         if (savedTagListFilters) {  //to avoid getting tags before we have set previous-/default filter
             try {
                 cancelerRef.current && cancelerRef.current();
@@ -316,7 +316,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     (response) => {
                         setPageIndex(0);
                         setNumberOfTags(response.maxAvailable);
-                        setSelectedTags([]);
                         return response;
                     }
                 );
@@ -326,9 +325,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     showSnackbarNotification(error.message);
                 }
             }
-        };
-        setSelectedTags([]);
-        return { maxAvailable: 0, tags: [] };
+        }
+        return undefined;
     };
 
     const exportTagsToExcel = async (): Promise<void> => {

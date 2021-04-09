@@ -1,8 +1,8 @@
-// import React from 'react';
-// import ScopeOverview from '../ScopeOverview';
-// import { render, act } from '@testing-library/react';
-// import { createMemoryHistory } from 'history';
-// import { Router } from 'react-router';
+import React from 'react';
+import ScopeOverview from '../ScopeOverview';
+import { render, screen } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router';
 
 const mockTags = [{
     maxAvailable: 1,
@@ -68,20 +68,17 @@ jest.mock('../../../context/PreservationContext', () => ({
     }
 }));
 
-// describe('<ScopeOverview />', () => {
+describe('<ScopeOverview />', () => {
 
-//     it('Should display description column', async () => {
-//         await act(async () => {
-//             const history = createMemoryHistory();
-//             const { getByText } = render(
-//                 <Router history={history}>
-//                     <ScopeOverview />
-//                 </Router>
-//             );     
-//             expect(getByText('Description')).toBeInTheDocument();     
-//         });        
-//     });
+    it('Should display description column', async () => {
+        const history = createMemoryHistory();
+        render(
+            <Router history={history}>
+                <ScopeOverview />
+            </Router>
+        );     
+        const description = await screen.findByText('Description');   
+        expect(description).toBeInTheDocument();   
+    });
     
-// });
-
-test.todo('Figure out how to make useState work with the test above...');
+});

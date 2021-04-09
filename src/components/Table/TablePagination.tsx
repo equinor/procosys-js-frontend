@@ -5,8 +5,8 @@ import { TablePagination as _MuiTablePagination } from '@material-ui/core';
 
 const rowsPerPageOptions = [10, 25, 50, 100, 500, 1000];
 
-type T = typeof _MuiTablePagination
-const MuiTablePagination: T = React.memo(_MuiTablePagination) as T;
+type PaginationType = typeof _MuiTablePagination
+const MuiTablePagination: PaginationType = React.memo(_MuiTablePagination) as PaginationType;
 
 export function TablePagination<T extends Record<string, unknown>>({
     instance

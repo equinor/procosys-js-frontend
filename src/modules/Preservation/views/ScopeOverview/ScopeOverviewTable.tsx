@@ -13,7 +13,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 
 interface ScopeOverviewTableProps {
-    getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags>;
+    getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | undefined>;
     setRefreshScopeListCallback: (callback: (maxHeight: number, refreshOnResize?: boolean) => void) => void;
     pageSize: number;
     pageIndex: number;
@@ -311,7 +311,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
     ], []);
 
-    const [pageCount, setPageCount] = useState<number>(0);
     const [maxRows, setMaxRows] = useState<number>(0);
 
     const [pageIndex, setPageIndex] = useState(props.pageIndex);
@@ -320,9 +319,14 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const tableRef = useRef();
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
     const [data, setData] = useState<PreservedTag[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const getData = ({ ix, sz }: any, sortField = 'Due', sortDir = 'asc'): void => {
-        if (!sz && !ix) return;
+    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'asc'): Promise<void> => {
+        if (!tablePageSize && !tablePageIndex) {
+            setLoading(false);
+            return;
+        }
+        setLoading(true);
 
         const fetchId = ++fetchIdRef.current;
 
@@ -334,26 +338,31 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
         }
 
         if (fetchId === fetchIdRef.current) {
-            props.getData(ix, sz, sortField, sortDir).then((res) => {
-                setData(res.tags);
-                setMaxRows(res.maxAvailable);
+            await props.getData(tablePageIndex, tablePageSize, sortField, sortDir).then((res) => {
+                if (res) {
+                    setData(res.tags);
+                    setMaxRows(res.maxAvailable);
+                    setLoading(false);
+                }
             });
+        } else {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
-            const req = { ix: 0, sz: pageSize };
+            const req = { tablePageIndex: 0, tablePageSize: pageSize };
             setPageIndex(0);
             getData(req);
         });
     });
 
     useEffect(() => {
-        getData({ ix: pageIndex, sz: pageSize }, sortBy.id, sortBy.desc ? 'desc' : 'asc');
+        getData({ tablePageIndex: pageIndex, tablePageSize: pageSize }, sortBy.id, sortBy.desc ? 'desc' : 'asc');
     }, [pageSize, sortBy, pageIndex]);
 
-    
+
 
     const setSorting = (input: { id: string, desc: boolean }): void => {
         if (input) {
@@ -371,6 +380,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
             <div style={{ height: '100%' }}>
                 <ProcosysTable
+                    loading={loading}
                     setPageSize={setPageSize}
                     onSort={setSorting}
                     onSelectedChange={props.setSelectedTags}
@@ -384,7 +394,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                     maxRowCount={maxRows}
                     data={data || []}
                     rowSelect={true}
-                    pageCount={pageCount} />
+                    pageCount={0} />
             </div>
         </Container>
 

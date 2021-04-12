@@ -3,42 +3,50 @@ import { PreservedTag } from './types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
-import { Column } from 'material-table';
 import DialogTable from './DialogTable';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
 
 interface RemoveDialogProps {
     removableTags: PreservedTag[];
     nonRemovableTags: PreservedTag[];
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo', id: 'tagNo' },
+    { Header: 'Description', accessor: 'description', id: 'description' },
+    { Header: 'Status', accessor: 'status', id: 'status' },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
+
+const Container = styled.div`
+    height: 65vh;
+`;
 
 const RemoveDialog = ({
     removableTags: removableTags,
     nonRemovableTags: nonRemovableTags
 }: RemoveDialogProps): JSX.Element => {
-    return (<div>
-        {nonRemovableTags.length > 0 && (
-            <div>
-                <Typography variant="meta">{nonRemovableTags.length} tag(s)  cannot be removed. Tags are not voided, or are in use.</Typography>
-                <DialogTable tags={nonRemovableTags} columns={columns} toolbarText='tag(s) will not be removed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>
-        )}
-        {removableTags.length > 0 && (
-            <DialogTable tags={removableTags} columns={columns} toolbarText='tag(s) will be removed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-        )}
-    </div>
+    return (
+
+        <Container>
+            {nonRemovableTags.length > 0 && (
+                <div>
+                    <Typography variant="meta">{nonRemovableTags.length} tag(s)  cannot be removed. Tags are not voided, or are in use.</Typography>
+                    <DialogTable tags={nonRemovableTags} columns={columns} toolbarText='tag(s) will not be removed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </div>
+            )}
+            {removableTags.length > 0 && (
+                <DialogTable tags={removableTags} columns={columns} toolbarText='tag(s) will be removed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+            )}
+        </Container>
     );
 };
 

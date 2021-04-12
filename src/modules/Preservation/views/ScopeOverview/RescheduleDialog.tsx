@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
-import { Column } from 'material-table';
 import DialogTable from './DialogTable';
 import { ButtonContainer, ButtonSpacer, DialogContainer, Divider, FormFieldSpacer, InputContainer, Scrim, Title } from './RescheduleDialog.style';
 import SelectInput, { SelectItem } from '../../../../components/Select';
@@ -14,6 +13,7 @@ import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
 const moduleName = 'PreservationRescheduleDialog';
@@ -24,17 +24,22 @@ interface RescheduleDialogProps {
     onClose: () => void;
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo' },
+    { Header: 'Description', accessor: 'description' },
+    { Header: 'Status', accessor: 'status' },
+    {
+        Header: 'Req type',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getRequirementIcons
+    }
 ];
 
 const directionItems: SelectItem[] = [
@@ -205,9 +210,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                     }
                     {
                         nonReschedulableTags.length > 0 && (
-                            <div>
-                                <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                            </div>
+                            <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                         )
                     }
                     {

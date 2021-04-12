@@ -44,6 +44,10 @@ export const Divider = styled.div`
 `;
 
 export const Content = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 80%;
     padding-right: calc(var(--grid-unit) * 2);
     padding-left: calc(var(--grid-unit) * 2);
     padding-bottom: calc(var(--grid-unit) * 2);

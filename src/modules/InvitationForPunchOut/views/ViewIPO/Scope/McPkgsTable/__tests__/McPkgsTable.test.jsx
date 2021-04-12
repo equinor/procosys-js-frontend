@@ -27,6 +27,7 @@ jest.mock('@procosys/core/PlantContext',() => ({
     }
 }));
 
+
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };

@@ -11,6 +11,7 @@ export interface Tag {
 }
 
 export interface TagRow {
+    noCheckbox?: boolean;
     tagNo: string;
     description: string;
     purchaseOrderTitle: string;
@@ -19,12 +20,14 @@ export interface TagRow {
     mccrResponsibleCodes: string;
     tagFunctionCode: string;
     isPreserved: boolean;
+    isSelected?: boolean;
     tableData?: {
         checked: boolean;
     };
 }
 
 export interface TagMigrationRow {
+    noCheckbox?: boolean;
     id: number;
     tagNo: string;
     description: string;
@@ -43,6 +46,7 @@ export interface TagMigrationRow {
     heating: boolean;
     special: boolean;
     isPreserved: boolean;
+    isSelected?: boolean;
     tableData?: {
         checked: boolean;
     };

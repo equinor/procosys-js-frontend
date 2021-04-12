@@ -64,7 +64,7 @@ describe('<AttachmentList />', () => {
             />
         );
         expect(queryByText('Add files')).toBeInTheDocument();
-        expect(queryByText('Drag and drop to add files, or click on the button above')).toBeInTheDocument();
+        expect(queryByText('Drag and drop to add files, or click on the button below')).toBeInTheDocument();
     });
 
     it('Should not render the "add files" button and DragAndDropField if an addAttachments prop is not passed', () => {
@@ -112,4 +112,6 @@ describe('<AttachmentList />', () => {
         fireEvent.click(fileName);
         expect(downloadAttachment).toHaveBeenCalledTimes(1);
     });
+
+    it.todo('Should render with more details if it\'s the large version');
 });

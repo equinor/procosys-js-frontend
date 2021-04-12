@@ -19,6 +19,7 @@ interface AttachmentListProps {
     addAttachments?: (files: FileList) => void;
     deleteAttachment?: (attachment: Attachment) => void;
     downloadAttachment: (id: number) => void;
+    large?: boolean;
 }
 
 const AttachmentList = ({
@@ -27,6 +28,7 @@ const AttachmentList = ({
     addAttachments,
     deleteAttachment,
     downloadAttachment,
+    large = false,
 }: AttachmentListProps): JSX.Element => {
 
     const getFilenameColumn = (attachment: Attachment): JSX.Element => {
@@ -81,6 +83,20 @@ const AttachmentList = ({
     */
     return (
         <Container>
+            { addAttachments &&
+                <div>
+                    <DragAndDropTitle>
+                        Drag and drop to add files, or click on the button { large? 'above' : 'below'}
+                    </DragAndDropTitle>
+                    <DragAndDropContainer
+                        onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
+                        onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
+                        data-testid="DnDField"
+                    >
+                        <EdsIcon name='cloud_download' size={48} color='#DADADA' />
+                    </DragAndDropContainer>
+                </div>
+            }
             <Table
                 columns={[
                     { render: getFilenameColumn },
@@ -124,20 +140,6 @@ const AttachmentList = ({
                 }}
                 style={{ boxShadow: 'none' }}
             />
-            { addAttachments && 
-                <div>
-                    <DragAndDropTitle>
-                        Drag and drop to add files, or click on the button above
-                    </DragAndDropTitle>
-                    <DragAndDropContainer
-                        onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
-                        onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
-                        data-testid="DnDField"
-                    >
-                        <EdsIcon name='cloud_download' size={48} color='#DADADA' />
-                    </DragAndDropContainer>
-                </div>
-            }
         </Container >
     );
 };

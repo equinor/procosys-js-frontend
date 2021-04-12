@@ -62,6 +62,7 @@ type TagSearchResponse = {
     tagFunctionCode: string;
     mccrResponsibleCodes: string;
     isPreserved: boolean;
+    noCheckbox: boolean;
 }
 
 type TagMigrationResponse = {
@@ -83,6 +84,7 @@ type TagMigrationResponse = {
     heating: boolean;
     special: boolean;
     isPreserved: boolean;
+    noCheckbox: boolean;
 }
 
 
@@ -1524,6 +1526,9 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 settings
             );
+            result.data.forEach((r) => {
+                r.noCheckbox = r.isPreserved;
+            });
             return result.data;
         } catch (error) {
             throw new PreservationApiError(error);
@@ -1606,6 +1611,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 settings
             );
+            result.data.forEach((r) => r.noCheckbox = r.isPreserved);
             return result.data;
         }
         catch (error) {

@@ -4,6 +4,8 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin-top: var(--margin-module--top);
+    height: 60vh;
+    
     tbody, thead {
         .MuiButtonBase-root {
             :hover {

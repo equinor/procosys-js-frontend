@@ -2,6 +2,7 @@ import { Area, Discipline, Journey, PurchaseOrder, Requirement, RequirementType,
 import { Container, Divider, LargerComponent, SelectedTags } from './AddScope.style';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+
 import { Canceler } from 'axios';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
 import { SelectItem } from '../../../../components/Select';
@@ -49,6 +50,7 @@ const AddScope = (): JSX.Element => {
 
     const [step, setStep] = useState(1);
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [selectedTableRows, setSelectedTableRows] = useState<Record<string, boolean>>({});
     const [scopeTableData, setScopeTableData] = useState<TagRow[]>([]);
     const [migrationTableData, setMigrationTableData] = useState<TagMigrationRow[]>([]);
     const [journeys, setJourneys] = useState<Journey[]>([]);
@@ -258,6 +260,7 @@ const AddScope = (): JSX.Element => {
                     mccrResponsibleCodes: r.mccrResponsibleCodes,
                     tagFunctionCode: r.tagFunctionCode,
                     isPreserved: r.isPreserved,
+                    noCheckbox: r.isPreserved,
                     tableData: { checked: selectedTags.findIndex(tag => tag.tagNo === r.tagNo) > -1 }
                 };
             });
@@ -285,12 +288,20 @@ const AddScope = (): JSX.Element => {
             const newScopeTableData = [...scopeTableData];
             if (tableDataIndex > -1) {
                 const tagToUncheck = newScopeTableData[tableDataIndex];
-                if (tagToUncheck.tableData) {
-                    tagToUncheck.tableData.checked = false;
-                    setScopeTableData(newScopeTableData);
-                }
-            }
+                tagToUncheck.isSelected = false;
+                setScopeTableData(newScopeTableData);
 
+                const newSelectedTags = selectedTags.filter(x => x.tagNo !== tagToUncheck.tagNo);
+
+                const selectedRows: Record<string, boolean> = {};
+
+                newSelectedTags.map((row) => {
+                    const index = newScopeTableData.indexOf(newScopeTableData.find(t => t.tagNo === row.tagNo) as TagRow);
+                    selectedRows[index] = true;
+                });
+
+                setSelectedTableRows(selectedRows);
+            }
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
         }
     };
@@ -329,10 +340,19 @@ const AddScope = (): JSX.Element => {
             const newMigrationTableData = [...migrationTableData];
             if (tableDataIndex > -1) {
                 const tagToUncheck = newMigrationTableData[tableDataIndex];
-                if (tagToUncheck.tableData) {
-                    tagToUncheck.tableData.checked = false;
-                    setMigrationTableData(newMigrationTableData);
-                }
+                tagToUncheck.isSelected = false;
+                setMigrationTableData(newMigrationTableData);
+
+                const newSelectedTags = selectedTags.filter(x => x.tagNo !== tagToUncheck.tagNo);
+
+                const selectedRows: Record<string, boolean> = {};
+
+                newSelectedTags.map((row) => {
+                    const index = newMigrationTableData.indexOf(newMigrationTableData.find(t => t.tagNo === row.tagNo) as TagMigrationRow);
+                    selectedRows[index] = true;
+                });
+
+                setSelectedTableRows(selectedRows);
             }
 
             showSnackbarNotification(`Tag ${tagNo} has been removed from selection`, 5000);
@@ -347,6 +367,8 @@ const AddScope = (): JSX.Element => {
                     <SelectTags
                         nextStep={goToNextStep}
                         setSelectedTags={setSelectedTags}
+                        selectedTableRows={selectedTableRows}
+                        setSelectedTableRows={setSelectedTableRows}
                         searchTags={searchTags}
                         selectedTags={selectedTags}
                         scopeTableData={scopeTableData}
@@ -364,6 +386,8 @@ const AddScope = (): JSX.Element => {
                     <SelectTags
                         nextStep={goToNextStep}
                         setSelectedTags={setSelectedTags}
+                        setSelectedTableRows={setSelectedTableRows}
+                        selectedTableRows={selectedTableRows}
                         searchTags={searchTags}
                         selectedTags={selectedTags}
                         scopeTableData={scopeTableData}
@@ -436,6 +460,8 @@ const AddScope = (): JSX.Element => {
                     <SelectMigrateTags
                         nextStep={goToNextStep}
                         setSelectedTags={setSelectedTags}
+                        setSelectedTableRows={setSelectedTableRows}
+                        selectedTableRows={selectedTableRows}
                         searchTags={searchTags}
                         selectedTags={selectedTags}
                         migrationTableData={migrationTableData}

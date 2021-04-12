@@ -4,46 +4,59 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
-import { Column } from 'material-table';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
 
 interface TransferDialogProps {
     transferableTags: PreservedTag[];
     nonTransferableTags: PreservedTag[];
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'From mode', field: 'mode' },
-    { title: 'From resp', field: 'responsibleCode' },
-    { title: 'To mode', field: 'nextMode' },
-    { title: 'To resp', field: 'nextResponsibleCode' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo' },
+    { Header: 'Description', accessor: 'description' },
+    { Header: 'From mode', accessor: 'mode' },
+    { Header: 'From resp', accessor: 'responsibleCode' },
+    { Header: 'To mode', accessor: 'nextMode' },
+    { Header: 'To resp', accessor: 'nextResponsibleCode' },
+    { Header: 'Status', accessor: 'status' },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
+
+const MainContainer = styled.div`
+    height: 70vh;
+`;
+
+const TableContainer = styled.div`
+    height: 50%;
+`;
 
 const TransferDialog = ({
     transferableTags,
     nonTransferableTags
 }: TransferDialogProps): JSX.Element => {
 
-    return (<div>
-        {nonTransferableTags.length > 0 && (
-            <div>
-                <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
-                <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>
-        )}
-        {transferableTags.length > 0 && (
-            <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-        )}
-    </div>
+    return (
+        <MainContainer>
+            {nonTransferableTags.length > 0 && (
+                <TableContainer>
+                    <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
+                    <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </TableContainer>
+            )}
+            {transferableTags.length > 0 && (
+                <TableContainer>
+                    <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                </TableContainer>
+            )}
+        </MainContainer>
     );
 };
 

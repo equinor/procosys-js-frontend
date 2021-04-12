@@ -51,3 +51,4 @@ settings.json
 
 #VS Code folder
 .vscode/
+.vs/slnx.sqlite

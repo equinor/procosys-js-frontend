@@ -38,7 +38,6 @@ const ActionTab = ({
     const [actions, setActions] = useState<ActionListItem[]>([]);
     const [showCreateAction, setShowCreateAction] = useState<boolean>(false);
 
-
     const getActionList = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {

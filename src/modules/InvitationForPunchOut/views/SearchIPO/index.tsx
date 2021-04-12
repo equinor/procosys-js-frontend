@@ -29,7 +29,6 @@ const emptyFilter: IPOFilter = {
     punchOutDates: []
 };
 
-
 const SearchIPO = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [displayFilter, setDisplayFilter] = useState<boolean>(false);
@@ -64,7 +63,7 @@ const SearchIPO = (): JSX.Element => {
         setIsLoading(true);
         if(project === undefined){
             console.error('The project is of type undefined');
-            showSnackbarNotification('Get saved filters failed: The project is of type undefined', 5000);
+            showSnackbarNotification('Get saved filters failed: The project is of type undefined');
             setIsLoading(false);
             return;
         }
@@ -73,7 +72,7 @@ const SearchIPO = (): JSX.Element => {
             setSavedFilters(response);
         } catch (error) {
             console.error('Get saved filters failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         setIsLoading(false);
     };
@@ -83,7 +82,6 @@ const SearchIPO = (): JSX.Element => {
             updateSavedFilters();
         }
     }, [project]);
-
     
     const getDefaultFilter = (): SavedIPOFilter | undefined => {
         if (savedFilters) {
@@ -117,7 +115,6 @@ const SearchIPO = (): JSX.Element => {
             setHasProjectChanged(false);
         }
     }, [savedFilters]);
-
     
     /**
      * Fetch available functional roles 
@@ -139,7 +136,6 @@ const SearchIPO = (): JSX.Element => {
             showSnackbarNotification(error.message);
         }
     }, []);
-
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -216,7 +212,6 @@ const SearchIPO = (): JSX.Element => {
         };
     }, []);
 
-
     /** Update module header height on module header resize */
     useEffect(() => {
         updateModuleHeaderHeightReference();
@@ -245,12 +240,9 @@ const SearchIPO = (): JSX.Element => {
         forceFilterUpdate();
     }, [filter]);
 
-
-
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };
-
 
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
         if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)
@@ -327,7 +319,7 @@ const SearchIPO = (): JSX.Element => {
                                     );
                                 })}
                             </Dropdown>}
-                            <Link to={'/CreateIPO'}>
+                            <Link to={project? `/CreateIPO/${project.name}`:'/CreateIPO'}>
                                 <Button variant='ghost' >
                                     {addIcon} New IPO
                                 </Button>
@@ -360,8 +352,6 @@ const SearchIPO = (): JSX.Element => {
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
                     update={update}
                     filterUpdate={filterUpdate}
-                    setOrderByField={setOrderByField}
-                    setOrderDirection={setOrderDirection}
                 />
 
 

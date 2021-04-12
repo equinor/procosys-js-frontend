@@ -62,7 +62,8 @@ export const Container = styled.div<{disableSelectAll?: boolean, mcColumn?: bool
     }
 
     .goToMcCol {
-        justify-content: flex-end;
+        position: relative;
+        bottom: 9px;
     }
 `;
 
@@ -80,4 +81,12 @@ export const TopContainer = styled.div`
     flex-direction: row;
     margin: calc(var(--grid-unit) * 3) 0;
     align-items: center;
+`;
+
+export const MCHeader = styled.div`
+    padding-left: 12px;
+`;
+
+export const CommPkgTableContainer = styled.div`
+    height: 50vh;
 `;

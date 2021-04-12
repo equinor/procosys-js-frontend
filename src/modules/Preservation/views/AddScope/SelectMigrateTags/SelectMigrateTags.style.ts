@@ -34,6 +34,10 @@ export const Container = styled.div`
     }
 `;
 
+export const TableContainer = styled.div`
+    height: 60vh;
+`;
+
 export const Header = styled.header`
     display: flex;
     align-items: baseline;

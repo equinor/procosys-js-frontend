@@ -4,24 +4,25 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
-import { Column } from 'material-table';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 interface StartPreservationDialogProps {
     startableTags: PreservedTag[];
     nonStartableTags: PreservedTag[];
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo', id: 'tagNo' },
+    { Header: 'Description', accessor: 'description', id: 'description' },
+    { Header: 'Status', accessor: 'status', id: 'status' },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
 
 const StartPreservationDialog = ({
@@ -29,7 +30,7 @@ const StartPreservationDialog = ({
     nonStartableTags
 }: StartPreservationDialogProps): JSX.Element => {
 
-    return (<div>
+    return (<div style={{height: '65vh'}}>
         {nonStartableTags.length > 0 && (
             <div>
                 <Typography variant="meta">{nonStartableTags.length} tag(s) cannot be started. Tags are already started, or are voided.</Typography>

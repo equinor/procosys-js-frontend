@@ -284,7 +284,7 @@ const CommPkgTable = forwardRef(({
 
             <CommPkgTableContainer>
                 <ProcosysTable
-                    disableSelectAll={!selectAll}
+                    disableSelectAll
                     ref={tableRef}
                     setPageSize={setPageSize}
                     pageIndex={pageIndex}

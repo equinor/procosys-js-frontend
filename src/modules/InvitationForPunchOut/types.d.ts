@@ -78,8 +78,9 @@ export interface CommPkgRow {
     description: string;
     system: string;
     status: string;
+    disableCheckbox?: boolean;
     tableData?: {
-        checked: boolean;
+        isSelected: boolean;
     };
 }
 
@@ -89,7 +90,7 @@ export interface McPkgRow {
     system: string;
     discipline: string;
     tableData?: {
-        checked: boolean;
+        isSelected: boolean;
     };
 }
 

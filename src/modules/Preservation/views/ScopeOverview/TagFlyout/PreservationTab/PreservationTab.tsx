@@ -10,12 +10,15 @@ import Requirements from './Requirements';
 import Spinner from '../../../../../../components/Spinner';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 interface PreservationTabProps {
     tagDetails: TagDetails;
     refreshTagDetails: () => void;
     setDirty: () => void;
 }
+
+const moduleName = 'PreservationTagFlyoutPreservation';
 
 const PreservationTab = ({
     tagDetails,
@@ -29,6 +32,8 @@ const PreservationTab = ({
     const [editingStorageArea, setEditingStorageArea] = useState<boolean>(false);
     const [remark, setRemark] = useState<string>(tagDetails.remark);
     const [storageArea, setStorageArea] = useState<string>(tagDetails.storageArea);
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const KEYCODE_ENTER = 13;
 
@@ -47,6 +52,19 @@ const PreservationTab = ({
         setTagRequirements(null); // force full refresh
         getTagRequirements();
     }, [tagDetails]);
+
+    /** Update global dirty state */
+    useEffect(() => {
+        if (editingRemark || editingStorageArea) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [editingRemark, editingStorageArea]);
 
     const recordTagRequirementValues = async (values: TagRequirementRecordValues): Promise<void> => {
         try {

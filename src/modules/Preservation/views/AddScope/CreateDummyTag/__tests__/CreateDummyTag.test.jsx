@@ -81,6 +81,18 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => {}
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('<CreateDummyTag />', () => {
 
     /** Because of API calls using effect hooks, we need to wrap everything in act */

@@ -91,6 +91,18 @@ jest.mock('../../../../context/PreservationContext', () => ({
     })
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('Module: <SetTagProperties />', () => {
 
     it('Should render with input fields', () => {

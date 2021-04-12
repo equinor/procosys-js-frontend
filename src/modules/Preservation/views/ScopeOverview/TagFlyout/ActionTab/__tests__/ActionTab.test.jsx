@@ -42,8 +42,6 @@ const mockActionAttachments = [
     }    
 ];
 
-
-
 jest.mock('../../../../../context/PreservationContext', () => ({
     
     usePreservationContext: jest.fn(() => {

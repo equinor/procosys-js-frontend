@@ -1,6 +1,6 @@
 import React from 'react';
 import ScopeOverview from '../ScopeOverview';
-import { render, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 
@@ -54,15 +54,28 @@ const mockProject = {
     description: 'project'
 };
 
+
 jest.mock('../../../context/PreservationContext', () => ({
     usePreservationContext: () => {
         return {
             project: mockProject,
             availableProjects: [mockProject],                
             apiClient: {
-                getSavedTagListFilters: () => Promise.resolve(null),
+                getSavedTagListFilters: () => Promise.resolve([]),
                 getPreservedTags: () => Promise.resolve(mockTags)
             }
+        };
+    }
+}));
+
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
         };
     }
 }));
@@ -70,15 +83,14 @@ jest.mock('../../../context/PreservationContext', () => ({
 describe('<ScopeOverview />', () => {
 
     it('Should display description column', async () => {
-        await act(async () => {
-            const history = createMemoryHistory();
-            const { getByText } = render(
-                <Router history={history}>
-                    <ScopeOverview />
-                </Router>
-            );          
-            expect(getByText('Description')).toBeInTheDocument();
-        });        
+        const history = createMemoryHistory();
+        render(
+            <Router history={history}>
+                <ScopeOverview />
+            </Router>
+        );     
+        const description = await screen.findByText('Description');   
+        expect(description).toBeInTheDocument();   
     });
     
 });

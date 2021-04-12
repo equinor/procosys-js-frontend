@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 
-import Checkbox from '@procosys/components/Checkbox';
 import { tokens } from '@equinor/eds-tokens';
 
 interface DropdownProps {

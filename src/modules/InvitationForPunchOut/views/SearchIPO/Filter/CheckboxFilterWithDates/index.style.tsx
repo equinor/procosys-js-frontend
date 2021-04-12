@@ -14,6 +14,5 @@ export const DateField = styled(TextField)`
 export const CheckboxSection = styled.div`
     display: flex;
     justify-content: space-between;
-    padding-bottom: calc(var(--grid-unit) * 2);
-    padding-left: calc(var(--grid-unit) * 4);
+    padding-left: calc(var(--grid-unit) * 2);
 `;

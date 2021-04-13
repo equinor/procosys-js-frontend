@@ -1,16 +1,16 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TableContainer, TagsHeader, TopContainer } from './SelectTags.style';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
-import React, { useEffect } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagRow } from '../types';
-
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
+import React, { useEffect } from 'react';
 import ProcosysTable from '@procosys/components/Table';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const tableColumns = [
     {
@@ -94,10 +94,12 @@ type SelectTagsProps = {
 }
 
 const KEYCODE_ENTER = 13;
+const moduleName = 'PreservationAddScopeSelectTags';
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
 
     useEffect(() => {
@@ -143,6 +145,18 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
 
         props.setSelectedTableRows(ids);
     };
+
+    /** Update global dirty state */
+    useEffect(() => {
+        if (props.selectedTags.length > 0) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [props.selectedTags]);
 
     const cancel = (): void => {
         history.push('/');

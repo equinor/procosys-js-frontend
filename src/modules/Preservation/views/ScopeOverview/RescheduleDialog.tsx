@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
-import { Column } from 'material-table';
 import DialogTable from './DialogTable';
 import { ButtonContainer, ButtonSpacer, DialogContainer, Divider, FormFieldSpacer, InputContainer, Scrim, Title } from './RescheduleDialog.style';
 import SelectInput, { SelectItem } from '../../../../components/Select';
@@ -13,8 +12,11 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
+const moduleName = 'PreservationRescheduleDialog';
 
 interface RescheduleDialogProps {
     tags: PreservedTag[];
@@ -22,17 +24,22 @@ interface RescheduleDialogProps {
     onClose: () => void;
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo' },
+    { Header: 'Description', accessor: 'description' },
+    { Header: 'Status', accessor: 'status' },
+    {
+        Header: 'Req type',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getRequirementIcons
+    }
 ];
 
 const directionItems: SelectItem[] = [
@@ -51,6 +58,8 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
     const [error, setError] = useState<string>('');
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const handleReschedule = (async (): Promise<void> => {
         setShowSpinner(true);
@@ -95,9 +104,22 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
     }, [props.tags]);
 
 
-    /** Set canReschedule */
-    useEffect((): void => {
+    const hasUnsavedChanges = (): boolean => {
+        return (noOfWeeks || (directionItem && directionItem.text) || (comment && comment.length > 0)) ? true : false;
+    };
+
+    /** Set canReschedule and set global dirty state */
+    useEffect(() => {
         setCanReschedule((noOfWeeksIsValid && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
+
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
     }, [noOfWeeks, directionItem, comment]);
 
     if (!props.open) {
@@ -106,26 +128,26 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     const handleNoOfWeeksChanged = (newValue: string): void => {
         setNoOfWeeks(newValue);
-        if(newValue === ''){
+        if (newValue === '') {
             setError('');
             setNoOfWeeksIsValid(false);
             return;
         }
         const newWeekNumber = Number(newValue);
-        if(!isNaN(newWeekNumber)){
-            if(Number.isInteger(newWeekNumber)){
-                if(0 < newWeekNumber && newWeekNumber < 53){
+        if (!isNaN(newWeekNumber)) {
+            if (Number.isInteger(newWeekNumber)) {
+                if (0 < newWeekNumber && newWeekNumber < 53) {
                     setNoOfWeeksIsValid(true);
                     setError('');
-                }else{
+                } else {
                     setNoOfWeeksIsValid(false);
                     setError('Has to be between 0 and 53');
                 }
-            }else{
+            } else {
                 setNoOfWeeksIsValid(false);
                 setError('Has to be a whole number');
             }
-        }else{
+        } else {
             setNoOfWeeksIsValid(false);
             setError('Has to be a number');
         }
@@ -156,8 +178,8 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                         }}
                                         value={noOfWeeks || ''}
                                         helperText={error}
-                                        variant={error? 'error': 'default'}
-                                        helperIcon={error? errorIcon: ''}
+                                        variant={error ? 'error' : 'default'}
+                                        helperIcon={error ? errorIcon : ''}
                                     />
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
@@ -188,9 +210,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                     }
                     {
                         nonReschedulableTags.length > 0 && (
-                            <div>
-                                <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                            </div>
+                            <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                         )
                     }
                     {

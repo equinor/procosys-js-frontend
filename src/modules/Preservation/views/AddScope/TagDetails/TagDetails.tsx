@@ -40,7 +40,6 @@ const TagDetails = ({
 
     const createTagSection = (tag: Tag): JSX.Element => {
         const isExpanded = tag.tagNo === expandedTagNo;
-
         return (
             <TagContainer key={tag.tagNo}>
                 <Collapse>

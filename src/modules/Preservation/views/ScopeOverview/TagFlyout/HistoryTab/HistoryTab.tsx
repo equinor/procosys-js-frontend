@@ -1,12 +1,13 @@
 import { Container, DetailsContainer, DueContainer } from './HistoryTab.style';
 import React, { useEffect, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 import { Canceler } from 'axios';
 import EdsIcon from '@procosys/components/EdsIcon';
 import HistoryDetails from './HistoryDetails';
 import PreservedRequirement from './PreservedRequirement';
+import ProcosysTable from '@procosys/components/Table';
 import Spinner from '@procosys/components/Spinner';
-import Table from '../../../../../../components/Table';
 import { Tooltip } from '@material-ui/core';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
@@ -31,11 +32,6 @@ interface HistoryLogItem {
 interface HistoryTabProps {
     tagId: number;
 }
-
-const tableCellStyling = {
-    paddingLeft: 'var(--grid-unit)',
-    paddingRight: 'var(--grid-unit)'
-};
 
 const HistoryTab = ({
     tagId
@@ -86,7 +82,8 @@ const HistoryTab = ({
         setShowRequirementDialog(false);
     };
 
-    const getDateColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getDateColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         return (
             <DueContainer isOverdue={historyItem.dueWeeks < 0}>
                 {getFormattedDate(historyItem.createdAtUtc)}
@@ -94,7 +91,8 @@ const HistoryTab = ({
         );
     };
 
-    const getUserColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getUserColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         return (
             <div>
                 {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
@@ -102,7 +100,8 @@ const HistoryTab = ({
         );
     };
 
-    const getDueColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getDueColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         return (
             <DueContainer isOverdue={historyItem.dueWeeks < 0}>
                 {historyItem.dueWeeks}
@@ -110,7 +109,8 @@ const HistoryTab = ({
         );
     };
 
-    const getDetailsColumn = (historyItem: HistoryLogItem): JSX.Element => {
+    const getDetailsColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
         if (historyItem.eventType === 'RequirementPreserved') {
             return (
                 <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
@@ -130,45 +130,49 @@ const HistoryTab = ({
         );
     }
 
+
+    const columns = [
+        {
+            Header: 'Date',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDateColumn
+        },
+        {
+            Header: 'User',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getUserColumn
+        },
+        {
+            Header: 'Due',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDueColumn
+        },
+        {
+            Header: 'Description',
+            field: 'description',
+            accessor: 'description'
+        },
+        {
+            Header: ' ',
+            field: 'eventType',
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDetailsColumn
+        },
+    ];
+
     return (
         <>
             <Container>
-                <Table
-                    columns={[
-                        { title: 'Date', render: getDateColumn, width: '5%', cellStyle: tableCellStyling },
-                        { title: 'User', render: getUserColumn, width: '20%', cellStyle: tableCellStyling },
-                        { title: 'Due', render: getDueColumn, width: '1%', cellStyle: tableCellStyling },
-                        { title: 'Description', field: 'description', width: '73%', cellStyle: tableCellStyling },
-                        { title: '', render: getDetailsColumn, width: '1%', cellStyle: tableCellStyling }
-                    ]}
+                <ProcosysTable
+                    pageIndex={0}
+                    pageSize={10}
+                    columns={columns}
+                    maxRowCount={historyLog.length}
                     data={historyLog}
-                    options={{
-                        search: false,
-                        pageSize: 10,
-                        pageSizeOptions: [5, 10, 50, 100],
-                        padding: 'dense',
-                        showTitle: false,
-                        draggable: false,
-                        selection: false,
-                        emptyRowsWhenPaging: false,
-                        filtering: false,
-                        thirdSortClick: false,
-                        headerStyle: {
-                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                            paddingLeft: 'var(--grid-unit)',
-                            paddingRight: 'var(--grid-unit)'
-                        },
-                        rowStyle: {
-                            verticalAlign: 'top'
-                        }
-                    }}
-                    components={{
-                        Toolbar: (): any => (
-                            <></>
-                        )
-                    }}
-                    style={{ boxShadow: 'none' }}
-                />
+                    clientPagination={true}
+                    clientSorting={true}
+                    loading={false}
+                    pageCount={Math.ceil(historyLog.length / 10)} />
             </Container>
             {
                 showRequirementDialog && (

@@ -1,14 +1,14 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, TagsHeader, TopContainer } from './SelectMigrateTags.style';
+import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, TagsHeader, TopContainer, TableContainer } from './SelectMigrateTags.style';
+import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagMigrationRow } from '../types';
 
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Loading from '../../../../../components/Loading';
-import React from 'react';
-import Table from '../../../../../components/Table';
+import ProcosysTable from '@procosys/components/Table';
+import React, { useEffect } from 'react';
+import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { getFormattedDate } from '@procosys/core/services/DateService';
-import { tokens } from '@equinor/eds-tokens';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 
@@ -22,44 +22,150 @@ type SelectMigrateTagsProps = {
     addScopeMethod: AddScopeMethod;
     removeTag: (tagNo: string) => void;
     removeFromMigrationScope: () => void;
+    setSelectedTableRows: (ids: Record<string, boolean>) => void;
+    selectedTableRows: Record<string, boolean>;
 }
 
-const getFormattedDueDate = (tag: TagMigrationRow): string => {
-    return getFormattedDate(tag.nextUpcommingDueTime);
-};
-
-const getFormattedsStartDate = (tag: TagMigrationRow): string => {
-    return getFormattedDate(tag.startDate);
-};
-
-const tableColumns = [
-    { title: 'Tag no', field: 'tagNo', cellStyle: { minWidth: '200px', maxWidth: '250px' } },
-    { title: 'Description', field: 'description', cellStyle: { minWidth: '250px' } },
-    { title: 'Remark', field: 'preservationRemark', cellStyle: { minWidth: '250px' } },
-    { title: 'Due', render: getFormattedDueDate },
-    { title: 'Start date', render: getFormattedsStartDate },
-    { title: 'Storage area', field: 'storageArea' },
-    { title: 'Mode', field: 'modeCode' },
+const columns = [
     {
-        title: 'Heating', render: (tag: TagMigrationRow): any => tag.heating === true ? <CheckBoxIcon /> : ''
+        Header: 'Tag no',
+        field: 'tagNo',
+        accessor: 'tagNo',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.tagNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
     },
-    { title: 'Special req.', render: (tag: TagMigrationRow): any => tag.special === true ? <CheckBoxIcon /> : '' },
     {
-        title: 'Preserved',
+        Header: 'Description',
+        field: 'description',
+        accessor: 'description',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.description?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Remark',
+        field: 'preservationRemark',
+        accessor: 'preservationRemark',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.preservationRemark?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Due',
+        field: 'nextUpcommingDueTime',
+        accessor: 'nextUpcommingDueTime',
+        Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => { return (<div>{getFormattedDate(rowData.row.values.nextUpcommingDueTime)}</div>); },
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return getFormattedDate(row.original.nextUpcommingDueTime)?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Start date',
+        field: 'startDate',
+        accessor: 'startDate',
+        Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => { return (<div>{getFormattedDate(rowData.row.values.startDate)}</div>); },
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return getFormattedDate(row.original.startDate)?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Storage area',
+        field: 'storageArea',
+        accessor: 'storageArea',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.storageArea?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Mode',
+        field: 'modeCode',
+        accessor: 'modeCode',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.modeCode?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Heating',
+        accessor: (d: TagMigrationRow): string | undefined => { return d.heating ? 'Heating' : 'No heating'; },
+        field: 'heating',
+        Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => { return rowData.row.values.Heating === 'Heating' ? <CheckBoxIcon /> : <></>; },
+        Filter: SelectColumnFilter,
+        filter: 'equals'
+    },
+    {
+        Header: 'Special req',
+        accessor: (d: TagMigrationRow): string | undefined => { return d.special ? 'Special req' : 'No'; },
+        field: 'special',
+        Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => { return rowData.row.values['Special req'] !== 'No' ? <CheckBoxIcon /> : <></>; },
+        Filter: SelectColumnFilter,
+        filter: 'equals'
+    },
+    {
+        Header: 'Preserved',
+        accessor: (d: TagMigrationRow): string | undefined => { return d.isPreserved ? 'Preserved' : 'Not preserved'; },
         field: 'isPreserved',
-        render: (rowData: TagMigrationRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
+        Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => { return rowData.row.values.Preserved === 'Preserved' ? <CheckBoxIcon /> : <></>; },
+        Filter: SelectColumnFilter,
+        filter: 'equals'
     },
-    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'MC pkg', field: 'mcPkgNo' },
-    { title: 'Tag function', field: 'tagFunctionCode' },
+    {
+        Header: 'MCCR resp',
+        field: 'mccrResponsibleCodes',
+        accessor: 'mccrResponsibleCodes',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.mccrResponsibleCodes?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'PO',
+        field: 'purchaseOrderTitle',
+        accessor: 'purchaseOrderTitle',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.purchaseOrderTitle?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Comm pkg',
+        field: 'commPkgNo',
+        accessor: 'commPkgNo',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.commPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'MC pkg',
+        field: 'mcPkgNo',
+        accessor: 'mcPkgNo',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.mcPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Tag function',
+        field: 'tagFunctionCode',
+        accessor: 'tagFunctionCode',
+        filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
+            return rows.filter((row) => { return row.original.tagFunctionCode?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
 ];
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+
+    useEffect(() => {
+        const selectedRows: Record<string, boolean> = {};
+
+        props.selectedTags.map((tag) => {
+            const index = props.migrationTableData.indexOf(props.migrationTableData.find(t => t.tagNo === tag.tagNo) as TagMigrationRow);
+            selectedRows[index] = true;
+        });
+
+        props.setSelectedTableRows(selectedRows);
+
+    }, [props.selectedTags]);
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -70,44 +176,28 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
         props.setSelectedTags(newSelectedTags);
     };
 
-    const addAllTagsInScope = (rowData: TagMigrationRow[]): void => {
+    const addTagsInScope = (rowData: TagMigrationRow[]): void => {
         const allRows = rowData
             .filter(row => !row.isPreserved)
             .map(row => {
                 return {
-                    tagId: row.id,
                     tagNo: row.tagNo,
+                    tagId: row.id,
                     description: row.description,
                     mcPkgNo: row.mcPkgNo
                 };
             });
-        const rowsToAdd = allRows.filter(row => !props.selectedTags.some(tag => tag.tagNo === row.tagNo));
-        props.setSelectedTags([...props.selectedTags, ...rowsToAdd]);
+        props.setSelectedTags([...allRows]);
     };
 
-    const handleSingleTag = (row: TagMigrationRow): void => {
-        const tagToHandle = {
-            tagId: row.id,
-            tagNo: row.tagNo,
-            description: row.description,
-            mcPkgNo: row.mcPkgNo
-        };
-        if (row.tableData && !row.tableData.checked) {
-            props.removeTag(row.tagNo);
-        } else {
-            props.setSelectedTags([...props.selectedTags, tagToHandle]);
-        }
-    };
-
-    const rowSelectionChanged = (rowData: TagMigrationRow[], row: TagMigrationRow): void => {
-        // exclude any preserved tags (material-table bug)
-        if (rowData.length == 0 && props.migrationTableData.length > 0) {
+    const rowSelectionChanged = (rowData: TagMigrationRow[], ids: Record<string, boolean>): void => {
+        if (rowData.length == 0 && props.migrationTableData && props.migrationTableData.length > 0) {
             removeAllSelectedTagsInScope();
-        } else if (rowData.length > 0 && rowData[0].tableData && !row) {
-            addAllTagsInScope(rowData);
-        } else if (rowData.length > 0) {
-            handleSingleTag(row);
+        } else {
+            addTagsInScope(rowData);
         }
+
+        props.setSelectedTableRows(ids);
     };
 
     const cancel = (): void => {
@@ -136,50 +226,22 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                     <Button onClick={props.nextStep} disabled={props.selectedTags.length === 0}>Next</Button>
                 </ButtonsContainer>
             </TopContainer>
-            <Table
-                columns={tableColumns}
-                data={props.migrationTableData}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    filtering: true,
-                    search: false,
-                    draggable: false,
-                    pageSize: 10,
-                    emptyRowsWhenPaging: false,
-                    pageSizeOptions: [10, 50, 100],
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    selection: true,
-                    selectionProps: (data: TagMigrationRow): any => ({
-                        // Disable and hide selection checkbox for preserved tags.
-                        // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
-                        // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
-                        disabled: data.isPreserved,
-                        style: { display: data.isPreserved && 'none' },
-                        disableRipple: true
-                    }),
-                    rowStyle: (data): any => ({
-                        backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
-                    })
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                onSelectionChange={(rowData, row): void => {
-                    rowSelectionChanged(rowData, row);
-                }}
-                isLoading={props.isLoading}
-                components={{
-                    OverlayLoading: (): JSX.Element => (
-                        <LoadingContainer>
-                            <Loading title="Loading tags" />
-                        </LoadingContainer>
-                    )
-                }}
-            />
+
+            <TableContainer>
+                <ProcosysTable
+                    onSelectedChange={(rowData: TagMigrationRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
+                    pageIndex={0}
+                    pageSize={50}
+                    columns={columns}
+                    maxRowCount={props.migrationTableData.length}
+                    data={props.migrationTableData}
+                    clientPagination={true}
+                    clientSorting={true}
+                    loading={props.isLoading}
+                    rowSelect={true}
+                    selectedRows={props.selectedTableRows}
+                    pageCount={Math.ceil(props.migrationTableData.length / 50)} />
+            </TableContainer>
         </Container >
     );
 };

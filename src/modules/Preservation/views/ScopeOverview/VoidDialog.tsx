@@ -5,8 +5,8 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
-import { Column } from 'material-table';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 interface VoidDialogProps {
     voidableTags: PreservedTag[];
@@ -23,20 +23,29 @@ export const TopText = styled.div`
     }
 `;
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Mode', field: 'mode' },
-    { title: 'Resp', field: 'responsibleCode' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const columns = [
+    { Header: 'Tag nr', accessor: 'tagNo' },
+    { Header: 'Description', accessor: 'description' },
+    { Header: 'Mode', accessor: 'mode' },
+    { Header: 'Resp', accessor: 'responsibleCode' },
+    { Header: 'Status', accessor: 'status' },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
+
+const MainContainer = styled.div`
+    height: 65vh;
+`;
+
+const TableContainer = styled.div`
+    height: 35vh;
+`;
 
 const VoidDialog = ({
     voidableTags,
@@ -49,21 +58,22 @@ const VoidDialog = ({
     const voidingText = `${voidableTags.length} tag(s) will be removed from preservation scope.`;
     const unvoidingText = 'Note that tag(s) have been removed from preservation during the period the tag(s) have been voided. Preservation will be started in the same step of the journey as when they were voided.';
 
-    return (<div>
-        {topTable.length > 0 && (
-            <div>
-                <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
-                <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>)}
-        {bottomTable.length > 0 && (
-            <div>
-                <TopText>
-                    <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba}/>
-                    <Typography variant='h6' style={{color: tokens.colors.interactive.danger__text.rgba}}>{voiding ? voidingText : unvoidingText}</Typography>
-                </TopText>
-                <DialogTable tags={bottomTable} columns={columns} />
-            </div>)}
-    </div>);
+    return (
+        <MainContainer>
+            {topTable.length > 0 && (
+                <TableContainer>
+                    <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
+                    <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </TableContainer>)}
+            {bottomTable.length > 0 && (
+                <TableContainer>
+                    <TopText>
+                        <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba} />
+                        <Typography variant='h6' style={{ color: tokens.colors.interactive.danger__text.rgba }}>{voiding ? voidingText : unvoidingText}</Typography>
+                    </TopText>
+                    <DialogTable tags={bottomTable} columns={columns} />
+                </TableContainer>)}
+        </MainContainer>);
 };
 
 export default VoidDialog;

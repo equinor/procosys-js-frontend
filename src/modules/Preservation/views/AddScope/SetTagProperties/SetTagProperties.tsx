@@ -10,6 +10,7 @@ import RequirementsSelector from '@procosys/modules/Preservation/components/Requ
 import Spinner from '../../../../../components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 type SetTagPropertiesProps = {
     areaType: string;
@@ -26,6 +27,8 @@ interface RequirementFormInput {
     intervalWeeks: number | null;
 }
 
+const moduleName = 'PreservationAddScopeSetTagProperties';
+
 const SetTagProperties = ({
     areaType,
     submitForm,
@@ -40,11 +43,33 @@ const SetTagProperties = ({
     const [journey, setJourney] = useState(-1);
     const [step, setStep] = useState<Step | null>();
     const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
-    const remarkInputRef = useRef<HTMLInputElement>(null);
-    const storageAreaInputRef = useRef<HTMLInputElement>(null);
+    const [remark, setRemark] = useState<string>('');
+    const [storageArea, setStorageArea] = useState<string>('');
     const [formIsValid, setFormIsValid] = useState(false);
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+    const hasUnsavedChanges = (): boolean => {
+        return (journey && journey != -1)
+            || (step && step != null)
+            || (requirements && requirements.length > 0)
+            || remark != ''
+            || storageArea != '';
+    };
+
+    /** Update global dirty state */
+    useEffect(() => {
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [journey, step, requirements, remark, storageArea]);
 
     /**
      * Form validation
@@ -104,15 +129,9 @@ const SetTagProperties = ({
 
 
     const submit = async (): Promise<void> => {
-        const remarkValue = remarkInputRef.current && remarkInputRef.current.value || null;
-        let storageAreaValue;
-        if (storageAreaInputRef.current) {
-            storageAreaValue = storageAreaInputRef.current.value;
-        }
-
         if (step) {
             if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
-                await submitForm(step.id, [], remarkValue, storageAreaValue);
+                await submitForm(step.id, [], remark, storageArea);
             } else {
                 const requirementsMappedForApi: Requirement[] = [];
                 requirements.forEach((req) => {
@@ -124,7 +143,7 @@ const SetTagProperties = ({
                     }
                 });
                 if (requirementsMappedForApi.length > 0) {
-                    await submitForm(step.id, requirementsMappedForApi, remarkValue, storageAreaValue);
+                    await submitForm(step.id, requirementsMappedForApi, remark, storageArea);
                 } else {
                     showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
                 }
@@ -209,7 +228,8 @@ const SetTagProperties = ({
                         <TextField
                             id={'Remark'}
                             label="Remark for whole preservation journey"
-                            inputRef={remarkInputRef}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setRemark(e.target.value)}
+                            value={remark}
                             placeholder="Write here"
                             helpertext="For example: Check according to predecure 123, or check specifications from supplier"
                             meta="Optional"
@@ -219,7 +239,8 @@ const SetTagProperties = ({
                         <TextField
                             id={'StorageArea'}
                             label="Storage area"
-                            inputRef={storageAreaInputRef}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setStorageArea(e.target.value)}
+                            value={storageArea}
                             placeholder="Write here"
                             helpertext="For example: AR123"
                             meta="Optional"

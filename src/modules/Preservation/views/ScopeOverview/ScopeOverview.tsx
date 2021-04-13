@@ -271,10 +271,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }));
     }, [filterForProjects]);
 
-    // useEffect(() => {
-    //     refreshScopeList(true);
-    // }, [moduleAreaHeight, moduleHeaderHeight]);
-
     useEffect(() => {
         if (isFirstRender.current) {
             // skip refreshing scope list on first render, when default/empty filters are set

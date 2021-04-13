@@ -17,33 +17,27 @@ import { Tooltip } from '@material-ui/core';
 const getDescriptionColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tagRow.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tagRow.description}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tagRow.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.description}</OverflowColumn>
+        </Tooltip>
     );
 };
 
 const getMccrResponsiblesColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tagRow.mccrResponsibleCodes} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tagRow.mccrResponsibleCodes}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tagRow.mccrResponsibleCodes} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.mccrResponsibleCodes}</OverflowColumn>
+        </Tooltip>
     );
 };
 
 const getPurchaseOrderTitleColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tagRow.purchaseOrderTitle} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tagRow.purchaseOrderTitle}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tagRow.purchaseOrderTitle} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.purchaseOrderTitle}</OverflowColumn>
+        </Tooltip>
     );
 };
 
@@ -51,11 +45,9 @@ const getPurchaseOrderTitleColumn = (row: TableOptions<TagRow>): JSX.Element => 
 const getCommPkgColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tagRow.commPkgNo} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tagRow.commPkgNo}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tagRow.commPkgNo} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.commPkgNo}</OverflowColumn>
+        </Tooltip>
     );
 };
 

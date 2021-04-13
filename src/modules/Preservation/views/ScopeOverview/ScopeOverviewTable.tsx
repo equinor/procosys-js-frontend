@@ -187,9 +187,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 180,
             maxWidth: 400,
             minWidth: 150,
-            // filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-            //     return rows.filter((row) => { return row.original.tagNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            // }
         },
         {
             Header: 'Description',
@@ -198,9 +195,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 250,
             maxWidth: 400,
             minWidth: 150,
-            // filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-            //     return rows.filter((row) => { return row.original.description.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            // }
         },
         {
             Header: 'Due',
@@ -227,9 +221,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 200,
             maxWidth: 400,
             minWidth: 50,
-            // filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-            //     return rows.filter((row) => { return row.original.mode.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            // }
         },
         {
             Header: 'PO',
@@ -239,19 +230,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 100,
             maxWidth: 150,
             minWidth: 50,
-            // filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-            //     return rows.filter((row) => {
-            //         if (row.original.purchaseOrderNo) {
-            //             if (row.original.calloffNo) {
-            //                 const searchField = `${row.original.purchaseOrderNo}/${row.original.calloffNo}`;
-            //                 return searchField.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-            //             } else {
-            //                 return row.original.purchaseOrderNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-            //             }
-            //         }
-            //     }
-            //     );
-            // }
         },
         {
             Header: 'Area',
@@ -261,23 +239,12 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 100,
             maxWidth: 150,
             minWidth: 50,
-            // filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-            //     return rows.filter((row) => {
-            //         if (row.original.areaCode)
-            //             return row.original.areaCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-            //     });
-            // }
         },
         {
             Header: 'Resp',
             id: 'responsible',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getResponsibleColumn,
-            // filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-            //     return rows.filter((row) => {
-            //         return row.original.responsibleCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1 || row.original.responsibleDescription.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-            //     });
-            // }
         },
         {
             Header: 'Disc',

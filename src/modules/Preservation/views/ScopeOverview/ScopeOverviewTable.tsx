@@ -7,7 +7,6 @@ import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
 import EdsIcon from '@procosys/components/EdsIcon';
 import ProcosysTable from '@procosys/components/Table';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
-import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import { Tooltip } from '@material-ui/core';

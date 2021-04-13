@@ -256,9 +256,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             Header: 'Status',
             accessor: (d: PreservedTag): string | undefined => { return d.status; },
             id: 'status',
-            Cell: getStatus,
-            Filter: SelectColumnFilter,
-            // filter: 'text'
+            Cell: getStatus
         },
         {
             Header: 'Req type',

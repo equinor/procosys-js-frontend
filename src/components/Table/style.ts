@@ -137,7 +137,7 @@ export const HeaderCheckbox = styled(Checkbox)`
     padding: 0;
     margin-top: -4px;
     > span {
-        padding: 2px 0px 0px 2px;
+        padding: 2px 0px 0px 0px;
     }
 `;
 

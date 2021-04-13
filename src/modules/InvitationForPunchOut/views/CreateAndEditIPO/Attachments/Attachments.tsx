@@ -80,7 +80,7 @@ const Attachments = ({
         const link = getAttachmentDownloadLink(attachment);
 
         return (
-            <Tooltip title={getFileName(attachment.fileName)} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={getFileName(attachment.fileName) || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <OverflowColumn>
                     <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
                 </OverflowColumn>

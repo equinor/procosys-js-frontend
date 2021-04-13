@@ -75,7 +75,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getTitleColum = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).title;
         return (
-            <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <Typography className='controlOverflow'>{data}</Typography>
             </Tooltip>
         );
@@ -86,7 +86,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         const pkgsString = pkgs?.join(', ');
 
         return (
-            <Tooltip title={<div>{pkgsString}</div>} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={pkgsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <Typography className='controlOverflow'>{pkgsString}</Typography>
             </Tooltip>
         );
@@ -97,7 +97,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         const pkgsString = pkgs?.join(', ');
 
         return (
-            <Tooltip title={<div>{pkgsString}</div>} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={pkgsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <Typography className='controlOverflow'>{pkgsString}</Typography>
             </Tooltip>
         );
@@ -106,7 +106,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getContractorRepColumn = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).contractorRep;
         return (
-            <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <Typography className='controlOverflow'>{data}</Typography>
             </Tooltip>
         );
@@ -115,7 +115,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getConstructionRepColumn = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).constructionCompanyRep;
         return (
-            <Tooltip title={data} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <Typography className='controlOverflow'>{data}</Typography>
             </Tooltip>
         );

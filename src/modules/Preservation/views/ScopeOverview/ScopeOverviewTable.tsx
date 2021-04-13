@@ -51,7 +51,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const getResponsibleColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
-            <StyledTooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <StyledTooltip title={tag.responsibleDescription || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.responsibleCode}</div>
             </StyledTooltip>
         );
@@ -119,7 +119,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 isVoided={tag.isVoided}
                 onClick={(): void => props.showTagDetails(tag)}
             >
-                <span style={{ color: 'inherit', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.tagNo}</span>
+                <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <span style={{ color: 'inherit', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.tagNo}</span>
+                </Tooltip>
             </TagLink>
         );
     }, []);
@@ -127,7 +129,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const getDescriptionColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
-            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                     {tag.description}
                 </div>

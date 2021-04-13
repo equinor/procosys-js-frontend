@@ -17,7 +17,7 @@ import { Tooltip } from '@material-ui/core';
 const getDescriptionColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <Tooltip title={tagRow.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={tagRow.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{tagRow.description}</OverflowColumn>
         </Tooltip>
     );
@@ -26,16 +26,17 @@ const getDescriptionColumn = (row: TableOptions<TagRow>): JSX.Element => {
 const getMccrResponsiblesColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <Tooltip title={tagRow.mccrResponsibleCodes} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={tagRow.mccrResponsibleCodes || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{tagRow.mccrResponsibleCodes}</OverflowColumn>
         </Tooltip>
     );
+
 };
 
 const getPurchaseOrderTitleColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <Tooltip title={tagRow.purchaseOrderTitle} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={tagRow.purchaseOrderTitle || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{tagRow.purchaseOrderTitle}</OverflowColumn>
         </Tooltip>
     );
@@ -45,7 +46,7 @@ const getPurchaseOrderTitleColumn = (row: TableOptions<TagRow>): JSX.Element => 
 const getCommPkgColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
     return (
-        <Tooltip title={tagRow.commPkgNo} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={tagRow.commPkgNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{tagRow.commPkgNo}</OverflowColumn>
         </Tooltip>
     );

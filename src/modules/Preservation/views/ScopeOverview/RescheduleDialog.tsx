@@ -35,49 +35,43 @@ const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
 const getTagNoColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
     const tag = row.value as PreservedTag;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tag.tagNo}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.tagNo}</OverflowColumn>
+        </Tooltip>
     );
 };
 
 const getDescriptionColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
     const tag = row.value as PreservedTag;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tag.description}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.description}</OverflowColumn>
+        </Tooltip>
     );
 };
 
 const getStatusColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
     const tag = row.value as PreservedTag;
     return (
-        <div className='tableCell'>
-            <Tooltip title={tag.status} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>{tag.status}</OverflowColumn>
-            </Tooltip>
-        </div>
+        <Tooltip title={tag.status || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.status}</OverflowColumn>
+        </Tooltip>
     );
 };
 
 const columns = [
-    { 
-        Header: 'Tag nr', 
+    {
+        Header: 'Tag nr',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getTagNoColumn
     },
-    { 
-        Header: 'Description', 
+    {
+        Header: 'Description',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getDescriptionColumn
     },
-    { 
-        Header: 'Status', 
+    {
+        Header: 'Status',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getStatusColumn
     },

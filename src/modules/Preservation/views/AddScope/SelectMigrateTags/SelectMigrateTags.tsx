@@ -30,7 +30,7 @@ type SelectMigrateTagsProps = {
 const getDescriptionColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
     const migrationRow = row.value as TagMigrationRow;
     return (
-        <Tooltip title={migrationRow.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={migrationRow.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{migrationRow.description}</OverflowColumn>
         </Tooltip>
     );
@@ -39,7 +39,7 @@ const getDescriptionColumn = (row: TableOptions<TagMigrationRow>): JSX.Element =
 const getRemarkColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
     const migrationRow = row.value as TagMigrationRow;
     return (
-        <Tooltip title={migrationRow.preservationRemark} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={migrationRow.preservationRemark || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{migrationRow.preservationRemark}</OverflowColumn>
         </Tooltip>
     );
@@ -49,7 +49,7 @@ const getRemarkColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
 const getStorageAreaColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
     const migrationRow = row.value as TagMigrationRow;
     return (
-        <Tooltip title={migrationRow.storageArea} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={migrationRow.storageArea || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{migrationRow.storageArea}</OverflowColumn>
         </Tooltip>
     );
@@ -58,7 +58,7 @@ const getStorageAreaColumn = (row: TableOptions<TagMigrationRow>): JSX.Element =
 const getMCCRRespColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
     const migrationRow = row.value as TagMigrationRow;
     return (
-        <Tooltip title={migrationRow.mccrResponsibleCodes} arrow={true} enterDelay={200} enterNextDelay={100}>
+        <Tooltip title={migrationRow.mccrResponsibleCodes || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
             <OverflowColumn>{migrationRow.mccrResponsibleCodes}</OverflowColumn>
         </Tooltip>
     );

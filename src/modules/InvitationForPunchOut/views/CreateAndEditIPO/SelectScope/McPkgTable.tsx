@@ -126,7 +126,7 @@ const McPkgTable = forwardRef(({
         const mcPkg = row.value as McPkgRow;
         return (
             <div className='tableCell'>
-                <Tooltip title={mcPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <Tooltip title={mcPkg.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                     <div className='controlOverflow'>{mcPkg.description}</div>
                 </Tooltip>
             </div>

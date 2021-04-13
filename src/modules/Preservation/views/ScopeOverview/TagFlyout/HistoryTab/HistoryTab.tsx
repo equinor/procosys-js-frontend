@@ -130,7 +130,7 @@ const HistoryTab = ({
         const historyItem = row.value as HistoryLogItem;
 
         return (
-            <Tooltip title={historyItem.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip title={historyItem.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <OverflowColumn>{historyItem.description}</OverflowColumn>
             </Tooltip>
         );

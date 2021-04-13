@@ -96,3 +96,8 @@ export const LoadingContainer = styled.div`
 export const TableContainer = styled.div`
     height: 50vh;
 `;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;

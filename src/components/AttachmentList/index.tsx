@@ -79,7 +79,8 @@ const AttachmentList = ({
         {
             Header: ' ',
             accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-            Cell: getFilenameColumn
+            Cell: getFilenameColumn,
+            width: 300
         },
         {
             Header: '  ',

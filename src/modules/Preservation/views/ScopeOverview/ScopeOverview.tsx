@@ -271,9 +271,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }));
     }, [filterForProjects]);
 
-    useEffect(() => {
-        refreshScopeList(true);
-    }, [moduleAreaHeight, moduleHeaderHeight]);
+    // useEffect(() => {
+    //     refreshScopeList(true);
+    // }, [moduleAreaHeight, moduleHeaderHeight]);
 
     useEffect(() => {
         if (isFirstRender.current) {

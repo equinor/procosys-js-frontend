@@ -1,4 +1,4 @@
-import { Container, DetailsContainer, DueContainer } from './HistoryTab.style';
+import { Container, DetailsContainer, DueContainer, OverflowColumn } from './HistoryTab.style';
 import React, { useEffect, useState } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
 
@@ -94,9 +94,11 @@ const HistoryTab = ({
     const getUserColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
         const historyItem = row.value as HistoryLogItem;
         return (
-            <div>
-                {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
-            </div>
+            <Tooltip title={`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>
+                    {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
+                </OverflowColumn>
+            </Tooltip>
         );
     };
 
@@ -122,6 +124,17 @@ const HistoryTab = ({
         }
 
         return <div></div>;
+    };
+
+    const getDescriptionColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+        const historyItem = row.value as HistoryLogItem;
+
+        return (
+            <Tooltip title={historyItem.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{historyItem.description}</OverflowColumn>
+            </Tooltip>
+        );
+
     };
 
     if (isLoading) {
@@ -150,7 +163,8 @@ const HistoryTab = ({
         {
             Header: 'Description',
             field: 'description',
-            accessor: 'description'
+            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDescriptionColumn
         },
         {
             Header: ' ',

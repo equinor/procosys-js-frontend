@@ -12,6 +12,8 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import ProcosysTable from '@procosys/components/Table';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import { OverflowColumn } from '@procosys/modules/Preservation/views/ScopeOverview/TagFlyout/HistoryTab/HistoryTab.style';
+import { Tooltip } from '@equinor/eds-core-react';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -78,7 +80,11 @@ const Attachments = ({
         const link = getAttachmentDownloadLink(attachment);
 
         return (
-            <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
+            <Tooltip title={getFileName(attachment.fileName)} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>
+                    <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
+                </OverflowColumn>
+            </Tooltip>
         );
     };
 

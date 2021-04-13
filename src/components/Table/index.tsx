@@ -70,8 +70,8 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
             minWidth: 50,
             width: 50,
             maxWidth: 50,
-            Header: ({ getToggleAllRowsSelectedProps, state }: HeaderProps<Record<string, unknown>>): JSX.Element => (
-                <HeaderCheckbox {...getToggleAllRowsSelectedProps()} disabled={state.disableSelectAll} />
+            Header: ({ getToggleAllRowsSelectedProps, disableSelectAll }: HeaderProps<Record<string, unknown>>): JSX.Element => (
+                <HeaderCheckbox {...getToggleAllRowsSelectedProps()} disabled={disableSelectAll} />
             ),
             Cell: ({ row }: CellProps<Record<string, unknown>>): JSX.Element => row.original.noCheckbox ? <></> : <RowCheckbox disabled={row.original.disableCheckbox} {...row.getToggleRowSelectedProps()} />,
         },

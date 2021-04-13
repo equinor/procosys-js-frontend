@@ -45,7 +45,7 @@ export const TableHeadCell = styled.div<{ align?: string }>`
 `;
 
 export const TableHeadFilterCell = styled.div`
-    padding: 8px 1px 8px 10px;
+    padding: 8px 1px 8px 2px;
     font-size: 0.875rem;
     min-height: 40px;
     flex-direction: column;
@@ -59,6 +59,7 @@ export const TableRow = styled.div<{ selected: boolean }>`
     color: inherit;
     outline: 0;
     vertical-align: middle;
+
     &:hover {
         background-color: rgba(0, 0, 0, 0.07);
     }
@@ -85,7 +86,7 @@ export const LoadingDiv = styled.div`
 
 
 export const TableCell = styled.div<{ align?: string }>`
-    padding: 10px 4px 0px 6px;
+    padding: 10px 4px 0px 4px;
     font-size: inherit;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
     font-weight: 400;
@@ -134,6 +135,7 @@ export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
 
 export const HeaderCheckbox = styled(Checkbox)`
     padding: 0;
+    margin-top: -4px;
     > span {
         padding: 2px 0px 0px 2px;
     }

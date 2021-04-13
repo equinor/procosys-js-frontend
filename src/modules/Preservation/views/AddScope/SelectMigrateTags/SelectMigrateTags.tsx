@@ -1,5 +1,5 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, TagsHeader, TopContainer, TableContainer } from './SelectMigrateTags.style';
+import { ButtonSeparator, ButtonsContainer, Container, Header, InnerContainer, TagsHeader, TopContainer, TableContainer, OverflowColumn } from './SelectMigrateTags.style';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagMigrationRow } from '../types';
 
@@ -11,6 +11,7 @@ import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import { Tooltip } from '@material-ui/core';
 
 type SelectMigrateTagsProps = {
     selectedTags: Tag[];
@@ -26,6 +27,51 @@ type SelectMigrateTagsProps = {
     selectedTableRows: Record<string, boolean>;
 }
 
+const getDescriptionColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
+    const migrationRow = row.value as TagMigrationRow;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={migrationRow.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{migrationRow.description}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getRemarkColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
+    const migrationRow = row.value as TagMigrationRow;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={migrationRow.preservationRemark} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{migrationRow.preservationRemark}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+
+const getStorageAreaColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
+    const migrationRow = row.value as TagMigrationRow;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={migrationRow.storageArea} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{migrationRow.storageArea}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getMCCRRespColumn = (row: TableOptions<TagMigrationRow>): JSX.Element => {
+    const migrationRow = row.value as TagMigrationRow;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={migrationRow.mccrResponsibleCodes} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{migrationRow.mccrResponsibleCodes}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
 const columns = [
     {
         Header: 'Tag no',
@@ -38,18 +84,20 @@ const columns = [
     {
         Header: 'Description',
         field: 'description',
-        accessor: 'description',
+        accessor: (d: UseTableRowProps<TagMigrationRow>): UseTableRowProps<TagMigrationRow> => d,
         filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
             return rows.filter((row) => { return row.original.description?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getDescriptionColumn
     },
     {
         Header: 'Remark',
         field: 'preservationRemark',
-        accessor: 'preservationRemark',
+        accessor: (d: UseTableRowProps<TagMigrationRow>): UseTableRowProps<TagMigrationRow> => d,
         filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
             return rows.filter((row) => { return row.original.preservationRemark?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getRemarkColumn
     },
     {
         Header: 'Due',
@@ -72,10 +120,11 @@ const columns = [
     {
         Header: 'Storage area',
         field: 'storageArea',
-        accessor: 'storageArea',
+        accessor: (d: UseTableRowProps<TagMigrationRow>): UseTableRowProps<TagMigrationRow> => d,
         filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
             return rows.filter((row) => { return row.original.storageArea?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getStorageAreaColumn
     },
     {
         Header: 'Mode',
@@ -112,10 +161,11 @@ const columns = [
     {
         Header: 'MCCR resp',
         field: 'mccrResponsibleCodes',
-        accessor: 'mccrResponsibleCodes',
+        accessor: (d: UseTableRowProps<TagMigrationRow>): UseTableRowProps<TagMigrationRow> => d,
         filter: (rows: UseTableRowProps<TagMigrationRow>[], id: number, filterType: string): UseTableRowProps<TagMigrationRow>[] => {
             return rows.filter((row) => { return row.original.mccrResponsibleCodes?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getMCCRRespColumn
     },
     {
         Header: 'PO',

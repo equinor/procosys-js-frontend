@@ -216,7 +216,7 @@ const CommPkgTable = forwardRef(({
     ];
 
     return (
-        <Container disableSelectAll={type === 'DP'} mcColumn={type == 'DP'}>
+        <Container mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>
                     <TextField
@@ -233,7 +233,7 @@ const CommPkgTable = forwardRef(({
 
             <CommPkgTableContainer>
                 <ProcosysTable
-                    disableSelectAll
+                    disableSelectAll={!selectAll}
                     ref={tableRef}
                     setPageSize={setPageSize}
                     pageIndex={pageIndex}

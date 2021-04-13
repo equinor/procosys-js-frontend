@@ -3,7 +3,7 @@ import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
-import { ButtonContainer, ButtonSpacer, DialogContainer, Divider, FormFieldSpacer, InputContainer, Scrim, Title } from './RescheduleDialog.style';
+import { ButtonContainer, ButtonSpacer, DialogContainer, Divider, FormFieldSpacer, InputContainer, OverflowColumn, Scrim, Title } from './RescheduleDialog.style';
 import SelectInput, { SelectItem } from '../../../../components/Select';
 import { TextField, Button } from '@equinor/eds-core-react';
 import { Content } from '@procosys/core/services/ModalDialogService/style';
@@ -14,6 +14,7 @@ import Spinner from '@procosys/components/Spinner';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import { Tooltip } from '@material-ui/core';
 
 const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
 const moduleName = 'PreservationRescheduleDialog';
@@ -31,10 +32,55 @@ const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
     );
 };
 
+const getTagNoColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.tagNo}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getDescriptionColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.description}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getStatusColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.status} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.status}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
 const columns = [
-    { Header: 'Tag nr', accessor: 'tagNo' },
-    { Header: 'Description', accessor: 'description' },
-    { Header: 'Status', accessor: 'status' },
+    { 
+        Header: 'Tag nr', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getTagNoColumn
+    },
+    { 
+        Header: 'Description', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getDescriptionColumn
+    },
+    { 
+        Header: 'Status', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getStatusColumn
+    },
     {
         Header: 'Req type',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,

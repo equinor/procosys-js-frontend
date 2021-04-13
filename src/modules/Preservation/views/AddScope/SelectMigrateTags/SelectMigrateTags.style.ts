@@ -93,3 +93,7 @@ export const LoadingContainer = styled.div`
     }
 `;
 
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;

@@ -7,11 +7,23 @@ import styled from 'styled-components';
 import { TextField } from '@equinor/eds-core-react';
 
 const TableFilterField = styled(TextField)`
-    width: calc(100% - 14px);
+    width: calc(100% - 5px);
+    > div > div {
+        top: 6px;
+        right: 10px;
+    }
 `;
 
 const StyledSelect = styled(Select)`
     height: 36px;
+    background-color: #f7f7f7;
+    width: calc(100% - 5px);
+    padding: 4px;
+    > div {
+        :focus {
+            background-color: #f7f7f7;
+        }
+    }
 `;
 
 export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: any[], setFilter: (a: string | undefined) => void } }): JSX.Element => {

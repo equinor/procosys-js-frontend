@@ -41,7 +41,7 @@ export const TableHeadCell = styled.div<{ align?: string }>`
     // border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
-    }    
+    }
 `;
 
 export const TableHeadFilterCell = styled.div`
@@ -114,11 +114,11 @@ export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
     position: absolute;
     cursor: col-resize;
     z-index: 100;
-    opacity: 0;
-    border-left: 1px solid rgba(0, 0, 0, 0.5);
-    border-right: 1px solid rgba(0, 0, 0, 0.5);
-    height: 50%;
-    top: 25%;
+    opacity: 1;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    /* border-right: 1px solid rgba(0, 0, 0, 0.5); */
+    height: 60%;
+    top: 20%;
     transition: all linear 100ms;
     right: -2px;
     width: 3px;

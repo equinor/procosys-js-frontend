@@ -7,6 +7,8 @@ import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import { Tooltip } from '@material-ui/core';
+import { OverflowColumn } from './RescheduleDialog.style';
 
 interface VoidDialogProps {
     voidableTags: PreservedTag[];
@@ -30,12 +32,88 @@ const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
     );
 };
 
+
+const getTagNoColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.tagNo}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getDescriptionColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.description}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getStatusColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.status} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.status}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getModeColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.mode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.mode}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getResponsibleColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.responsibleCode}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
 const columns = [
-    { Header: 'Tag nr', accessor: 'tagNo' },
-    { Header: 'Description', accessor: 'description' },
-    { Header: 'Mode', accessor: 'mode' },
-    { Header: 'Resp', accessor: 'responsibleCode' },
-    { Header: 'Status', accessor: 'status' },
+    { 
+        Header: 'Tag nr', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getTagNoColumn
+    },
+    { 
+        Header: 'Description', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getDescriptionColumn
+    },
+    { 
+        Header: 'Mode', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getModeColumn
+    },
+    { 
+        Header: 'Resp', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getResponsibleColumn
+    },
+    { 
+        Header: 'Status', 
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getStatusColumn
+    },
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 

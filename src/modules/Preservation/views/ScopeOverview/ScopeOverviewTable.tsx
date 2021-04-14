@@ -7,10 +7,10 @@ import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
 import EdsIcon from '@procosys/components/EdsIcon';
 import ProcosysTable from '@procosys/components/Table';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
-import { SelectColumnFilter } from '@procosys/components/Table/filters';
-import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
+import { Tooltip } from '@material-ui/core';
+import styled from 'styled-components';
 
 interface ScopeOverviewTableProps {
     getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | undefined>;
@@ -23,6 +23,10 @@ interface ScopeOverviewTableProps {
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
 }
+
+const StyledTooltip = styled(Tooltip)`
+    font-size: 14px;
+`;
 
 const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
@@ -47,9 +51,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const getResponsibleColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
-            <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <StyledTooltip title={tag.responsibleDescription || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.responsibleCode}</div>
-            </Tooltip>
+            </StyledTooltip>
         );
     }, []);
 
@@ -115,7 +119,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 isVoided={tag.isVoided}
                 onClick={(): void => props.showTagDetails(tag)}
             >
-                <span style={{ color: 'inherit', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.tagNo}</span>
+                <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <span style={{ color: 'inherit', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.tagNo}</span>
+                </Tooltip>
             </TagLink>
         );
     }, []);
@@ -123,9 +129,11 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const getDescriptionColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
-            <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
-                {tag.description}
-            </div>
+            <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
+                    {tag.description}
+                </div>
+            </Tooltip>
         );
     }, []);
 
@@ -180,9 +188,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 180,
             maxWidth: 400,
             minWidth: 150,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.tagNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
         },
         {
             Header: 'Description',
@@ -191,9 +196,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 250,
             maxWidth: 400,
             minWidth: 150,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.description.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
         },
         {
             Header: 'Due',
@@ -220,9 +222,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 200,
             maxWidth: 400,
             minWidth: 50,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.mode.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
         },
         {
             Header: 'PO',
@@ -232,19 +231,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 100,
             maxWidth: 150,
             minWidth: 50,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => {
-                    if (row.original.purchaseOrderNo) {
-                        if (row.original.calloffNo) {
-                            const searchField = `${row.original.purchaseOrderNo}/${row.original.calloffNo}`;
-                            return searchField.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                        } else {
-                            return row.original.purchaseOrderNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                        }
-                    }
-                }
-                );
-            }
         },
         {
             Header: 'Area',
@@ -254,23 +240,12 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             width: 100,
             maxWidth: 150,
             minWidth: 50,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => {
-                    if (row.original.areaCode)
-                        return row.original.areaCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                });
-            }
         },
         {
             Header: 'Resp',
             id: 'responsible',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
             Cell: getResponsibleColumn,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => {
-                    return row.original.responsibleCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1 || row.original.responsibleDescription.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                });
-            }
         },
         {
             Header: 'Disc',
@@ -282,9 +257,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             Header: 'Status',
             accessor: (d: PreservedTag): string | undefined => { return d.status; },
             id: 'status',
-            Cell: getStatus,
-            Filter: SelectColumnFilter,
-            filter: 'text'
+            Cell: getStatus
         },
         {
             Header: 'Req type',

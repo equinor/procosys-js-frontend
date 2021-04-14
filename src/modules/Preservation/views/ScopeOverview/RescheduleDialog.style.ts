@@ -68,3 +68,8 @@ export const ButtonContainer = styled.div`
 export const ButtonSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
 `;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;

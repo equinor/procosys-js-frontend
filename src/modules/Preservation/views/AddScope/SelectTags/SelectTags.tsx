@@ -1,5 +1,5 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TableContainer, TagsHeader, TopContainer } from './SelectTags.style';
+import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, OverflowColumn, Search, TableContainer, TagsHeader, TopContainer } from './SelectTags.style';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagRow } from '../types';
@@ -11,6 +11,46 @@ import ProcosysTable from '@procosys/components/Table';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { Tooltip } from '@material-ui/core';
+
+
+const getDescriptionColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.description}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const getMccrResponsiblesColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.mccrResponsibleCodes || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.mccrResponsibleCodes}</OverflowColumn>
+        </Tooltip>
+    );
+
+};
+
+const getPurchaseOrderTitleColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.purchaseOrderTitle || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.purchaseOrderTitle}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+
+const getCommPkgColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.commPkgNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.commPkgNo}</OverflowColumn>
+        </Tooltip>
+    );
+};
 
 const tableColumns = [
     {
@@ -24,10 +64,11 @@ const tableColumns = [
     {
         Header: 'Description',
         field: 'description',
-        accessor: 'description',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
         filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
             return rows.filter((row) => { return row.original.description?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getDescriptionColumn
     },
     {
         Header: 'MC pkg',
@@ -40,26 +81,29 @@ const tableColumns = [
     {
         Header: 'MCCR resp',
         field: 'mccrResponsibleCodes',
-        accessor: 'mccrResponsibleCodes',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
         filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
             return rows.filter((row) => { return row.original.mccrResponsibleCodes?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getMccrResponsiblesColumn
     },
     {
         Header: 'PO',
         field: 'purchaseOrderTitle',
-        accessor: 'purchaseOrderTitle',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
         filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
             return rows.filter((row) => { return row.original.purchaseOrderTitle?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getPurchaseOrderTitleColumn
     },
     {
         Header: 'Comm pkg',
         field: 'commPkgNo',
-        accessor: 'commPkgNo',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
         filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
             return rows.filter((row) => { return row.original.commPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-        }
+        },
+        Cell: getCommPkgColumn
     },
     {
         Header: 'Tag function',

@@ -43,3 +43,9 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+/* New table tooltip workaround - remove when using eds-tooltip */
+.MuiTooltip-tooltip {
+    font-weight: 400 !important;
+    font-size: 16px !important;
+}

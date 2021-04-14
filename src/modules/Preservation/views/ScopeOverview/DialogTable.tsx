@@ -31,7 +31,7 @@ const DialogTable = ({
                     clientPagination={true}
                     clientSorting={true}
                     pageCount={Math.ceil(columns.length / 10)}
-                    toolbarText={numTags + ' ' + toolbarText}
+                    toolbarText={toolbarText && numTags + ' ' + toolbarText}
                     toolbarColor={toolbarColor}
                 />
             </div>

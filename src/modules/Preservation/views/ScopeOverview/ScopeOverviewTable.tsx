@@ -11,6 +11,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import { Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
+import { JSXBreakpoints } from '@procosys/core/styling';
 
 interface ScopeOverviewTableProps {
     getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | undefined>;
@@ -179,6 +180,129 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             </div>);
     }, []);
 
+    const { mobileColumns, desktopColumns } = getColumns(getTagNoColumn, getDescriptionColumn, getDueColumn, getNextColumn, getMode, getPOColumn, getAreaCode, getResponsibleColumn, getDisciplineCode, getStatus, getRequirementColumn, getActionsHeader, getActionsColumn);
+
+    const [maxRows, setMaxRows] = useState<number>(0);
+
+    const [pageIndex, setPageIndex] = useState(props.pageIndex);
+    const [pageSize, setPageSize] = useState(props.pageSize);
+    const fetchIdRef = useRef(0);
+    const tableRef = useRef();
+    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
+    const [data, setData] = useState<PreservedTag[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
+    const columnsRef = useRef<ColumnInstance<any>[]>(columns);
+
+    const setColumns = (newValue: any[]): void => {
+        columnsRef.current = newValue;
+        _setColumns(newValue);
+    };
+
+
+    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'asc'): Promise<void> => {
+        if (!tablePageSize && !tablePageIndex) {
+            setLoading(false);
+            return;
+        }
+        setLoading(true);
+
+        const fetchId = ++fetchIdRef.current;
+
+        if (sortBy.id) {
+            sortField = (sortBy as any).id;
+            sortDir = sortBy.desc ? 'desc' : 'asc';
+            props.setOrderByField(sortField);
+            props.setOrderDirection(sortDir);
+        }
+
+        if (fetchId === fetchIdRef.current) {
+            await props.getData(tablePageIndex, tablePageSize, sortField, sortDir).then((res) => {
+                if (res) {
+                    setData(res.tags);
+                    setMaxRows(res.maxAvailable);
+                    setLoading(false);
+                }
+            });
+        } else {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const reRenderTable = (): void => {
+            if (window.innerWidth <= JSXBreakpoints.MOBILE) {
+                setColumns(mobileColumns);
+            } else {
+                setColumns(desktopColumns);
+            }
+        };
+
+        window.addEventListener('resize', reRenderTable);
+
+        return (): void => {
+            window.removeEventListener('resize', reRenderTable);
+        };
+    }, []);
+
+    useEffect(() => {
+        setColumns(desktopColumns);
+    }, []);
+
+    useEffect(() => {
+
+        props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
+            const req = { tablePageIndex: 0, tablePageSize: pageSize };
+            setPageIndex(0);
+            getData(req);
+        });
+    });
+
+    useEffect(() => {
+        getData({ tablePageIndex: pageIndex, tablePageSize: pageSize }, sortBy.id, sortBy.desc ? 'desc' : 'asc');
+    }, [pageSize, sortBy, pageIndex]);
+
+
+
+    const setSorting = (input: { id: string, desc: boolean }): void => {
+        if (input) {
+            if ((sortBy.id !== input.id || sortBy.desc !== input.desc)) {
+                setSortBy(input);
+                props.setOrderByField(input.id);
+            }
+        } else if (sortBy.id) {
+            setSortBy({ id: undefined, desc: false });
+        }
+    };
+
+    return (
+        <Container>
+            <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
+            <ProcosysTable
+                loading={loading}
+                setPageSize={setPageSize}
+                onSort={setSorting}
+                onSelectedChange={props.setSelectedTags}
+                ref={tableRef}
+                pageIndex={pageIndex}
+                setPageIndex={setPageIndex}
+                pageSize={pageSize}
+                columns={columns}
+                clientPagination={false}
+                clientSorting={false}
+                maxRowCount={maxRows}
+                data={data || []}
+                rowSelect={true}
+                pageCount={0} />
+        </Container>
+
+    );
+
+};
+
+export default ScopeOverviewTable;
+
+function getColumns(getTagNoColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getDescriptionColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getDueColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getNextColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getMode: (row: TableOptions<PreservedTag>) => JSX.Element, getPOColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getAreaCode: (row: TableOptions<PreservedTag>) => JSX.Element, getResponsibleColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getDisciplineCode: (row: TableOptions<PreservedTag>) => JSX.Element, getStatus: (row: TableOptions<PreservedTag>) => JSX.Element, getRequirementColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getActionsHeader: () => JSX.Element, getActionsColumn: (row: TableOptions<PreservedTag>) => JSX.Element) {
     const desktopColumns = [
         {
             Header: 'Tag no',
@@ -374,124 +498,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             minWidth: 30
         },
     ];
-
-    const [maxRows, setMaxRows] = useState<number>(0);
-
-    const [pageIndex, setPageIndex] = useState(props.pageIndex);
-    const [pageSize, setPageSize] = useState(props.pageSize);
-    const fetchIdRef = useRef(0);
-    const tableRef = useRef();
-    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
-    const [data, setData] = useState<PreservedTag[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
-    const columnsRef = useRef<ColumnInstance<any>[]>(columns);
-
-    const setColumns = (newValue: any[]): void => {
-        columnsRef.current = newValue;
-        _setColumns(newValue);
-    };
-
-
-    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'asc'): Promise<void> => {
-        if (!tablePageSize && !tablePageIndex) {
-            setLoading(false);
-            return;
-        }
-        setLoading(true);
-
-        const fetchId = ++fetchIdRef.current;
-
-        if (sortBy.id) {
-            sortField = (sortBy as any).id;
-            sortDir = sortBy.desc ? 'desc' : 'asc';
-            props.setOrderByField(sortField);
-            props.setOrderDirection(sortDir);
-        }
-
-        if (fetchId === fetchIdRef.current) {
-            await props.getData(tablePageIndex, tablePageSize, sortField, sortDir).then((res) => {
-                if (res) {
-                    setData(res.tags);
-                    setMaxRows(res.maxAvailable);
-                    setLoading(false);
-                }
-            });
-        } else {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        const reRenderTable = (): void => {
-            if (window.innerWidth < 640) {
-                setColumns(mobileColumns);
-            } else {
-                setColumns(desktopColumns);
-            }
-        };
-
-        window.addEventListener('resize', reRenderTable);
-
-        return (): void => {
-            window.removeEventListener('resize', reRenderTable);
-        };
-    }, []);
-
-    useEffect(() => {
-        setColumns(desktopColumns);
-    }, []);
-
-    useEffect(() => {
-
-        props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
-            const req = { tablePageIndex: 0, tablePageSize: pageSize };
-            setPageIndex(0);
-            getData(req);
-        });
-    });
-
-    useEffect(() => {
-        getData({ tablePageIndex: pageIndex, tablePageSize: pageSize }, sortBy.id, sortBy.desc ? 'desc' : 'asc');
-    }, [pageSize, sortBy, pageIndex]);
-
-
-
-    const setSorting = (input: { id: string, desc: boolean }): void => {
-        if (input) {
-            if ((sortBy.id !== input.id || sortBy.desc !== input.desc)) {
-                setSortBy(input);
-                props.setOrderByField(input.id);
-            }
-        } else if (sortBy.id) {
-            setSortBy({ id: undefined, desc: false });
-        }
-    };
-
-    return (
-        <Container>
-            <Typography variant='body_long'>{props.selectedTags.length} tags selected</Typography>
-            <ProcosysTable
-                loading={loading}
-                setPageSize={setPageSize}
-                onSort={setSorting}
-                onSelectedChange={props.setSelectedTags}
-                ref={tableRef}
-                pageIndex={pageIndex}
-                setPageIndex={setPageIndex}
-                pageSize={pageSize}
-                columns={columns}
-                clientPagination={false}
-                clientSorting={false}
-                maxRowCount={maxRows}
-                data={data || []}
-                rowSelect={true}
-                pageCount={0} />
-        </Container>
-
-    );
-
-};
-
-export default ScopeOverviewTable;
+    return { mobileColumns, desktopColumns };
+}
 

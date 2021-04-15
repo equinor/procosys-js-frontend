@@ -94,7 +94,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         setTimeout(() => {
             counterRef.current = newValue;
             _setCounter(newValue);
-        }, 100);
+        }, 200);
     };
 
     const hasFilters = (): boolean => {

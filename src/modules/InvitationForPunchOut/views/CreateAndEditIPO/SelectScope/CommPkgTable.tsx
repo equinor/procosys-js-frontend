@@ -169,11 +169,11 @@ const CommPkgTable = forwardRef(({
     const getDescriptionColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {
         const commPkg = row.value as CommPkgRow;
         return (
-            <div className='tableCell'>
-                <Tooltip title={commPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div className='controlOverflow'>{commPkg.description}</div>
-                </Tooltip>
-            </div>
+
+            <Tooltip title={commPkg.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div>{commPkg.description}</div>
+            </Tooltip>
+
         );
     };
 
@@ -216,7 +216,7 @@ const CommPkgTable = forwardRef(({
     ];
 
     return (
-        <Container disableSelectAll={type === 'DP'} mcColumn={type == 'DP'}>
+        <Container mcColumn={type == 'DP'}>
             <TopContainer>
                 <Search>
                     <TextField
@@ -233,7 +233,7 @@ const CommPkgTable = forwardRef(({
 
             <CommPkgTableContainer>
                 <ProcosysTable
-                    disableSelectAll
+                    disableSelectAll={!selectAll}
                     ref={tableRef}
                     setPageSize={setPageSize}
                     pageIndex={pageIndex}

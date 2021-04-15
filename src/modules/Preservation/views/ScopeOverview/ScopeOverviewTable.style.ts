@@ -39,8 +39,17 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 export const Container = styled.div`
     display: flex;
     flex-grow: 1;
-    max-height: calc(100% - 230px);
     flex-direction: column;
+
+    max-height: calc(100% - 160px);
+        ${Breakpoints.TABLET} {
+            margin-bottom: 60px;
+            max-height: calc(100% - 140px);
+        }
+        ${Breakpoints.MOBILE} {
+            max-height: calc(100% - 100px);
+            margin-bottom: 60px;
+        }
     
     input + svg {
         width: 24px;
@@ -67,9 +76,7 @@ export const Container = styled.div`
     }
 
     .controlOverflow {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        white-space: pre-wrap;
         color: inherit;
     }
     

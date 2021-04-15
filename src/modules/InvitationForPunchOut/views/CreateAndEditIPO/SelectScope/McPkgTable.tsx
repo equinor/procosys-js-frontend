@@ -125,11 +125,9 @@ const McPkgTable = forwardRef(({
     const getDescriptionColumn = (row: TableOptions<McPkgRow>): JSX.Element => {
         const mcPkg = row.value as McPkgRow;
         return (
-            <div className='tableCell'>
-                <Tooltip title={mcPkg.description} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div className='controlOverflow'>{mcPkg.description}</div>
-                </Tooltip>
-            </div>
+            <Tooltip title={mcPkg.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div>{mcPkg.description}</div>
+            </Tooltip>
         );
     };
 

@@ -58,7 +58,11 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
     }, []);
 
     const isDirty = useMemo((): boolean => {
-        return JSON.stringify(requirementType) != JSON.stringify(newRequirementType);
+        if (requirementType) {
+            return JSON.stringify(requirementType) !== JSON.stringify(newRequirementType);
+        } else {
+            return JSON.stringify(getInitialRequirementType()) !== JSON.stringify(newRequirementType);
+        }
     }, [requirementType, newRequirementType]);
 
     const confirmDiscardingChangesIfExist = (): boolean => {
@@ -67,10 +71,10 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
 
     //Set dirty when forms is updated
     useEffect(() => {
-        if (requirementType == null || !isDirty) {
+        if (requirementType == null && !isDirty) {
             setIsDirtyAndValid(false);
         } else {
-            if (newRequirementType.code && newRequirementType.icon && newRequirementType.sortKey && newRequirementType.title) {
+            if (isDirty && newRequirementType.code && newRequirementType.icon && newRequirementType.sortKey && newRequirementType.title) {
                 setIsDirtyAndValid(true);
             } else {
                 setIsDirtyAndValid(false);

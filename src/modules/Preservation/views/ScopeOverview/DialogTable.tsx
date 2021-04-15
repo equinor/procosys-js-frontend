@@ -21,7 +21,7 @@ const DialogTable = ({
 
     return (
         <Container>
-            <div style={{height: '50%'}}>
+            <div>
                 <ProcosysTable
                     columns={columns}
                     data={tags}
@@ -31,7 +31,7 @@ const DialogTable = ({
                     clientPagination={true}
                     clientSorting={true}
                     pageCount={Math.ceil(columns.length / 10)}
-                    toolbarText={numTags + ' ' + toolbarText}
+                    toolbarText={toolbarText && numTags + ' ' + toolbarText}
                     toolbarColor={toolbarColor}
                 />
             </div>

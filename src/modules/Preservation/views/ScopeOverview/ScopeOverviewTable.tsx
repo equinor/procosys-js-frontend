@@ -1,16 +1,17 @@
 import { Container, SingleIconContainer, TagLink } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
 import { PreservedTag, PreservedTags } from '@procosys/modules/Preservation/views/ScopeOverview/types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { TableOptions, UseTableRowProps } from 'react-table';
+import { ColumnInstance, TableOptions, UseTableRowProps } from 'react-table';
 import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import ProcosysTable from '@procosys/components/Table';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
-import { SelectColumnFilter } from '@procosys/components/Table/filters';
-import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
+import { Tooltip } from '@material-ui/core';
+import styled from 'styled-components';
+import { JSXBreakpoints } from '@procosys/core/styling';
 
 interface ScopeOverviewTableProps {
     getData: (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null) => Promise<PreservedTags | undefined>;
@@ -23,6 +24,10 @@ interface ScopeOverviewTableProps {
     setOrderByField: (orderByField: string | null) => void;
     setOrderDirection: (orderDirection: string | null) => void;
 }
+
+const StyledTooltip = styled(Tooltip)`
+    font-size: 14px;
+`;
 
 const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
@@ -47,9 +52,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const getResponsibleColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
-            <Tooltip title={tag.responsibleDescription} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <StyledTooltip title={tag.responsibleDescription || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.responsibleCode}</div>
-            </Tooltip>
+            </StyledTooltip>
         );
     }, []);
 
@@ -115,7 +120,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 isVoided={tag.isVoided}
                 onClick={(): void => props.showTagDetails(tag)}
             >
-                <span style={{ color: 'inherit', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.tagNo}</span>
+                <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <span style={{ color: 'inherit', opacity: tag.isVoided ? '0.5' : '1' }}>{tag.tagNo}</span>
+                </Tooltip>
             </TagLink>
         );
     }, []);
@@ -123,9 +130,11 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const getDescriptionColumn = useMemo(() => (row: TableOptions<PreservedTag>): JSX.Element => {
         const tag = row.value as PreservedTag;
         return (
-            <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
-                {tag.description}
-            </div>
+            <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
+                    {tag.description}
+                </div>
+            </Tooltip>
         );
     }, []);
 
@@ -171,143 +180,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             </div>);
     }, []);
 
-    const columns = useMemo(() => [
-        {
-            Header: 'Tag no',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'tagNo',
-            Cell: getTagNoColumn,
-            width: 180,
-            maxWidth: 400,
-            minWidth: 150,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.tagNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
-        },
-        {
-            Header: 'Description',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            Cell: getDescriptionColumn,
-            width: 250,
-            maxWidth: 400,
-            minWidth: 150,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.description.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
-        },
-        {
-            Header: 'Due',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'due',
-            Cell: getDueColumn,
-            width: 60,
-            maxWidth: 100,
-            minWidth: 50
-        },
-        {
-            Header: 'Next',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'Due',
-            Cell: getNextColumn,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50
-        },
-        {
-            Header: 'Mode',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            Cell: getMode,
-            width: 200,
-            maxWidth: 400,
-            minWidth: 50,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => { return row.original.mode.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
-        },
-        {
-            Header: 'PO',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'PO',
-            Cell: getPOColumn,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => {
-                    if (row.original.purchaseOrderNo) {
-                        if (row.original.calloffNo) {
-                            const searchField = `${row.original.purchaseOrderNo}/${row.original.calloffNo}`;
-                            return searchField.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                        } else {
-                            return row.original.purchaseOrderNo.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                        }
-                    }
-                }
-                );
-            }
-        },
-        {
-            Header: 'Area',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'Area',
-            Cell: getAreaCode,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => {
-                    if (row.original.areaCode)
-                        return row.original.areaCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                });
-            }
-        },
-        {
-            Header: 'Resp',
-            id: 'responsible',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            Cell: getResponsibleColumn,
-            filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
-                return rows.filter((row) => {
-                    return row.original.responsibleCode.toLowerCase().indexOf(filterType.toLowerCase()) > -1 || row.original.responsibleDescription.toLowerCase().indexOf(filterType.toLowerCase()) > -1;
-                });
-            }
-        },
-        {
-            Header: 'Disc',
-            id: 'discipline',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            Cell: getDisciplineCode
-        },
-        {
-            Header: 'Status',
-            accessor: (d: PreservedTag): string | undefined => { return d.status; },
-            id: 'status',
-            Cell: getStatus,
-            Filter: SelectColumnFilter,
-            filter: 'text'
-        },
-        {
-            Header: 'Req type',
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'reqtype',
-            Cell: getRequirementColumn,
-            defaultCanSort: false,
-            width: 200,
-            maxWidth: 400,
-            minWidth: 150
-        },
-        {
-            Header: getActionsHeader(),
-            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
-            id: 'actions',
-            Cell: getActionsColumn,
-            defaultCanSort: false,
-            width: 60,
-            maxWidth: 100,
-            minWidth: 30
-        },
-
-    ], []);
+    const { mobileColumns, desktopColumns } = getColumns(getTagNoColumn, getDescriptionColumn, getDueColumn, getNextColumn, getMode, getPOColumn, getAreaCode, getResponsibleColumn, getDisciplineCode, getStatus, getRequirementColumn, getActionsHeader, getActionsColumn);
 
     const [maxRows, setMaxRows] = useState<number>(0);
 
@@ -318,6 +191,14 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
     const [data, setData] = useState<PreservedTag[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
+    const columnsRef = useRef<ColumnInstance<any>[]>(columns);
+
+    const setColumns = (newValue: any[]): void => {
+        columnsRef.current = newValue;
+        _setColumns(newValue);
+    };
+
 
     const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'asc'): Promise<void> => {
         if (!tablePageSize && !tablePageIndex) {
@@ -349,6 +230,27 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     };
 
     useEffect(() => {
+        const reRenderTable = (): void => {
+            if (window.innerWidth <= JSXBreakpoints.MOBILE) {
+                setColumns(mobileColumns);
+            } else {
+                setColumns(desktopColumns);
+            }
+        };
+
+        window.addEventListener('resize', reRenderTable);
+
+        return (): void => {
+            window.removeEventListener('resize', reRenderTable);
+        };
+    }, []);
+
+    useEffect(() => {
+        setColumns(desktopColumns);
+    }, []);
+
+    useEffect(() => {
+
         props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
             const req = { tablePageIndex: 0, tablePageSize: pageSize };
             setPageIndex(0);
@@ -399,4 +301,216 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 };
 
 export default ScopeOverviewTable;
+
+function getColumns(
+    getTagNoColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getDescriptionColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getDueColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getNextColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getMode: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getPOColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getAreaCode: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getResponsibleColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getDisciplineCode: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getStatus: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getRequirementColumn: (row: TableOptions<PreservedTag>) => JSX.Element, 
+    getActionsHeader: () => JSX.Element, 
+    getActionsColumn: (row: TableOptions<PreservedTag>) => JSX.Element): {mobileColumns: any[], desktopColumns: any[]} {
+    const desktopColumns = [
+        {
+            Header: 'Tag no',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'tagNo',
+            Cell: getTagNoColumn,
+            width: 180,
+            maxWidth: 400,
+            minWidth: 150,
+        },
+        {
+            Header: 'Description',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getDescriptionColumn,
+            width: 250,
+            maxWidth: 400,
+            minWidth: 80,
+        },
+        {
+            Header: 'Due',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'due',
+            Cell: getDueColumn,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 50
+        },
+        {
+            Header: 'Next',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'Due',
+            Cell: getNextColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50
+        },
+        {
+            Header: 'Mode',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getMode,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 50,
+        },
+        {
+            Header: 'PO',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'PO',
+            Cell: getPOColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Area',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'Area',
+            Cell: getAreaCode,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Resp',
+            id: 'responsible',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getResponsibleColumn,
+        },
+        {
+            Header: 'Disc',
+            id: 'discipline',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getDisciplineCode
+        },
+        {
+            Header: 'Status',
+            accessor: (d: PreservedTag): string | undefined => { return d.status; },
+            id: 'status',
+            Cell: getStatus
+        },
+        {
+            Header: 'Req type',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'reqtype',
+            Cell: getRequirementColumn,
+            defaultCanSort: false,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 150
+        },
+        {
+            Header: getActionsHeader(),
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'actions',
+            Cell: getActionsColumn,
+            defaultCanSort: false,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 30
+        },
+    ];
+
+    const mobileColumns = [
+        {
+            Header: 'Tag no',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'tagNo',
+            Cell: getTagNoColumn,
+            width: 180,
+            maxWidth: 400,
+            minWidth: 150,
+        },
+        {
+            Header: 'Req type',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'reqtype',
+            Cell: getRequirementColumn,
+            defaultCanSort: false,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 150
+        },
+        {
+            Header: 'Due',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'due',
+            Cell: getDueColumn,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 50
+        },
+        {
+            Header: 'Next',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'Due',
+            Cell: getNextColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50
+        },
+        {
+            Header: 'Mode',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getMode,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 50,
+        },
+        {
+            Header: 'PO',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'PO',
+            Cell: getPOColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Area',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'Area',
+            Cell: getAreaCode,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Resp',
+            id: 'responsible',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getResponsibleColumn,
+        },
+        {
+            Header: 'Disc',
+            id: 'discipline',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getDisciplineCode
+        },
+        {
+            Header: 'Status',
+            accessor: (d: PreservedTag): string | undefined => { return d.status; },
+            id: 'status',
+            Cell: getStatus
+        },
+        {
+            Header: getActionsHeader(),
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'actions',
+            Cell: getActionsColumn,
+            defaultCanSort: false,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 30
+        },
+    ];
+    return { mobileColumns, desktopColumns };
+}
 

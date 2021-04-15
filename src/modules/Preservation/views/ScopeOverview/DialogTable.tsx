@@ -21,7 +21,7 @@ const DialogTable = ({
 
     return (
         <Container>
-            <div style={{height: '50%'}}>
+            <div>
                 <ProcosysTable
                     columns={columns}
                     data={tags}

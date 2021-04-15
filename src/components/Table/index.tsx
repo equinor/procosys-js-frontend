@@ -13,8 +13,8 @@ import {
     useSortBy,
     useTable
 } from 'react-table';
-import { FixedSizeList as List, areEqual, FixedSizeList } from 'react-window';
-import React, { CSSProperties, PropsWithChildren, forwardRef, memo, useEffect, useRef, useImperativeHandle } from 'react';
+import { VariableSizeList as List, VariableSizeList } from 'react-window';
+import React, { CSSProperties, PropsWithChildren, forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow, HeaderCheckbox, RowCheckbox, LoadingDiv } from './style';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -86,6 +86,17 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         }), []
     );
 
+    const [counter, _setCounter] = useState<number>(1);
+    const counterRef = useRef<number>(counter);
+
+    const setCounter = (newValue: number): void => {
+        rowHeights.current = {};
+        setTimeout(() => {
+            counterRef.current = newValue;
+            _setCounter(newValue);
+        }, 200);
+    };
+
     const hasFilters = (): boolean => {
         let i = 0;
         let filterFound = false;
@@ -137,6 +148,13 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             tableInstance.onSort(sortBy[0]);
     }, [tableInstance.onSort, sortBy]);
 
+    useEffect(() => {
+        if (tableInstance.state.columnResizing.isResizingColumn === null) {
+            rowHeights.current = {};
+            setCounter(counter + 1);
+        }
+    }, [tableInstance.state.columnResizing.isResizingColumn]);
+
 
     useEffect(() => {
         if (props.onSelectedChange) {
@@ -156,13 +174,20 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     }));
 
     useEffect(() => {
-        if (props.setPageIndex)
+        if (props.setPageIndex) {
             props.setPageIndex(pageIndex);
+        }
+        rowHeights.current = {};
+        setCounter(counter + 1);
+
     }, [pageIndex]);
 
     useEffect(() => {
-        if (props.setPageSize)
+        if (props.setPageSize) {
             props.setPageSize(pageSize);
+        }
+        rowHeights.current = {};
+        setCounter(counter + 1);
     }, [pageSize]);
 
     const cellClickHandler = (cell: Cell<Record<string, unknown>>) => (): void => {
@@ -170,15 +195,38 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     };
 
 
-    const RenderRow = memo(({ index, style }: {
-        index: number,
-        style: React.CSSProperties
-    }) => {
+    const RenderRow = ({ index, style }: { index: number, style: React.CSSProperties }): JSX.Element | null => {
         const row = page[index];
         if (!row) return null;
+        const rowRef = useRef<HTMLDivElement>({} as HTMLDivElement);
+
+        useEffect(() => {
+            if (rowRef.current && (rowHeights.current[index] == 40 || rowHeights.current[index] === undefined)) {
+                let maxValue = 32;
+                const children = rowRef.current.children;
+                
+                for (let i = 0; i < children.length; i++) {
+                    const child = children[i];
+                    if (child.clientHeight > maxValue)
+                        maxValue = child.clientHeight;
+
+                    const grandChildren = child.children;
+                    for (let ci = 0; ci < grandChildren.length; ci++) {
+                        const grandChild = grandChildren[ci];
+                        if (grandChild.clientHeight > maxValue)
+                            maxValue = grandChild.clientHeight;
+                    }
+                }
+
+                setRowHeight(index, maxValue < 40 ? 40 : maxValue + 14);
+            }
+        }, [rowRef]);
+
         prepareRow(row);
+
         return (
-            <TableRow selected={!row.original.noCheckbox && row.isSelected} {...row.getRowProps({ style })}>
+
+            <TableRow ref={rowRef} selected={!row.original.noCheckbox && row.isSelected} {...row.getRowProps({ style })}>
                 {row.cells.map((cell) => (
                     <TableCell align={cell.column.align} {...cell.getCellProps()} key={cell.getCellProps().key} onClick={cellClickHandler(cell)}>
                         {
@@ -188,11 +236,14 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                 ))}
             </TableRow>
         );
-    }, areEqual);
 
-    const listRef = useRef<FixedSizeList>(null);
+
+    };
+
+    const listRef = useRef<VariableSizeList>({} as VariableSizeList);
     const headerRef = useRef<HTMLDivElement>(null);
     const headerFiltersRef = useRef<HTMLDivElement>(null);
+    const rowHeights = useRef<any>({});
 
     const scrollHeader = (props: Event): void => {
         if (headerRef.current) {
@@ -228,24 +279,43 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         }, 50);
     };
 
+    function getRowHeight(index: number): number {
+        return rowHeights.current[index] || 40;
+    }
+
+    useEffect(() => {
+        const reRenderTable = (): void => {
+            setCounter(counterRef.current + 1);
+        };
+        window.addEventListener('resize', reRenderTable);
+
+        return (): void => {
+            window.removeEventListener('resize', reRenderTable);
+        };
+    }, []);
+
+    function setRowHeight(index: number, size: number): void {
+        listRef.current.resetAfterIndex(0);
+        rowHeights.current = { ...rowHeights.current, [index]: size };
+    }
 
     return (
         loading ? (
             <LoadingDiv><Spinner large /></LoadingDiv>
         ) : (
-            <AutoSizer>
+            <AutoSizer style={{ height: '100%', width: '100%' }}>
                 {({ height, width }): JSX.Element => (
                     <div>
                         <div style={{ justifyContent: 'flex-end', width: width }}>
                             {props.toolbar ? props.toolbar : null}
                             {props.toolbarText && <Typography style={{ color: props.toolbarColor, width: 'max-content' }} variant='h6' >{props.toolbarText}</Typography>}
                         </div>
-                        <Table {...getTableProps()}>
+                        <Table key={counter} {...getTableProps()}>
                             {
                                 !props.noHeader &&
                                 // render table header
                                 headerGroups.map((headerGroup, i) => (
-                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 8, display: 'flex' }}>
+                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerRef} style={{ width: width - 18, display: 'flex' }}>
 
                                         {headerGroup.headers.map((column) => {
                                             const style = {
@@ -282,7 +352,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                 !props.noHeader &&
                                 // show client side filtering if any cols specify it
                                 hasFilters() && headerGroups.map((headerGroup, i) => (
-                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerFiltersRef} style={{ width: width - 8, display: 'flex' }}>
+                                    <TableHeader {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key} ref={headerFiltersRef} style={{ width: width - 18, display: 'flex' }}>
                                         {
                                             headerGroup.headers.filter((c) => c.filter).length > 0 &&
                                             headerGroup.headers.map((column) => {
@@ -303,18 +373,18 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                             <div {...getTableBodyProps()}>
                                 {props.data.length === 0 && (<div>No records to display</div>)}
                                 <List
-                                    height={height}
+                                    height={height - 60}
                                     itemCount={pageSize > props.data.length ? props.data.length : pageSize}
-                                    itemSize={40}
+                                    itemSize={getRowHeight}
                                     width={width}
                                     ref={listRef}
                                     onItemsRendered={addScrollEventHandler}
                                 >
                                     {RenderRow}
                                 </List>
-                            </div>
-                            <div style={{ width: width }}>
-                                <TablePagination<Record<string, unknown>> instance={tableInstance} />
+                                <div style={{ width: width }}>
+                                    <TablePagination<Record<string, unknown>> instance={tableInstance} />
+                                </div>
                             </div>
                         </Table>
                     </div>

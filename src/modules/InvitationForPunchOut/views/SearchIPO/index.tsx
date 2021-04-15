@@ -58,6 +58,7 @@ const SearchIPO = (): JSX.Element => {
 
     const [orderByField, setOrderByField] = useState<string | null>(null);
     const [orderDirection, setOrderDirection] = useState<string | null>(null);
+    const [dataLoading, setDataLoading] = useState<boolean>(false);
 
     const updateSavedFilters = async (): Promise<void> => {
         setIsLoading(true);
@@ -247,15 +248,18 @@ const SearchIPO = (): JSX.Element => {
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
         if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)
             try {
+                setDataLoading(true);
                 cancelerRef.current && cancelerRef.current();
                 return await apiClient.getIPOs(project.name, page, pageSize, orderBy, orderDirection, filter, (c) => { cancelerRef.current = c; }).then(
                     (response) => {
                         setNumberOfIPOs(response.maxAvailable);
+                        setDataLoading(false);
                         return response;
                     }
                 );
             } catch (error) {
                 console.error('Get IPOs failed: ', error.message, error.data);
+                // setDataLoading(false);
                 if (!error.isCancel) {
                     showSnackbarNotification(error.message);
                 }
@@ -342,6 +346,7 @@ const SearchIPO = (): JSX.Element => {
                 </HeaderContainer >
 
                 <InvitationsTable
+                    loading={dataLoading}
                     getIPOs={getIPOs}
                     data-testId='invitationsTable'
                     pageSize={pageSize}

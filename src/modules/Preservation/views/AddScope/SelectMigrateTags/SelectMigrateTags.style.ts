@@ -35,7 +35,7 @@ export const Container = styled.div`
 `;
 
 export const TableContainer = styled.div`
-    height: 50vh;
+    height: calc(100% - 260px);
 `;
 
 export const Header = styled.header`

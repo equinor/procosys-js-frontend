@@ -17,6 +17,7 @@ interface InvitationsTableProps {
     height: number;
     update: number;
     filterUpdate: number;
+    loading: boolean;
 }
 
 interface IPOQuery {
@@ -26,13 +27,12 @@ interface IPOQuery {
 }
 
 
-const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate, loading }: InvitationsTableProps): JSX.Element => {
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'createdAtUtc', desc: true });
     const [pageIndex, setPageIndex] = useState(0);
     const [maxRows, setMaxRows] = useState<number>(0);
     const [data, setData] = useState<IPO[]>([]);
     const [pageCount, setPageCount] = useState<number>(0);
-    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const req = { page: 0, pageSize: pageSize, orderBy: { title: 'createdAtUtc' }, orderDirection: 'desc' } as Query<IPOQuery>;
@@ -53,12 +53,10 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
 
 
     const getIPOsByQuery = (query: Query<IPOQuery>): void => {
-        setLoading(true);
         getIPOs(query.page, query.pageSize, query.orderBy.title as string, query.orderDirection).then(result => {
             setData(result.invitations);
             setMaxRows(result.maxAvailable);
             setPageCount(Math.ceil(result.maxAvailable / pageSize));
-            setLoading(false);
         });
     };
 
@@ -75,9 +73,11 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getTitleColum = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).title;
         return (
-            <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <Typography className='controlOverflow'>{data}</Typography>
-            </Tooltip>
+            <div className='controlOverflow'>
+                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{data}</Typography>
+                </Tooltip>
+            </div>
         );
     };
 
@@ -86,9 +86,11 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         const pkgsString = pkgs?.join(', ');
 
         return (
-            <Tooltip title={pkgsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <Typography className='controlOverflow'>{pkgsString}</Typography>
-            </Tooltip>
+            <div className='controlOverflow'>
+                <Tooltip title={pkgsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{pkgsString}</Typography>
+                </Tooltip>
+            </div>
         );
     };
 
@@ -97,27 +99,33 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         const pkgsString = pkgs?.join(', ');
 
         return (
-            <Tooltip title={pkgsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <Typography className='controlOverflow'>{pkgsString}</Typography>
-            </Tooltip>
+            <div className='controlOverflow'>
+                <Tooltip title={pkgsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{pkgsString}</Typography>
+                </Tooltip>
+            </div>
         );
     };
 
     const getContractorRepColumn = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).contractorRep;
         return (
-            <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <Typography className='controlOverflow'>{data}</Typography>
-            </Tooltip>
+            <div className='controlOverflow'>
+                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{data}</Typography>
+                </Tooltip>
+            </div>
         );
     };
 
     const getConstructionRepColumn = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).constructionCompanyRep;
         return (
-            <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <Typography className='controlOverflow'>{data}</Typography>
-            </Tooltip>
+            <div className='controlOverflow'>
+                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{data}</Typography>
+                </Tooltip>
+            </div>
         );
     };
 

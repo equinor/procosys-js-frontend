@@ -44,8 +44,10 @@ export const Container = styled.div`
     max-height: calc(100% - 160px);
         ${Breakpoints.TABLET} {
             margin-bottom: 60px;
+            max-height: calc(100% - 140px);
         }
         ${Breakpoints.MOBILE} {
+            max-height: calc(100% - 100px);
             margin-bottom: 60px;
         }
     

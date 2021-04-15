@@ -21,8 +21,7 @@ export const TableHeader = styled.div`
 export const Table = styled.div`
     border-spacing: 0;
     overflow-y: auto;
-    max-height: 100%;
-    width: fit-content;
+    width: 100%;
 `;
 
 export const TableHeadCell = styled.div<{ align?: string }>`
@@ -38,7 +37,6 @@ export const TableHeadCell = styled.div<{ align?: string }>`
     align-items: 'flex-start';
     display: 'flex';
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
-    // border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
     }
@@ -59,6 +57,10 @@ export const TableRow = styled.div<{ selected: boolean }>`
     color: inherit;
     outline: 0;
     vertical-align: middle;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    width: 100%;
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.07);
@@ -92,13 +94,14 @@ export const TableCell = styled.div<{ align?: string }>`
     font-weight: 400;
     line-height: 1.43;
     vertical-align: inherit;
-    overflow: hidden;
-    white-space: nowrap;
+    white-space: pre-wrap;
     text-overflow: ellipsis;
     color: inherit;
     justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
-    align-items: 'flex-start';
-    display: 'flex';
+    align-items: flex-start;
+    display: flex;
+    min-height: 40px;
+    flex-direction: row;
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     :last-child {
         border-right: none;

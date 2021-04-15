@@ -1,7 +1,7 @@
 import { Container, SingleIconContainer, TagLink } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
 import { PreservedTag, PreservedTags } from '@procosys/modules/Preservation/views/ScopeOverview/types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { TableOptions, UseTableRowProps } from 'react-table';
+import { ColumnInstance, TableOptions, UseTableRowProps } from 'react-table';
 import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
 
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -179,7 +179,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             </div>);
     }, []);
 
-    const columns = useMemo(() => [
+    const desktopColumns = [
         {
             Header: 'Tag no',
             accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
@@ -195,7 +195,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             Cell: getDescriptionColumn,
             width: 250,
             maxWidth: 400,
-            minWidth: 150,
+            minWidth: 80,
         },
         {
             Header: 'Due',
@@ -279,8 +279,101 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             maxWidth: 100,
             minWidth: 30
         },
+    ];
 
-    ], []);
+    const mobileColumns = [
+        {
+            Header: 'Tag no',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'tagNo',
+            Cell: getTagNoColumn,
+            width: 180,
+            maxWidth: 400,
+            minWidth: 150,
+        },
+        {
+            Header: 'Req type',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'reqtype',
+            Cell: getRequirementColumn,
+            defaultCanSort: false,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 150
+        },
+        {
+            Header: 'Due',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'due',
+            Cell: getDueColumn,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 50
+        },
+        {
+            Header: 'Next',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'Due',
+            Cell: getNextColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50
+        },
+        {
+            Header: 'Mode',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getMode,
+            width: 200,
+            maxWidth: 400,
+            minWidth: 50,
+        },
+        {
+            Header: 'PO',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'PO',
+            Cell: getPOColumn,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Area',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'Area',
+            Cell: getAreaCode,
+            width: 100,
+            maxWidth: 150,
+            minWidth: 50,
+        },
+        {
+            Header: 'Resp',
+            id: 'responsible',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getResponsibleColumn,
+        },
+        {
+            Header: 'Disc',
+            id: 'discipline',
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            Cell: getDisciplineCode
+        },
+        {
+            Header: 'Status',
+            accessor: (d: PreservedTag): string | undefined => { return d.status; },
+            id: 'status',
+            Cell: getStatus
+        },
+        {
+            Header: getActionsHeader(),
+            accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+            id: 'actions',
+            Cell: getActionsColumn,
+            defaultCanSort: false,
+            width: 60,
+            maxWidth: 100,
+            minWidth: 30
+        },
+    ];
 
     const [maxRows, setMaxRows] = useState<number>(0);
 
@@ -291,6 +384,14 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
     const [data, setData] = useState<PreservedTag[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
+    const columnsRef = useRef<ColumnInstance<any>[]>(columns);
+
+    const setColumns = (newValue: any[]): void => {
+        columnsRef.current = newValue;
+        _setColumns(newValue);
+    };
+
 
     const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'asc'): Promise<void> => {
         if (!tablePageSize && !tablePageIndex) {
@@ -322,6 +423,27 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     };
 
     useEffect(() => {
+        const reRenderTable = (): void => {
+            if (window.innerWidth < 640) {
+                setColumns(mobileColumns);
+            } else {
+                setColumns(desktopColumns);
+            }
+        };
+
+        window.addEventListener('resize', reRenderTable);
+
+        return (): void => {
+            window.removeEventListener('resize', reRenderTable);
+        };
+    }, []);
+
+    useEffect(() => {
+        setColumns(desktopColumns);
+    }, []);
+
+    useEffect(() => {
+
         props.setRefreshScopeListCallback((maxHeight?: number, refreshOnResize = false) => {
             const req = { tablePageIndex: 0, tablePageSize: pageSize };
             setPageIndex(0);

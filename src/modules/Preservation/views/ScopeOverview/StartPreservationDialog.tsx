@@ -5,11 +5,18 @@ import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
+import { Tooltip } from '@material-ui/core';
 
 interface StartPreservationDialogProps {
     startableTags: PreservedTag[];
     nonStartableTags: PreservedTag[];
 }
+
+const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;
 
 const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
     const tag = row.value as PreservedTag;
@@ -18,10 +25,38 @@ const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
     );
 };
 
+const getTagNoCell = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.tagNo}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const getDescriptionCell = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.description}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+
+const getStatusCell = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.status || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.status}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
 const columns = [
-    { Header: 'Tag nr', accessor: 'tagNo', id: 'tagNo' },
-    { Header: 'Description', accessor: 'description', id: 'description' },
-    { Header: 'Status', accessor: 'status', id: 'status' },
+    { Header: 'Tag nr', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getTagNoCell },
+    { Header: 'Description', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getDescriptionCell },
+    { Header: 'Status', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getStatusCell },
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
 

@@ -169,11 +169,11 @@ const CommPkgTable = forwardRef(({
     const getDescriptionColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {
         const commPkg = row.value as CommPkgRow;
         return (
-            <div className='tableCell'>
-                <Tooltip title={commPkg.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <div className='controlOverflow'>{commPkg.description}</div>
-                </Tooltip>
-            </div>
+
+            <Tooltip title={commPkg.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <div>{commPkg.description}</div>
+            </Tooltip>
+
         );
     };
 

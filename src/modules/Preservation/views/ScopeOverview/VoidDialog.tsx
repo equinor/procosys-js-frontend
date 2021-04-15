@@ -89,28 +89,28 @@ const getResponsibleColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
 };
 
 const columns = [
-    { 
-        Header: 'Tag nr', 
+    {
+        Header: 'Tag nr',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getTagNoColumn
     },
-    { 
-        Header: 'Description', 
+    {
+        Header: 'Description',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getDescriptionColumn
     },
-    { 
-        Header: 'Mode', 
+    {
+        Header: 'Mode',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getModeColumn
     },
-    { 
-        Header: 'Resp', 
+    {
+        Header: 'Resp',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getResponsibleColumn
     },
-    { 
-        Header: 'Status', 
+    {
+        Header: 'Status',
         accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
         Cell: getStatusColumn
     },
@@ -118,11 +118,13 @@ const columns = [
 ];
 
 const MainContainer = styled.div`
-    height: 65vh;
+    height: 70vh;
 `;
 
-const TableContainer = styled.div`
-    height: 35vh;
+const TableContainer = styled.div<{ restrictHeight?: boolean }>`
+${(props): any => `
+    height: ${props.restrictHeight ? '50%' : '100%'};
+`}
 `;
 
 const VoidDialog = ({
@@ -139,12 +141,12 @@ const VoidDialog = ({
     return (
         <MainContainer>
             {topTable.length > 0 && (
-                <TableContainer>
+                <TableContainer restrictHeight={bottomTable.length > 0}>
                     <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
                     <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                 </TableContainer>)}
             {bottomTable.length > 0 && (
-                <TableContainer>
+                <TableContainer restrictHeight={topTable.length > 0}>
                     <TopText>
                         <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba} />
                         <Typography variant='h6' style={{ color: tokens.colors.interactive.danger__text.rgba }}>{voiding ? voidingText : unvoidingText}</Typography>

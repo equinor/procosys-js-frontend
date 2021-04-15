@@ -8,6 +8,10 @@ export const Toolbar = styled.div`
 
 export const Container = styled.div`
     height: 100%;
+
+    > div {
+        height: 65%;
+    }
     
     ${Breakpoints.TABLET} {
         //hide columns

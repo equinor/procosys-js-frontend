@@ -1,18 +1,19 @@
 import React, { useRef } from 'react';
-import Table from './../Table';
 import { Container, AttachmentLink, AddFile, StyledButton, DragAndDropContainer, DragAndDropTitle, TableContainer } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable from '../Table';
+import { getFileTypeIconName } from '@procosys/modules/InvitationForPunchOut/views/utils';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
-const deleteIcon = <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />;
 
 export interface Attachment {
     id: number;
     fileName: string;
     rowVersion: string;
+    uploadedAt?: Date;
+    uploadedBy?: string;
 }
 
 interface AttachmentListProps {
@@ -22,6 +23,16 @@ interface AttachmentListProps {
     deleteAttachment?: (attachment: Attachment) => void;
     downloadAttachment: (id: number) => void;
     large?: boolean;
+    detailed?: boolean;
+}
+
+interface Column {
+    Header: string;
+    accessor: (d: UseTableRowProps<Attachment>) => UseTableRowProps<Attachment>;
+    align?: string;
+    Cell: (row: TableOptions<Attachment>) => JSX.Element;
+    width?: number;
+    alignContent?: string;
 }
 
 const AttachmentList = ({
@@ -31,6 +42,7 @@ const AttachmentList = ({
     deleteAttachment,
     downloadAttachment,
     large = false,
+    detailed = false,
 }: AttachmentListProps): JSX.Element => {
 
     const getFilenameColumn = (row: TableOptions<Attachment>): JSX.Element => {
@@ -89,26 +101,75 @@ const AttachmentList = ({
         );
     };
 
-    const columns = [
-        {
-            Header: ' ',
-            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-            Cell: getFilenameColumn
-        },
-        {
-            Header: '  ',
-            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-            align: 'right',
-            Cell: getRemoveAttachmentColumn
-        }
-    ];
+    const getAttachmentIcon = (row: TableOptions<Attachment>): JSX.Element => {
+        const attachment = row.value as Attachment;
+        const iconName = getFileTypeIconName(attachment.fileName);
+        return (
+            <EdsIcon name={iconName} size={24} color={tokens.colors.text.static_icons__default} />
+        );
+    };
 
-    /* TODO: once table component is ready and I've been able to ask someone about design and
-    ** it makes sense to use this component for all the different attachment components:
-    ** Change columns based on which type
-    ** Change options (header especially)
-    ** Add type icons
-    */
+    const getUploadedBy = (row: TableOptions<Attachment>): JSX.Element => {
+        return (
+            row.value.uploadedBy? (
+                <div>
+                    { row.value.uploadedBy }
+                </div>
+            ) : <></>
+        );
+    };
+
+    const getUploadedAt = (row: TableOptions<Attachment>): JSX.Element => {
+        return (
+            row.value.uploadedAt? (
+                <div>
+                    { row.value.uploadedAt }
+                </div>
+            ) : <></>
+        );
+    };
+
+    const getColumns = (): Column[] => {
+        const columns: Column[] = [];
+        columns.push(
+            {
+                Header: 'Type',
+                accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+                Cell: getAttachmentIcon,
+                width: 16
+            },
+            {
+                Header: 'Title',
+                accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+                Cell: getFilenameColumn
+            }
+        );
+        if(detailed){
+            columns.push(
+                {
+                    Header: 'Uploaded at',
+                    accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+                    Cell: getUploadedAt
+                },
+                {
+                    Header: 'Uploaded by',
+                    accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+                    Cell: getUploadedBy
+                }
+            );
+        }
+        columns.push(
+            {
+                Header: ' ',
+                accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
+                align: 'right',
+                Cell: getRemoveAttachmentColumn,
+                width: 24
+            }
+        );
+        return columns;
+    };
+
     return (
         <Container>
             { addAttachments &&
@@ -127,9 +188,9 @@ const AttachmentList = ({
             }
             <TableContainer>
                 <ProcosysTable
-                    columns={columns}
+                    columns={getColumns()}
                     data={attachments}
-                    noHeader={true}
+                    noHeader={!large}
                     pageIndex={0}
                     pageSize={25}
                     clientPagination={true}

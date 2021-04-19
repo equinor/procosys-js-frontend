@@ -13,6 +13,15 @@ const Wrapper = styled.div`
   height: 600px;
 `;
 
+type LocalTableType = {
+    tagNo: string,
+    description: string,
+    responsibleCode: string,
+    disciplineCode: string,
+    status: string,
+    isVoided: boolean
+}
+
 const columns = [
     {
         Header: 'Tag nr',
@@ -46,9 +55,9 @@ const columns = [
     },
     {
         Header: 'Voided',
-        accessor: (d: any): string | undefined => { return d.isVoided ? 'Voided' : 'Not voided'; },
+        accessor: (d: PreservedTag): string | undefined => { return d.isVoided ? 'Voided' : 'Not voided'; },
         field: 'isVoided',
-        Cell: (rowData: TableOptions<any>): JSX.Element => { return rowData.row.values.Voided === 'Voided' ? <CheckBoxIcon color='disabled' /> : <></>; }
+        Cell: (rowData: TableOptions<PreservedTag>): JSX.Element => { return rowData.row.values.Voided === 'Voided' ? <CheckBoxIcon color='disabled' /> : <></>; }
     },
 ];
 
@@ -60,7 +69,7 @@ const filteredColumns = [
         width: 180,
         maxWidth: 400,
         minWidth: 50,
-        filter: (rows: UseTableRowProps<any>[], id: number, filterType: string): UseTableRowProps<any>[] => {
+        filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
             return rows.filter((row) => { return row.original.tagNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
         }
     },
@@ -70,7 +79,7 @@ const filteredColumns = [
         width: 250,
         maxWidth: 400,
         minWidth: 80,
-        filter: (rows: UseTableRowProps<any>[], id: number, filterType: string): UseTableRowProps<any>[] => {
+        filter: (rows: UseTableRowProps<PreservedTag>[], id: number, filterType: string): UseTableRowProps<PreservedTag>[] => {
             return rows.filter((row) => { return row.original.description?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
         }
     },
@@ -91,21 +100,21 @@ const filteredColumns = [
     },
     {
         Header: 'Voided',
-        accessor: (d: any): string | undefined => { return d.isVoided ? 'Voided' : 'Not voided'; },
+        accessor: (d: PreservedTag): string | undefined => { return d.isVoided ? 'Voided' : 'Not voided'; },
         field: 'isVoided',
-        Cell: (rowData: TableOptions<any>): JSX.Element => { return rowData.row.values.Voided === 'Voided' ? <CheckBoxIcon color='disabled' /> : <></>; },
+        Cell: (rowData: TableOptions<PreservedTag>): JSX.Element => { return rowData.row.values.Voided === 'Voided' ? <CheckBoxIcon color='disabled' /> : <></>; },
         Filter: SelectColumnFilter,
         filter: 'equals'
     },
 ];
 
-const getData = () => {
+const getData = (): LocalTableType[] => {
     const data = require('./__tests__/data.json');
     const localData = data.tags.map((e: PreservedTag) => {
         return {
             tagNo: e.tagNo, description: e.description, responsibleCode: e.responsibleCode, disciplineCode: e.disciplineCode, status: e.status, isVoided: e.isVoided
-        };
-    });
+        } as LocalTableType;
+    }) as LocalTableType[];
     return localData;
 };
 
@@ -177,7 +186,7 @@ export default {
 } as Meta;
 
 
-export const Default: Story<TableProperties<any>> = (args: JSX.IntrinsicAttributes & TableProperties<any>) => {
+export const Default: Story<TableProperties<LocalTableType>> = (args: JSX.IntrinsicAttributes & TableProperties<LocalTableType>) => {
     const [pageSize, setPageSize] = useState(10);
     const [id, setId] = useState<number>(0);
     const prevArgs = useRef<string>();
@@ -207,7 +216,7 @@ export const Default: Story<TableProperties<any>> = (args: JSX.IntrinsicAttribut
     );
 };
 
-export const Filtering: Story<TableProperties<any>> = (args: JSX.IntrinsicAttributes & TableProperties<any>) => {
+export const Filtering: Story<TableProperties<LocalTableType>> = (args: JSX.IntrinsicAttributes & TableProperties<LocalTableType>) => {
     const [pageSize, setPageSize] = useState(10);
     const [id, setId] = useState<number>(0);
     const prevArgs = useRef<string>();

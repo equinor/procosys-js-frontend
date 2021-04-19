@@ -51,14 +51,19 @@ const ActionAttachments = ({
         };
     }, []);
 
-    const downloadAttachment = async (attachmentId: number): Promise<void> => {
-        try {
-            const url = await apiClient.getDownloadUrlForActionAttachment(tagId, actionId, attachmentId);
-            window.open(url, '_blank');
-            showSnackbarNotification('Attachment is downloaded.', 5000, true);
-        } catch (error) {
-            console.error('Not able to get download url for action attachment: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000, true);
+    const downloadAttachment = async (attachment: Attachment): Promise<void> => {
+        if(attachment.id){
+            try {
+                const url = await apiClient.getDownloadUrlForActionAttachment(tagId, actionId, attachment.id);
+                window.open(url, '_blank');
+                showSnackbarNotification('Attachment is downloaded.', 5000, true);
+            } catch (error) {
+                console.error('Not able to get download url for action attachment: ', error.message, error.data);
+                showSnackbarNotification(error.message, 5000, true);
+            }
+        }else{
+            console.error('Attachment does not exist');
+            showSnackbarNotification('Attachment does not exist', 5000, true);
         }
     };
 

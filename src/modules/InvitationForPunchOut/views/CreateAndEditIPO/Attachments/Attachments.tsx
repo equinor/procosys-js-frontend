@@ -12,6 +12,7 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import ProcosysTable from '@procosys/components/Table';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import AttachmentList from '@procosys/components/AttachmentList';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -41,7 +42,8 @@ const Attachments = ({
         }
     };
 
-    const removeAttachment = (index: number): void => {
+    const removeAttachment = (row: TableOptions<Attachment>): void => {
+        const index = row.row.index;
         if (attachments[index].id) {
             //Attachments already uploaded will be deleted when ipo i saved
             attachments[index].toBeDeleted = true;
@@ -127,39 +129,55 @@ const Attachments = ({
         },
     ];
 
-    return (<Container>
-        <FormContainer>
-            <Typography variant='h5'>Drag and drop to add files, or click on the button to select files</Typography>
-            <AddAttachmentContainer>
-                <form>
-                    <Button
-                        onClick={handleAddFile}
-                    >
+    return (
+        <Container>
+            <FormContainer>
+                <Typography variant='h5'>Drag and drop to add files, or click on the button to select files</Typography>
+                <AddAttachmentContainer>
+                    <form>
+                        <Button
+                            onClick={handleAddFile}
+                        >
                         Select files
-                    </Button>
-                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
-                </form>
-            </AddAttachmentContainer>
-            <DragAndDropContainer
-                onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
-                onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
-            >
-                <EdsIcon name='cloud_download' size={48} color='#DADADA' />
-            </DragAndDropContainer>
-            <Typography variant='h5'>Attachments</Typography>
+                        </Button>
+                        <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
+                    </form>
+                </AddAttachmentContainer>
+                <AttachmentList 
+                    attachments={attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment) => {
+                        return({
+                            id: attachment.id,
+                            fileName: attachment.fileName,
+                            rowVersion: attachment.fileName,
+                            uploadedAt: attachment.uploadedAt,
+                            uploadedBy: attachment.uploadedBy?.firstName + ' ' + attachment.uploadedBy?.lastName,
+                        });
+                    })}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    deleteAttachment={removeAttachment}
+                />
+                <DragAndDropContainer
+                    onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
+                    onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
+                >
+                    <EdsIcon name='cloud_download' size={48} color='#DADADA' />
+                </DragAndDropContainer>
+                <Typography variant='h5'>Attachments</Typography>
 
-            <ProcosysTable
-                columns={columns}
-                data={attachments.filter((attachment) => !attachment.toBeDeleted)}
-                clientPagination={true}
-                clientSorting={true}
-                maxRowCount={attachments.filter((attachment) => !attachment.toBeDeleted).length || 0}
-                pageIndex={0}
-                pageSize={10}
-                rowSelect={false}
-            />
-        </FormContainer>
-    </Container>);
+                <ProcosysTable
+                    columns={columns}
+                    data={attachments.filter((attachment) => !attachment.toBeDeleted)}
+                    clientPagination={true}
+                    clientSorting={true}
+                    maxRowCount={attachments.filter((attachment) => !attachment.toBeDeleted).length || 0}
+                    pageIndex={0}
+                    pageSize={10}
+                    rowSelect={false}
+                />
+            </FormContainer>
+        </Container>
+    );
 };
 
 export default Attachments;

@@ -9,7 +9,7 @@ import { getFileTypeIconName } from '@procosys/modules/InvitationForPunchOut/vie
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 
 export interface Attachment {
-    id: number;
+    id?: number;
     fileName: string;
     rowVersion: string;
     uploadedAt?: Date;
@@ -20,8 +20,8 @@ interface AttachmentListProps {
     attachments: Attachment[];
     disabled: boolean;
     addAttachments?: (files: FileList) => void;
-    deleteAttachment?: (attachment: Attachment) => void;
-    downloadAttachment: (id: number) => void;
+    deleteAttachment?: (row: TableOptions<Attachment>) => void;
+    downloadAttachment: (attachment: Attachment) => void;
     large?: boolean;
     detailed?: boolean;
 }
@@ -49,17 +49,17 @@ const AttachmentList = ({
         const attachment = row.value as Attachment;
         return (
             <AttachmentLink>
-                <div onClick={(): void => { downloadAttachment(attachment.id); }}>
+                <div onClick={(): void => { downloadAttachment(attachment); }}>
                     {attachment.fileName}
                 </div>
             </AttachmentLink >
         );
     };
 
-    const handleDelete = (attachment: Attachment): void => {
+    const handleDelete = (row: TableOptions<Attachment>): void => {
         if (!disabled && deleteAttachment) {
-            if (confirm(`You want to delete the file '${attachment.fileName}'`)) {
-                deleteAttachment(attachment);
+            if (confirm(`You want to delete the file '${row.value.fileName}'`)) {
+                deleteAttachment(row);
             }
         }
     };
@@ -91,10 +91,9 @@ const AttachmentList = ({
     };
 
     const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
-        const attachment = row.value as Attachment;
         return (
             deleteAttachment ? (
-                <div aria-disabled={disabled} onClick={(): void => handleDelete(attachment)} >
+                <div aria-disabled={disabled} onClick={(): void => handleDelete(row)} >
                     <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />
                 </div>
             ) : <></>

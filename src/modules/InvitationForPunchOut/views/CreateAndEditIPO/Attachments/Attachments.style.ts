@@ -36,3 +36,8 @@ export const DragAndDropContainer = styled.div`
     height: 200px;
     background-color: ${tokens.colors.ui.background__light.rgba};
 `;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;

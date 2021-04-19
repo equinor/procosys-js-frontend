@@ -7,6 +7,8 @@ import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { TableOptions, UseTableRowProps } from 'react-table';
+import { Tooltip } from '@material-ui/core';
+import { OverflowColumn } from './RescheduleDialog.style';
 
 interface VoidDialogProps {
     voidableTags: PreservedTag[];
@@ -30,21 +32,99 @@ const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
     );
 };
 
+
+const getTagNoColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.tagNo} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.tagNo}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getDescriptionColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.description} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.description}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getStatusColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.status} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.status}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getModeColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.mode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.mode}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
+const getResponsibleColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <div className='tableCell'>
+            <Tooltip title={tag.responsibleCode} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <OverflowColumn>{tag.responsibleCode}</OverflowColumn>
+            </Tooltip>
+        </div>
+    );
+};
+
 const columns = [
-    { Header: 'Tag nr', accessor: 'tagNo' },
-    { Header: 'Description', accessor: 'description' },
-    { Header: 'Mode', accessor: 'mode' },
-    { Header: 'Resp', accessor: 'responsibleCode' },
-    { Header: 'Status', accessor: 'status' },
+    {
+        Header: 'Tag nr',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getTagNoColumn
+    },
+    {
+        Header: 'Description',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getDescriptionColumn
+    },
+    {
+        Header: 'Mode',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getModeColumn
+    },
+    {
+        Header: 'Resp',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getResponsibleColumn
+    },
+    {
+        Header: 'Status',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getStatusColumn
+    },
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 
 const MainContainer = styled.div`
-    height: 65vh;
+    height: 70vh;
 `;
 
-const TableContainer = styled.div`
-    height: 35vh;
+const TableContainer = styled.div<{ restrictHeight?: boolean }>`
+${(props): any => `
+    height: ${props.restrictHeight ? '50%' : '100%'};
+`}
 `;
 
 const VoidDialog = ({
@@ -61,12 +141,12 @@ const VoidDialog = ({
     return (
         <MainContainer>
             {topTable.length > 0 && (
-                <TableContainer>
+                <TableContainer restrictHeight={bottomTable.length > 0}>
                     <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
                     <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                 </TableContainer>)}
             {bottomTable.length > 0 && (
-                <TableContainer>
+                <TableContainer restrictHeight={topTable.length > 0}>
                     <TopText>
                         <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba} />
                         <Typography variant='h6' style={{ color: tokens.colors.interactive.danger__text.rgba }}>{voiding ? voidingText : unvoidingText}</Typography>

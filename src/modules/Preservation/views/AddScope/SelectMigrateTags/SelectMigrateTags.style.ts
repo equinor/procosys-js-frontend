@@ -35,7 +35,7 @@ export const Container = styled.div`
 `;
 
 export const TableContainer = styled.div`
-    height: 60vh;
+    height: calc(100% - 260px);
 `;
 
 export const Header = styled.header`
@@ -93,3 +93,7 @@ export const LoadingContainer = styled.div`
     }
 `;
 
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;

@@ -34,6 +34,18 @@ jest.mock('../../../context/PreservationContext', () => ({
     })
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('<RescheduleDialog />', () => {
     it('Should only display non-reschedulable tags when no reschedulable tags are selected', async () => {
         const { queryByText } = render(<RescheduleDialog  tags={nonReschedulableTags} open={true} onClose={()=>{}} />);

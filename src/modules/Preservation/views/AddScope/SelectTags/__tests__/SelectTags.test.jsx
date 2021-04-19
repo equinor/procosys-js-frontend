@@ -18,6 +18,17 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => { }
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
 
 const tableData = [
     {

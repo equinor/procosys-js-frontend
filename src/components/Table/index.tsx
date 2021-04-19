@@ -39,7 +39,6 @@ export interface TableSorting {
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
     columns: ColumnInstance<T>[];
-    pageCount: number;
     loading: boolean;
     data: T[];
     maxRowCount: number;
@@ -144,9 +143,16 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     } = tableInstance;
 
     useEffect(() => {
-        if (tableInstance.onSort)
+        if (tableInstance.onSort) {
             tableInstance.onSort(sortBy[0]);
+        }
+        rowHeights.current = {};
+        setCounter(counter + 1);
     }, [tableInstance.onSort, sortBy]);
+
+    useEffect(() => {
+        rowHeights.current = {};
+    }, [tableInstance.state.filters]);
 
     useEffect(() => {
         if (tableInstance.state.columnResizing.isResizingColumn === null) {
@@ -204,7 +210,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             if (rowRef.current && (rowHeights.current[index] == 40 || rowHeights.current[index] === undefined)) {
                 let maxValue = 32;
                 const children = rowRef.current.children;
-                
+
                 for (let i = 0; i < children.length; i++) {
                     const child = children[i];
                     if (child.clientHeight > maxValue)
@@ -230,7 +236,9 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                 {row.cells.map((cell) => (
                     <TableCell align={cell.column.align} {...cell.getCellProps()} key={cell.getCellProps().key} onClick={cellClickHandler(cell)}>
                         {
-                            cell.render('Cell')
+                            <div>
+                                {cell.render('Cell')}
+                            </div>
                         }
                     </TableCell>
                 ))}

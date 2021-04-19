@@ -21,8 +21,7 @@ export const TableHeader = styled.div`
 export const Table = styled.div`
     border-spacing: 0;
     overflow-y: auto;
-    max-height: 100%;
-    width: fit-content;
+    width: 100%;
 `;
 
 export const TableHeadCell = styled.div<{ align?: string }>`
@@ -38,14 +37,13 @@ export const TableHeadCell = styled.div<{ align?: string }>`
     align-items: 'flex-start';
     display: 'flex';
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
-    // border-right: 1px solid rgba(224, 224, 224, 1);
     :last-child {
         border-right: none;
-    }    
+    }
 `;
 
 export const TableHeadFilterCell = styled.div`
-    padding: 8px 1px 8px 10px;
+    padding: 8px 1px 8px 2px;
     font-size: 0.875rem;
     min-height: 40px;
     flex-direction: column;
@@ -59,6 +57,11 @@ export const TableRow = styled.div<{ selected: boolean }>`
     color: inherit;
     outline: 0;
     vertical-align: middle;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    width: 100%;
+
     &:hover {
         background-color: rgba(0, 0, 0, 0.07);
     }
@@ -85,19 +88,20 @@ export const LoadingDiv = styled.div`
 
 
 export const TableCell = styled.div<{ align?: string }>`
-    padding: 10px 4px 0px 6px;
+    padding: 10px 4px 0px 4px;
     font-size: inherit;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
     font-weight: 400;
     line-height: 1.43;
     vertical-align: inherit;
-    overflow: hidden;
-    white-space: nowrap;
+    white-space: pre-wrap;
     text-overflow: ellipsis;
     color: inherit;
     justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
-    align-items: 'flex-start';
-    display: 'flex';
+    align-items: flex-start;
+    display: flex;
+    min-height: 40px;
+    flex-direction: row;
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     :last-child {
         border-right: none;
@@ -113,11 +117,11 @@ export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
     position: absolute;
     cursor: col-resize;
     z-index: 100;
-    opacity: 0;
-    border-left: 1px solid rgba(0, 0, 0, 0.5);
-    border-right: 1px solid rgba(0, 0, 0, 0.5);
-    height: 50%;
-    top: 25%;
+    opacity: 1;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    /* border-right: 1px solid rgba(0, 0, 0, 0.5); */
+    height: 60%;
+    top: 20%;
     transition: all linear 100ms;
     right: -2px;
     width: 3px;
@@ -134,8 +138,9 @@ export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
 
 export const HeaderCheckbox = styled(Checkbox)`
     padding: 0;
+    margin-top: -4px;
     > span {
-        padding: 2px 0px 0px 2px;
+        padding: 2px 0px 0px 0px;
     }
 `;
 

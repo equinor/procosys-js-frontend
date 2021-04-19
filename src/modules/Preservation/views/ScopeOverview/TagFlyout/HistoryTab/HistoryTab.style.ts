@@ -15,3 +15,8 @@ export const DueContainer = styled.div<{ isOverdue: boolean }>`
         color: ${tokens.colors.interactive.danger__text.rgba};
     `}
 `;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;

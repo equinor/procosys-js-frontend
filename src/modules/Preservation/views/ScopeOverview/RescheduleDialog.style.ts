@@ -30,7 +30,7 @@ export const DialogContainer = styled.div<{ width: string }>`
     ${(props): any => `
         display: block;
         max-height: 90%;
-        height: 70%;
+        height: 80%;
         overflow: auto;
         width: ${props.width};
         background-color: ${tokens.colors.ui.background__default.rgba};       
@@ -67,4 +67,9 @@ export const ButtonContainer = styled.div`
 
 export const ButtonSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
+`;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
 `;

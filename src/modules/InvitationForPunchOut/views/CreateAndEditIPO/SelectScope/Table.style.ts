@@ -63,7 +63,7 @@ export const Container = styled.div<{disableSelectAll?: boolean, mcColumn?: bool
 
     .goToMcCol {
         position: relative;
-        bottom: 9px;
+        /* bottom: 9px; */
     }
 `;
 
@@ -88,5 +88,5 @@ export const MCHeader = styled.div`
 `;
 
 export const CommPkgTableContainer = styled.div`
-    height: 50vh;
+    height: 48vh;
 `;

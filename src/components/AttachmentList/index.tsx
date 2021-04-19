@@ -133,7 +133,8 @@ const AttachmentList = ({
             {
                 Header: 'Title',
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-                Cell: getFilenameColumn
+                Cell: getFilenameColumn,
+                width: 300
             }
         );
         if(detailed){
@@ -156,7 +157,6 @@ const AttachmentList = ({
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
                 align: 'right',
                 Cell: getRemoveAttachmentColumn,
-                width: 24
             }
         );
         return columns;

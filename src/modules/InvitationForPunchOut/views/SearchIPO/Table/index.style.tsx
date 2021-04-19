@@ -4,7 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin-top: var(--margin-module--top);
-    height: 60vh;
+    height: calc(100% - 120px);
     
     tbody, thead {
         .MuiButtonBase-root {
@@ -27,7 +27,7 @@ export const Container = styled.div`
 
     .controlOverflow {
         overflow: hidden;
-        white-space: nowrap;
+        white-space: pre-wrap;
         text-overflow: ellipsis;
         color: inherit;
     }

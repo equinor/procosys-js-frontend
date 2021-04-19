@@ -1,6 +1,5 @@
 import { CellValue, IdType, UseTableRowProps } from 'react-table';
-import { Select } from '@material-ui/core';
-
+import { MenuItem, Select } from '@material-ui/core';
 import { ColumnFilter } from './style';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import React from 'react';
@@ -8,7 +7,23 @@ import styled from 'styled-components';
 import { TextField } from '@equinor/eds-core-react';
 
 const TableFilterField = styled(TextField)`
-    width: calc(100% - 14px);
+    width: calc(100% - 5px);
+    > div > div {
+        top: 6px;
+        right: 10px;
+    }
+`;
+
+const StyledSelect = styled(Select)`
+    height: 36px;
+    background-color: #f7f7f7;
+    width: calc(100% - 5px);
+    padding: 4px;
+    > div {
+        :focus {
+            background-color: #f7f7f7;
+        }
+    }
 `;
 
 export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: any[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
@@ -24,6 +39,8 @@ export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, se
     );
 };
 
+
+// Need to use material-ui Select until further -> EDS-SingleSelect cannot handle overflow:hidden in row.
 export const SelectColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, id } }: { column: { filterValue: string, preFilteredRows: UseTableRowProps<Record<IdType<any>, CellValue>>[], setFilter: (a: string | undefined) => void, id: number } }): JSX.Element => {
     const options = React.useMemo(() => {
         const options = new Set<string>();
@@ -38,20 +55,24 @@ export const SelectColumnFilter = ({ column: { filterValue, preFilteredRows, set
         return [...options.values()];
     }, [id, preFilteredRows]);
 
+    const selectValue = filterValue || '_all_';
+
+    const handleChange = (e: React.ChangeEvent<{ value: unknown }>): void => {
+        setFilter((e.target.value as string) === '_all_' ? undefined : (e.target.value as string));
+    };
+
     return (
-        <Select
+        <StyledSelect
             id="custom-select"
-            value={filterValue || '_all_'}
-            onChange={(e: React.ChangeEvent<{ value: unknown }>): void => {
-                setFilter((e.target.value as string) === '_all_' ? undefined : (e.target.value as string));
-            }}
+            value={selectValue}
+            onChange={handleChange}
         >
-            <option value="_all_">All</option>
+            <MenuItem key="_all_" value="_all_">All</MenuItem>
             {options.map((option, i) => (
-                <option key={i} value={option}>
+                <MenuItem key={i} value={option}>
                     {option}
-                </option>
+                </MenuItem>
             ))}
-        </Select>
+        </StyledSelect>
     );
 };

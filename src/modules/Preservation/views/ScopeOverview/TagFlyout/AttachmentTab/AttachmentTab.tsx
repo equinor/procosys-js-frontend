@@ -3,9 +3,10 @@ import { showSnackbarNotification } from '../../../../../../core/services/Notifi
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
-import AttachmentList, { Attachment } from '@procosys/components/AttachmentList';
+import AttachmentList from '@procosys/components/AttachmentList';
 import { Container } from './AttachmentTab.style';
-
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
+import { TableOptions } from 'react-table';
 
 interface AttachmentTabProps {
     tagId: number;
@@ -71,10 +72,10 @@ const AttachmentTab = ({
         setIsLoading(false);
     };
 
-    const downloadAttachment = async (attachmentId: number): Promise<void> => {
+    const downloadAttachment = async (attachment: Attachment): Promise<void> => {
         try {
-            if (tagId != null) {
-                const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachmentId);
+            if (tagId != null && attachment.id) {
+                const url = await apiClient.getDownloadUrlForTagAttachment(tagId, attachment.id);
                 window.open(url, '_blank');
                 showSnackbarNotification('Attachment is downloaded.', 5000, true);
             }
@@ -84,9 +85,10 @@ const AttachmentTab = ({
         }
     };
 
-    const deleteAttachment = async (attachment: Attachment): Promise<void> => {
+    const deleteAttachment = async (row: TableOptions<Attachment>): Promise<void> => {
+        const attachment: Attachment = row.value;
         try {
-            if (tagId != null) {
+            if (tagId != null && attachment.id && attachment.rowVersion) {
                 setIsLoading(true);
                 await apiClient.deleteAttachmentOnTag(tagId, attachment.id, attachment.rowVersion);
                 getAttachments();

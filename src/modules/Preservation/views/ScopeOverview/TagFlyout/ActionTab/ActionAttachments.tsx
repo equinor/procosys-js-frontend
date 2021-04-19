@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
-import AttachmentList, { Attachment } from '@procosys/components/AttachmentList';
+import AttachmentList from '@procosys/components/AttachmentList';
 import { Canceler } from 'axios';
 import Spinner from '@procosys/components/Spinner';
 import { Container } from './ActionAttachment.style';
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
+import { TableOptions } from 'react-table';
 
 interface ActionAttachmentsProps {
     tagId: number;
@@ -62,8 +64,8 @@ const ActionAttachments = ({
                 showSnackbarNotification(error.message, 5000, true);
             }
         }else{
-            console.error('Attachment does not exist');
-            showSnackbarNotification('Attachment does not exist', 5000, true);
+            console.error('Cannot download an attachment that does not exist');
+            showSnackbarNotification('Cannot download an attachment that does not exist', 5000, true);
         }
     };
 
@@ -86,17 +88,23 @@ const ActionAttachments = ({
         setIsLoading(false);
     };
 
-    const deleteAttachment = async (attachment: Attachment): Promise<void> => {
-        try {
-            setIsLoading(true);
-            await apiClient.deleteAttachmentOnAction(tagId, actionId, attachment.id, attachment.rowVersion);
-            getAttachments();
-            showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
-        } catch (error) {
-            console.error('Not able to delete action attachment: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000, true);
-        }
-        setIsLoading(false);
+    const deleteAttachment = async (row: TableOptions<Attachment>): Promise<void> => {
+        const attachment: Attachment = row.value;
+        if(attachment.id && attachment.rowVersion){
+            try {
+                setIsLoading(true);
+                await apiClient.deleteAttachmentOnAction(tagId, actionId, attachment.id, attachment.rowVersion);
+                getAttachments();
+                showSnackbarNotification(`Attachment with filename '${attachment.fileName}' is deleted.`, 5000, true);
+            } catch (error) {
+                console.error('Not able to delete action attachment: ', error.message, error.data);
+                showSnackbarNotification(error.message, 5000, true);
+            }
+            setIsLoading(false);
+        }else{
+            console.error('Cannot delete an attachment that does not exist');
+            showSnackbarNotification('Cannot delete an attachment that does not exist', 5000, true);
+        };
     };
 
     if (isLoading) {

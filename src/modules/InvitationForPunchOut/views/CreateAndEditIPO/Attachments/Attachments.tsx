@@ -84,6 +84,11 @@ const Attachments = ({
         );
     };
 
+    const downloadAttachment = async (attachment: Attachment): Promise<void> => {
+        const link = getAttachmentDownloadLink(attachment);
+        window.open(link, '_blank');
+    };
+
     const getAttachmentIcon = (row: TableOptions<Attachment>): JSX.Element => {
         const attachment = row.value as Attachment;
         const iconName = getFileTypeIconName(attachment.fileName);
@@ -144,18 +149,11 @@ const Attachments = ({
                     </form>
                 </AddAttachmentContainer>
                 <AttachmentList 
-                    attachments={attachments.filter((attachment) => !attachment.toBeDeleted).map((attachment) => {
-                        return({
-                            id: attachment.id,
-                            fileName: attachment.fileName,
-                            rowVersion: attachment.fileName,
-                            uploadedAt: attachment.uploadedAt,
-                            uploadedBy: attachment.uploadedBy?.firstName + ' ' + attachment.uploadedBy?.lastName,
-                        });
-                    })}
+                    attachments={attachments.filter((attachment) => !attachment.toBeDeleted)}
                     disabled={false}
                     addAttachments={addAttachments}
                     deleteAttachment={removeAttachment}
+                    downloadAttachment={downloadAttachment}
                 />
                 <DragAndDropContainer
                     onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}

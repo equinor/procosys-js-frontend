@@ -5,23 +5,16 @@ import { tokens } from '@equinor/eds-tokens';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable from '../Table';
 import { getFileTypeIconName } from '@procosys/modules/InvitationForPunchOut/views/utils';
+import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
-
-export interface Attachment {
-    id?: number;
-    fileName: string;
-    rowVersion: string;
-    uploadedAt?: Date;
-    uploadedBy?: string;
-}
 
 interface AttachmentListProps {
     attachments: Attachment[];
     disabled: boolean;
     addAttachments?: (files: FileList) => void;
     deleteAttachment?: (row: TableOptions<Attachment>) => void;
-    downloadAttachment: (attachment: Attachment) => void;
+    downloadAttachment: (attachment: Attachment) => Promise<void>;
     large?: boolean;
     detailed?: boolean;
 }

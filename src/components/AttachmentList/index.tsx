@@ -20,6 +20,7 @@ interface AttachmentListProps {
     detailed?: boolean;
 }
 
+/*
 interface Column {
     Header: string;
     accessor: (d: UseTableRowProps<Attachment>) => UseTableRowProps<Attachment>;
@@ -29,6 +30,7 @@ interface Column {
     alignContent?: string;
     margin?: string;
 }
+*/
 
 const AttachmentList = ({
     attachments,
@@ -123,8 +125,9 @@ const AttachmentList = ({
         );
     };
 
-    const getColumns = (): Column[] => {
-        const columns: Column[] = [];
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    const getColumns = () => {
+        const columns = [];
         columns.push(
             {
                 Header: 'Type',

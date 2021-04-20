@@ -188,7 +188,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const [pageSize, setPageSize] = useState(props.pageSize);
     const fetchIdRef = useRef(0);
     const tableRef = useRef();
-    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: undefined, desc: false });
+    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'due', desc: true });
     const [data, setData] = useState<PreservedTag[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
@@ -200,7 +200,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     };
 
 
-    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'asc'): Promise<void> => {
+    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'desc'): Promise<void> => {
         if (!tablePageSize && !tablePageIndex) {
             setLoading(false);
             return;
@@ -271,7 +271,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 props.setOrderByField(input.id);
             }
         } else if (sortBy.id) {
-            setSortBy({ id: undefined, desc: false });
+            setSortBy({ id: undefined, desc: true });
         }
     };
 
@@ -293,6 +293,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 maxRowCount={maxRows}
                 data={data || []}
                 rowSelect={true}
+                orderBy={sortBy}
                 pageCount={0} />
         </Container>
 
@@ -302,7 +303,131 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 
 export default ScopeOverviewTable;
 
-function getColumns(getTagNoColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getDescriptionColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getDueColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getNextColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getMode: (row: TableOptions<PreservedTag>) => JSX.Element, getPOColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getAreaCode: (row: TableOptions<PreservedTag>) => JSX.Element, getResponsibleColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getDisciplineCode: (row: TableOptions<PreservedTag>) => JSX.Element, getStatus: (row: TableOptions<PreservedTag>) => JSX.Element, getRequirementColumn: (row: TableOptions<PreservedTag>) => JSX.Element, getActionsHeader: () => JSX.Element, getActionsColumn: (row: TableOptions<PreservedTag>) => JSX.Element) {
+function getColumns(
+    getTagNoColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getDescriptionColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getDueColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getNextColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getMode: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getPOColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getAreaCode: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getResponsibleColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getDisciplineCode: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getStatus: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getRequirementColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
+    getActionsHeader: () => JSX.Element,
+    getActionsColumn: (row: TableOptions<PreservedTag>) => JSX.Element): {
+        mobileColumns: (
+            {
+                Header: string;
+                accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>;
+                id: string; Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
+                width: number;
+                maxWidth: number;
+                minWidth: number;
+                defaultCanSort?: undefined;
+            } | {
+                Header: string;
+                accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>;
+                id: string;
+                Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
+                defaultCanSort: boolean;
+                width: number;
+                maxWidth: number;
+                minWidth: number;
+            } | {
+                Header: string;
+                accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                width: number; 
+                maxWidth: number; 
+                minWidth: number; 
+                id?: undefined; 
+                defaultCanSort?: undefined;
+            } | { 
+                Header: string; 
+                id: string; 
+                accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                width?: undefined; 
+                maxWidth?: undefined; 
+                minWidth?: undefined; 
+                defaultCanSort?: undefined; 
+            } | { 
+                Header: string; 
+                accessor: (d: PreservedTag) => string | undefined; 
+                id: string; 
+                Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                width?: undefined; 
+                maxWidth?: undefined; 
+                minWidth?: undefined; 
+                defaultCanSort?: undefined; 
+            } | { 
+                Header: JSX.Element; 
+                accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                id: string; 
+                Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                defaultCanSort: boolean; 
+                width: number; 
+                maxWidth: number; 
+                minWidth: number; 
+            })[]; 
+            desktopColumns: (
+                { 
+                    Header: string; 
+                    accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                    id: string; 
+                    Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                    width: number; 
+                    maxWidth: number; 
+                    minWidth: number; 
+                    defaultCanSort?: undefined; 
+                } | { 
+                    Header: string; 
+                    accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                    Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                    width: number; 
+                    maxWidth: number; 
+                    minWidth: number; 
+                    id?: undefined; 
+                    defaultCanSort?: undefined; 
+                } | { 
+                    Header: string; 
+                    id: string; 
+                    accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                    Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                    width?: undefined; 
+                    maxWidth?: undefined; 
+                    minWidth?: undefined; 
+                    defaultCanSort?: undefined; 
+                } | { 
+                    Header: string; 
+                    accessor: (d: PreservedTag) => string | undefined; 
+                    id: string; 
+                    Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                    width?: undefined; 
+                    maxWidth?: undefined; 
+                    minWidth?: undefined; 
+                    defaultCanSort?: undefined; 
+                } | { 
+                    Header: string; 
+                    accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; 
+                    id: string; 
+                    Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                    defaultCanSort: boolean; 
+                    width: number; 
+                    maxWidth: number; 
+                    minWidth: number; 
+                } | { 
+                    Header: JSX.Element; 
+                    accessor: (d: UseTableRowProps<PreservedTag>) => UseTableRowProps<PreservedTag>; id: string; 
+                    Cell: (row: TableOptions<PreservedTag>) => JSX.Element; 
+                    defaultCanSort: boolean; 
+                    width: number; 
+                    maxWidth: number; 
+                    minWidth: number; 
+                })[];
+    } {
     const desktopColumns = [
         {
             Header: 'Tag no',

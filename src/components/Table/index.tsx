@@ -87,6 +87,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     );
 
     const [counter, _setCounter] = useState<number>(1);
+    const [rendered, setRendered] = useState<boolean>(false);
     const counterRef = useRef<number>(counter);
 
     const setCounter = (newValue: number): void => {
@@ -144,8 +145,16 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     } = tableInstance;
 
     useEffect(() => {
-        if (tableInstance.onSort)
+        if (sortBy.length > 0 && tableInstance.onSort && sortBy[0] !== props.orderBy) {
             tableInstance.onSort(sortBy[0]);
+            setRendered(true);
+        }
+        if (sortBy.length === 0 && tableInstance.onSort && sortBy[0] !== props.orderBy) {
+            if (rendered) {
+                tableInstance.onSort(sortBy[0]);
+            }
+        }
+
     }, [tableInstance.onSort, sortBy]);
 
     useEffect(() => {
@@ -204,7 +213,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             if (rowRef.current && (rowHeights.current[index] == 40 || rowHeights.current[index] === undefined)) {
                 let maxValue = 32;
                 const children = rowRef.current.children;
-                
+
                 for (let i = 0; i < children.length; i++) {
                     const child = children[i];
                     if (child.clientHeight > maxValue)
@@ -328,8 +337,8 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                                         {column.canSort && column.defaultCanSort !== false ? (
 
                                                             <TableSortLabel
-                                                                active={column.isSorted || column.id === props.orderBy?.id.toString()}
-                                                                direction={column.id === props.orderBy?.id.toString() ? props.orderBy?.desc ? 'desc' : 'asc' : column.isSortedDesc ? 'desc' : 'asc'}
+                                                                active={column.isSorted || (props.orderBy?.id !== undefined && column.id === props.orderBy?.id.toString())}
+                                                                direction={props.orderBy?.id !== undefined && column.id === props.orderBy?.id.toString() ? props.orderBy?.desc ? 'desc' : 'asc' : column.isSortedDesc ? 'desc' : 'asc'}
                                                                 {...column.getSortByToggleProps()}
                                                             >
                                                                 {column.render('Header')}

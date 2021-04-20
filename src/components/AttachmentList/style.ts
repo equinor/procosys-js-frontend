@@ -51,6 +51,7 @@ export const DragAndDropTitle = styled.div`
     padding-top: calc(var(--grid-unit) * 4);
     padding-bottom: calc(var(--grid-unit) * 2);
 `;
+
 export const TableContainer = styled(Container)`
     height: 40vh;
 `;

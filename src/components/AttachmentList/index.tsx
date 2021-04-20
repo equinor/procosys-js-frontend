@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Container, AttachmentLink, AddFile, StyledButton, DragAndDropContainer, DragAndDropTitle, TableContainer } from './style';
 import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
+import { Button } from '@equinor/eds-core-react';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable from '../Table';
 import { getFileTypeIconName } from '@procosys/modules/InvitationForPunchOut/views/utils';
@@ -26,6 +27,7 @@ interface Column {
     Cell: (row: TableOptions<Attachment>) => JSX.Element;
     width?: number;
     alignContent?: string;
+    margin?: string;
 }
 
 const AttachmentList = ({
@@ -86,7 +88,7 @@ const AttachmentList = ({
     const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
         return (
             deleteAttachment ? (
-                <div aria-disabled={disabled} onClick={(): void => handleDelete(row)} >
+                <div aria-disabled={disabled} onClick={(): void => handleDelete(row)} style={{margin: 'auto'}} >
                     <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />
                 </div>
             ) : <></>
@@ -97,7 +99,7 @@ const AttachmentList = ({
         const attachment = row.value as Attachment;
         const iconName = getFileTypeIconName(attachment.fileName);
         return (
-            <EdsIcon name={iconName} size={24} color={tokens.colors.text.static_icons__default} />
+            <EdsIcon name={iconName} size={16} color={tokens.colors.text.static_icons__default} />
         );
     };
 
@@ -128,13 +130,12 @@ const AttachmentList = ({
                 Header: 'Type',
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
                 Cell: getAttachmentIcon,
-                width: 16
+                width: 8
             },
             {
                 Header: 'Title',
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-                Cell: getFilenameColumn,
-                width: 300
+                Cell: getFilenameColumn
             }
         );
         if(detailed){
@@ -155,8 +156,8 @@ const AttachmentList = ({
             {
                 Header: ' ',
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-                align: 'right',
                 Cell: getRemoveAttachmentColumn,
+                width: 8
             }
         );
         return columns;
@@ -164,6 +165,20 @@ const AttachmentList = ({
 
     return (
         <Container>
+            {
+                addAttachments && large && (
+                    <>
+                        <form>
+                            <Button
+                                onClick={handleAddFile}
+                            >
+                        Select files
+                            </Button>
+                            <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
+                        </form>
+                    </>
+                )
+            }
             { addAttachments &&
                 <div>
                     <DragAndDropTitle>
@@ -190,7 +205,7 @@ const AttachmentList = ({
                     rowSelect={false}
                     toolbar={
                         <AddFile>
-                            {addAttachments && (
+                            {addAttachments && !large && (
                                 <form>
                                     <StyledButton
                                         variant='ghost'
@@ -199,7 +214,7 @@ const AttachmentList = ({
                                         onClick={handleAddFile}>
                                         {addIcon} Add files
                                     </StyledButton>
-                                    <input id="addFile" style={{ display: 'none' }} type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
+                                    <input id="addFiles" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
                                 </form>
                             )}
                         </AddFile>

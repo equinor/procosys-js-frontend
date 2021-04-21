@@ -188,7 +188,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const [pageSize, setPageSize] = useState(props.pageSize);
     const fetchIdRef = useRef(0);
     const tableRef = useRef();
-    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'due', desc: true });
+    const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'due', desc: false });
     const [data, setData] = useState<PreservedTag[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
@@ -200,7 +200,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     };
 
 
-    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'Due', sortDir = 'desc'): Promise<void> => {
+    const getData = async ({ tablePageIndex, tablePageSize }: any, sortField = 'due', sortDir = 'asc'): Promise<void> => {
         if (!tablePageSize && !tablePageIndex) {
             setLoading(false);
             return;
@@ -271,7 +271,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 props.setOrderByField(input.id);
             }
         } else if (sortBy.id) {
-            setSortBy({ id: undefined, desc: true });
+            setSortBy({ id: undefined, desc: false });
         }
     };
 

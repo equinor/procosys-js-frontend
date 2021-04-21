@@ -129,7 +129,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             manualPagination: props.clientPagination ? false : true,
             defaultColumn,
             manualSortBy: props.clientSorting ? false : true,
-            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {}, disableSelectAll: props.disableSelectAll }
+            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {}, disableSelectAll: props.disableSelectAll, sortBy: props.orderBy ? [props.orderBy] : [] }
         }, ...hooks);
 
     const {
@@ -145,13 +145,13 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     } = tableInstance;
 
     useEffect(() => {
-        if (sortBy.length > 0 && tableInstance.onSort && sortBy[0] !== props.orderBy) {
+        if (sortBy.length > 0 && tableInstance.onSort && (sortBy[0].id !== props.orderBy?.id || sortBy[0].desc !== props.orderBy?.desc)) {
             tableInstance.onSort(sortBy[0]);
             setRendered(true);
         }
-        if (sortBy.length === 0 && tableInstance.onSort && sortBy[0] !== props.orderBy) {
+        if (sortBy.length === 0 && tableInstance.onSort) {
             if (rendered) {
-                tableInstance.onSort(sortBy[0]);
+                tableInstance.onSort([]);
             }
         }
 

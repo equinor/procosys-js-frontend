@@ -265,6 +265,13 @@ const Header: React.FC = (): JSX.Element => {
                             </Button>
                         </a>
                     </MenuContainerItem>
+                    <MenuContainerItem>
+                        <a href={`/${params.plant}/GlobalSearch`}>
+                            <Button variant={'ghost'}>
+                                Global search
+                            </Button>
+                        </a>
+                    </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
                     <MenuContainerItem className='compact'>

@@ -22,6 +22,7 @@ interface ConfigResponse {
         procosysApi: FeatureConfig
         graphApi: FeatureConfig
         preservationApi: FeatureConfig
+        searchApi: FeatureConfig;
         ipoApi: FeatureConfig
         libraryApi: FeatureConfig
         instrumentationKey: string
@@ -107,6 +108,7 @@ class ProCoSysSettings {
     procosysApi!: FeatureConfig;
     graphApi!: FeatureConfig;
     preservationApi!: FeatureConfig;
+    searchApi!: FeatureConfig;
     ipoApi!: FeatureConfig;
     libraryApi!: FeatureConfig;
 
@@ -188,6 +190,7 @@ class ProCoSysSettings {
 
             this.graphApi = configurationResponse.configuration.graphApi;
             this.preservationApi = configurationResponse.configuration.preservationApi;
+            this.searchApi = configurationResponse.configuration.searchApi;
             this.ipoApi = configurationResponse.configuration.ipoApi;
             this.libraryApi = configurationResponse.configuration.libraryApi;
             this.procosysApi = configurationResponse.configuration.procosysApi;
@@ -224,6 +227,7 @@ class ProCoSysSettings {
             localSettings.configuration.instrumentationKey && (this.instrumentationKey = localSettings.configuration.instrumentationKey);
             localSettings.configuration.graphApi && (this.graphApi = localSettings.configuration.graphApi);
             localSettings.configuration.preservationApi && (this.preservationApi = localSettings.configuration.preservationApi);
+            localSettings.configuration.searchApi && (this.searchApi = localSettings.configuration.searchApi);
             localSettings.configuration.ipoApi && (this.ipoApi = localSettings.configuration.ipoApi);
             localSettings.configuration.libraryApi && (this.libraryApi = localSettings.configuration.libraryApi);
             localSettings.configuration.procosysApi && (this.procosysApi = localSettings.configuration.procosysApi);

@@ -14,6 +14,8 @@ import LazyRoute from '../components/LazyRoute';
 import { PlantContextProvider } from '../core/PlantContext';
 import { ProCoSysRootLayout } from './index.style';
 import React from 'react';
+import GlobalSearch from '@procosys/modules/GlobalSearch';
+import { GlobalSearchContextProvider } from '@procosys/modules/GlobalSearch/context/GlobalSearchContext';
 
 const UserGreeting = React.lazy(() => import('./../modules/UserGreeting'));
 const Preservation = React.lazy(() => import('./../modules/Preservation'));
@@ -61,6 +63,14 @@ const ProcosysRouter = (): JSX.Element => {
                                         LazyRoute(InvitationForPunchOut, routeProps)
                                     }
                                 />
+                                <GlobalSearchContextProvider>
+                                    <Route
+                                        path={`${path}/globalsearch`}
+                                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                                            LazyRoute(GlobalSearch, routeProps)
+                                        }
+                                    />
+                                </GlobalSearchContextProvider>
                                 <Route component={Page404} />
                             </Switch>
                         </div>

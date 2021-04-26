@@ -13,6 +13,7 @@ interface ConfigResponse {
         procosysApi: FeatureConfig
         graphApi: FeatureConfig
         preservationApi: FeatureConfig
+        searchApi: FeatureConfig
         ipoApi: FeatureConfig
         libraryApi: FeatureConfig
         instrumentationKey: string

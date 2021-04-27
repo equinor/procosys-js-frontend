@@ -7,6 +7,7 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable from '../Table';
 import { getFileTypeIconName } from '@procosys/modules/InvitationForPunchOut/views/utils';
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
+import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 
@@ -15,7 +16,7 @@ interface AttachmentListProps {
     disabled: boolean;
     addAttachments?: (files: FileList) => void;
     deleteAttachment?: (row: TableOptions<Attachment>) => void;
-    downloadAttachment: (attachment: Attachment) => Promise<void>;
+    downloadAttachment: (attachment: Attachment) => Promise<void> | void;
     large?: boolean;
     detailed?: boolean;
 }
@@ -111,7 +112,7 @@ const AttachmentList = ({
         return (
             row.value.uploadedBy? (
                 <div>
-                    { row.value.uploadedBy }
+                    { row.value.uploadedBy.firstName } { row.value.uploadedBy.lastName }
                 </div>
             ) : <></>
         );
@@ -121,7 +122,7 @@ const AttachmentList = ({
         return (
             row.value.uploadedAt? (
                 <div>
-                    { row.value.uploadedAt }
+                    { getFormattedDateAndTime(row.value.uploadedAt) }
                 </div>
             ) : <></>
         );

@@ -90,7 +90,7 @@ const Attachments = ({
         );
     };
 
-    const downloadAttachment = async (attachment: Attachment): Promise<void> => {
+    const downloadAttachment = (attachment: Attachment): void => {
         const link = getAttachmentDownloadLink(attachment);
         window.open(link, '_blank');
     };

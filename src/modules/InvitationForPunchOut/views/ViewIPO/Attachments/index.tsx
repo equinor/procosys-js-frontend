@@ -13,6 +13,8 @@ import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import AttachmentList from '@procosys/components/AttachmentList';
+import { TableOptions } from 'react-table';
 
 const { Head, Body, Cell, Row } = Table;
 
@@ -67,11 +69,12 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         }));
     };
 
-    const handleSubmitFile = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-        e.preventDefault();
+    const handleSubmitFiles = async (files: FileList | null): Promise<void> => {
         setLoading(true);
-        await uploadFiles(e.target.files);
-        await getAttachments();
+        if(files){
+            await uploadFiles(files);
+            await getAttachments();
+        }
         setLoading(false);
     };
 
@@ -93,7 +96,8 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         setLoading(false);
     };
 
-    const removeAttachment = async (index: number): Promise<void> => {
+    const removeAttachment = async (row: TableOptions<Attachment>): Promise<void> => {
+        const index = row.row.index;
         const attachment = attachments[index];
         if (attachment.id && attachment.rowVersion) {
             setLoading(true);
@@ -110,8 +114,10 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         }
     };
 
-    const openAttachment = (downloadUri: string): void => {
-        window.open(downloadUri, '_blank');
+    const openAttachment = (attachment: Attachment): void => {
+        if(attachment.downloadUri){
+            window.open(attachment.downloadUri, '_blank');
+        }
     };
 
     return (<Container>
@@ -120,69 +126,15 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 <Spinner large />
             </SpinnerContainer>
         )}
-        <FormContainer>
-            <Typography variant='h5'>Drag and drop to add files, or click on the button to select files</Typography>
-            <AddAttachmentContainer>
-                <form>
-                    <Button
-                        disabled={loading}
-                        onClick={handleAddFile}
-                    >
-                        Select files
-                    </Button>
-                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
-                </form>
-            </AddAttachmentContainer>
-            <DragAndDropContainer
-                onDrop={(event: React.DragEvent<HTMLDivElement>): Promise<void> => handleDrop(event)}
-                onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
-            >
-                <EdsIcon name='cloud_download' size={48} color='#DADADA' />
-            </DragAndDropContainer>
-            <Typography variant='h5'>Attachments</Typography>
-            <AttachmentTable>
-                <Head>
-                    <Row>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Type</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} width="60%">Title</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} width="20%">Uploaded at</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} width="20%">Uploaded by</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }} >{' '}</Cell>
-                    </Row>
-                </Head>
-                <Body>
-                    {attachments && attachments.length > 0 ? attachments.map((attachment, index) => (
-                        <Row key={attachment.id}>
-                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
-                                <EdsIcon name={getFileTypeIconName(attachment.fileName)} size={24} />
-                            </Cell>
-                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
-                                <CustomTooltip title="Click to open in new tab" arrow>
-                                    <Typography onClick={(): void => { attachment.downloadUri && openAttachment(attachment.downloadUri); }} variant="body_short" link>{getFileName(attachment.fileName)}</Typography>
-                                </CustomTooltip>
-                            </Cell>
-                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
-                                <Typography variant="body_short">{attachment.uploadedAt && getFormattedDateAndTime(attachment.uploadedAt)}</Typography>
-                            </Cell>
-                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
-                                <Typography variant="body_short">{attachment.uploadedBy && `${attachment.uploadedBy.firstName} ${attachment.uploadedBy.lastName}`}</Typography>
-                            </Cell>
-                            <Cell as="td" style={{ verticalAlign: 'middle', lineHeight: '1em' }}>
-                                <div onClick={(): Promise<void> => removeAttachment(index)}>
-                                    <EdsIcon name='delete_to_trash' />
-                                </div>
-                            </Cell>
-                        </Row>
-                    )) :
-                        (
-                            <Row>
-                                <Cell colSpan={5} style={{ verticalAlign: 'middle', width: '100%' }}><Typography style={{ textAlign: 'center' }} variant="body_short">No records to display</Typography></Cell>
-                            </Row>
-                        )}
-                </Body>
-
-            </AttachmentTable>
-        </FormContainer>
+            <AttachmentList 
+                attachments={attachments}
+                disabled={false}
+                addAttachments={handleSubmitFiles}
+                deleteAttachment={removeAttachment}
+                downloadAttachment={openAttachment}
+                large={true}
+                detailed={true}
+            />
     </Container>);
 };
 

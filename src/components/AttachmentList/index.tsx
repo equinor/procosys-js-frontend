@@ -44,6 +44,7 @@ const AttachmentList = ({
 }: AttachmentListProps): JSX.Element => {
 
     const iconSize = large? 24 : 16;
+    const iconColumnSize = detailed? 24 : 8;
 
     const getFilenameColumn = (row: TableOptions<Attachment>): JSX.Element => {
         const attachment = row.value as Attachment;
@@ -136,7 +137,7 @@ const AttachmentList = ({
                 Header: 'Type',
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
                 Cell: getAttachmentIcon,
-                width: 8
+                width: iconColumnSize
             },
             {
                 Header: 'Title',
@@ -149,12 +150,14 @@ const AttachmentList = ({
                 {
                     Header: 'Uploaded at',
                     accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-                    Cell: getUploadedAt
+                    Cell: getUploadedAt,
+                    width: 100
                 },
                 {
                     Header: 'Uploaded by',
                     accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-                    Cell: getUploadedBy
+                    Cell: getUploadedBy,
+                    width: 100
                 }
             );
         }
@@ -163,7 +166,7 @@ const AttachmentList = ({
                 Header: ' ',
                 accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
                 Cell: getRemoveAttachmentColumn,
-                width: 8
+                width: iconColumnSize
             }
         );
         return columns;

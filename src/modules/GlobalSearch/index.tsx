@@ -129,10 +129,11 @@ const GlobalSearch = (): JSX.Element => {
         types.length > 0 ? setFilterTypes(types as string[]) : setFilterTypes([]);
     }
 
-    const handleOnChange = useCallback((e: { target: { value: any; }; }) => {
+    const handleOnChange = useCallback((e: { target: { value: string; }; }) => {
         const searchVal = e.target.value;
         setSearchValue(searchVal);
         debounceSearchHandler(searchVal);
+        setCurrentItem(null);
     }, [debounceSearchHandler])
 
 
@@ -245,7 +246,6 @@ const GlobalSearch = (): JSX.Element => {
                                 />
                             )
                         )
-
                     }
                 </ResultsContainer>
                 {
@@ -278,6 +278,3 @@ const GlobalSearch = (): JSX.Element => {
 };
 
 export default GlobalSearch;
-
-
-

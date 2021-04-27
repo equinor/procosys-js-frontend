@@ -78,6 +78,8 @@ describe('<AttachmentList />', () => {
         expect(queryByText('Add files')).not.toBeInTheDocument();
         expect(queryByText('Drag and drop to add files, or click on the button above')).not.toBeInTheDocument();
     });
+
+    // TODO: fix this test
     /*
     it('Should call the addAttachments function if a file is uploaded using "add files" button', () => {
         const file = new File([''], 'test.png', { type: 'image/png' });
@@ -114,5 +116,9 @@ describe('<AttachmentList />', () => {
         expect(downloadAttachment).toHaveBeenCalledTimes(1);
     });
 
-    it.todo('Should render with more details if it\'s the large version');
+    it.todo('Should render with more details if it\'s the detailed version');
+
+    it.todo('Should render without column headers if it\'s the small version');
+
+    it.todo('Should render with column headers if it\'s the large version');
 });

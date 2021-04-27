@@ -21,6 +21,7 @@ export const AttachmentLink = styled.div`
     text-overflow: ellipsis;
     text-decoration: underline;
     cursor: pointer;
+    color: ${tokens.colors.interactive.primary__resting.rgba};
 `;
 
 export const StyledButton = styled(Button)`

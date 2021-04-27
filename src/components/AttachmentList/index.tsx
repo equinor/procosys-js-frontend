@@ -42,6 +42,8 @@ const AttachmentList = ({
     detailed = false,
 }: AttachmentListProps): JSX.Element => {
 
+    const iconSize = large? 24 : 16;
+
     const getFilenameColumn = (row: TableOptions<Attachment>): JSX.Element => {
         const attachment = row.value as Attachment;
         return (
@@ -91,7 +93,7 @@ const AttachmentList = ({
         return (
             deleteAttachment ? (
                 <div aria-disabled={disabled} onClick={(): void => handleDelete(row)} style={{margin: 'auto'}} >
-                    <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={16} />
+                    <EdsIcon color={tokens.colors.interactive.primary__resting.rgba} name='delete_to_trash' size={iconSize} />
                 </div>
             ) : <></>
         );
@@ -101,7 +103,7 @@ const AttachmentList = ({
         const attachment = row.value as Attachment;
         const iconName = getFileTypeIconName(attachment.fileName);
         return (
-            <EdsIcon name={iconName} size={16} color={tokens.colors.text.static_icons__default} />
+            <EdsIcon name={iconName} size={iconSize} color={tokens.colors.text.static_icons__default} />
         );
     };
 

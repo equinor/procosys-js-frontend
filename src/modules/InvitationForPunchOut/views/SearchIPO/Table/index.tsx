@@ -18,6 +18,8 @@ interface InvitationsTableProps {
     update: number;
     filterUpdate: number;
     loading: boolean;
+    setOrderByField: (orderByField: string | null) => void;
+    setOrderDirection: (direction: string | null) => void;
 }
 
 interface IPOQuery {
@@ -27,7 +29,7 @@ interface IPOQuery {
 }
 
 
-const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate, loading }: InvitationsTableProps): JSX.Element => {
+const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPage, setFirstPageSelected, projectName, height, update, filterUpdate, loading, setOrderByField, setOrderDirection }: InvitationsTableProps): JSX.Element => {
     const [sortBy, setSortBy] = useState<{ id: string | undefined, desc: boolean }>({ id: 'createdAtUtc', desc: true });
     const [pageIndex, setPageIndex] = useState(0);
     const [maxRows, setMaxRows] = useState<number>(0);
@@ -55,6 +57,8 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getIPOsByQuery = (query: Query<IPOQuery>): void => {
         getIPOs(query.page, query.pageSize, query.orderBy.title as string, query.orderDirection).then(result => {
             setData(result.invitations);
+            setOrderByField(query.orderBy.title);
+            setOrderDirection(query.orderDirection);
             setMaxRows(result.maxAvailable);
             setPageCount(Math.ceil(result.maxAvailable / pageSize));
         });
@@ -214,6 +218,8 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             if ((sortBy.id !== input.id || sortBy.desc !== input.desc)) {
                 setSortBy(input);
             }
+        } else if (sortBy.id) {
+            setSortBy({ id: undefined, desc: true });
         }
     };
 

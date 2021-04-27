@@ -356,7 +356,9 @@ const SearchIPO = (): JSX.Element => {
                     projectName={project?.name}
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
                     update={update}
+                    setOrderByField={setOrderByField}
                     filterUpdate={filterUpdate}
+                    setOrderDirection={setOrderDirection}
                 />
 
 

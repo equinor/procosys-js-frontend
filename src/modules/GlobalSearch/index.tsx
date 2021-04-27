@@ -1,19 +1,17 @@
-import { Chip } from '@equinor/eds-core-react';
-import { Accordion, Button, SingleSelect, Typography } from '@equinor/eds-core-react';
-import CloseIcon from '@material-ui/icons/Close';
-import Checkbox from '@procosys/components/Checkbox';
+import { SingleSelect, Typography } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
 import debounce from "lodash/debounce";
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { useGlobalSearchContext } from './context/GlobalSearchContext';
+import GlobalSearchFilters from './Filters';
+import GlobalSearchFlyout from './Flyout/GlobalSearchFlyout';
+import { StyledSideSheet } from './Flyout/style';
 import { ContentDocument, SearchResult } from './http/GlobalSearchApiClient';
-import { AccordionContent, Container, DescriptionCell, FilterChip, FiltersAndSortRow, FiltersContainer, FiltersTypes, GlobalSearchSearchRow, Header, LinkButton, ResultsContainer, SearchAndFilter, SearchContainer, SearchFilters, SelectedFilters, SortOrder, StyledButton, StyledSearch, TypeIndicator } from './style';
-
-const { AccordionItem, AccordionHeader, AccordionPanel } = Accordion;
+import { Container, DescriptionCell, DescriptionPart, FilterChip, FiltersAndSortRow, GlobalSearchSearchRow, LinkButton, ResultsContainer, SearchAndFilter, SearchContainer, SelectedFilters, SortOrder, StyledButton, StyledSearch, TypeIndicator } from './style';
 
 const GlobalSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -29,28 +27,55 @@ const GlobalSearch = (): JSX.Element => {
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [plantFilterExpanded, setPlantFilterExpanded] = useState<boolean>(true);
     const [typeFilterExpanded, setTypeFilterExpanded] = useState<boolean>(true);
+    const [currentItem, setCurrentItem] = useState<ContentDocument | null>(null);
 
-    const getLinkIcon = (): JSX.Element => {
-        return (
-            <LinkButton variant="ghost">
-                <EdsIcon name='launch' />
-            </LinkButton>
-        );
-    };
-
-    const getDescription = useMemo(() => (row: TableOptions<ContentDocument>): JSX.Element => {
+    const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
 
         if (doc.commPkg) {
-            return <DescriptionCell><TypeIndicator><span>{doc.type}</span></TypeIndicator>{doc.commPkg?.description}</DescriptionCell>;
+            return (
+                <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    <DescriptionPart>
+                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
+                        {doc.commPkg?.description}
+                    </DescriptionPart>
+                    <LinkButton variant="ghost">
+                        <EdsIcon name='launch' />
+                    </LinkButton>
+                </DescriptionCell>
+            );
         }
 
         if (doc.mcPkg) {
-            return <DescriptionCell><TypeIndicator><span>{doc.type}</span></TypeIndicator>{doc.mcPkg?.description}</DescriptionCell>;
+            return (
+                <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    <DescriptionPart>
+                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
+                        {doc.mcPkg?.description}
+                    </DescriptionPart>
+                    <LinkButton variant="ghost">
+                        <EdsIcon name='launch' />
+                    </LinkButton>
+                </DescriptionCell>
+            )
         }
 
         return <div></div>;
-    }, []);
+    };
+
+    const handleItemClick = (item: ContentDocument): void => {
+        setCurrentItem(item);
+        setShowFilter(false);
+    }
+
+    useEffect(() => {
+        if (currentItem) {
+            setDisplayFlyout(true);
+        } else {
+            setDisplayFlyout(false);
+        }
+
+    }, [currentItem])
 
     const columns = [
         {
@@ -59,13 +84,6 @@ const GlobalSearch = (): JSX.Element => {
             id: 'id',
             width: 90,
             Cell: getDescription
-        },
-        {
-            Header: 'None',
-            accessor: 'plant',
-            id: 'plant',
-            width: 10,
-            Cell: getLinkIcon
         }
     ]
 
@@ -80,7 +98,7 @@ const GlobalSearch = (): JSX.Element => {
                 apiClient.doSearch(value).then((searchResult: SearchResult) => {
                     setSearchResult(searchResult);
                     setFilteredItems(searchResult.items);
-                    prepareFilters(searchResult);
+                    prepareFilters(searchResult.items || []);
                 }).finally(() => {
                     setSearching(false);
                 });
@@ -96,18 +114,18 @@ const GlobalSearch = (): JSX.Element => {
         setSelectedPlants([]);
     }
 
-    const prepareFilters = (searchResult: SearchResult): void => {
-        if (!searchResult || searchResult.hits === 0) {
+    const prepareFilters = (items: ContentDocument[]): void => {
+        if (items.length === 0) {
             clearFilters();
             return;
         }
 
         // plants
-        const plants = [...new Set(searchResult?.items.map((res => res.plantName)))];
+        const plants = [...new Set(items.map((res => res.plantName)))];
         plants.length > 0 ? setFilterPlants(plants as string[]) : setFilterPlants([]);
 
         // types
-        const types = [...new Set(searchResult?.items.map((res => res.type)))];
+        const types = [...new Set(items.map((res => res.type)))];
         types.length > 0 ? setFilterTypes(types as string[]) : setFilterTypes([]);
     }
 
@@ -134,60 +152,68 @@ const GlobalSearch = (): JSX.Element => {
         }
     }
 
-    const handlePlantRemove = (plant: string) => {
+    const handlePlantRemove = (plant: string): void => {
         setSelectedPlants(selectedPlants.filter(s => s !== plant));
     }
 
-    const handleTypeRemove = (type: string) => {
+    const handleTypeRemove = (type: string): void => {
         setSelectedTypes(selectedTypes.filter(t => t !== type));
     }
 
-
     useEffect(() => {
-
         if (searchResult && searchResult.items.length > 0) {
-            let tempItems = [...searchResult.items];
+            let currentItems = [...searchResult.items];
 
             if (selectedPlants.length > 0) {
-                tempItems = tempItems.filter(item => selectedPlants.indexOf(item.plantName || '') > -1);
+                currentItems = currentItems.filter(item => selectedPlants.indexOf(item.plantName || '') > -1);
             }
 
             if (selectedTypes.length > 0) {
-                tempItems = tempItems.filter(item => selectedTypes.indexOf(item.type || '') > -1);
+                currentItems = currentItems.filter(item => selectedTypes.indexOf(item.type || '') > -1);
             }
 
-            setFilteredItems(tempItems);
+            setFilteredItems(currentItems);
         }
     }, [selectedPlants, selectedTypes]);
 
+    const toggleShowFilter = (): void => {
+        if (!showFilter) {
+            setCurrentItem(null);
+        }
+        setShowFilter(!showFilter);
+    }
+
     return (
         <Container>
-            <SearchContainer withSidePanel={showFilter}>
+            <SearchContainer withSidePanel={(showFilter && !currentItem)}>
                 <Helmet titleTemplate={'ProCoSys - Global search'} />
                 <Typography variant="h1">Global search</Typography>
 
                 <GlobalSearchSearchRow>
                     <SearchAndFilter>
-                        <StyledSearch onChange={handleOnChange} value={searchValue}></StyledSearch>
-                        <StyledButton onClick={(): void => setShowFilter(!showFilter)} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
-                        {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
-                            <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
+                        <StyledSearch onChange={handleOnChange} autoFocus value={searchValue}></StyledSearch>
+                        {searchResult && filteredItems.length > 0 && (
+                            <>
+                                <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
+                                {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
+                                    <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
+                                )}
+                            </>
                         )}
-                        
                     </SearchAndFilter>
 
                 </GlobalSearchSearchRow>
-                <FiltersAndSortRow>
+                <FiltersAndSortRow currentItem={currentItem}>
                     <SelectedFilters>
                         {selectedPlants && (
                             selectedPlants.map((plant) => {
-                                return (<FilterChip variant="active" onDelete={() => handlePlantRemove(plant)} key={plant}>{plant}</FilterChip>)
+                                return (<FilterChip variant="active" onDelete={(): void => handlePlantRemove(plant)} key={plant}>{plant}</FilterChip>)
                             })
                         )}
 
                         {selectedTypes && (
                             selectedTypes.map((type) => {
-                                return (<FilterChip variant="active" onDelete={() => handleTypeRemove(type)} key={type}>{'Type: ' + type}</FilterChip>)
+                                return (<FilterChip variant="active" onDelete={(): void => handleTypeRemove(type)} key={type}>{'Type: ' + type}</FilterChip>)
                             })
                         )}
 
@@ -202,7 +228,7 @@ const GlobalSearch = (): JSX.Element => {
                     </SortOrder>
                 </FiltersAndSortRow>
 
-                <ResultsContainer>
+                <ResultsContainer currentItem={currentItem}>
                     {
                         searching ? <Loading title="Searching" /> : (
                             !searchResult || searchResult.items.length === 0 ? 'No results' : (
@@ -219,82 +245,32 @@ const GlobalSearch = (): JSX.Element => {
                                 />
                             )
                         )
+
                     }
                 </ResultsContainer>
+                {
+                    displayFlyout && currentItem && (
+                        <StyledSideSheet onClose={(): void => setCurrentItem(null)} open={displayFlyout} title={(currentItem as ContentDocument).commPkg ? 'Preview Commissioning pkg' : 'Preview MC pkg'} variant="large">
+                            <GlobalSearchFlyout item={currentItem as ContentDocument} />
+                        </StyledSideSheet>
+                    )
+                }
             </SearchContainer>
             {
-                showFilter && (
-                    <FiltersContainer>
-                        <SearchFilters>
-                            <Header filterActive={false}>
-                                <Typography variant="h1">Filters</Typography>
-                                <div style={{ display: 'flex' }}>
-                                    <Button variant='ghost' title='Close' onClick={(): void => { setShowFilter(false); }}>
-                                        <CloseIcon />
-                                    </Button>
-                                </div>
-                            </Header>
-                            <FiltersTypes>
-
-                                <Accordion chevronPosition="right" headerLevel="h2">
-                                    <AccordionItem isExpanded={plantFilterExpanded} onClick={() => setPlantFilterExpanded(!plantFilterExpanded)}>
-                                        <AccordionHeader>
-                                            Plant
-                                        </AccordionHeader>
-                                        <AccordionPanel>
-                                            <AccordionContent>
-                                                {
-                                                    filterPlants.map((plant: string, i: number) => {
-                                                        return (
-                                                            <Checkbox
-                                                                key={plant}
-                                                                checked={selectedPlants.some(elementId => {
-                                                                    return plant === String(elementId);
-                                                                })}
-                                                                onChange={(checked: boolean): void => {
-                                                                    onCheckboxPlantFilterChange(plant, checked);
-                                                                }}
-                                                            >
-                                                                <Typography variant='body_long'>{plant}</Typography>
-                                                            </Checkbox>
-                                                        )
-                                                    })
-                                                }
-                                            </AccordionContent>
-
-                                        </AccordionPanel>
-                                    </AccordionItem>
-                                    <AccordionItem isExpanded={typeFilterExpanded} onClick={() => setTypeFilterExpanded(!typeFilterExpanded)}>
-                                        <AccordionHeader>
-                                            Type
-                                        </AccordionHeader>
-                                        <AccordionPanel>
-                                            <AccordionContent>
-                                                {
-                                                    filterTypes.map((type: string, i: number) => {
-                                                        return (
-                                                            <Checkbox
-                                                                key={type}
-                                                                checked={selectedTypes.some(elementId => {
-                                                                    return type === String(elementId);
-                                                                })}
-                                                                onChange={(checked: boolean): void => {
-                                                                    onCheckboxTypeFilterChange(type, checked);
-                                                                }}
-                                                            >
-                                                                <Typography variant='body_long'>{type}</Typography>
-                                                            </Checkbox>
-                                                        )
-                                                    })
-                                                }
-                                            </AccordionContent>
-
-                                        </AccordionPanel>
-                                    </AccordionItem>
-                                </Accordion>
-                            </FiltersTypes>
-                        </SearchFilters>
-                    </FiltersContainer>
+                showFilter && !currentItem && (
+                    <GlobalSearchFilters
+                        plantFilterExpanded={plantFilterExpanded}
+                        setShowFilter={setShowFilter}
+                        setPlantFilterExpanded={setPlantFilterExpanded}
+                        filterPlants={filterPlants}
+                        selectedPlants={selectedPlants}
+                        onCheckboxPlantFilterChange={onCheckboxPlantFilterChange}
+                        typeFilterExpanded={typeFilterExpanded}
+                        setTypeFilterExpanded={setTypeFilterExpanded}
+                        filterTypes={filterTypes}
+                        selectedTypes={selectedTypes}
+                        onCheckboxTypeFilterChange={onCheckboxTypeFilterChange}
+                    />
                 )
             }
         </Container>

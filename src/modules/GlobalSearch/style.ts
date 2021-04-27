@@ -3,6 +3,7 @@ import { Search, Button } from '@equinor/eds-core-react';
 import { Breakpoints } from '@procosys/core/styling';
 import { tokens } from '@equinor/eds-tokens';
 import { Chip } from '@equinor/eds-core-react';
+import { ContentDocument } from './http/GlobalSearchApiClient';
 
 export const Container = styled.div`
     display: flex;
@@ -96,12 +97,14 @@ export const StyledButton = styled(Button)`
     margin-bottom: 20px;
 `;
 
-export const FiltersAndSortRow = styled.div`
+export const FiltersAndSortRow = styled.div<{ currentItem: ContentDocument | null }>`
     display: flex;
     justify-content: space-between;
     width: 100%;
     align-items: center;
-`;
+    ${({ currentItem }): any => currentItem && css`
+        width: calc(100% - 480px);
+    `}`;
 
 export const SelectedFilters = styled.div`
     display: flex;
@@ -110,15 +113,20 @@ export const SelectedFilters = styled.div`
     margin-bottom: 20px;
 `;
 
-export const ResultsContainer = styled.div`
+export const ResultsContainer = styled.div<{ currentItem: ContentDocument | null }>`
     height: 70vh;
     width: 100%;
-`;
+    ${({ currentItem }): any => currentItem && css`
+        width: calc(100% - 480px);
+    `}`;
 
 export const LinkButton = styled(Button)`
     height: 24px;
     width: 24px;
     padding: 0;
+    /* &.selected {
+        background-color: #deffde;
+    } */
 `;
 
 export const TypeIndicator = styled.div`
@@ -131,6 +139,7 @@ export const TypeIndicator = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 12px;
+    margin-right: 10px;
     > span {
         padding-top: 3px;
     }
@@ -138,13 +147,17 @@ export const TypeIndicator = styled.div`
 
 export const DescriptionCell = styled.div`
     display: flex;
-    align-items: center;
-    width: 100%;
+    justify-content: space-between;
+    width: calc(100% - 4px);
     color: ${tokens.colors.interactive.primary__resting.rgba};
     cursor: pointer;
     > div {
         margin-right: 20px;
         color: var(--text--default);
+    }
+    &.selected {
+        background-color: #deffde;
+        box-shadow: 0px 0px 0px 4px #deffde;
     }
 `;
 
@@ -177,4 +190,10 @@ export const AccordionContent = styled.div`
 export const FilterChip = styled(Chip)`
     margin-right: 8px;
     margin-bottom: 8px;
+`;
+
+export const DescriptionPart = styled.div`
+    display: flex;
+    align-items: center;
+    
 `;

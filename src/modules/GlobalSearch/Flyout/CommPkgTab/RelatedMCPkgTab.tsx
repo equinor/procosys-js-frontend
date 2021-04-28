@@ -28,7 +28,7 @@ const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element =>
                     return (
                         <MCPackageEntry key={pkg.mcPkgId}>
                             <StyledCard100>
-                                <StyledCardHeader onClick={() => navigateToMCPkg(pkg.mcPkgNo as string)}>
+                                <StyledCardHeader onClick={(): void => navigateToMCPkg(pkg.mcPkgNo as string)}>
                                     <StyledHeaderTitle className="link-container">
                                         <Typography variant="caption">MC pkg.</Typography>
                                         <Typography variant="body_short">{pkg.mcPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>

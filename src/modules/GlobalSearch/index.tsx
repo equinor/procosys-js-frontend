@@ -154,10 +154,17 @@ const GlobalSearch = (): JSX.Element => {
 
     const handleOnChange = useCallback((e: { target: { value: string; }; }) => {
         const searchVal = e.target.value;
-        setSearchValue(searchVal);
-        debounceSearchHandler(searchVal);
+        
+        if (!searchVal) {
+            setFilterPlants([]);
+            setFilterTypes([]);
+            setShowFilter(false);
+        }
+        
         setCurrentItem(null);
         clearFilters();
+        setSearchValue(searchVal);
+        debounceSearchHandler(searchVal);
     }, [debounceSearchHandler])
 
 

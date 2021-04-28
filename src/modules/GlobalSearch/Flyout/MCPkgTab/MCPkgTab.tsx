@@ -13,14 +13,14 @@ export interface MCPkgTabTabProperties {
 
 const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
 
-    const navigateToCommPkg = () => {
+    const navigateToCommPkg = (): void => {
         // let url = location.origin + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
         let url = 'https://procosysqp.equinor.com' + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
         url += "/CommPkg?commPkgNo=" + mcPkg.mcPkg?.commPkgNo + "&project=" + mcPkg.project;
         window.open(url, '_blank');
     };
 
-    const navigateToMCPkg = () => {
+    const navigateToMCPkg = (): void => {
         // let url = location.origin + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
         let url = 'https://procosysqp.equinor.com' + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
         url += "/MCPkg?mcPkgNo=" + mcPkg.mcPkg?.mcPkgNo + "&project=" + mcPkg.project;
@@ -30,7 +30,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
     return (
         <Container>
             <StyledCard100>
-                <StyledCardHeader onClick={() => navigateToMCPkg()}>
+                <StyledCardHeader onClick={(): void => navigateToMCPkg()}>
                     <StyledHeaderTitle className="link-container">
                         <Typography variant="caption">MC pkg.</Typography>
                         <Typography variant="body_short">{mcPkg.mcPkg?.mcPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
@@ -100,7 +100,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
             <Typography variant="h6">Comm package info</Typography>
 
             <StyledCard100>
-                <StyledCardHeader onClick={() => navigateToCommPkg()}>
+                <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
                     <StyledHeaderTitle className="link-container">
                         <Typography variant="caption">Comm pkg.</Typography>
                         <Typography variant="body_short">{mcPkg.mcPkg?.commPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>

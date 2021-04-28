@@ -14,7 +14,7 @@ export interface CommPkgTabProperties {
 
 const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
 
-    const navigateToCommPkg = () => {
+    const navigateToCommPkg = (): void => {
         // let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
         let url = 'https://procosysqp.equinor.com' + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
         url += "/CommPkg?commPkgNo=" + commPkg.commPkg?.commPkgNo + "&project=" + commPkg.project;
@@ -24,7 +24,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
     return (
         <Container>
             <StyledCard100>
-                <StyledCardHeader onClick={() => navigateToCommPkg()}>
+                <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
                     <StyledHeaderTitle className="link-container">
                         <Typography variant="caption">Comm pkg.</Typography>
                         <Typography variant="body_short">{commPkg.commPkg?.commPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>

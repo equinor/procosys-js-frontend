@@ -1,30 +1,20 @@
-import { AddAttachmentContainer, AttachmentTable, Container, DragAndDropContainer, FormContainer, SpinnerContainer } from './index.style';
-import { Button, Typography } from '@equinor/eds-core-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { getFileName, getFileTypeIconName } from '../../utils';
+import { Container, SpinnerContainer } from './index.style';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import { Canceler } from '@procosys/http/HttpClient';
-import CustomTooltip from './CustomTooltip';
-import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
-import { Table } from '@equinor/eds-core-react';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
-import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import AttachmentList from '@procosys/components/AttachmentList';
 import { TableOptions } from 'react-table';
-
-const { Head, Body, Cell, Row } = Table;
-
 
 interface AttachmentsProps {
     ipoId: number;
 }
 
 const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
-    const inputFileRef = useRef<HTMLInputElement>(null);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const { apiClient } = useInvitationForPunchOutContext();
     const [loading, setLoading] = useState<boolean>(false);
@@ -75,24 +65,6 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
             await uploadFiles(files);
             await getAttachments();
         }
-        setLoading(false);
-    };
-
-    const handleAddFile = (): void => {
-        if (inputFileRef.current) {
-            inputFileRef.current.click();
-        }
-    };
-
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
-        event.preventDefault();
-    };
-
-    const handleDrop = async (event: React.DragEvent<HTMLDivElement>): Promise<void> => {
-        event.preventDefault();
-        setLoading(true);
-        await uploadFiles(event.dataTransfer.files);
-        await getAttachments();
         setLoading(false);
     };
 

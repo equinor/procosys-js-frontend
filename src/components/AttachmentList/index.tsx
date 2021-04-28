@@ -21,7 +21,6 @@ interface AttachmentListProps {
     detailed?: boolean;
 }
 
-
 interface Column {
     Header: string;
     accessor: (d: UseTableRowProps<Attachment>) => UseTableRowProps<Attachment>;
@@ -29,7 +28,6 @@ interface Column {
     Cell: (row: TableOptions<Attachment>) => JSX.Element;
     width?: number;
 }
-
 
 const AttachmentList = ({
     attachments,
@@ -40,7 +38,6 @@ const AttachmentList = ({
     large = false,
     detailed = false,
 }: AttachmentListProps): JSX.Element => {
-
     const iconSize = large? 24 : 16;
     const iconColumnSize = detailed? 24 : 8;
 
@@ -90,7 +87,6 @@ const AttachmentList = ({
     };
 
     const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
-        const attachment = row.value as Attachment;
         return (
             deleteAttachment ? (
                 <div aria-disabled={disabled} onClick={(): void => handleDelete(row)} style={{margin: 'auto'}} >

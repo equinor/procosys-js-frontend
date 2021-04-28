@@ -1,5 +1,5 @@
-import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
-import { Button, Typography } from '@equinor/eds-core-react';
+import { Container, FormContainer } from './Attachments.style';
+import { Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
 import { getFileName, getFileTypeIconName } from '../../utils';
 
@@ -10,7 +10,6 @@ import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import ProcosysTable from '@procosys/components/Table';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import AttachmentList from '@procosys/components/AttachmentList';
 import { OverflowColumn } from '@procosys/modules/Preservation/views/ScopeOverview/TagFlyout/HistoryTab/HistoryTab.style';
@@ -25,24 +24,7 @@ const Attachments = ({
     attachments,
     setAttachments
 }: AttachmentsProps): JSX.Element => {
-    const inputFileRef = useRef<HTMLInputElement>(null);
     const { setDirtyStateFor } = useDirtyContext();
-
-    const handleSubmitFile = (e: any): void => {
-        e.preventDefault();
-        try {
-            addAttachments(e.target.files);
-        } catch (error) {
-            console.error('Upload attachment failed: ', error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
-    };
-
-    const handleAddFile = (): void => {
-        if (inputFileRef.current) {
-            inputFileRef.current.click();
-        }
-    };
 
     const removeAttachment = (row: TableOptions<Attachment>): void => {
         const index = row.row.index;
@@ -77,68 +59,10 @@ const Attachments = ({
         setDirtyStateFor(ComponentName.Attachments);
     };
 
-    const getAttachmentName = (row: TableOptions<Attachment>): JSX.Element => {
-        const attachment = row.value as Attachment;
-        const link = getAttachmentDownloadLink(attachment);
-
-        return (
-            <Tooltip title={getFileName(attachment.fileName) || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <OverflowColumn>
-                    <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
-                </OverflowColumn>
-            </Tooltip>
-        );
-    };
-
     const downloadAttachment = (attachment: Attachment): void => {
         const link = getAttachmentDownloadLink(attachment);
         window.open(link, '_blank');
     };
-
-    const getAttachmentIcon = (row: TableOptions<Attachment>): JSX.Element => {
-        const attachment = row.value as Attachment;
-        const iconName = getFileTypeIconName(attachment.fileName);
-        return (
-            <EdsIcon name={iconName} size={24} />
-        );
-    };
-
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
-        event.preventDefault();
-    };
-
-    const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
-        event.preventDefault();
-        addAttachments(event.dataTransfer.files);
-
-    };
-
-    const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
-        return (
-            <div onClick={(): void => removeAttachment(row.row.index)} >
-                <EdsIcon name='delete_to_trash' />
-            </div>
-        );
-    };
-
-    const columns = [
-        {
-            Header: 'Type',
-            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-            Cell: getAttachmentIcon,
-            width: 30
-        },
-        {
-            Header: 'Title',
-            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-            Cell: getAttachmentName
-        },
-        {
-            Header: ' ',
-            accessor: (d: UseTableRowProps<Attachment>): UseTableRowProps<Attachment> => d,
-            Cell: getRemoveAttachmentColumn
-        },
-    ];
 
     return (
         <Container>

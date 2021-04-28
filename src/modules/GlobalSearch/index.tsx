@@ -1,4 +1,4 @@
-import { SingleSelect, Typography } from '@equinor/eds-core-react';
+import { NativeSelect, Typography } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
@@ -50,6 +50,7 @@ const GlobalSearch = (): JSX.Element => {
         if (doc.commPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    <TypeIndicator><span>{doc.type}</span></TypeIndicator>
                     <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
                     </LinkButton>
@@ -57,7 +58,7 @@ const GlobalSearch = (): JSX.Element => {
                         {doc.commPkg?.commPkgNo}
                     </PackageNoPart>
                     <DescriptionPart>
-                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
+
                         {doc.commPkg?.description}
                     </DescriptionPart>
 
@@ -68,6 +69,7 @@ const GlobalSearch = (): JSX.Element => {
         if (doc.mcPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    <TypeIndicator><span>{doc.type}</span></TypeIndicator>
                     <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
                     </LinkButton>
@@ -75,7 +77,7 @@ const GlobalSearch = (): JSX.Element => {
                         {doc.mcPkg?.mcPkgNo}
                     </PackageNoPart>
                     <DescriptionPart>
-                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
+
                         {doc.mcPkg?.description}
                     </DescriptionPart>
                 </DescriptionCell>
@@ -155,6 +157,7 @@ const GlobalSearch = (): JSX.Element => {
         setSearchValue(searchVal);
         debounceSearchHandler(searchVal);
         setCurrentItem(null);
+        clearFilters();
     }, [debounceSearchHandler])
 
 
@@ -208,8 +211,8 @@ const GlobalSearch = (): JSX.Element => {
     return (
         <Container>
             <SearchContainer withSidePanel={(showFilter && !currentItem)}>
-                <Helmet titleTemplate={'ProCoSys - Global search'} />
-                <Typography variant="h1">Global search</Typography>
+                <Helmet titleTemplate={'ProCoSys - Global Search'} />
+                <Typography variant="h1">Global Search</Typography>
 
                 <GlobalSearchSearchRow>
                     <SearchAndFilter>
@@ -221,12 +224,13 @@ const GlobalSearch = (): JSX.Element => {
                                     <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
                                 )}
                                 <SortOrder>
-                                    <SingleSelect
-                                        selectedOption={'Relevance'}
+                                    <NativeSelect
                                         id="sort-by-select"
                                         label="Sort by"
-                                        items={['Relevance', 'Date']}
-                                    />
+                                    >
+                                        <option>Relevance</option>
+                                        <option>Date</option>
+                                    </NativeSelect>
                                 </SortOrder>
                             </>
                         )}
@@ -243,7 +247,7 @@ const GlobalSearch = (): JSX.Element => {
 
                         {selectedTypes && (
                             selectedTypes.map((type) => {
-                                return (<FilterChip variant="active" onDelete={(): void => handleTypeRemove(type)} key={type}>{'Type: ' + type}</FilterChip>)
+                                return (<FilterChip variant="active" onDelete={(): void => handleTypeRemove(type)} key={type}>{'Type: ' + (type === 'C' ? 'Comm pkg' : 'MC pkg')}</FilterChip>)
                             })
                         )}
 
@@ -271,7 +275,11 @@ const GlobalSearch = (): JSX.Element => {
                 </ResultsContainer>
                 {
                     displayFlyout && currentItem && (
-                        <StyledSideSheet onClose={(): void => setCurrentItem(null)} open={displayFlyout} title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : 'Preview MC package'} variant="large">
+                        <StyledSideSheet
+                            onClose={(): void => setCurrentItem(null)}
+                            open={displayFlyout}
+                            title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : 'Preview MC package'}
+                            variant="large">
                             <GlobalSearchFlyout item={currentItem as ContentDocument} />
                         </StyledSideSheet>
                     )

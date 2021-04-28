@@ -89,7 +89,7 @@ const GlobalSearchFilters = ({
                                                         onCheckboxTypeFilterChange(type, checked);
                                                     }}
                                                 >
-                                                    <Typography variant='body_long'>{type}</Typography>
+                                                    <Typography variant='body_long'>{type === 'C' ? 'Comm pkg' : 'MC pkg'}</Typography>
                                                 </Checkbox>
                                             )
                                         })

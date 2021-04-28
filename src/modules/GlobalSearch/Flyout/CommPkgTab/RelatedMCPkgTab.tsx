@@ -2,7 +2,9 @@ import { Card } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import React from 'react';
 import { ContentDocument } from '../../http/GlobalSearchApiClient';
-import { Container, MCPackageEntry, StyledCard100, StyledCard50, StyledDivider } from './style';
+import { LinkIndicator } from '../MCPkgTab/style';
+import { Container, MCPackageEntry, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle } from './style';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 const { CardHeader, CardHeaderTitle, CardMedia, CardActions } = Card;
 
@@ -12,6 +14,13 @@ export interface RelatedMCPkgTabProperties {
 
 const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element => {
 
+    const navigateToMCPkg = (mcPkgNo: string): void => {
+        // let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
+        let url = 'https://procosysqp.equinor.com' + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
+        url += "/MCPkg?mcPkgNo=" + mcPkgNo + "&project=" + commPkg.project;
+        window.open(url, '_blank');
+    };
+
     return (
         <Container>
             {
@@ -19,12 +28,12 @@ const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element =>
                     return (
                         <MCPackageEntry key={pkg.mcPkgId}>
                             <StyledCard100>
-                                <CardHeader>
-                                    <CardHeaderTitle>
-                                        <Typography variant="caption">MC pkg no.</Typography>
-                                        <Typography variant="body_short">{pkg.mcPkgNo || ''}</Typography>
-                                    </CardHeaderTitle>
-                                </CardHeader>
+                                <StyledCardHeader onClick={() => navigateToMCPkg(pkg.mcPkgNo as string)}>
+                                    <StyledHeaderTitle className="link-container">
+                                        <Typography variant="caption">MC pkg.</Typography>
+                                        <Typography variant="body_short">{pkg.mcPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                                    </StyledHeaderTitle>
+                                </StyledCardHeader>
                             </StyledCard100>
 
                             <StyledCard100>

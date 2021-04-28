@@ -86,15 +86,17 @@ export const StyledSearch = styled(Search)`
 
 export const SortOrder = styled.div`
     display: flex;
-    flex: 1 1;
+    flex: 0 1 200px;
     padding-bottom: 35px;
     min-width: 180px;
+    margin-left: 2px;
 `;
 
 export const StyledButton = styled(Button)`
-    min-width: 160px;
+    flex: 0 1 140px;
     display: flex;
     margin-bottom: 20px;
+    margin-right: 10px;
 `;
 
 export const FiltersAndSortRow = styled.div<{ currentItem: ContentDocument | null }>`
@@ -137,7 +139,7 @@ export const TypeIndicator = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    margin-right: 10px;
+    margin-right: 20px;
     > span {
         padding-top: 3px;
     }
@@ -146,7 +148,7 @@ export const TypeIndicator = styled.div`
 export const DescriptionCell = styled.div`
     display: flex;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     width: calc(100% - 4px);
     color: ${tokens.colors.interactive.primary__resting.rgba};
     cursor: pointer;

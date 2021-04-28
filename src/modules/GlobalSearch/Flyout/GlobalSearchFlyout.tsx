@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ContentDocument } from '../http/GlobalSearchApiClient';
 import CommPkgTab from './CommPkgTab/CommPkgTab';
 import RelatedMCPkgTab from './CommPkgTab/RelatedMCPkgTab';
@@ -12,6 +12,10 @@ export interface GlobalSearchFlyoutProps {
 const GlobalSearchFlyout = ({ item }: GlobalSearchFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('info');
 
+    useEffect(() => {
+        setActiveTab('info');
+    }, [item]);
+    
     const getTabContent = (): JSX.Element => {
 
         switch (activeTab) {

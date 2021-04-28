@@ -1,10 +1,12 @@
 import { Card } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
+import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
 import { ContentDocument } from '../../http/GlobalSearchApiClient';
-import { Container, StyledCard100, StyledCard50 } from './style';
+import { LinkIndicator } from '../MCPkgTab/style';
+import { Container, StyledCard100, StyledCard50, StyledCardHeader, StyledHeaderTitle } from './style';
 
-const { CardHeader, CardHeaderTitle, CardMedia, CardActions } = Card;
+const { CardHeader, CardHeaderTitle } = Card;
 
 export interface CommPkgTabProperties {
     commPkg: ContentDocument;
@@ -12,15 +14,22 @@ export interface CommPkgTabProperties {
 
 const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
 
+    const navigateToCommPkg = () => {
+        // let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
+        let url = 'https://procosysqp.equinor.com' + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
+        url += "/CommPkg?commPkgNo=" + commPkg.commPkg?.commPkgNo + "&project=" + commPkg.project;
+        window.open(url, '_blank');
+    };
+
     return (
         <Container>
             <StyledCard100>
-                <CardHeader>
-                    <CardHeaderTitle>
-                        <Typography variant="caption">Comm pkg no.</Typography>
-                        <Typography variant="body_short">{commPkg.commPkg?.commPkgNo || ''}</Typography>
-                    </CardHeaderTitle>
-                </CardHeader>
+                <StyledCardHeader onClick={() => navigateToCommPkg()}>
+                    <StyledHeaderTitle className="link-container">
+                        <Typography variant="caption">Comm pkg.</Typography>
+                        <Typography variant="body_short">{commPkg.commPkg?.commPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                    </StyledHeaderTitle>
+                </StyledCardHeader>
             </StyledCard100>
 
             <StyledCard50>
@@ -79,7 +88,6 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
 
         </Container>
     )
-
 };
 
 export default CommPkgTab;

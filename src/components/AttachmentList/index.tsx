@@ -21,17 +21,15 @@ interface AttachmentListProps {
     detailed?: boolean;
 }
 
-/*
+
 interface Column {
     Header: string;
     accessor: (d: UseTableRowProps<Attachment>) => UseTableRowProps<Attachment>;
     align?: string;
     Cell: (row: TableOptions<Attachment>) => JSX.Element;
     width?: number;
-    alignContent?: string;
-    margin?: string;
 }
-*/
+
 
 const AttachmentList = ({
     attachments,
@@ -129,8 +127,7 @@ const AttachmentList = ({
         );
     };
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const getColumns = () => {
+    const getColumns = (): Column[] => {
         const columns = [];
         columns.push(
             {

@@ -1,4 +1,4 @@
-import { Container, SingleIconContainer, TagLink } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
+import { Container, SingleIconContainer, TagLink, TagStatusLabel } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
 import { PreservedTag, PreservedTags } from '@procosys/modules/Preservation/views/ScopeOverview/types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ColumnInstance, TableOptions, UseTableRowProps } from 'react-table';
@@ -133,6 +133,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                     {tag.description}
+                    {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
                 </div>
             </Tooltip>
         );

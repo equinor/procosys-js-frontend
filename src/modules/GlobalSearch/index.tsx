@@ -30,13 +30,14 @@ const GlobalSearch = (): JSX.Element => {
     const [currentItem, setCurrentItem] = useState<ContentDocument | null>(null);
 
     const navigateToItem = (item: ContentDocument): void => {
-        let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
+        // let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
+        let url = 'https://procosysqp.equinor.com' + "/" + item.plant?.replace('PCS$', '') + "/link";
         if (item.commPkg) {
             url += "/CommPkg?commPkgNo=" + item.commPkg.commPkgNo + "&project=" + item.project;
         }
 
         if (item.mcPkg) {
-            url += "/MCPkg?commPkgNo=" + item.mcPkg.mcPkgNo + "&project=" + item.project;
+            url += "/MCPkg?mcPkgNo=" + item.mcPkg.mcPkgNo + "&project=" + item.project;
         }
 
         window.open(url, '_blank');
@@ -56,7 +57,7 @@ const GlobalSearch = (): JSX.Element => {
                         {doc.commPkg?.commPkgNo}
                     </PackageNoPart>
                     <DescriptionPart>
-                        {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
+                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
                         {doc.commPkg?.description}
                     </DescriptionPart>
 
@@ -74,7 +75,7 @@ const GlobalSearch = (): JSX.Element => {
                         {doc.mcPkg?.mcPkgNo}
                     </PackageNoPart>
                     <DescriptionPart>
-                        {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
+                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
                         {doc.mcPkg?.description}
                     </DescriptionPart>
                 </DescriptionCell>

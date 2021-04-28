@@ -130,7 +130,7 @@ export const LinkButton = styled(Button)`
 export const TypeIndicator = styled.div`
     border-radius: 50%;
     min-width: 20px;
-    min-height: 20px;
+    min-height: 14px;
     padding: 4px;
     border: 1px solid var(--text--default);
     display: flex;
@@ -146,6 +146,7 @@ export const TypeIndicator = styled.div`
 export const DescriptionCell = styled.div`
     display: flex;
     justify-content: flex-start;
+    align-items: flex-start;
     width: calc(100% - 4px);
     color: ${tokens.colors.interactive.primary__resting.rgba};
     cursor: pointer;
@@ -188,7 +189,7 @@ export const FilterChip = styled(Chip)`
 
 export const DescriptionPart = styled.div`
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex: 1 1;
 `;
 

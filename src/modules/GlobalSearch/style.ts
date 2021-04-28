@@ -87,7 +87,7 @@ export const StyledSearch = styled(Search)`
 export const SortOrder = styled.div`
     display: flex;
     flex: 1 1;
-    padding-bottom: 20px;
+    padding-bottom: 35px;
     min-width: 180px;
 `;
 
@@ -124,9 +124,7 @@ export const LinkButton = styled(Button)`
     height: 24px;
     width: 24px;
     padding: 0;
-    /* &.selected {
-        background-color: #deffde;
-    } */
+    margin-right: 30px;
 `;
 
 export const TypeIndicator = styled.div`
@@ -147,17 +145,13 @@ export const TypeIndicator = styled.div`
 
 export const DescriptionCell = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: calc(100% - 4px);
     color: ${tokens.colors.interactive.primary__resting.rgba};
     cursor: pointer;
-    > div {
-        margin-right: 20px;
-        color: var(--text--default);
-    }
     &.selected {
         background-color: #deffde;
-        box-shadow: 0px 0px 0px 4px #deffde;
+        box-shadow: 0px 0px 0px 7px #deffde;
     }
 `;
 
@@ -195,5 +189,11 @@ export const FilterChip = styled(Chip)`
 export const DescriptionPart = styled.div`
     display: flex;
     align-items: center;
-    
+    flex: 1 1;
+`;
+
+export const PackageNoPart = styled.div`
+    display: flex;
+    align-items: center;
+    flex: 0 0 120px;
 `;

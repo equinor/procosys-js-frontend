@@ -1,3 +1,4 @@
+import { Divider } from "@equinor/eds-core-react";
 import { Card } from "@equinor/eds-core-react";
 import styled from "styled-components";
 
@@ -13,4 +14,8 @@ export const StyledCard50 = styled(Card)`
 
 export const StyledCard100 = styled(Card)`
     flex: 1 1 100%;
+`;
+
+export const StyledDivider = styled(Divider)`
+    width: 100%;
 `;

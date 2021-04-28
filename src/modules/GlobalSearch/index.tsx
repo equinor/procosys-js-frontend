@@ -11,7 +11,7 @@ import GlobalSearchFilters from './Filters';
 import GlobalSearchFlyout from './Flyout/GlobalSearchFlyout';
 import { StyledSideSheet } from './Flyout/style';
 import { ContentDocument, SearchResult } from './http/GlobalSearchApiClient';
-import { Container, DescriptionCell, DescriptionPart, FilterChip, FiltersAndSortRow, GlobalSearchSearchRow, LinkButton, ResultsContainer, SearchAndFilter, SearchContainer, SelectedFilters, SortOrder, StyledButton, StyledSearch, TypeIndicator } from './style';
+import { Container, DescriptionCell, DescriptionPart, FilterChip, FiltersAndSortRow, GlobalSearchSearchRow, LinkButton, PackageNoPart, ResultsContainer, SearchAndFilter, SearchContainer, SelectedFilters, SortOrder, StyledButton, StyledSearch, TypeIndicator } from './style';
 
 const GlobalSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -29,19 +29,37 @@ const GlobalSearch = (): JSX.Element => {
     const [typeFilterExpanded, setTypeFilterExpanded] = useState<boolean>(true);
     const [currentItem, setCurrentItem] = useState<ContentDocument | null>(null);
 
+    const navigateToItem = (item: ContentDocument): void => {
+        let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
+        if (item.commPkg) {
+            url += "/CommPkg?commPkgNo=" + item.commPkg.commPkgNo + "&project=" + item.project;
+        }
+
+        if (item.mcPkg) {
+            url += "/MCPkg?commPkgNo=" + item.mcPkg.mcPkgNo + "&project=" + item.project;
+        }
+
+        window.open(url, '_blank');
+    }
+
+
     const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
 
         if (doc.commPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <DescriptionPart>
-                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
-                        {doc.commPkg?.description}
-                    </DescriptionPart>
-                    <LinkButton variant="ghost">
+                    <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
                     </LinkButton>
+                    <PackageNoPart>
+                        {doc.commPkg?.commPkgNo}
+                    </PackageNoPart>
+                    <DescriptionPart>
+                        {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
+                        {doc.commPkg?.description}
+                    </DescriptionPart>
+
                 </DescriptionCell>
             );
         }
@@ -49,17 +67,19 @@ const GlobalSearch = (): JSX.Element => {
         if (doc.mcPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <DescriptionPart>
-                        <TypeIndicator><span>{doc.type}</span></TypeIndicator>
-                        {doc.mcPkg?.description}
-                    </DescriptionPart>
-                    <LinkButton variant="ghost">
+                    <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
                     </LinkButton>
+                    <PackageNoPart>
+                        {doc.mcPkg?.mcPkgNo}
+                    </PackageNoPart>
+                    <DescriptionPart>
+                        {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
+                        {doc.mcPkg?.description}
+                    </DescriptionPart>
                 </DescriptionCell>
             )
         }
-
         return <div></div>;
     };
 
@@ -199,6 +219,14 @@ const GlobalSearch = (): JSX.Element => {
                                 {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
                                     <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
                                 )}
+                                <SortOrder>
+                                    <SingleSelect
+                                        selectedOption={'Relevance'}
+                                        id="sort-by-select"
+                                        label="Sort by"
+                                        items={['Relevance', 'Date']}
+                                    />
+                                </SortOrder>
                             </>
                         )}
                     </SearchAndFilter>
@@ -219,14 +247,6 @@ const GlobalSearch = (): JSX.Element => {
                         )}
 
                     </SelectedFilters>
-                    <SortOrder>
-                        <SingleSelect
-                            selectedOption={'Relevance'}
-                            id="sort-by-select"
-                            label="Sort by"
-                            items={['Relevance', 'Date']}
-                        />
-                    </SortOrder>
                 </FiltersAndSortRow>
 
                 <ResultsContainer currentItem={currentItem}>
@@ -250,7 +270,7 @@ const GlobalSearch = (): JSX.Element => {
                 </ResultsContainer>
                 {
                     displayFlyout && currentItem && (
-                        <StyledSideSheet onClose={(): void => setCurrentItem(null)} open={displayFlyout} title={(currentItem as ContentDocument).commPkg ? 'Preview Commissioning pkg' : 'Preview MC pkg'} variant="large">
+                        <StyledSideSheet onClose={(): void => setCurrentItem(null)} open={displayFlyout} title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : 'Preview MC package'} variant="large">
                             <GlobalSearchFlyout item={currentItem as ContentDocument} />
                         </StyledSideSheet>
                     )

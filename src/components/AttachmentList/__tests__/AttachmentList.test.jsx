@@ -1,23 +1,49 @@
 import AttachmentList from '../index';
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-//import userEvent from '@testing-library/user-event';
 
 const attachmentsMock = [
     {
         fileName: 'Attachment 1',
         id: 1,
-        rowVersion: '1'
+        rowVersion: '1',
+        uploadedBy: {
+            id: 1,
+            firstName: 'Jane',
+            lastName: 'Doe',
+            azureOid: 'string',
+            email: 'string',
+            rowVersion: 'string',
+        },
+        uploadedAt: new Date(),
     },
     {
         fileName: 'Attachment 2',
         id: 2,
-        rowVersion: '2'
+        rowVersion: '2',
+        uploadedBy: {
+            id: 2,
+            firstName: 'Dane',
+            lastName: 'Doe',
+            azureOid: 'string',
+            email: 'string',
+            rowVersion: 'string',
+        },
+        uploadedAt: new Date(),
     },
     {
         fileName: 'Attachment 3',
         id: 3,
-        rowVersion: '3'
+        rowVersion: '3',
+        uploadedBy: {
+            id: 3,
+            firstName: 'John',
+            lastName: 'Doe',
+            azureOid: 'string',
+            email: 'string',
+            rowVersion: 'string',
+        },
+        uploadedAt: new Date(),
     }
 ];
 
@@ -79,28 +105,6 @@ describe('<AttachmentList />', () => {
         expect(queryByText('Drag and drop to add files, or click on the button above')).not.toBeInTheDocument();
     });
 
-    // TODO: fix this test
-    /*
-    it('Should call the addAttachments function if a file is uploaded using "add files" button', () => {
-        const file = new File([''], 'test.png', { type: 'image/png' });
-        const { getByTestId } = render(
-            <AttachmentList 
-                attachments={attachmentsMock}
-                disabled={false}
-                addAttachments={addAttachments}
-                downloadAttachment={downloadAttachment}
-            />
-        );
-        const addFilesInput = getByTestId('addFiles');
-        expect(addFilesInput).toBeInTheDocument();
-        userEvent.upload(addFilesInput, file);
-        expect(addAttachments).toHaveBeenCalledTimes(1);
-    });
-    */
-
-    // TODO: after the table component has been finished, is possible to add a test id to the delete buttons then
-    it.todo('Should call the deleteAttachment function if a delete button is clicked');
-
     it('Should call the downloadAttachment function if a filename is clicked', () => {
         const { getByText } = render(
             <AttachmentList 
@@ -116,9 +120,45 @@ describe('<AttachmentList />', () => {
         expect(downloadAttachment).toHaveBeenCalledTimes(1);
     });
 
-    it.todo('Should render with more details if it\'s the detailed version');
+    it('Should render with more details if it\'s the detailed version', () => {
+        const { getByText } = render(
+            <AttachmentList 
+                attachments={attachmentsMock}
+                disabled={false}
+                addAttachments={addAttachments}
+                downloadAttachment={downloadAttachment}
+                large={true}
+                detailed={true}
+            />
+        );
+        const details = getByText('Uploaded at');
+        expect(details).toBeInTheDocument();
+    });
 
-    it.todo('Should render without column headers if it\'s the small version');
+    it('Should render without column headers if it\'s the small version', () => {
+        const { queryByText } = render(
+            <AttachmentList 
+                attachments={attachmentsMock}
+                disabled={false}
+                addAttachments={addAttachments}
+                downloadAttachment={downloadAttachment}
+            />
+        );
+        const header = queryByText('Title');
+        expect(header).not.toBeInTheDocument();
+    });
 
-    it.todo('Should render with column headers if it\'s the large version');
+    it('Should render with column headers if it\'s the large version', () => {
+        const { getByText } = render(
+            <AttachmentList 
+                attachments={attachmentsMock}
+                disabled={false}
+                addAttachments={addAttachments}
+                downloadAttachment={downloadAttachment}
+                large={true}
+            />
+        );
+        const header = getByText('Title');
+        expect(header).toBeInTheDocument();
+    });
 });

@@ -90,6 +90,7 @@ const AttachmentList = ({
     };
 
     const getRemoveAttachmentColumn = (row: TableOptions<Attachment>): JSX.Element => {
+        const attachment = row.value as Attachment;
         return (
             deleteAttachment ? (
                 <div aria-disabled={disabled} onClick={(): void => handleDelete(row)} style={{margin: 'auto'}} >

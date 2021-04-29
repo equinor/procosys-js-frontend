@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { ContentDocument } from '../http/GlobalSearchApiClient';
+import { ContentDocument } from '../http/QuickSearchApiClient';
 import CommPkgTab from './CommPkgTab/CommPkgTab';
 import RelatedMCPkgTab from './CommPkgTab/RelatedMCPkgTab';
 import MCPkgTab from './MCPkgTab/MCPkgTab';
 import { Tabs } from './style';
 
-export interface GlobalSearchFlyoutProps {
+export interface QuickSearchFlyoutProps {
     item: ContentDocument;
 }
 
-const GlobalSearchFlyout = ({ item }: GlobalSearchFlyoutProps): JSX.Element => {
+const QuickSearchFlyout = ({ item }: QuickSearchFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('info');
 
     useEffect(() => {
@@ -49,4 +49,4 @@ const GlobalSearchFlyout = ({ item }: GlobalSearchFlyoutProps): JSX.Element => {
     );
 };
 
-export default GlobalSearchFlyout;
+export default QuickSearchFlyout;

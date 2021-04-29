@@ -3,7 +3,10 @@ import { Search, Button } from '@equinor/eds-core-react';
 import { Breakpoints } from '@procosys/core/styling';
 import { tokens } from '@equinor/eds-tokens';
 import { Chip } from '@equinor/eds-core-react';
-import { ContentDocument } from './http/GlobalSearchApiClient';
+import { ContentDocument } from './http/QuickSearchApiClient';
+import { Accordion } from '@equinor/eds-core-react';
+
+const { AccordionItem, AccordionHeader, AccordionPanel } = Accordion;
 
 export const Container = styled.div`
     display: flex;
@@ -69,7 +72,7 @@ export const SearchAndFilter = styled.div`
     align-items: center;
 `;
 
-export const GlobalSearchSearchRow = styled.div`
+export const QuickSearchSearchRow = styled.div`
     margin-top: 30px;
     display: flex;
     align-items: flex-end;
@@ -153,8 +156,8 @@ export const DescriptionCell = styled.div`
     color: ${tokens.colors.interactive.primary__resting.rgba};
     cursor: pointer;
     &.selected {
-        background-color: #deffde;
-        box-shadow: 0px 0px 0px 7px #deffde;
+        background-color: #e6faec;
+        box-shadow: 0px 0px 0px 7px #e6faec;
     }
 `;
 
@@ -162,6 +165,14 @@ export const FiltersTypes = styled.div`
     display: flex;
     width: 100%;
     flex-direction: column;
+`;
+
+export const StyledAccordionHeader = styled(AccordionHeader)`
+    border: none;
+`;
+
+export const StyledAccordionPanel = styled(AccordionPanel)`
+    border: none;
 `;
 
 export const AccordionContent = styled.div`

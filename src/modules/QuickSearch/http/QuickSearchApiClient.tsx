@@ -53,7 +53,7 @@ export interface SearchResult {
     items: ContentDocument[];
 }
 
-class GlobalSearchApiClient extends ApiClient {
+class QuickSearchApiClient extends ApiClient {
 
     constructor(authService: IAuthService) {
         super(
@@ -94,4 +94,4 @@ class GlobalSearchApiClient extends ApiClient {
     }
 }
 
-export default GlobalSearchApiClient;
+export default QuickSearchApiClient;

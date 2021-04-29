@@ -1,14 +1,14 @@
 import { Button } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import React from 'react';
-import { AccordionContent, FiltersContainer, FiltersTypes, Header, SearchFilters } from './style';
+import { AccordionContent, FiltersContainer, FiltersTypes, Header, SearchFilters, StyledAccordionHeader, StyledAccordionPanel } from './style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Accordion } from '@equinor/eds-core-react';
 import Checkbox from '@procosys/components/Checkbox';
 
 const { AccordionItem, AccordionHeader, AccordionPanel } = Accordion;
 
-export interface GlobalSearchFiltersProps {
+export interface QuickSearchFiltersProps {
     plantFilterExpanded: boolean;
     setShowFilter: (val: boolean) => void;
     setPlantFilterExpanded: (val: boolean) => void;
@@ -22,7 +22,7 @@ export interface GlobalSearchFiltersProps {
     onCheckboxTypeFilterChange: (type: string, checked: boolean) => void;
 }
 
-const GlobalSearchFilters = ({
+const QuickSearchFilters = ({
     plantFilterExpanded,
     setShowFilter,
     setPlantFilterExpanded,
@@ -34,7 +34,7 @@ const GlobalSearchFilters = ({
     filterTypes,
     selectedTypes,
     onCheckboxTypeFilterChange
-}: GlobalSearchFiltersProps): JSX.Element => {
+}: QuickSearchFiltersProps): JSX.Element => {
 
     return (
         <FiltersContainer>
@@ -50,8 +50,8 @@ const GlobalSearchFilters = ({
                 <FiltersTypes>
                     <Accordion chevronPosition="right" headerLevel="h2">
                         <AccordionItem isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(!plantFilterExpanded)}>
-                            <AccordionHeader>Plant</AccordionHeader>
-                            <AccordionPanel>
+                            <StyledAccordionHeader>Plant</StyledAccordionHeader>
+                            <StyledAccordionPanel>
                                 <AccordionContent>
                                     {
                                         filterPlants.map((plant: string, i: number) => {
@@ -71,11 +71,11 @@ const GlobalSearchFilters = ({
                                         })
                                     }
                                 </AccordionContent>
-                            </AccordionPanel>
+                            </StyledAccordionPanel>
                         </AccordionItem>
                         <AccordionItem isExpanded={typeFilterExpanded} onClick={(): void => setTypeFilterExpanded(!typeFilterExpanded)}>
-                            <AccordionHeader>Type</AccordionHeader>
-                            <AccordionPanel>
+                            <StyledAccordionHeader>Type</StyledAccordionHeader>
+                            <StyledAccordionPanel>
                                 <AccordionContent>
                                     {
                                         filterTypes.map((type: string, i: number) => {
@@ -95,7 +95,7 @@ const GlobalSearchFilters = ({
                                         })
                                     }
                                 </AccordionContent>
-                            </AccordionPanel>
+                            </StyledAccordionPanel>
                         </AccordionItem>
                     </Accordion>
                 </FiltersTypes>
@@ -104,4 +104,4 @@ const GlobalSearchFilters = ({
     );
 }
 
-export default GlobalSearchFilters;
+export default QuickSearchFilters;

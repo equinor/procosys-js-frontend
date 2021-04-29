@@ -5,15 +5,33 @@ import ProcosysTable from '@procosys/components/Table';
 import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
+import { useLocation } from 'react-router-dom';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import { useGlobalSearchContext } from './context/GlobalSearchContext';
-import GlobalSearchFilters from './Filters';
-import GlobalSearchFlyout from './Flyout/GlobalSearchFlyout';
+import { useQuickSearchContext } from './context/QuickSearchContext';
+import QuickSearchFilters from './Filters';
+import QuickSearchFlyout from './Flyout/QuickSearchFlyout';
 import { StyledSideSheet } from './Flyout/style';
-import { ContentDocument, SearchResult } from './http/GlobalSearchApiClient';
-import { Container, DescriptionCell, DescriptionPart, FilterChip, FiltersAndSortRow, GlobalSearchSearchRow, LinkButton, PackageNoPart, ResultsContainer, SearchAndFilter, SearchContainer, SelectedFilters, SortOrder, StyledButton, StyledSearch, TypeIndicator } from './style';
+import { ContentDocument, SearchResult } from './http/QuickSearchApiClient';
+import {
+    Container,
+    DescriptionCell,
+    DescriptionPart,
+    FilterChip,
+    FiltersAndSortRow,
+    QuickSearchSearchRow,
+    LinkButton,
+    PackageNoPart,
+    ResultsContainer,
+    SearchAndFilter,
+    SearchContainer,
+    SelectedFilters,
+    SortOrder,
+    StyledButton,
+    StyledSearch,
+    TypeIndicator
+} from './style';
 
-const GlobalSearch = (): JSX.Element => {
+const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('');
     const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
@@ -28,6 +46,14 @@ const GlobalSearch = (): JSX.Element => {
     const [plantFilterExpanded, setPlantFilterExpanded] = useState<boolean>(true);
     const [typeFilterExpanded, setTypeFilterExpanded] = useState<boolean>(true);
     const [currentItem, setCurrentItem] = useState<ContentDocument | null>(null);
+
+    const { search } = useLocation();
+
+    useEffect(() => {
+
+        console.log('search', search);
+
+    }, [])
 
     const navigateToItem = (item: ContentDocument): void => {
         // let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
@@ -50,7 +76,7 @@ const GlobalSearch = (): JSX.Element => {
         if (doc.commPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <TypeIndicator><span>{doc.type}</span></TypeIndicator>
+                    {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
                     <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
                     </LinkButton>
@@ -69,7 +95,7 @@ const GlobalSearch = (): JSX.Element => {
         if (doc.mcPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <TypeIndicator><span>{doc.type}</span></TypeIndicator>
+                    {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
                     <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
                     </LinkButton>
@@ -112,7 +138,7 @@ const GlobalSearch = (): JSX.Element => {
 
     const {
         apiClient
-    } = useGlobalSearchContext();
+    } = useQuickSearchContext();
 
     const debounceSearchHandler = useCallback(
         debounce((value: string) => {
@@ -154,13 +180,13 @@ const GlobalSearch = (): JSX.Element => {
 
     const handleOnChange = useCallback((e: { target: { value: string; }; }) => {
         const searchVal = e.target.value;
-        
+
         if (!searchVal) {
             setFilterPlants([]);
             setFilterTypes([]);
             setShowFilter(false);
         }
-        
+
         setCurrentItem(null);
         clearFilters();
         setSearchValue(searchVal);
@@ -218,12 +244,12 @@ const GlobalSearch = (): JSX.Element => {
     return (
         <Container>
             <SearchContainer withSidePanel={(showFilter && !currentItem)}>
-                <Helmet titleTemplate={'ProCoSys - Global Search'} />
-                <Typography variant="h1">Global Search</Typography>
+                <Helmet titleTemplate={'ProCoSys - Quick Search'} />
+                <Typography variant="h1">Quick Search</Typography>
 
-                <GlobalSearchSearchRow>
+                <QuickSearchSearchRow>
                     <SearchAndFilter>
-                        <StyledSearch onChange={handleOnChange} autoFocus value={searchValue}></StyledSearch>
+                        <StyledSearch onChange={handleOnChange} name="procosys-qs" id="procosys-qs" autocomplete="on" autoFocus value={searchValue}></StyledSearch>
                         {searchResult && filteredItems.length > 0 && (
                             <>
                                 <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
@@ -243,7 +269,7 @@ const GlobalSearch = (): JSX.Element => {
                         )}
                     </SearchAndFilter>
 
-                </GlobalSearchSearchRow>
+                </QuickSearchSearchRow>
                 <FiltersAndSortRow currentItem={currentItem}>
                     <SelectedFilters>
                         {selectedPlants && (
@@ -287,14 +313,14 @@ const GlobalSearch = (): JSX.Element => {
                             open={displayFlyout}
                             title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : 'Preview MC package'}
                             variant="large">
-                            <GlobalSearchFlyout item={currentItem as ContentDocument} />
+                            <QuickSearchFlyout item={currentItem as ContentDocument} />
                         </StyledSideSheet>
                     )
                 }
             </SearchContainer>
             {
                 showFilter && !currentItem && (
-                    <GlobalSearchFilters
+                    <QuickSearchFilters
                         plantFilterExpanded={plantFilterExpanded}
                         setShowFilter={setShowFilter}
                         setPlantFilterExpanded={setPlantFilterExpanded}
@@ -313,4 +339,4 @@ const GlobalSearch = (): JSX.Element => {
     )
 };
 
-export default GlobalSearch;
+export default QuickSearch;

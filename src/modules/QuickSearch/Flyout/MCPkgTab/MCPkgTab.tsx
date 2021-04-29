@@ -1,7 +1,7 @@
 import { Card } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import React from 'react';
-import { ContentDocument } from '../../http/GlobalSearchApiClient';
+import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle } from './style';
 import EdsIcon from '@procosys/components/EdsIcon';
 

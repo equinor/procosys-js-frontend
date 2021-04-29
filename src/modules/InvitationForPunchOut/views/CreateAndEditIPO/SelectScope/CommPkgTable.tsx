@@ -18,6 +18,7 @@ interface CommPkgTableProps {
     projectName: string;
     filter: string;
     setFilter: (filter: string) => void;
+    commPkgNo: string | null;
 }
 
 const WAIT_INTERVAL = 300;
@@ -30,7 +31,8 @@ const CommPkgTable = forwardRef(({
     type,
     projectName,
     filter,
-    setFilter
+    setFilter,
+    commPkgNo
 }: CommPkgTableProps, ref): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [filteredCommPkgs, setFilteredCommPkgs] = useState<CommPkgRow[]>([]);
@@ -53,7 +55,7 @@ const CommPkgTable = forwardRef(({
         }
     };
 
-    const getCommPkgs = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
+    const getCommPkgsByFilter = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
         try {
             setLoading(true);
             if (!filter) return { maxAvailable: 0, commPkgs: [] };
@@ -73,7 +75,6 @@ const CommPkgTable = forwardRef(({
                 maxAvailable: response.maxAvailable,
                 commPkgs: commPkgData
             };
-
         } catch (error) {
             console.error(error);
             return {
@@ -85,16 +86,63 @@ const CommPkgTable = forwardRef(({
         }
     };
 
+    const getCommPkgsByCommPkgNo = async (pageSize: number, page: number): Promise<{maxAvailable: number, commPkgs: CommPkgRow[]}> => {
+        if(commPkgNo != null){
+            try {
+                const response = await apiClient.getCommPkgsAsync(projectName, commPkgNo, pageSize, page, (cancel: Canceler) => cancelerRef.current = cancel);
+            
+                const commPkgData = response.commPkgs.map((commPkg): CommPkgRow => {
+                    return {
+                        commPkgNo: commPkg.commPkgNo,
+                        description: commPkg.description,
+                        system: commPkg.system,
+                        status: commPkg.status,
+                        tableData: {
+                            isSelected: true
+                        }
+                    };
+                });
+                return {
+                    maxAvailable: 1,
+                    commPkgs: commPkgData
+                };
+            } catch (error) {
+                console.error(error);
+                return {
+                    maxAvailable: 0,
+                    commPkgs: []
+                };
+            }
+        }else{
+            return {
+                maxAvailable: 0,
+                commPkgs: []
+            };
+        }
+    };
+
     const getCommPkgsByQuery = (query: DataQuery): void => {
-        if (!filter.trim()) {
-            setData([]);
-            setMaxRows(0);
-        } else {
-            getCommPkgs(query.pageSize, query.pageIndex).then(result => {
-                setFilteredCommPkgs(result.commPkgs);
-                setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
-                setData(result.commPkgs);
+        if(commPkgNo == null){
+            if (!filter.trim()) {
+                setData([]);
+                setMaxRows(0);
+            } else{
+                getCommPkgsByFilter(query.pageSize, query.pageIndex).then(result => {
+                    setFilteredCommPkgs(result.commPkgs);
+                    setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
+                    setData(result.commPkgs);
+                    setMaxRows(result.maxAvailable);
+                });
+            }
+        }else{
+            getCommPkgsByCommPkgNo(query.pageSize, query.pageIndex).then(result => {
+                // Only the commPkg that exactly matches the one in the URL is shown
+                const thisCommPkg = result.commPkgs.filter(el => el.commPkgNo == commPkgNo);
+                setFilteredCommPkgs(thisCommPkg);
+                setSelectAll(true);
+                setData(thisCommPkg);
                 setMaxRows(result.maxAvailable);
+                setSelectedCommPkgScope(thisCommPkg);
             });
         }
     };
@@ -227,6 +275,9 @@ const CommPkgTable = forwardRef(({
                         onKeyUp={(e: any): void => {
                             setFilter(e.currentTarget.value);
                         }}
+                        disabled={
+                            type == 'MDP' && commPkgNo != null
+                        }
                     />
                 </Search>
             </TopContainer>

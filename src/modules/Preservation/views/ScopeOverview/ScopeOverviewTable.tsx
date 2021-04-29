@@ -133,7 +133,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
                 <div className='controlOverflow' style={{ color: isTagOverdue(tag) ? tokens.colors.interactive.danger__text.rgba : 'rgba(0, 0, 0, 1)', opacity: tag.isVoided ? '0.5' : '1' }}>
                     {tag.description}
-                    {tag.isNew && <TagStatusLabel>new</TagStatusLabel>}
+                    {tag.isNew && <TagStatusLabel role="new-indicator">new</TagStatusLabel>}
                 </div>
             </Tooltip>
         );

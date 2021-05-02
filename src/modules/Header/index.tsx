@@ -8,10 +8,11 @@ import {
     Nav,
     PlantSelector,
     ShowOnDesktop,
-    ShowOnMobile
+    ShowOnMobile,
+    StyledSearch
 } from './style';
-import { Link, useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
@@ -24,6 +25,7 @@ import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
+import debounce from 'lodash.debounce';
 
 type PlantItem = {
     text: string;
@@ -44,11 +46,27 @@ const Header: React.FC = (): JSX.Element => {
         }));
     });
     const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
+    const history = useHistory();
+
+    const debounceSearchHandler = useCallback(
+        debounce((value: string) => {
+            if (value.length > 2) {
+                const url = 'quicksearch?query=' + value + "&dosearch=true";
+                history.push(url);
+            }
+        }, 1000),
+        []
+    );
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
         setCurrentPlant(filteredPlants[plantIndex].value as string);
     };
+
+    const handleQuickSearchChange = useCallback((e: { target: { value: string; }; }) => {
+        const searchVal = e.target.value;
+        debounceSearchHandler(searchVal);
+    }, [debounceSearchHandler]);
 
     useEffect(() => {
         if (filterForPlants.length <= 0) {
@@ -110,7 +128,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
+                            {(ProCoSysSettings.featureIsEnabled('IPO')) &&
                                 <Link to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </Link>
@@ -179,7 +197,7 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
+                            {(ProCoSysSettings.featureIsEnabled('IPO')) &&
                                 <Link to={`/${params.plant}/InvitationForPunchOut`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </Link>
@@ -265,15 +283,16 @@ const Header: React.FC = (): JSX.Element => {
                             </Button>
                         </a>
                     </MenuContainerItem>
-                    <MenuContainerItem>
-                        <a href={`/${params.plant}/QuickSearch`}>
-                            <Button variant={'ghost'}>
-                                Quick Search
-                            </Button>
-                        </a>
-                    </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
+                    <MenuContainerItem>
+                        <StyledSearch
+                            placeholder={'Quick Search'}
+                            onChange={handleQuickSearchChange}
+                            name="procosys-qs"
+                            id="procosys-qs"
+                            autocomplete="on" autoFocus />
+                    </MenuContainerItem>
                     <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='link'>
                             <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">

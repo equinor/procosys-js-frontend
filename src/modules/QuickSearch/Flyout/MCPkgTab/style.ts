@@ -35,7 +35,7 @@ export const StyledHeaderTitle = styled(CardHeaderTitle)`
         align-items: center;
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
-    > p > span {
+    p > span:nth-child(2) {
             margin-top: -6px;
             margin-left: 5px;
         }

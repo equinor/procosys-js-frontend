@@ -9,9 +9,11 @@ const { CardHeader, CardHeaderTitle } = Card;
 
 export interface MCPkgTabTabProperties {
     mcPkg: ContentDocument;
+    searchValue: string;
+    highlightOn: boolean;
 }
 
-const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
+const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
         // let url = location.origin + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
@@ -27,13 +29,31 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
         window.open(url, '_blank');
     };
 
+    const highlightSearchValue = (text: string): JSX.Element => {
+        if (!highlightOn) return <span>{text}</span>;
+
+        let startIndexNo = -1;
+
+        startIndexNo = text.toLowerCase().indexOf(searchValue.toLowerCase());
+
+        if (startIndexNo > -1) {
+            if (startIndexNo === 0) {
+                return <span><mark>{text.substr(0, searchValue.length)}</mark>{text.substr(searchValue.length)}</span>
+            } else {
+                return <span><mark>{text.substr(startIndexNo, searchValue.length)}</mark>{text.substr(startIndexNo + searchValue.length)}</span>
+            }
+        } else {
+            return <span>{text}</span>
+        }
+    };
+
     return (
         <Container>
             <StyledCard100>
                 <StyledCardHeader onClick={(): void => navigateToMCPkg()}>
                     <StyledHeaderTitle className="link-container">
                         <Typography variant="caption">MC pkg.</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.mcPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.mcPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
                     </StyledHeaderTitle>
                 </StyledCardHeader>
             </StyledCard100>
@@ -42,7 +62,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
-                        <Typography variant="body_short">{mcPkg.plantName || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.plantName || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard50>
@@ -51,7 +71,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Project</Typography>
-                        <Typography variant="body_short">{mcPkg.project || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.project || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard50>
@@ -60,7 +80,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Discipline</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.discipline || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.discipline || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -69,7 +89,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Description</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.description || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -78,7 +98,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Area</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.area || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.area || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -87,7 +107,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.responsible || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.responsible || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -103,7 +123,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
                     <StyledHeaderTitle className="link-container">
                         <Typography variant="caption">Comm pkg.</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.commPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.commPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
                     </StyledHeaderTitle>
                 </StyledCardHeader>
             </StyledCard100>
@@ -112,7 +132,7 @@ const MCPkgTab = ({ mcPkg }: MCPkgTabTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Description.</Typography>
-                        <Typography variant="body_short">{mcPkg.mcPkg?.commPkgDescription || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.commPkgDescription || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>

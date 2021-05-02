@@ -10,9 +10,11 @@ const { CardHeader, CardHeaderTitle } = Card;
 
 export interface CommPkgTabProperties {
     commPkg: ContentDocument;
+    searchValue: string;
+    highlightOn: boolean;
 }
 
-const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
+const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
         // let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
@@ -21,13 +23,31 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
         window.open(url, '_blank');
     };
 
+    const highlightSearchValue = (text: string): JSX.Element => {
+        if (!highlightOn) return <span>{text}</span>;
+
+        let startIndexNo = -1;
+
+        startIndexNo = text.toLowerCase().indexOf(searchValue.toLowerCase());
+
+        if (startIndexNo > -1) {
+            if (startIndexNo === 0) {
+                return <span><mark>{text.substr(0, searchValue.length)}</mark>{text.substr(searchValue.length)}</span>
+            } else {
+                return <span><mark>{text.substr(startIndexNo, searchValue.length)}</mark>{text.substr(startIndexNo + searchValue.length)}</span>
+            }
+        } else {
+            return <span>{text}</span>
+        }
+    };
+
     return (
         <Container>
             <StyledCard100>
                 <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
                     <StyledHeaderTitle className="link-container">
                         <Typography variant="caption">Comm pkg.</Typography>
-                        <Typography variant="body_short">{commPkg.commPkg?.commPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.commPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
                     </StyledHeaderTitle>
                 </StyledCardHeader>
             </StyledCard100>
@@ -36,7 +56,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
-                        <Typography variant="body_short">{commPkg.plantName || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.plantName || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard50>
@@ -45,7 +65,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Project</Typography>
-                        <Typography variant="body_short">{commPkg.project || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.project || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard50>
@@ -54,7 +74,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Description of work</Typography>
-                        <Typography variant="body_short">{commPkg.commPkg?.descriptionOfWork || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.descriptionOfWork || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -63,7 +83,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Area</Typography>
-                        <Typography variant="body_short">{commPkg.commPkg?.area || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.area || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -72,7 +92,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
-                        <Typography variant="body_short">{commPkg.commPkg?.responsible || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.responsible || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -81,7 +101,7 @@ const CommPkgTab = ({ commPkg }: CommPkgTabProperties): JSX.Element => {
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Path</Typography>
-                        <Typography variant="body_short">{commPkg.commPkg?.path || ''}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.path || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>

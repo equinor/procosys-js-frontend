@@ -3,22 +3,42 @@ import { Typography } from '@equinor/eds-core-react';
 import React from 'react';
 import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { LinkIndicator } from '../MCPkgTab/style';
-import { Container, MCPackageEntry, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle } from './style';
+import { Container, MCPackageEntry, StyledCard100, StyledCardHeader, StyledDivider, StyledHeaderTitle } from './style';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 const { CardHeader, CardHeaderTitle, CardMedia, CardActions } = Card;
 
 export interface RelatedMCPkgTabProperties {
     commPkg: ContentDocument;
+    searchValue: string;
+    highlightOn: boolean;
 }
 
-const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element => {
+const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabProperties): JSX.Element => {
 
     const navigateToMCPkg = (mcPkgNo: string): void => {
         // let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
         let url = 'https://procosysqp.equinor.com' + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
         url += "/MCPkg?mcPkgNo=" + mcPkgNo + "&project=" + commPkg.project;
         window.open(url, '_blank');
+    };
+
+    const highlightSearchValue = (text: string): JSX.Element => {
+        if (!highlightOn) return <span>{text}</span>;
+
+        let startIndexNo = -1;
+
+        startIndexNo = text.toLowerCase().indexOf(searchValue.toLowerCase());
+
+        if (startIndexNo > -1) {
+            if (startIndexNo === 0) {
+                return <span><mark>{text.substr(0, searchValue.length)}</mark>{text.substr(searchValue.length)}</span>
+            } else {
+                return <span><mark>{text.substr(startIndexNo, searchValue.length)}</mark>{text.substr(startIndexNo + searchValue.length)}</span>
+            }
+        } else {
+            return <span>{text}</span>
+        }
     };
 
     return (
@@ -31,7 +51,7 @@ const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element =>
                                 <StyledCardHeader onClick={(): void => navigateToMCPkg(pkg.mcPkgNo as string)}>
                                     <StyledHeaderTitle className="link-container">
                                         <Typography variant="caption">MC pkg.</Typography>
-                                        <Typography variant="body_short">{pkg.mcPkgNo || ''}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                                        <Typography variant="body_short">{highlightSearchValue(pkg.mcPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
                                     </StyledHeaderTitle>
                                 </StyledCardHeader>
                             </StyledCard100>
@@ -40,7 +60,7 @@ const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element =>
                                 <CardHeader>
                                     <CardHeaderTitle>
                                         <Typography variant="caption">Description</Typography>
-                                        <Typography variant="body_short">{pkg.mcPkgDescription || ''}</Typography>
+                                        <Typography variant="body_short">{highlightSearchValue(pkg.mcPkgDescription || '')}</Typography>
                                     </CardHeaderTitle>
                                 </CardHeader>
                             </StyledCard100>
@@ -55,7 +75,6 @@ const RelatedMCPkgTab = ({ commPkg }: RelatedMCPkgTabProperties): JSX.Element =>
             }
         </Container>
     )
-
 };
 
 export default RelatedMCPkgTab;

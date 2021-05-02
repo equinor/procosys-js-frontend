@@ -5,6 +5,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { Chip } from '@equinor/eds-core-react';
 import { ContentDocument } from './http/QuickSearchApiClient';
 import { Accordion } from '@equinor/eds-core-react';
+import { Typography } from '@equinor/eds-core-react';
 
 const { AccordionItem, AccordionHeader, AccordionPanel } = Accordion;
 
@@ -89,17 +90,15 @@ export const StyledSearch = styled(Search)`
 
 export const SortOrder = styled.div`
     display: flex;
-    flex: 0 1 200px;
-    padding-bottom: 35px;
-    min-width: 180px;
-    margin-left: 2px;
+    flex: 0 1 150px;
+    padding-bottom: 15px;
+    margin-left: 8px;
 `;
 
 export const StyledButton = styled(Button)`
     flex: 0 1 140px;
     display: flex;
-    margin-bottom: 20px;
-    margin-right: 10px;
+    margin-right: 20px;
 `;
 
 export const FiltersAndSortRow = styled.div<{ currentItem: ContentDocument | null }>`
@@ -119,11 +118,17 @@ export const SelectedFilters = styled.div`
 `;
 
 export const ResultsContainer = styled.div<{ currentItem: ContentDocument | null }>`
-    height: 70vh;
+    height: 80vh;
     width: 100%;
+    ${Breakpoints.MOBILE} {
+        height: 70vh;
+    }
+
     ${({ currentItem }): any => currentItem && css`
         width: calc(100% - 480px);
     `}`;
+
+
 
 export const LinkButton = styled(Button)`
     height: 24px;
@@ -210,4 +215,19 @@ export const PackageNoPart = styled.div`
     display: flex;
     align-items: center;
     flex: 0 0 120px;
+
+    mark {
+        background-color: #ffff81;
+    }
+`;
+
+export const TopDiv = styled.div`
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+`;
+
+export const StyledHeader = styled(Typography)`
+    flex: 0 1 325px;
 `;

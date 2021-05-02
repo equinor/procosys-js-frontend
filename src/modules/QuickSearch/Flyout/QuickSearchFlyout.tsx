@@ -7,9 +7,11 @@ import { Tabs } from './style';
 
 export interface QuickSearchFlyoutProps {
     item: ContentDocument;
+    searchValue: string;
+    highlightOn: boolean;
 }
 
-const QuickSearchFlyout = ({ item }: QuickSearchFlyoutProps): JSX.Element => {
+const QuickSearchFlyout = ({ item, searchValue, highlightOn }: QuickSearchFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('info');
 
     useEffect(() => {
@@ -21,13 +23,13 @@ const QuickSearchFlyout = ({ item }: QuickSearchFlyoutProps): JSX.Element => {
         switch (activeTab) {
             case 'info': {
                 if (item.commPkg) {
-                    return <CommPkgTab commPkg={item} />
+                    return <CommPkgTab highlightOn={highlightOn} searchValue={searchValue} commPkg={item} />
                 }
-                return <MCPkgTab mcPkg={item} />
+                return <MCPkgTab highlightOn={highlightOn} searchValue={searchValue} mcPkg={item} />
             }
             case 'related': {
                 if (item.commPkg) {
-                    return <RelatedMCPkgTab commPkg={item} />
+                    return <RelatedMCPkgTab highlightOn={highlightOn} searchValue={searchValue} commPkg={item} />
                 }
                 return <div></div>;
             }

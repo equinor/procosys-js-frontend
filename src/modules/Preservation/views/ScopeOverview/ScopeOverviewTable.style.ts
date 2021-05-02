@@ -8,7 +8,7 @@ export const Toolbar = styled.div`
 `;
 
 export const TagStatusLabel = styled.span`
-    margin-left: auto;
+    margin-left: 10px;
     border-radius: calc(var(--grid-unit) * 2);
     padding: calc(var(--grid-unit) / 2) var(--grid-unit);
     font-size: calc(var(--grid-unit) * 1.5);

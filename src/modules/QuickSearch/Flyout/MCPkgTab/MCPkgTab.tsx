@@ -4,6 +4,7 @@ import React from 'react';
 import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle } from './style';
 import EdsIcon from '@procosys/components/EdsIcon';
+import Highlighter from 'react-highlight-words';
 
 const { CardHeader, CardHeaderTitle } = Card;
 
@@ -32,19 +33,11 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
     const highlightSearchValue = (text: string): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
 
-        let startIndexNo = -1;
-
-        startIndexNo = text.toLowerCase().indexOf(searchValue.toLowerCase());
-
-        if (startIndexNo > -1) {
-            if (startIndexNo === 0) {
-                return <span><mark>{text.substr(0, searchValue.length)}</mark>{text.substr(searchValue.length)}</span>
-            } else {
-                return <span><mark>{text.substr(startIndexNo, searchValue.length)}</mark>{text.substr(startIndexNo + searchValue.length)}</span>
-            }
-        } else {
-            return <span>{text}</span>
-        }
+        return <Highlighter
+            searchWords={searchValue.split(' ')}
+            autoEscape={true}
+            textToHighlight={text}
+        />
     };
 
     return (
@@ -136,10 +129,8 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
-
         </Container>
     )
-
 };
 
 export default MCPkgTab;

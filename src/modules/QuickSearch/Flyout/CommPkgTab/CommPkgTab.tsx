@@ -2,6 +2,7 @@ import { Card } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
+import Highlighter from 'react-highlight-words';
 import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { LinkIndicator } from '../MCPkgTab/style';
 import { Container, StyledCard100, StyledCard50, StyledCardHeader, StyledHeaderTitle } from './style';
@@ -26,19 +27,11 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
     const highlightSearchValue = (text: string): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
 
-        let startIndexNo = -1;
-
-        startIndexNo = text.toLowerCase().indexOf(searchValue.toLowerCase());
-
-        if (startIndexNo > -1) {
-            if (startIndexNo === 0) {
-                return <span><mark>{text.substr(0, searchValue.length)}</mark>{text.substr(searchValue.length)}</span>
-            } else {
-                return <span><mark>{text.substr(startIndexNo, searchValue.length)}</mark>{text.substr(startIndexNo + searchValue.length)}</span>
-            }
-        } else {
-            return <span>{text}</span>
-        }
+        return <Highlighter
+            searchWords={searchValue.split(' ')}
+            autoEscape={true}
+            textToHighlight={text}
+        />
     };
 
     return (
@@ -105,7 +98,6 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
-
         </Container>
     )
 };

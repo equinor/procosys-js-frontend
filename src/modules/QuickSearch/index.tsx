@@ -2,8 +2,7 @@ import { NativeSelect, Typography } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
-import debounce from "lodash/debounce";
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { useLocation } from 'react-router-dom';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -18,21 +17,19 @@ import {
     DescriptionPart,
     FilterChip,
     FiltersAndSortRow,
-    QuickSearchSearchRow,
     LinkButton,
     PackageNoPart,
     ResultsContainer,
-    SearchAndFilter,
     SearchContainer,
     SelectedFilters,
     SortOrder,
     StyledButton,
-    StyledSearch,
     TypeIndicator,
     TopDiv,
     StyledHeader
 } from './style';
 import queryString from 'query-string'
+import Highlighter from 'react-highlight-words';
 
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -52,19 +49,14 @@ const QuickSearch = (): JSX.Element => {
     const highlightOn = true;
 
     const { search } = useLocation();
-    const test = useLocation();
 
     useEffect(() => {
-        // console.log('search', search);
-        // console.log('test', test)
         const values = queryString.parse(search)
         if (values && values.query) {
             const searchVal = values.query as string;
             setSearchValue(searchVal);
 
             if (values && values.dosearch) {
-                // debounceSearchHandler(values.query as string);
-
                 if (searchVal.length > 2) {
                     setSearching(true);
                     apiClient.doSearch(searchVal).then((searchResult: SearchResult) => {
@@ -77,11 +69,8 @@ const QuickSearch = (): JSX.Element => {
                 } else {
                     setSearchResult(null);
                 }
-
             }
         }
-        // console.log(values.query);
-        // console.log(values.filters);
     }, [])
 
     const navigateToItem = (item: ContentDocument): void => {
@@ -98,20 +87,20 @@ const QuickSearch = (): JSX.Element => {
         window.open(url, '_blank');
     }
 
+    const highlightSearchValue = (text: string): JSX.Element => {
+        if (!highlightOn) return <span>{text}</span>;
+
+        return <Highlighter
+            searchWords={searchValue.split(' ')}
+            autoEscape={true}
+            textToHighlight={text}
+        />
+    };
+
 
     const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-        let startIndexNo = -1;
-        let startIndexDescription = -1;
-        let numberField = '';
-        let descriptionField = '';
-
         if (doc.commPkg) {
-            numberField = doc.commPkg.commPkgNo || '';
-            descriptionField = doc.commPkg.description || '';
-
-            startIndexNo = numberField.toLowerCase().indexOf(searchValue.toLowerCase());
-            startIndexDescription = descriptionField.toLowerCase().indexOf(searchValue.toLowerCase());
 
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
@@ -120,46 +109,16 @@ const QuickSearch = (): JSX.Element => {
                         <EdsIcon name='launch' />
                     </LinkButton>
                     <PackageNoPart>
-                        {
-                            highlightOn ? (
-                                startIndexNo > -1 ? (
-                                    startIndexNo === 0 ? (
-                                        <span><mark>{numberField.substr(0, searchValue.length)}</mark>{numberField.substr(searchValue.length)}</span>
-                                    ) : (
-                                        <span><mark>{numberField.substr(startIndexNo, searchValue.length)}</mark>{numberField.substr(startIndexNo + searchValue.length)}</span>
-                                    )
-                                ) : (<span>{numberField}</span>)
-                            ) : (
-                                numberField
-                            )
-                        }
+                        {highlightSearchValue(doc.commPkg.commPkgNo || '')}
                     </PackageNoPart>
                     <DescriptionPart>
-                    {
-                            highlightOn ? (
-                                startIndexDescription > -1 ? (
-                                    startIndexDescription === 0 ? (
-                                        <span><mark>{descriptionField.substr(0, searchValue.length)}</mark>{descriptionField.substr(searchValue.length)}</span>
-                                    ) : (
-                                        <span><mark>{descriptionField.substr(startIndexDescription, searchValue.length)}</mark>{descriptionField.substr(startIndexDescription + searchValue.length)}</span>
-                                    )
-                                ) : (<span>{descriptionField}</span>)
-                            ) : (
-                                descriptionField
-                            )
-                        }
+                        {highlightSearchValue(doc.commPkg.description || '')}
                     </DescriptionPart>
-
                 </DescriptionCell>
             );
         }
 
         if (doc.mcPkg) {
-            numberField = doc.mcPkg.mcPkgNo || '';
-            descriptionField = doc.mcPkg.description || '';
-
-            startIndexNo = numberField.toLowerCase().indexOf(searchValue.toLowerCase());
-            startIndexDescription = descriptionField.toLowerCase().indexOf(searchValue.toLowerCase());
 
             return (
                 <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
@@ -169,32 +128,12 @@ const QuickSearch = (): JSX.Element => {
                     </LinkButton>
                     <PackageNoPart>
                         {
-                            highlightOn ? (
-                                startIndexNo > -1 ? (
-                                    startIndexNo === 0 ? (
-                                        <span><mark>{numberField.substr(0, searchValue.length)}</mark>{numberField.substr(searchValue.length)}</span>
-                                    ) : (
-                                        <span><mark>{numberField.substr(startIndexNo, searchValue.length)}</mark>{numberField.substr(startIndexNo + searchValue.length)}</span>
-                                    )
-                                ) : (<span>{numberField}</span>)
-                            ) : (
-                                numberField
-                            )
+                            highlightSearchValue(doc.mcPkg.mcPkgNo || '')
                         }
                     </PackageNoPart>
                     <DescriptionPart>
-                    {
-                            highlightOn ? (
-                                startIndexDescription > -1 ? (
-                                    startIndexDescription === 0 ? (
-                                        <span><mark>{descriptionField.substr(0, searchValue.length)}</mark>{descriptionField.substr(searchValue.length)}</span>
-                                    ) : (
-                                        <span><mark>{descriptionField.substr(startIndexDescription, searchValue.length)}</mark>{descriptionField.substr(startIndexDescription + searchValue.length)}</span>
-                                    )
-                                ) : (<span>{descriptionField}</span>)
-                            ) : (
-                                descriptionField
-                            )
+                        {
+                            highlightSearchValue(doc.mcPkg.description || '')
                         }
                     </DescriptionPart>
                 </DescriptionCell>
@@ -214,7 +153,6 @@ const QuickSearch = (): JSX.Element => {
         } else {
             setDisplayFlyout(false);
         }
-
     }, [currentItem])
 
     const columns = [
@@ -230,24 +168,6 @@ const QuickSearch = (): JSX.Element => {
     const {
         apiClient
     } = useQuickSearchContext();
-
-    const debounceSearchHandler = useCallback(
-        debounce((value: string) => {
-            if (value.length > 2) {
-                setSearching(true);
-                apiClient.doSearch(value).then((searchResult: SearchResult) => {
-                    setSearchResult(searchResult);
-                    setFilteredItems(searchResult.items);
-                    prepareFilters(searchResult.items || []);
-                }).finally(() => {
-                    setSearching(false);
-                });
-            } else {
-                setSearchResult(null);
-            }
-        }, 500),
-        []
-    );
 
     const clearFilters = (): void => {
         setSelectedTypes([]);
@@ -268,22 +188,6 @@ const QuickSearch = (): JSX.Element => {
         const types = [...new Set(items.map((res => res.type)))];
         types.length > 0 ? setFilterTypes(types as string[]) : setFilterTypes([]);
     }
-
-    // const handleOnChange = useCallback((e: { target: { value: string; }; }) => {
-    //     const searchVal = e.target.value;
-
-    //     if (!searchVal) {
-    //         setFilterPlants([]);
-    //         setFilterTypes([]);
-    //         setShowFilter(false);
-    //     }
-
-    //     setCurrentItem(null);
-    //     clearFilters();
-    //     setSearchValue(searchVal);
-    //     debounceSearchHandler(searchVal);
-    // }, [debounceSearchHandler])
-
 
     const onCheckboxPlantFilterChange = (plant: string, checked: boolean): void => {
         if (checked) {
@@ -353,29 +257,6 @@ const QuickSearch = (): JSX.Element => {
                     </SortOrder>
                 </TopDiv>
 
-                {/* <QuickSearchSearchRow>
-                    <SearchAndFilter>
-                        <StyledSearch onChange={handleOnChange} name="procosys-qs" id="procosys-qs" autocomplete="on" autoFocus value={searchValue}></StyledSearch>
-                        {searchResult && filteredItems.length > 0 && (
-                            <>
-                                <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
-                                {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
-                                    <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
-                                )}
-                                <SortOrder>
-                                    <NativeSelect
-                                        id="sort-by-select"
-                                        label="Sort by"
-                                    >
-                                        <option>Relevance</option>
-                                        <option>Date</option>
-                                    </NativeSelect>
-                                </SortOrder>
-                            </>
-                        )}
-                    </SearchAndFilter>
-
-                </QuickSearchSearchRow> */}
                 <FiltersAndSortRow currentItem={currentItem}>
                     <SelectedFilters>
                         {selectedPlants && (

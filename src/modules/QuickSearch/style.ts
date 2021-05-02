@@ -7,7 +7,7 @@ import { ContentDocument } from './http/QuickSearchApiClient';
 import { Accordion } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 
-const { AccordionItem, AccordionHeader, AccordionPanel } = Accordion;
+const { AccordionHeader, AccordionPanel } = Accordion;
 
 export const Container = styled.div`
     display: flex;
@@ -63,30 +63,6 @@ export const Header = styled.header<{ filterActive: boolean }>`
             color: ${tokens.colors.interactive.primary__resting.rgba};
         }
     `}`;
-
-
-export const SearchAndFilter = styled.div`
-    display: flex;
-    padding-bottom: 10px;
-    flex: 1 1 100%;
-    flex-wrap: wrap;
-    align-items: center;
-`;
-
-export const QuickSearchSearchRow = styled.div`
-    margin-top: 30px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;    
-`;
-
-export const StyledSearch = styled(Search)`
-    margin-right: 50px;
-    display: flex;
-    max-width: 500px;
-    min-width: 250px;
-    margin-bottom: 20px;
-`;
 
 export const SortOrder = styled.div`
     display: flex;
@@ -209,6 +185,10 @@ export const DescriptionPart = styled.div`
     display: flex;
     align-items: flex-start;
     flex: 1 1;
+
+    mark {
+        background-color: #ffff81;
+    }
 `;
 
 export const PackageNoPart = styled.div`

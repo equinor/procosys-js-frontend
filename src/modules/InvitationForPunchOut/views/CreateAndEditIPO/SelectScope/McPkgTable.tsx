@@ -1,4 +1,4 @@
-import { Container, Search, TopContainer } from './Table.style';
+import { Container, McPkgTableContainer, Search, TopContainer } from './Table.style';
 import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -178,6 +178,7 @@ const McPkgTable = forwardRef(({
             }
             { !isLoading &&
 
+            <McPkgTableContainer>
                 <ProcosysTable
                     ref={tableRef}
                     columns={columns}
@@ -197,6 +198,7 @@ const McPkgTable = forwardRef(({
                     }
                     pageSize={10}
                 />
+            </McPkgTableContainer>
             }
         </Container>
     );

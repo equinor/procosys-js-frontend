@@ -41,3 +41,7 @@ export const OverflowColumn = styled.div`
     text-overflow: ellipsis;
     overflow: hidden;
 `;
+
+export const AttachmentsTableContainer = styled.div`
+    height: 35vh;
+`;

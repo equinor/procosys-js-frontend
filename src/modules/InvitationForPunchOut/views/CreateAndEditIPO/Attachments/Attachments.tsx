@@ -1,19 +1,19 @@
-import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
+import { AddAttachmentContainer, AttachmentsTableContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
 import { Button, Typography } from '@equinor/eds-core-react';
 import React, { useRef } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
 import { getFileName, getFileTypeIconName } from '../../utils';
 
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import { ComponentName } from '../../enums';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { OverflowColumn } from '@procosys/modules/Preservation/views/ScopeOverview/TagFlyout/HistoryTab/HistoryTab.style';
+import ProcosysTable from '@procosys/components/Table';
+import { Tooltip } from '@equinor/eds-core-react';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import ProcosysTable from '@procosys/components/Table';
-import { TableOptions, UseTableRowProps } from 'react-table';
-import { OverflowColumn } from '@procosys/modules/Preservation/views/ScopeOverview/TagFlyout/HistoryTab/HistoryTab.style';
-import { Tooltip } from '@equinor/eds-core-react';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -154,16 +154,18 @@ const Attachments = ({
             </DragAndDropContainer>
             <Typography variant='h5'>Attachments</Typography>
 
-            <ProcosysTable
-                columns={columns}
-                data={attachments.filter((attachment) => !attachment.toBeDeleted)}
-                clientPagination={true}
-                clientSorting={true}
-                maxRowCount={attachments.filter((attachment) => !attachment.toBeDeleted).length || 0}
-                pageIndex={0}
-                pageSize={10}
-                rowSelect={false}
-            />
+            <AttachmentsTableContainer>
+                <ProcosysTable
+                    columns={columns}
+                    data={attachments.filter((attachment) => !attachment.toBeDeleted)}
+                    clientPagination={true}
+                    clientSorting={true}
+                    maxRowCount={attachments.filter((attachment) => !attachment.toBeDeleted).length || 0}
+                    pageIndex={0}
+                    pageSize={10}
+                    rowSelect={false}
+                />
+            </AttachmentsTableContainer>
         </FormContainer>
     </Container>);
 };

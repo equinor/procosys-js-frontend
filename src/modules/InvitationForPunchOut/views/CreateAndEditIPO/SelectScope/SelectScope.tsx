@@ -13,7 +13,7 @@ interface SelectScopeProps {
     selectedCommPkgScope: CommPkgRow[];
     setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
     selectedMcPkgScope: McScope;
-    setSelectedMcPkgScope: (selectedMckgScope: McScope) => void;
+    setSelectedMcPkgScope: React.Dispatch<React.SetStateAction<McScope>>;
     commPkgNo: string | null;
     projectName: string;
 }
@@ -46,7 +46,7 @@ const SelectScope = ({
             if (selectedIndex > -1) {
                 // remove from selected mcPkgs
                 const newSelected = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
-                const newSelectedMcPkgScope = { commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
+                const newSelectedMcPkgScope = { system: newSelected.length > 0 ? selectedMcPkgScope.system : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
                 setSelectedMcPkgScope(newSelectedMcPkgScope);
             }
         }

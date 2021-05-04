@@ -89,7 +89,7 @@ const CreateIPO = (): JSX.Element => {
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
-        commPkgNoParent: null,
+        system: null,
         multipleDisciplines: false,
         selected: []
     });
@@ -208,16 +208,7 @@ const CreateIPO = (): JSX.Element => {
         });
     };
 
-    const getMcScope = (): string[] | null => {
-        const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
-        let mcPkgScope = null;
-        if (commPkgNoContainingMcScope) {
-            mcPkgScope = selectedMcPkgScope.selected.map(mc => {
-                return mc.mcPkgNo;
-            });
-        }
-        return mcPkgScope;
-    };
+    const getMcScope = (): string[] | null => selectedMcPkgScope.selected.map(mc => mc.mcPkgNo);
 
     const getParticipants = (): ParticipantDto[] => {
         return participants.map((p, i) => {
@@ -292,7 +283,7 @@ const CreateIPO = (): JSX.Element => {
                 <Loading title="Creating new IPO" />
             </Container>
         );
-    };
+    }
 
     return (
         <CreateAndEditIPO

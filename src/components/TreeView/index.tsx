@@ -28,7 +28,7 @@ interface NodeData extends TreeViewNode {
     children?: NodeData[];
 }
 
-interface TreeViewProps {
+export interface TreeViewProps {
     rootNodes: TreeViewNode[];
     dirtyNodeId?: number | string;
     resetDirtyNode?: () => void;

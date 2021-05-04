@@ -46,7 +46,7 @@ describe('<ProcosysTable />', () => {
                 onSort={() => { }}
                 onSelectedChange={() => { }}
                 pageIndex={0}
-                pageSize={10}
+                pageSize={100}
                 columns={columns}
                 maxRowCount={maxRows}
                 data={tags.tags}
@@ -55,8 +55,8 @@ describe('<ProcosysTable />', () => {
                 pageCount={1} />
         );
 
-        expect(queryAllByText('ACPF').length).toBe(6);
-        expect(queryAllByRole('row').length).toBe(11); // data + header
-        expect(queryAllByText('0000-ML-11-0396-CA2-00-A').length).toBe(1);
+        expect(queryAllByText('ACPF').length).toBe(12);
+        expect(queryAllByRole('row').length).toBe(24); // data + header
+        expect(queryAllByText('SX86M90011A').length).toBe(1);
     });
 });

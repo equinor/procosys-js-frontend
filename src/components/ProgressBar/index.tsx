@@ -8,7 +8,7 @@ type ProgressBarSteps = {
     isCompleted: boolean;
 }
 
-interface ProgressBarProps {
+export interface ProgressBarProps {
     steps: ProgressBarSteps[];
     currentStep: number;
     goTo?: (stepNo: number) => void;

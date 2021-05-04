@@ -14,7 +14,7 @@ export type SelectItem = {
     email?: string;
 };
 
-type SelectProps = {
+export type SelectProps = {
     data: SelectItem[];
     disabled?: boolean;
     onChange?: (newValue: any) => void;

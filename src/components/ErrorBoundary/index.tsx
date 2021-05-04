@@ -4,7 +4,7 @@ import { AnalyticsContext } from '@procosys/core/services/Analytics/AnalyticsCon
 import { ErrorBoundaryContainer } from './ErrorBoundary.style';
 import { Typography } from '@equinor/eds-core-react';
 
-type ErrorProps = {
+export type ErrorProps = {
     message?: string;
     children: React.ReactChild;
 }

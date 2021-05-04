@@ -3,7 +3,7 @@ import React from 'react';
 import Spinner from '../../components/Spinner';
 import { Typography } from '@equinor/eds-core-react';
 
-type LoadingProps = {
+export type LoadingProps = {
     title?: string;
 }
 

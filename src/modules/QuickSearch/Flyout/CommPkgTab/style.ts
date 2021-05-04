@@ -48,3 +48,8 @@ export const StyledCardHeader = styled(CardHeader)`
         font-weight: 500;
     }
 `;
+
+export const LoadingDiv = styled.div`
+    text-align: center;
+    width: 100%;
+`;

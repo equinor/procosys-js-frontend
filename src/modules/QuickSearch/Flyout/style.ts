@@ -24,6 +24,7 @@ export const Tabs = styled.nav`
 export const StyledSideSheet = styled(SideSheet)`
     top: 116px;
     height: calc(100% - 116px);
+    overflow: auto;
     ${Breakpoints.TABLET} {
         top: 66px;
     }

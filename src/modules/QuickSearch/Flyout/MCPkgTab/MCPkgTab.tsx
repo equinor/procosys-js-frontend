@@ -51,6 +51,15 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
                 </StyledCardHeader>
             </StyledCard100>
 
+            <StyledCard100>
+                <CardHeader>
+                    <CardHeaderTitle>
+                        <Typography variant="caption">Description</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
+                    </CardHeaderTitle>
+                </CardHeader>
+            </StyledCard100>
+
             <StyledCard50>
                 <CardHeader>
                     <CardHeaderTitle>
@@ -81,15 +90,6 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
             <StyledCard100>
                 <CardHeader>
                     <CardHeaderTitle>
-                        <Typography variant="caption">Description</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
-                    </CardHeaderTitle>
-                </CardHeader>
-            </StyledCard100>
-
-            <StyledCard100>
-                <CardHeader>
-                    <CardHeaderTitle>
                         <Typography variant="caption">Area</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.area || '')}</Typography>
                     </CardHeaderTitle>
@@ -101,6 +101,15 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
                     <CardHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.responsible || '')}</Typography>
+                    </CardHeaderTitle>
+                </CardHeader>
+            </StyledCard100>
+
+            <StyledCard100>
+                <CardHeader>
+                    <CardHeaderTitle>
+                        <Typography variant="caption">Remark</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.remark || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -125,7 +134,7 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
                 <CardHeader>
                     <CardHeaderTitle>
                         <Typography variant="caption">Description.</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.commPkgDescription || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
                     </CardHeaderTitle>
                 </CardHeader>
             </StyledCard100>

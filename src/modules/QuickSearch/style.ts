@@ -131,6 +131,8 @@ export const TypeIndicator = styled.div`
 
 export const DescriptionCell = styled.div`
     display: flex;
+    height: 100%;
+    
     justify-content: flex-start;
     align-items: center;
     width: calc(100% - 4px);
@@ -138,7 +140,12 @@ export const DescriptionCell = styled.div`
     cursor: pointer;
     &.selected {
         background-color: #e6faec;
-        box-shadow: 0px 0px 0px 7px #e6faec;
+    }
+    ${Breakpoints.MOBILE} {
+        padding: 1px;
+    }
+    ${Breakpoints.TABLET} {
+        padding: 1px;
     }
 `;
 

@@ -51,7 +51,7 @@ const Header: React.FC = (): JSX.Element => {
     const debounceSearchHandler = useCallback(
         debounce((value: string) => {
             if (value.length > 2) {
-                const url = 'quicksearch?query=' + value + "&dosearch=true";
+                const url = 'quicksearch?query=' + value;
                 history.push(url);
             }
         }, 1000),

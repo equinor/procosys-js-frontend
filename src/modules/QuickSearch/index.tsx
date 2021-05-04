@@ -1,4 +1,4 @@
-import { NativeSelect, Typography } from '@equinor/eds-core-react';
+import { NativeSelect } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
@@ -58,7 +58,7 @@ const QuickSearch = (): JSX.Element => {
             const searchVal = values.query as string;
             setSearchValue(searchVal);
 
-            if (values && values.dosearch) {
+            if (values) {
                 if (searchVal.length > 2) {
                     setSearching(true);
                     apiClient.doSearch(searchVal).then((searchResult: SearchResult) => {
@@ -67,11 +67,11 @@ const QuickSearch = (): JSX.Element => {
                         prepareFilters(searchResult.items || []);
                     }).finally(() => {
                         const filteredPlants = [];
-                        if (values.filterPlants && values.filterPlants.length > 0) {
-                            if (typeof(values.filterPlants) === 'string')
-                                filteredPlants.push(values.filterPlants as string);
+                        if (values.plant && values.plant.length > 0) {
+                            if (typeof (values.plant) === 'string')
+                                filteredPlants.push(values.plant as string);
                             else {
-                                (values.filterPlants as string[]).forEach(p => {
+                                (values.plant as string[]).forEach(p => {
                                     filteredPlants.push(p);
                                 })
 
@@ -80,11 +80,11 @@ const QuickSearch = (): JSX.Element => {
                         }
 
                         const filteredTypes = [];
-                        if (values.filterTypes && values.filterTypes.length > 0) {
-                            if (typeof(values.filterTypes) === 'string')
-                                filteredTypes.push(values.filterTypes as string);
+                        if (values.type && values.type.length > 0) {
+                            if (typeof (values.type) === 'string')
+                                filteredTypes.push(values.type as string);
                             else {
-                                (values.filterTypes as string[]).forEach(p => {
+                                (values.type as string[]).forEach(p => {
                                     filteredTypes.push(p);
                                 })
 
@@ -136,7 +136,7 @@ const QuickSearch = (): JSX.Element => {
         if (doc.commPkg) {
 
             return (
-                <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
                     <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
@@ -154,7 +154,7 @@ const QuickSearch = (): JSX.Element => {
         if (doc.mcPkg) {
 
             return (
-                <DescriptionCell className={currentItem && currentItem.id === doc.id ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
                     <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
                         <EdsIcon name='launch' />
@@ -224,7 +224,10 @@ const QuickSearch = (): JSX.Element => {
     const onCheckboxPlantFilterChange = (plant: string, checked: boolean): void => {
         if (checked) {
             setSelectedPlants([...selectedPlants, plant]);
+            history.replaceState(null, '', location.href + '&plant=' + plant)
         } else {
+            const newUrl = decodeURI(location.href).replace('&plant=' + plant, '');
+            history.replaceState(null, '', encodeURI(newUrl));
             setSelectedPlants(selectedPlants.filter(s => s !== plant));
         }
     }
@@ -232,7 +235,10 @@ const QuickSearch = (): JSX.Element => {
     const onCheckboxTypeFilterChange = (type: string, checked: boolean): void => {
         if (checked) {
             setSelectedTypes([...selectedTypes, type]);
+            history.replaceState(null, '', location.href + '&type=' + type)
         } else {
+            const newUrl = location.href.replace('&type=' + type, '');
+            history.replaceState(null, '', newUrl);
             setSelectedTypes(selectedTypes.filter(s => s !== type));
         }
     }
@@ -278,7 +284,7 @@ const QuickSearch = (): JSX.Element => {
                     {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
                         <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
                     )}
-                    <StyledButton onClick={(): void => {generateUrl()}} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
+                    <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
                     <SortOrder>
                         <NativeSelect
                             id="sort-by-select"

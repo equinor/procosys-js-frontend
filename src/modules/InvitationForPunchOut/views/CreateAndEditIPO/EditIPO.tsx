@@ -47,12 +47,12 @@ const EditIPO = (): JSX.Element => {
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [initialSelectedCommPkgScope, setInitialSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
-        commPkgNoParent: null,
+        system: null,
         multipleDisciplines: false,
         selected: []
     });
     const [initialSelectedMcPkgScope, setInitialSelectedMcPkgScope] = useState<McScope>({
-        commPkgNoParent: null,
+        system: null,
         multipleDisciplines: false,
         selected: []
     });
@@ -94,7 +94,7 @@ const EditIPO = (): JSX.Element => {
     useEffect(() => {
         const mcPkgs = selectedMcPkgScope.selected.map(({mcPkgNo}) => mcPkgNo);
         const initialMcPkgs = initialSelectedMcPkgScope.selected.map(({mcPkgNo}) => mcPkgNo);
-        if (JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) || selectedMcPkgScope.commPkgNoParent !== initialSelectedMcPkgScope.commPkgNoParent) {
+        if (JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) || selectedMcPkgScope.system !== initialSelectedMcPkgScope.system) {
             setDirtyStateFor(ComponentName.Scope);
         } else {
             unsetDirtyStateFor(ComponentName.Scope);
@@ -144,16 +144,7 @@ const EditIPO = (): JSX.Element => {
         });
     };
 
-    const getMcScope = (): string[] | null => {
-        const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
-        let mcPkgScope = null;
-        if (commPkgNoContainingMcScope) {
-            mcPkgScope = selectedMcPkgScope.selected.map(mc => {
-                return mc.mcPkgNo;
-            });
-        }
-        return mcPkgScope;
-    };
+    const getMcScope = (): string[] | null => selectedMcPkgScope.selected.map(mc => mc.mcPkgNo);
 
     const getPerson = (participant: Participant): PersonDto | null => {
         if (!participant.person) {
@@ -321,16 +312,17 @@ const EditIPO = (): JSX.Element => {
                 setInitialSelectedCommPkgScope(commPkgScope);
             } else if (invitation.mcPkgScope && invitation.mcPkgScope.length > 0) {
                 //MCPkg
-                const mcPkgScope: McScope = { commPkgNoParent: null, multipleDisciplines: false, selected: [] };
+                const mcPkgScope: McScope = { system: null, multipleDisciplines: false, selected: [] };
 
                 invitation.mcPkgScope.forEach((mcPkg) => {
-                    if (!mcPkgScope.commPkgNoParent) {
-                        mcPkgScope.commPkgNoParent = mcPkg.commPkgNo;
+                    if (!mcPkgScope.system) {
+                        mcPkgScope.system = mcPkg.system;
                     }
                     mcPkgScope.selected.push({
                         mcPkgNo: mcPkg.mcPkgNo,
                         description: mcPkg.description,
                         system: mcPkg.system,
+                        commPkgNo: mcPkg.commPkgNo,
                         discipline: ''
                     });
                 });
@@ -432,7 +424,7 @@ const EditIPO = (): JSX.Element => {
                 <Loading title="Save updated IPO" />
             </Container>
         );
-    };
+    }
 
     if (isLoading) {
         return (
@@ -440,7 +432,7 @@ const EditIPO = (): JSX.Element => {
                 <Loading title="Fetching IPO" />
             </CenterContainer>
         );
-    };
+    }
 
     return (
         <CreateAndEditIPO

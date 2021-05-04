@@ -1,8 +1,6 @@
 import ProcosysTable from '..';
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
 import { render } from '@testing-library/react';
-import theme from '../../../assets/theme';
 
 const tags = require('./data.json');
 
@@ -39,15 +37,9 @@ const columns = [
 
 const maxRows = 10;
 
-const renderWithTheme = (Component) => {
-    return render(
-        <ThemeProvider theme={theme}>{Component}</ThemeProvider>
-    );
-};
-
 describe('<ProcosysTable />', () => {
     it('Render test', async () => {
-        const { queryAllByRole, queryAllByText } = renderWithTheme(
+        const { queryAllByRole, queryAllByText } = render(
 
             <ProcosysTable
                 setPageSize={() => { }}

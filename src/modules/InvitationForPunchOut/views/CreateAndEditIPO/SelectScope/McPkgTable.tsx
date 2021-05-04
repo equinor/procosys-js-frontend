@@ -1,19 +1,19 @@
-import { Container, Search, TopContainer } from './Table.style';
+import { Container, McPkgTableContainer, Search, TopContainer } from './Table.style';
 import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Loading from '@procosys/components/Loading';
+import ProcosysTable from '@procosys/components/Table';
 import { TextField } from '@equinor/eds-core-react';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-import { TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable from '@procosys/components/Table';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;
-    setSelectedMcPkgScope: (selectedCommPkgScope: McScope) => void;
+    setSelectedMcPkgScope: React.Dispatch<React.SetStateAction<McScope>>;
     projectName: string;
     commPkgNo: string;
 }
@@ -54,6 +54,7 @@ const McPkgTable = forwardRef(({
                             description: mcPkg.description,
                             discipline: mcPkg.disciplineCode,
                             system: mcPkg.system,
+                            commPkgNo: commPkgNo,
                             tableData: {
                                 isSelected: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
                             }
@@ -86,7 +87,7 @@ const McPkgTable = forwardRef(({
         if (selectedIndex > -1) {
             // remove from selected mcPkgs
             const newSelected = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
-            const newSelectedMcPkgScope = { commPkgNoParent: newSelected.length > 0 ? selectedMcPkgScope.commPkgNoParent : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
+            const newSelectedMcPkgScope = { system: newSelected.length > 0 ? selectedMcPkgScope.system : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
             setSelectedMcPkgScope(newSelectedMcPkgScope);
 
             tableRef && tableRef.current && tableRef.current.UnselectRow(tableDataIndex);
@@ -101,7 +102,17 @@ const McPkgTable = forwardRef(({
 
 
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
-        setSelectedMcPkgScope({ commPkgNoParent: commPkgNo, multipleDisciplines: multipleDisciplines(rowData), selected: rowData });
+        if (rowData.length === 0) return;
+
+        if (!selectedMcPkgScope.system) {
+                setSelectedMcPkgScope((selectedScope: McScope) => {
+                    return { ...selectedScope, system: rowData[0].system, selected: [...selectedScope.selected, ...rowData] }
+                });
+        } else if (selectedMcPkgScope.system === rowData[0].system) {
+            setSelectedMcPkgScope((selectedScope: McScope) => {
+                return { ...selectedScope, selected: [...selectedScope.selected, ...rowData] }
+            });
+        }
     };
 
     const removeAllSelectedMcPkgsInScope = (): void => {
@@ -110,16 +121,15 @@ const McPkgTable = forwardRef(({
             mcPkgNos.push(m.mcPkgNo);
         });
         const newSelectedMcPkgs = selectedMcPkgScope.selected.filter(item => !mcPkgNos.includes(item.mcPkgNo));
-        setSelectedMcPkgScope({ commPkgNoParent: null, multipleDisciplines: false, selected: newSelectedMcPkgs });
+        setSelectedMcPkgScope({ system: newSelectedMcPkgs.length > 0 ? newSelectedMcPkgs[0].system : null, multipleDisciplines: false, selected: newSelectedMcPkgs });
     };
 
 
     const rowSelectionChangedMc = (rowData: McPkgRow[], ids: Record<string, boolean>): void => {
-        if (rowData.length == 0 && availableMcPkgs.length > 0) {
+        if (availableMcPkgs.length > 0) {
             removeAllSelectedMcPkgsInScope();
-        } else {
             addAllMcPkgsInScope(rowData);
-        }
+        } 
     };
 
     const getDescriptionColumn = (row: TableOptions<McPkgRow>): JSX.Element => {
@@ -145,8 +155,6 @@ const McPkgTable = forwardRef(({
         },
     ];
 
-
-
     return (
         <Container>
             <TopContainer>
@@ -170,6 +178,7 @@ const McPkgTable = forwardRef(({
             }
             { !isLoading &&
 
+            <McPkgTableContainer>
                 <ProcosysTable
                     ref={tableRef}
                     columns={columns}
@@ -189,6 +198,7 @@ const McPkgTable = forwardRef(({
                     }
                     pageSize={10}
                 />
+            </McPkgTableContainer>
             }
         </Container>
     );

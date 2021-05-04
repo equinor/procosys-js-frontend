@@ -11,7 +11,7 @@
     },
     "extends": [
         "eslint:recommended",
-        "prettier/react",
+        "prettier",
         "plugin:react/recommended"
     ],
     "globals": {
@@ -37,10 +37,10 @@
             ],
             "extends": [
                 "plugin:@typescript-eslint/recommended",
-                "prettier/@typescript-eslint"
+                "prettier"
             ],
             "plugins": [
-                "@typescript-eslint"
+                "@typescript-eslint"    
             ],
             "rules": {
                 "require-atomic-updates": "off",

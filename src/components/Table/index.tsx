@@ -39,6 +39,7 @@ export interface TableSorting {
 
 export interface TableProperties<T extends Record<string, unknown>> extends TableOptions<T> {
     columns: ColumnInstance<T>[];
+    pageCount: number;
     loading: boolean;
     data: T[];
     maxRowCount: number;
@@ -86,6 +87,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     );
 
     const [counter, _setCounter] = useState<number>(1);
+    const [rendered, setRendered] = useState<boolean>(false);
     const counterRef = useRef<number>(counter);
 
     const setCounter = (newValue: number): void => {
@@ -127,7 +129,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
             manualPagination: props.clientPagination ? false : true,
             defaultColumn,
             manualSortBy: props.clientSorting ? false : true,
-            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {}, disableSelectAll: props.disableSelectAll }
+            initialState: { pageIndex: props.pageIndex, pageSize: props.pageSize, selectedRowIds: props.selectedRows || {}, disableSelectAll: props.disableSelectAll, sortBy: props.orderBy ? [props.orderBy] : [] }
         }, ...hooks);
 
     const {
@@ -143,16 +145,17 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     } = tableInstance;
 
     useEffect(() => {
-        if (tableInstance.onSort) {
+        if (sortBy.length > 0 && tableInstance.onSort && (sortBy[0].id !== props.orderBy?.id || sortBy[0].desc !== props.orderBy?.desc)) {
             tableInstance.onSort(sortBy[0]);
+            setRendered(true);
         }
-        rowHeights.current = {};
-        setCounter(counter + 1);
-    }, [tableInstance.onSort, sortBy]);
+        if (sortBy.length === 0 && tableInstance.onSort) {
+            if (rendered) {
+                tableInstance.onSort([]);
+            }
+        }
 
-    useEffect(() => {
-        rowHeights.current = {};
-    }, [tableInstance.state.filters]);
+    }, [tableInstance.onSort, sortBy]);
 
     useEffect(() => {
         if (tableInstance.state.columnResizing.isResizingColumn === null) {
@@ -236,9 +239,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                 {row.cells.map((cell) => (
                     <TableCell align={cell.column.align} {...cell.getCellProps()} key={cell.getCellProps().key} onClick={cellClickHandler(cell)}>
                         {
-                            <div>
-                                {cell.render('Cell')}
-                            </div>
+                            cell.render('Cell')
                         }
                     </TableCell>
                 ))}
@@ -336,8 +337,8 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                                         {column.canSort && column.defaultCanSort !== false ? (
 
                                                             <TableSortLabel
-                                                                active={column.isSorted || column.id === props.orderBy?.id.toString()}
-                                                                direction={column.id === props.orderBy?.id.toString() ? props.orderBy?.desc ? 'desc' : 'asc' : column.isSortedDesc ? 'desc' : 'asc'}
+                                                                active={column.isSorted || (props.orderBy?.id !== undefined && column.id === props.orderBy?.id.toString())}
+                                                                direction={props.orderBy?.id !== undefined && column.id === props.orderBy?.id.toString() ? props.orderBy?.desc ? 'desc' : 'asc' : column.isSortedDesc ? 'desc' : 'asc'}
                                                                 {...column.getSortByToggleProps()}
                                                             >
                                                                 {column.render('Header')}

@@ -88,6 +88,7 @@ export interface McPkgRow {
     mcPkgNo: string;
     description: string;
     system: string;
+    commPkgNo: string;
     discipline: string;
     tableData?: {
         isSelected: boolean;
@@ -95,7 +96,7 @@ export interface McPkgRow {
 }
 
 export interface McScope {
-    commPkgNoParent: string | null;
+    system: string | null;
     multipleDisciplines: boolean;
     selected: McPkgRow[];
 }

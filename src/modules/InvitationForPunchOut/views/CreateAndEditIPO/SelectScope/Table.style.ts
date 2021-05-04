@@ -90,3 +90,7 @@ export const MCHeader = styled.div`
 export const CommPkgTableContainer = styled.div`
     height: 48vh;
 `;
+
+export const McPkgTableContainer = styled.div`
+    height: 48vh;
+`;

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Container, Field, NextInfo, Section } from './Requirements.style';
+import React, { useEffect, useState } from 'react';
 import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
-import RequirementNumberField from './RequirementNumberField';
-import RequirementCheckboxField from './RequirementCheckboxField';
+
 import PreservationIcon from '../../../../../../components/PreservationIcon';
-import { Container, Section, Field, NextInfo } from './Requirements.style';
-import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 import RequirementAttachmentField from './RequirementAttachmentField';
+import RequirementCheckboxField from './RequirementCheckboxField';
+import RequirementNumberField from './RequirementNumberField';
+import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 interface RequirementProps {
@@ -197,13 +197,13 @@ const Requirements = ({
 
     const getCheckboxValue = (requirementId: number, field: TagRequirementField): boolean | undefined => {
         const requirement = requirementValues.find(value => value.requirementId == requirementId);
-        if (requirement && field.currentValue) {
+        if (requirement) {
             const fieldIndex = requirement.checkBoxValues.findIndex(f => f.fieldId == field.id);
             if (fieldIndex > -1) {
                 return requirement.checkBoxValues[fieldIndex].isChecked;
             }
         }
-        return field.currentValue && field.currentValue.isChecked;
+        return field.currentValue ? field.currentValue.isChecked : false;
     };
 
     const getRequirementField = (requirementId: number, field: TagRequirementField): JSX.Element => {

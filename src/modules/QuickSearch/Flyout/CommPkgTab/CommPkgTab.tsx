@@ -93,6 +93,15 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
             <StyledCard100>
                 <CardHeader>
                     <CardHeaderTitle>
+                        <Typography variant="caption">Remark</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.remark || '')}</Typography>
+                    </CardHeaderTitle>
+                </CardHeader>
+            </StyledCard100>
+
+            <StyledCard100>
+                <CardHeader>
+                    <CardHeaderTitle>
                         <Typography variant="caption">Path</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.path || '')}</Typography>
                     </CardHeaderTitle>

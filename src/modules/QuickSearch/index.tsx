@@ -30,6 +30,7 @@ import {
 } from './style';
 import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -52,6 +53,7 @@ const QuickSearch = (): JSX.Element => {
 
     useEffect(() => {
         const values = queryString.parse(search)
+        console.log('values', values);
         if (values && values.query) {
             const searchVal = values.query as string;
             setSearchValue(searchVal);
@@ -64,6 +66,32 @@ const QuickSearch = (): JSX.Element => {
                         setFilteredItems(searchResult.items);
                         prepareFilters(searchResult.items || []);
                     }).finally(() => {
+                        const filteredPlants = [];
+                        if (values.filterPlants && values.filterPlants.length > 0) {
+                            if (typeof(values.filterPlants) === 'string')
+                                filteredPlants.push(values.filterPlants as string);
+                            else {
+                                (values.filterPlants as string[]).forEach(p => {
+                                    filteredPlants.push(p);
+                                })
+
+                            }
+                            setSelectedPlants(filteredPlants);
+                        }
+
+                        const filteredTypes = [];
+                        if (values.filterTypes && values.filterTypes.length > 0) {
+                            if (typeof(values.filterTypes) === 'string')
+                                filteredTypes.push(values.filterTypes as string);
+                            else {
+                                (values.filterTypes as string[]).forEach(p => {
+                                    filteredTypes.push(p);
+                                })
+
+                            }
+                            setSelectedTypes(filteredTypes);
+                        }
+
                         setSearching(false);
                     });
                 } else {
@@ -72,6 +100,11 @@ const QuickSearch = (): JSX.Element => {
             }
         }
     }, [])
+
+    const generateUrl = (): void => {
+        navigator.clipboard.writeText(location.href);
+        showSnackbarNotification('Link copied to clipboard.', 5000);
+    }
 
     const navigateToItem = (item: ContentDocument): void => {
         // let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
@@ -179,7 +212,6 @@ const QuickSearch = (): JSX.Element => {
             clearFilters();
             return;
         }
-
         // plants
         const plants = [...new Set(items.map((res => res.plantName)))];
         plants.length > 0 ? setFilterPlants(plants as string[]) : setFilterPlants([]);
@@ -246,6 +278,7 @@ const QuickSearch = (): JSX.Element => {
                     {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
                         <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
                     )}
+                    <StyledButton onClick={(): void => {generateUrl()}} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
                     <SortOrder>
                         <NativeSelect
                             id="sort-by-select"

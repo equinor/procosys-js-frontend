@@ -1,4 +1,3 @@
-import { NativeSelect } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
@@ -22,9 +21,7 @@ import {
     ResultsContainer,
     SearchContainer,
     SelectedFilters,
-    SortOrder,
     StyledButton,
-    TypeIndicator,
     TopDiv,
     StyledHeader
 } from './style';

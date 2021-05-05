@@ -6,7 +6,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Accordion } from '@equinor/eds-core-react';
 import Checkbox from '@procosys/components/Checkbox';
 
-const { AccordionItem, AccordionHeader, AccordionPanel } = Accordion;
+const { AccordionItem } = Accordion;
 
 export interface QuickSearchFiltersProps {
     plantFilterExpanded: boolean;

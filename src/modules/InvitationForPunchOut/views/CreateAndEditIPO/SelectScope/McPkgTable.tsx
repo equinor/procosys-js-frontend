@@ -91,7 +91,6 @@ const McPkgTable = forwardRef(({
     const addAllMcPkgsInScope = (rowData: McPkgRow[]): void => {
         if (rowData.length === 0) return;
 
-        console.log("asdasdada")
         if (!selectedMcPkgScope.system) {
                 setSelectedMcPkgScope((selectedScope: McScope) => {
                     return { ...selectedScope, system: rowData[0].system, multipleDisciplines: multipleDisciplines([...selectedScope.selected, ...rowData]), selected: [...selectedScope.selected, ...rowData] }

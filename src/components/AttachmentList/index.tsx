@@ -11,7 +11,7 @@ import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 
 const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
 
-interface AttachmentListProps {
+export interface AttachmentListProps {
     attachments: Attachment[];
     disabled: boolean;
     addAttachments?: (files: FileList) => void;

@@ -2,7 +2,7 @@ import AttachmentList from '../index';
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-const attachmentsMock = [
+export const attachmentsMock = [
     {
         fileName: 'Attachment 1',
         id: 1,

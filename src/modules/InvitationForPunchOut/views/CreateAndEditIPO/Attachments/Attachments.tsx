@@ -1,19 +1,13 @@
 import { Container, FormContainer } from './Attachments.style';
-import { Typography } from '@equinor/eds-core-react';
-import React, { useRef } from 'react';
-import { getFileName, getFileTypeIconName } from '../../utils';
-
+import React from 'react';
+import { TableOptions } from 'react-table';
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 import { ComponentName } from '../../enums';
-import EdsIcon from '@procosys/components/EdsIcon';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import { TableOptions, UseTableRowProps } from 'react-table';
 import AttachmentList from '@procosys/components/AttachmentList';
-import { OverflowColumn } from '@procosys/modules/Preservation/views/ScopeOverview/TagFlyout/HistoryTab/HistoryTab.style';
-import { Tooltip } from '@equinor/eds-core-react';
 
 interface AttachmentsProps {
     attachments: Attachment[];

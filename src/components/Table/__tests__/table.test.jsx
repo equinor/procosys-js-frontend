@@ -1,8 +1,6 @@
 import ProcosysTable from '..';
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
 import { render } from '@testing-library/react';
-import theme from '../../../assets/theme';
 
 const tags = require('./data.json');
 
@@ -39,22 +37,16 @@ const columns = [
 
 const maxRows = 10;
 
-const renderWithTheme = (Component) => {
-    return render(
-        <ThemeProvider theme={theme}>{Component}</ThemeProvider>
-    );
-};
-
 describe('<ProcosysTable />', () => {
     it('Render test', async () => {
-        const { queryAllByRole, queryAllByText } = renderWithTheme(
+        const { queryAllByRole, queryAllByText } = render(
 
             <ProcosysTable
                 setPageSize={() => { }}
                 onSort={() => { }}
                 onSelectedChange={() => { }}
                 pageIndex={0}
-                pageSize={10}
+                pageSize={100}
                 columns={columns}
                 maxRowCount={maxRows}
                 data={tags.tags}
@@ -63,8 +55,8 @@ describe('<ProcosysTable />', () => {
                 pageCount={1} />
         );
 
-        expect(queryAllByText('ACPF').length).toBe(6);
-        expect(queryAllByRole('row').length).toBe(11); // data + header
-        expect(queryAllByText('0000-ML-11-0396-CA2-00-A').length).toBe(1);
+        expect(queryAllByText('ACPF').length).toBe(12);
+        expect(queryAllByRole('row').length).toBe(24); // data + header
+        expect(queryAllByText('SX86M90011A').length).toBe(1);
     });
 });

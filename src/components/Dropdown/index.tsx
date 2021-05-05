@@ -4,13 +4,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
 
-type DropdownProps = {
+export interface DropdownProps {
     disabled?: boolean;
     text?: string;
     children?: React.ReactNode;
     Icon?: JSX.Element;
     onFilter?: (input: string) => void;
     label?: string;
+    /** empty value and 'form' are the only implemented variants */
     variant?: string;
     meta?: string;
     maxHeight?: string;
@@ -18,10 +19,10 @@ type DropdownProps = {
 
 const KEYCODE_ESCAPE = 27;
 
-const Select: React.FC<DropdownProps> = ({
+const Dropdown: React.FC<DropdownProps> = ({
     disabled = false,
     text = '',
-    Icon = <KeyboardArrowDownIcon />,
+    Icon,
     children,
     onFilter,
     label,
@@ -33,6 +34,8 @@ const Select: React.FC<DropdownProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     children = children ? React.Children.toArray(children) : [];
+
+    if(!Icon) Icon = <KeyboardArrowDownIcon />;
 
     useClickOutsideNotifier(() => {
         if (onFilter) {
@@ -124,4 +127,4 @@ const Select: React.FC<DropdownProps> = ({
     );
 };
 
-export default Select;
+export default Dropdown;

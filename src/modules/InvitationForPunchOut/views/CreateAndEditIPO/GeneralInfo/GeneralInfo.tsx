@@ -77,9 +77,7 @@ const GeneralInfo = ({
     }, [filterForProjects]);
 
     const setPoTypeForm = (value: string): void => {
-        if (!fromMain) {
-            clearScope();
-        }
+        clearScope();
         const newPoType = poTypes.find((p: SelectItem) => p.value === value);
         if (newPoType) {
             setGeneralInfo(gi => { return { ...gi, poType: newPoType }; });

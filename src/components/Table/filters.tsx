@@ -1,10 +1,11 @@
 import { CellValue, IdType, UseTableRowProps } from 'react-table';
 import { MenuItem, Select } from '@material-ui/core';
+
 import { ColumnFilter } from './style';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import React from 'react';
-import styled from 'styled-components';
 import { TextField } from '@equinor/eds-core-react';
+import styled from 'styled-components';
 
 const TableFilterField = styled(TextField)`
     width: calc(100% - 5px);
@@ -26,10 +27,11 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: any[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
+export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, filterPlaceholder='' } }: { column: { filterValue: string, preFilteredRows: any[], setFilter: (a: string | undefined) => void, filterPlaceholder?: string } }): JSX.Element => {
     return (
         <ColumnFilter>
             <TableFilterField
+                placeholder={filterPlaceholder}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setFilter(e.target.value || undefined);
                 }}

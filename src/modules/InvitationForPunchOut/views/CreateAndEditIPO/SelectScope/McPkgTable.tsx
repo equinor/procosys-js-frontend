@@ -132,7 +132,8 @@ const McPkgTable = forwardRef(({
             accessor: 'mcPkgNo',
             filter: (rows: UseTableRowProps<McPkgRow>[], id: number, filterType: string): UseTableRowProps<McPkgRow>[] => {
                 return rows.filter((row) => { return row.original.mcPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
-            }
+            },
+            filterPlaceholder: "Search for mc pkg no"
         },
         {
             Header: 'Description',

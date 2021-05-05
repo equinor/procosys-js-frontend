@@ -3,7 +3,7 @@ import { Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useState } from 'react';
 import { ContentDocument, SearchResult } from '../../http/QuickSearchApiClient';
 import { LinkIndicator } from '../MCPkgTab/style';
-import { Container, LoadingDiv, MCPackageEntry, StyledCard100, StyledCardHeader, StyledDivider, StyledHeaderTitle } from './style';
+import { Container, LoadingDiv, MCPackageEntry, StyledCard100, StyledCardHeader, StyledDivider, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Highlighter from 'react-highlight-words';
 import { useQuickSearchContext } from '../../context/QuickSearchContext';
@@ -23,8 +23,7 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
     const { apiClient } = useQuickSearchContext();
 
     const navigateToMCPkg = (mcPkgNo: string): void => {
-        // let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
-        let url = 'https://procosysqp.equinor.com' + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
+        let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
         url += "/MCPkg?mcPkgNo=" + mcPkgNo + "&project=" + commPkg.project;
         window.open(url, '_blank');
     };
@@ -61,37 +60,37 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
                             <MCPackageEntry key={pkg.key}>
                                 <StyledCard100>
                                     <StyledCardHeader onClick={(): void => navigateToMCPkg(pkg.mcPkg?.mcPkgNo as string)}>
-                                        <StyledHeaderTitle className="link-container">
+                                        <StyledHeaderTitleLink className="link-container">
                                             <Typography variant="caption">MC pkg.</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.mcPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
-                                        </StyledHeaderTitle>
+                                        </StyledHeaderTitleLink>
                                     </StyledCardHeader>
                                 </StyledCard100>
 
                                 <StyledCard100>
                                     <CardHeader>
-                                        <CardHeaderTitle>
+                                        <StyledHeaderTitle>
                                             <Typography variant="caption">Description</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.description || '')}</Typography>
-                                        </CardHeaderTitle>
+                                        </StyledHeaderTitle>
                                     </CardHeader>
                                 </StyledCard100>
 
                                 <StyledCard100>
                                     <CardHeader>
-                                        <CardHeaderTitle>
+                                        <StyledHeaderTitle>
                                             <Typography variant="caption">Discipline</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.discipline || '')}</Typography>
-                                        </CardHeaderTitle>
+                                        </StyledHeaderTitle>
                                     </CardHeader>
                                 </StyledCard100>
 
                                 <StyledCard100>
                                     <CardHeader>
-                                        <CardHeaderTitle>
+                                        <StyledHeaderTitle>
                                             <Typography variant="caption">Responsible</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.responsible || '')}</Typography>
-                                        </CardHeaderTitle>
+                                        </StyledHeaderTitle>
                                     </CardHeader>
                                 </StyledCard100>
                                 <StyledDivider

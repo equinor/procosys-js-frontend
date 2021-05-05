@@ -74,7 +74,7 @@ export const SortOrder = styled.div`
 export const StyledButton = styled(Button)`
     flex: 0 1 140px;
     display: flex;
-    margin-right: 20px;
+    margin-right: 4px;
 `;
 
 export const FiltersAndSortRow = styled.div<{ currentItem: ContentDocument | null }>`
@@ -94,10 +94,13 @@ export const SelectedFilters = styled.div`
 `;
 
 export const ResultsContainer = styled.div<{ currentItem: ContentDocument | null }>`
-    height: 80vh;
+    height: calc(100% - 140px);
     width: 100%;
+    ${Breakpoints.TABLET} {
+        height: calc(100% - 150px);
+    }
     ${Breakpoints.MOBILE} {
-        height: 70vh;
+        height: calc(100% - 150px);
     }
 
     ${({ currentItem }): any => currentItem && css`
@@ -132,20 +135,25 @@ export const TypeIndicator = styled.div`
 export const DescriptionCell = styled.div`
     display: flex;
     height: 100%;
-    
+    text-overflow: ellipsis;
+    word-wrap: break-word;
     justify-content: flex-start;
     align-items: center;
     width: calc(100% - 4px);
-    color: ${tokens.colors.interactive.primary__resting.rgba};
+    color: ${tokens.colors.text.static_icons__default.rgba};
     cursor: pointer;
     &.selected {
         background-color: #e6faec;
-    }
-    ${Breakpoints.MOBILE} {
-        padding: 1px;
+        box-shadow: -4px 0px #e6faec;
     }
     ${Breakpoints.TABLET} {
         padding: 1px;
+    }
+    ${Breakpoints.MOBILE} {
+        padding: 4px;
+    }
+    > * {
+        overflow-wrap: anywhere;
     }
 `;
 
@@ -194,7 +202,7 @@ export const DescriptionPart = styled.div`
     flex: 1 1;
 
     mark {
-        background-color: #ffff81;
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
     }
 `;
 
@@ -204,7 +212,7 @@ export const PackageNoPart = styled.div`
     flex: 0 0 120px;
 
     mark {
-        background-color: #ffff81;
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
     }
 `;
 
@@ -217,4 +225,5 @@ export const TopDiv = styled.div`
 
 export const StyledHeader = styled(Typography)`
     flex: 0 1 325px;
+    margin-right: 30px;
 `;

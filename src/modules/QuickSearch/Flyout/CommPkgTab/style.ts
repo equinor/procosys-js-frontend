@@ -30,16 +30,27 @@ export const StyledDivider = styled(Divider)`
     width: 100%;
 `;
 
-export const StyledHeaderTitle = styled(CardHeaderTitle)`
+export const StyledHeaderTitleLink = styled(CardHeaderTitle)`
     > p {
         display: flex;
         align-items: center;
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
+    
     p > span:last-child {
             margin-top: -6px;
             margin-left: 5px;
         }
+    
+    mark {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+`;
+
+export const StyledHeaderTitle = styled(CardHeaderTitle)`  
+    mark {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
 `;
 
 export const StyledCardHeader = styled(CardHeader)`

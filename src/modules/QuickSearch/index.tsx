@@ -31,6 +31,7 @@ import {
 import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -53,7 +54,7 @@ const QuickSearch = (): JSX.Element => {
 
     useEffect(() => {
         const values = queryString.parse(search)
-        console.log('values', values);
+
         if (values && values.query) {
             const searchVal = values.query as string;
             setSearchValue(searchVal);
@@ -107,8 +108,8 @@ const QuickSearch = (): JSX.Element => {
     }
 
     const navigateToItem = (item: ContentDocument): void => {
-        // let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
-        let url = 'https://procosysqp.equinor.com' + "/" + item.plant?.replace('PCS$', '') + "/link";
+        let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
+
         if (item.commPkg) {
             url += "/CommPkg?commPkgNo=" + item.commPkg.commPkgNo + "&project=" + item.project;
         }
@@ -130,6 +131,29 @@ const QuickSearch = (): JSX.Element => {
         />
     };
 
+    const getLink = (row: TableOptions<ContentDocument>): JSX.Element => {
+        const doc = row.value as ContentDocument;
+        return (
+            <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
+                    <EdsIcon name='launch' />
+                </LinkButton>
+            </DescriptionCell>
+        )
+    }
+
+    const getNumber = (row: TableOptions<ContentDocument>): JSX.Element => {
+        const doc = row.value as ContentDocument;
+        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo || '' : doc.mcPkg ? doc.mcPkg.mcPkgNo || '' : '';
+
+        return (
+            <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <PackageNoPart>
+                    {highlightSearchValue(pkgNo)}
+                </PackageNoPart>
+            </DescriptionCell>
+        )
+    }
 
     const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
@@ -138,12 +162,7 @@ const QuickSearch = (): JSX.Element => {
             return (
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
-                    <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
-                        <EdsIcon name='launch' />
-                    </LinkButton>
-                    <PackageNoPart>
-                        {highlightSearchValue(doc.commPkg.commPkgNo || '')}
-                    </PackageNoPart>
+
                     <DescriptionPart>
                         {highlightSearchValue(doc.commPkg.description || '')}
                     </DescriptionPart>
@@ -156,23 +175,22 @@ const QuickSearch = (): JSX.Element => {
             return (
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
-                    <LinkButton variant="ghost" onClick={(): void => navigateToItem(doc)}>
-                        <EdsIcon name='launch' />
-                    </LinkButton>
-                    <PackageNoPart>
-                        {
-                            highlightSearchValue(doc.mcPkg.mcPkgNo || '')
-                        }
-                    </PackageNoPart>
                     <DescriptionPart>
-                        {
-                            highlightSearchValue(doc.mcPkg.description || '')
-                        }
+                        {highlightSearchValue(doc.mcPkg.description || '')}
                     </DescriptionPart>
                 </DescriptionCell>
             )
         }
         return <div></div>;
+    };
+
+    const getDateColumn = (row: TableOptions<ContentDocument>): JSX.Element => {
+        const doc = row.value as ContentDocument;
+        return (
+            <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                {getFormattedDate(doc.lastUpdated)}
+            </DescriptionCell>
+        );
     };
 
     const handleItemClick = (item: ContentDocument): void => {
@@ -190,11 +208,68 @@ const QuickSearch = (): JSX.Element => {
 
     const columns = [
         {
+            Header: '',
+            accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
+            id: 'link',
+            Cell: getLink,
+            width: 30,
+            minWidth: 30,
+            maxWidth: 40,
+            defaultCanSort: false
+        },
+        {
+            Header: 'No.',
+            accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
+            id: 'no',
+            Cell: getNumber,
+            width: 110,
+            maxWidth: 110,
+            minWidth: 50,
+            sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
+                const firstValue = (a.original.commPkg ? a.original.commPkg.commPkgNo : a.original.mcPkg?.mcPkgNo) || '';
+                const secondValue = (b.original.commPkg ? b.original.commPkg.commPkgNo : b.original.mcPkg?.mcPkgNo) || '';
+                if (firstValue > secondValue)
+                    return 1;
+                else if (firstValue < secondValue)
+                    return -1;
+                else
+                    return 0;
+            }
+        },
+        {
             Header: 'Description',
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'id',
-            width: 90,
-            Cell: getDescription
+            Cell: getDescription,
+            width: 250,
+            minWidth: 180,
+            maxWidth: 500,
+            sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
+                const firstValue = (a.original.commPkg ? a.original.commPkg.description : a.original.mcPkg?.description) || '';
+                const secondValue = (b.original.commPkg ? b.original.commPkg.description : b.original.mcPkg?.description) || '';
+                if (firstValue > secondValue)
+                    return 1;
+                else if (firstValue < secondValue)
+                    return -1;
+                else
+                    return 0;
+            }
+        },
+        {
+            Header: 'Last updated',
+            accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
+            id: 'updated',
+            Cell: getDateColumn,
+            sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
+                const firstDate = new Date(a.original.lastUpdated || '').getTime();
+                const secondDate = new Date(b.original.lastUpdated || '').getTime();
+                if (firstDate > secondDate)
+                    return 1;
+                else if (firstDate < secondDate)
+                    return -1;
+                else
+                    return 0;
+            }
         }
     ]
 
@@ -285,15 +360,6 @@ const QuickSearch = (): JSX.Element => {
                         <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
                     )}
                     <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
-                    <SortOrder>
-                        <NativeSelect
-                            id="sort-by-select"
-                            label="Sort by"
-                        >
-                            <option>Relevance</option>
-                            <option>Date</option>
-                        </NativeSelect>
-                    </SortOrder>
                 </TopDiv>
 
                 <FiltersAndSortRow currentItem={currentItem}>
@@ -323,7 +389,7 @@ const QuickSearch = (): JSX.Element => {
                                     setPageSize={setPageSize}
                                     pageSize={pageSize}
                                     columns={columns}
-                                    noHeader={true}
+                                    noHeader={false}
                                     clientPagination={true}
                                     clientSorting={true}
                                     pageIndex={0}

@@ -89,8 +89,17 @@ describe('<ScopeOverview />', () => {
                 <ScopeOverview />
             </Router>
         );     
-        const description = await screen.findByText('Description');   
-        expect(description).toBeInTheDocument();   
+   
+        let exists = false;
+        await screen.findByText('Description')
+            .then(() => {
+                exists = true;
+            })
+            .catch(() => {
+                exists = false;
+            });
+
+        expect(exists).toBeTruthy();
     });
     
 });

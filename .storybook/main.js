@@ -3,6 +3,9 @@ const path = require('path');
 
 // Export a function. Accept the base config as the only param.
 module.exports = {
+  core: {
+    builder: "webpack5",
+  },
   'stories': [
     '../src/**/*.stories.mdx',
     '../src/**/*.stories.@(js|jsx|ts|tsx)'
@@ -25,18 +28,7 @@ module.exports = {
       include: path.resolve(__dirname, '../'),
     });
 
-  //   config.module.rules.push({
-  //     test: /\.(jpe?g|png|gif|svg)$/,
-  //     use: [{
-  //         loader: 'file-loader', 
-  //         options: {
-  //             name: '[name].[ext]',
-  //             outputPath: 'static/media/'
-  //         }
-  //     }]
-  // });
-
-
+    config.resolve.fallback = { "crypto": false, "path": false };
     config.resolve.alias = {
       '@procosys/core': path.resolve(__dirname, '../src/core/'),
       'react-dom': '@hot-loader/react-dom',

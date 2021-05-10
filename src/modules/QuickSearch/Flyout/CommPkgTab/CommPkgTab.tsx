@@ -18,8 +18,10 @@ export interface CommPkgTabProperties {
 const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
-        let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + commPkg.commPkg?.commPkgNo + "&project=" + commPkg.project;
+        if(!commPkg.plant || !commPkg.commPkg || !commPkg.commPkg) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
+
+        let url = location.origin + "/" + commPkg.plant.replace('PCS$', '') + "/link";
+        url += "/CommPkg?commPkgNo=" + commPkg.commPkg.commPkgNo + "&project=" + commPkg.project;
         window.open(url, '_blank');
     };
 

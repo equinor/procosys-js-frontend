@@ -17,14 +17,18 @@ export interface MCPkgTabTabProperties {
 const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
-        let url = location.origin + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + mcPkg.mcPkg?.commPkgNo + "&project=" + mcPkg.project;
+        if(!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
+
+        let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
+        url += "/CommPkg?commPkgNo=" + mcPkg.mcPkg.commPkgNo + "&project=" + mcPkg.project;
         window.open(url, '_blank');
     };
 
     const navigateToMCPkg = (): void => {
-        let url = location.origin + "/" + mcPkg.plant?.replace('PCS$', '') + "/link";
-        url += "/MCPkg?mcPkgNo=" + mcPkg.mcPkg?.mcPkgNo + "&project=" + mcPkg.project;
+        if(!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
+
+        let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
+        url += "/MCPkg?mcPkgNo=" + mcPkg.mcPkg.mcPkgNo + "&project=" + mcPkg.project;
         window.open(url, '_blank');
     };
 

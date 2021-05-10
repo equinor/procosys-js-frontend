@@ -166,23 +166,27 @@ const AttachmentList = ({
         return columns;
     };
 
-    return (
-        <Container>
-            {
-                addAttachments && large && (
-                    <>
-                        <form>
-                            <Button
-                                onClick={handleAddFile}
-                            >
-                        Select files
-                            </Button>
-                            <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
-                        </form>
-                    </>
-                )
-            }
-            { addAttachments &&
+    const determineTopAddButtonRender = (): JSX.Element => {
+        if(addAttachments != undefined && large === true){
+            return (
+                <>
+                    <form>
+                        <Button
+                            onClick={handleAddFile}
+                        >
+                            Select files
+                        </Button>
+                        <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
+                    </form>
+                </>
+            )
+        }
+        return <></>;
+    };
+
+    const determineDragAndDropRender = (): JSX.Element => {
+        if(addAttachments != undefined){
+            return (
                 <div>
                     <DragAndDropTitle>
                         Drag and drop to add files, or click on the button { large? 'above' : 'below'}
@@ -195,7 +199,35 @@ const AttachmentList = ({
                         <EdsIcon name='cloud_download' size={48} color='#DADADA' />
                     </DragAndDropContainer>
                 </div>
-            }
+            )
+        }
+        return <></>
+    };
+
+    const determineToolbarButtonRender = (): JSX.Element => {
+        if(addAttachments != undefined && large === false){
+            return (
+                <AddFile>
+                    <form>
+                        <StyledButton
+                            variant='ghost'
+                            disabled={disabled}
+                            data-testid={'addFiles'}
+                            onClick={handleAddFile}>
+                            {addIcon} Add files
+                        </StyledButton>
+                        <input id="addFiles" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
+                    </form>
+                </AddFile>
+            )
+        }
+        return <></>
+    };
+
+    return (
+        <Container>
+            {determineTopAddButtonRender()}
+            {determineDragAndDropRender()}
             <TableContainer>
                 <ProcosysTable
                     columns={getColumns()}
@@ -206,22 +238,7 @@ const AttachmentList = ({
                     clientPagination={true}
                     clientSorting={true}
                     rowSelect={false}
-                    toolbar={
-                        <AddFile>
-                            {addAttachments && !large && (
-                                <form>
-                                    <StyledButton
-                                        variant='ghost'
-                                        disabled={disabled}
-                                        data-testid={'addFiles'}
-                                        onClick={handleAddFile}>
-                                        {addIcon} Add files
-                                    </StyledButton>
-                                    <input id="addFiles" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFiles} />
-                                </form>
-                            )}
-                        </AddFile>
-                    }
+                    toolbar={determineToolbarButtonRender()}
                 />
             </TableContainer>
         </ Container>

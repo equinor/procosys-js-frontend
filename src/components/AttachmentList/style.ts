@@ -46,6 +46,7 @@ export const DragAndDropContainer = styled.div`
     max-width: 500px;
     height: 200px;
     background-color: ${tokens.colors.ui.background__light.rgba};
+    margin-bottom: calc(var(--grid-unit) * 2);
 `;
 
 export const DragAndDropTitle = styled.div`

@@ -13,9 +13,9 @@ import {
     useSortBy,
     useTable
 } from 'react-table';
+import { HeaderCheckbox, LoadingDiv, RowCheckbox, Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow } from './style';
 import { VariableSizeList as List, VariableSizeList } from 'react-window';
-import React, { CSSProperties, PropsWithChildren, forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow, HeaderCheckbox, RowCheckbox, LoadingDiv } from './style';
+import React, { CSSProperties, PropsWithChildren, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { DefaultColumnFilter } from './filters';

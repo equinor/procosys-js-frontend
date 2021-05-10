@@ -6,6 +6,7 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import { Canceler } from '@procosys/http/HttpClient';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
+import { SelectedItem } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeFilter/MultiSelectFilter/MultiSelectFilter.style';
 import { TextField } from '@equinor/eds-core-react';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
@@ -38,8 +39,6 @@ const McPkgTable = forwardRef(({
 }: McPkgTableProps, ref): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const [availableMcPkgs, setAvailableMcPkgs] = useState<McPkgRow[]>([]);
-    const [filteredMcPkgs, setFilteredMcPkgs] = useState<McPkgRow[]>([]);
-    const [filter, setFilter] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const tableRef = useRef<any>();
 
@@ -61,7 +60,6 @@ const McPkgTable = forwardRef(({
                         };
                     }));
                 setAvailableMcPkgs(availableMcPkgs);
-                setFilteredMcPkgs(availableMcPkgs);
                 setIsLoading(false);
             })();
             return (): void => requestCanceler && requestCanceler();
@@ -69,17 +67,6 @@ const McPkgTable = forwardRef(({
             showSnackbarNotification(error.message);
         }
     }, []);
-
-    useEffect(() => {
-        if (filter.length <= 0) {
-            setFilteredMcPkgs(availableMcPkgs);
-            return;
-        }
-        setFilteredMcPkgs(availableMcPkgs.filter((mc: McPkgRow) => {
-            return mc.mcPkgNo.toLowerCase().indexOf(filter.toLowerCase()) > -1;
-        }));
-    }, [filter]);
-
 
     const unselectMcPkg = (mcPkgNo: string): void => {
         const selectedIndex = selectedMcPkgScope.selected.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
@@ -106,11 +93,11 @@ const McPkgTable = forwardRef(({
 
         if (!selectedMcPkgScope.system) {
                 setSelectedMcPkgScope((selectedScope: McScope) => {
-                    return { ...selectedScope, system: rowData[0].system, selected: [...selectedScope.selected, ...rowData] }
+                    return { ...selectedScope, system: rowData[0].system, multipleDisciplines: multipleDisciplines([...selectedScope.selected, ...rowData]), selected: [...selectedScope.selected, ...rowData] }
                 });
         } else if (selectedMcPkgScope.system === rowData[0].system) {
             setSelectedMcPkgScope((selectedScope: McScope) => {
-                return { ...selectedScope, selected: [...selectedScope.selected, ...rowData] }
+                return { ...selectedScope, multipleDisciplines: multipleDisciplines([...selectedScope.selected, ...rowData]), selected: [...selectedScope.selected, ...rowData] }
             });
         }
     };
@@ -121,15 +108,13 @@ const McPkgTable = forwardRef(({
             mcPkgNos.push(m.mcPkgNo);
         });
         const newSelectedMcPkgs = selectedMcPkgScope.selected.filter(item => !mcPkgNos.includes(item.mcPkgNo));
-        setSelectedMcPkgScope({ system: newSelectedMcPkgs.length > 0 ? newSelectedMcPkgs[0].system : null, multipleDisciplines: false, selected: newSelectedMcPkgs });
+        setSelectedMcPkgScope({ system: newSelectedMcPkgs.length > 0 ? newSelectedMcPkgs[0].system : null, multipleDisciplines: multipleDisciplines(newSelectedMcPkgs), selected: newSelectedMcPkgs });
     };
 
 
     const rowSelectionChangedMc = (rowData: McPkgRow[], ids: Record<string, boolean>): void => {
-        if (availableMcPkgs.length > 0) {
-            removeAllSelectedMcPkgsInScope();
-            addAllMcPkgsInScope(rowData);
-        } 
+        removeAllSelectedMcPkgsInScope();
+        addAllMcPkgsInScope(rowData);
     };
 
     const getDescriptionColumn = (row: TableOptions<McPkgRow>): JSX.Element => {
@@ -144,7 +129,11 @@ const McPkgTable = forwardRef(({
     const columns = [
         {
             Header: 'Mc pkg',
-            accessor: 'mcPkgNo'
+            accessor: 'mcPkgNo',
+            filter: (rows: UseTableRowProps<McPkgRow>[], id: number, filterType: string): UseTableRowProps<McPkgRow>[] => {
+                return rows.filter((row) => { return row.original.mcPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+            },
+            filterPlaceholder: "Search for mc pkg no"
         },
         {
             Header: 'Description',
@@ -158,20 +147,6 @@ const McPkgTable = forwardRef(({
     return (
         <Container>
             <TopContainer>
-                <Search>
-                    <TextField
-                        id="search"
-                        placeholder="Search"
-                        helperText="Search for mc pkg no."
-                        defaultValue=''
-                        onKeyDown={(e: any): void => {
-                            e.keyCode === KEYCODE_ENTER && setFilter(e.currentTarget.value);
-                        }}
-                        onInput={(e: any): void => {
-                            setFilter(e.currentTarget.value);
-                        }}
-                    />
-                </Search>
             </TopContainer>
             {
                 isLoading && <Loading title="Loading MC packages" />
@@ -182,16 +157,16 @@ const McPkgTable = forwardRef(({
                 <ProcosysTable
                     ref={tableRef}
                     columns={columns}
-                    data={filteredMcPkgs}
+                    data={availableMcPkgs}
                     clientPagination={true}
                     clientSorting={true}
-                    maxRowCount={filteredMcPkgs.length}
+                    maxRowCount={availableMcPkgs.length}
                     pageIndex={0}
                     rowSelect={true}
                     onSelectedChange={(rowData: McPkgRow[], ids: any): void => { rowSelectionChangedMc(rowData, ids); }}
                     selectedRows={
-                        filteredMcPkgs.filter((x: McPkgRow) => x.tableData?.isSelected)
-                            .map((a: McPkgRow) => filteredMcPkgs.indexOf(a))
+                        availableMcPkgs.filter((x: McPkgRow) => x.tableData?.isSelected)
+                            .map((a: McPkgRow) => availableMcPkgs.indexOf(a))
                             .reduce((obj: any, item) => {
                                 return { ...obj, [item]: true };
                             }, true)

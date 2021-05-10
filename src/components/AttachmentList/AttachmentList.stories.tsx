@@ -1,8 +1,7 @@
 import React from 'react';
-import ProgressBar, { ProgressBarProps } from '@procosys/components/ProgressBar';
 import { Story, Meta } from '@storybook/react';
 import styled from 'styled-components';
-import AttachmentList, { AttachmentListProps } from '.';
+import AttachmentList from '.';
 import { TableOptions } from 'react-table';
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
 
@@ -46,6 +45,8 @@ export default {
             },
         ],
         disabled: false,
+        large: false,
+        detailed: false,
         downloadAttachment: downloadAttachment,
         deleteAttachment: deleteAttachment,
     },

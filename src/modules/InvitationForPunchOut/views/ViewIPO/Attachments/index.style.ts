@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin: var(--margin-module--top) var(--margin-module--right);
@@ -18,35 +17,6 @@ export const Container = styled.div`
     }
 `;
 
-export const FormContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    > * {
-        margin-bottom: calc(var(--grid-unit) * 3);
-    }
-`;
-
-export const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    button:last-of-type {
-        margin-left: calc(var(--grid-unit) * 2);
-    }
-`;
-
-export const AddAttachmentContainer = styled.div`
-    max-width: 300px;
-`;
-
-export const DragAndDropContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 500px;
-    height: 200px;
-    background-color: ${tokens.colors.ui.background__light.rgba};
-`;
-
 export const SpinnerContainer = styled.div`
     position: absolute;
     display: flex;
@@ -58,8 +28,4 @@ export const SpinnerContainer = styled.div`
     z-index: 9999;
     align-items: center;
     justify-content: center;
-`;
-
-export const AttachmentTable = styled.table`
-    width: 95%;
 `;

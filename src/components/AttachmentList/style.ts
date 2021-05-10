@@ -21,6 +21,7 @@ export const AttachmentLink = styled.div`
     text-overflow: ellipsis;
     text-decoration: underline;
     cursor: pointer;
+    color: ${tokens.colors.interactive.primary__resting.rgba};
 `;
 
 export const StyledButton = styled(Button)`
@@ -36,6 +37,21 @@ export const StyledButton = styled(Button)`
     svg path {
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
+`;
+
+export const DragAndDropContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 500px;
+    height: 200px;
+    background-color: ${tokens.colors.ui.background__light.rgba};
+    margin-bottom: calc(var(--grid-unit) * 2);
+`;
+
+export const DragAndDropTitle = styled.div`
+    padding-top: calc(var(--grid-unit) * 4);
+    padding-bottom: calc(var(--grid-unit) * 2);
 `;
 
 export const TableContainer = styled(Container)`

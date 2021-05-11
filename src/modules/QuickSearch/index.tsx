@@ -30,6 +30,7 @@ import Highlighter from 'react-highlight-words';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { Typography } from '@equinor/eds-core-react';
+import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -51,8 +52,9 @@ const QuickSearch = (): JSX.Element => {
     const { search } = useLocation();
 
     useEffect(() => {
-        const values = queryString.parse(search)
-
+        if(!ProCoSysSettings.featureIsEnabled('search')) window.location.href = location.origin;
+        
+        const values = queryString.parse(search);
         if (values && values.query) {
             const searchVal = values.query as string;
             setSearchValue(searchVal);

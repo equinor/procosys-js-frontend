@@ -5,6 +5,10 @@ import { RequestCanceler } from "@procosys/http/HttpClient";
 import { AxiosRequestConfig } from "axios";
 import { IAuthService } from "src/auth/AuthService";
 
+export enum ResultTypeEnum {
+    COMM_PKG = 'C',
+    MC_PKG = 'MC',
+}
 
 export interface ContentDocument {
     key?: string;
@@ -61,9 +65,7 @@ class QuickSearchApiClient extends ApiClient {
         );
     }
 
-    /**
-     * Perform search
-     */
+
     async doSearch(searchString: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
         const endpoint = '/Search?query=' + searchString;
         const settings: AxiosRequestConfig = {};
@@ -73,7 +75,7 @@ class QuickSearchApiClient extends ApiClient {
         try {
             const result = await this.client.get<SearchResult>(endpoint, settings);
             result.data.items.map((item: ContentDocument) => {
-                item.type = item.commPkg ? 'C' : 'MC';
+                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG : ResultTypeEnum.MC_PKG;
             });
             return result.data;
         }
@@ -91,7 +93,7 @@ class QuickSearchApiClient extends ApiClient {
         try {
             const result = await this.client.get<SearchResult>(endpoint, settings);
             result.data.items.map((item: ContentDocument) => {
-                item.type = 'MC';
+                item.type = ResultTypeEnum.MC_PKG;
             });
             return result.data;
         }

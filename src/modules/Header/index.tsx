@@ -11,8 +11,8 @@ import {
     ShowOnMobile,
     StyledSearch
 } from './style';
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
@@ -25,7 +25,7 @@ import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
-import debounce from 'lodash.debounce';
+import queryString from 'query-string'
 
 type PlantItem = {
     text: string;
@@ -34,6 +34,7 @@ type PlantItem = {
 
 const Header: React.FC = (): JSX.Element => {
     const user = useCurrentUser();
+    const [searchValue, setSearchValue] = useState<string>('');
     const { auth } = useProcosysContext();
     const { plant, setCurrentPlant } = useCurrentPlant();
     const params = useParams<any>();
@@ -45,28 +46,35 @@ const Header: React.FC = (): JSX.Element => {
             value: plant.id,
         }));
     });
-    const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
-    const history = useHistory();
 
-    const debounceSearchHandler = useCallback(
-        debounce((value: string) => {
-            if (value.length > 2) {
-                const url = 'quicksearch?query=' + value;
-                history.push(url);
-            }
-        }, 1000),
-        []
-    );
+    const KEYCODE_ENTER = 13;
+    const { search } = useLocation();
+    const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
+
+    useEffect(() => {
+        const values = queryString.parse(search)
+        if (values && values.query) {
+            setSearchValue(values.query as string);
+        } else {
+            setSearchValue('');
+        }
+    }, []);
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
         setCurrentPlant(filteredPlants[plantIndex].value as string);
     };
 
-    const handleQuickSearchChange = useCallback((e: { target: { value: string; }; }) => {
-        const searchVal = e.target.value;
-        debounceSearchHandler(searchVal);
-    }, [debounceSearchHandler]);
+    const doSearch = (): void => {
+        if (searchValue.length > 2) {
+            const url = location.origin + '/' + plant.pathId + '/quicksearch?query=' + searchValue;
+            window.location.href = url;
+        }
+    }
+
+    const handleQuickSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        setSearchValue(e.target.value);
+    }
 
     useEffect(() => {
         if (filterForPlants.length <= 0) {
@@ -285,14 +293,21 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    <MenuContainerItem>
-                        <StyledSearch
-                            placeholder={'Quick Search'}
-                            onChange={handleQuickSearchChange}
-                            name="procosys-qs"
-                            id="procosys-qs"
-                            autocomplete="on" autoFocus />
-                    </MenuContainerItem>
+                    {(ProCoSysSettings.featureIsEnabled('search')) && (
+                        <MenuContainerItem>
+                            <StyledSearch
+                                placeholder={'Quick Search'}
+                                onChange={handleQuickSearchChange}
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                    e.keyCode === KEYCODE_ENTER &&
+                                        doSearch();
+                                }}
+                                name="procosys-qs"
+                                id="procosys-qs"
+                                value={searchValue}
+                                autocomplete="on" autoFocus />
+                        </MenuContainerItem>
+                    )}
                     <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='link'>
                             <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">

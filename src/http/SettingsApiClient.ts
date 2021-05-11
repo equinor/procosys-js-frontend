@@ -23,6 +23,7 @@ interface ConfigResponse {
         library: boolean
         preservation: boolean
         main: boolean
+        search: boolean
     } 
     
 }

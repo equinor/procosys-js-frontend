@@ -23,6 +23,8 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
     const { apiClient } = useQuickSearchContext();
 
     const navigateToMCPkg = (mcPkgNo: string): void => {
+        if(!commPkg.plant) throw new Error("Unable to navigate. Plant is missing.");
+
         let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
         url += "/MCPkg?mcPkgNo=" + mcPkgNo + "&project=" + commPkg.project;
         window.open(url, '_blank');
@@ -32,13 +34,11 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
         getMCPackages();
     }, [])
 
-    const getMCPackages = (): void => {
+    const getMCPackages = async (): Promise<void> => {
         setSearching(true);
-        apiClient.getMCPackages(commPkg.commPkg?.commPkgNo || '', commPkg.plant || '').then((searchResult: SearchResult) => {
-            setSearchResult(searchResult);
-        }).finally(() => {
-            setSearching(false);
-        });
+        const searchResult = await apiClient.getMCPackages(commPkg.commPkg?.commPkgNo ?? '', commPkg.plant ?? '');
+        setSearchResult(searchResult);
+        setSearching(false);
     }
 
     const highlightSearchValue = (text: string): JSX.Element => {
@@ -62,7 +62,7 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
                                     <StyledCardHeader onClick={(): void => navigateToMCPkg(pkg.mcPkg?.mcPkgNo as string)}>
                                         <StyledHeaderTitleLink className="link-container">
                                             <Typography variant="caption">MC pkg.</Typography>
-                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.mcPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.mcPkgNo ?? '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
                                         </StyledHeaderTitleLink>
                                     </StyledCardHeader>
                                 </StyledCard100>
@@ -71,7 +71,7 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
                                     <CardHeader>
                                         <StyledHeaderTitle>
                                             <Typography variant="caption">Description</Typography>
-                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.description || '')}</Typography>
+                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.description ?? '')}</Typography>
                                         </StyledHeaderTitle>
                                     </CardHeader>
                                 </StyledCard100>
@@ -80,7 +80,7 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
                                     <CardHeader>
                                         <StyledHeaderTitle>
                                             <Typography variant="caption">Discipline</Typography>
-                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.discipline || '')}</Typography>
+                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.discipline ?? '')}</Typography>
                                         </StyledHeaderTitle>
                                     </CardHeader>
                                 </StyledCard100>
@@ -89,7 +89,7 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
                                     <CardHeader>
                                         <StyledHeaderTitle>
                                             <Typography variant="caption">Responsible</Typography>
-                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.responsible || '')}</Typography>
+                                            <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.responsible ?? '')}</Typography>
                                         </StyledHeaderTitle>
                                     </CardHeader>
                                 </StyledCard100>

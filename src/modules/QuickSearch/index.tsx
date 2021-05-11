@@ -13,7 +13,7 @@ import { ContentDocument, SearchResult } from './http/QuickSearchApiClient';
 import {
     Container,
     DescriptionCell,
-    DescriptionPart,
+    ResultCell,
     FilterChip,
     FiltersAndSortRow,
     LinkButton,
@@ -29,6 +29,7 @@ import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { getFormattedDate } from '@procosys/core/services/DateService';
+import { Typography } from '@equinor/eds-core-react';
 
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -44,7 +45,7 @@ const QuickSearch = (): JSX.Element => {
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [plantFilterExpanded, setPlantFilterExpanded] = useState<boolean>(true);
     const [typeFilterExpanded, setTypeFilterExpanded] = useState<boolean>(true);
-    const [currentItem, setCurrentItem] = useState<ContentDocument | null>(null);
+    const [currentItem, setCurrentItem] = useState<ContentDocument | undefined>(undefined);
     const highlightOn = true;
 
     const { search } = useLocation();
@@ -145,9 +146,9 @@ const QuickSearch = (): JSX.Element => {
 
         return (
             <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                <PackageNoPart>
+                <ResultCell>
                     {highlightSearchValue(pkgNo)}
-                </PackageNoPart>
+                </ResultCell>
             </DescriptionCell>
         )
     }
@@ -160,9 +161,9 @@ const QuickSearch = (): JSX.Element => {
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
 
-                    <DescriptionPart>
+                    <ResultCell variant="body_short" lines="1" className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                         {highlightSearchValue(doc.commPkg.description || '')}
-                    </DescriptionPart>
+                    </ResultCell>
                 </DescriptionCell>
             );
         }
@@ -172,9 +173,9 @@ const QuickSearch = (): JSX.Element => {
             return (
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
-                    <DescriptionPart>
+                    <ResultCell variant="body_short" lines="1">
                         {highlightSearchValue(doc.mcPkg.description || '')}
-                    </DescriptionPart>
+                    </ResultCell>
                 </DescriptionCell>
             )
         }
@@ -185,7 +186,9 @@ const QuickSearch = (): JSX.Element => {
         const doc = row.value as ContentDocument;
         return (
             <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                {getFormattedDate(doc.lastUpdated)}
+                <Typography variant="body_short" lines="1">
+                    {getFormattedDate(doc.lastUpdated)}
+                </Typography>
             </DescriptionCell>
         );
     };
@@ -210,8 +213,6 @@ const QuickSearch = (): JSX.Element => {
             id: 'link',
             Cell: getLink,
             width: 30,
-            minWidth: 30,
-            maxWidth: 40,
             defaultCanSort: false
         },
         {
@@ -219,9 +220,7 @@ const QuickSearch = (): JSX.Element => {
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'no',
             Cell: getNumber,
-            width: 110,
-            maxWidth: 110,
-            minWidth: 50,
+            width: 90,
             sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
                 const firstValue = (a.original.commPkg ? a.original.commPkg.commPkgNo : a.original.mcPkg?.mcPkgNo) || '';
                 const secondValue = (b.original.commPkg ? b.original.commPkg.commPkgNo : b.original.mcPkg?.mcPkgNo) || '';
@@ -238,9 +237,7 @@ const QuickSearch = (): JSX.Element => {
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'id',
             Cell: getDescription,
-            width: 250,
-            minWidth: 180,
-            maxWidth: 500,
+            width: 300,
             sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
                 const firstValue = (a.original.commPkg ? a.original.commPkg.description : a.original.mcPkg?.description) || '';
                 const secondValue = (b.original.commPkg ? b.original.commPkg.description : b.original.mcPkg?.description) || '';
@@ -256,6 +253,7 @@ const QuickSearch = (): JSX.Element => {
             Header: 'Last updated',
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'updated',
+            width: 100,
             Cell: getDateColumn,
             sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
                 const firstDate = new Date(a.original.lastUpdated || '').getTime();
@@ -316,10 +314,14 @@ const QuickSearch = (): JSX.Element => {
     }
 
     const handlePlantRemove = (plant: string): void => {
+        const newUrl = decodeURI(location.href).replace('&plant=' + plant, '');
+        history.replaceState(null, '', encodeURI(newUrl));
         setSelectedPlants(selectedPlants.filter(s => s !== plant));
     }
 
     const handleTypeRemove = (type: string): void => {
+        const newUrl = location.href.replace('&type=' + type, '');
+        history.replaceState(null, '', newUrl);
         setSelectedTypes(selectedTypes.filter(t => t !== type));
     }
 
@@ -341,7 +343,7 @@ const QuickSearch = (): JSX.Element => {
 
     const toggleShowFilter = (): void => {
         if (!showFilter) {
-            setCurrentItem(null);
+            setCurrentItem(undefined);
         }
         setShowFilter(!showFilter);
     }
@@ -398,7 +400,7 @@ const QuickSearch = (): JSX.Element => {
                 {
                     displayFlyout && currentItem && (
                         <StyledSideSheet
-                            onClose={(): void => setCurrentItem(null)}
+                            onClose={(): void => setCurrentItem(undefined)}
                             open={displayFlyout}
                             title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : 'Preview MC package'}
                             variant="large">

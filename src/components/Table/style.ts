@@ -102,7 +102,6 @@ export const TableCell = styled.div<{ align?: string }>`
     display: flex;
     min-height: 40px;
     flex-direction: row;
-    align-items: center;
     text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
     :last-child {
         border-right: none;

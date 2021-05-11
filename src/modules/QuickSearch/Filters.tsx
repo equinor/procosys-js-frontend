@@ -1,7 +1,7 @@
 import { Button } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import React from 'react';
-import { AccordionContent, FiltersContainer, FiltersTypes, Header, SearchFilters, StyledAccordionHeader, StyledAccordionPanel } from './style';
+import { AccordionContent, FiltersContainer, FiltersTypes, FlexDiv, Header, SearchFilters, StyledAccordionHeader, StyledAccordionPanel } from './style';
 import CloseIcon from '@material-ui/icons/Close';
 import { Accordion } from '@equinor/eds-core-react';
 import Checkbox from '@procosys/components/Checkbox';
@@ -10,13 +10,13 @@ const { AccordionItem } = Accordion;
 
 export interface QuickSearchFiltersProps {
     plantFilterExpanded: boolean;
-    setShowFilter: (val: boolean) => void;
-    setPlantFilterExpanded: (val: boolean) => void;
+    setShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
+    setPlantFilterExpanded: React.Dispatch<React.SetStateAction<boolean>>;
     filterPlants: string[];
     selectedPlants: string[];
     onCheckboxPlantFilterChange: (plant: string, checked: boolean) => void;
     typeFilterExpanded: boolean;
-    setTypeFilterExpanded: (val: boolean) => void;
+    setTypeFilterExpanded: React.Dispatch<React.SetStateAction<boolean>>;
     filterTypes: string[];
     selectedTypes: string[];
     onCheckboxTypeFilterChange: (type: string, checked: boolean) => void;
@@ -39,17 +39,17 @@ const QuickSearchFilters = ({
     return (
         <FiltersContainer>
             <SearchFilters>
-                <Header filterActive={false}>
+                <Header filterActive={true}>
                     <Typography variant="h1">Filters</Typography>
-                    <div style={{ display: 'flex' }}>
-                        <Button variant='ghost' title='Close' onClick={(): void => { setShowFilter(false); }}>
+                    <FlexDiv>
+                        <Button variant='ghost' title='Close' onClick={(): void => setShowFilter(false)}>
                             <CloseIcon />
                         </Button>
-                    </div>
+                    </FlexDiv>
                 </Header>
                 <FiltersTypes>
                     <Accordion chevronPosition="right" headerLevel="h2">
-                        <AccordionItem isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(!plantFilterExpanded)}>
+                        <AccordionItem isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(prevState => !prevState)}>
                             <StyledAccordionHeader>Plant</StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>
@@ -73,7 +73,7 @@ const QuickSearchFilters = ({
                                 </AccordionContent>
                             </StyledAccordionPanel>
                         </AccordionItem>
-                        <AccordionItem isExpanded={typeFilterExpanded} onClick={(): void => setTypeFilterExpanded(!typeFilterExpanded)}>
+                        <AccordionItem isExpanded={typeFilterExpanded} onClick={(): void => setTypeFilterExpanded(prevState => !prevState)}>
                             <StyledAccordionHeader>Type</StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>

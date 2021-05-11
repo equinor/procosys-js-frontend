@@ -31,10 +31,10 @@ const QuickSearchFlyout = ({ item, searchValue, highlightOn }: QuickSearchFlyout
                 if (item.commPkg) {
                     return <RelatedMCPkgTab highlightOn={highlightOn} searchValue={searchValue} commPkg={item} />
                 }
-                return <div></div>;
+                return <></>;
             }
             default:
-                return <div></div>;
+                return <></>;
         }
     };
 

@@ -18,7 +18,7 @@ export interface CommPkgTabProperties {
 const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
-        if(!commPkg.plant || !commPkg.commPkg || !commPkg.commPkg) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
+        if(!commPkg.plant || !commPkg.commPkg) throw new Error("Unable to navigate. Plant or CommPkg is missing.");
 
         let url = location.origin + "/" + commPkg.plant.replace('PCS$', '') + "/link";
         url += "/CommPkg?commPkgNo=" + commPkg.commPkg.commPkgNo + "&project=" + commPkg.project;
@@ -41,7 +41,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
                     <StyledHeaderTitleLink className="link-container">
                         <Typography variant="caption">Comm pkg.</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.commPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.commPkgNo ?? '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
                     </StyledHeaderTitleLink>
                 </StyledCardHeader>
             </StyledCard100>
@@ -50,7 +50,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <CardHeader>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.plantName || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.plantName ?? '')}</Typography>
                     </StyledHeaderTitle>
                 </CardHeader>
             </StyledCard50>
@@ -59,7 +59,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <CardHeader>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.project || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.project ?? '')}</Typography>
                     </StyledHeaderTitle>
                 </CardHeader>
             </StyledCard50>
@@ -68,7 +68,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <CardHeader>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description of work</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.descriptionOfWork || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.descriptionOfWork ?? '')}</Typography>
                     </StyledHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -77,7 +77,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <CardHeader>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Area</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.area || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.area ?? '')}</Typography>
                     </StyledHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -86,7 +86,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <CardHeader>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.responsible || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.responsible ?? '')}</Typography>
                     </StyledHeaderTitle>
                 </CardHeader>
             </StyledCard100>
@@ -95,7 +95,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
                 <CardHeader>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Remark</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.remark || '')}</Typography>
+                        <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.remark ?? '')}</Typography>
                     </StyledHeaderTitle>
                 </CardHeader>
             </StyledCard100>

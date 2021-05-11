@@ -15,6 +15,7 @@ interface FeatureFlags {
     library: boolean
     preservation: boolean
     main: boolean
+    search: boolean
 }
 
 interface ConfigResponse {
@@ -139,7 +140,8 @@ class ProCoSysSettings {
             IPO: true,
             preservation: true,
             main: true,
-            library: true
+            library: true,
+            search: true
         };
         this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
 
@@ -200,6 +202,7 @@ class ProCoSysSettings {
             this.featureFlags.main = configurationResponse.featureFlags.main;
             this.featureFlags.library = configurationResponse.featureFlags.library;
             this.featureFlags.preservation = configurationResponse.featureFlags.preservation;
+            this.featureFlags.search = configurationResponse.featureFlags.search;
         } catch (error) {
             console.error('Failed to parse Configuration from remote server', error);
             throw error;
@@ -241,6 +244,7 @@ class ProCoSysSettings {
             localSettings.featureFlags.IPO != undefined && (this.featureFlags.IPO = localSettings.featureFlags.IPO);
             localSettings.featureFlags.library != undefined && (this.featureFlags.library = localSettings.featureFlags.library);
             localSettings.featureFlags.preservation != undefined && (this.featureFlags.preservation = localSettings.featureFlags.preservation);
+            localSettings.featureFlags.search != undefined && (this.featureFlags.search = localSettings.featureFlags.search);
         }
 
     }

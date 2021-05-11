@@ -39,9 +39,8 @@ export const SearchContainer = styled.div<{ withSidePanel?: boolean }>`
 
 export const FiltersContainer = styled.div`
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};
-    padding-left: calc(var(--grid-unit) * 2);
     margin-left: calc(var(--grid-unit) * 2);
-    padding-right: calc(var(--grid-unit) * 2);
+    padding: 0 calc(var(--grid-unit) * 2);
     overflow-y: auto;
     min-width: 300px;
 `;
@@ -51,18 +50,22 @@ export const SearchFilters = styled.div`
     flex-direction: column;
 `;
 
-export const Header = styled.header<{ filterActive: boolean }>`
+interface HeaderProps {
+    filterActive: boolean;
+}
+
+export const Header = styled.header<HeaderProps>`
     display: flex;
     justify-content: space-between;
     padding-bottom: calc(var(--grid-unit) * 4);
     margin-left: var(--grid-unit);
     margin-top: var(--margin-module--top);
+    h1 { color: ${(props): string => props.filterActive ? tokens.colors.interactive.primary__resting.rgba : 'initial'} }
+`;
 
-    ${({ filterActive }): any => filterActive && css`
-        h1 {
-            color: ${tokens.colors.interactive.primary__resting.rgba};
-        }
-    `}`;
+export const FlexDiv = styled.div`
+    display: flex;
+`;
 
 export const SortOrder = styled.div`
     display: flex;
@@ -77,14 +80,16 @@ export const StyledButton = styled(Button)`
     margin-right: 4px;
 `;
 
-export const FiltersAndSortRow = styled.div<{ currentItem: ContentDocument | null }>`
+interface FiltersAndSortRowProps {
+    currentItem?: ContentDocument;
+}
+
+export const FiltersAndSortRow = styled.div<FiltersAndSortRowProps>`
     display: flex;
     justify-content: space-between;
-    width: 100%;
     align-items: center;
-    ${({ currentItem }): any => currentItem && css`
-        width: calc(100% - 480px);
-    `}`;
+    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%' };
+`;
 
 export const SelectedFilters = styled.div`
     display: flex;
@@ -93,19 +98,21 @@ export const SelectedFilters = styled.div`
     margin-bottom: 20px;
 `;
 
-export const ResultsContainer = styled.div<{ currentItem: ContentDocument | null }>`
+
+interface ResultsContainerProps {
+    currentItem?: ContentDocument;
+}
+
+export const ResultsContainer = styled.div<ResultsContainerProps>`
     height: calc(100% - 140px);
-    width: 100%;
+    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%' };
     ${Breakpoints.TABLET} {
-        height: calc(100% - 150px);
+        height: calc(100% - 120px);
     }
     ${Breakpoints.MOBILE} {
-        height: calc(100% - 150px);
+        height: calc(100% - 118px);
     }
-
-    ${({ currentItem }): any => currentItem && css`
-        width: calc(100% - 480px);
-    `}`;
+`;
 
 
 
@@ -135,9 +142,6 @@ export const TypeIndicator = styled.div`
 export const DescriptionCell = styled.div`
     display: flex;
     height: 100%;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
-    justify-content: flex-start;
     align-items: center;
     width: calc(100% - 4px);
     color: ${tokens.colors.text.static_icons__default.rgba};
@@ -151,9 +155,6 @@ export const DescriptionCell = styled.div`
     }
     ${Breakpoints.MOBILE} {
         padding: 4px;
-    }
-    > * {
-        overflow-wrap: anywhere;
     }
 `;
 
@@ -196,11 +197,7 @@ export const FilterChip = styled(Chip)`
     margin-bottom: 8px;
 `;
 
-export const DescriptionPart = styled.div`
-    display: flex;
-    align-items: flex-start;
-    flex: 1 1;
-
+export const ResultCell = styled(Typography)`
     mark {
         background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
     }

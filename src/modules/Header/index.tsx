@@ -11,7 +11,7 @@ import {
     ShowOnMobile,
     StyledSearch
 } from './style';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -46,6 +46,7 @@ const Header: React.FC = (): JSX.Element => {
             value: plant.id,
         }));
     });
+    const history = useHistory();
 
     const KEYCODE_ENTER = 13;
     const { search } = useLocation();
@@ -67,8 +68,7 @@ const Header: React.FC = (): JSX.Element => {
 
     const doSearch = (): void => {
         if (searchValue.length > 2) {
-            const url = location.origin + '/' + plant.pathId + '/quicksearch?query=' + searchValue;
-            window.location.href = url;
+            history.push('/' + plant.pathId + '/quicksearch?query=' + searchValue);
         }
     }
 

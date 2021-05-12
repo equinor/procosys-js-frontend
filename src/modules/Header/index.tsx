@@ -11,7 +11,7 @@ import {
     ShowOnMobile,
     StyledSearch
 } from './style';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';

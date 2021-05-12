@@ -15,6 +15,7 @@ interface FeatureFlags {
     library: boolean
     preservation: boolean
     main: boolean
+    search: boolean
 }
 
 interface ConfigResponse {
@@ -22,6 +23,7 @@ interface ConfigResponse {
         procosysApi: FeatureConfig
         graphApi: FeatureConfig
         preservationApi: FeatureConfig
+        searchApi: FeatureConfig;
         ipoApi: FeatureConfig
         libraryApi: FeatureConfig
         instrumentationKey: string
@@ -107,6 +109,7 @@ class ProCoSysSettings {
     procosysApi!: FeatureConfig;
     graphApi!: FeatureConfig;
     preservationApi!: FeatureConfig;
+    searchApi!: FeatureConfig;
     ipoApi!: FeatureConfig;
     libraryApi!: FeatureConfig;
 
@@ -137,7 +140,8 @@ class ProCoSysSettings {
             IPO: true,
             preservation: true,
             main: true,
-            library: true
+            library: true,
+            search: true
         };
         this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
 
@@ -188,6 +192,7 @@ class ProCoSysSettings {
 
             this.graphApi = configurationResponse.configuration.graphApi;
             this.preservationApi = configurationResponse.configuration.preservationApi;
+            this.searchApi = configurationResponse.configuration.searchApi;
             this.ipoApi = configurationResponse.configuration.ipoApi;
             this.libraryApi = configurationResponse.configuration.libraryApi;
             this.procosysApi = configurationResponse.configuration.procosysApi;
@@ -197,6 +202,7 @@ class ProCoSysSettings {
             this.featureFlags.main = configurationResponse.featureFlags.main;
             this.featureFlags.library = configurationResponse.featureFlags.library;
             this.featureFlags.preservation = configurationResponse.featureFlags.preservation;
+            this.featureFlags.search = configurationResponse.featureFlags.search;
         } catch (error) {
             console.error('Failed to parse Configuration from remote server', error);
             throw error;
@@ -224,6 +230,7 @@ class ProCoSysSettings {
             localSettings.configuration.instrumentationKey && (this.instrumentationKey = localSettings.configuration.instrumentationKey);
             localSettings.configuration.graphApi && (this.graphApi = localSettings.configuration.graphApi);
             localSettings.configuration.preservationApi && (this.preservationApi = localSettings.configuration.preservationApi);
+            localSettings.configuration.searchApi && (this.searchApi = localSettings.configuration.searchApi);
             localSettings.configuration.ipoApi && (this.ipoApi = localSettings.configuration.ipoApi);
             localSettings.configuration.libraryApi && (this.libraryApi = localSettings.configuration.libraryApi);
             localSettings.configuration.procosysApi && (this.procosysApi = localSettings.configuration.procosysApi);
@@ -237,6 +244,7 @@ class ProCoSysSettings {
             localSettings.featureFlags.IPO != undefined && (this.featureFlags.IPO = localSettings.featureFlags.IPO);
             localSettings.featureFlags.library != undefined && (this.featureFlags.library = localSettings.featureFlags.library);
             localSettings.featureFlags.preservation != undefined && (this.featureFlags.preservation = localSettings.featureFlags.preservation);
+            localSettings.featureFlags.search != undefined && (this.featureFlags.search = localSettings.featureFlags.search);
         }
 
     }

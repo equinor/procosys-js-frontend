@@ -10,6 +10,7 @@ export const Container = styled.div`
 
 export const LargerComponent = styled.div`
     width: 70%;
+    overflow: auto;
 `;
 
 export const SelectedTags = styled.div`

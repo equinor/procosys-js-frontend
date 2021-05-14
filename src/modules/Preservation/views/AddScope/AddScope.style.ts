@@ -17,6 +17,7 @@ export const SelectedTags = styled.div`
     width: 30%;
     margin-left: var(--grid-unit);
     margin-bottom: calc(var(--grid-unit) * 4);
+    overflow: auto;
 `;
 
 export const Divider = styled.div`

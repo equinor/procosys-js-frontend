@@ -98,7 +98,7 @@ export const TableCell = styled.div<{ align?: string }>`
     text-overflow: ellipsis;
     color: inherit;
     justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     min-height: 40px;
     flex-direction: row;

@@ -10,12 +10,14 @@ export const Container = styled.div`
 
 export const LargerComponent = styled.div`
     width: 70%;
+    overflow: auto;
 `;
 
 export const SelectedTags = styled.div`
     width: 30%;
     margin-left: var(--grid-unit);
     margin-bottom: calc(var(--grid-unit) * 4);
+    overflow: auto;
 `;
 
 export const Divider = styled.div`

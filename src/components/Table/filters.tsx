@@ -37,6 +37,7 @@ export const DefaultColumnFilter = ( { column }: ColumnFilterProps<DefaultFilter
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setFilter(e.target.value || undefined);
                 }}
+                value={column.filterValue}
                 inputIcon={<FilterListIcon />}
                 type='search' />
         </ColumnFilter>

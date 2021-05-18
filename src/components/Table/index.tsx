@@ -4,6 +4,7 @@ import {
     ColumnInstance,
     HeaderProps,
     Hooks,
+    TableInstance,
     TableOptions,
     useFilters,
     useFlexLayout,
@@ -195,7 +196,9 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         if (props.setPageSize) {
             props.setPageSize(pageSize);
         }
+        tableInstance.state.pageSize = pageSize;
         rowHeights.current = {};
+
         setCounter(counter + 1);
     }, [pageSize]);
 
@@ -292,6 +295,24 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         return rowHeights.current[index] || 40;
     }
 
+    const getItemCount = (tableInstance: TableInstance<Record<string, unknown>>): number => {
+        if(tableInstance.state.pageIndex > 0) {
+            const itemsStartIndex = tableInstance.state.pageSize * tableInstance.state.pageIndex;
+            const itemsEndIndex = itemsStartIndex + tableInstance.state.pageSize;
+            if(tableInstance.filteredRows.length > itemsEndIndex)
+                return tableInstance.state.pageSize;
+            else {
+                return tableInstance.filteredRows.length - itemsStartIndex;
+            }
+        } else {
+            if(tableInstance.filteredRows.length < tableInstance.state.pageSize) {
+                return tableInstance.filteredRows.length;
+            } else {
+                return tableInstance.state.pageSize;
+            }    
+        }
+    }
+
     useEffect(() => {
         const reRenderTable = (): void => {
             setCounter(counterRef.current + 1);
@@ -383,7 +404,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                 {props.data.length === 0 && (<div>No records to display</div>)}
                                 <List
                                     height={height - 60}
-                                    itemCount={pageSize > props.data.length ? props.data.length : pageSize}
+                                    itemCount={getItemCount(tableInstance)}
                                     itemSize={getRowHeight}
                                     width={width}
                                     ref={listRef}

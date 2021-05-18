@@ -162,7 +162,7 @@ export default {
         },
         maxRowCount: {
             description: 'Total number of rows in data.'
-        },
+        },        
         data: {
             description: 'Array containing the table rows.'
         },
@@ -217,26 +217,11 @@ export const Default: Story<TableProperties<LocalTableType>> = (args: JSX.Intrin
 };
 
 export const Filtering: Story<TableProperties<LocalTableType>> = (args: JSX.IntrinsicAttributes & TableProperties<LocalTableType>) => {
-    const [pageSize, setPageSize] = useState(10);
-    const [id, setId] = useState<number>(0);
-    const prevArgs = useRef<string>();
-
-    useEffect(() => {
-        if (Object.keys(args).length > 0) {
-            if (prevArgs.current !== JSON.stringify(args)) {
-                setId(id + 1);
-            }
-        }
-        prevArgs.current = JSON.stringify(args);
-    }, [args]);
-
     return (
         <Wrapper>
             <Table
-                key={id}
-                setPageSize={setPageSize}
                 {...args}
-                pageSize={pageSize}
+                pageSize={10}
                 columns={filteredColumns}
                 maxRowCount={50}
                 data={getData().slice(0, 50) || []}

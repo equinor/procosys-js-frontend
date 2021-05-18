@@ -12,7 +12,7 @@ export function TablePagination<T extends Record<string, unknown>>({
     instance
 }: PropsWithChildren<{ instance: TableInstance<T> }>): ReactElement | null {
     const {
-        state: { pageIndex, pageSize, rowCount = instance.filteredRows.length },
+        state: { pageIndex, pageSize, rowCount = instance.columns.filter(x => x.filterValue).length > 0 ? instance.filteredRows.length : instance.maxRowCount },
         gotoPage,
         nextPage,
         previousPage,

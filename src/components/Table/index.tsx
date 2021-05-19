@@ -296,21 +296,31 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
     }
 
     const getItemCount = (tableInstance: TableInstance<Record<string, unknown>>): number => {
-        if(tableInstance.state.pageIndex > 0) {
-            const itemsStartIndex = tableInstance.state.pageSize * tableInstance.state.pageIndex;
-            const itemsEndIndex = itemsStartIndex + tableInstance.state.pageSize;
-            if(tableInstance.filteredRows.length > itemsEndIndex)
-                return tableInstance.state.pageSize;
-            else {
-                return tableInstance.filteredRows.length - itemsStartIndex;
+        let itemCount = 0;
+        if (props.clientPagination) {
+            if (tableInstance.state.pageIndex > 0) {
+                const itemsStartIndex = tableInstance.state.pageSize * tableInstance.state.pageIndex;
+                const itemsEndIndex = itemsStartIndex + tableInstance.state.pageSize;
+                if (tableInstance.filteredRows.length > itemsEndIndex)
+                    itemCount = tableInstance.state.pageSize;
+                else {
+                    itemCount = tableInstance.filteredRows.length - itemsStartIndex;
+                }
+            } else {
+                if (tableInstance.filteredRows.length < tableInstance.state.pageSize) {
+                    itemCount = tableInstance.filteredRows.length;
+                } else {
+                    itemCount = tableInstance.state.pageSize;
+                }
             }
         } else {
-            if(tableInstance.filteredRows.length < tableInstance.state.pageSize) {
-                return tableInstance.filteredRows.length;
+            if (tableInstance.filteredRows.length < tableInstance.state.pageSize) {
+                itemCount = tableInstance.filteredRows.length;
             } else {
-                return tableInstance.state.pageSize;
-            }    
+                itemCount = tableInstance.state.pageSize;
+            }
         }
+        return itemCount;
     }
 
     useEffect(() => {

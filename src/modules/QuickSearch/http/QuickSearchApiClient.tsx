@@ -8,6 +8,7 @@ import { IAuthService } from "src/auth/AuthService";
 export enum ResultTypeEnum {
     COMM_PKG = 'C',
     MC_PKG = 'MC',
+    TAG = 'T'
 }
 
 export interface ContentDocument {
@@ -20,6 +21,7 @@ export interface ContentDocument {
     mcPkg?: ContentDocumentMcPkg;
     type?: string;
     lastUpdated?: Date;
+    tag?: ContentDocumentTag;
 }
 
 export interface ContentDocumentCommPkg {
@@ -39,6 +41,19 @@ export interface ContentDocumentMcPkg {
     mcPkgNo?: string;
     remark?: string;
     responsible?: string;
+}
+
+export interface ContentDocumentTag {
+    tagNo?: string;
+    description?: string;
+    mcPkgNo?: string;
+    commPkgNo?: string;
+    area?: string;
+    disciplineCode?: string;
+    disciplineDescription?: string;
+    callOfNo?: string;
+    purchaseOrderNo?: string;
+    tagFunctionCode?: string;
 }
 
 export interface SearchResult {
@@ -75,7 +90,7 @@ class QuickSearchApiClient extends ApiClient {
         try {
             const result = await this.client.get<SearchResult>(endpoint, settings);
             result.data.items.map((item: ContentDocument) => {
-                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG : ResultTypeEnum.MC_PKG;
+                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG : item.mcPkg ? ResultTypeEnum.MC_PKG : ResultTypeEnum.TAG;
             });
             return result.data;
         }

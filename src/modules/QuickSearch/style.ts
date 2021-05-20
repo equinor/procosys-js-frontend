@@ -95,7 +95,6 @@ export const SelectedFilters = styled.div`
     display: flex;
     flex: 1 1 100%;
     flex-wrap: wrap;
-    margin-bottom: 20px;
 `;
 
 
@@ -104,14 +103,7 @@ interface ResultsContainerProps {
 }
 
 export const ResultsContainer = styled.div<ResultsContainerProps>`
-    height: calc(100% - 140px);
     width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%' };
-    ${Breakpoints.TABLET} {
-        height: calc(100% - 120px);
-    }
-    ${Breakpoints.MOBILE} {
-        height: calc(100% - 118px);
-    }
 `;
 
 
@@ -143,6 +135,26 @@ export const DescriptionCell = styled.div`
     display: flex;
     height: 100%;
     align-items: center;
+    width: calc(100% - 4px);
+    color: ${tokens.colors.text.static_icons__default.rgba};
+    cursor: pointer;
+    &.selected {
+        background-color: #e6faec;
+        box-shadow: -4px 0px #e6faec;
+    }
+    ${Breakpoints.TABLET} {
+        padding: 1px;
+    }
+    ${Breakpoints.MOBILE} {
+        padding: 4px;
+    }
+`;
+
+export const TypeCell = styled.div`
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
     width: calc(100% - 4px);
     color: ${tokens.colors.text.static_icons__default.rgba};
     cursor: pointer;

@@ -89,7 +89,7 @@ const QuickSearchFilters = ({
                                                         onCheckboxTypeFilterChange(type, checked);
                                                     }}
                                                 >
-                                                    <Typography variant='body_long'>{type === 'C' ? 'Comm pkg' : 'MC pkg'}</Typography>
+                                                    <Typography variant='body_long'>{type === 'C' ? 'Comm pkg' : type === 'MC' ? 'MC pkg' : 'Tag'}</Typography>
                                                 </Checkbox>
                                             )
                                         })

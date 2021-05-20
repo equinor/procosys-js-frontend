@@ -1,7 +1,7 @@
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { useLocation } from 'react-router-dom';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -17,20 +17,29 @@ import {
     FilterChip,
     FiltersAndSortRow,
     LinkButton,
-    PackageNoPart,
     ResultsContainer,
     SearchContainer,
     SelectedFilters,
     StyledButton,
     TopDiv,
-    StyledHeader
+    StyledHeader,
+    TypeIndicator,
+    TypeCell
 } from './style';
 import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { getFormattedDate } from '@procosys/core/services/DateService';
-import { Typography } from '@equinor/eds-core-react';
 import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
+import CommPkgIcon from './icons/commPkg';
+import MCPkgIcon from './icons/mcPkg';
+import TagIcon from './icons/tag';
+import styled from 'styled-components';
+import { Tooltip } from '@material-ui/core';
+
+const StyledTooltip = styled(Tooltip)`
+font-size: 14px;
+`;
 
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -48,12 +57,14 @@ const QuickSearch = (): JSX.Element => {
     const [typeFilterExpanded, setTypeFilterExpanded] = useState<boolean>(true);
     const [currentItem, setCurrentItem] = useState<ContentDocument | undefined>(undefined);
     const highlightOn = true;
+    const [topDivHeight, setTopDivHeight] = useState<number>(0);
+    const topDivRef = useRef<HTMLDivElement>(null);
 
     const { search } = useLocation();
 
     useEffect(() => {
-        if(!ProCoSysSettings.featureIsEnabled('search')) window.location.href = location.origin;
-        
+        if (!ProCoSysSettings.featureIsEnabled('search')) window.location.href = location.origin;
+
         const values = queryString.parse(search);
         if (values && values.query) {
             const searchVal = values.query as string;
@@ -123,9 +134,10 @@ const QuickSearch = (): JSX.Element => {
 
     const highlightSearchValue = (text: string): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
+        text = text.replaceAll('"', '');
 
         return <Highlighter
-            searchWords={searchValue.split(' ')}
+            searchWords={searchValue.replaceAll('"', '').split(' ')}
             autoEscape={true}
             textToHighlight={text}
         />
@@ -142,13 +154,25 @@ const QuickSearch = (): JSX.Element => {
         )
     }
 
+    const getType = (row: TableOptions<ContentDocument>): JSX.Element => {
+        const doc = row.value as ContentDocument;
+
+        return (
+            <StyledTooltip title={doc.type === 'C' ? 'Comm package' : doc.type === 'MC' ? 'MC package' : doc.type === 'T' ? 'Tag' : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <TypeCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''}>
+                    {doc.type === 'C' ? <CommPkgIcon /> : doc.type === 'MC' ? <MCPkgIcon /> : doc.type === 'T' ? <TagIcon /> : <TypeIndicator><span>{doc.type}</span></TypeIndicator>}
+                </TypeCell>
+            </StyledTooltip>
+        )
+    }
+
     const getNumber = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo || '' : doc.mcPkg ? doc.mcPkg.mcPkgNo || '' : '';
+        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo ?? '' : doc.mcPkg ? doc.mcPkg.mcPkgNo ?? '' : doc.tag ? doc.tag.tagNo ?? '' : '';
 
         return (
             <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                <ResultCell>
+                <ResultCell variant="body_short" lines="1">
                     {highlightSearchValue(pkgNo)}
                 </ResultCell>
             </DescriptionCell>
@@ -157,40 +181,69 @@ const QuickSearch = (): JSX.Element => {
 
     const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-        if (doc.commPkg) {
 
+        if (doc.commPkg) {
             return (
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
-
                     <ResultCell variant="body_short" lines="1" className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                        {highlightSearchValue(doc.commPkg.description || '')}
+                        {highlightSearchValue(doc.commPkg.description ?? '')}
                     </ResultCell>
                 </DescriptionCell>
             );
         }
 
         if (doc.mcPkg) {
-
             return (
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    {/* <TypeIndicator><span>{doc.type}</span></TypeIndicator> */}
                     <ResultCell variant="body_short" lines="1">
-                        {highlightSearchValue(doc.mcPkg.description || '')}
+                        {highlightSearchValue(doc.mcPkg.description ?? '')}
                     </ResultCell>
                 </DescriptionCell>
             )
         }
+
+        if (doc.tag) {
+            return (
+                <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    <ResultCell variant="body_short" lines="1">
+                        {highlightSearchValue(doc.tag.description ?? '')}
+                    </ResultCell>
+                </DescriptionCell>
+            )
+        }
+
         return <div></div>;
+    };
+
+    const getPlantName = (row: TableOptions<ContentDocument>): JSX.Element => {
+        const doc = row.value as ContentDocument;
+        return (
+            <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <ResultCell variant="body_short" lines="1">
+                    {highlightSearchValue(doc.plantName ?? '')}
+                </ResultCell>
+            </DescriptionCell>
+        );
+    };
+
+    const getProject = (row: TableOptions<ContentDocument>): JSX.Element => {
+        const doc = row.value as ContentDocument;
+        return (
+            <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <ResultCell variant="body_short" lines="1">
+                    {highlightSearchValue(doc.project ?? '')}
+                </ResultCell>
+            </DescriptionCell>
+        );
     };
 
     const getDateColumn = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
         return (
             <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                <Typography variant="body_short" lines="1">
-                    {getFormattedDate(doc.lastUpdated)}
-                </Typography>
+                <ResultCell variant="body_short" lines="1">
+                    {highlightSearchValue(getFormattedDate(doc.lastUpdated))}
+                </ResultCell>
             </DescriptionCell>
         );
     };
@@ -214,18 +267,35 @@ const QuickSearch = (): JSX.Element => {
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'link',
             Cell: getLink,
-            width: 30,
+            width: 40,
             defaultCanSort: false
+        },
+        {
+            Header: 'Type',
+            accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
+            id: 'type',
+            Cell: getType,
+            width: 55,
+            sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
+                const firstValue = (a.original.type) || '';
+                const secondValue = (b.original.type) || '';
+                if (firstValue > secondValue)
+                    return 1;
+                else if (firstValue < secondValue)
+                    return -1;
+                else
+                    return 0;
+            }
         },
         {
             Header: 'No.',
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'no',
             Cell: getNumber,
-            width: 90,
+            width: 100,
             sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
-                const firstValue = (a.original.commPkg ? a.original.commPkg.commPkgNo : a.original.mcPkg?.mcPkgNo) || '';
-                const secondValue = (b.original.commPkg ? b.original.commPkg.commPkgNo : b.original.mcPkg?.mcPkgNo) || '';
+                const firstValue = (a.original.commPkg ? a.original.commPkg.commPkgNo : a.original.mcPkg ? a.original.mcPkg.mcPkgNo : a.original.tag ? a.original.tag.tagNo : '') || '';
+                const secondValue = (b.original.commPkg ? b.original.commPkg.commPkgNo : b.original.mcPkg ? b.original.mcPkg.mcPkgNo : b.original.tag ? b.original.tag.tagNo : '') || '';
                 if (firstValue > secondValue)
                     return 1;
                 else if (firstValue < secondValue)
@@ -239,10 +309,44 @@ const QuickSearch = (): JSX.Element => {
             accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
             id: 'id',
             Cell: getDescription,
-            width: 300,
+            width: 200,
             sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
-                const firstValue = (a.original.commPkg ? a.original.commPkg.description : a.original.mcPkg?.description) || '';
-                const secondValue = (b.original.commPkg ? b.original.commPkg.description : b.original.mcPkg?.description) || '';
+                const firstValue = a.original.type === 'C' ? a.original.commPkg?.description ?? '' : a.original.type === 'MC' ? a.original.mcPkg?.description ?? '' : a.original.type === 'T' ? a.original.tag?.description ?? '' : '';
+                const secondValue = b.original.type === 'C' ? b.original.commPkg?.description ?? '' : b.original.type === 'MC' ? b.original.mcPkg?.description ?? '' : b.original.type === 'T' ? b.original.tag?.description ?? '' : '';
+                if (firstValue > secondValue)
+                    return 1;
+                else if (firstValue < secondValue)
+                    return -1;
+                else
+                    return 0;
+            }
+        },
+        {
+            Header: 'Plant',
+            accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
+            id: 'plantName',
+            Cell: getPlantName,
+            width: 100,
+            sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
+                const firstValue = a.original.plantName ?? '';
+                const secondValue = b.original.plantName ?? '';
+                if (firstValue > secondValue)
+                    return 1;
+                else if (firstValue < secondValue)
+                    return -1;
+                else
+                    return 0;
+            }
+        },
+        {
+            Header: 'Project',
+            accessor: (d: UseTableRowProps<ContentDocument>): UseTableRowProps<ContentDocument> => d,
+            id: 'project',
+            Cell: getProject,
+            width: 100,
+            sortType: (a: UseTableRowProps<ContentDocument>, b: UseTableRowProps<ContentDocument>): 0 | -1 | 1 => {
+                const firstValue = a.original.project ?? '';
+                const secondValue = b.original.project ?? '';
                 if (firstValue > secondValue)
                     return 1;
                 else if (firstValue < secondValue)
@@ -327,6 +431,19 @@ const QuickSearch = (): JSX.Element => {
         setSelectedTypes(selectedTypes.filter(t => t !== type));
     }
 
+    const updateTopDivHeight = (): void => {
+        if (!topDivRef.current) return;
+        setTopDivHeight(topDivRef.current.clientHeight);
+    };
+
+    useEffect(() => {
+        window.addEventListener('resize', updateTopDivHeight);
+
+        return (): void => {
+            window.removeEventListener('resize', updateTopDivHeight);
+        };
+    }, []);
+
     useEffect(() => {
         if (searchResult && searchResult.items.length > 0) {
             let currentItems = [...searchResult.items];
@@ -343,6 +460,10 @@ const QuickSearch = (): JSX.Element => {
         }
     }, [selectedPlants, selectedTypes]);
 
+    useEffect(() => {
+        updateTopDivHeight();
+    }, [showFilter, selectedPlants, selectedTypes]);
+
     const toggleShowFilter = (): void => {
         if (!showFilter) {
             setCurrentItem(undefined);
@@ -354,33 +475,33 @@ const QuickSearch = (): JSX.Element => {
         <Container>
             <SearchContainer withSidePanel={(showFilter && !currentItem)}>
                 <Helmet titleTemplate={'ProCoSys - Quick Search'} />
-                <TopDiv>
+                <TopDiv ref={topDivRef}>
                     <StyledHeader variant="h1">Quick Search Results</StyledHeader>
                     <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
                     {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
                         <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
                     )}
                     <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
+
+                    <FiltersAndSortRow currentItem={currentItem}>
+                        <SelectedFilters>
+                            {selectedPlants && (
+                                selectedPlants.map((plant) => {
+                                    return (<FilterChip variant="active" onDelete={(): void => handlePlantRemove(plant)} key={plant}>{plant}</FilterChip>)
+                                })
+                            )}
+
+                            {selectedTypes && (
+                                selectedTypes.map((type) => {
+                                    return (<FilterChip variant="active" onDelete={(): void => handleTypeRemove(type)} key={type}>{'Type: ' + (type === 'C' ? 'Comm pkg' : type === 'MC' ? 'MC pkg' : 'Tag')}</FilterChip>)
+                                })
+                            )}
+
+                        </SelectedFilters>
+                    </FiltersAndSortRow>
                 </TopDiv>
 
-                <FiltersAndSortRow currentItem={currentItem}>
-                    <SelectedFilters>
-                        {selectedPlants && (
-                            selectedPlants.map((plant) => {
-                                return (<FilterChip variant="active" onDelete={(): void => handlePlantRemove(plant)} key={plant}>{plant}</FilterChip>)
-                            })
-                        )}
-
-                        {selectedTypes && (
-                            selectedTypes.map((type) => {
-                                return (<FilterChip variant="active" onDelete={(): void => handleTypeRemove(type)} key={type}>{'Type: ' + (type === 'C' ? 'Comm pkg' : 'MC pkg')}</FilterChip>)
-                            })
-                        )}
-
-                    </SelectedFilters>
-                </FiltersAndSortRow>
-
-                <ResultsContainer currentItem={currentItem}>
+                <ResultsContainer id="rescont" currentItem={currentItem} style={{ height: 'calc(100% - ' + ((topDivHeight === 0 ? 160 : topDivHeight) + 48) + 'px)' }}>
                     {
                         searching ? <Loading title="Searching" /> : (
                             !searchResult || searchResult.items.length === 0 ? 'No results' : (
@@ -404,7 +525,7 @@ const QuickSearch = (): JSX.Element => {
                         <StyledSideSheet
                             onClose={(): void => setCurrentItem(undefined)}
                             open={displayFlyout}
-                            title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : 'Preview MC package'}
+                            title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : (currentItem as ContentDocument).mcPkg ? 'Preview MC package' : 'Preview Tag'}
                             variant="large">
                             <QuickSearchFlyout highlightOn={highlightOn} searchValue={searchValue} item={currentItem as ContentDocument} />
                         </StyledSideSheet>

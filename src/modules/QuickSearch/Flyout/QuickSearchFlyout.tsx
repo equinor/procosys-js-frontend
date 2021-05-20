@@ -4,6 +4,7 @@ import CommPkgTab from './CommPkgTab/CommPkgTab';
 import RelatedMCPkgTab from './CommPkgTab/RelatedMCPkgTab';
 import MCPkgTab from './MCPkgTab/MCPkgTab';
 import { Tabs } from './style';
+import TagTab from './TagTab/TagTab';
 
 export interface QuickSearchFlyoutProps {
     item: ContentDocument;
@@ -25,7 +26,15 @@ const QuickSearchFlyout = ({ item, searchValue, highlightOn }: QuickSearchFlyout
                 if (item.commPkg) {
                     return <CommPkgTab highlightOn={highlightOn} searchValue={searchValue} commPkg={item} />
                 }
-                return <MCPkgTab highlightOn={highlightOn} searchValue={searchValue} mcPkg={item} />
+
+                if(item.mcPkg) {
+                    return <MCPkgTab highlightOn={highlightOn} searchValue={searchValue} mcPkg={item} />
+                }
+                
+                if(item.tag) {
+                    return <TagTab highlightOn={highlightOn} searchValue={searchValue} tag={item} />
+                }
+                return <></>;
             }
             case 'related': {
                 if (item.commPkg) {

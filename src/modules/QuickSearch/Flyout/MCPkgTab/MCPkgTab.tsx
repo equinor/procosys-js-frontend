@@ -6,7 +6,7 @@ import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader
 import EdsIcon from '@procosys/components/EdsIcon';
 import Highlighter from 'react-highlight-words';
 
-const { CardHeader, CardHeaderTitle } = Card;
+const { CardHeader } = Card;
 
 export interface MCPkgTabTabProperties {
     mcPkg: ContentDocument;
@@ -17,7 +17,7 @@ export interface MCPkgTabTabProperties {
 const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
-        if(!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
+        if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
 
         let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
         url += "/CommPkg?commPkgNo=" + mcPkg.mcPkg.commPkgNo + "&project=" + mcPkg.project;
@@ -25,7 +25,7 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
     };
 
     const navigateToMCPkg = (): void => {
-        if(!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
+        if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
 
         let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
         url += "/MCPkg?mcPkgNo=" + mcPkg.mcPkg.mcPkgNo + "&project=" + mcPkg.project;
@@ -124,11 +124,20 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
             <Typography variant="h6">Comm package info</Typography>
 
             <StyledCard100>
-                <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
-                    <StyledHeaderTitle className="link-container">
-                        <Typography variant="caption">Comm pkg.</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.commPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
-                    </StyledHeaderTitle>
+                <StyledCardHeader onClick={(): void => mcPkg.mcPkg?.commPkgNo ? navigateToCommPkg() : undefined}>
+                    {
+                        mcPkg.mcPkg?.commPkgNo ? (
+                            <StyledHeaderTitleLink className="link-container">
+                                <Typography variant="caption">Comm pkg.</Typography>
+                                <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.commPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                            </StyledHeaderTitleLink>
+                        ) : (
+                            <StyledHeaderTitle className="link-container">
+                                <Typography variant="caption">Comm pkg.</Typography>
+                            </StyledHeaderTitle>
+                        )
+                    }
+
                 </StyledCardHeader>
             </StyledCard100>
 

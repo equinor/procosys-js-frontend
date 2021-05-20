@@ -381,6 +381,8 @@ const QuickSearch = (): JSX.Element => {
     const clearFilters = (): void => {
         setSelectedTypes([]);
         setSelectedPlants([]);
+        const newUrl = location.origin + location.pathname + '?query=' + queryString.parse(search).query;
+        history.replaceState(null, '', encodeURI(newUrl));
     }
 
     const prepareFilters = (items: ContentDocument[]): void => {

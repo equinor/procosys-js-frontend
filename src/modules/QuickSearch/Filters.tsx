@@ -36,6 +36,23 @@ const QuickSearchFilters = ({
     onCheckboxTypeFilterChange
 }: QuickSearchFiltersProps): JSX.Element => {
 
+    const getFilterType = (type: string) => {
+        switch (type) {
+            case 'C':
+                return 'Comm pkg';
+            case 'MC':
+                return 'MC pkg';
+            case 'T':
+                return 'Tag';
+            case 'PI':
+                return "Punch List Item";
+            case 'OTHER':
+                return 'Other';
+            default:
+                return 'Other'
+        }
+    }
+
     return (
         <FiltersContainer>
             <SearchFilters>
@@ -89,7 +106,7 @@ const QuickSearchFilters = ({
                                                         onCheckboxTypeFilterChange(type, checked);
                                                     }}
                                                 >
-                                                    <Typography variant='body_long'>{type === 'C' ? 'Comm pkg' : type === 'MC' ? 'MC pkg' : 'Tag'}</Typography>
+                                                    <Typography variant='body_long'>{getFilterType(type)}</Typography>
                                                 </Checkbox>
                                             )
                                         })

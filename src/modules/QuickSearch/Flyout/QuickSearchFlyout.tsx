@@ -3,6 +3,7 @@ import { ContentDocument } from '../http/QuickSearchApiClient';
 import CommPkgTab from './CommPkgTab/CommPkgTab';
 import RelatedMCPkgTab from './CommPkgTab/RelatedMCPkgTab';
 import MCPkgTab from './MCPkgTab/MCPkgTab';
+import PunchListItemTab from './PunchListItemTab/PunchListItemTab';
 import { Tabs } from './style';
 import TagTab from './TagTab/TagTab';
 
@@ -33,6 +34,10 @@ const QuickSearchFlyout = ({ item, searchValue, highlightOn }: QuickSearchFlyout
                 
                 if(item.tag) {
                     return <TagTab highlightOn={highlightOn} searchValue={searchValue} tag={item} />
+                }
+
+                if(item.punchItem) {
+                    return <PunchListItemTab highlightOn={highlightOn} searchValue={searchValue} punchItem={item} />
                 }
                 return <></>;
             }

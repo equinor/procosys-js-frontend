@@ -20,7 +20,7 @@ const TagTab = ({ tag: tag, searchValue, highlightOn }: TagTabTabProperties): JS
         if (!tag.plant || !tag.tag || !tag.tag.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
 
         let url = location.origin + "/" + tag.plant.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + tag.tag.commPkgNo + "&project=" + tag.project;
+        url += "/CommPkg?commPkgNo=" + encodeURIComponent(tag.tag.commPkgNo ?? '') + "&project=" + encodeURIComponent(tag.project ?? '');
         window.open(url, '_blank');
     };
 
@@ -28,7 +28,7 @@ const TagTab = ({ tag: tag, searchValue, highlightOn }: TagTabTabProperties): JS
         if (!tag.plant || !tag.tag || !tag.tag.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
 
         let url = location.origin + "/" + tag.plant.replace('PCS$', '') + "/link";
-        url += "/MCPkg?mcPkgNo=" + tag.tag.mcPkgNo + "&project=" + tag.project;
+        url += "/MCPkg?mcPkgNo=" + encodeURIComponent(tag.tag.mcPkgNo ?? '') + "&project=" + encodeURIComponent(tag.project ?? '');
         window.open(url, '_blank');
     };
 
@@ -36,7 +36,7 @@ const TagTab = ({ tag: tag, searchValue, highlightOn }: TagTabTabProperties): JS
         if (!tag.plant || !tag.tag || !tag.tag.tagNo) throw new Error("Unable to navigate. Plant or Tag is missing. ");
 
         let url = location.origin + "/" + tag.plant.replace('PCS$', '') + "/link";
-        url += "/Tag?tagNo=" + tag.tag.tagNo + "&project=" + tag.project;
+        url += "/Tag?tagNo=" + encodeURIComponent(tag.tag.tagNo ?? '') + "&project=" + encodeURIComponent(tag.project ?? '');
         window.open(url, '_blank');
     };
 

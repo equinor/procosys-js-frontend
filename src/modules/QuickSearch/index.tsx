@@ -36,6 +36,7 @@ import MCPkgIcon from './icons/mcPkg';
 import TagIcon from './icons/tag';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
+import PunchIcon from './icons/punch';
 
 const StyledTooltip = styled(Tooltip)`
 font-size: 14px;
@@ -122,11 +123,19 @@ const QuickSearch = (): JSX.Element => {
         let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
 
         if (item.commPkg) {
-            url += "/CommPkg?commPkgNo=" + item.commPkg.commPkgNo + "&project=" + item.project;
+            url += "/CommPkg?commPkgNo=" + encodeURIComponent(item.commPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(item.project ?? '');
         }
 
         if (item.mcPkg) {
-            url += "/MCPkg?mcPkgNo=" + item.mcPkg.mcPkgNo + "&project=" + item.project;
+            url += "/MCPkg?mcPkgNo=" + encodeURIComponent(item.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(item.project ?? '');
+        }
+
+        if (item.tag) {
+            url += "/Tag?tagNo=" + encodeURIComponent(item.tag.tagNo ?? '') + "&project=" + encodeURIComponent(item.project ?? '');
+        }
+
+        if(item.punchItem) {
+            url += "/PunchListItem?punchListItemNo=" + encodeURIComponent(item.punchItem.punchItemNo ?? '');
         }
 
         window.open(url, '_blank');
@@ -154,13 +163,44 @@ const QuickSearch = (): JSX.Element => {
         )
     }
 
+    const getTypeTooltipText = (type: string): string => {
+        switch(type) {
+            case 'C':
+                return 'Comm package';
+            case 'MC':
+                return 'MC package';
+            case 'T': 
+                return 'Tag';
+            case 'PI':
+                return 'Punch List Item';
+            default:
+                return 'Other';
+        }
+    }
+
+    const getTypeIcon = (type: string): JSX.Element => {
+        switch(type) {
+            case 'C':
+                return <CommPkgIcon />;
+            case 'MC':
+                return <MCPkgIcon />;
+            case 'T': 
+                return <TagIcon />;
+            case 'PI':
+                return <PunchIcon />;
+            default:
+                return <TypeIndicator><span>{type}</span></TypeIndicator>;
+        }
+    }
+
+
     const getType = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
 
         return (
-            <StyledTooltip title={doc.type === 'C' ? 'Comm package' : doc.type === 'MC' ? 'MC package' : doc.type === 'T' ? 'Tag' : ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                <TypeCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''}>
-                    {doc.type === 'C' ? <CommPkgIcon /> : doc.type === 'MC' ? <MCPkgIcon /> : doc.type === 'T' ? <TagIcon /> : <TypeIndicator><span>{doc.type}</span></TypeIndicator>}
+            <StyledTooltip title={getTypeTooltipText(doc.type ?? '')} arrow={true} enterDelay={200} enterNextDelay={100}>
+                <TypeCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    {getTypeIcon(doc.type ?? '')}
                 </TypeCell>
             </StyledTooltip>
         )
@@ -168,7 +208,11 @@ const QuickSearch = (): JSX.Element => {
 
     const getNumber = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo ?? '' : doc.mcPkg ? doc.mcPkg.mcPkgNo ?? '' : doc.tag ? doc.tag.tagNo ?? '' : '';
+        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo ?? '' 
+            : doc.mcPkg ? doc.mcPkg.mcPkgNo ?? '' 
+            : doc.tag ? doc.tag.tagNo ?? '' 
+            : doc.punchItem ? doc.punchItem.punchItemNo ?? '' 
+            : '';
 
         return (
             <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
@@ -181,38 +225,19 @@ const QuickSearch = (): JSX.Element => {
 
     const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-
-        if (doc.commPkg) {
+       
             return (
                 <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
                     <ResultCell variant="body_short" lines="1" className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                        {highlightSearchValue(doc.commPkg.description ?? '')}
+                        {highlightSearchValue(
+                            doc.commPkg ? doc.commPkg.description ?? '' 
+                                : doc.mcPkg ? doc.mcPkg.description ?? '' 
+                                : doc.tag ? doc.tag.description ?? '' 
+                                : doc.punchItem ? doc.punchItem.description ?? ''
+                                : '')}
                     </ResultCell>
                 </DescriptionCell>
             );
-        }
-
-        if (doc.mcPkg) {
-            return (
-                <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <ResultCell variant="body_short" lines="1">
-                        {highlightSearchValue(doc.mcPkg.description ?? '')}
-                    </ResultCell>
-                </DescriptionCell>
-            )
-        }
-
-        if (doc.tag) {
-            return (
-                <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <ResultCell variant="body_short" lines="1">
-                        {highlightSearchValue(doc.tag.description ?? '')}
-                    </ResultCell>
-                </DescriptionCell>
-            )
-        }
-
-        return <div></div>;
     };
 
     const getPlantName = (row: TableOptions<ContentDocument>): JSX.Element => {
@@ -473,6 +498,38 @@ const QuickSearch = (): JSX.Element => {
         setShowFilter(!showFilter);
     }
 
+    const getFilterType = (type: string) => {
+        switch (type) {
+            case 'C':
+                return 'Comm pkg';
+            case 'MC':
+                return 'MC pkg';
+            case 'T':
+                return 'Tag';
+            case 'PI':
+                return "Punch List Item";
+            case 'OTHER':
+                return 'Other';
+            default:
+                return 'Other'
+        }
+    }
+
+    const getFlyoutTitle = (type: string): string => {
+        switch(type) {
+            case 'C':
+                return 'Preview Comm package';
+            case 'MC':
+                return 'Preview MC package';
+            case 'T': 
+                return 'Preview Tag';
+            case 'PI':
+                return 'Preview Punch List Item';
+            default:
+                return 'Preview Other';
+        }
+    }
+
     return (
         <Container>
             <SearchContainer withSidePanel={(showFilter && !currentItem)}>
@@ -495,7 +552,12 @@ const QuickSearch = (): JSX.Element => {
 
                             {selectedTypes && (
                                 selectedTypes.map((type) => {
-                                    return (<FilterChip variant="active" onDelete={(): void => handleTypeRemove(type)} key={type}>{'Type: ' + (type === 'C' ? 'Comm pkg' : type === 'MC' ? 'MC pkg' : 'Tag')}</FilterChip>)
+                                    return (<FilterChip
+                                        variant="active"
+                                        onDelete={(): void => handleTypeRemove(type)}
+                                        key={type}>
+                                        {'Type: ' + getFilterType(type)}
+                                    </FilterChip>)
                                 })
                             )}
 
@@ -527,7 +589,7 @@ const QuickSearch = (): JSX.Element => {
                         <StyledSideSheet
                             onClose={(): void => setCurrentItem(undefined)}
                             open={displayFlyout}
-                            title={(currentItem as ContentDocument).commPkg ? 'Preview Comm package' : (currentItem as ContentDocument).mcPkg ? 'Preview MC package' : 'Preview Tag'}
+                            title={getFlyoutTitle((currentItem as ContentDocument).type ?? '')}
                             variant="large">
                             <QuickSearchFlyout highlightOn={highlightOn} searchValue={searchValue} item={currentItem as ContentDocument} />
                         </StyledSideSheet>

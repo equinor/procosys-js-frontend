@@ -8,7 +8,9 @@ import { IAuthService } from "src/auth/AuthService";
 export enum ResultTypeEnum {
     COMM_PKG = 'C',
     MC_PKG = 'MC',
-    TAG = 'T'
+    TAG = 'T',
+    PUNCH_ITEM = 'PI',
+    OTHER = 'OTHER'
 }
 
 export interface ContentDocument {
@@ -22,6 +24,7 @@ export interface ContentDocument {
     type?: string;
     lastUpdated?: Date;
     tag?: ContentDocumentTag;
+    punchItem?: ContentDocumentPunchItem;
 }
 
 export interface ContentDocumentCommPkg {
@@ -54,6 +57,15 @@ export interface ContentDocumentTag {
     callOfNo?: string;
     purchaseOrderNo?: string;
     tagFunctionCode?: string;
+}
+
+export interface ContentDocumentPunchItem {
+    punchItemNo?: string;
+    tagNo?: string;
+    category?: string;
+    description?: string;
+    formType?: string;
+    responsible?: string;
 }
 
 export interface SearchResult {
@@ -90,7 +102,11 @@ class QuickSearchApiClient extends ApiClient {
         try {
             const result = await this.client.get<SearchResult>(endpoint, settings);
             result.data.items.map((item: ContentDocument) => {
-                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG : item.mcPkg ? ResultTypeEnum.MC_PKG : ResultTypeEnum.TAG;
+                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG
+                    : item.mcPkg ? ResultTypeEnum.MC_PKG 
+                    : item.tag ? ResultTypeEnum.TAG
+                    : item.punchItem ? ResultTypeEnum.PUNCH_ITEM
+                    : ResultTypeEnum.OTHER;
             });
             return result.data;
         }

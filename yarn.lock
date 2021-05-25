@@ -1181,18 +1181,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@date-io/core@^2.10.11":
-  version "2.10.11"
-  resolved "https://registry.yarnpkg.com/@date-io/core/-/core-2.10.11.tgz#b1a3d57730f3eaaab54d5658be4a71727297e357"
-  integrity sha512-keXQnwH0LM8wyvu+j5Z2KGK56D+eItjy7DnwuWl/oV+DM2UEYl0z5WhdPMpfswSyt/kjuPOzcVF/7u/skMLaoA==
-
-"@date-io/date-fns@^2.10.11":
-  version "2.10.11"
-  resolved "https://registry.yarnpkg.com/@date-io/date-fns/-/date-fns-2.10.11.tgz#1f3b40c6f2ea2e659260ca329fef80cb6dc64704"
-  integrity sha512-QG9IAZ4bvwkJftoSVKtdb5ISH+Qp4zilrjhzcL4RXaeqkfIWiFeXqQPgJljvPl6gQ04zf2SjGkWjdh1eJxxwmQ==
-  dependencies:
-    "@date-io/core" "^2.10.11"
-
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"
@@ -3540,10 +3528,10 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
-date-fns@^2.19.0:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.19.0.tgz#65193348635a28d5d916c43ec7ce6fbd145059e1"
-  integrity sha512-X3bf2iTPgCAQp9wvjOQytnf5vO5rESYRXlPIVcgSbtT5OTScPcsf9eZU+B/YIkKAtYr5WeCii58BgATrNitlWg==
+date-fns@^2.21.3:
+  version "2.21.3"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.21.3.tgz#8f5f6889d7a96bbcc1f0ea50239b397a83357f9b"
+  integrity sha512-HeYdzCaFflc1i4tGbj7JKMjM4cKGYoyxwcIIkHzNgCkX8xXDNJDZXgDDVchIWpN4eQc3lH37WarduXFZJOtxfw==
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3:
   version "2.6.9"

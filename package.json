@@ -76,7 +76,6 @@
         "webpack-dev-server": "^3.11.2"
     },
     "dependencies": {
-        "@date-io/date-fns": "^2.10.11",
         "@equinor/eds-core-react": "0.8.3",
         "@equinor/eds-icons": "^0.6.0",
         "@equinor/eds-tokens": "^0.5.7",
@@ -85,7 +84,7 @@
         "@microsoft/applicationinsights-react-js": "^3.1.2",
         "@microsoft/applicationinsights-web": "^2.6.2",
         "axios": "0.21.1",
-        "date-fns": "^2.19.0",
+        "date-fns": "^2.21.3",
         "msal": "^1.4.11",
         "qs": "^6.10.1",
         "react": "^17.0.2",

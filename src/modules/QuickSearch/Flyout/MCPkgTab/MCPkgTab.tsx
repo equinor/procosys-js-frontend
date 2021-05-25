@@ -8,19 +8,19 @@ import Highlighter from 'react-highlight-words';
 
 const { CardHeader } = Card;
 
-export interface MCPkgTabTabProperties {
+export interface MCPkgTabProperties {
     mcPkg: ContentDocument;
     searchValue: string;
     highlightOn: boolean;
 }
 
-const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): JSX.Element => {
+const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.Element => {
 
     const navigateToCommPkg = (): void => {
         if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
 
         let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + mcPkg.mcPkg.commPkgNo + "&project=" + mcPkg.project;
+        url += "/CommPkg?commPkgNo=" + encodeURIComponent(mcPkg.mcPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project ?? '');
         window.open(url, '_blank');
     };
 
@@ -28,7 +28,7 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabTabProperties): J
         if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
 
         let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
-        url += "/MCPkg?mcPkgNo=" + mcPkg.mcPkg.mcPkgNo + "&project=" + mcPkg.project;
+        url += "/MCPkg?mcPkgNo=" + encodeURIComponent(mcPkg.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project ?? '');
         window.open(url, '_blank');
     };
 

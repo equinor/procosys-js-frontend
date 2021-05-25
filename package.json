@@ -17,7 +17,8 @@
         "test-watch": "jest --watch",
         "lint": "./node_modules/.bin/eslint",
         "lint-all": "./node_modules/.bin/eslint --ext .js,.jsx,.ts,.tsx src/",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "pre-commit": "lint-staged"
     },
     "lint-staged": {
         "*.{ts,tsx,js,jsx}": "yarn lint"

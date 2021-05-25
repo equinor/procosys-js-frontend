@@ -1,18 +1,18 @@
+import { Button, Typography } from '@equinor/eds-core-react';
 import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, StyledButton, TooltipText } from './index.style';
 import { IPOFilter, IPOs, SavedIPOFilter } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import InvitationsFilter from './Filter';
 import InvitationsTable from './Table';
+import { Link } from 'react-router-dom';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
 import { Tooltip } from '@equinor/eds-core-react';
-import { Typography, Button } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 
@@ -47,6 +47,7 @@ const SearchIPO = (): JSX.Element => {
 
     const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
     const numberOfFilters: number = Object.values(filter).filter(v => v && JSON.stringify(v) != '[]').length;
+    const test = 0;
 
     const cancelerRef = useRef<Canceler | null>();
 

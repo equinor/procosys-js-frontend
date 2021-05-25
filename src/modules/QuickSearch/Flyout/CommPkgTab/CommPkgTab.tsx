@@ -21,7 +21,7 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
         if(!commPkg.plant || !commPkg.commPkg) throw new Error("Unable to navigate. Plant or CommPkg is missing.");
 
         let url = location.origin + "/" + commPkg.plant.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + encodeURIComponent(commPkg.commPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(commPkg.project ?? '');
+        url += "/CommPkg?commPkgNo=" + encodeURIComponent(commPkg.commPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(commPkg.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 

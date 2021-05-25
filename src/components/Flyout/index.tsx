@@ -2,7 +2,7 @@ import React, { MouseEvent, useRef, useEffect, ReactNode } from 'react';
 
 import { Overlay, FlyoutContainer } from './style';
 
-interface FlyoutProps {
+export interface FlyoutProps {
     close: () => void;
     children: ReactNode;
     position?: string;

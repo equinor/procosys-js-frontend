@@ -4,6 +4,7 @@ import {
     ColumnInstance,
     HeaderProps,
     Hooks,
+    TableInstance,
     TableOptions,
     useFilters,
     useFlexLayout,
@@ -13,9 +14,9 @@ import {
     useSortBy,
     useTable
 } from 'react-table';
+import { HeaderCheckbox, LoadingDiv, RowCheckbox, Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow } from './style';
 import { VariableSizeList as List, VariableSizeList } from 'react-window';
-import React, { CSSProperties, PropsWithChildren, forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { Table, TableCell, TableHeadCell, TableHeadFilterCell, TableHeader, TableRow, HeaderCheckbox, RowCheckbox, LoadingDiv } from './style';
+import React, { CSSProperties, PropsWithChildren, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { DefaultColumnFilter } from './filters';
@@ -195,7 +196,9 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         if (props.setPageSize) {
             props.setPageSize(pageSize);
         }
+        tableInstance.state.pageSize = pageSize;
         rowHeights.current = {};
+
         setCounter(counter + 1);
     }, [pageSize]);
 
@@ -292,6 +295,34 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
         return rowHeights.current[index] || 40;
     }
 
+    const getItemCount = (tableInstance: TableInstance<Record<string, unknown>>): number => {
+        let itemCount = 0;
+        if (props.clientPagination) {
+            if (tableInstance.state.pageIndex > 0) {
+                const itemsStartIndex = tableInstance.state.pageSize * tableInstance.state.pageIndex;
+                const itemsEndIndex = itemsStartIndex + tableInstance.state.pageSize;
+                if (tableInstance.filteredRows.length > itemsEndIndex)
+                    itemCount = tableInstance.state.pageSize;
+                else {
+                    itemCount = tableInstance.filteredRows.length - itemsStartIndex;
+                }
+            } else {
+                if (tableInstance.filteredRows.length < tableInstance.state.pageSize) {
+                    itemCount = tableInstance.filteredRows.length;
+                } else {
+                    itemCount = tableInstance.state.pageSize;
+                }
+            }
+        } else {
+            if (tableInstance.filteredRows.length < tableInstance.state.pageSize) {
+                itemCount = tableInstance.filteredRows.length;
+            } else {
+                itemCount = tableInstance.state.pageSize;
+            }
+        }
+        return itemCount;
+    }
+
     useEffect(() => {
         const reRenderTable = (): void => {
             setCounter(counterRef.current + 1);
@@ -383,7 +414,7 @@ const ProcosysTable = forwardRef(((props: PropsWithChildren<TableProperties<Reco
                                 {props.data.length === 0 && (<div>No records to display</div>)}
                                 <List
                                     height={height - 60}
-                                    itemCount={pageSize > props.data.length ? props.data.length : pageSize}
+                                    itemCount={getItemCount(tableInstance)}
                                     itemSize={getRowHeight}
                                     width={width}
                                     ref={listRef}

@@ -12,14 +12,13 @@ export function TablePagination<T extends Record<string, unknown>>({
     instance
 }: PropsWithChildren<{ instance: TableInstance<T> }>): ReactElement | null {
     const {
-        state: { pageIndex, pageSize, rowCount = instance.maxRowCount },
+        state: { pageIndex, pageSize, rowCount = instance.columns.filter(x => x.filterValue).length > 0 ? instance.filteredRows.length : instance.maxRowCount },
         gotoPage,
         nextPage,
         previousPage,
         setPageSize,
         setPageIndex
     } = instance;
-
 
     const handleChangePage = useCallback(
         (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {

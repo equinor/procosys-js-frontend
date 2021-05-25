@@ -88,7 +88,7 @@ export const LoadingDiv = styled.div`
 
 
 export const TableCell = styled.div<{ align?: string }>`
-    padding: 10px 4px 0px 4px;
+    padding: 0;
     font-size: inherit;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
     font-weight: 400;
@@ -98,7 +98,7 @@ export const TableCell = styled.div<{ align?: string }>`
     text-overflow: ellipsis;
     color: inherit;
     justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     min-height: 40px;
     flex-direction: row;

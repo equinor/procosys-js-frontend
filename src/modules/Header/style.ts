@@ -1,6 +1,7 @@
 import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Search } from '@equinor/eds-core-react';
 
 export const Nav = styled.nav`
     display: grid;
@@ -118,4 +119,10 @@ export const ShowOnDesktop = styled.div`
     ${Breakpoints.TABLET} {
         display: none;            
     } 
+`;
+
+export const StyledSearch = styled(Search)`
+    display: flex;
+    max-width: 500px;
+    min-width: 250px;
 `;

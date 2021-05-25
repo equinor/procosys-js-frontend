@@ -13,6 +13,7 @@ interface ConfigResponse {
         procosysApi: FeatureConfig
         graphApi: FeatureConfig
         preservationApi: FeatureConfig
+        searchApi: FeatureConfig
         ipoApi: FeatureConfig
         libraryApi: FeatureConfig
         instrumentationKey: string
@@ -22,6 +23,7 @@ interface ConfigResponse {
         library: boolean
         preservation: boolean
         main: boolean
+        search: boolean
     } 
     
 }

@@ -1,10 +1,12 @@
-import { CellValue, IdType, UseTableRowProps } from 'react-table';
+import { CellValue, IdType } from 'react-table';
+import { ColumnFilterProps, DefaultFilter, SelectFilter } from './types';
 import { MenuItem, Select } from '@material-ui/core';
+
 import { ColumnFilter } from './style';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import React from 'react';
-import styled from 'styled-components';
 import { TextField } from '@equinor/eds-core-react';
+import styled from 'styled-components';
 
 const TableFilterField = styled(TextField)`
     width: calc(100% - 5px);
@@ -26,13 +28,16 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }: { column: { filterValue: string, preFilteredRows: any[], setFilter: (a: string | undefined) => void } }): JSX.Element => {
+export const DefaultColumnFilter = ( { column }: ColumnFilterProps<DefaultFilter>) : JSX.Element => {
+    const { setFilter, filterPlaceholder } = column;
     return (
         <ColumnFilter>
             <TableFilterField
+                placeholder={filterPlaceholder}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setFilter(e.target.value || undefined);
                 }}
+                value={column.filterValue}
                 inputIcon={<FilterListIcon />}
                 type='search' />
         </ColumnFilter>
@@ -41,7 +46,8 @@ export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, se
 
 
 // Need to use material-ui Select until further -> EDS-SingleSelect cannot handle overflow:hidden in row.
-export const SelectColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter, id } }: { column: { filterValue: string, preFilteredRows: UseTableRowProps<Record<IdType<any>, CellValue>>[], setFilter: (a: string | undefined) => void, id: number } }): JSX.Element => {
+export const SelectColumnFilter = ({ column } : ColumnFilterProps<SelectFilter>): JSX.Element => {
+    const { preFilteredRows, id, filterValue, setFilter } = column;
     const options = React.useMemo(() => {
         const options = new Set<string>();
         preFilteredRows.forEach((row: Record<IdType<any>, CellValue>) => {

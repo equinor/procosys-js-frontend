@@ -8,7 +8,7 @@ const disabledCheckedIcon = <EdsIcon name='checkbox' color={tokens.colors.intera
 const checkboxIcon = <EdsIcon name='checkbox_outline' color={tokens.colors.interactive.primary__resting.rgba} size={24} />;
 const checkedCheckboxIcon = <EdsIcon name='checkbox' color={tokens.colors.interactive.primary__resting.rgba} size={24} />;
 
-interface CheckboxProps {
+export interface CheckboxProps {
     children?: ReactNode;
     onChange?: (checked: boolean) => void;
     checked?: boolean;

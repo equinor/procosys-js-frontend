@@ -47,7 +47,6 @@ const SearchIPO = (): JSX.Element => {
 
     const [numberOfIPOs, setNumberOfIPOs] = useState<number>(10);
     const numberOfFilters: number = Object.values(filter).filter(v => v && JSON.stringify(v) != '[]').length;
-    const test = 0;
 
     const cancelerRef = useRef<Canceler | null>();
 

@@ -79,7 +79,7 @@
         "@date-io/date-fns": "^2.10.11",
         "@equinor/eds-core-react": "0.8.3",
         "@equinor/eds-icons": "^0.6.0",
-        "@equinor/eds-tokens": "^0.5.4",
+        "@equinor/eds-tokens": "^0.5.7",
         "@material-ui/core": "^4.11.4",
         "@material-ui/icons": "^4.5.1",
         "@microsoft/applicationinsights-react-js": "^3.1.2",
@@ -92,9 +92,9 @@
         "react-dom": "^17.0.2",
         "react-helmet": "^6.1.0",
         "react-router-dom": "^5.1.2",
-        "react-table": "^7.6.3",
+        "react-table": "^7.7.0",
         "react-virtualized-auto-sizer": "^1.0.4",
         "react-window": "^1.8.6",
-        "styled-components": "^5.2.0"
+        "styled-components": "^5.3.0"
     }
 }

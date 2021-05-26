@@ -1,6 +1,7 @@
 const { defaults } = require('jest-config');
 
 module.exports = {
+    testEnvironment: "jsdom",
     preset: 'ts-jest/presets/js-with-ts',
     verbose: true,
     globals: {

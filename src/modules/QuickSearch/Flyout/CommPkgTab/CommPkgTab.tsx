@@ -1,13 +1,12 @@
-import { Card } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
-import EdsIcon from '@procosys/components/EdsIcon';
-import React from 'react';
-import Highlighter from 'react-highlight-words';
-import { ContentDocument } from '../../http/QuickSearchApiClient';
-import { LinkIndicator } from '../MCPkgTab/style';
 import { Container, StyledCard100, StyledCard50, StyledCardHeader, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
 
-const { CardHeader } = Card;
+import { Card } from '@equinor/eds-core-react';
+import { ContentDocument } from '../../http/QuickSearchApiClient';
+import EdsIcon from '@procosys/components/EdsIcon';
+import Highlighter from 'react-highlight-words';
+import { LinkIndicator } from '../MCPkgTab/style';
+import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 
 export interface CommPkgTabProperties {
     commPkg: ContentDocument;
@@ -47,57 +46,57 @@ const CommPkgTab = ({ commPkg, searchValue, highlightOn }: CommPkgTabProperties)
             </StyledCard100>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.plantName ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.project ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description of work</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.descriptionOfWork ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Area</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.area ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.responsible ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Remark</Typography>
                         <Typography variant="body_short">{highlightSearchValue(commPkg.commPkg?.remark ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
         </Container>
     )

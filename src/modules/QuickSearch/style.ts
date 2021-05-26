@@ -1,13 +1,12 @@
-import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import { Search, Button } from '@equinor/eds-core-react';
+import { Button, Search } from '@equinor/eds-core-react';
+import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
+
+import { Accordion } from '@equinor/eds-core-react';
 import { Breakpoints } from '@procosys/core/styling';
-import { tokens } from '@equinor/eds-tokens';
 import { Chip } from '@equinor/eds-core-react';
 import { ContentDocument } from './http/QuickSearchApiClient';
-import { Accordion } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
-
-const { AccordionHeader, AccordionPanel } = Accordion;
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -176,11 +175,11 @@ export const FiltersTypes = styled.div`
     flex-direction: column;
 `;
 
-export const StyledAccordionHeader = styled(AccordionHeader)`
+export const StyledAccordionHeader = styled(Accordion.Header)`
     border: none;
 `;
 
-export const StyledAccordionPanel = styled(AccordionPanel)`
+export const StyledAccordionPanel = styled(Accordion.Panel)`
     border: none;
 `;
 

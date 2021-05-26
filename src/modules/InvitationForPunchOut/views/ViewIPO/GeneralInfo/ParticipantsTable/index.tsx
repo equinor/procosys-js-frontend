@@ -4,7 +4,7 @@ import { Container, CustomTable, ResponseWrapper, SpinnerContainer } from './sty
 import { ExternalEmail, FunctionalRole, Participant } from '../../types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import CustomPopover from './CustomPopover/index';
+import CustomPopover from './CustomPopover';
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
@@ -15,7 +15,6 @@ import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 
-const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipUpdate = <div>Update attended status and notes for participants.</div>;
 const tooltipAccept = <div>Punch round has been checked by company.</div>;
@@ -335,18 +334,18 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 </SpinnerContainer>
             )}
             <CustomTable>
-                <Head>
-                    <Row>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attendance list </Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Representative </Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Outlook response</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attended</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Notes</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed by</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed at</Cell>
-                    </Row>
-                </Head>
-                <Body>
+                <Table.Head>
+                    <Table.Row>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attendance list </Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Representative </Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Outlook response</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attended</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Notes</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed by</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed at</Table.Cell>
+                    </Table.Row>
+                </Table.Head>
+                <Table.Body>
                     {participants.map((participant: Participant, index: number) => {
                         const representative = participant.person ?
                             `${participant.person.person.firstName} ${participant.person.person.lastName}` :
@@ -378,26 +377,26 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                             : false;
 
                         return (
-                            <Row key={participant.sortKey} as="tr">
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                            <Table.Row key={participant.sortKey} as="tr">
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <Typography variant="body_short">
                                         {OrganizationMap.get(participant.organization as Organization)}
                                     </Typography>
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <Typography variant="body_short">
                                         {representative}
                                     </Typography>
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <ResponseWrapper> 
                                         <Typography variant="body_short">
                                             {response} 
                                         </Typography>
                                         {addPopover && <CustomPopover participant={participant} />}
                                     </ResponseWrapper>
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     <Switch
                                         id={`attendance${id}`}
                                         disabled={editAttendedDisabled}
@@ -405,15 +404,15 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                         label={attNoteData[index].attended ? 'Attended' : 'Did not attend'}
                                         checked={attNoteData[index].attended}
                                         onChange={(): void => handleEditAttended(id)} />
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', width: '40%', minWidth: '200px' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', width: '40%', minWidth: '200px' }}>
                                     <TextField
                                         id={`textfield${id}`}
                                         disabled={editNotesDisabled}
                                         defaultValue={attNoteData[index].note}
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     <Typography variant="body_short">
                                         {getSignedProperty(
                                             participant, status,
@@ -425,19 +424,19 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                             () => handleUnCompletePunchOut(index)
                                         )}
                                     </Typography>
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
                                     <Typography variant="body_short">
                                         {participant.signedAtUtc ?
                                             `${getFormattedDateAndTime(new Date(participant.signedAtUtc))}` :
                                             '-'
                                         }
                                     </Typography>
-                                </Cell>
-                            </Row>
+                                </Table.Cell>
+                            </Table.Row>
                         );
                     })}
-                </Body>
+                </Table.Body>
             </CustomTable>
         </Container>
     );

@@ -1,12 +1,11 @@
-import { Card } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
-import React from 'react';
-import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
+
+import { Card } from '@equinor/eds-core-react';
+import { ContentDocument } from '../../http/QuickSearchApiClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Highlighter from 'react-highlight-words';
-
-const { CardHeader } = Card;
+import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 
 export interface MCPkgTabProperties {
     mcPkg: ContentDocument;
@@ -54,66 +53,66 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.plantName || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.project || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Discipline</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.discipline || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Area</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.area || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.responsible || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Remark</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.remark || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledDivider
@@ -142,12 +141,12 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description.</Typography>
                         <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
         </Container>
     )

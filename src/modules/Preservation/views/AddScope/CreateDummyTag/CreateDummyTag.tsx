@@ -3,16 +3,17 @@ import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import { ButtonsContainer, CenterContent, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
+
 import { Canceler } from 'axios';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import Spinner from '@procosys/components/Spinner';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';

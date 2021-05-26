@@ -1,15 +1,14 @@
-import { Card } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
-import React, { useEffect, useState } from 'react';
-import { ContentDocument, SearchResult } from '../../http/QuickSearchApiClient';
-import { LinkIndicator } from '../MCPkgTab/style';
 import { Container, LoadingDiv, MCPackageEntry, StyledCard100, StyledCardHeader, StyledDivider, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
+import { ContentDocument, SearchResult } from '../../http/QuickSearchApiClient';
+import React, { useEffect, useState } from 'react';
+
+import { Card } from '@equinor/eds-core-react';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Highlighter from 'react-highlight-words';
-import { useQuickSearchContext } from '../../context/QuickSearchContext';
+import { LinkIndicator } from '../MCPkgTab/style';
 import Loading from '@procosys/components/Loading';
-
-const { CardHeader, CardHeaderTitle } = Card;
+import { Typography } from '@equinor/eds-core-react';
+import { useQuickSearchContext } from '../../context/QuickSearchContext';
 
 export interface RelatedMCPkgTabProperties {
     commPkg: ContentDocument;
@@ -68,30 +67,30 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
                                 </StyledCard100>
 
                                 <StyledCard100>
-                                    <CardHeader>
+                                    <Card.Header>
                                         <StyledHeaderTitle>
                                             <Typography variant="caption">Description</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.description ?? '')}</Typography>
                                         </StyledHeaderTitle>
-                                    </CardHeader>
+                                    </Card.Header>
                                 </StyledCard100>
 
                                 <StyledCard100>
-                                    <CardHeader>
+                                    <Card.Header>
                                         <StyledHeaderTitle>
                                             <Typography variant="caption">Discipline</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.discipline ?? '')}</Typography>
                                         </StyledHeaderTitle>
-                                    </CardHeader>
+                                    </Card.Header>
                                 </StyledCard100>
 
                                 <StyledCard100>
-                                    <CardHeader>
+                                    <Card.Header>
                                         <StyledHeaderTitle>
                                             <Typography variant="caption">Responsible</Typography>
                                             <Typography variant="body_short">{highlightSearchValue(pkg.mcPkg?.responsible ?? '')}</Typography>
                                         </StyledHeaderTitle>
-                                    </CardHeader>
+                                    </Card.Header>
                                 </StyledCard100>
                                 <StyledDivider
                                     color="medium"

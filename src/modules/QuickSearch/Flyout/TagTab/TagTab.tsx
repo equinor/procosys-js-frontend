@@ -1,12 +1,11 @@
-import { Card } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
-import React from 'react';
-import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
+
+import { Card } from '@equinor/eds-core-react';
+import { ContentDocument } from '../../http/QuickSearchApiClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Highlighter from 'react-highlight-words';
-
-const { CardHeader } = Card;
+import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 
 export interface TagTabTabProperties {
     tag: ContentDocument;
@@ -62,57 +61,57 @@ const TagTab = ({ tag: tag, searchValue, highlightOn }: TagTabTabProperties): JS
             </StyledCard100>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description</Typography>
                         <Typography variant="body_short">{highlightSearchValue(tag.tag?.description ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
                         <Typography variant="body_short">{highlightSearchValue(tag.plantName ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
                         <Typography variant="body_short">{highlightSearchValue(tag.project ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Discipline</Typography>
                         <Typography variant="body_short">{highlightSearchValue(tag.tag?.disciplineCode ?? '')}, {highlightSearchValue(tag.tag?.disciplineDescription ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Purchase order</Typography>
                         <Typography variant="body_short">{highlightSearchValue(tag.tag?.purchaseOrderNo ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Tag function code</Typography>
                         <Typography variant="body_short">{highlightSearchValue(tag.tag?.tagFunctionCode ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard100>

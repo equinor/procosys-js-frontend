@@ -1,2 +1,5 @@
 # Ignore root config and setup files
 /*.js
+
+# Ignore storybook build
+storybook-static/

@@ -20,7 +20,7 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
         if (!punchItem.plant || !punchItem.punchItem || !punchItem.punchItem.tagNo) throw new Error("Unable to navigate.");
 
         let url = location.origin + "/" + punchItem.plant.replace('PCS$', '') + "/link";
-        url += "/Tag?tagNo=" + encodeURIComponent(punchItem.punchItem.tagNo ?? '') + "&project=" + encodeURIComponent(punchItem.project ?? '');
+        url += "/Tag?tagNo=" + encodeURIComponent(punchItem.punchItem.tagNo ?? '') + "&project=" + encodeURIComponent(punchItem.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 

@@ -20,7 +20,7 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
         if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
 
         let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + encodeURIComponent(mcPkg.mcPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project ?? '');
+        url += "/CommPkg?commPkgNo=" + encodeURIComponent(mcPkg.mcPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 
@@ -28,7 +28,7 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
         if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
 
         let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
-        url += "/MCPkg?mcPkgNo=" + encodeURIComponent(mcPkg.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project ?? '');
+        url += "/MCPkg?mcPkgNo=" + encodeURIComponent(mcPkg.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 

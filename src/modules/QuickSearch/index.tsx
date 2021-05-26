@@ -123,15 +123,15 @@ const QuickSearch = (): JSX.Element => {
         let url = location.origin + "/" + item.plant?.replace('PCS$', '') + "/link";
 
         if (item.commPkg) {
-            url += "/CommPkg?commPkgNo=" + encodeURIComponent(item.commPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(item.project ?? '');
+            url += "/CommPkg?commPkgNo=" + encodeURIComponent(item.commPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(item.project?.toLocaleUpperCase() ?? '');
         }
 
         if (item.mcPkg) {
-            url += "/MCPkg?mcPkgNo=" + encodeURIComponent(item.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(item.project ?? '');
+            url += "/MCPkg?mcPkgNo=" + encodeURIComponent(item.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(item.project?.toLocaleUpperCase() ?? '');
         }
 
         if (item.tag) {
-            url += "/Tag?tagNo=" + encodeURIComponent(item.tag.tagNo ?? '') + "&project=" + encodeURIComponent(item.project ?? '');
+            url += "/Tag?tagNo=" + encodeURIComponent(item.tag.tagNo ?? '') + "&project=" + encodeURIComponent(item.project?.toLocaleUpperCase() ?? '');
         }
 
         if(item.punchItem) {

@@ -26,7 +26,7 @@ const RelatedMCPkgTab = ({ commPkg, searchValue, highlightOn }: RelatedMCPkgTabP
         if(!commPkg.plant) throw new Error("Unable to navigate. Plant is missing.");
 
         let url = location.origin + "/" + commPkg.plant?.replace('PCS$', '') + "/link";
-        url += "/MCPkg?mcPkgNo=" + mcPkgNo + "&project=" + commPkg.project;
+        url += "/MCPkg?mcPkgNo=" + mcPkgNo + "&project=" + commPkg.project?.toLocaleUpperCase();
         window.open(url, '_blank');
     };
 

@@ -1412,13 +1412,13 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@equinor/eds-core-react@0.12.0":
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-core-react/-/eds-core-react-0.12.0.tgz#0a0d8c8befee27c7d8da80c1df6df77644d6cb71"
-  integrity sha512-enLI+te0PJg3vqa/1yO/6pr7O+kdP9SJLQB2vTzVimqxewOe4o4yzK1GlW2vw9nWeancQLFBolrhbr8wls3ZZA==
+"@equinor/eds-core-react@0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-core-react/-/eds-core-react-0.12.1.tgz#c95c589ee42aea4ba75c6c54bc13598fd9ace585"
+  integrity sha512-DRb+DskLzLYprP+n0M7jx1uCyghMXs5xHIOH5y1M5+jCO78T0H4BQuMlRXyzMpJZ2/LkrKFy9RNTeqIkeWT/Og==
   dependencies:
     "@equinor/eds-icons" "0.6.2"
-    "@equinor/eds-tokens" "0.5.8"
+    "@equinor/eds-tokens" "0.6.0"
     "@popperjs/core" "2.9.0"
     downshift "^6.0.6"
     react-fast-compare "3.2.0"
@@ -1429,15 +1429,10 @@
   resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.6.2.tgz#7eb981df5b186712e74335a45f16211368911258"
   integrity sha512-WGYErmaOLRGLbMo5ABPCjlGMFfyKk/PfWUZRhXAvAj7boc/8XVDWUf0lTATXW4wHKWnWCkmHFghN/4OQoFh/ng==
 
-"@equinor/eds-tokens@0.5.8":
-  version "0.5.8"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.5.8.tgz#bdb99d6016d3c3b4852dea8ad7302d390a36716b"
-  integrity sha512-TB/vpWUV803fSiknnTT4tN8M10N+kTpGcoaD2AGMMJDdrz3qjYvnmXtF9wJIt8UN5wtu8D3zrP3aCijyqBtBmg==
-
-"@equinor/eds-tokens@^0.5.7":
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.5.7.tgz#733d3f7766a0a03a9f3b300a05b6cbaf4dbb0889"
-  integrity sha512-l+newy3+poPJmNbvCiN1mwRxd8uuqn5j3tnzU43k/c1NxrD34Xh4SdAzHq9J7yq32R6Zxh7sKKGwqdd5035OLw==
+"@equinor/eds-tokens@0.6.0", "@equinor/eds-tokens@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-tokens/-/eds-tokens-0.6.0.tgz#daeac90b4cfdcad99242bb8892ad43b2db6610a8"
+  integrity sha512-Er9Bn5VRlgdyYwgGtubwTb8ejJx6msB8RTbQ1lZ4dWTAjN1XvBQKTSIZMo6NwqJ5N4+5n3YmEbpeGhOetqLyWg==
 
 "@eslint/eslintrc@^0.4.1":
   version "0.4.1"

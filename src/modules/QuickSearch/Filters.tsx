@@ -1,12 +1,11 @@
-import { Button } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
-import React from 'react';
 import { AccordionContent, FiltersContainer, FiltersTypes, FlexDiv, Header, SearchFilters, StyledAccordionHeader, StyledAccordionPanel } from './style';
-import CloseIcon from '@material-ui/icons/Close';
-import { Accordion } from '@equinor/eds-core-react';
-import Checkbox from '@procosys/components/Checkbox';
 
-const { AccordionItem } = Accordion;
+import { Accordion } from '@equinor/eds-core-react';
+import { Button } from '@equinor/eds-core-react';
+import Checkbox from '@procosys/components/Checkbox';
+import CloseIcon from '@material-ui/icons/Close';
+import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 
 export interface QuickSearchFiltersProps {
     plantFilterExpanded: boolean;
@@ -36,7 +35,7 @@ const QuickSearchFilters = ({
     onCheckboxTypeFilterChange
 }: QuickSearchFiltersProps): JSX.Element => {
 
-    const getFilterType = (type: string) => {
+    const getFilterType = (type: string): string => {
         switch (type) {
             case 'C':
                 return 'Comm pkg';
@@ -66,7 +65,7 @@ const QuickSearchFilters = ({
                 </Header>
                 <FiltersTypes>
                     <Accordion chevronPosition="right" headerLevel="h2">
-                        <AccordionItem isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(prevState => !prevState)}>
+                        <Accordion.Item isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(prevState => !prevState)}>
                             <StyledAccordionHeader>Plant</StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>
@@ -89,8 +88,8 @@ const QuickSearchFilters = ({
                                     }
                                 </AccordionContent>
                             </StyledAccordionPanel>
-                        </AccordionItem>
-                        <AccordionItem isExpanded={typeFilterExpanded} onClick={(): void => setTypeFilterExpanded(prevState => !prevState)}>
+                        </Accordion.Item>
+                        <Accordion.Item isExpanded={typeFilterExpanded} onClick={(): void => setTypeFilterExpanded(prevState => !prevState)}>
                             <StyledAccordionHeader>Type</StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>
@@ -113,7 +112,7 @@ const QuickSearchFilters = ({
                                     }
                                 </AccordionContent>
                             </StyledAccordionPanel>
-                        </AccordionItem>
+                        </Accordion.Item>
                     </Accordion>
                 </FiltersTypes>
             </SearchFilters>

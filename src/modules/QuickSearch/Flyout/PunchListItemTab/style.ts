@@ -1,9 +1,7 @@
-import { Divider } from "@equinor/eds-core-react";
 import { Card } from "@equinor/eds-core-react";
-import { tokens } from '@equinor/eds-tokens';
+import { Divider } from "@equinor/eds-core-react";
 import styled from "styled-components";
-
-const { CardHeader, CardHeaderTitle } = Card;
+import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
@@ -29,7 +27,7 @@ export const LinkIndicator = styled.span`
     height: 20px;
 `;
 
-export const StyledHeaderTitleLink = styled(CardHeaderTitle)`
+export const StyledHeaderTitleLink = styled(Card.HeaderTitle)`
     > p {
         display: flex;
         align-items: center;
@@ -46,13 +44,13 @@ export const StyledHeaderTitleLink = styled(CardHeaderTitle)`
         }
 `;
 
-export const StyledHeaderTitle = styled(CardHeaderTitle)`
+export const StyledHeaderTitle = styled(Card.HeaderTitle)`
     mark {
         background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
     }
 `;
 
-export const StyledCardHeader = styled(CardHeader)`
+export const StyledCardHeader = styled(Card.Header)`
     cursor: pointer;
     :hover * {
         font-weight: 500;

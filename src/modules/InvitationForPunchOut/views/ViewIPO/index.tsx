@@ -23,8 +23,6 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 
-const { TabList, Tab, TabPanels, TabPanel } = Tabs;
-
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
     { title: 'Punch-out completed', isCompleted: false },
@@ -336,28 +334,28 @@ const ViewIPO = (): JSX.Element => {
                         <InvitationContentContainer>
                             <TabsContainer>
                                 <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
-                                    <TabList>
-                                        <Tab>General</Tab>
-                                        <Tab>Scope</Tab>
-                                        <Tab>Attachments</Tab>
-                                        <Tab>History</Tab>
-                                        <Tab className='emptyTab'>{''}</Tab>
-                                    </TabList>
+                                    <Tabs.List>
+                                        <Tabs.Tab>General</Tabs.Tab>
+                                        <Tabs.Tab>Scope</Tabs.Tab>
+                                        <Tabs.Tab>Attachments</Tabs.Tab>
+                                        <Tabs.Tab>History</Tabs.Tab>
+                                        <Tabs.Tab className='emptyTab'>{''}</Tabs.Tab>
+                                    </Tabs.List>
                                     <TabStyle maxHeight={tabModuleHeight + 67}>
-                                        <TabPanels>
-                                            <TabPanel>
+                                        <Tabs.Panels>
+                                            <Tabs.Panel>
                                                 <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unaccept={unacceptPunchOut} uncomplete={uncompletePunchOut}/>
-                                            </TabPanel>
-                                            <TabPanel>
+                                            </Tabs.Panel>
+                                            <Tabs.Panel>
                                                 <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />
-                                            </TabPanel>
-                                            <TabPanel>
+                                            </Tabs.Panel>
+                                            <Tabs.Panel>
                                                 <Attachments ipoId={params.ipoId} />
-                                            </TabPanel>
-                                            <TabPanel>
+                                            </Tabs.Panel>
+                                            <Tabs.Panel>
                                                 <History ipoId={params.ipoId} />
-                                            </TabPanel>
-                                        </TabPanels>
+                                            </Tabs.Panel>
+                                        </Tabs.Panels>
                                     </TabStyle>
                                 </Tabs>
                                 <CommentsIconContainer >

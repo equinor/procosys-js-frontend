@@ -1,5 +1,5 @@
 import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../../enums';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { OutlookResponseType } from '../../../enums';
 import ParticipantsTable from '../index';
@@ -306,9 +306,9 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Complete punch-out')).toBeInTheDocument();
-        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
+        await waitFor(() => {expect(queryByText('Complete punch-out')).toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Sign punch-out')).not.toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Accept punch-out')).not.toBeInTheDocument();});
     });
 
     it('Renders completed status for completer', async () => {
@@ -322,11 +322,11 @@ describe('<ParticipantsTable />', () => {
             accept={acceptPunchOut}
             complete={completePunchOut} />);
 
-        expect(queryByText('Update')).toBeInTheDocument();
-        expect(queryByText('Uncomplete')).toBeInTheDocument();
-        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
-        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
+        await waitFor(() => {expect(queryByText('Update')).toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Uncomplete')).toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Sign punch-out')).not.toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Accept punch-out')).not.toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();});
     });
 
     it('Renders completed status for accepter', async () => {
@@ -338,12 +338,12 @@ describe('<ParticipantsTable />', () => {
             status={IpoStatusEnum.COMPLETED}
             accept={acceptPunchOut}
             complete={completePunchOut} />);
-        expect(queryByText('Update')).not.toBeInTheDocument();
-        expect(queryByText('Uncomplete')).not.toBeInTheDocument();
-        expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Accept punch-out')).toBeInTheDocument();
-        expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();
-        expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();
+        await waitFor(() => {expect(queryByText('Update')).not.toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Uncomplete')).not.toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Sign punch-out')).not.toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText('Accept punch-out')).toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText(newParticipants[ParticipantIndex.COMPLETER].signedBy.userName)).toBeInTheDocument();});
+        await waitFor(() => {expect(queryByText(getFormattedDateAndTime(newParticipants[ParticipantIndex.COMPLETER].signedAtUtc))).toBeInTheDocument();});
     });
 
     it('Renders completed status for signer', async () => {
@@ -484,8 +484,8 @@ describe('<ParticipantsTable />', () => {
 
         const input = getByTestId('textfield234');
         fireEvent.change(input, { target: { value: 'test' }});
-        expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+        await waitFor(() => { expect(mockSetDirtyStateFor).toBeCalledTimes(1); });
+        await waitFor(() => { expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable); });
     });
 
     it('Should set dirty state when setting attendance', async () => {
@@ -497,8 +497,8 @@ describe('<ParticipantsTable />', () => {
 
         const input = getByTestId('attendance234');
         fireEvent.click(input);
-        expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+        await waitFor(() => { expect(mockSetDirtyStateFor).toBeCalledTimes(1); });
+        await waitFor(() => { expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable); });
     });
 
     it('Should reset dirty state when reverting to clean state', async () => {
@@ -512,10 +512,10 @@ describe('<ParticipantsTable />', () => {
         jest.clearAllMocks();
         fireEvent.click(input);
         fireEvent.click(input);
-        expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
-        expect(mockUnsetDirtyStateFor).toBeCalledTimes(1);
-        expect(mockUnsetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable);
+        await waitFor(() => { expect(mockSetDirtyStateFor).toBeCalledTimes(1); });
+        await waitFor(() => { expect(mockSetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable); });
+        await waitFor(() => { expect(mockUnsetDirtyStateFor).toBeCalledTimes(1); });
+        await waitFor(() => { expect(mockUnsetDirtyStateFor).toBeCalledWith(ComponentName.ParticipantsTable); });
     });
 
     it('User can accept', async () => {

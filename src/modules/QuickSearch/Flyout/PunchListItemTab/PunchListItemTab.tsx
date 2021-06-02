@@ -1,12 +1,11 @@
-import { Card } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
-import React from 'react';
-import { ContentDocument } from '../../http/QuickSearchApiClient';
 import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
+
+import { Card } from '@equinor/eds-core-react';
+import { ContentDocument } from '../../http/QuickSearchApiClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Highlighter from 'react-highlight-words';
-
-const { CardHeader } = Card;
+import React from 'react';
+import { Typography } from '@equinor/eds-core-react';
 
 export interface PunchListItemTabProperties {
     punchItem: ContentDocument;
@@ -65,57 +64,57 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
             )}
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description</Typography>
                         <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.description ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
                         <Typography variant="body_short">{highlightSearchValue(punchItem.plantName ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
                         <Typography variant="body_short">{highlightSearchValue(punchItem.project ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Form type</Typography>
                         <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.formType ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard50>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Category</Typography>
                         <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.category ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard50>
 
             <StyledCard100>
-                <CardHeader>
+                <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
                         <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.responsible ?? '')}</Typography>
                     </StyledHeaderTitle>
-                </CardHeader>
+                </Card.Header>
             </StyledCard100>
         </Container>
     )

@@ -126,3 +126,10 @@ export const StyledSearch = styled(Search)`
     max-width: 500px;
     min-width: 250px;
 `;
+
+export const SearchSubText = styled.div`
+    font-size: 11px;
+    color: gray;
+    position: absolute;
+    margin-top: 2px;
+`;

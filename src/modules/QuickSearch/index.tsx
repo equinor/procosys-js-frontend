@@ -498,7 +498,7 @@ const QuickSearch = (): JSX.Element => {
         setShowFilter(!showFilter);
     }
 
-    const getFilterType = (type: string) => {
+    const getFilterType = (type: string): string => {
         switch (type) {
             case 'C':
                 return 'Comm pkg';

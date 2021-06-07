@@ -7,12 +7,13 @@ import {
     MenuContainerItem,
     Nav,
     PlantSelector,
+    SearchSubText,
     ShowOnDesktop,
     ShowOnMobile,
     StyledSearch
 } from './style';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
@@ -40,6 +41,7 @@ const Header: React.FC = (): JSX.Element => {
     const params = useParams<any>();
     const [filterForPlants, setFilterForPlants] = useState<string>('');
     const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
+    const [showSearchSubText, setShowSearchSubText] = useState<boolean>(false);
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map(plant => ({
             text: plant.title,
@@ -83,6 +85,17 @@ const Header: React.FC = (): JSX.Element => {
         }
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
+
+    const getSearchSubText = (): JSX.Element => {
+        if (searchValue) {
+            if (searchValue.length > 2) {
+                return <SearchSubText>Press enter to search</SearchSubText>
+            } else {
+                return <SearchSubText>Type min. 3 characters and press enter to search</SearchSubText>
+            }
+        }
+        return <SearchSubText>Type min. 3 characters and press enter to search</SearchSubText>
+    }
 
     return (
         <div>
@@ -293,7 +306,7 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    {(ProCoSysSettings.featureIsEnabled('search')) && (
+                    {(ProCoSysSettings.featureIsEnabled('quickSearch')) && (
                         <MenuContainerItem>
                             <StyledSearch
                                 placeholder={'Quick Search'}
@@ -305,7 +318,13 @@ const Header: React.FC = (): JSX.Element => {
                                 name="procosys-qs"
                                 id="procosys-qs"
                                 value={searchValue}
+                                onFocus={(): void => setShowSearchSubText(prevState => !prevState)}
+                                onBlur={(): void => setShowSearchSubText(prevState => !prevState)}
                                 autocomplete="on" autoFocus />
+                            {
+                                showSearchSubText && getSearchSubText()
+                            }
+
                         </MenuContainerItem>
                     )}
                     <MenuContainerItem className='compact'>

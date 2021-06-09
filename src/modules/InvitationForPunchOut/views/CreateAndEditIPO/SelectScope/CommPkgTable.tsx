@@ -171,7 +171,7 @@ const CommPkgTable = forwardRef(({
         filteredCommPkgs.forEach(c => {
             commPkgNos.push(c.commPkgNo);
         });
-        const newSelectedCommPkgs = selectedCommPkgScope.filter(item => !commPkgNos.includes(item.commPkgNo));
+        const newSelectedCommPkgs = selectedCommPkgScope ? selectedCommPkgScope.filter(item => !commPkgNos.includes(item.commPkgNo)) : [];
         setSelectedCommPkgScope(newSelectedCommPkgs);
     };
 

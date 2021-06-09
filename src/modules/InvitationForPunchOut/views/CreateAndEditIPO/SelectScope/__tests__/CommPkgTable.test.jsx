@@ -4,7 +4,8 @@ import { render } from '@testing-library/react';
 
 describe('<CommPkgTable />', () => {
     it('Should render table', () => {
-        const { queryByText } = render(<CommPkgTable />);
+        const propFunc = jest.fn();
+        const { queryByText } = render(<CommPkgTable setSelectedCommPkgScope={propFunc} />);
         expect(queryByText('Description')).toBeInTheDocument();
         expect(queryByText('Comm status')).toBeInTheDocument();
         expect(queryByText('Comm pkg')).toBeInTheDocument();
@@ -32,7 +33,8 @@ describe('<CommPkgTable />', () => {
     test.todo('Should be able to add comm packages to selected scope');
 
     it('Should render the search field as disabled if the type is MDP and the commPkgNo is in the URL', () => {
-        const { queryByPlaceholderText } = render(<CommPkgTable type='MDP' commPkgNo={50}/>);
+        const propFunc = jest.fn();
+        const { queryByPlaceholderText } = render(<CommPkgTable type='MDP' commPkgNo={50} setSelectedCommPkgScope={propFunc} />);
         expect(queryByPlaceholderText('Search')).toBeDisabled();
     });
 

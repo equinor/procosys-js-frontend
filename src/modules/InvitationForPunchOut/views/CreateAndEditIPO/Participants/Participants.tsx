@@ -8,12 +8,12 @@ import { Canceler } from '@procosys/http/HttpClient';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { OrganizationMap } from '../../utils';
+import { OrganizationsEnum } from '../../enums';
 import RoleSelector from '../../../components/RoleSelector';
+import Spinner from '@procosys/components/Spinner';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-import { OrganizationsEnum } from '../../enums';
-import Spinner from '@procosys/components/Spinner';
 
 const WAIT_INTERVAL = 300;
 
@@ -237,6 +237,8 @@ const Participants = ({
     };
 
     const isSignerParticipant = (index: number): boolean => {
+        if (!participants[index] || !participants[index].organization) return false;
+
         if (participants[index].organization.value == Organizations[0].value ||
             participants[index].organization.value == Organizations[1].value ||
             participants[index].organization.value == Organizations[2].value ||

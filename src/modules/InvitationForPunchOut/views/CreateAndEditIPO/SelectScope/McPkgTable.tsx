@@ -95,7 +95,7 @@ const McPkgTable = forwardRef(({
                 setSelectedMcPkgScope((selectedScope: McScope) => {
                     return { ...selectedScope, system: rowData[0].system, multipleDisciplines: multipleDisciplines([...selectedScope.selected, ...rowData]), selected: [...selectedScope.selected, ...rowData] }
                 });
-        } else if (selectedMcPkgScope.system === rowData[0].system) {
+        } else {
             setSelectedMcPkgScope((selectedScope: McScope) => {
                 return { ...selectedScope, multipleDisciplines: multipleDisciplines([...selectedScope.selected, ...rowData]), selected: [...selectedScope.selected, ...rowData] }
             });

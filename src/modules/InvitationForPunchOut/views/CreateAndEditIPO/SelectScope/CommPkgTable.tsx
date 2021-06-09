@@ -178,7 +178,7 @@ const CommPkgTable = forwardRef(({
     const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
         if (type != 'DP') {
             const rowsToAdd = rowData.filter(row => hasValidSystem(row.system));
-            setSelectedCommPkgScope(rowsToAdd);
+            setSelectedCommPkgScope((scope: CommPkgRow[]) => [...scope, ...rowsToAdd]);
         }
     };
 
@@ -208,13 +208,9 @@ const CommPkgTable = forwardRef(({
     }));
 
 
-    const rowSelectionChanged = (rowData: CommPkgRow[], row: CommPkgRow): void => {
-        if (rowData.length == 0 && filteredCommPkgs.length > 0) {
+    const rowSelectionChanged = (rowData: CommPkgRow[], _row: CommPkgRow): void => {
             removeAllSelectedCommPkgsInScope();
-        } else {
-            if (rowData.length > 0)
-                addAllCommPkgsInScope(rowData);
-        }
+            addAllCommPkgsInScope(rowData);
     };
 
     const getDescriptionColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {

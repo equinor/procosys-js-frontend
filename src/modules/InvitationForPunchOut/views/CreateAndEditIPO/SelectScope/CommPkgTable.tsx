@@ -1,17 +1,18 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { CommPkgTableContainer, Container, MCHeader, Search, TopContainer } from './Table.style';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import ProcosysTable, { DataQuery } from '@procosys/components/Table';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
+
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-import { TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable, { DataQuery } from '@procosys/components/Table';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
-    setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
+    setSelectedCommPkgScope: React.Dispatch<React.SetStateAction<CommPkgRow[]>>;
     selectedMcPkgScope: McPkgRow[];
     setCurrentCommPkg: (commPkgNo: string) => void;
     type: string;
@@ -45,15 +46,17 @@ const CommPkgTable = forwardRef(({
     const [loading, setLoading] = useState<boolean>(false);
     const tableRef = useRef<any>();
 
-    const hasValidSystem = (system: string): boolean => {
-        if (selectedCommPkgScope.length == 0 && selectedMcPkgScope.length == 0) return true;
+    const hasValidSystem = useCallback((system: string): boolean => {
+        if (selectedCommPkgScope.length === 0 && selectedMcPkgScope.length === 0) return true;
 
-        if (selectedCommPkgScope.length > 0) {
-            return selectedCommPkgScope[0].system === system;
-        } else {
-            return selectedMcPkgScope[0].system === system;
-        }
-    };
+        const validateSystem = system.substr(0, system.lastIndexOf('|'));
+        const currentSystem = selectedCommPkgScope.length > 0 ? 
+            selectedCommPkgScope[0].system :
+            selectedMcPkgScope[0].system;
+
+            
+        return validateSystem === currentSystem.substr(0, currentSystem.lastIndexOf('|'));
+    }, [selectedCommPkgScope]);
 
     const getCommPkgsByFilter = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
         try {
@@ -185,7 +188,7 @@ const CommPkgTable = forwardRef(({
             d.disableCheckbox = !hasValidSystem(d.system);
         });
         setFilteredCommPkgs(_data);
-    }, [selectedCommPkgScope]);
+    }, [selectedCommPkgScope, data]);
 
     const unselectCommPkg = (commPkgNo: string): void => {
         const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);

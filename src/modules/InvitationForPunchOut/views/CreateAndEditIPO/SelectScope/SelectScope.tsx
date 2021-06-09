@@ -11,7 +11,7 @@ import SelectedScope from './SelectedScope';
 interface SelectScopeProps {
     type: string;
     selectedCommPkgScope: CommPkgRow[];
-    setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
+    setSelectedCommPkgScope: React.Dispatch<React.SetStateAction<CommPkgRow[]>>;
     selectedMcPkgScope: McScope;
     setSelectedMcPkgScope: React.Dispatch<React.SetStateAction<McScope>>;
     commPkgNo: string | null;

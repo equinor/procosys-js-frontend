@@ -611,13 +611,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 breakFunction = true;
                 return;
             }
-            const mode = modes.find(mode => mode.id == step.mode.id);
-
-            if (i != 0 && mode && mode.forSupplier) {
-                setCanSave(false);
-                breakFunction = true;
-                return;
-            }
         });
 
         if (breakFunction) {

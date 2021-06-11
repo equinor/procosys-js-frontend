@@ -64,7 +64,7 @@ const QuickSearch = (): JSX.Element => {
     const { search } = useLocation();
 
     useEffect(() => {
-        if (!ProCoSysSettings.featureIsEnabled('search')) window.location.href = location.origin;
+        if (!ProCoSysSettings.featureIsEnabled('quickSearch')) window.location.href = location.origin;
 
         const values = queryString.parse(search);
         if (values && values.query) {

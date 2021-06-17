@@ -107,7 +107,7 @@ const Header: React.FC = (): JSX.Element => {
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
 
-    const goToFilteredQuicksearch = (filterType: string): void => {
+    const goToFilteredQuicksearch = (filterType: string) : void => {
         history.push('/' + plant.pathId + '/quicksearch?query=' + filterType + ':' + searchValue);
         setIsOpen(false);
     }
@@ -354,13 +354,13 @@ const Header: React.FC = (): JSX.Element => {
                                             <>
                                                 <QuickSearchResultsFoundIn group="navigation" variant="label">Results found in</QuickSearchResultsFoundIn>
 
-                                                {searchResult.totalCommPkgHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('c')}><span>Commissioning packages ( {searchResult.totalCommPkgHits} )</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+                                                {searchResult.totalCommPkgHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('c')}><span>Commissioning packages</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
 
-                                                {searchResult.totalMcPkgHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('m')}><span>MC packages ( {searchResult.totalMcPkgHits} )</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+                                                {searchResult.totalMcPkgHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('m')}><span>MC packages</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
 
-                                                {searchResult.totalTagHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('t')}><span>Tags ( {searchResult.totalTagHits} )</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+                                                {searchResult.totalTagHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('t')}><span>Tags</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
 
-                                                {searchResult.totalPunchItemHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('p')}><span>Punch List items ( {searchResult.totalPunchItemHits} )</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+                                                {searchResult.totalPunchItemHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('p')}><span>Punch List items</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
 
                                                 <QuickSearchResultsContainerFooter onClick={(): void => goToQuicksearch()} variant="ghost">Show all results</QuickSearchResultsContainerFooter>
                                             </>

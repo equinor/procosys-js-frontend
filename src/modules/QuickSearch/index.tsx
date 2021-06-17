@@ -1,7 +1,7 @@
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { useLocation } from 'react-router-dom';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -24,7 +24,9 @@ import {
     TopDiv,
     StyledHeader,
     TypeIndicator,
-    TypeCell
+    TypeCell,
+    QuickSearchSearch,
+    SearchFieldContainer
 } from './style';
 import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
@@ -37,6 +39,9 @@ import TagIcon from './icons/tag';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
 import PunchIcon from './icons/punch';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
+import { SearchSubText } from '../Header/style';
+import { Checkbox } from '@equinor/eds-core-react';
 
 const StyledTooltip = styled(Tooltip)`
 font-size: 14px;
@@ -45,6 +50,7 @@ font-size: 14px;
 const QuickSearch = (): JSX.Element => {
     const [showFilter, setShowFilter] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('');
+    const [searchInputValue, setSearchInputValue] = useState<string>('');
     const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
     const [filteredItems, setFilteredItems] = useState<ContentDocument[]>([]);
     const [searching, setSearching] = useState<boolean>(false);
@@ -60,7 +66,9 @@ const QuickSearch = (): JSX.Element => {
     const highlightOn = true;
     const [topDivHeight, setTopDivHeight] = useState<number>(0);
     const topDivRef = useRef<HTMLDivElement>(null);
-
+    const { plant, setCurrentPlant } = useCurrentPlant();
+    const [showSearchSubText, setShowSearchSubText] = useState<boolean>(false);
+    const [searchAllPlants, setSearchAllPlants] = useState<boolean>(false);
     const { search } = useLocation();
 
     useEffect(() => {
@@ -69,12 +77,22 @@ const QuickSearch = (): JSX.Element => {
         const values = queryString.parse(search);
         if (values && values.query) {
             const searchVal = values.query as string;
+            const allPlants = values.allplants as string;
+
+            if (allPlants === 'true') {
+                setSearchAllPlants(true);
+                setSearchValue(searchVal);
+                setSearchInputValue(searchVal);
+                return;
+            }
+
             setSearchValue(searchVal);
+            setSearchInputValue(searchVal);
 
             if (values) {
                 if (searchVal.length > 2) {
                     setSearching(true);
-                    apiClient.doSearch(searchVal).then((searchResult: SearchResult) => {
+                    apiClient.doSearch(searchVal, plant.id).then((searchResult: SearchResult) => {
                         setSearchResult(searchResult);
                         setFilteredItems(searchResult.items);
                         prepareFilters(searchResult.items || []);
@@ -87,7 +105,6 @@ const QuickSearch = (): JSX.Element => {
                                 (values.plant as string[]).forEach(p => {
                                     filteredPlants.push(p);
                                 })
-
                             }
                             setSelectedPlants(filteredPlants);
                         }
@@ -134,7 +151,7 @@ const QuickSearch = (): JSX.Element => {
             url += "/Tag?tagNo=" + encodeURIComponent(item.tag.tagNo ?? '') + "&project=" + encodeURIComponent(item.project?.toLocaleUpperCase() ?? '');
         }
 
-        if(item.punchItem) {
+        if (item.punchItem) {
             url += "/PunchListItem?punchListItemNo=" + encodeURIComponent(item.punchItem.punchItemNo ?? '');
         }
 
@@ -164,12 +181,12 @@ const QuickSearch = (): JSX.Element => {
     }
 
     const getTypeTooltipText = (type: string): string => {
-        switch(type) {
+        switch (type) {
             case 'C':
                 return 'Comm package';
             case 'MC':
                 return 'MC package';
-            case 'T': 
+            case 'T':
                 return 'Tag';
             case 'PI':
                 return 'Punch List Item';
@@ -179,12 +196,12 @@ const QuickSearch = (): JSX.Element => {
     }
 
     const getTypeIcon = (type: string): JSX.Element => {
-        switch(type) {
+        switch (type) {
             case 'C':
                 return <CommPkgIcon />;
             case 'MC':
                 return <MCPkgIcon />;
-            case 'T': 
+            case 'T':
                 return <TagIcon />;
             case 'PI':
                 return <PunchIcon />;
@@ -208,11 +225,11 @@ const QuickSearch = (): JSX.Element => {
 
     const getNumber = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo ?? '' 
-            : doc.mcPkg ? doc.mcPkg.mcPkgNo ?? '' 
-            : doc.tag ? doc.tag.tagNo ?? '' 
-            : doc.punchItem ? doc.punchItem.punchItemNo ?? '' 
-            : '';
+        const pkgNo = doc.commPkg ? doc.commPkg.commPkgNo ?? ''
+            : doc.mcPkg ? doc.mcPkg.mcPkgNo ?? ''
+                : doc.tag ? doc.tag.tagNo ?? ''
+                    : doc.punchItem ? doc.punchItem.punchItemNo ?? ''
+                        : '';
 
         return (
             <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
@@ -225,19 +242,19 @@ const QuickSearch = (): JSX.Element => {
 
     const getDescription = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
-       
-            return (
-                <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                    <ResultCell variant="body_short" lines="1" className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
-                        {highlightSearchValue(
-                            doc.commPkg ? doc.commPkg.description ?? '' 
-                                : doc.mcPkg ? doc.mcPkg.description ?? '' 
-                                : doc.tag ? doc.tag.description ?? '' 
-                                : doc.punchItem ? doc.punchItem.description ?? ''
-                                : '')}
-                    </ResultCell>
-                </DescriptionCell>
-            );
+
+        return (
+            <DescriptionCell className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                <ResultCell variant="body_short" lines="1" className={currentItem && currentItem.key === doc.key ? 'selected' : ''} onClick={(): void => { handleItemClick(doc) }}>
+                    {highlightSearchValue(
+                        doc.commPkg ? doc.commPkg.description ?? ''
+                            : doc.mcPkg ? doc.mcPkg.description ?? ''
+                                : doc.tag ? doc.tag.description ?? ''
+                                    : doc.punchItem ? doc.punchItem.description ?? ''
+                                        : '')}
+                </ResultCell>
+            </DescriptionCell>
+        );
     };
 
     const getPlantName = (row: TableOptions<ContentDocument>): JSX.Element => {
@@ -406,7 +423,11 @@ const QuickSearch = (): JSX.Element => {
     const clearFilters = (): void => {
         setSelectedTypes([]);
         setSelectedPlants([]);
-        const newUrl = location.origin + location.pathname + '?query=' + queryString.parse(search).query;
+        let newUrl = location.origin + location.pathname + '?query=' + queryString.parse(search).query;
+        if (searchAllPlants) {
+            newUrl = location.origin + location.pathname + '?allplants=true&query=' + queryString.parse(search).query;
+        }
+        
         history.replaceState(null, '', encodeURI(newUrl));
     }
 
@@ -463,6 +484,48 @@ const QuickSearch = (): JSX.Element => {
         setTopDivHeight(topDivRef.current.clientHeight);
     };
 
+    const KEYCODE_ENTER = 13;
+
+    const doSearch = (): void => {
+        const searchVal = (document.getElementById('procosysqs') as HTMLInputElement).value;
+        if (!searchVal) return;
+
+        setSearching(true);
+        apiClient.doSearch(searchVal, searchAllPlants ? undefined : plant.id).then((searchResult: SearchResult) => {
+            setSearchValue(searchVal);
+            setSearchResult(searchResult);
+            setFilteredItems(searchResult.items);
+            prepareFilters(searchResult.items || []);
+            const values = queryString.parse(search);
+            const filteredPlants = [];
+            if (values.plant && values.plant.length > 0) {
+                if (typeof (values.plant) === 'string')
+                    filteredPlants.push(values.plant as string);
+                else {
+                    (values.plant as string[]).forEach(p => {
+                        filteredPlants.push(p);
+                    })
+                }
+                setSelectedPlants(filteredPlants);
+            }
+
+            const filteredTypes = [];
+            if (values.type && values.type.length > 0) {
+                if (typeof (values.type) === 'string')
+                    filteredTypes.push(values.type as string);
+                else {
+                    (values.type as string[]).forEach(p => {
+                        filteredTypes.push(p);
+                    })
+
+                }
+                setSelectedTypes(filteredTypes);
+            }
+        }).finally(() => {
+            setSearching(false);
+        });
+    }
+
     useEffect(() => {
         window.addEventListener('resize', updateTopDivHeight);
 
@@ -491,6 +554,17 @@ const QuickSearch = (): JSX.Element => {
         updateTopDivHeight();
     }, [showFilter, selectedPlants, selectedTypes]);
 
+    useEffect(() => {
+        if (searchAllPlants)
+            history.replaceState(null, '', location.href + '&allplants=' + searchAllPlants);
+        else {
+            const newUrl = decodeURI(location.href).replace('&allplants=true', '');
+            history.replaceState(null, '', encodeURI(newUrl));
+        }
+
+        doSearch();
+    }, [searchAllPlants])
+
     const toggleShowFilter = (): void => {
         if (!showFilter) {
             setCurrentItem(undefined);
@@ -516,12 +590,12 @@ const QuickSearch = (): JSX.Element => {
     }
 
     const getFlyoutTitle = (type: string): string => {
-        switch(type) {
+        switch (type) {
             case 'C':
                 return 'Preview Comm package';
             case 'MC':
                 return 'Preview MC package';
-            case 'T': 
+            case 'T':
                 return 'Preview Tag';
             case 'PI':
                 return 'Preview Punch List Item';
@@ -535,12 +609,38 @@ const QuickSearch = (): JSX.Element => {
             <SearchContainer withSidePanel={(showFilter && !currentItem)}>
                 <Helmet titleTemplate={'ProCoSys - Quick Search'} />
                 <TopDiv ref={topDivRef}>
-                    <StyledHeader variant="h1">Quick Search Results</StyledHeader>
+                    <StyledHeader variant="h1">Quick Search</StyledHeader>
                     <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
-                    {(selectedTypes.length > 0 || selectedPlants.length > 0) && (
-                        <StyledButton onClick={(): void => clearFilters()} variant="ghost">Clear filters<EdsIcon name='close' /></StyledButton>
-                    )}
+
                     <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
+
+                    <Checkbox
+                        label="Search across all plants"
+                        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+                            setSearchAllPlants(e.target.checked);
+                        }}
+                        checked={searchAllPlants}
+                    />
+
+                    <SearchFieldContainer>
+                        <QuickSearchSearch
+                            placeholder={'Quick Search'}
+                            defaultValue={searchInputValue}
+                            name="procosysqs"
+                            id="procosysqs"
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    doSearch();
+                            }}
+                            onFocus={(): void => setShowSearchSubText(prevState => !prevState)}
+                            onBlur={(): void => setShowSearchSubText(prevState => !prevState)}
+                            autocomplete="on" autoFocus />
+                        {
+                            showSearchSubText && <SearchSubText>Type your search and press enter</SearchSubText>
+                        }
+
+                    </SearchFieldContainer>
+
 
                     <FiltersAndSortRow currentItem={currentItem}>
                         <SelectedFilters>
@@ -600,6 +700,7 @@ const QuickSearch = (): JSX.Element => {
                 showFilter && !currentItem && (
                     <QuickSearchFilters
                         plantFilterExpanded={plantFilterExpanded}
+                        clearFilters={clearFilters}
                         setShowFilter={setShowFilter}
                         setPlantFilterExpanded={setPlantFilterExpanded}
                         filterPlants={filterPlants}

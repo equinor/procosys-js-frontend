@@ -6,10 +6,12 @@ import Checkbox from '@procosys/components/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
+import EdsIcon from '@procosys/components/EdsIcon';
 
 export interface QuickSearchFiltersProps {
     plantFilterExpanded: boolean;
     setShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
+    clearFilters: React.Dispatch<void>;
     setPlantFilterExpanded: React.Dispatch<React.SetStateAction<boolean>>;
     filterPlants: string[];
     selectedPlants: string[];
@@ -32,6 +34,7 @@ const QuickSearchFilters = ({
     setTypeFilterExpanded,
     filterTypes,
     selectedTypes,
+    clearFilters,
     onCheckboxTypeFilterChange
 }: QuickSearchFiltersProps): JSX.Element => {
 
@@ -61,8 +64,11 @@ const QuickSearchFilters = ({
                         <Button variant='ghost' title='Close' onClick={(): void => setShowFilter(false)}>
                             <CloseIcon />
                         </Button>
-                    </FlexDiv>
+                    </FlexDiv>                   
                 </Header>
+                <div style={{display:'flex', justifyContent:'flex-end'}}>
+                <Button onClick={clearFilters} variant="ghost">Reset filter</Button>
+                </div>
                 <FiltersTypes>
                     <Accordion chevronPosition="right" headerLevel="h2">
                         <Accordion.Item isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(prevState => !prevState)}>

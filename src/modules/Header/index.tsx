@@ -7,13 +7,12 @@ import {
     MenuContainerItem,
     Nav,
     PlantSelector,
-    SearchSubText,
     ShowOnDesktop,
     ShowOnMobile,
     StyledSearch
 } from './style';
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
@@ -26,7 +25,14 @@ import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
-import queryString from 'query-string'
+import { useQuickSearchContext } from '../QuickSearch/context/QuickSearchContext';
+import { ContentDocument, SearchResult } from '../QuickSearch/http/QuickSearchApiClient';
+import debounce from 'lodash.debounce';
+import { QuickSearchPreviewSection, QuickSearchResultsContainer, QuickSearchResultsContainerFooter, QuickSearchResultsContainerHeader, QuickSearchResultsFoundIn, SearchingDiv } from '../QuickSearch/style';
+import QuickSearchPreviewHit from '../QuickSearch/QuickSearchPreviewHit';
+import Spinner from '@procosys/components/Spinner';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import useClickOutsideNotifier from '@procosys/hooks/useClickOutsideNotifier';
 
 type PlantItem = {
     text: string;
@@ -41,42 +47,57 @@ const Header: React.FC = (): JSX.Element => {
     const params = useParams<any>();
     const [filterForPlants, setFilterForPlants] = useState<string>('');
     const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
-    const [showSearchSubText, setShowSearchSubText] = useState<boolean>(false);
+    const [searchResult, setSearchResult] = useState<SearchResult>();
+    const [searching, setSearching] = useState<boolean>(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
+
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map(plant => ({
             text: plant.title,
             value: plant.id,
         }));
     });
+
+    useClickOutsideNotifier(() => {
+        setIsOpen(false);
+    }, containerRef);
+
     const history = useHistory();
 
-    const KEYCODE_ENTER = 13;
-    const { search } = useLocation();
-    const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
+    const { apiClient } = useQuickSearchContext();
 
-    useEffect(() => {
-        const values = queryString.parse(search)
-        if (values && values.query) {
-            setSearchValue(values.query as string);
-        } else {
-            setSearchValue('');
-        }
-    }, []);
+    const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
         setCurrentPlant(filteredPlants[plantIndex].value as string);
     };
 
-    const doSearch = (): void => {
-        if (searchValue.length > 2) {
-            history.push('/' + plant.pathId + '/quicksearch?query=' + searchValue);
-        }
-    }
+    const debounceSearchHandler = useCallback(
+        debounce((value: string) => {
+            apiClient.doPreviewSearch(value, plant.id).then((searchResult: SearchResult) => {
+                setSearchResult(searchResult);
+                setSearching(false);
+            });
+        }, 500),
+        [plant]
+    );
 
-    const handleQuickSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        setSearchValue(e.target.value);
-    }
+    const handleQuickSearchChange = useCallback((e: { target: { value: string; }; }) => {
+        const searchVal = e.target.value;
+        setIsOpen(true);
+        setSearchResult(undefined);
+        setSearching(true);
+        setSearchValue(searchVal);
+        if (searchVal === '') {
+            setSearching(false);
+            return;
+        }
+
+        debounceSearchHandler(searchVal);
+    }, [debounceSearchHandler]);
+
 
     useEffect(() => {
         if (filterForPlants.length <= 0) {
@@ -86,15 +107,14 @@ const Header: React.FC = (): JSX.Element => {
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
 
-    const getSearchSubText = (): JSX.Element => {
-        if (searchValue) {
-            if (searchValue.length > 2) {
-                return <SearchSubText>Press enter to search</SearchSubText>
-            } else {
-                return <SearchSubText>Type min. 3 characters and press enter to search</SearchSubText>
-            }
-        }
-        return <SearchSubText>Type min. 3 characters and press enter to search</SearchSubText>
+    const goToFilteredQuicksearch = (filterType: string) : void => {
+        history.push('/' + plant.pathId + '/quicksearch?query=' + filterType + ':' + searchValue);
+        setIsOpen(false);
+    }
+
+    const goToQuicksearch = (): void => {
+        history.push('/' + plant.pathId + '/quicksearch?query=' + searchValue);
+        setIsOpen(false);
     }
 
     return (
@@ -311,19 +331,49 @@ const Header: React.FC = (): JSX.Element => {
                             <StyledSearch
                                 placeholder={'Quick Search'}
                                 onChange={handleQuickSearchChange}
-                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                                    e.keyCode === KEYCODE_ENTER &&
-                                        doSearch();
-                                }}
+                                onFocus={(): void => setIsOpen(true)}
+                                value={searchValue}
                                 name="procosys-qs"
                                 id="procosys-qs"
-                                value={searchValue}
-                                onFocus={(): void => setShowSearchSubText(prevState => !prevState)}
-                                onBlur={(): void => setShowSearchSubText(prevState => !prevState)}
                                 autocomplete="on" autoFocus />
-                            {
-                                showSearchSubText && getSearchSubText()
-                            }
+
+                            {!searching && searchValue && isOpen && (
+                                <QuickSearchResultsContainer ref={containerRef}>
+                                    <QuickSearchResultsContainerHeader group="navigation" variant="label">Results</QuickSearchResultsContainerHeader>
+                                    {
+                                        searchResult && searchResult.items.length > 0 ? (
+                                            searchResult.items.map((item: ContentDocument, counter: number) => {
+                                                if (counter > 5) return;
+                                                return <QuickSearchPreviewHit key={item.key} searchValue={searchValue} item={item}></QuickSearchPreviewHit>
+                                            })
+                                        ) : <SearchingDiv>Nothing here... &#129300;</SearchingDiv>
+                                    }
+
+                                    {
+                                        searchResult && searchResult.items.length > 0 && (
+                                            <>
+                                                <QuickSearchResultsFoundIn group="navigation" variant="label">Results found in</QuickSearchResultsFoundIn>
+
+                                                {searchResult.totalCommPkgHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('c')}><span>Commissioning packages</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+
+                                                {searchResult.totalMcPkgHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('m')}><span>MC packages</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+
+                                                {searchResult.totalTagHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('t')}><span>Tags</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+
+                                                {searchResult.totalPunchItemHits > 0 && <QuickSearchPreviewSection onClick={(): void => goToFilteredQuicksearch('p')}><span>Punch List items</span><KeyboardArrowRightIcon className='arrowIcon' /></QuickSearchPreviewSection>}
+
+                                                <QuickSearchResultsContainerFooter onClick={(): void => goToQuicksearch()} variant="ghost">Show all results</QuickSearchResultsContainerFooter>
+                                            </>
+                                        )
+                                    }
+                                </QuickSearchResultsContainer>
+                            )}
+
+                            {searching && isOpen && (
+                                <QuickSearchResultsContainer>
+                                    <SearchingDiv>Searching... <Spinner medium></Spinner></SearchingDiv>
+                                </QuickSearchResultsContainer>
+                            )}
 
                         </MenuContainerItem>
                     )}

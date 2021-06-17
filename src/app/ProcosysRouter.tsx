@@ -35,45 +35,46 @@ const ProcosysRouter = (): JSX.Element => {
             <PlantContextProvider>
                 <DirtyContextProvider>
                     <ProCoSysRootLayout>
-                        <Header />
-                        <div id="root-content">
-                            <Switch key={plant}>
-                                <Route
-                                    path={path}
-                                    exact
-                                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                                        LazyRoute(UserGreeting, routeProps)
-                                    }
-                                />
-                                <Route
-                                    path={`${path}/preservation`}
-                                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                                        LazyRoute(Preservation, routeProps)
-                                    }
-                                />
-                                <Route
-                                    path={`${path}/libraryv2`}
-                                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                                        LazyRoute(PlantConfig, routeProps)
-                                    }
-                                />
-                                <Route
-                                    path={`${path}/invitationforpunchout`}
-                                    component={(routeProps: RouteComponentProps): JSX.Element =>
-                                        LazyRoute(InvitationForPunchOut, routeProps)
-                                    }
-                                />
-                                <QuickSearchContextProvider>
+                        <QuickSearchContextProvider>
+                            <Header />
+                            <div id="root-content">
+                                <Switch key={plant}>
+                                    <Route
+                                        path={path}
+                                        exact
+                                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                                            LazyRoute(UserGreeting, routeProps)
+                                        }
+                                    />
+                                    <Route
+                                        path={`${path}/preservation`}
+                                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                                            LazyRoute(Preservation, routeProps)
+                                        }
+                                    />
+                                    <Route
+                                        path={`${path}/libraryv2`}
+                                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                                            LazyRoute(PlantConfig, routeProps)
+                                        }
+                                    />
+                                    <Route
+                                        path={`${path}/invitationforpunchout`}
+                                        component={(routeProps: RouteComponentProps): JSX.Element =>
+                                            LazyRoute(InvitationForPunchOut, routeProps)
+                                        }
+                                    />
+
                                     <Route
                                         path={`${path}/quicksearch`}
                                         component={(routeProps: RouteComponentProps): JSX.Element =>
                                             LazyRoute(QuickSearch, routeProps)
                                         }
                                     />
-                                </QuickSearchContextProvider>
-                                <Route component={Page404} />
-                            </Switch>
-                        </div>
+                                    <Route component={Page404} />
+                                </Switch>
+                            </div>
+                        </QuickSearchContextProvider>
                     </ProCoSysRootLayout>
                 </DirtyContextProvider>
             </PlantContextProvider>

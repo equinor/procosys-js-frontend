@@ -131,5 +131,5 @@ export const SearchSubText = styled.div`
     font-size: 11px;
     color: gray;
     position: absolute;
-    margin-top: 2px;
+    margin-top: 50px;
 `;

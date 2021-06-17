@@ -427,7 +427,7 @@ const QuickSearch = (): JSX.Element => {
         if (searchAllPlants) {
             newUrl = location.origin + location.pathname + '?allplants=true&query=' + queryString.parse(search).query;
         }
-        
+
         history.replaceState(null, '', encodeURI(newUrl));
     }
 
@@ -490,14 +490,19 @@ const QuickSearch = (): JSX.Element => {
         const searchVal = (document.getElementById('procosysqs') as HTMLInputElement).value;
         if (!searchVal) return;
 
+
         setSearching(true);
         apiClient.doSearch(searchVal, searchAllPlants ? undefined : plant.id).then((searchResult: SearchResult) => {
             setSearchValue(searchVal);
             setSearchResult(searchResult);
             setFilteredItems(searchResult.items);
-            prepareFilters(searchResult.items || []);
-            const values = queryString.parse(search);
+            
+            const values = queryString.parse(location.search);
             const filteredPlants = [];
+            values.query = searchVal;
+            history.replaceState(null, '', location.origin + location.pathname + '?' + queryString.stringify(values));
+            prepareFilters(searchResult.items || []);
+
             if (values.plant && values.plant.length > 0) {
                 if (typeof (values.plant) === 'string')
                     filteredPlants.push(values.plant as string);
@@ -555,10 +560,15 @@ const QuickSearch = (): JSX.Element => {
     }, [showFilter, selectedPlants, selectedTypes]);
 
     useEffect(() => {
-        if (searchAllPlants)
-            history.replaceState(null, '', location.href + '&allplants=' + searchAllPlants);
+        if (searchAllPlants && location.href.indexOf('allplants=true') < 0) {
+            if (location.href.indexOf('?') > -1) {
+                history.replaceState(null, '', location.href + '&allplants=true');
+            } else {
+                history.replaceState(null, '', location.href + '?allplants=true');
+            }
+        }
         else {
-            const newUrl = decodeURI(location.href).replace('&allplants=true', '');
+            const newUrl = decodeURI(location.href).replace('&allplants=true', '').replace('?allplants=true&', '?');
             history.replaceState(null, '', encodeURI(newUrl));
         }
 

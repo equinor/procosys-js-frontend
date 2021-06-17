@@ -72,6 +72,8 @@ const Header: React.FC = (): JSX.Element => {
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
         setCurrentPlant(filteredPlants[plantIndex].value as string);
+        setSearchValue('');
+        setSearchResult(undefined);
     };
 
     const debounceSearchHandler = useCallback(

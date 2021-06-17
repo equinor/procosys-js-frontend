@@ -496,7 +496,7 @@ const QuickSearch = (): JSX.Element => {
             setSearchValue(searchVal);
             setSearchResult(searchResult);
             setFilteredItems(searchResult.items);
-            
+
             const values = queryString.parse(location.search);
             const filteredPlants = [];
             values.query = searchVal;
@@ -560,18 +560,18 @@ const QuickSearch = (): JSX.Element => {
     }, [showFilter, selectedPlants, selectedTypes]);
 
     useEffect(() => {
+        const values = queryString.parse(location.search);
+        values.plant = [];
+
+        setSelectedPlants([]);
         if (searchAllPlants && location.href.indexOf('allplants=true') < 0) {
-            if (location.href.indexOf('?') > -1) {
-                history.replaceState(null, '', location.href + '&allplants=true');
-            } else {
-                history.replaceState(null, '', location.href + '?allplants=true');
-            }
+            values.allplants = 'true';
         }
         else {
-            const newUrl = decodeURI(location.href).replace('&allplants=true', '').replace('?allplants=true&', '?');
-            history.replaceState(null, '', encodeURI(newUrl));
+            values.allplants = 'false';
         }
-
+        setFilterPlants([]);
+        history.replaceState(null, '', location.origin + location.pathname + '?' + queryString.stringify(values));
         doSearch();
     }, [searchAllPlants])
 

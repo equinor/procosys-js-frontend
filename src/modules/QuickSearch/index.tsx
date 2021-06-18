@@ -82,8 +82,8 @@ const QuickSearch = (): JSX.Element => {
 
             if (allPlants === 'true') {
                 setSearchAllPlants(true);
-                setSearchValue(searchVal);
-                setSearchInputValue(searchVal);
+                setSearchValue(decodeURIComponent(searchVal));
+                setSearchInputValue(decodeURIComponent(searchVal));
                 return;
             }
 
@@ -163,8 +163,8 @@ const QuickSearch = (): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
         text = text.replaceAll('"', '');
 
-        const searchFor = searchValue.replaceAll('"', '').split(' '); 
-        
+        const searchFor = searchValue.replaceAll('"', '').split(' ');
+
         if(searchValue.indexOf(':') === 1) {
             searchFor.push(searchValue.substr(2));
         }
@@ -569,16 +569,13 @@ const QuickSearch = (): JSX.Element => {
 
     useEffect(() => {
         const values = queryString.parse(location.search);
-        values.plant = [];
-
-        setSelectedPlants([]);
         if (searchAllPlants && location.href.indexOf('allplants=true') < 0) {
             values.allplants = 'true';
         }
         else {
             values.allplants = 'false';
         }
-        setFilterPlants([]);
+
         history.replaceState(null, '', location.origin + location.pathname + '?' + queryString.stringify(values));
         doSearch();
     }, [searchAllPlants])
@@ -635,13 +632,6 @@ const QuickSearch = (): JSX.Element => {
                             <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
                             <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost"><EdsIcon name='filter_list' /></StyledButton>
                         </FlexDiv>
-                        {/* <Checkbox
-                        label="Search across all plants"
-                        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-                            setSearchAllPlants(e.target.checked);
-                        }}
-                        checked={searchAllPlants}
-                    /> */}
                     </QSHeaderDiv>
 
                     <SearchFieldContainer>
@@ -654,8 +644,6 @@ const QuickSearch = (): JSX.Element => {
                                 e.keyCode === KEYCODE_ENTER &&
                                     doSearch();
                             }}
-                            // onFocus={(): void => setShowSearchSubText(prevState => !prevState)}
-                            // onBlur={(): void => setShowSearchSubText(prevState => !prevState)}
                             autocomplete="on" autoFocus />
                         {
                             showSearchSubText && <SearchSubText>Type your search and press enter</SearchSubText>

@@ -1,7 +1,7 @@
 import EdsIcon from '@procosys/components/EdsIcon';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
-import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { useLocation } from 'react-router-dom';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -26,7 +26,9 @@ import {
     TypeIndicator,
     TypeCell,
     QuickSearchSearch,
-    SearchFieldContainer
+    SearchFieldContainer,
+    QSHeaderDiv,
+    FlexDiv
 } from './style';
 import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
@@ -41,7 +43,6 @@ import { Tooltip } from '@material-ui/core';
 import PunchIcon from './icons/punch';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { SearchSubText } from '../Header/style';
-import { Checkbox } from '@equinor/eds-core-react';
 
 const StyledTooltip = styled(Tooltip)`
 font-size: 14px;
@@ -67,7 +68,7 @@ const QuickSearch = (): JSX.Element => {
     const [topDivHeight, setTopDivHeight] = useState<number>(0);
     const topDivRef = useRef<HTMLDivElement>(null);
     const { plant, setCurrentPlant } = useCurrentPlant();
-    const [showSearchSubText, setShowSearchSubText] = useState<boolean>(false);
+    const [showSearchSubText, setShowSearchSubText] = useState<boolean>(true);
     const [searchAllPlants, setSearchAllPlants] = useState<boolean>(false);
     const { search } = useLocation();
 
@@ -162,8 +163,14 @@ const QuickSearch = (): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
         text = text.replaceAll('"', '');
 
+        const searchFor = searchValue.replaceAll('"', '').split(' '); 
+        
+        if(searchValue.indexOf(':') === 1) {
+            searchFor.push(searchValue.substr(2));
+        }
+
         return <Highlighter
-            searchWords={searchValue.replaceAll('"', '').split(' ')}
+            searchWords={searchFor}
             autoEscape={true}
             textToHighlight={text}
         />
@@ -423,6 +430,7 @@ const QuickSearch = (): JSX.Element => {
     const clearFilters = (): void => {
         setSelectedTypes([]);
         setSelectedPlants([]);
+        setSearchAllPlants(false);
         let newUrl = location.origin + location.pathname + '?query=' + queryString.parse(search).query;
         if (searchAllPlants) {
             newUrl = location.origin + location.pathname + '?allplants=true&query=' + queryString.parse(search).query;
@@ -619,18 +627,22 @@ const QuickSearch = (): JSX.Element => {
             <SearchContainer withSidePanel={(showFilter && !currentItem)}>
                 <Helmet titleTemplate={'ProCoSys - Quick Search'} />
                 <TopDiv ref={topDivRef}>
-                    <StyledHeader variant="h1">Quick Search</StyledHeader>
-                    <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost">{showFilter ? 'Hide filters' : 'Show filters'} <EdsIcon name='filter_list' /></StyledButton>
-
-                    <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
-
-                    <Checkbox
+                    <QSHeaderDiv>
+                        <div>
+                            <StyledHeader variant="h1">Quick Search</StyledHeader>
+                        </div>
+                        <FlexDiv>
+                            <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
+                            <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost"><EdsIcon name='filter_list' /></StyledButton>
+                        </FlexDiv>
+                        {/* <Checkbox
                         label="Search across all plants"
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                             setSearchAllPlants(e.target.checked);
                         }}
                         checked={searchAllPlants}
-                    />
+                    /> */}
+                    </QSHeaderDiv>
 
                     <SearchFieldContainer>
                         <QuickSearchSearch
@@ -642,8 +654,8 @@ const QuickSearch = (): JSX.Element => {
                                 e.keyCode === KEYCODE_ENTER &&
                                     doSearch();
                             }}
-                            onFocus={(): void => setShowSearchSubText(prevState => !prevState)}
-                            onBlur={(): void => setShowSearchSubText(prevState => !prevState)}
+                            // onFocus={(): void => setShowSearchSubText(prevState => !prevState)}
+                            // onBlur={(): void => setShowSearchSubText(prevState => !prevState)}
                             autocomplete="on" autoFocus />
                         {
                             showSearchSubText && <SearchSubText>Type your search and press enter</SearchSubText>
@@ -709,6 +721,8 @@ const QuickSearch = (): JSX.Element => {
             {
                 showFilter && !currentItem && (
                     <QuickSearchFilters
+                        searchAllPlants={searchAllPlants}
+                        setSearchAllPlants={setSearchAllPlants}
                         plantFilterExpanded={plantFilterExpanded}
                         clearFilters={clearFilters}
                         setShowFilter={setShowFilter}

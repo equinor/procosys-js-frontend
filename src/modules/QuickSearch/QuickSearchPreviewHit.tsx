@@ -10,9 +10,12 @@ import { QuickSearchResultItem, SearchResultItemPart, SearchResultType, TypeIndi
 interface QuickSearchPreviewHitProps {
     item: ContentDocument;
     searchValue: string;
+    hitNumber: number;
 }
 
 const QuickSearchPreviewHit = (props: QuickSearchPreviewHitProps): JSX.Element => {
+
+    const KEYCODE_ENTER = 13;
 
     const highlightSearchValue = (text: string): JSX.Element => {
         text = text.replaceAll('"', '');
@@ -89,7 +92,14 @@ const QuickSearchPreviewHit = (props: QuickSearchPreviewHitProps): JSX.Element =
     }
 
     return (
-        <QuickSearchResultItem onClick={(): void => navigateToItem(props.item)}>
+        <QuickSearchResultItem
+            tabIndex={props.hitNumber}
+            id={"hit_" + props.hitNumber}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                e.keyCode === KEYCODE_ENTER &&
+                    navigateToItem(props.item)
+            }}
+            onClick={(): void => navigateToItem(props.item)}>
             <SearchResultType>
                 {getTypeIcon(props.item.type ?? '')}
             </SearchResultType>

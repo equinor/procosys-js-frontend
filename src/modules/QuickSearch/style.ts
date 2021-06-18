@@ -73,9 +73,21 @@ export const SortOrder = styled.div`
 `;
 
 export const StyledButton = styled(Button)`
-    flex: 0 1 140px;
+    flex: 1 0 130px;
     display: flex;
     margin-right: 4px;
+`;
+
+export const FilterButton = styled(Button)`
+    flex: 1 0 50%;
+    justify-content: flex-end;
+    display: flex;
+`;
+
+export const QSHeaderDiv = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 interface FiltersAndSortRowProps {
@@ -275,6 +287,15 @@ export const QuickSearchResultItem = styled.div`
     :hover {
         background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
     }
+    :focus {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    mark {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus-visible {
+        outline: none;
+    }
 `;
 
 export const SearchResultItemPart = styled(Typography)`
@@ -282,6 +303,9 @@ export const SearchResultItemPart = styled(Typography)`
     min-width: 120px;
     text-overflow: ellipsis;
     overflow: hidden;
+    mark {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
 `;
 
 export const SearchResultType = styled.div`
@@ -304,6 +328,12 @@ export const QuickSearchPreviewSection = styled.div`
     cursor: pointer;
     :hover {
         background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus-visible {
+        outline: none;
     }
 `;
 

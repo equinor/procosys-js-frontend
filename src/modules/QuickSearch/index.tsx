@@ -28,7 +28,8 @@ import {
     QuickSearchSearch,
     SearchFieldContainer,
     QSHeaderDiv,
-    FlexDiv
+    FlexDiv,
+    FiltersButton
 } from './style';
 import queryString from 'query-string'
 import Highlighter from 'react-highlight-words';
@@ -630,7 +631,7 @@ const QuickSearch = (): JSX.Element => {
                         </div>
                         <FlexDiv>
                             <StyledButton onClick={(): void => { generateUrl() }} variant="ghost">Share link <EdsIcon name='share' /></StyledButton>
-                            <StyledButton onClick={(): void => toggleShowFilter()} variant="ghost"><EdsIcon name='filter_list' /></StyledButton>
+                            <FiltersButton onClick={(): void => toggleShowFilter()} variant={(searchAllPlants || (selectedPlants && selectedPlants.length) || (selectedTypes && selectedTypes.length > 0)) > 0 ? 'contained' : 'ghost'}><EdsIcon name='filter_list' /></FiltersButton>
                         </FlexDiv>
                     </QSHeaderDiv>
 

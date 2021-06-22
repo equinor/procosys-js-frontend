@@ -78,6 +78,10 @@ export const StyledButton = styled(Button)`
     margin-right: 4px;
 `;
 
+export const FiltersButton = styled(Button)`
+    margin-right: 4px;
+`;
+
 export const FilterButton = styled(Button)`
     flex: 1 0 50%;
     justify-content: flex-end;
@@ -186,8 +190,13 @@ export const FiltersTypes = styled.div`
     flex-direction: column;
 `;
 
-export const StyledAccordionHeader = styled(Accordion.Header)`
+interface StyledAccordionHeaderProps {
+    active: boolean;
+}
+
+export const StyledAccordionHeader = styled(Accordion.Header)<StyledAccordionHeaderProps>`
     border: none;
+    font-weight: ${(props): string => props.active ? '600' : '500'};
 `;
 
 export const StyledAccordionPanel = styled(Accordion.Panel)`

@@ -1,6 +1,5 @@
 import { Button, Search } from '@equinor/eds-core-react';
 import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
-
 import { Accordion } from '@equinor/eds-core-react';
 import { Breakpoints } from '@procosys/core/styling';
 import { Chip } from '@equinor/eds-core-react';
@@ -74,9 +73,21 @@ export const SortOrder = styled.div`
 `;
 
 export const StyledButton = styled(Button)`
-    flex: 0 1 140px;
+    flex: 1 0 130px;
     display: flex;
     margin-right: 4px;
+`;
+
+export const FilterButton = styled(Button)`
+    flex: 1 0 50%;
+    justify-content: flex-end;
+    display: flex;
+`;
+
+export const QSHeaderDiv = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 interface FiltersAndSortRowProps {
@@ -87,7 +98,7 @@ export const FiltersAndSortRow = styled.div<FiltersAndSortRowProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%' };
+    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%'};
 `;
 
 export const SelectedFilters = styled.div`
@@ -102,7 +113,7 @@ interface ResultsContainerProps {
 }
 
 export const ResultsContainer = styled.div<ResultsContainerProps>`
-    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%' };
+    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%'};
 `;
 
 
@@ -234,4 +245,107 @@ export const TopDiv = styled.div`
 export const StyledHeader = styled(Typography)`
     flex: 0 1 325px;
     margin-right: 30px;
+`;
+
+
+export const QuickSearchResultsContainer = styled.div`
+    position: absolute;
+    top: 54px;
+    width: 400px;
+    height: auto;
+    min-height: 50px;
+    max-height: 750px;
+    background: white;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    z-index: 20;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    overflow: auto;
+`;
+
+export const QuickSearchResultsContainerHeader = styled(Typography)`
+    padding-left: 24px;
+`;
+
+export const QuickSearchResultsFoundIn = styled(Typography)`
+    padding-left: 24px;
+    margin-top: 36px;
+`;
+
+export const SearchingDiv = styled.div`
+    padding-left: 24px;
+`;
+
+export const QuickSearchResultItem = styled.div`
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    padding: 4px 4px 4px 24px;
+    :hover {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    mark {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus-visible {
+        outline: none;
+    }
+`;
+
+export const SearchResultItemPart = styled(Typography)`
+    margin-right: 10px;
+    min-width: 120px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    mark {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+`;
+
+export const SearchResultType = styled.div`
+    margin-right: 10px;
+`;
+
+export const QuickSearchResultsContainerFooter = styled(Button)`
+    margin-left: 24px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+`;
+
+export const QuickSearchPreviewSection = styled.div`
+    padding-left: 24px;
+    padding-right: 24px;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    :hover {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus {
+        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+    }
+    :focus-visible {
+        outline: none;
+    }
+`;
+
+export const QuickSearchSearch = styled(Search)`
+    display: flex;
+    max-width: 500px;
+    min-width: 250px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+`;
+
+export const SearchFieldContainer = styled.div`
+    width: 100%;
+    display: flex;
 `;

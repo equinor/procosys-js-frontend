@@ -71,6 +71,11 @@ export interface ContentDocumentPunchItem {
 export interface SearchResult {
     hits: number;
     items: ContentDocument[];
+    totalHits: number;
+    totalCommPkgHits: number;
+    totalMcPkgHits: number;
+    totalTagHits: number;
+    totalPunchItemHits: number;
 }
 
 class QuickSearchApiClient extends ApiClient {
@@ -93,8 +98,30 @@ class QuickSearchApiClient extends ApiClient {
     }
 
 
-    async doSearch(searchString: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
-        const endpoint = '/Search?query=' + searchString;
+    async doPreviewSearch(searchString: string, plantId: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
+        const endpoint = '/Search?preview=true&plant=' + plantId + '&query=' + encodeURIComponent(searchString);
+        const settings: AxiosRequestConfig = {};
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<SearchResult>(endpoint, settings);
+            result.data.items.map((item: ContentDocument) => {
+                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG
+                    : item.mcPkg ? ResultTypeEnum.MC_PKG 
+                    : item.tag ? ResultTypeEnum.TAG
+                    : item.punchItem ? ResultTypeEnum.PUNCH_ITEM
+                    : ResultTypeEnum.OTHER;
+            });
+            return result.data;
+        }
+        catch (error) {
+            throw new ProCoSysApiError(error);
+        }
+    }
+
+    async doSearch(searchString: string, plantId?: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
+        const endpoint = '/Search?' + (plantId ? 'plant=' + plantId + '&' : '') + 'query=' + encodeURIComponent(searchString);
         const settings: AxiosRequestConfig = {};
 
         this.setupRequestCanceler(settings, setRequestCanceller);

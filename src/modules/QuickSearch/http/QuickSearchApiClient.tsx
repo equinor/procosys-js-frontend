@@ -83,8 +83,8 @@ class QuickSearchApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            ProCoSysSettings.searchApi.scope.join(' '),
-            ProCoSysSettings.searchApi.url
+            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.scope ? ProCoSysSettings.searchApi.scope.join(' ') : '',
+            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.url ? ProCoSysSettings.searchApi.url : ''
         );
         this.client.interceptors.request.use(
             config => {

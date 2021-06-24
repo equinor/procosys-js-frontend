@@ -24,6 +24,14 @@ interface CommPkgTableProps {
 
 const WAIT_INTERVAL = 300;
 
+const getSystem = (sysString: string): string => {
+    return sysString.lastIndexOf('|') !== -1 ? sysString.substr(0, sysString.lastIndexOf('|')) : sysString;
+}
+
+const hasSameSystem = (sysString1: string, sysString2: string): boolean => {
+        return  getSystem(sysString1) === getSystem(sysString2);
+};
+
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
     selectedMcPkgScope,
@@ -46,16 +54,14 @@ const CommPkgTable = forwardRef(({
     const [loading, setLoading] = useState<boolean>(false);
     const tableRef = useRef<any>();
 
-    const hasValidSystem = useCallback((system: string): boolean => {
+    const hasValidSystem = useCallback((systemString: string): boolean => {
         if (selectedCommPkgScope.length === 0 && selectedMcPkgScope.length === 0) return true;
 
-        const validateSystem = system.substr(0, system.lastIndexOf('|'));
-        const currentSystem = selectedCommPkgScope.length > 0 ? 
+        const currentSystemString = selectedCommPkgScope.length > 0 ? 
             selectedCommPkgScope[0].system :
             selectedMcPkgScope[0].system;
-
             
-        return validateSystem === currentSystem.substr(0, currentSystem.lastIndexOf('|'));
+        return hasSameSystem(systemString, currentSystemString);
     }, [selectedCommPkgScope]);
 
     const getCommPkgsByFilter = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
@@ -132,7 +138,7 @@ const CommPkgTable = forwardRef(({
             } else{
                 getCommPkgsByFilter(query.pageSize, query.pageIndex).then(result => {
                     setFilteredCommPkgs(result.commPkgs);
-                    setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
+                    setSelectAll(result.commPkgs.every(commpkg => hasSameSystem(commpkg.system, result.commPkgs[0].system)));
                     setData(result.commPkgs);
                     setMaxRows(result.maxAvailable);
                 });

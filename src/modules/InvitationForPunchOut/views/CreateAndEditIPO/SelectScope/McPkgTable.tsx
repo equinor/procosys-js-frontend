@@ -1,4 +1,4 @@
-import { Container, McPkgTableContainer, Search, TopContainer } from './Table.style';
+import { Container, McPkgTableContainer, TopContainer } from './Table.style';
 import { McPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
@@ -6,8 +6,6 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import { Canceler } from '@procosys/http/HttpClient';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
-import { SelectedItem } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeFilter/MultiSelectFilter/MultiSelectFilter.style';
-import { TextField } from '@equinor/eds-core-react';
 import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
@@ -18,8 +16,6 @@ interface McPkgTableProps {
     projectName: string;
     commPkgNo: string;
 }
-
-const KEYCODE_ENTER = 13;
 
 export const multipleDisciplines = (selected: McPkgRow[]): boolean => {
     if (selected.length > 0) {

@@ -1,17 +1,18 @@
 import { Button, TextField } from '@equinor/eds-core-react';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
 import { CommPkgTableContainer, Container, MCHeader, Search, TopContainer } from './Table.style';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import ProcosysTable, { DataQuery } from '@procosys/components/Table';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { TableOptions, UseTableRowProps } from 'react-table';
+
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
-import { TableOptions, UseTableRowProps } from 'react-table';
-import ProcosysTable, { DataQuery } from '@procosys/components/Table';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
-    setSelectedCommPkgScope: (selectedCommPkgScope: CommPkgRow[]) => void;
+    setSelectedCommPkgScope: React.Dispatch<React.SetStateAction<CommPkgRow[]>>;
     selectedMcPkgScope: McPkgRow[];
     setCurrentCommPkg: (commPkgNo: string) => void;
     type: string;
@@ -22,6 +23,14 @@ interface CommPkgTableProps {
 }
 
 const WAIT_INTERVAL = 300;
+
+const getSystem = (sysString: string): string => {
+    return sysString.lastIndexOf('|') !== -1 ? sysString.substr(0, sysString.lastIndexOf('|')) : sysString;
+}
+
+const hasSameSystem = (sysString1: string, sysString2: string): boolean => {
+        return  getSystem(sysString1) === getSystem(sysString2);
+};
 
 const CommPkgTable = forwardRef(({
     selectedCommPkgScope,
@@ -45,15 +54,15 @@ const CommPkgTable = forwardRef(({
     const [loading, setLoading] = useState<boolean>(false);
     const tableRef = useRef<any>();
 
-    const hasValidSystem = (system: string): boolean => {
-        if (selectedCommPkgScope.length == 0 && selectedMcPkgScope.length == 0) return true;
+    const hasValidSystem = useCallback((systemString: string): boolean => {
+        if (selectedCommPkgScope.length === 0 && selectedMcPkgScope.length === 0) return true;
 
-        if (selectedCommPkgScope.length > 0) {
-            return selectedCommPkgScope[0].system === system;
-        } else {
-            return selectedMcPkgScope[0].system === system;
-        }
-    };
+        const currentSystemString = selectedCommPkgScope.length > 0 ? 
+            selectedCommPkgScope[0].system :
+            selectedMcPkgScope[0].system;
+            
+        return hasSameSystem(systemString, currentSystemString);
+    }, [selectedCommPkgScope]);
 
     const getCommPkgsByFilter = async (pageSize: number, page: number): Promise<{ maxAvailable: number, commPkgs: CommPkgRow[] }> => {
         try {
@@ -129,7 +138,7 @@ const CommPkgTable = forwardRef(({
             } else{
                 getCommPkgsByFilter(query.pageSize, query.pageIndex).then(result => {
                     setFilteredCommPkgs(result.commPkgs);
-                    setSelectAll(result.commPkgs.every(commpkg => commpkg.system === result.commPkgs[0].system));
+                    setSelectAll(result.commPkgs.every(commpkg => hasSameSystem(commpkg.system, result.commPkgs[0].system)));
                     setData(result.commPkgs);
                     setMaxRows(result.maxAvailable);
                 });
@@ -168,14 +177,14 @@ const CommPkgTable = forwardRef(({
         filteredCommPkgs.forEach(c => {
             commPkgNos.push(c.commPkgNo);
         });
-        const newSelectedCommPkgs = selectedCommPkgScope.filter(item => !commPkgNos.includes(item.commPkgNo));
+        const newSelectedCommPkgs = selectedCommPkgScope ? selectedCommPkgScope.filter(item => !commPkgNos.includes(item.commPkgNo)) : [];
         setSelectedCommPkgScope(newSelectedCommPkgs);
     };
 
     const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
         if (type != 'DP') {
             const rowsToAdd = rowData.filter(row => hasValidSystem(row.system));
-            setSelectedCommPkgScope(rowsToAdd);
+            setSelectedCommPkgScope((scope: CommPkgRow[]) => [...scope, ...rowsToAdd]);
         }
     };
 
@@ -185,7 +194,7 @@ const CommPkgTable = forwardRef(({
             d.disableCheckbox = !hasValidSystem(d.system);
         });
         setFilteredCommPkgs(_data);
-    }, [selectedCommPkgScope]);
+    }, [selectedCommPkgScope, data]);
 
     const unselectCommPkg = (commPkgNo: string): void => {
         const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
@@ -205,13 +214,9 @@ const CommPkgTable = forwardRef(({
     }));
 
 
-    const rowSelectionChanged = (rowData: CommPkgRow[], row: CommPkgRow): void => {
-        if (rowData.length == 0 && filteredCommPkgs.length > 0) {
+    const rowSelectionChanged = (rowData: CommPkgRow[], _row: CommPkgRow): void => {
             removeAllSelectedCommPkgsInScope();
-        } else {
-            if (rowData.length > 0)
-                addAllCommPkgsInScope(rowData);
-        }
+            addAllCommPkgsInScope(rowData);
     };
 
     const getDescriptionColumn = (row: TableOptions<CommPkgRow>): JSX.Element => {

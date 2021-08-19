@@ -1,5 +1,7 @@
 import { format } from 'date-fns';
-
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+dayjs.extend(localizedFormat)
 // THE COMMENTED FUNCTIONS HAVE BEEN USED BY PRESERVATION
 // KEEP FOR CONVENIENCE UNTIL EDS DATETIME STRATEGY IS IN PLACE
 
@@ -40,7 +42,7 @@ export const getFormattedDateAndTime = (date: Date | string | undefined | null):
         return '';
     }
     const newDate = new Date(date);
-    return newDate.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return newDate.toLocaleString(navigator.language, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 };
 
 export const getFormattedDate = (date: Date | string | undefined | null): string => {
@@ -48,7 +50,7 @@ export const getFormattedDate = (date: Date | string | undefined | null): string
         return '';
     }
     const newDate = new Date(date);
-    return newDate.toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return newDate.toLocaleDateString(navigator.language, { year: 'numeric', month: '2-digit', day: '2-digit' });
 };
 
 export const getFormattedTime = (date: Date | string | null | undefined): string => {
@@ -56,7 +58,7 @@ export const getFormattedTime = (date: Date | string | null | undefined): string
         return '';
     }
     const newDate = new Date(date);
-    return newDate.toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12 : false });
+    return newDate.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
 };
 
 export const isValidDate = (value: string | Date | undefined | null): boolean => {
@@ -71,8 +73,6 @@ export const isValidDate = (value: string | Date | undefined | null): boolean =>
 type validFormatStrings = 'yyyy-MM-dd' | 'HH:mm';
 
 export const formatForDatePicker = (value: Date | string | undefined | null, formatString: validFormatStrings): string => {
-    console.log(value);
-    console.log(format(new Date(value as Date | string), formatString));
     if (isValidDate(value)) {
         return format(new Date(value as Date | string), formatString);
     }

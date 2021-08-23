@@ -43,7 +43,7 @@ describe('Module: <Comments ipoId={} />', () => {
         const { getByText } = render(<Comments comments={comments}  loading={false} />);
 
         await waitFor(() => expect(getByText(comments[1].comment)).toBeInTheDocument());
-        await waitFor(() => expect(getByText((new Date(comments[1].createdAtUtc)).toLocaleString([], {year: 'numeric', month: '2-digit', day: 'numeric', hour: '2-digit', minute: '2-digit'}))).toBeInTheDocument());
+        await waitFor(() => expect(getByText((new Date(comments[1].createdAtUtc)).toLocaleString(navigator.language, {year: 'numeric', month: '2-digit', day: 'numeric', hour: '2-digit', minute: '2-digit'}))).toBeInTheDocument());
         await waitFor(() => expect(getByText(`${comments[0].createdBy.firstName} ${comments[0].createdBy.lastName}`)).toBeInTheDocument());
     });
 });

@@ -1,7 +1,4 @@
 import { format } from 'date-fns';
-import dayjs from 'dayjs';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-dayjs.extend(localizedFormat)
 // THE COMMENTED FUNCTIONS HAVE BEEN USED BY PRESERVATION
 // KEEP FOR CONVENIENCE UNTIL EDS DATETIME STRATEGY IS IN PLACE
 

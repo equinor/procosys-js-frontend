@@ -4,7 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin-top: var(--margin-module--top);
-    height: calc(100% - 120px);
+    height: calc(100% - 100px);
     
     tbody, thead {
         .MuiButtonBase-root {

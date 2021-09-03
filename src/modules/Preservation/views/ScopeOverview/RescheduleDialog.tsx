@@ -20,12 +20,6 @@ import styled from 'styled-components';
 const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
 const moduleName = 'PreservationRescheduleDialog';
 
-const TableContainer = styled.div<{ restrictHeight?: boolean }>`
-        ${(props): any => `
-            height: ${props.restrictHeight ? '40%' : '100%'};
-        `}
-    `;
-
 interface RescheduleDialogProps {
     tags: PreservedTag[];
     open: boolean;
@@ -259,16 +253,12 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                     }
                     {
                         nonReschedulableTags.length > 0 && (
-                            <TableContainer restrictHeight={reschedulableTags.length > 0}>
                                 <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                            </TableContainer>
                         )
                     }
                     {
                         reschedulableTags.length > 0 && (
-                            <TableContainer restrictHeight={nonReschedulableTags.length > 0}>
                                 <DialogTable tags={reschedulableTags} columns={columns} toolbarText='tag(s) will be rescheduled' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-                            </TableContainer>
                         )
                     }
 

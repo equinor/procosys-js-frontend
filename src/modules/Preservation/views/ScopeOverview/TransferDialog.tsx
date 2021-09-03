@@ -103,8 +103,8 @@ const MainContainer = styled.div`
     height: 70vh;
 `;
 
-const TableContainer = styled.div`
-    height: 50%;
+const TableContainer = styled.div<{ isHalfScreen: boolean }>`
+    height: ${(props): string => props.isHalfScreen? '50%' : '100%' };
 `;
 
 const TransferDialog = ({
@@ -115,13 +115,13 @@ const TransferDialog = ({
     return (
         <MainContainer>
             {nonTransferableTags.length > 0 && (
-                <TableContainer>
+                <TableContainer isHalfScreen={transferableTags.length > 0}>
                     <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
                     <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                 </TableContainer>
             )}
             {transferableTags.length > 0 && (
-                <TableContainer>
+                <TableContainer isHalfScreen={nonTransferableTags.length > 0} >
                     <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
                 </TableContainer>
             )}

@@ -28,6 +28,8 @@ const columns = [
 
 const Container = styled.div`
     height: 65vh;
+    /* display: flex;
+    flex-direction: column; */
 `;
 
 const PreservedDialog = ({

@@ -65,10 +65,6 @@ const MainContainer = styled.div`
     height: 70vh;
 `;
 
-const TableContainer = styled.div`
-    height: 50%;
-`;
-
 const CompleteDialog = ({
     completableTags,
     nonCompletableTags
@@ -76,15 +72,13 @@ const CompleteDialog = ({
     return (
         <MainContainer>
             {nonCompletableTags.length > 0 && (
-                <TableContainer>
+                <>
                     <Typography variant="meta">{nonCompletableTags.length} tag(s) cannot be completed. Tags are not started, already completed or voided.</Typography>
                     <DialogTable tags={nonCompletableTags} columns={columns} toolbarText='tag(s) will not be completed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                </TableContainer>
+                </>
             )}
             {completableTags.length > 0 && (
-                <TableContainer>
-                    <DialogTable tags={completableTags} columns={columns} toolbarText='tag(s) will be completed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-                </TableContainer>
+                <DialogTable tags={completableTags} columns={columns} toolbarText='tag(s) will be completed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
             )}
         </MainContainer>
     );

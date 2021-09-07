@@ -7,6 +7,7 @@ import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
+import { MainContainer, TableContainer } from './Dialogs.style';
 
 interface StartPreservationDialogProps {
     startableTags: PreservedTag[];
@@ -64,18 +65,20 @@ const StartPreservationDialog = ({
     startableTags,
     nonStartableTags
 }: StartPreservationDialogProps): JSX.Element => {
-
-    return (<div style={{height: '65vh'}}>
-        {nonStartableTags.length > 0 && (
-            <div>
-                <Typography variant="meta">{nonStartableTags.length} tag(s) cannot be started. Tags are already started, or are voided.</Typography>
-                <DialogTable tags={nonStartableTags} columns={columns} toolbarText='tag(s) will not be started' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-            </div>
-        )}
-        {startableTags.length > 0 && (
-            <DialogTable tags={startableTags} columns={columns} toolbarText='tag(s) will be started' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
-        )}
-    </div>
+    return (
+        <MainContainer>
+            {nonStartableTags.length > 0 && (
+                <TableContainer isHalfSize={startableTags.length > 0}>
+                    <Typography variant="meta">{nonStartableTags.length} tag(s) cannot be started. Tags are already started, or are voided.</Typography>
+                    <DialogTable tags={nonStartableTags} columns={columns} toolbarText='tag(s) will not be started' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
+                </TableContainer>
+            )}
+            {startableTags.length > 0 && (
+                <TableContainer isHalfSize={nonStartableTags.length > 0}>
+                    <DialogTable tags={startableTags} columns={columns} toolbarText='tag(s) will be started' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                </TableContainer>
+            )}
+        </MainContainer>
     );
 };
 

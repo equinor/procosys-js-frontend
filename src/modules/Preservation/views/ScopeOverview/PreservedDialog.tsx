@@ -6,6 +6,7 @@ import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
+import { MainContainer, TableContainer } from './Dialogs.style';
 
 interface PreservedDialogProps {
     preservableTags: PreservedTag[];
@@ -26,29 +27,25 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
 
-const Container = styled.div`
-    height: 65vh;
-    /* display: flex;
-    flex-direction: column; */
-`;
-
 const PreservedDialog = ({
     preservableTags,
     nonPreservableTags
 }: PreservedDialogProps): JSX.Element => {
 
     return (
-        <Container>
+        <MainContainer>
             {nonPreservableTags.length > 0 && (
-                <div>
+                <TableContainer isHalfSize={preservableTags.length > 0}>
                     <Typography variant="meta">{nonPreservableTags.length} tag(s) cannot be preserved this week.</Typography>
                     <DialogTable tags={nonPreservableTags} columns={columns} toolbarText='tag(s) will not be preserved for this week' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                </div>
+                </TableContainer>
             )}
             {preservableTags.length > 0 && (
-                <DialogTable tags={preservableTags} columns={columns} toolbarText='tag(s) will be preserved for this week' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                <TableContainer isHalfSize={nonPreservableTags.length > 0}>
+                    <DialogTable tags={preservableTags} columns={columns} toolbarText='tag(s) will be preserved for this week' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                </TableContainer>
             )}
-        </Container>
+        </MainContainer>
     );
 };
 

@@ -1,4 +1,3 @@
-import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 
 export const ProCoSysRootLayout = styled.div`

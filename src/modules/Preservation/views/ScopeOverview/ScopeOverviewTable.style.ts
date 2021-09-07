@@ -41,7 +41,7 @@ export const Container = styled.div`
     flex-grow: 1;
     flex-direction: column;
     min-height: 200px;
-    margin-bottom: 52px;
+    margin-bottom: 76px;
     
     input + svg {
         width: 24px;

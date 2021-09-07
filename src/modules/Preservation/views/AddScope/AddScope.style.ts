@@ -3,9 +3,9 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
-    height: calc(100% - 70px);
+    height: calc( 100% - var(--grid-unit) * 4);
     overflow: hidden;
-    margin: var(--margin-module--top) var(--margin-module--right) var(--margin-module--bottom) var(--margin-module--left) 
+    margin: calc(var(--grid-unit) * 2);
 `;
 
 export const LargerComponent = styled.div`

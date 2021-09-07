@@ -35,7 +35,9 @@ export const Container = styled.div`
 `;
 
 export const TableContainer = styled.div`
-    height: calc(100% - 260px);
+    min-height: 200px;
+    flex-grow:1;
+    margin-bottom: 100px;
 `;
 
 export const Header = styled.header`

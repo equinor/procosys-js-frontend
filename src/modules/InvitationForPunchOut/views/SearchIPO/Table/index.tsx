@@ -159,6 +159,19 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         );
     };
 
+    const getTechnicalIntegrityRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const techintReps = (row.value as IPO).technicalIntegrityReps;
+        const techintRepsString = techintReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={techintRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{techintRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
     const tableColumns = [
         {
             Header: 'ID',
@@ -249,6 +262,13 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             id: 'operationReps',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
             Cell: getOperationRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Technical integrity rep',
+            id: 'technicalIntegrityReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getTechnicalIntegrityRepColumn,
             width: 220
         },
     ];

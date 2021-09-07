@@ -172,6 +172,7 @@ interface IPO {
     acceptedAtUtc?: Date;
     contractorRep: string;
     constructionCompanyRep: string;
+    commissioningReps: string[];
     mcPkgNos?: string[];
     commPkgNos?: string[];
 }

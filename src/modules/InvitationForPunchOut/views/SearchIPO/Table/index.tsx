@@ -172,6 +172,19 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         );
     };
 
+    const getSupplierRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const supplierReps = (row.value as IPO).supplierReps;
+        const supplierRepsString = supplierReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={supplierRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{supplierRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
     const tableColumns = [
         {
             Header: 'ID',
@@ -269,6 +282,13 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             id: 'technicalIntegrityReps',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
             Cell: getTechnicalIntegrityRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Supplier rep',
+            id: 'supplierReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getSupplierRepColumn,
             width: 220
         },
     ];

@@ -146,6 +146,19 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         );
     };
 
+    const getOperationRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const opReps = (row.value as IPO).operationReps;
+        const opRepsString = opReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={opRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{opRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
     const tableColumns = [
         {
             Header: 'ID',
@@ -229,6 +242,13 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             id: 'commissioningReps',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
             Cell: getCommissioningRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Operation rep',
+            id: 'operationReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getOperationRepColumn,
             width: 220
         },
     ];

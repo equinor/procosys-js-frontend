@@ -85,7 +85,7 @@ Better code quality and easier transition for developers coming from a typed lan
 https://Typescriptlang.org
 
 ### Webpack
-Building the application
+Building / bundling the application
 
 https://webpack.js.org/
 

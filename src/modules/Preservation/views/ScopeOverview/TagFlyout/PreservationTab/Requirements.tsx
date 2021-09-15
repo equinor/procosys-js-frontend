@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Container, Field, NextInfo, Section } from './Requirements.style';
+import React, { useEffect, useState } from 'react';
 import { TagRequirement, TagRequirementField, TagRequirementRecordValues } from './../types';
-import RequirementNumberField from './RequirementNumberField';
-import RequirementCheckboxField from './RequirementCheckboxField';
+
 import PreservationIcon from '../../../../../../components/PreservationIcon';
-import { Container, Section, Field, NextInfo } from './Requirements.style';
-import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 import RequirementAttachmentField from './RequirementAttachmentField';
+import RequirementCheckboxField from './RequirementCheckboxField';
+import RequirementNumberField from './RequirementNumberField';
+import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 interface RequirementProps {
     tagId: number;
@@ -17,6 +18,8 @@ interface RequirementProps {
     preserveRequirement: (requirementId: number) => void;
     refreshRequirements: () => void;
 }
+
+const moduleName = 'PreservationTagFlyoutPreservationRequirements';
 
 const Requirements = ({
     tagId,
@@ -28,11 +31,41 @@ const Requirements = ({
 }: RequirementProps): JSX.Element => {
 
     const [requirementValues, setRequirementValues] = useState<TagRequirementRecordValues[]>([]);
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+    const hasUnsavedChangesForRequirement = (requirementId: number): boolean => {
+        if (readonly) {
+            return false;
+        }
+
+        return requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
+    };
+
+    const hasUnsavedChanges = (): boolean => {
+        return !readonly && requirements.some(requirement => {
+            if (hasUnsavedChangesForRequirement(requirement.id)) {
+                return true;
+            }
+        });
+    };
 
     useEffect((): void => {
         // reset values when requirements are updated
         setRequirementValues([]);
     }, [requirements]);
+
+    /** Update global dirty state */
+    useEffect(() => {
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [requirementValues]);
 
     const setNumberFieldValue = (requirementId: number, fieldId: number, value: string): void => {
         const newRequirementValues = [...requirementValues];
@@ -149,14 +182,6 @@ const Requirements = ({
         recordTagRequirementValues(requirement);
     };
 
-    const isSaveButtonEnabled = (requirementId: number): boolean => {
-        if (readonly) {
-            return false;
-        }
-
-        return requirementValues.findIndex(requirement => requirement.requirementId == requirementId) > -1;
-    };
-
     const isPreserveButtonEnabled = (requirementId: number, isReadyToBePreserved: boolean): boolean => {
         if (readonly) {
             return false;
@@ -172,13 +197,13 @@ const Requirements = ({
 
     const getCheckboxValue = (requirementId: number, field: TagRequirementField): boolean | undefined => {
         const requirement = requirementValues.find(value => value.requirementId == requirementId);
-        if (requirement && field.currentValue) {
+        if (requirement) {
             const fieldIndex = requirement.checkBoxValues.findIndex(f => f.fieldId == field.id);
             if (fieldIndex > -1) {
                 return requirement.checkBoxValues[fieldIndex].isChecked;
             }
         }
-        return field.currentValue && field.currentValue.isChecked;
+        return field.currentValue ? field.currentValue.isChecked : false;
     };
 
     const getRequirementField = (requirementId: number, field: TagRequirementField): JSX.Element => {
@@ -286,7 +311,7 @@ const Requirements = ({
                             <Section>
                                 <div style={{ display: 'flex', marginTop: 'var(--grid-unit)', justifyContent: 'flex-end' }}>
                                     <Button
-                                        disabled={!isSaveButtonEnabled(requirement.id)}
+                                        disabled={!hasUnsavedChangesForRequirement(requirement.id)}
                                         onClick={(): void => saveRequirement(requirement.id)}
                                     >
                                         Save

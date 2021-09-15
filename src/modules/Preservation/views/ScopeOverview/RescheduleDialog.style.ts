@@ -4,13 +4,11 @@ import { tokens } from '@equinor/eds-tokens';
 export const InputContainer = styled.div`
     margin:  calc(var(--grid-unit) * 2) 0px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
 `;
 
 export const FormFieldSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
-    align-self: flex-end;
+    align-self: flex-start;
     #dropdownIcon {
         height: calc(var(--grid-unit) * 3);
     }
@@ -32,6 +30,7 @@ export const DialogContainer = styled.div<{ width: string }>`
     ${(props): any => `
         display: block;
         max-height: 90%;
+        height: 80%;
         overflow: auto;
         width: ${props.width};
         background-color: ${tokens.colors.ui.background__default.rgba};       
@@ -68,4 +67,9 @@ export const ButtonContainer = styled.div`
 
 export const ButtonSpacer = styled.div`
     margin-right: calc(var(--grid-unit) * 2);
+`;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
 `;

@@ -7,7 +7,6 @@ export const Container = styled.div`
     flex-direction: column;
 `;
 
-
 interface FilterProps {
     isExpanded?: boolean;
     filterActive?: boolean;

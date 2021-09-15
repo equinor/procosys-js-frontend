@@ -1,6 +1,7 @@
-import React from 'react';
+import { act, render, waitFor } from '@testing-library/react';
+
 import CreateDummyTag from '../CreateDummyTag';
-import { render, act, waitFor } from '@testing-library/react';
+import React from 'react';
 
 const mockDisciplines = [
     {
@@ -81,13 +82,25 @@ jest.mock('react-router-dom', () => ({
     useHistory: () => {}
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('<CreateDummyTag />', () => {
 
     /** Because of API calls using effect hooks, we need to wrap everything in act */
     it('Next button should be disabled intially.', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            const { getByText } = render(<CreateDummyTag setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
             expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
         });
     });
@@ -96,7 +109,7 @@ describe('<CreateDummyTag />', () => {
         /** Because of API calls using effect hooks, we need to wrap everything in act */
         await act(async () => {
             var propFunc = jest.fn();
-            const { queryByText } = render(<CreateDummyTag setArea={propFunc} setPurchaseOrder={propFunc} />);
+            const { queryByText } = render(<CreateDummyTag setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc} />);
 
             expect(queryByText('Dummy type')).toBeInTheDocument();
             expect(queryByText('Discipline')).toBeInTheDocument();

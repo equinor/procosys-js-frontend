@@ -5,6 +5,7 @@ import { LibraryType } from '../Library';
 import React from 'react';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePlantConfigContext } from '../../../context/PlantConfigContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 
 type LibraryTreeviewProps = {
     forceUpdate: React.DispatchWithoutAction;
@@ -15,6 +16,8 @@ type LibraryTreeviewProps = {
 };
 
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
+
+    const { isDirty } = useDirtyContext();
 
     const {
         libraryApiClient,
@@ -214,6 +217,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 rootNodes={rootNodes}
                 dirtyNodeId={props.dirtyLibraryType}
                 resetDirtyNode={props.resetDirtyLibraryType}
+                hasUnsavedChanges={isDirty}
+                unsavedChangesConfirmationMessage={unsavedChangesConfirmationMessage}
             />
         </Container>
     );

@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PreservedTag } from './types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
-import { Column } from 'material-table';
 import DialogTable from './DialogTable';
-import { ButtonContainer, ButtonSpacer, DialogContainer, Divider, FormFieldSpacer, InputContainer, Scrim, Title } from './RescheduleDialog.style';
+import { ButtonContainer, ButtonSpacer, DialogContainer, Divider, FormFieldSpacer, InputContainer, OverflowColumn, Scrim, Title } from './RescheduleDialog.style';
 import SelectInput, { SelectItem } from '../../../../components/Select';
 import { TextField, Button } from '@equinor/eds-core-react';
 import { Content } from '@procosys/core/services/ModalDialogService/style';
@@ -12,6 +11,20 @@ import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
+import EdsIcon from '@procosys/components/EdsIcon';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import { Tooltip } from '@material-ui/core';
+import styled from 'styled-components';
+
+const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
+const moduleName = 'PreservationRescheduleDialog';
+
+const TableContainer = styled.div<{ restrictHeight?: boolean }>`
+        ${(props): any => `
+            height: ${props.restrictHeight ? '40%' : '100%'};
+        `}
+    `;
 
 interface RescheduleDialogProps {
     tags: PreservedTag[];
@@ -19,24 +32,62 @@ interface RescheduleDialogProps {
     onClose: () => void;
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
-];
+const getTagNoColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.tagNo}</OverflowColumn>
+        </Tooltip>
+    );
+};
 
-const timeItems: SelectItem[] = [
-    { text: '1 week', value: 1 },
-    { text: '2 weeks', value: 2 },
-    { text: '3 weeks', value: 3 },
-    { text: '4 weeks', value: 4 }];
+const getDescriptionColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.description}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const getStatusColumn = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.status || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.status}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const columns = [
+    {
+        Header: 'Tag nr',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getTagNoColumn
+    },
+    {
+        Header: 'Description',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getDescriptionColumn
+    },
+    {
+        Header: 'Status',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getStatusColumn
+    },
+    {
+        Header: 'Req type',
+        accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d,
+        Cell: getRequirementIcons
+    }
+];
 
 const directionItems: SelectItem[] = [
     { text: 'Earlier', value: 'Earlier' },
@@ -45,27 +96,32 @@ const directionItems: SelectItem[] = [
 const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
 
     const [directionItem, setDirectionItem] = useState<SelectItem | null>();
-    const [timeItem, setTimeItem] = useState<SelectItem | null>();
+    const [noOfWeeks, setNoOfWeeks] = useState<string>('');
+    const [noOfWeeksIsValid, setNoOfWeeksIsValid] = useState<boolean>(false);
     const [comment, setComment] = useState<string>('');
     const [reschedulableTags, setReschedulableTags] = useState<PreservedTag[]>([]);
     const [nonReschedulableTags, setNonReschedulableTags] = useState<PreservedTag[]>([]);
     const [canReschedule, setCanReschedule] = useState<boolean>(true);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const { apiClient } = usePreservationContext();
+    const [error, setError] = useState<string>('');
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const handleReschedule = (async (): Promise<void> => {
         setShowSpinner(true);
         try {
-            if (timeItem && directionItem && canReschedule) {
+            if (noOfWeeks && directionItem && canReschedule && noOfWeeksIsValid) {
                 await apiClient.reschedule(reschedulableTags.map(t => ({
                     id: t.id,
                     rowVersion: t.rowVersion
-                })), timeItem.value, directionItem.value, comment);
+                })), Number(noOfWeeks), directionItem.value, comment);
                 showSnackbarNotification(`${reschedulableTags.length} tag(s) have been successfully rescheduled.`);
             } else {
-                showSnackbarNotification('Tags have not been rescheduled. Time, direction and comment is required.');
+                showSnackbarNotification('Tag(s) have not been rescheduled. Number of weeks, direction and comment is required. Number of weeks must be a whole number in the range 1 to 52.');
             }
-            setTimeItem(null);
+            setNoOfWeeks('');
+            setNoOfWeeksIsValid(false);
             setDirectionItem(null);
             setComment('');
             setShowSpinner(false);
@@ -95,14 +151,56 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
     }, [props.tags]);
 
 
-    /** Set canReschedule */
-    useEffect((): void => {
-        setCanReschedule((timeItem && timeItem.text && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
-    }, [timeItem, directionItem, comment]);
+    const hasUnsavedChanges = (): boolean => {
+        return (noOfWeeks || (directionItem && directionItem.text) || (comment && comment.length > 0)) ? true : false;
+    };
+
+    /** Set canReschedule and set global dirty state */
+    useEffect(() => {
+        setCanReschedule((noOfWeeksIsValid && directionItem && directionItem.text && comment && comment.length > 0) ? true : false);
+
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [noOfWeeks, directionItem, comment]);
 
     if (!props.open) {
         return null;
     }
+
+    const handleNoOfWeeksChanged = (newValue: string): void => {
+        setNoOfWeeks(newValue);
+        if (newValue === '') {
+            setError('');
+            setNoOfWeeksIsValid(false);
+            return;
+        }
+        const newWeekNumber = Number(newValue);
+        if (!isNaN(newWeekNumber)) {
+            if (Number.isInteger(newWeekNumber)) {
+                if (0 < newWeekNumber && newWeekNumber < 53) {
+                    setNoOfWeeksIsValid(true);
+                    setError('');
+                } else {
+                    setNoOfWeeksIsValid(false);
+                    setError('Has to be between 0 and 53');
+                }
+            } else {
+                setNoOfWeeksIsValid(false);
+                setError('Has to be a whole number');
+            }
+        } else {
+            setNoOfWeeksIsValid(false);
+            setError('Has to be a number');
+        }
+    };
+
+    
 
     return (
         <Scrim>
@@ -119,14 +217,19 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                         reschedulableTags.length > 0 && (
                             <InputContainer>
                                 <FormFieldSpacer>
-                                    <SelectInput
-                                        title='time'
-                                        onChange={(value): void => setTimeItem(timeItems.find((p: SelectItem) => p.value === value))}
-                                        data={timeItems}
-                                        label='Time'
-                                    >
-                                        {timeItem && timeItem.text || 'Select'}
-                                    </SelectInput>
+                                    <TextField
+                                        label="No. of weeks"
+                                        data-testid="No. of weeks"
+                                        meta="Required"
+                                        placeholder="Write here"
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                                            handleNoOfWeeksChanged(e.target.value);
+                                        }}
+                                        value={noOfWeeks || ''}
+                                        helperText={error}
+                                        variant={error ? 'error' : 'default'}
+                                        helperIcon={error ? errorIcon : ''}
+                                    />
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
                                     <SelectInput
@@ -140,7 +243,8 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                 </FormFieldSpacer>
                                 <FormFieldSpacer>
                                     <TextField
-                                        id="comment"
+                                        label="Comment"
+                                        data-testid="comment"
                                         meta="Required"
                                         placeholder="Write here"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -155,14 +259,16 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                     }
                     {
                         nonReschedulableTags.length > 0 && (
-                            <div>
+                            <TableContainer restrictHeight={reschedulableTags.length > 0}>
                                 <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                            </div>
+                            </TableContainer>
                         )
                     }
                     {
                         reschedulableTags.length > 0 && (
-                            <DialogTable tags={reschedulableTags} columns={columns} toolbarText='tag(s) will be rescheduled' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                            <TableContainer restrictHeight={nonReschedulableTags.length > 0}>
+                                <DialogTable tags={reschedulableTags} columns={columns} toolbarText='tag(s) will be rescheduled' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                            </TableContainer>
                         )
                     }
 

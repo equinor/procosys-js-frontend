@@ -1,8 +1,11 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     margin-top: var(--margin-module--top);
+    height: calc(100% - 120px);
+    
     tbody, thead {
         .MuiButtonBase-root {
             :hover {
@@ -24,8 +27,12 @@ export const Container = styled.div`
 
     .controlOverflow {
         overflow: hidden;
-        white-space: nowrap;
+        white-space: pre-wrap;
         text-overflow: ellipsis;
         color: inherit;
     }
+`;
+
+export const CustomLink = styled(Link)`
+    color: ${tokens.colors.interactive.primary__resting.rgba};
 `;

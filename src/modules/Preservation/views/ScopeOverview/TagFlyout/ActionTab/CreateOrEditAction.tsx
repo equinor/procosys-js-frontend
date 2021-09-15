@@ -1,14 +1,16 @@
 import { AttachmentsContainer, ButtonContainer, ButtonSpacer, Container, Header, InputContainer } from './CreateOrEditAction.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import ActionAttachments from './ActionAttachments';
-import DateFnsUtils from '@date-io/date-fns';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { TextField as DateTimeField } from '@material-ui/core';
 import Spinner from '@procosys/components/Spinner';
+import { formatForDatePicker, getFormattedDate } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+
+const moduleName = 'PreservationCreateorEditAction';
 
 interface ActionTabProps {
     tagId: number;
@@ -40,9 +42,12 @@ const CreateOrEditAction = ({
     const [newDescription, setNewDescription] = useState<string>(description ? description : '');
     const [newDueTimeUtc, setNewDueTimeUtc] = useState<Date | null>(dueTimeUtc ? dueTimeUtc : null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
 
     const titleInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
+
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     /** Set initial values */
     useEffect(() => {
@@ -50,6 +55,21 @@ const CreateOrEditAction = ({
         descriptionInputRef.current && description ? descriptionInputRef.current.value = description : null;
 
     }, []);
+
+    /** Update global and local dirty state */
+    useEffect(() => {
+        if (title != newTitle || description != newDescription || getFormattedDate(dueTimeUtc) != getFormattedDate(newDueTimeUtc)) {
+            setIsDirty(true);
+            setDirtyStateFor(moduleName);
+        } else {
+            setIsDirty(false);
+            unsetDirtyStateFor(moduleName);
+        }
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [newTitle, newDescription, newDueTimeUtc]);
 
     const saveAction = async (): Promise<void> => {
         setIsLoading(true);
@@ -110,18 +130,17 @@ const CreateOrEditAction = ({
                 />
             </InputContainer>
             <InputContainer>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} >
-                    <KeyboardDatePicker
-                        label="Due date"
-                        value={newDueTimeUtc}
-                        onChange={(date: MaterialUiPickersDate): void => setNewDueTimeUtc(date)}
-                        disablePast={false}
-                        format='dd.MM.yyyy'
-                        variant='inline'
-                        inputVariant='outlined'
-                        placeholder='dd.mm.yyyy'
-                    />
-                </MuiPickersUtilsProvider>
+                <DateTimeField
+                    InputProps={{ inputProps: { max: '2121-01-01' } }}
+                    id='actionDate'
+                    label='Date'
+                    type='date'
+                    value={formatForDatePicker(newDueTimeUtc, 'yyyy-MM-dd')}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => setNewDueTimeUtc(new Date(event.target.value))}
+                />
             </InputContainer>
 
             {actionId &&
@@ -142,7 +161,7 @@ const CreateOrEditAction = ({
                     Cancel
                 </Button>
                 <ButtonSpacer />
-                <Button onClick={saveAction} disabled={!newTitle || !newDescription}>
+                <Button onClick={saveAction} disabled={!(isDirty && newTitle && newDescription)}>
                     Save
                 </Button>
             </ButtonContainer>

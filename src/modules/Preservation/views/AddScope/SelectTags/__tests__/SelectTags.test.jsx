@@ -15,7 +15,19 @@ jest.mock('../../../../context/PreservationContext', () => ({
 }));
 
 jest.mock('react-router-dom', () => ({
-    useHistory: () => {}
+    useHistory: () => { }
+}));
+
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
 }));
 
 const tableData = [
@@ -30,9 +42,9 @@ const tableData = [
 ];
 
 describe('Module: <SelectTags />', () => {
-    
+
     it('Should render Next button disabled when no rows are selected', () => {
-        const { getByText } = render(<SelectTags selectedTags={[]} />);
+        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={[]} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
         expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
     });
 
@@ -41,13 +53,13 @@ describe('Module: <SelectTags />', () => {
             { 'tagNo': 'test' }
         ];
 
-        const { getByText } = render(<SelectTags selectedTags={selectedTags} />);
+        const { getByText } = render(<SelectTags selectedTags={selectedTags} scopeTableData={tableData} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
 
         expect(getByText('Next').closest('button')).toHaveProperty('disabled', false);
     });
 
     it('Should render Tag info in table', () => {
-        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} />);
+        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
 
         expect(getByText('tagno-test')).toBeInTheDocument();
         expect(getByText('description-test')).toBeInTheDocument();
@@ -58,14 +70,23 @@ describe('Module: <SelectTags />', () => {
 
     it('Should update selected tags when clicking checkbox in table', () => {
         const selectedTags = [];
+        let i = 0;
+
+        const setSelectedTags = () => {
+            // this gets called when setting up the test - ignore the first time.
+            if (i === 0) {
+                i++;
+                return;
+            }
+            selectedTags.push({ tagNo: 'test' });
+        };
 
         const { container } = render(
-            <SelectTags 
-                selectedTags={selectedTags} 
+            <SelectTags
+                selectedTags={selectedTags}
                 scopeTableData={tableData}
-                setSelectedTags={jest.fn(() => {
-                    selectedTags.push({ tagNo: 'test'});
-                })}
+                setSelectedTags={setSelectedTags}
+                setSelectedTableRows={() => 1}
             />);
 
         const checkboxes = container.querySelectorAll('input[type="checkbox"]');
@@ -74,7 +95,7 @@ describe('Module: <SelectTags />', () => {
     });
 
     it('Should render Tag info in table', () => {
-        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} />);
+        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
 
         expect(getByText('tagno-test')).toBeInTheDocument();
         expect(getByText('description-test')).toBeInTheDocument();
@@ -84,12 +105,12 @@ describe('Module: <SelectTags />', () => {
     });
 
     it('Should not render search field when add-scope-method is autoscope.', () => {
-        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsAutoscope' />);
+        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsAutoscope' setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
         expect(queryByText('Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.')).not.toBeInTheDocument();
     });
 
     it('Should render search field when add-scope-method is manually', () => {
-        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsManually' />);
+        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsManually' setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
         expect(queryByText('Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.')).toBeInTheDocument();
     });
 

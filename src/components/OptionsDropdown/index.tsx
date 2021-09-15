@@ -5,14 +5,17 @@ import EdsIcon from '../EdsIcon';
 import { tokens } from '@equinor/eds-tokens';
 import { useClickOutsideNotifier } from '../../hooks';
 
-type DropdownProps = {
+export type DropdownProps = {
     disabled?: boolean;
     text?: string;
     children?: React.ReactNode;
+    /** EdsIcon name */
     icon?: string;
-    variant?: string;
+    /** Specifies which variant to use */
+    variant?: 'contained' | 'outlined' | 'ghost' | 'ghost_icon';
     iconSize?: number;
 };
+
 
 const KEYCODE_ESCAPE = 27;
 

@@ -16,8 +16,8 @@ export type GeneralInfoDetails = {
     poType: SelectItem | null;
     title: string | null;
     description?: string | null;
-    startTime: Date;
-    endTime: Date;
+    startTime: Date | undefined;
+    endTime: Date | undefined;
     location?: string | null;
 }
 
@@ -76,23 +76,27 @@ export type Attachment = {
 export interface CommPkgRow {
     commPkgNo: string;
     description: string;
+    system: string;
     status: string;
+    disableCheckbox?: boolean;
     tableData?: {
-        checked: boolean;
+        isSelected: boolean;
     };
 }
 
 export interface McPkgRow {
     mcPkgNo: string;
     description: string;
+    system: string;
+    commPkgNo: string;
     discipline: string;
     tableData?: {
-        checked: boolean;
+        isSelected: boolean;
     };
 }
 
 export interface McScope {
-    commPkgNoParent: string | null;
+    system: string | null;
     multipleDisciplines: boolean;
     selected: McPkgRow[];
 }

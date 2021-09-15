@@ -4,24 +4,60 @@ import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
-import { Column } from 'material-table';
+import { TableOptions, UseTableRowProps } from 'react-table';
+import styled from 'styled-components';
+import { Tooltip } from '@material-ui/core';
 
 interface StartPreservationDialogProps {
     startableTags: PreservedTag[];
     nonStartableTags: PreservedTag[];
 }
 
-const getRequirementIcons = (tag: PreservedTag): JSX.Element => {
+const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`;
+
+const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
     return (
         <RequirementIcons tag={tag} />
     );
 };
 
-const columns: Column<any>[] = [
-    { title: 'Tag nr', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'Status', field: 'status' },
-    { title: 'Req type', render: getRequirementIcons }
+const getTagNoCell = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.tagNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.tagNo}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const getDescriptionCell = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.description}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+
+const getStatusCell = (row: TableOptions<PreservedTag>): JSX.Element => {
+    const tag = row.value as PreservedTag;
+    return (
+        <Tooltip title={tag.status || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tag.status}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const columns = [
+    { Header: 'Tag nr', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getTagNoCell },
+    { Header: 'Description', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getDescriptionCell },
+    { Header: 'Status', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getStatusCell },
+    { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, id: 'reqtype', Cell: getRequirementIcons }
 ];
 
 const StartPreservationDialog = ({
@@ -29,7 +65,7 @@ const StartPreservationDialog = ({
     nonStartableTags
 }: StartPreservationDialogProps): JSX.Element => {
 
-    return (<div>
+    return (<div style={{height: '65vh'}}>
         {nonStartableTags.length > 0 && (
             <div>
                 <Typography variant="meta">{nonStartableTags.length} tag(s) cannot be started. Tags are already started, or are voided.</Typography>

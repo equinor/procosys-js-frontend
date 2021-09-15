@@ -62,6 +62,7 @@ type TagSearchResponse = {
     tagFunctionCode: string;
     mccrResponsibleCodes: string;
     isPreserved: boolean;
+    noCheckbox: boolean;
 }
 
 type TagMigrationResponse = {
@@ -83,6 +84,7 @@ type TagMigrationResponse = {
     heating: boolean;
     special: boolean;
     isPreserved: boolean;
+    noCheckbox: boolean;
 }
 
 
@@ -100,7 +102,7 @@ interface ModeResponse {
     id: number;
     title: string;
     forSupplier: boolean;
-    inUse: boolean;
+    isInUse: boolean;
     isVoided: boolean;
     rowVersion: string;
 }
@@ -185,7 +187,7 @@ interface JourneyResponse {
                 title: string;
                 isVoided: boolean,
                 forSupplier: boolean,
-                inUse: boolean,
+                isInUse: boolean,
                 rowVersion: string;
             };
             responsible: {
@@ -256,6 +258,11 @@ interface RequirementForUpdate {
     rowVersion: string | undefined;
 }
 
+interface RequirementForDelete {
+    requirementId: number | undefined;
+    rowVersion: string | undefined;
+}
+
 interface FieldsFormInput {
     id: number | null;
     rowVersion: string | null;
@@ -316,6 +323,7 @@ interface TagRequirementsResponse {
     ];
     comment: string;
     isVoided: boolean;
+    isInUse: boolean;
     rowVersion: string;
 }
 
@@ -520,7 +528,7 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], setRequestCanceller?: RequestCanceler): Promise<string> {
+    async updateTagStepAndRequirements(tagId: number, description: string, stepId: number, rowVersion: string, updatedRequirements: RequirementForUpdate[], newRequirements: RequirementFormInput[], deletedRequirements: RequirementForDelete[], setRequestCanceller?: RequestCanceler): Promise<string> {
         const endpoint = `/Tags/${tagId}/UpdateTagStepAndRequirements`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -530,6 +538,7 @@ class PreservationApiClient extends ApiClient {
                 stepId,
                 newRequirements,
                 updatedRequirements,
+                deletedRequirements,
                 rowVersion
             }, settings);
             return result.data;
@@ -831,7 +840,6 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
     /**
      * Export tags to excel
      *
@@ -874,12 +882,11 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-
     /**
      * Get saved tag list filters
      */
     async getSavedTagListFilters(projectName: string, setRequestCanceller?: RequestCanceler): Promise<SavedScopeFilterResponse[]> {
-        const endpoint = '/SavedFilters';
+        const endpoint = '/Persons/SavedFilters';
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName
@@ -895,11 +902,12 @@ class PreservationApiClient extends ApiClient {
             throw new PreservationApiError(error);
         }
     }
+
     /**
      * Add saved tag list filter
      */
     async addSavedTagListFilter(projectName: string, title: string, defaultFilter: boolean, criteria: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = '/SavedFilter';
+        const endpoint = '/Persons/SavedFilter';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -924,7 +932,7 @@ class PreservationApiClient extends ApiClient {
     */
     async updateSavedTagListFilter(savedFilterid: number, title: string, defaultFilter: boolean, criteria: string, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
 
-        const endpoint = `/SavedFilters/${savedFilterid}`;
+        const endpoint = `/Persons/SavedFilters/${savedFilterid}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
@@ -947,7 +955,7 @@ class PreservationApiClient extends ApiClient {
     * Delete saved tag list filter 
     */
     async deleteSavedTagListFilter(savedFilterId: number, rowVersion: string, setRequestCanceller?: RequestCanceler): Promise<void> {
-        const endpoint = `/SavedFilters/${savedFilterId}`;
+        const endpoint = `/Persons/SavedFilters/${savedFilterId}`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
@@ -1518,6 +1526,9 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 settings
             );
+            result.data.forEach((r) => {
+                r.noCheckbox = r.isPreserved;
+            });
             return result.data;
         } catch (error) {
             throw new PreservationApiError(error);
@@ -1600,6 +1611,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 settings
             );
+            result.data.forEach((r) => r.noCheckbox = r.isPreserved);
             return result.data;
         }
         catch (error) {

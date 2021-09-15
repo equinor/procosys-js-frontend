@@ -23,8 +23,6 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 
-const { TabList, Tab, TabPanels, TabPanel } = Tabs;
-
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
     { title: 'Punch-out completed', isCompleted: false },
@@ -219,6 +217,23 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
+    const uncompletePunchOut = async (participant: Participant): Promise<any> => {
+        const signer = participant.person ? participant.person.person :
+            participant.functionalRole ? participant.functionalRole : undefined;
+
+        if (!signer || !invitation) return;
+
+        try {
+            await apiClient.uncompletePunchOut(params.ipoId, invitation.rowVersion, signer.rowVersion);
+            analytics.trackUserAction(IpoCustomEvents.UNCOMPLETED, { project: invitation.projectName, type: invitation.type });
+            await getInvitation();
+            showSnackbarNotification('Punch-out uncompleted');
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
     const acceptPunchOut = async (participant: Participant, attNoteData: AttNoteData[]): Promise<any> => {
         const signer = participant.person ? participant.person.person :
             participant.functionalRole ? participant.functionalRole : undefined;
@@ -319,28 +334,28 @@ const ViewIPO = (): JSX.Element => {
                         <InvitationContentContainer>
                             <TabsContainer>
                                 <Tabs className='tabs' activeTab={activeTab} onChange={handleChange}>
-                                    <TabList>
-                                        <Tab>General</Tab>
-                                        <Tab>Scope</Tab>
-                                        <Tab>Attachments</Tab>
-                                        <Tab>History</Tab>
-                                        <Tab className='emptyTab'>{''}</Tab>
-                                    </TabList>
+                                    <Tabs.List>
+                                        <Tabs.Tab>General</Tabs.Tab>
+                                        <Tabs.Tab>Scope</Tabs.Tab>
+                                        <Tabs.Tab>Attachments</Tabs.Tab>
+                                        <Tabs.Tab>History</Tabs.Tab>
+                                        <Tabs.Tab className='emptyTab'>{''}</Tabs.Tab>
+                                    </Tabs.List>
                                     <TabStyle maxHeight={tabModuleHeight + 67}>
-                                        <TabPanels>
-                                            <TabPanel>
-                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unaccept={unacceptPunchOut} />
-                                            </TabPanel>
-                                            <TabPanel>
+                                        <Tabs.Panels>
+                                            <Tabs.Panel>
+                                                <GeneralInfo invitation={invitation} accept={acceptPunchOut} complete={completePunchOut} sign={signPunchOut} update={updateParticipants} unaccept={unacceptPunchOut} uncomplete={uncompletePunchOut}/>
+                                            </Tabs.Panel>
+                                            <Tabs.Panel>
                                                 <Scope mcPkgScope={invitation.mcPkgScope} commPkgScope={invitation.commPkgScope} projectName={invitation.projectName} />
-                                            </TabPanel>
-                                            <TabPanel>
+                                            </Tabs.Panel>
+                                            <Tabs.Panel>
                                                 <Attachments ipoId={params.ipoId} />
-                                            </TabPanel>
-                                            <TabPanel>
+                                            </Tabs.Panel>
+                                            <Tabs.Panel>
                                                 <History ipoId={params.ipoId} />
-                                            </TabPanel>
-                                        </TabPanels>
+                                            </Tabs.Panel>
+                                        </Tabs.Panels>
                                     </TabStyle>
                                 </Tabs>
                                 <CommentsIconContainer >
@@ -369,7 +384,8 @@ const ViewIPO = (): JSX.Element => {
                         <Typography>No invitation found</Typography>
                     )
             }
-        </Container >);
+        </Container>
+    );
 };
 
 export default ViewIPO;

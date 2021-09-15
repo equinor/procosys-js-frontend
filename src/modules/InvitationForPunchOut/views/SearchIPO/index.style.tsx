@@ -89,4 +89,16 @@ export const TooltipText = styled.span`
     }
 `;
 
+export const IconBar = styled.div`
+    display: flex;
+    padding-top: 10px;
+    a {
+        margin-left: var(--grid-unit);
+    }
+`;
 
+export const LeftPartOfHeader = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+`;

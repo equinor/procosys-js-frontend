@@ -13,6 +13,7 @@ import { TextField } from '@equinor/eds-core-react';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 interface RequirementFormInput {
     requirementDefinitionId: number;
@@ -22,12 +23,16 @@ interface RequirementFormInput {
     requirementDefinitionTitle?: string;
     editingRequirements?: boolean;
     isVoided?: boolean;
+    isDeleted?: boolean;
     rowVersion?: string;
 }
+
+const moduleName = 'PreservationEditProperties';
 
 const EditTagProperties = (): JSX.Element => {
     const { apiClient, project } = usePreservationContext();
     const history = useHistory();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const [journey, setJourney] = useState(-1);
     const [journeys, setJourneys] = useState<Journey[]>([]);
@@ -86,6 +91,23 @@ const EditTagProperties = (): JSX.Element => {
         };
     }, []);
 
+    const hasUnsavedChanges = (): boolean => {
+        return tagJourneyOrRequirementsEdited || remarkOrStorageAreaEdited;
+    };
+
+    /** Update global and local dirty state */
+    useEffect(() => {
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [tagJourneyOrRequirementsEdited, remarkOrStorageAreaEdited]);
+
     /**
      * Get Requirements
      */
@@ -104,6 +126,7 @@ const EditTagProperties = (): JSX.Element => {
                             requirementDefinitionTitle: itm.requirementDefinition.title,
                             editingRequirements: true,
                             isVoided: itm.isVoided,
+                            isInUse: itm.isInUse,
                             rowVersion: itm.rowVersion
                         };
                     });
@@ -320,7 +343,16 @@ const EditTagProperties = (): JSX.Element => {
                         rowVersion: req.rowVersion
                     };
                 });
-                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements);
+                const deletedRequirements = requirements.filter(req => req.isVoided && req.isDeleted)
+                    .map(
+                        req => {
+                            return {
+                                requirementId: req.requirementId,
+                                rowVersion: req.rowVersion
+                            };
+                        }
+                    );
+                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements, deletedRequirements);
             }
         } catch (error) {
             handleErrorFromBackend(error, 'Error updating journey, step, requirements, or description');
@@ -451,7 +483,7 @@ const EditTagProperties = (): JSX.Element => {
                             <Button
                                 onClick={saveDialog}
                                 color="primary"
-                                disabled={((!tagJourneyOrRequirementsEdited && !remarkOrStorageAreaEdited) || !step)}
+                                disabled={(!hasUnsavedChanges() || !step)}
                             >
                                 Save
                             </Button>

@@ -5,6 +5,9 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     width:100%;
+    flex-grow: 1;
+    max-height: calc(100% - 200px);
+
     input + svg {
         width: 24px;
         height: 24px;
@@ -52,6 +55,7 @@ export const Search = styled.div`
     display: flex;    
     flex: 1;
     padding-bottom: calc(var(--grid-unit) * 3);
+    padding-left: 2px;
     input {
         width: 500px;
     }
@@ -87,4 +91,13 @@ export const LoadingContainer = styled.div`
     h1 {
         font-size: calc(var(--grid-unit) * 3);
     }
+`;
+
+export const TableContainer = styled.div`
+    height: calc(100% - 90px);
+`;
+
+export const OverflowColumn = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
 `;

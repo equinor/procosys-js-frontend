@@ -8,11 +8,12 @@ import { Canceler } from 'axios';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '../../../../../components/EdsIcon';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import Spinner from '@procosys/components/Spinner';
 
 const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
@@ -32,6 +33,8 @@ type POItem = {
     text: string;
     value: string;
 };
+
+const moduleName = 'PreservationAddScopeCreateDummyTag';
 
 type CreateDummyTagProps = {
     nextStep?: () => void;
@@ -74,6 +77,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const history = useHistory();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     useEffect(() => {
         (allAreas && disciplines) ? setIsLoading(false) : setIsLoading(true);
@@ -332,7 +336,18 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         return { tagNo: '', exists: true };
     };
 
+    const hasUnsavedChanges = (): boolean => {
+        return props.areaType || props.discipline || props.area || props.description || props.suffix ? true : false;
+    };
+
+    /** Verify tagno and update global dirty state */
     useEffect(() => {
+        if (hasUnsavedChanges()) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+
         const checkTagNos = async (): Promise<void> => {
             if (props.discipline && props.areaType && props.areaType.value != 'PoArea') {
                 const areaCode = (props.area) ? props.area.code : null;
@@ -372,6 +387,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
 
         return (): void => {
             clearTimeout(timer);
+            unsetDirtyStateFor(moduleName);
         };
     }, [props.discipline, props.area, props.areaType, props.suffix, props.purchaseOrder]);
 

@@ -89,7 +89,7 @@ const CreateIPO = (): JSX.Element => {
     const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
-        commPkgNoParent: null,
+        system: null,
         multipleDisciplines: false,
         selected: []
     });
@@ -104,7 +104,7 @@ const CreateIPO = (): JSX.Element => {
     const [projectNameFromMain] = useState<string | null>(params.projectName ? decodeURIComponent(params.projectName) : null);
     const [commPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
 
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } = useDirtyContext();
     const analystics = useAnalytics();
 
     useEffect(() => {
@@ -208,16 +208,7 @@ const CreateIPO = (): JSX.Element => {
         });
     };
 
-    const getMcScope = (): string[] | null => {
-        const commPkgNoContainingMcScope = selectedMcPkgScope.commPkgNoParent;
-        let mcPkgScope = null;
-        if (commPkgNoContainingMcScope) {
-            mcPkgScope = selectedMcPkgScope.selected.map(mc => {
-                return mc.mcPkgNo;
-            });
-        }
-        return mcPkgScope;
-    };
+    const getMcScope = (): string[] | null => selectedMcPkgScope.selected.map(mc => mc.mcPkgNo);
 
     const getParticipants = (): ParticipantDto[] => {
         return participants.map((p, i) => {
@@ -256,8 +247,8 @@ const CreateIPO = (): JSX.Element => {
                     generalInfo.title,
                     generalInfo.projectName,
                     generalInfo.poType.value,
-                    generalInfo.startTime,
-                    generalInfo.endTime,
+                    generalInfo.startTime as Date,
+                    generalInfo.endTime as Date,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
@@ -268,7 +259,7 @@ const CreateIPO = (): JSX.Element => {
 
                 await uploadAllAttachments(newIpoId);
 
-                unsetDirtyStateFor(ComponentName.CreateAndEditIPO);
+                unsetDirtyStateForMany([ComponentName.Attachments, ComponentName.GeneralInfo]);
                 history.push('/' + newIpoId);
             } catch (error) {
                 console.error('Create IPO failed: ', error.message, error.data);
@@ -292,28 +283,30 @@ const CreateIPO = (): JSX.Element => {
                 <Loading title="Creating new IPO" />
             </Container>
         );
-    };
+    }
 
-    return (<CreateAndEditIPO
-        saveIpo={createNewIpo}
-        steps={steps}
-        setSteps={setSteps}
-        generalInfo={generalInfo}
-        setGeneralInfo={setGeneralInfo}
-        selectedCommPkgScope={selectedCommPkgScope}
-        setSelectedCommPkgScope={setSelectedCommPkgScope}
-        selectedMcPkgScope={selectedMcPkgScope}
-        setSelectedMcPkgScope={setSelectedMcPkgScope}
-        participants={participants}
-        setParticipants={setParticipants}
-        attachments={attachments}
-        setAttachments={setAttachments}
-        availableRoles={availableRoles}
-        fromMain={fromMain}
-        confirmationChecked={confirmationChecked}
-        setConfirmationChecked={setConfirmationChecked}
-        commPkgNoFromMain={commPkgNoFromMain}
-    />);
+    return (
+        <CreateAndEditIPO
+            saveIpo={createNewIpo}
+            steps={steps}
+            setSteps={setSteps}
+            generalInfo={generalInfo}
+            setGeneralInfo={setGeneralInfo}
+            selectedCommPkgScope={selectedCommPkgScope}
+            setSelectedCommPkgScope={setSelectedCommPkgScope}
+            selectedMcPkgScope={selectedMcPkgScope}
+            setSelectedMcPkgScope={setSelectedMcPkgScope}
+            participants={participants}
+            setParticipants={setParticipants}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            availableRoles={availableRoles}
+            fromMain={fromMain}
+            confirmationChecked={confirmationChecked}
+            setConfirmationChecked={setConfirmationChecked}
+            commPkgNoFromMain={commPkgNoFromMain}
+        />
+    );
 };
 
 export default CreateIPO;

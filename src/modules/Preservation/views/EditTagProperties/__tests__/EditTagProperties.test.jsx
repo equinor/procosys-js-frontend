@@ -136,6 +136,18 @@ jest.mock('../../../context/PreservationContext', () => ({
     })
 }));
 
+const mockSetDirtyStateFor = jest.fn();
+const mockUnsetDirtyStateFor = jest.fn();
+
+jest.mock('@procosys/core/DirtyContext', () => ({
+    useDirtyContext: () => {
+        return {
+            setDirtyStateFor: mockSetDirtyStateFor,
+            unsetDirtyStateFor: mockUnsetDirtyStateFor
+        };
+    }
+}));
+
 describe('Module: <EditTagProperties />', () => {
 
     it('Should render with all editable fields', async () => {
@@ -190,8 +202,7 @@ describe('Module: <EditTagProperties />', () => {
         expect(expect(components.length).toBe(2));
     });
 
-
-    it('Should remove requirement input when clicking on delete', async () => {
+    it('Should remove a new requirement when clicking on the delete button', async () => {
         const { queryAllByText, getByText, getByTitle } = render(<EditTagProperties />);
         await waitForElementToBeRemoved(getByTitle('Loading'));
 
@@ -210,6 +221,15 @@ describe('Module: <EditTagProperties />', () => {
         const components = queryAllByText('Requirement');
         expect(components.length).toBe(1);
         expect(getByText('Unvoid')).toBeInTheDocument();
+    });
+
+    it('Should delete a voided requirement when the delete button is clicked', async () => {
+        const { getByText, getByTitle, queryAllByText } = render(<EditTagProperties />);
+        await waitForElementToBeRemoved(getByTitle('Loading'));
+        expect(queryAllByText('Requirement').length).toBe(1);
+        getByText('Void').click();
+        getByText('Delete').click();
+        expect(queryAllByText('Requirement').length).toBe(0);
     });
 
     it('Should enable Save button when changes are made', async () => {

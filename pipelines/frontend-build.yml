@@ -98,6 +98,7 @@ stages:
       clusterName: 'pcs-aks-test'
       kvName: 'pcs-frontend-${{ variables.envName }}-kv'
       kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+      replicas: 2
 
 # deploy to test environment
 - stage: test
@@ -124,6 +125,7 @@ stages:
       clusterName: 'pcs-aks-test'
       kvName: 'pcs-frontend-${{ variables.envName }}-kv'
       kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+      replicas: 2
 
       # deploy to test environment
 - stage: production
@@ -150,3 +152,4 @@ stages:
       clusterName: 'pcs-aks-prod'
       kvName: 'pcs-frontend-${{ variables.envName }}-kv'
       kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
+      replicas: 3

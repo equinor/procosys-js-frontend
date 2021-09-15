@@ -1,21 +1,20 @@
 import { Button, Switch, TextField } from '@equinor/eds-core-react';
 import { ComponentName, IpoStatusEnum, OrganizationsEnum } from '../../../enums';
-import { Container, CustomTable, SpinnerContainer, ResponseWrapper } from './style';
+import { Container, CustomTable, ResponseWrapper, SpinnerContainer } from './style';
 import { ExternalEmail, FunctionalRole, Participant } from '../../types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import CustomPopover from './CustomPopover';
 import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
 import { OutlookResponseType } from '../../enums';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
-import { format } from 'date-fns';
+import { Typography } from '@equinor/eds-core-react';
+import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 
-import CustomPopover from './CustomPopover/index';
-
-const { Head, Body, Cell, Row } = Table;
 const tooltipComplete = <div>When punch round has been completed<br />and any punches have been added.<br />Complete and go to next step.</div>;
 const tooltipUpdate = <div>Update attended status and notes for participants.</div>;
 const tooltipAccept = <div>Punch round has been checked by company.</div>;
@@ -36,10 +35,11 @@ interface ParticipantsTableProps {
     update: (attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
+    uncomplete: (p: Participant) => Promise<any>;
 }
 
 
-const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unaccept }: ParticipantsTableProps): JSX.Element => {
+const ParticipantsTable = ({ participants, status, complete, accept, update, sign, unaccept, uncomplete }: ParticipantsTableProps): JSX.Element => {
     const cleanData = participants.map(p => {
         const x = p.person ? p.person.person : p.functionalRole ? p.functionalRole : p.externalEmail;
         const attendedStatus = status === IpoStatusEnum.PLANNED ?
@@ -59,6 +59,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
     const [editAttendedDisabled, setEditAttendedDisabled] = useState<boolean>(true);
     const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const btnCompleteRef = useRef<HTMLButtonElement>();
+    const btnUnCompleteRef = useRef<HTMLButtonElement>();
     const btnAcceptRef = useRef<HTMLButtonElement>();
     const btnUnAcceptRef = useRef<HTMLButtonElement>();
     const btnUpdateRef = useRef<HTMLButtonElement>();
@@ -102,15 +103,22 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         );
     };
 
-    const getUpdateParticipantsButton = (updateParticipants: (index: number) => void): JSX.Element => {
+
+    const getUnCompleteAndUpdateParticipantsButton = (updateParticipants: (index: number) => void, unCompletePunchout: (index: number) => void): JSX.Element => {
         return (
-            <CustomTooltip title={tooltipUpdate} arrow>
-                <span>
-                    <Button ref={btnUpdateRef} onClick={updateParticipants}>
+            <>
+                <CustomTooltip title={tooltipUpdate} arrow>
+                    <span>
+                        <Button ref={btnUpdateRef} onClick={updateParticipants}>
                         Update
-                    </Button>
-                </span>
-            </CustomTooltip>
+                        </Button>
+                    </span>
+                </CustomTooltip>
+                <span>{' '}</span>
+                <Button ref={btnUnCompleteRef} onClick={unCompletePunchout}>
+                Uncomplete
+                </Button>
+            </>
         );
     };
 
@@ -150,7 +158,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         handleAcceptPunchOut: (index: number) => void,
         handleUpdateParticipants: (index: number) => void,
         handleSignPunchOut: (index: number) => void,
-        handleUnAcceptPunchOut: (index: number) => void): JSX.Element => {
+        handleUnAcceptPunchOut: (index: number) => void,
+        handleUnCompletePunchOut: (index: number) => void
+    ): JSX.Element => {
 
         switch (participant.organization) {
             case OrganizationsEnum.Contractor:
@@ -160,7 +170,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                     } else if (participant.canSign && status === IpoStatusEnum.PLANNED) {
                         return getCompleteButton(handleCompletePunchOut);
                     } else if (participant.canSign && status === IpoStatusEnum.COMPLETED) {
-                        return getUpdateParticipantsButton(handleUpdateParticipants);
+                        return getUnCompleteAndUpdateParticipantsButton(handleUpdateParticipants, handleUnCompletePunchOut);
                     }
                 } else {
                     if (participant.signedBy) {
@@ -217,6 +227,23 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
         if (btnCompleteRef.current) {
             btnCompleteRef.current.removeAttribute('disabled');
+        }
+        setLoading(false);
+        unsetDirtyStateFor(ComponentName.ParticipantsTable);
+    };
+
+    const handleUnCompletePunchOut = async (index: number): Promise<any> => {
+        setLoading(true);
+        if (btnUnCompleteRef.current) {
+            btnUnCompleteRef.current.setAttribute('disabled', 'disabled');
+        }
+        await uncomplete(participants[index]);
+
+        if (btnCompleteRef.current) {
+            btnCompleteRef.current.removeAttribute('disabled');
+        }
+        if (btnUnCompleteRef.current) {
+            btnUnCompleteRef.current.removeAttribute('disabled');
         }
         setLoading(false);
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
@@ -307,18 +334,18 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 </SpinnerContainer>
             )}
             <CustomTable>
-                <Head>
-                    <Row>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attendance list </Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Representative </Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Outlook response</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attended</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Notes</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed by</Cell>
-                        <Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed at</Cell>
-                    </Row>
-                </Head>
-                <Body>
+                <Table.Head>
+                    <Table.Row>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attendance list </Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Representative </Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Outlook response</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Attended</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Notes</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed by</Table.Cell>
+                        <Table.Cell as="th" scope="col" style={{ verticalAlign: 'middle' }}>Signed at</Table.Cell>
+                    </Table.Row>
+                </Table.Head>
+                <Table.Body>
                     {participants.map((participant: Participant, index: number) => {
                         const representative = participant.person ?
                             `${participant.person.person.firstName} ${participant.person.person.lastName}` :
@@ -350,18 +377,26 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                             : false;
 
                         return (
-                            <Row key={participant.sortKey} as="tr">
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
-                                    {OrganizationMap.get(participant.organization as Organization)}
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>{representative}</Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle' }}>
+                            <Table.Row key={participant.sortKey} as="tr">
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                    <Typography variant="body_short">
+                                        {OrganizationMap.get(participant.organization as Organization)}
+                                    </Typography>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
+                                    <Typography variant="body_short">
+                                        {representative}
+                                    </Typography>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <ResponseWrapper> 
-                                        {response} 
+                                        <Typography variant="body_short">
+                                            {response} 
+                                        </Typography>
                                         {addPopover && <CustomPopover participant={participant} />}
                                     </ResponseWrapper>
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
                                     <Switch
                                         id={`attendance${id}`}
                                         disabled={editAttendedDisabled}
@@ -369,33 +404,39 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                                         label={attNoteData[index].attended ? 'Attended' : 'Did not attend'}
                                         checked={attNoteData[index].attended}
                                         onChange={(): void => handleEditAttended(id)} />
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', width: '40%', minWidth: '200px' }}>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', width: '40%', minWidth: '200px' }}>
                                     <TextField
                                         id={`textfield${id}`}
                                         disabled={editNotesDisabled}
                                         defaultValue={attNoteData[index].note}
                                         onChange={(e: any): void => handleEditNotes(e, id)} />
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
-                                    {getSignedProperty(
-                                        participant, status,
-                                        () => handleCompletePunchOut(index),
-                                        () => handleAcceptPunchOut(index),
-                                        () => handleUpdateParticipants(),
-                                        () => handleSignPunchOut(index),
-                                        () => handleUnAcceptPunchOut(index))}
-                                </Cell>
-                                <Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
-                                    {participant.signedAtUtc ?
-                                        `${format(new Date(participant.signedAtUtc), 'dd/MM/yyyy HH:mm')}` :
-                                        '-'
-                                    }
-                                </Cell>
-                            </Row>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', minWidth: '160px' }}>
+                                    <Typography variant="body_short">
+                                        {getSignedProperty(
+                                            participant, status,
+                                            () => handleCompletePunchOut(index),
+                                            () => handleAcceptPunchOut(index),
+                                            () => handleUpdateParticipants(),
+                                            () => handleSignPunchOut(index),
+                                            () => handleUnAcceptPunchOut(index),
+                                            () => handleUnCompletePunchOut(index)
+                                        )}
+                                    </Typography>
+                                </Table.Cell>
+                                <Table.Cell as="td" style={{ verticalAlign: 'middle', minWidth: '150px' }}>
+                                    <Typography variant="body_short">
+                                        {participant.signedAtUtc ?
+                                            `${getFormattedDateAndTime(new Date(participant.signedAtUtc))}` :
+                                            '-'
+                                        }
+                                    </Typography>
+                                </Table.Cell>
+                            </Table.Row>
                         );
                     })}
-                </Body>
+                </Table.Body>
             </CustomTable>
         </Container>
     );

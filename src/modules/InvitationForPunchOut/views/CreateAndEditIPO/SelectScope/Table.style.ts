@@ -1,7 +1,8 @@
 import styled, { css } from 'styled-components';
+
 import { tokens } from '@equinor/eds-tokens';
 
-export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boolean}>`
+export const Container = styled.div<{disableSelectAll?: boolean, mcColumn?: boolean}>`
     input + svg {
         width: 24px;
         height: 24px;
@@ -61,7 +62,8 @@ export const Container = styled.div<{disableSelectAll: boolean, mcColumn?: boole
     }
 
     .goToMcCol {
-        justify-content: flex-end;
+        position: relative;
+        /* bottom: 9px; */
     }
 `;
 
@@ -79,4 +81,16 @@ export const TopContainer = styled.div`
     flex-direction: row;
     margin: calc(var(--grid-unit) * 3) 0;
     align-items: center;
+`;
+
+export const MCHeader = styled.div`
+    padding-left: 12px;
+`;
+
+export const CommPkgTableContainer = styled.div`
+    height: 48vh;
+`;
+
+export const McPkgTableContainer = styled.div`
+    height: 48vh;
 `;

@@ -2,6 +2,7 @@ import { Attachment, CommPkgRow, GeneralInfoDetails, Participant, Person } from 
 import { Container, FormContainer, Section, Subsection, TableSection } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
 import { getFileName, getFileTypeIconName } from '../../utils';
+import { getFormattedDate, getFormattedTime } from '@procosys/core/services/DateService';
 
 import CommPkgsTable from '../../ViewIPO/Scope/CommPkgsTable';
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -9,7 +10,6 @@ import { McPkgScope } from '../../ViewIPO/types';
 import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
 import React from 'react';
 import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
-import { format } from 'date-fns';
 import { getAttachmentDownloadLink } from '../utils';
 
 const { Body, Row, Cell, Head } = Table;
@@ -111,15 +111,15 @@ const Summary = ({
                 <div className='timeContainer'>
                     <Subsection>
                         <Typography token={{ fontSize: '12px' }}>Date</Typography>
-                        <Typography variant="body_long">{format(generalInfo.startTime, 'dd/MM/yyyy')}</Typography>
+                        <Typography variant="body_long">{getFormattedDate(generalInfo.startTime)}</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{ fontSize: '12px' }}>Start</Typography>
-                        <Typography variant="body_long">{format(generalInfo.startTime, 'HH:mm')}</Typography>
+                        <Typography variant="body_long">{getFormattedTime(generalInfo.startTime)}</Typography>
                     </Subsection>
                     <Subsection>
                         <Typography token={{ fontSize: '12px' }}>End</Typography>
-                        <Typography variant="body_long">{format(generalInfo.endTime, 'HH:mm')}</Typography>
+                        <Typography variant="body_long">{getFormattedTime(generalInfo.endTime)}</Typography>
                     </Subsection>
                 </div>
                 <Subsection>
@@ -146,7 +146,7 @@ const Summary = ({
                 <>
                     <Section>
                         <Typography variant="h5">Included MC Packages</Typography>
-                        <McPkgsTable mcPkgScope={mcPkgScope.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: mcPkg.commPkgNo }; })} projectName={generalInfo.projectName} />
+                        <McPkgsTable mcPkgScope={mcPkgScope.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: mcPkg.commPkgNo, system: mcPkg.system }; })} projectName={generalInfo.projectName} />
                     </Section>
                 </>
             )}

@@ -12,7 +12,7 @@ import PressureIcon from '../assets/icons/Pressure';
 import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import ThermostatIcon from '../assets/icons/Thermostat';
 
-interface IconProps {
+export interface IconProps {
     variant: string;
 }
 

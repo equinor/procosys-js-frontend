@@ -1,31 +1,128 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, Search, TagsHeader, TopContainer } from './SelectTags.style';
+import { ButtonsContainer, Container, Header, InnerContainer, LoadingContainer, OverflowColumn, Search, TableContainer, TagsHeader, TopContainer } from './SelectTags.style';
+import { SelectColumnFilter } from '@procosys/components/Table/filters';
+import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagRow } from '../types';
-
 import { AddScopeMethod } from '../AddScope';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
-import React from 'react';
-import Table from '../../../../../components/Table';
-import { tokens } from '@equinor/eds-tokens';
+import React, { useEffect } from 'react';
+import ProcosysTable from '@procosys/components/Table';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { Tooltip } from '@material-ui/core';
+
+
+const getDescriptionColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.description}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+const getMccrResponsiblesColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.mccrResponsibleCodes || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.mccrResponsibleCodes}</OverflowColumn>
+        </Tooltip>
+    );
+
+};
+
+const getPurchaseOrderTitleColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.purchaseOrderTitle || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.purchaseOrderTitle}</OverflowColumn>
+        </Tooltip>
+    );
+};
+
+
+const getCommPkgColumn = (row: TableOptions<TagRow>): JSX.Element => {
+    const tagRow = row.value as TagRow;
+    return (
+        <Tooltip title={tagRow.commPkgNo || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <OverflowColumn>{tagRow.commPkgNo}</OverflowColumn>
+        </Tooltip>
+    );
+};
 
 const tableColumns = [
-    { title: 'Tag no', field: 'tagNo' },
-    { title: 'Description', field: 'description' },
-    { title: 'MC pkg', field: 'mcPkgNo' },
-    { title: 'MCCR resp', field: 'mccrResponsibleCodes' },
-    { title: 'PO', field: 'purchaseOrderTitle' },
-    { title: 'Comm pkg', field: 'commPkgNo' },
-    { title: 'Tag function', field: 'tagFunctionCode' },
     {
-        title: 'Preserved',
+        Header: 'Tag no',
+        field: 'tagNo',
+        accessor: 'tagNo',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.tagNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Description',
+        field: 'description',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.description?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        },
+        Cell: getDescriptionColumn
+    },
+    {
+        Header: 'MC pkg',
+        field: 'mcPkgNo',
+        accessor: 'mcPkgNo',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.mcPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'MCCR resp',
+        field: 'mccrResponsibleCodes',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.mccrResponsibleCodes?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        },
+        Cell: getMccrResponsiblesColumn
+    },
+    {
+        Header: 'PO',
+        field: 'purchaseOrderTitle',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.purchaseOrderTitle?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        },
+        Cell: getPurchaseOrderTitleColumn
+    },
+    {
+        Header: 'Comm pkg',
+        field: 'commPkgNo',
+        accessor: (d: UseTableRowProps<TagRow>): UseTableRowProps<TagRow> => d,
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.commPkgNo?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        },
+        Cell: getCommPkgColumn
+    },
+    {
+        Header: 'Tag function',
+        field: 'tagFunctionCode',
+        accessor: 'tagFunctionCode',
+        filter: (rows: UseTableRowProps<TagRow>[], id: number, filterType: string): UseTableRowProps<TagRow>[] => {
+            return rows.filter((row) => { return row.original.tagFunctionCode?.toLowerCase().indexOf(filterType.toLowerCase()) > -1; });
+        }
+    },
+    {
+        Header: 'Preserved',
+        accessor: (d: TagRow): string | undefined => { return d.isPreserved ? 'Preserved' : 'Not preserved'; },
         field: 'isPreserved',
-        render: (rowData: TagRow): any => rowData.isPreserved && <CheckBoxIcon />,
-        filtering: false
+        Cell: (rowData: TableOptions<TagRow>): JSX.Element => { return rowData.row.values.Preserved === 'Preserved' ? <CheckBoxIcon color='disabled' /> : <></>; },
+        Filter: SelectColumnFilter,
+        filter: 'equals'
     },
 ];
+
 
 type SelectTagsProps = {
     selectedTags: Tag[];
@@ -36,14 +133,30 @@ type SelectTagsProps = {
     isLoading: boolean;
     addScopeMethod: AddScopeMethod;
     removeTag: (tagNo: string) => void;
+    selectedTableRows: Record<string, boolean>;
+    setSelectedTableRows: (ids: Record<string, boolean>) => void;
 }
 
 const KEYCODE_ENTER = 13;
-
+const moduleName = 'PreservationAddScopeSelectTags';
 
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const history = useHistory();
+    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+
+    useEffect(() => {
+        const selectedRows: Record<string, boolean> = {};
+
+        props.selectedTags.forEach((tag) => {
+            const index = props.scopeTableData.indexOf(props.scopeTableData.find(t => t.tagNo === tag.tagNo) as TagRow);
+            selectedRows[index] = true;
+        });
+
+        props.setSelectedTableRows(selectedRows);
+
+    }, [props.selectedTags]);
 
     const removeAllSelectedTagsInScope = (): void => {
         const tagNos: string[] = [];
@@ -54,7 +167,7 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         props.setSelectedTags(newSelectedTags);
     };
 
-    const addAllTagsInScope = (rowData: TagRow[]): void => {
+    const addTagsInScope = (rowData: TagRow[]): void => {
         const allRows = rowData
             .filter(row => !row.isPreserved)
             .map(row => {
@@ -64,34 +177,30 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                     mcPkgNo: row.mcPkgNo
                 };
             });
-        const rowsToAdd = allRows.filter(row => !props.selectedTags.some(tag => tag.tagNo === row.tagNo));
-        props.setSelectedTags([...props.selectedTags, ...rowsToAdd]);
+        props.setSelectedTags([...allRows]);
     };
 
-    const handleSingleTag = (row: TagRow): void => {
-        const tagToHandle = {
-            tagNo: row.tagNo,
-            description: row.description,
-            mcPkgNo: row.mcPkgNo
-        };
-        if (row.tableData && !row.tableData.checked) {
-            props.removeTag(row.tagNo);
-        } else {
-            props.setSelectedTags([...props.selectedTags, tagToHandle]);
-        }
-    };
-
-    const rowSelectionChanged = (rowData: TagRow[], row: TagRow): void => {
-        // exclude any preserved tags (material-table bug)
-
+    const rowSelectionChanged = (rowData: TagRow[], ids: Record<string, boolean>): void => {
         if (rowData.length == 0 && props.scopeTableData && props.scopeTableData.length > 0) {
             removeAllSelectedTagsInScope();
-        } else if (rowData.length > 0 && rowData[0].tableData && !row) {
-            addAllTagsInScope(rowData);
-        } else if (rowData.length > 0 && !row.isPreserved) {
-            handleSingleTag(row);
+        } else {
+            addTagsInScope(rowData);
         }
+
+        props.setSelectedTableRows(ids);
     };
+
+    /** Update global dirty state */
+    useEffect(() => {
+        if (props.selectedTags.length > 0) {
+            setDirtyStateFor(moduleName);
+        } else {
+            unsetDirtyStateFor(moduleName);
+        }
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [props.selectedTags]);
 
     const cancel = (): void => {
         history.push('/');
@@ -141,42 +250,21 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
             }
             {
                 !props.isLoading &&
-                <Table
-                    columns={tableColumns}
-                    data={props.scopeTableData}
-                    options={{
-                        toolbar: false,
-                        showTitle: false,
-                        filtering: true,
-                        search: false,
-                        draggable: false,
-                        pageSize: 10,
-                        emptyRowsWhenPaging: false,
-                        pageSizeOptions: [10, 50, 100],
-                        padding: 'dense',
-                        headerStyle: {
-                            backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                        },
-                        selection: true,
-                        selectionProps: (data: TagRow): any => ({
-                            // Disable and hide selection checkbox for preserved tags.
-                            // The checkboxes will however still be checked when using 'Select All' due to a bug in material-table: https://github.com/mbrn/material-table/issues/686
-                            // We are handling this by explicitly filtering out any preserved tags when rows are selected ('onSelectionChange').
-                            disabled: data.isPreserved,
-                            style: { display: data.isPreserved && 'none' },
-                            disableRipple: true
-                        }),
-                        rowStyle: (data): any => ({
-                            backgroundColor: (data.tableData.checked && !data.isPreserved) && '#e6faec'
-                        })
-                    }}
-                    style={{
-                        boxShadow: 'none'
-                    }}
-                    onSelectionChange={(rowData, row): void => {
-                        rowSelectionChanged(rowData, row);
-                    }}
-                />
+                <TableContainer>
+                    <ProcosysTable
+                        onSelectedChange={(rowData: TagRow[], ids: any): void => { rowSelectionChanged(rowData, ids); }}
+                        pageIndex={0}
+                        pageSize={10}
+                        columns={tableColumns}
+                        maxRowCount={props.scopeTableData.length}
+                        data={props.scopeTableData}
+                        clientPagination={true}
+                        clientSorting={true}
+                        loading={false}
+                        rowSelect={true}
+                        selectedRows={props.selectedTableRows}
+                        pageCount={Math.ceil(props.scopeTableData.length / 10)} />
+                </TableContainer>
             }
         </Container >
     );

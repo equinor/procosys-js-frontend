@@ -26,7 +26,7 @@ const validateGeneralInfo = (info: GeneralInfoDetails, confirmationChecked?: boo
         (!startTime || !endTime) && (errors = { ...errors, time: 'Start and end time is required.'});
 
         !confirmationChecked && (errors = { ...errors, confirmation: 'Confirmation required.'});
-    };
+    }
 
     if (title) {
         title.length > 250 && (errors = { ...errors, title: 'Title is too long. Maximum 250 characters.' });
@@ -51,7 +51,7 @@ export enum StepsEnum {
     Participants = 3,
     UploadAttachments = 4,
     SummaryAndCreate = 5
-};
+}
 
 interface CreateAndEditProps {
     saveIpo: () => void;
@@ -74,7 +74,7 @@ interface CreateAndEditProps {
     ipoId?: number | null;
     isEditMode?: boolean;
     commPkgNoFromMain?: string | null;
-};
+}
 
 const CreateAndEditIPO = ({
     saveIpo,
@@ -187,7 +187,7 @@ const CreateAndEditIPO = ({
 
     const clearScope = (): void => {
         setSelectedMcPkgScope({
-            commPkgNoParent: null,
+            system: null,
             multipleDisciplines: false,
             selected: []
         });
@@ -254,7 +254,7 @@ const CreateAndEditIPO = ({
         {currentStep == StepsEnum.SummaryAndCreate &&
             <Summary
                 generalInfo={generalInfo}
-                mcPkgScope={selectedMcPkgScope.selected.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: selectedMcPkgScope.commPkgNoParent ? selectedMcPkgScope.commPkgNoParent : '' }; })}
+                mcPkgScope={selectedMcPkgScope.selected.map((mcPkg) => { return { mcPkgNo: mcPkg.mcPkgNo, description: mcPkg.description, commPkgNo: mcPkg.commPkgNo ? mcPkg.commPkgNo : '', system: mcPkg.system }; })}
                 commPkgScope={selectedCommPkgScope}
                 participants={participants}
                 attachments={attachments}

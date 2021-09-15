@@ -1,6 +1,7 @@
 import { Container, Divider, LibraryItemContainer } from './Library.style';
 import React, { useEffect, useReducer, useState } from 'react';
 
+import { Helmet } from 'react-helmet';
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
@@ -33,6 +34,9 @@ const Library = (): JSX.Element => {
 
     return (
         <Container>
+            {selectedLibraryType && (<Helmet>
+                <title>{` - ${selectedLibraryType}`}</title>
+            </Helmet>)}
             <LibraryTreeview
                 forceUpdate={forceUpdate}
                 setSelectedLibraryType={setSelectedLibraryType}

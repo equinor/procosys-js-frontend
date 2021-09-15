@@ -22,6 +22,9 @@ junit.xml
 node_modules/
 jspm_packages/
 
+# Storybook
+storybook-static/
+
 # TypeScript v1 declaration files
 typings/
 
@@ -51,3 +54,4 @@ settings.json
 
 #VS Code folder
 .vscode/
+.vs/slnx.sqlite

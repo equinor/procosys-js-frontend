@@ -1,6 +1,6 @@
-import { Breadcrumbs, ButtonContainer, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
+import { Breadcrumbs, ButtonSpacer, Container, DropdownItem, FormFieldSpacer, IconContainer, InputContainer, ResponsibleDropdownContainer, StepsContainer } from './PreservationJourney.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
 import { Canceler } from 'axios';
@@ -10,8 +10,9 @@ import EdsIcon from '../../../../../components/EdsIcon';
 import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
 const addIcon = <EdsIcon name='add' />;
 const upIcon = <EdsIcon name='arrow_up' />;
@@ -23,6 +24,11 @@ const unvoidIcon = <EdsIcon name='restore_from_trash' />;
 
 const saveTitle = 'If you have changes to save, check that all fields are filled in, no titles are identical, and if you have a supplier step it must be the first step.';
 const baseBreadcrumb = 'Library / Preservation journeys';
+const moduleName = 'PreservationJourneyForm';
+
+const WAIT_INTERVAL = 300;
+
+const checkboxHeightInGridUnits = 4;
 
 enum AutoTransferMethod {
     NONE = 'None',
@@ -70,14 +76,14 @@ type PreservationJourneyProps = {
 
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
-    const createNewJourney = (): Journey => {
+    const getInitialJourney = (): Journey => {
         return { id: -1, title: '', isVoided: false, isInUse: false, steps: [], rowVersion: '' };
     };
 
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [journey, setJourney] = useState<Journey | null>(null);
-    const [newJourney, setNewJourney] = useState<Journey>(createNewJourney);
+    const [newJourney, setNewJourney] = useState<Journey>(getInitialJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [modes, setModes] = useState<Mode[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>([]);
@@ -90,6 +96,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setIsEditMode(false);
     }, [props.forceUpdate]);
 
+    const isDirty = useMemo((): boolean => {
+        return JSON.stringify(journey) != JSON.stringify(newJourney);
+    }, [journey, newJourney]);
 
     const {
         preservationApiClient,
@@ -124,7 +133,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 if (error instanceof ProCoSysApiError) {
                     if (error.isCancel) return;
                 }
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
         })();
 
@@ -146,12 +155,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
                 responsibles.forEach(resp => mappedResponsibles.push({ text: (resp.code + ' - ' + resp.description), value: resp.code, selected: false }));
                 setMappedResponsibles(mappedResponsibles);
+                setFilteredResponsibles(mappedResponsibles);
             } catch (error) {
                 console.error('Get responsibles failed: ', error.message, error.data);
                 if (error instanceof ProCoSysApiError) {
                     if (error.isCancel) return;
                 }
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
             setIsLoading(false);
         })();
@@ -175,7 +185,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             if (error instanceof ProCoSysApiError) {
                 if (error.isCancel) return;
             }
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         setIsLoading(false);
     };
@@ -196,7 +206,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             return true;
         } catch (error) {
             console.error('Add journey step failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         return false;
     };
@@ -211,10 +221,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 await saveNewStep(journeyId, step);
             }
             props.setDirtyLibraryType();
-            showSnackbarNotification('New journey is saved.', 5000);
+            showSnackbarNotification('New journey is saved.');
         } catch (error) {
             console.error('Add journey failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         if (journeyId != -1) {
             getJourney(journeyId);
@@ -229,7 +239,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             return true;
         } catch (error) {
             console.error('Update journey failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         return false;
     };
@@ -243,7 +253,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     await preservationApiClient.updateJourneyStep(newJourney.id, step.id, step.title, step.mode.id, step.responsible.code, step.autoTransferMethod, step.rowVersion);
                 } catch (error) {
                     console.error('Update journey step failed: ', error.message, error.data);
-                    showSnackbarNotification(error.message, 5000);
+                    showSnackbarNotification(error.message);
                     return false;
                 }
             }
@@ -271,7 +281,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
                         if (originalStep === null) {
                             console.error('Error occured when trying to save update to a step that was not found in the journey.');
-                            showSnackbarNotification('Error occured when trying to save update to a step that was not found in the journey.', 5000);
+                            showSnackbarNotification('Error occured when trying to save update to a step that was not found in the journey.');
                             setIsLoading(false);
                             return;
                         }
@@ -285,11 +295,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             }
         }
         if (noChangesToSave) {
-            showSnackbarNotification('No changes need to be saved.', 5000);
+            showSnackbarNotification('No changes need to be saved.');
         } else {
             if (saveOk) {
                 getJourney(newJourney.id);
-                showSnackbarNotification('Changes for journey are saved.', 5000);
+                showSnackbarNotification('Changes for journey are saved.');
             }
         }
         setIsLoading(false);
@@ -312,7 +322,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         });
 
         if (!ok) {
-            showSnackbarNotification(errorMessage, 5000);
+            showSnackbarNotification(errorMessage);
             return false;
         }
 
@@ -330,26 +340,28 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
     };
 
+    const confirmDiscardingChangesIfExist = (): boolean => {
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
+    };
+
     const cancel = (): void => {
-        if (canSave && !confirm('Do you want to cancel changes without saving?')) {
-            return;
+        if (confirmDiscardingChangesIfExist()) {
+            setJourney(null);
+            setIsEditMode(false);
         }
-        setJourney(null);
-        setCanSave(false);
-        setIsEditMode(false);
     };
 
     const voidJourney = async (): Promise<void> => {
-        if (journey) {
+        if (journey && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.voidJourney(journey.id, journey.rowVersion);
                 getJourney(journey.id);
                 props.setDirtyLibraryType();
-                showSnackbarNotification('Journey is voided.', 5000);
+                showSnackbarNotification('Journey is voided.');
             } catch (error) {
                 console.error('Error occured when trying to void journey: ', error.message, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
             setIsLoading(false);
         }
@@ -362,10 +374,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 await preservationApiClient.unvoidJourney(journey.id, journey.rowVersion);
                 getJourney(journey.id);
                 props.setDirtyLibraryType();
-                showSnackbarNotification('Journey is unvoided.', 5000);
+                showSnackbarNotification('Journey is unvoided.');
             } catch (error) {
                 console.error('Error occured when trying to unvoid journey: ', error.message, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
             setIsLoading(false);
         }
@@ -380,17 +392,17 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 setCanSave(false);
                 setIsEditMode(false);
                 props.setDirtyLibraryType();
-                showSnackbarNotification('Journey is deleted.', 5000);
+                showSnackbarNotification('Journey is deleted.');
             } catch (error) {
                 console.error('Error occured when trying to delete journey: ', error.message, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
             setIsLoading(false);
         }
     };
 
     const duplicateJourney = async (): Promise<void> => {
-        if (journey) {
+        if (journey && confirmDiscardingChangesIfExist()) {
             setIsLoading(true);
             try {
                 await preservationApiClient.duplicateJourney(journey.id);
@@ -406,9 +418,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const initNewJourney = (): void => {
-        setNewJourney(createNewJourney());
-        setJourney(cloneJourney(newJourney));
-        setIsEditMode(true);
+        if (confirmDiscardingChangesIfExist()) {
+            setNewJourney(getInitialJourney());
+            setJourney(cloneJourney(newJourney));
+            setIsEditMode(true);
+        }
     };
 
     const setJourneyTitleValue = (value: string): void => {
@@ -475,10 +489,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         try {
             await preservationApiClient.swapStepsOnJourney(newJourney.id, stepA.id, stepA.rowVersion, stepB.id, stepB.rowVersion);
             getJourney(newJourney.id);
-            showSnackbarNotification('Step is moved.', 5000);
+            showSnackbarNotification('Step is moved.');
         } catch (error) {
             console.error('Swap steps failed: ', error.message, error.data);
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(error.message);
         }
         setIsLoading(false);
     };
@@ -489,7 +503,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         if (steps.length > 1 && stepIndex + 1 < steps.length) {
             swapSteps(steps[stepIndex], steps[stepIndex + 1]);
         } else {
-            showSnackbarNotification('Step cannot be moved further down.', 5000);
+            showSnackbarNotification('Step cannot be moved further down.');
         }
     };
 
@@ -498,7 +512,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         if (steps.length > 1 && stepIndex > 0) {
             swapSteps(steps[stepIndex], steps[stepIndex - 1]);
         } else {
-            showSnackbarNotification('Step cannot be moved further up.', 5000);
+            showSnackbarNotification('Step cannot be moved further up.');
         }
     };
 
@@ -512,10 +526,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 try {
                     await preservationApiClient.deleteJourneyStep(journey.id, step.id, step.rowVersion);
                     getJourney(journey.id);
-                    showSnackbarNotification('Journey step is deleted.', 5000);
+                    showSnackbarNotification('Journey step is deleted.');
                 } catch (error) {
                     console.error('Error occured when trying to delete journey step: ', error.message, error.data);
-                    showSnackbarNotification(error.message, 5000);
+                    showSnackbarNotification(error.message);
                 }
                 setIsLoading(false);
             }
@@ -528,15 +542,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.voidJourneyStep(journey.id, step.id, step.rowVersion);
                 getJourney(journey.id);
-                showSnackbarNotification('Journey step is voided.', 5000);
+                showSnackbarNotification('Journey step is voided.');
             } catch (error) {
                 console.error('Error occured when trying to void journey step: ', error.message, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
             setIsLoading(false);
         }
     };
-
 
     const unvoidStep = async (step: Step): Promise<void> => {
         if (journey) {
@@ -544,10 +557,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             try {
                 await preservationApiClient.unvoidJourneyStep(journey.id, step.id, step.rowVersion);
                 getJourney(journey.id);
-                showSnackbarNotification('Journey step is unvoided.', 5000);
+                showSnackbarNotification('Journey step is unvoided.');
             } catch (error) {
                 console.error('Error occured when trying to unvoid journey step: ', error.message, error.data);
-                showSnackbarNotification(error.message, 5000);
+                showSnackbarNotification(error.message);
             }
             setIsLoading(false);
         }
@@ -555,21 +568,32 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     /** Update list of responsibled based on filter */
     useEffect(() => {
-        if (filterForResponsibles.length <= 0) {
-            setFilteredResponsibles(mappedResponsibles);
-            return;
-        }
-        setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
-    }, [filterForResponsibles, mappedResponsibles]);
+        const handleFilterChange = async (): Promise<void> => {
 
-    /** Update isDirtyAndValid when newJourney changes */
+            if (filterForResponsibles.length <= 0) {
+                setFilteredResponsibles(mappedResponsibles);
+                return;
+            }
+            setFilteredResponsibles(mappedResponsibles.filter((resp: SelectItem) => resp.text.toLowerCase().indexOf(filterForResponsibles.toLowerCase()) > -1));
+        };
+
+        const timer = setTimeout(() => {
+            handleFilterChange();
+        }, WAIT_INTERVAL);
+
+        return (): void => {
+            clearTimeout(timer);
+        };
+    }, [filterForResponsibles]);
+
+    /** Update canSave and isDirty when newJourney or journey changes */
     useEffect(() => {
-        if (JSON.stringify(journey) == JSON.stringify(newJourney)) {
+        if (journey == null || !isDirty) {
             setCanSave(false);
-            unsetDirtyStateFor('PreservationJourneyForm');
+            unsetDirtyStateFor(moduleName);
             return;
         } else {
-            setDirtyStateFor('PreservationJourneyForm');
+            setDirtyStateFor(moduleName);
         }
         if (newJourney.title.length < 3) {
             setCanSave(false);
@@ -587,13 +611,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 breakFunction = true;
                 return;
             }
-            const mode = modes.find(mode => mode.id == step.mode.id);
-
-            if (i != 0 && mode && mode.forSupplier) {
-                setCanSave(false);
-                breakFunction = true;
-                return;
-            }
         });
 
         if (breakFunction) {
@@ -601,7 +618,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
 
         setCanSave(true);
-    }, [newJourney]);
+
+        return (): void => {
+            unsetDirtyStateFor(moduleName);
+        };
+    }, [newJourney, journey]);
 
     if (isLoading) {
         return (
@@ -629,40 +650,52 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             {newJourney.isVoided &&
                 <Typography variant="caption" style={{ marginLeft: 'calc(var(--grid-unit) * 2)', fontWeight: 'bold' }}>Journey is voided</Typography>
             }
+
             <ButtonContainer>
-                {newJourney.isVoided && newJourney.id != -1 &&
-                    <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
-                        {deleteIcon} Delete
+                <ButtonContainerLeft>
+                    <Button variant='ghost' onClick={initNewJourney}>
+                        {addIcon} New preservation journey
                     </Button>
-                }
-                <ButtonSpacer />
-                {!newJourney.isVoided && newJourney.id != -1 &&
-                    < Button variant="outlined" onClick={duplicateJourney}>
-                        {duplicateIcon} Duplicate
+                </ButtonContainerLeft>
+                <ButtonContainerRight>
+                    {newJourney.isVoided && newJourney.id != -1 &&
+                        <>
+                            <ButtonSpacer />
+                            <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse} title={newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
+                                {deleteIcon} Delete
+                            </Button>
+                        </>
+                    }
+                    <ButtonSpacer />
+                    {!newJourney.isVoided && newJourney.id != -1 &&
+                        < Button variant="outlined" onClick={duplicateJourney}>
+                            {duplicateIcon} Duplicate
+                        </Button>
+                    }
+                    <ButtonSpacer />
+                    {newJourney.isVoided &&
+                        <Button variant="outlined" onClick={unvoidJourney}>
+                            {unvoidIcon} Unvoid
+                        </Button>
+                    }
+                    {!newJourney.isVoided && newJourney.id != -1 &&
+                        <Button variant="outlined" onClick={voidJourney}>
+                            {voidIcon} Void
+                        </Button>
+                    }
+                    <ButtonSpacer />
+                    <Button variant="outlined" onClick={cancel} disabled={newJourney.isVoided}>
+                        Cancel
                     </Button>
-                }
-                <ButtonSpacer />
-                {newJourney.isVoided &&
-                    <Button variant="outlined" onClick={unvoidJourney}>
-                        {unvoidIcon} Unvoid
+                    <ButtonSpacer />
+                    <Button onClick={handleSave} disabled={newJourney.isVoided || !canSave} title={canSave ? '' : saveTitle}>
+                        Save
                     </Button>
-                }
-                {!newJourney.isVoided && newJourney.id != -1 &&
-                    <Button variant="outlined" onClick={voidJourney}>
-                        {voidIcon} Void
-                    </Button>
-                }
-                <ButtonSpacer />
-                <Button variant="outlined" onClick={cancel} disabled={newJourney.isVoided}>
-                    Cancel
-                </Button>
-                <ButtonSpacer />
-                <Button onClick={handleSave} disabled={newJourney.isVoided || !canSave} title={canSave ? '' : saveTitle}>
-                    Save
-                </Button>
+                </ButtonContainerRight>
+
             </ButtonContainer>
 
-            <InputContainer style={{ width: '280px' }}>
+            <InputContainer style={{ marginTop: 'calc(var(--grid-unit) * 3)', width: '280px' }}>
                 <TextField
                     id={'title'}
                     label='Title for this journey'
@@ -735,7 +768,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     {index != 100 &&
                                         <div style={{ fontSize: '12px', paddingBottom: 'var(--grid-unit)' }}>Automatic transfer on signing</div>
                                     }
-                                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'row', maxHeight: `calc(var(--grid-unit) * ${checkboxHeightInGridUnits})` }}>
                                         <FormFieldSpacer>
                                             <Checkbox
                                                 checked={step.autoTransferMethod == AutoTransferMethod.RFCC}
@@ -747,6 +780,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                         setStepAutoTransValue(AutoTransferMethod.NONE, index);
                                                     }
                                                 }}
+                                                heightInGridUnits={checkboxHeightInGridUnits}
                                             >
                                                 <Typography variant='body_long'>RFCC</Typography>
                                             </Checkbox>
@@ -763,6 +797,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                         setStepAutoTransValue(AutoTransferMethod.NONE, index);
                                                     }
                                                 }}
+                                                heightInGridUnits={checkboxHeightInGridUnits}
                                             >
                                                 <Typography variant='body_long'>RFOC</Typography>
                                             </Checkbox>

@@ -3,7 +3,7 @@ import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import WarningOutlinedIcon from '@material-ui/icons/WarningOutlined';
 
-type ErrorProps = {
+export type ErrorProps = {
     title?: string;
     large?: boolean;
     medium?: boolean;

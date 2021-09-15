@@ -8,10 +8,11 @@ import {
     Nav,
     PlantSelector,
     ShowOnDesktop,
-    ShowOnMobile
+    ShowOnMobile,
+    StyledSearch
 } from './style';
-import { Link, useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import Dropdown from '../../components/Dropdown';
@@ -24,6 +25,16 @@ import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
+import { useQuickSearchContext } from '../QuickSearch/context/QuickSearchContext';
+import { ContentDocument, SearchResult } from '../QuickSearch/http/QuickSearchApiClient';
+import debounce from 'lodash.debounce';
+import { QuickSearchPreviewSection, QuickSearchResultsContainer, QuickSearchResultsContainerFooter, QuickSearchResultsContainerHeader, QuickSearchResultsFoundIn, SearchingDiv } from '../QuickSearch/style';
+import QuickSearchPreviewHit from '../QuickSearch/QuickSearchPreviewHit';
+import Spinner from '@procosys/components/Spinner';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import useClickOutsideNotifier from '@procosys/hooks/useClickOutsideNotifier';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Canceler } from '@procosys/http/HttpClient';
 
 type PlantItem = {
     text: string;
@@ -32,23 +43,138 @@ type PlantItem = {
 
 const Header: React.FC = (): JSX.Element => {
     const user = useCurrentUser();
+    const [searchValue, setSearchValue] = useState<string>('');
     const { auth } = useProcosysContext();
     const { plant, setCurrentPlant } = useCurrentPlant();
     const params = useParams<any>();
     const [filterForPlants, setFilterForPlants] = useState<string>('');
     const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
+    const [searchResult, setSearchResult] = useState<SearchResult>();
+    const [searching, setSearching] = useState<boolean>(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [quickSearchLeftPos, setQuickSearchLeftPos] = useState<number>(0);
+    const [currentHit, setCurrentHit] = useState<number>(-1);
+    const KEYCODE_ENTER = 13;
+
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map(plant => ({
             text: plant.title,
             value: plant.id,
         }));
     });
+
+    useHotkeys('esc', () => {
+        setIsOpen(false);
+    }, { enableOnTags: ['INPUT'] });
+
+    useHotkeys('down', () => {
+        if (counter < 1) return;
+
+        if ((currentHit + 1) > counter) {
+            return;
+        }
+
+        const hit = document.getElementById('hit_' + (currentHit + 1)) as HTMLDivElement;
+        if (hit) {
+            (document.activeElement as HTMLElement).blur();
+            hit.focus();
+        }
+
+        setCurrentHit(currentHit + 1 === counter ? currentHit : currentHit + 1);
+    }, { enableOnTags: ['INPUT'] });
+
+
+    useHotkeys('up', () => {
+        let hits = searchResult?.items.length;
+        if (!hits) return;
+
+        if (hits > 5) hits = 5;
+
+        if (currentHit <= 0) {
+            (document.getElementById('procosys-qs') as HTMLDivElement).focus();
+            setCurrentHit(-1);
+            return;
+        }
+
+        const hit = document.getElementById('hit_' + (currentHit - 1)) as HTMLDivElement;
+        if (hit) {
+            (document.activeElement as HTMLElement).blur();
+            hit.focus();
+        }
+
+        setCurrentHit(currentHit - 1);
+    }, { enableOnTags: ['INPUT'] });
+
+    useClickOutsideNotifier(() => {
+        setIsOpen(false);
+    }, containerRef);
+
+    const history = useHistory();
+
+    const { apiClient } = useQuickSearchContext();
+
     const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
         setCurrentPlant(filteredPlants[plantIndex].value as string);
+        setSearchValue('');
+        setSearchResult(undefined);
     };
+
+    const cancelerRef = useRef<Canceler | null>();
+
+    const debounceSearchHandler = useCallback(
+        debounce((value: string) => {
+            cancelerRef.current && cancelerRef.current();
+            apiClient.doPreviewSearch(value, plant.id, (c) => { cancelerRef.current = c; }).then((searchResult: SearchResult) => {
+                setSearchResult(searchResult);
+                let searchCount = searchResult.hits > 6 ? 6 : searchResult.hits;
+
+                if (searchCount > 0) {
+                    searchCount = searchResult.totalCommPkgHits > 0 ? searchCount + 1 : searchCount;
+                    searchCount = searchResult.totalMcPkgHits > 0 ? searchCount + 1 : searchCount;
+                    searchCount = searchResult.totalPunchItemHits > 0 ? searchCount + 1 : searchCount;
+                    searchCount = searchResult.totalTagHits > 0 ? searchCount + 1 : searchCount;
+                }
+                setCurrentHit(-1);
+                setSearching(false);
+            }
+            );
+        }, 750),
+        [plant]
+    );
+
+    const handleQuickSearchChange = useCallback((e: { target: { value: string; }; }) => {
+        const searchVal = e.target.value;
+        const searchInput = document.getElementById('procosys-qs');
+        if (searchInput) {
+            const rect = searchInput.getBoundingClientRect();
+            setQuickSearchLeftPos(rect.left);
+        }
+
+        setIsOpen(true);
+        setSearchResult(undefined);
+        setSearching(true);
+        setSearchValue(searchVal);
+        if (searchVal === '') {
+            setSearching(false);
+            return;
+        }
+
+        debounceSearchHandler(searchVal);
+    }, [debounceSearchHandler]);
+
+    const handleQuickSearchFocus = (): void => {
+        const searchInput = document.getElementById('procosys-qs');
+        if (searchInput) {
+            const rect = searchInput.getBoundingClientRect();
+            setQuickSearchLeftPos(rect.left);
+        }
+        setIsOpen(true);
+    }
+
 
     useEffect(() => {
         if (filterForPlants.length <= 0) {
@@ -58,6 +184,32 @@ const Header: React.FC = (): JSX.Element => {
         setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
     }, [filterForPlants]);
 
+    const goToFilteredQuicksearch = (filterType: string): void => {
+        setCurrentHit(0);
+        history.push('/' + plant.pathId + '/quicksearch?query=' + filterType + ':' + searchValue);
+        setIsOpen(false);
+        setSearchValue('');
+        setSearchResult(undefined);
+    }
+
+    const goToQuicksearch = (): void => {
+        history.push('/' + plant.pathId + '/quicksearch?query=' + searchValue);
+        setIsOpen(false);
+        setSearchValue('');
+        setSearchResult(undefined);
+    }
+
+    const goToFirstItemInResult = (): void => {
+        if (!searching && searchResult && searchResult.items[0]) {
+            const item = (document.getElementById('hit_0') as HTMLDivElement);
+            item.focus();
+            setTimeout(() => {
+                item.click();
+            }, 250);
+        }
+    }
+
+    let counter = 0;
     return (
         <div>
             <Nav>
@@ -110,7 +262,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
+                            {(ProCoSysSettings.featureIsEnabled('IPO')) &&
                                 <Link to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </Link>
@@ -179,7 +331,7 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            { (ProCoSysSettings.featureIsEnabled('IPO')) &&
+                            {(ProCoSysSettings.featureIsEnabled('IPO')) &&
                                 <Link to={`/${params.plant}/InvitationForPunchOut`}>
                                     <DropdownItem>Invitation for punch-out</DropdownItem>
                                 </Link>
@@ -267,6 +419,106 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
+                    {(ProCoSysSettings.featureIsEnabled('quickSearch')) && (
+                        <MenuContainerItem>
+                            <StyledSearch
+                                placeholder={'Quick Search'}
+                                onChange={handleQuickSearchChange}
+                                onFocus={handleQuickSearchFocus}
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                    e.keyCode === KEYCODE_ENTER &&
+                                        goToFirstItemInResult()
+                                }}
+                                value={searchValue}
+                                name="procosys-qs"
+                                id="procosys-qs"
+                                autocomplete="on" autoFocus />
+
+                            {!searching && searchValue && isOpen && (
+                                <QuickSearchResultsContainer style={{ left: quickSearchLeftPos - 30 + 'px' }} ref={containerRef}>
+                                    <QuickSearchResultsContainerHeader group="navigation" variant="label">Results</QuickSearchResultsContainerHeader>
+                                    {
+                                        searchResult && searchResult.items.length > 0 ? (
+                                            searchResult.items.map((item: ContentDocument) => {
+                                                if (counter > 5) return;
+                                                return <QuickSearchPreviewHit hitNumber={counter++} key={item.key} searchValue={searchValue} item={item}></QuickSearchPreviewHit>
+                                            })
+                                        ) : <SearchingDiv>Nothing here... &#129300;</SearchingDiv>
+                                    }
+
+                                    {
+                                        searchResult && searchResult.items.length > 0 && (
+                                            <>
+                                                <QuickSearchResultsFoundIn group="navigation" variant="label">Results found in</QuickSearchResultsFoundIn>
+
+                                                {searchResult.totalCommPkgHits > 0 &&
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={'hit_' + (counter - 1)}
+                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                                            e.keyCode === KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch('c')
+                                                        }}
+                                                        onClick={(): void => goToFilteredQuicksearch('c')}>
+                                                        <span>Commissioning packages</span>
+                                                        <KeyboardArrowRightIcon className='arrowIcon' />
+                                                    </QuickSearchPreviewSection>
+                                                }
+
+                                                {searchResult.totalMcPkgHits > 0 &&
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={'hit_' + (counter - 1)}
+                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                                            e.keyCode === KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch('m')
+                                                        }}
+                                                        onClick={(): void => goToFilteredQuicksearch('m')}>
+                                                        <span>MC packages</span><KeyboardArrowRightIcon className='arrowIcon' />
+                                                    </QuickSearchPreviewSection>
+                                                }
+
+                                                {searchResult.totalTagHits > 0 &&
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={'hit_' + (counter - 1)}
+                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                                            e.keyCode === KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch('t')
+                                                        }}
+                                                        onClick={(): void => goToFilteredQuicksearch('t')}>
+                                                        <span>Tags</span><KeyboardArrowRightIcon className='arrowIcon' />
+                                                    </QuickSearchPreviewSection>
+                                                }
+
+                                                {searchResult.totalPunchItemHits > 0 &&
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={'hit_' + (counter - 1)}
+                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                                            e.keyCode === KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch('p')
+                                                        }}
+                                                        onClick={(): void => goToFilteredQuicksearch('p')}>
+                                                        <span>Punch List items</span><KeyboardArrowRightIcon className='arrowIcon' />
+                                                    </QuickSearchPreviewSection>
+                                                }
+
+                                                <QuickSearchResultsContainerFooter onClick={(): void => goToQuicksearch()} variant="ghost">Show all results</QuickSearchResultsContainerFooter>
+                                            </>
+                                        )
+                                    }
+                                </QuickSearchResultsContainer>
+                            )}
+
+                            {searching && isOpen && (
+                                <QuickSearchResultsContainer style={{ left: quickSearchLeftPos - 30 + 'px' }}>
+                                    <SearchingDiv>Searching... <Spinner medium></Spinner></SearchingDiv>
+                                </QuickSearchResultsContainer>
+                            )}
+
+                        </MenuContainerItem>
+                    )}
                     <MenuContainerItem className='compact'>
                         <OptionsDropdown variant={'ghost'} icon='link'>
                             <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">

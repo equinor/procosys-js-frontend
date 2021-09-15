@@ -92,6 +92,11 @@ module.exports = {
         new webpack.DefinePlugin({
             __DEV__: JSON.stringify(false)
         }),
+        // fix "process is not defined" error:
+        // (do "npm install process" before running the build)
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
         /* Automatically creates our index.html page */
         new HtmlWebpackPlugin({
             title: 'ProCoSys',

@@ -1,10 +1,9 @@
-import React from 'react';
-import { Button, Typography, Accordion } from '@equinor/eds-core-react';
-import { SelectedScopeContainer, AccordionContent, TextContainer } from './SelectedScope.style';
+import { Accordion, Button, Typography } from '@equinor/eds-core-react';
+import { AccordionContent, SelectedScopeContainer, TextContainer } from './SelectedScope.style';
 import { CommPkgRow, McPkgRow } from '@procosys/modules/InvitationForPunchOut/types';
-import EdsIcon from '@procosys/components/EdsIcon';
 
-const {AccordionItem, AccordionHeader, AccordionPanel} = Accordion;
+import EdsIcon from '@procosys/components/EdsIcon';
+import React from 'react';
 
 const multipleDisciplinesWarning = <div><EdsIcon name='warning_outlined' size={16}/><Typography>Scope contains multiple disciplines</Typography></div>;
 
@@ -35,14 +34,14 @@ const SelectedScope = ({
 
     const createSectionForCommPkg = (commPkg: CommPkgRow): JSX.Element => {
         return (
-            <AccordionItem key={commPkg.commPkgNo}>
-                <AccordionHeader>
+            <Accordion.Item key={commPkg.commPkgNo}>
+                <Accordion.Header>
                     {commPkg.commPkgNo}
                     <Button  variant="ghost_icon" onClick={(): void => removeCommPkg(commPkg.commPkgNo)}>
                         <EdsIcon name="delete_to_trash"></EdsIcon>
                     </Button>
-                </AccordionHeader>
-                <AccordionPanel>
+                </Accordion.Header>
+                <Accordion.Panel>
                     <AccordionContent>
                         <div>
                             <Typography variant='caption'>
@@ -61,21 +60,21 @@ const SelectedScope = ({
                             </Typography>
                         </div>
                     </AccordionContent>
-                </AccordionPanel>
-            </AccordionItem >
+                </Accordion.Panel>
+            </Accordion.Item >
         );
     };
 
     const createSectionForMcPkg = (mcPkg: McPkgRow): JSX.Element => {
         return (
-            <AccordionItem key={mcPkg.mcPkgNo}>
-                <AccordionHeader>
+            <Accordion.Item key={mcPkg.mcPkgNo}>
+                <Accordion.Header>
                     {mcPkg.mcPkgNo}
                     <Button  variant="ghost_icon" onClick={(): void => removeMcPkg(mcPkg.mcPkgNo)}>
                         <EdsIcon name="delete_to_trash"></EdsIcon>
                     </Button>
-                </AccordionHeader>
-                <AccordionPanel>
+                </Accordion.Header>
+                <Accordion.Panel>
                     <AccordionContent>
                         <div>
                             <Typography variant='caption'>
@@ -102,8 +101,8 @@ const SelectedScope = ({
                             </Typography>
                         </div>
                     </AccordionContent>
-                </AccordionPanel>
-            </AccordionItem >
+                </Accordion.Panel>
+            </Accordion.Item >
         );
     };
 

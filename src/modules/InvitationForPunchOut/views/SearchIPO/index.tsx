@@ -1,5 +1,6 @@
-import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, StyledButton, TooltipText } from './index.style';
-import { IPOFilter, IPOs } from './types';
+import { Button, Typography } from '@equinor/eds-core-react';
+import { Container, ContentContainer, DropdownItem, FilterContainer, Header, HeaderContainer, IconBar, LeftPartOfHeader, StyledButton, TooltipText } from './index.style';
+import { IPOFilter, IPOs, SavedIPOFilter } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -7,13 +8,15 @@ import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import InvitationsFilter from './Filter';
 import InvitationsTable from './Table';
+import { Link } from 'react-router-dom';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
 import { Tooltip } from '@equinor/eds-core-react';
-import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
+
+const addIcon = <EdsIcon name='add' />;
 
 const emptyFilter: IPOFilter = {
     ipoStatuses: [],
@@ -25,7 +28,6 @@ const emptyFilter: IPOFilter = {
     titleStartsWith: '',
     punchOutDates: []
 };
-
 
 const SearchIPO = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -50,6 +52,71 @@ const SearchIPO = (): JSX.Element => {
 
     const [availableRoles, setAvailableRoles] = useState<SelectItem[]>([]);
 
+    const [selectedSavedFilterTitle, setSelectedSavedFilterTitle] = useState<string | null>(null);
+    const [savedFilters, setSavedFilters] = useState<SavedIPOFilter[] | null>(null);
+    const [hasProjectChanged, setHasProjectChanged] = useState<boolean>(true);
+
+    const [orderByField, setOrderByField] = useState<string | null>(null);
+    const [orderDirection, setOrderDirection] = useState<string | null>(null);
+    const [dataLoading, setDataLoading] = useState<boolean>(false);
+
+    const updateSavedFilters = async (): Promise<void> => {
+        setIsLoading(true);
+        if(project === undefined){
+            console.error('The project is of type undefined');
+            showSnackbarNotification('Get saved filters failed: The project is of type undefined');
+            setIsLoading(false);
+            return;
+        }
+        try {
+            const response = await apiClient.getSavedIPOFilters(project.name);
+            setSavedFilters(response);
+        } catch (error) {
+            console.error('Get saved filters failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        setIsLoading(false);
+    };
+
+    useEffect((): void => {
+        if (project && project.id != -1) {
+            updateSavedFilters();
+        }
+    }, [project]);
+    
+    const getDefaultFilter = (): SavedIPOFilter | undefined => {
+        if (savedFilters) {
+            const defaultFilter = savedFilters.find((filter) => filter.defaultFilter);
+            return defaultFilter;
+        };
+        return undefined;
+    };
+
+    useEffect((): void => {
+        if(hasProjectChanged){
+            if (project && project.id === -1) return;
+
+            if(savedFilters) {
+                const defaultFilter = getDefaultFilter();
+                if (defaultFilter) {
+                    setSelectedSavedFilterTitle(defaultFilter.title);
+                    try{
+                        setFilter({
+                            ...JSON.parse(defaultFilter.criteria)
+                        });
+                    }catch (error) {
+                        console.error('Failed to parse default filter');
+                    }
+                }else{
+                    setFilter({
+                        ...emptyFilter
+                    });
+                }
+            }
+            setHasProjectChanged(false);
+        }
+    }, [savedFilters]);
+    
     /**
      * Fetch available functional roles 
      */
@@ -70,7 +137,6 @@ const SearchIPO = (): JSX.Element => {
             showSnackbarNotification(error.message);
         }
     }, []);
-
 
     useEffect(() => {
         let requestCanceler: Canceler;
@@ -105,6 +171,7 @@ const SearchIPO = (): JSX.Element => {
 
         setProject(filteredProjects[index]);
         setResetTablePaging(true);
+        setHasProjectChanged(true);
 
         if (numberOfFilters > 0) {
             // Reset filters on project change:
@@ -146,7 +213,6 @@ const SearchIPO = (): JSX.Element => {
         };
     }, []);
 
-
     /** Update module header height on module header resize */
     useEffect(() => {
         updateModuleHeaderHeightReference();
@@ -175,25 +241,25 @@ const SearchIPO = (): JSX.Element => {
         forceFilterUpdate();
     }, [filter]);
 
-
-
     const toggleFilter = (): void => {
         setDisplayFilter(!displayFilter);
     };
 
-
     const getIPOs = async (page: number, pageSize: number, orderBy: string | null, orderDirection: string | null): Promise<IPOs> => {
         if (project) {  //to avoid getting ipos before we have set previous-/default filter (include savedFilters if used)
             try {
+                setDataLoading(true);
                 cancelerRef.current && cancelerRef.current();
                 return await apiClient.getIPOs(project.name, page, pageSize, orderBy, orderDirection, filter, (c) => { cancelerRef.current = c; }).then(
                     (response) => {
                         setNumberOfIPOs(response.maxAvailable);
+                        setDataLoading(false);
                         return response;
                     }
                 );
             } catch (error) {
                 console.error('Get IPOs failed: ', error.message, error.data);
+                // setDataLoading(false);
                 if (!error.isCancel) {
                     showSnackbarNotification(error.message);
                 }
@@ -203,31 +269,67 @@ const SearchIPO = (): JSX.Element => {
         return { maxAvailable: 0, invitations: [] };
     };
 
+    const exportInvitationsToExcel = async (): Promise<void> => {
+        if(project){
+            try {
+                showSnackbarNotification('Exporting filtered IPOs to Excel...');
+                await apiClient.exportInvitationsToExcel(project.name, orderByField, orderDirection, filter).then(
+                    (response) => {
+                        const outputFilename = `Invitations for Punch Out-${project.name}.xlsx`;
+                        const tempUrl = window.URL.createObjectURL(new Blob([response]));
+                        const tempLink = document.createElement('a');
+                        tempLink.style.display = 'none';
+                        tempLink.href = tempUrl;
+                        tempLink.setAttribute('download', outputFilename);
+                        document.body.appendChild(tempLink);
+                        tempLink.click();
+                        tempLink.remove();
+                    }
+                );
+                showSnackbarNotification('IPOs are exported to Excel');
+            } catch (error) {
+                console.error('Export IPOs to excel failed: ', error.message, error.data);
+                if (!error.isCancel) {
+                    showSnackbarNotification(error.message);
+                }
+            }
+        }
+    };
+
     return (
         <Container ref={moduleContainerRef}>
             <ContentContainer withSidePanel={displayFilter}>
                 <HeaderContainer ref={moduleHeaderContainerRef}>
-                    <Header>
-                        <Typography variant="h1">Invitation for punch-out</Typography>
-                        { <Dropdown
-                            maxHeight='300px'
-                            text={project ? project.name : 'Select project'}
-                            onFilter={setFilterForProjects}
-                        >
-                            {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
-                            {!isLoading && filteredProjects.map((projectItem, index) => {
-                                return (
-                                    <DropdownItem
-                                        key={index}
-                                        onClick={(event): void => changeProject(event, index)}
-                                    >
-                                        <div>{projectItem.description}</div>
-                                        <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
-                                    </DropdownItem>
-                                );
-                            })}
-                        </Dropdown>}
-                    </Header>
+                    <LeftPartOfHeader>
+                        <Header>
+                            <Typography variant="h1">Invitation for punch-out</Typography>
+                        </Header>
+                        <IconBar>
+                            { <Dropdown
+                                maxHeight='300px'
+                                text={project ? project.name : 'Select project'}
+                                onFilter={setFilterForProjects}
+                            >
+                                {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
+                                {!isLoading && filteredProjects.map((projectItem, index) => {
+                                    return (
+                                        <DropdownItem
+                                            key={index}
+                                            onClick={(event): void => changeProject(event, index)}
+                                        >
+                                            <div>{projectItem.description}</div>
+                                            <div style={{ fontSize: '12px' }}>{projectItem.name}</div>
+                                        </DropdownItem>
+                                    );
+                                })}
+                            </Dropdown>}
+                            <Link to={project? `/CreateIPO/${project.name}`:'/CreateIPO'}>
+                                <Button variant='ghost' >
+                                    {addIcon} New IPO
+                                </Button>
+                            </Link>
+                        </IconBar>
+                    </ LeftPartOfHeader>
                     <Tooltip placement={'left'} title={<TooltipText><p>{numberOfFilters} active filter(s)</p><p>Filter result {numberOfIPOs} items</p></TooltipText>} disableHoverListener={numberOfFilters < 1} arrow={true} style={{ textAlign: 'center' }}>
                         <div>
                             <StyledButton
@@ -244,6 +346,7 @@ const SearchIPO = (): JSX.Element => {
                 </HeaderContainer >
 
                 <InvitationsTable
+                    loading={dataLoading}
                     getIPOs={getIPOs}
                     data-testId='invitationsTable'
                     pageSize={pageSize}
@@ -253,7 +356,9 @@ const SearchIPO = (): JSX.Element => {
                     projectName={project?.name}
                     height={moduleAreaHeight - moduleHeaderHeight - 100}
                     update={update}
+                    setOrderByField={setOrderByField}
                     filterUpdate={filterUpdate}
+                    setOrderDirection={setOrderDirection}
                 />
 
 
@@ -267,14 +372,18 @@ const SearchIPO = (): JSX.Element => {
                                 setDisplayFilter(false);
                             }}
                             filter={filter} setFilter={setFilter}
+                            savedFilters={savedFilters}
+                            refreshSavedFilters={updateSavedFilters}
+                            setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
+                            selectedSavedFilterTitle={selectedSavedFilterTitle}
                             roles={availableRoles}
                             numberOfIPOs={numberOfIPOs}
+                            exportInvitationsToExcel={exportInvitationsToExcel}
                         />
                     </FilterContainer>
                 )
             }
         </Container >
-
     );
 };
 

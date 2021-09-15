@@ -7,8 +7,10 @@ export const Toolbar = styled.div`
 `;
 
 export const Container = styled.div`
-    div > div > div > div[style] {
-        overflow-y: hidden !important; /* This is to remove the scrollbar in table that makes it seem like the page is lagging when user is scrolling  */
+    height: 100%;
+
+    > div {
+        height: 65%;
     }
     
     ${Breakpoints.TABLET} {

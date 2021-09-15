@@ -1,15 +1,13 @@
-import { AddAttachmentContainer, Container, DragAndDropContainer, FormContainer } from './Attachments.style';
-import { Button, Typography } from '@equinor/eds-core-react';
-import React, { useRef } from 'react';
-import { getFileName, getFileTypeIconName } from '../../utils';
-
+import { Container, FormContainer } from './Attachments.style';
+import React from 'react';
+import { TableOptions } from 'react-table';
 import { Attachment } from '@procosys/modules/InvitationForPunchOut/types';
-import EdsIcon from '@procosys/components/EdsIcon';
-import Table from '@procosys/components/Table';
+import { ComponentName } from '../../enums';
 import fileTypeValidator from '@procosys/util/FileTypeValidator';
 import { getAttachmentDownloadLink } from '../utils';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { tokens } from '@equinor/eds-tokens';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
+import AttachmentList from '@procosys/components/AttachmentList';
 
 interface AttachmentsProps {
     attachments: Attachment[];
@@ -20,25 +18,10 @@ const Attachments = ({
     attachments,
     setAttachments
 }: AttachmentsProps): JSX.Element => {
-    const inputFileRef = useRef<HTMLInputElement>(null);
+    const { setDirtyStateFor } = useDirtyContext();
 
-    const handleSubmitFile = (e: any): void => {
-        e.preventDefault();
-        try {
-            addAttachments(e.target.files);
-        } catch (error) {
-            console.error('Upload attachment failed: ', error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
-    };
-
-    const handleAddFile = (): void => {
-        if (inputFileRef.current) {
-            inputFileRef.current.click();
-        }
-    };
-
-    const removeAttachment = (index: number): void => {
+    const removeAttachment = (row: TableOptions<Attachment>): void => {
+        const index = row.row.index;
         if (attachments[index].id) {
             //Attachments already uploaded will be deleted when ipo i saved
             attachments[index].toBeDeleted = true;
@@ -49,6 +32,7 @@ const Attachments = ({
                 [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
             );
         }
+        setDirtyStateFor(ComponentName.Attachments);
     };
 
     const addAttachments = (files: FileList | null): void => {
@@ -66,86 +50,28 @@ const Attachments = ({
             }
 
         });
+        setDirtyStateFor(ComponentName.Attachments);
     };
 
-    const getAttachmentName = (attachment: Attachment): JSX.Element => {
+    const downloadAttachment = (attachment: Attachment): void => {
         const link = getAttachmentDownloadLink(attachment);
-
-        return (
-            <Typography link={!!link} target='_blank' href={link}>{getFileName(attachment.fileName)}</Typography>
-        );
+        window.open(link, '_blank');
     };
 
-    const getAttachmentIcon = (attachment: Attachment): JSX.Element => {
-        const iconName = getFileTypeIconName(attachment.fileName);
-        return (
-            <EdsIcon name={iconName} size={24} />
-        );
-    };
-
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
-        event.preventDefault();
-    };
-
-    const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
-        event.preventDefault();
-        addAttachments(event.dataTransfer.files);
-
-    };
-
-    return (<Container>
-        <FormContainer>
-            <Typography variant='h5'>Drag and drop to add files, or click on the button to select files</Typography>
-            <AddAttachmentContainer>
-                <form>
-                    <Button
-                        onClick={handleAddFile}
-                    >
-                        Select files
-                    </Button>
-                    <input id="addFile" style={{ display: 'none' }} multiple type='file' ref={inputFileRef} onChange={handleSubmitFile} />
-                </form>
-            </AddAttachmentContainer>
-            <DragAndDropContainer
-                onDrop={(event: React.DragEvent<HTMLDivElement>): void => handleDrop(event)}
-                onDragOver={(event: React.DragEvent<HTMLDivElement>): void => handleDragOver(event)}
-            >
-                <EdsIcon name='cloud_download' size={48} color='#DADADA' />
-            </DragAndDropContainer>
-            <Typography variant='h5'>Attachments</Typography>
-            <Table
-                columns={[{ title: 'Type', render: getAttachmentIcon, width: '30px' }, { title: 'Title', render: getAttachmentName }]}
-                data={attachments.filter((attachment) => !attachment.toBeDeleted)}
-                options={{
-                    toolbar: false,
-                    showTitle: false,
-                    search: false,
-                    draggable: false,
-                    padding: 'dense',
-                    headerStyle: {
-                        backgroundColor: tokens.colors.interactive.table__header__fill_resting.rgba,
-                    },
-                    actionsColumnIndex: -1,
-                    paging: false
-                }}
-                style={{
-                    boxShadow: 'none'
-                }}
-                localization={{
-                    header: {
-                        actions: ''
-                    }
-                }}
-                actions={[
-                    {
-                        icon: (): JSX.Element => <EdsIcon name='delete_to_trash' />,
-                        tooltip: 'Remove attachment',
-                        onClick: (_, rowData): void => removeAttachment(rowData.tableData.id)
-                    }
-                ]}
-            />
-        </FormContainer>
-    </Container>);
+    return (
+        <Container>
+            <FormContainer>
+                <AttachmentList 
+                    attachments={attachments.filter((attachment) => !attachment.toBeDeleted)}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    deleteAttachment={removeAttachment}
+                    downloadAttachment={downloadAttachment}
+                    large={true}
+                />
+            </FormContainer>
+        </Container>
+    );
 };
 
 export default Attachments;

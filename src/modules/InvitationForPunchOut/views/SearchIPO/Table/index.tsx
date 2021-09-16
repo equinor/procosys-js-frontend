@@ -111,23 +111,31 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         );
     };
 
-    const getContractorRepColumn = (row: TableOptions<IPO>): JSX.Element => {
-        const data = (row.value as IPO).contractorRep;
+    const getContractorRepsColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const contractorRep = (row.value as IPO).contractorRep;
+        const additionalContractorReps = (row.value as IPO).additionalContractorReps;
+        const commaIfseveralContractors = additionalContractorReps.length != 0 ? ', ' : '';
+        const constractorRepsString = contractorRep + commaIfseveralContractors + additionalContractorReps?.join(', ') ;
+
         return (
             <div className='controlOverflow'>
-                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <Typography>{data}</Typography>
+                <Tooltip title={constractorRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{constractorRepsString}</Typography>
                 </Tooltip>
             </div>
         );
     };
 
-    const getConstructionRepColumn = (row: TableOptions<IPO>): JSX.Element => {
-        const data = (row.value as IPO).constructionCompanyRep;
+    const getConstructionRepsColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const constructionRep = (row.value as IPO).constructionCompanyRep;
+        const additionalConstructionCompanyReps = (row.value as IPO).additionalConstructionCompanyReps;
+        const commaIfseveralContractors = additionalConstructionCompanyReps.length != 0 ? ', ' : '';
+        const constructionCompRepsString = constructionRep + commaIfseveralContractors + additionalConstructionCompanyReps?.join(', ') ;
+
         return (
             <div className='controlOverflow'>
-                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <Typography>{data}</Typography>
+                <Tooltip title={constructionCompRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{constructionCompRepsString}</Typography>
                 </Tooltip>
             </div>
         );
@@ -266,14 +274,14 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             Header: 'Contractor rep',
             id: 'contractorRep',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
-            Cell: getContractorRepColumn,
+            Cell: getContractorRepsColumn,
             width: 220
         },
         {
-            Header: 'Construction rep',
+            Header: 'Construction Company rep',
             id: 'constructionCompanyRep',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
-            Cell: getConstructionRepColumn,
+            Cell: getConstructionRepsColumn,
             width: 220
         },
         {

@@ -14,6 +14,8 @@ export interface IPO {
     technicalIntegrityReps: string[];
     supplierReps: string[];
     externalGuests: string[];
+    additionalContractorReps: string[];
+    additionalConstructionCompanyReps: string[];
     mcPkgNos?: string[];
     commPkgNos?: string[];
 }

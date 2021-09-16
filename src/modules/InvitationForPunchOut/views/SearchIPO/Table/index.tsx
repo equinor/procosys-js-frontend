@@ -185,6 +185,19 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         );
     };
 
+    const getExternalGuestColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const externalGuests = (row.value as IPO).externalGuests;
+        const externalGuestsString = externalGuests?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={externalGuestsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{externalGuestsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
     const tableColumns = [
         {
             Header: 'ID',
@@ -289,6 +302,13 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             id: 'supplierReps',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
             Cell: getSupplierRepColumn,
+            width: 220
+        },
+        {
+            Header: 'External rep',
+            id: 'externalGuests',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getExternalGuestColumn,
             width: 220
         },
     ];

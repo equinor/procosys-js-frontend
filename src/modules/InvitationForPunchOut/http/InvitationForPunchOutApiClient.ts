@@ -176,6 +176,7 @@ interface IPO {
     operationReps: string[];
     technicalIntegrityReps: string[];
     supplierReps: string[];
+    externalGuests: string[];
     mcPkgNos?: string[];
     commPkgNos?: string[];
 }

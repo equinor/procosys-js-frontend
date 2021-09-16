@@ -278,7 +278,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             width: 220
         },
         {
-            Header: 'Construction Company rep',
+            Header: 'Construction company rep',
             id: 'constructionCompanyRep',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
             Cell: getConstructionRepsColumn,

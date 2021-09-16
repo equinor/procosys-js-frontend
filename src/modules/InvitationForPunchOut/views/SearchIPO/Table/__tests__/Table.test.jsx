@@ -43,7 +43,12 @@ describe('<InvitationsTable />', () => {
         await waitFor(() => expect(getByText('Completed')).toBeInTheDocument());
         await waitFor(() => expect(getByText('Accepted')).toBeInTheDocument());
         await waitFor(() => expect(getByText('Contractor rep')).toBeInTheDocument());
-        await waitFor(() => expect(getByText('Construction rep')).toBeInTheDocument());
+        await waitFor(() => expect(getByText('Construction company rep')).toBeInTheDocument());
+        await waitFor(() => expect(getByText('Commissioning rep')).toBeInTheDocument());
+        await waitFor(() => expect(getByText('Operation rep')).toBeInTheDocument());
+        await waitFor(() => expect(getByText('Technical integrity rep')).toBeInTheDocument());
+        await waitFor(() => expect(getByText('Supplier rep')).toBeInTheDocument());
+        await waitFor(() => expect(getByText('External rep')).toBeInTheDocument());
     });
 });
 

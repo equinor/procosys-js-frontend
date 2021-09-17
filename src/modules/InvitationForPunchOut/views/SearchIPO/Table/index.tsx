@@ -114,13 +114,12 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getContractorRepsColumn = (row: TableOptions<IPO>): JSX.Element => {
         const contractorRep = (row.value as IPO).contractorRep;
         const additionalContractorReps = (row.value as IPO).additionalContractorReps;
-        const commaIfseveralContractors = additionalContractorReps.length != 0 ? ', ' : '';
-        const constractorRepsString = contractorRep + commaIfseveralContractors + additionalContractorReps?.join(', ') ;
+        const contractorRepsString = [contractorRep, ...additionalContractorReps].join(', ');
 
         return (
             <div className='controlOverflow'>
-                <Tooltip title={constractorRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <Typography>{constractorRepsString}</Typography>
+                <Tooltip title={contractorRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{contractorRepsString}</Typography>
                 </Tooltip>
             </div>
         );
@@ -129,8 +128,7 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
     const getConstructionRepsColumn = (row: TableOptions<IPO>): JSX.Element => {
         const constructionRep = (row.value as IPO).constructionCompanyRep;
         const additionalConstructionCompanyReps = (row.value as IPO).additionalConstructionCompanyReps;
-        const commaIfseveralContractors = additionalConstructionCompanyReps.length != 0 ? ', ' : '';
-        const constructionCompRepsString = constructionRep + commaIfseveralContractors + additionalConstructionCompanyReps?.join(', ') ;
+        const constructionCompRepsString = [constructionRep, ...additionalConstructionCompanyReps].join(', ');
 
         return (
             <div className='controlOverflow'>

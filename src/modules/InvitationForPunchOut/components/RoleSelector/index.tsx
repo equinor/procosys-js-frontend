@@ -27,9 +27,6 @@ type RoleSelectorProps = {
     label?: string;
 };
 
-const KEYCODE_ENTER = 13;
-const KEYCODE_ESCAPE = 27;
-
 const RoleSelector = ({
     selectedRole,
     disabled = false,
@@ -250,7 +247,7 @@ const RoleSelector = ({
             tabIndex={0}
             data-value={parentItem.code}
             onKeyDown={(e): void => {
-                e.keyCode === KEYCODE_ENTER &&
+                e.code === 'Enter' &&
                     selectItem(parentItem, parentIndex);
             }}
             onClick={(): void => {
@@ -273,7 +270,7 @@ const RoleSelector = ({
                     role="option"
                     tabIndex={0}
                     onKeyDown={(e): void => {
-                        e.keyCode === KEYCODE_ENTER &&
+                        e.code === 'Enter' &&
                             selectItem(itm, index);
                     }}
                     onClick={(): void => {
@@ -328,7 +325,7 @@ const RoleSelector = ({
                 <ul ref={listRef}
                     className='container'
                     onKeyDown={(e): void => {
-                        e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
+                        e.code === 'Escape' && setIsOpen(false);
                     }}
                 >
                     <FilterContainer>

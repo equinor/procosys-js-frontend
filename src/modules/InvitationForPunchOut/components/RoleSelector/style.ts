@@ -60,10 +60,12 @@ export const DropdownIcon = styled.div<IconProps>`
 
 interface DropdownButtonProps {
     readonly isOpen: boolean;
+    readonly error?: boolean;
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    border: none;
+    border: ${(props): string => props.error? 'solid' : 'none'};
+    border-color: ${tokens.colors.interactive.danger__resting.rgba};
     display: flex;
     width: 100%;
     align-items: center;
@@ -221,8 +223,11 @@ export const TitleContent = styled.div<TitleContentProps>`
     }
 `;
 
-export const Label = styled.div`
+export const Label = styled.div<{ error?: boolean; }>`
     font-size: 12px;
+    ${(props): any => props.error && css`
+        color: ${tokens.colors.interactive.danger__resting.rgba};
+    `}
 `;
 
 export const FilterContainer = styled.li`

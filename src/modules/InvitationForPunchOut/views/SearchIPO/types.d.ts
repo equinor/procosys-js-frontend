@@ -9,6 +9,13 @@ export interface IPO {
     acceptedAtUtc?: Date;
     contractorRep: string;
     constructionCompanyRep: string;
+    commissioningReps: string[];
+    operationReps: string[];
+    technicalIntegrityReps: string[];
+    supplierReps: string[];
+    externalGuests: string[];
+    additionalContractorReps: string[];
+    additionalConstructionCompanyReps: string[];
     mcPkgNos?: string[];
     commPkgNos?: string[];
 }

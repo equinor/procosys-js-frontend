@@ -1424,10 +1424,15 @@
     react-fast-compare "3.2.0"
     react-popper "2.2.4"
 
-"@equinor/eds-icons@0.6.2", "@equinor/eds-icons@^0.6.0":
+"@equinor/eds-icons@0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.6.2.tgz#7eb981df5b186712e74335a45f16211368911258"
   integrity sha512-WGYErmaOLRGLbMo5ABPCjlGMFfyKk/PfWUZRhXAvAj7boc/8XVDWUf0lTATXW4wHKWnWCkmHFghN/4OQoFh/ng==
+
+"@equinor/eds-icons@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@equinor/eds-icons/-/eds-icons-0.7.0.tgz#1141eaa7c664adb0a288fc5dcb2f170353ffcb4b"
+  integrity sha512-DjbZjsKKxvsXoZV+hRO/Gg5tXH9tbq/ekrymL8YJR9tE73Wt8TbsDnjLZPWocs/Oj61xJUcY+yCoDmidSJVZ6w==
 
 "@equinor/eds-tokens@0.6.0", "@equinor/eds-tokens@^0.6.0":
   version "0.6.0"

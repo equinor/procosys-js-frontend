@@ -39,29 +39,29 @@ const McPkgTable = forwardRef(({
     const tableRef = useRef<any>();
 
     useEffect(() => {
+        let requestCanceler: Canceler;
+        (async (): Promise<void> => {
         try {
-            let requestCanceler: Canceler;
-            (async (): Promise<void> => {
-                const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkgNo)
-                    .then(mcPkgs => mcPkgs.map((mcPkg): McPkgRow => {
-                        return {
-                            mcPkgNo: mcPkg.mcPkgNo,
-                            description: mcPkg.description,
-                            discipline: mcPkg.disciplineCode,
-                            system: mcPkg.system,
-                            commPkgNo: commPkgNo,
-                            tableData: {
-                                isSelected: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
-                            }
-                        };
-                    }));
-                setAvailableMcPkgs(availableMcPkgs);
-                setIsLoading(false);
-            })();
-            return (): void => requestCanceler && requestCanceler();
+            const availableMcPkgs = await apiClient.getMcPkgsAsync(projectName, commPkgNo)
+                .then(mcPkgs => mcPkgs.map((mcPkg): McPkgRow => {
+                    return {
+                        mcPkgNo: mcPkg.mcPkgNo,
+                        description: mcPkg.description,
+                        discipline: mcPkg.disciplineCode,
+                        system: mcPkg.system,
+                        commPkgNo: commPkgNo,
+                        tableData: {
+                            isSelected: selectedMcPkgScope.selected.some(mc => mc.mcPkgNo == mcPkg.mcPkgNo)
+                        }
+                    };
+                }));
+            setAvailableMcPkgs(availableMcPkgs);
+            setIsLoading(false);
         } catch (error) {
             showSnackbarNotification(error.message);
         }
+    })();
+        return (): void => requestCanceler && requestCanceler();
     }, []);
 
     const unselectMcPkg = (mcPkgNo: string): void => {

@@ -303,7 +303,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnSignRef.current) {
             btnSignRef.current.setAttribute('disabled', 'disabled');
         }
-
+        
         await sign(participants[index]);
         if (btnSignRef.current) {
             btnSignRef.current.removeAttribute('disabled');
@@ -325,6 +325,14 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         updateData[index] = { ...updateData[index], note: event.target.value };
         setAttNoteData([...updateData]);
     };
+
+    const getOrganizationText = (organization: string, sortKey: number): string | undefined => {
+        let organizationText = OrganizationMap.get(organization as Organization);
+        if (sortKey > 1 && (organization === OrganizationsEnum.Contractor || organization === OrganizationsEnum.ConstructionCompany)) {
+            organizationText += ' additional'
+        }
+        return organizationText;
+    }
 
     return (
         <Container>
@@ -380,7 +388,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                             <Table.Row key={participant.sortKey} as="tr">
                                 <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <Typography variant="body_short">
-                                        {OrganizationMap.get(participant.organization as Organization)}
+                                        {getOrganizationText(participant.organization, participant.sortKey)}
                                     </Typography>
                                 </Table.Cell>
                                 <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>

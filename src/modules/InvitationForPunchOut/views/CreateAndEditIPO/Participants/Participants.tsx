@@ -19,8 +19,8 @@ const WAIT_INTERVAL = 300;
 
 const Organizations: SelectItem[] = [
     { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
-    { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany },
-    { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
+    { text: `${OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string} additional`, value: OrganizationsEnum.ConstructionCompany },
+    { text: `${OrganizationMap.get(OrganizationsEnum.Contractor) as string} additional`, value: OrganizationsEnum.Contractor },
     { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
     { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
     { text: OrganizationMap.get(OrganizationsEnum.Supplier) as string, value: OrganizationsEnum.Supplier },

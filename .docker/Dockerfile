@@ -1,9 +1,11 @@
 # build environment
 FROM node:14.17.0 as build
+ARG BUILD_URI=0000
+RUN echo $BUILD_URI
 WORKDIR /app
 COPY . /app
 RUN yarn install
-RUN yarn build --mode=production
+RUN yarn build --mode=production -- --env=BUILD_URI=$BUILD_URI
 
 # production environment
 FROM nginx:1.19.10-alpine

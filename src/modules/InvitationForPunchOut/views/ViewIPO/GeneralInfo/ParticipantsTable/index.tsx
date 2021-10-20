@@ -303,7 +303,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         if (btnSignRef.current) {
             btnSignRef.current.setAttribute('disabled', 'disabled');
         }
-        
+
         await sign(participants[index]);
         if (btnSignRef.current) {
             btnSignRef.current.removeAttribute('disabled');

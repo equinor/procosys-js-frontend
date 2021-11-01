@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
-    padding: calc(var(--grid-unit) * 2); 
-    height: 500px;
+    padding: calc(var(--grid-unit) * 2);
+    height: calc(100vh - 250px);
 `;
 
 export const DetailsContainer = styled.div`

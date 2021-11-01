@@ -16,15 +16,10 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
+import { MainContainer, TableContainer } from './Dialogs.style';
 
 const errorIcon = <EdsIcon name='error_filled' size={16} color={tokens.colors.interactive.danger__text.rgba} />;
 const moduleName = 'PreservationRescheduleDialog';
-
-const TableContainer = styled.div<{ restrictHeight?: boolean }>`
-        ${(props): any => `
-            height: ${props.restrictHeight ? '40%' : '100%'};
-        `}
-    `;
 
 interface RescheduleDialogProps {
     tags: PreservedTag[];
@@ -91,10 +86,10 @@ const columns = [
 
 const directionItems: SelectItem[] = [
     { text: 'Earlier', value: 'Earlier' },
-    { text: 'Later', value: 'Later' }];
+    { text: 'Later', value: 'Later' }
+];
 
 const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
-
     const [directionItem, setDirectionItem] = useState<SelectItem | null>();
     const [noOfWeeks, setNoOfWeeks] = useState<string>('');
     const [noOfWeeksIsValid, setNoOfWeeksIsValid] = useState<boolean>(false);
@@ -150,7 +145,6 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
         setNonReschedulableTags(nonReschedulableTags);
     }, [props.tags]);
 
-
     const hasUnsavedChanges = (): boolean => {
         return (noOfWeeks || (directionItem && directionItem.text) || (comment && comment.length > 0)) ? true : false;
     };
@@ -199,8 +193,6 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
             setError('Has to be a number');
         }
     };
-
-    
 
     return (
         <Scrim>
@@ -257,21 +249,22 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                             </InputContainer>
                         )
                     }
+                    <MainContainer>
                     {
                         nonReschedulableTags.length > 0 && (
-                            <TableContainer restrictHeight={reschedulableTags.length > 0}>
+                            <TableContainer isHalfSize={reschedulableTags.length > 0}>
                                 <DialogTable tags={nonReschedulableTags} columns={columns} toolbarText='tag(s) will not be rescheduled' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                             </TableContainer>
                         )
                     }
                     {
                         reschedulableTags.length > 0 && (
-                            <TableContainer restrictHeight={nonReschedulableTags.length > 0}>
+                            <TableContainer isHalfSize={nonReschedulableTags.length > 0}>
                                 <DialogTable tags={reschedulableTags} columns={columns} toolbarText='tag(s) will be rescheduled' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
                             </TableContainer>
                         )
                     }
-
+                    </MainContainer>
                 </Content >
 
                 <ButtonContainer>

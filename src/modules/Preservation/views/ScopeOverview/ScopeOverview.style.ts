@@ -23,6 +23,9 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
         }
     }};
     overflow: hidden;
+    ${Breakpoints.MOBILE} {
+        overflow-y: scroll;
+    }
     flex-direction: column;
     margin-top: var(--margin-module--top);
     min-height: 400px; /* min-height to ensure that project dropdown (max 300px) is not cut off if empty table */

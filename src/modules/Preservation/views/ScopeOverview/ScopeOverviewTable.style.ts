@@ -40,20 +40,12 @@ export const Container = styled.div`
     display: flex;
     flex-grow: 1;
     flex-direction: column;
-
-    max-height: calc(100% - 160px);
-        ${Breakpoints.TABLET} {
-            margin-bottom: 60px;
-            max-height: calc(100% - 140px);
-        }
-        ${Breakpoints.MOBILE} {
-            max-height: calc(100% - 100px);
-            margin-bottom: 60px;
-        }
+    min-height: 200px;
+    margin-bottom: 76px;
     
     input + svg {
         width: 24px;
-        height: 24px;       
+        height: 24px;
     }
     
     tbody, thead {

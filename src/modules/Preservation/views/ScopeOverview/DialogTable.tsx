@@ -35,7 +35,8 @@ const DialogTable = ({
                     toolbarColor={toolbarColor}
                 />
             </div>
-        </Container>);
+        </Container>
+    );
 };
 
 export default DialogTable;

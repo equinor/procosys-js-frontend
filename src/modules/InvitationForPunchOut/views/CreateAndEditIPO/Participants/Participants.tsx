@@ -267,6 +267,14 @@ const Participants = ({
         };
     }, [personsFilter]);
 
+    const getOrganizationText = (organization: string, sortKey: number): string | undefined => {
+        let organizationText = organization;
+        if (sortKey > 1 && (organization === OrganizationsEnum.Contractor || organization === OrganizationsEnum.ConstructionCompany)) {
+            organizationText += ' additional'
+        }
+        return organizationText;
+    }
+
     return (<Container>
         <FormContainer>
             <ParticipantRowsContainer>
@@ -280,7 +288,7 @@ const Participants = ({
                                     label={'Organization'}
                                     disabled={index < 2}
                                 >
-                                    {p.organization.text || 'Select'}
+                                    {p.organization.text? getOrganizationText(p.organization.text, index) : 'Select'}
                                 </SelectInput>
                             </div>
                             <div>

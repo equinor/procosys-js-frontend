@@ -181,27 +181,20 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 }
                 break;
             case OrganizationsEnum.ConstructionCompany:
-                if (status == IpoStatusEnum.ACCEPTED) {
-                    if (participant.sortKey == 1 && participant.canSign) {
+                if(participant.sortKey === 1) {
+                    if(participant.canSign && status === IpoStatusEnum.ACCEPTED) {
                         return getUnAcceptButton(handleUnAcceptPunchOut);
-                    }
-                    if (participant.signedBy) {
+                    } else if(participant.canSign && status === IpoStatusEnum.COMPLETED) {
+                        return getAcceptButton(handleAcceptPunchOut);
+                    } else if(participant.signedBy) {
                         return <span>{`${participant.signedBy.userName}`}</span>;
                     }
-                }
-
-                if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
-                    if (participant.sortKey === 1) {
-                        if (status === IpoStatusEnum.COMPLETED) {
-                            return getAcceptButton(handleAcceptPunchOut);
-                        }
-                    } else {
+                } else {
+                    if(participant.signedBy) {
+                        return <span>{`${participant.signedBy.userName}`}</span>;
+                    } else if(participant.canSign && status != IpoStatusEnum.CANCELED) {
                         return getSignButton(handleSignPunchOut);
                     }
-                }
-
-                if (participant.signedBy) {
-                    return <span>{`${participant.signedBy.userName}`}</span>;
                 }
                 break;
             case OrganizationsEnum.Operation:

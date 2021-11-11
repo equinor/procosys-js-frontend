@@ -112,7 +112,7 @@ const RoleSelector = ({
     const filterRoles = (input: string): void => {
         setFilter(input);
         if (input.length > 0) {
-            setFilteredRoles(allRoles.filter(role => role.code.toLocaleLowerCase().startsWith(input.toLocaleLowerCase())));
+            setFilteredRoles(allRoles.filter(role => role.code.toLocaleLowerCase().includes(input.toLocaleLowerCase())));
         } else {
             setFilteredRoles(allRoles);
         }

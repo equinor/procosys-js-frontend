@@ -321,7 +321,9 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
 
     const getOrganizationText = (organization: string, sortKey: number): string | undefined => {
         let organizationText = OrganizationMap.get(organization as Organization);
-        if (sortKey > 1 && (organization === OrganizationsEnum.Contractor || organization === OrganizationsEnum.ConstructionCompany)) {
+        const organizationIsContractorOrConstructionCompany = organization === OrganizationsEnum.Contractor 
+            || organization === OrganizationsEnum.ConstructionCompany
+        if (sortKey > 1 && organizationIsContractorOrConstructionCompany) {
             organizationText += ' additional'
         }
         return organizationText;

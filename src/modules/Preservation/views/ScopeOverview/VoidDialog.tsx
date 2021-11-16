@@ -9,6 +9,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tooltip } from '@material-ui/core';
 import { OverflowColumn } from './RescheduleDialog.style';
+import { MainContainer, TableContainer } from './Dialogs.style';
 
 interface VoidDialogProps {
     voidableTags: PreservedTag[];
@@ -117,16 +118,6 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 
-const MainContainer = styled.div`
-    height: 70vh;
-`;
-
-const TableContainer = styled.div<{ restrictHeight?: boolean }>`
-${(props): any => `
-    height: ${props.restrictHeight ? '50%' : '100%'};
-`}
-`;
-
 const VoidDialog = ({
     voidableTags,
     unvoidableTags,
@@ -141,12 +132,12 @@ const VoidDialog = ({
     return (
         <MainContainer>
             {topTable.length > 0 && (
-                <TableContainer restrictHeight={bottomTable.length > 0}>
+                <TableContainer isHalfSize={bottomTable.length > 0}>
                     <Typography variant="meta">{`${topTable.length} tag(s) cannot be ${voiding ? 'voided' : 'unvoided'}.`}</Typography>
                     <DialogTable tags={topTable} columns={columns} toolbarText={`tag(s) are already ${voiding ? 'voided' : 'unvoided'}`} toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                 </TableContainer>)}
             {bottomTable.length > 0 && (
-                <TableContainer restrictHeight={topTable.length > 0}>
+                <TableContainer isHalfSize={topTable.length > 0}>
                     <TopText>
                         <EdsIcon name='warning_filled' color={tokens.colors.interactive.danger__text.rgba} />
                         <Typography variant='h6' style={{ color: tokens.colors.interactive.danger__text.rgba }}>{voiding ? voidingText : unvoidingText}</Typography>

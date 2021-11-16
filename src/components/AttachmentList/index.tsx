@@ -238,6 +238,8 @@ const AttachmentList = ({
                     clientPagination={true}
                     clientSorting={true}
                     rowSelect={false}
+                    maxRowCount={large ? attachments.length : undefined}
+                    pageCount={large ? Math.ceil(attachments.length / 25) : undefined}
                     toolbar={determineToolbarButtonRender()}
                 />
             </TableContainer>

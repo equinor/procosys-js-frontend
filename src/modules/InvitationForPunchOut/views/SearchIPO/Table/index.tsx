@@ -111,23 +111,94 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
         );
     };
 
-    const getContractorRepColumn = (row: TableOptions<IPO>): JSX.Element => {
-        const data = (row.value as IPO).contractorRep;
+    const getContractorRepsColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const contractorRep = (row.value as IPO).contractorRep;
+        const additionalContractorReps = (row.value as IPO).additionalContractorReps;
+        const contractorRepsString = [contractorRep, ...additionalContractorReps].join(', ');
+
         return (
             <div className='controlOverflow'>
-                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <Typography>{data}</Typography>
+                <Tooltip title={contractorRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{contractorRepsString}</Typography>
                 </Tooltip>
             </div>
         );
     };
 
-    const getConstructionRepColumn = (row: TableOptions<IPO>): JSX.Element => {
-        const data = (row.value as IPO).constructionCompanyRep;
+    const getConstructionRepsColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const constructionRep = (row.value as IPO).constructionCompanyRep;
+        const additionalConstructionCompanyReps = (row.value as IPO).additionalConstructionCompanyReps;
+        const constructionCompRepsString = [constructionRep, ...additionalConstructionCompanyReps].join(', ');
+
         return (
             <div className='controlOverflow'>
-                <Tooltip title={data || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <Typography>{data}</Typography>
+                <Tooltip title={constructionCompRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{constructionCompRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
+    const getCommissioningRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const commReps = (row.value as IPO).commissioningReps;
+        const commRepsString = commReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={commRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{commRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
+    const getOperationRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const opReps = (row.value as IPO).operationReps;
+        const opRepsString = opReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={opRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{opRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
+    const getTechnicalIntegrityRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const techintReps = (row.value as IPO).technicalIntegrityReps;
+        const techintRepsString = techintReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={techintRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{techintRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
+    const getSupplierRepColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const supplierReps = (row.value as IPO).supplierReps;
+        const supplierRepsString = supplierReps?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={supplierRepsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{supplierRepsString}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
+    const getExternalGuestColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const externalGuests = (row.value as IPO).externalGuests;
+        const externalGuestsString = externalGuests?.join(', ');
+
+        return (
+            <div className='controlOverflow'>
+                <Tooltip title={externalGuestsString || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+                    <Typography>{externalGuestsString}</Typography>
                 </Tooltip>
             </div>
         );
@@ -201,14 +272,49 @@ const InvitationsTable = ({ getIPOs, pageSize, setPageSize, shouldSelectFirstPag
             Header: 'Contractor rep',
             id: 'contractorRep',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
-            Cell: getContractorRepColumn,
+            Cell: getContractorRepsColumn,
             width: 220
         },
         {
-            Header: 'Construction rep',
+            Header: 'Construction company rep',
             id: 'constructionCompanyRep',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
-            Cell: getConstructionRepColumn,
+            Cell: getConstructionRepsColumn,
+            width: 220
+        },
+        {
+            Header: 'Commissioning rep',
+            id: 'commissioningReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getCommissioningRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Operation rep',
+            id: 'operationReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getOperationRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Technical integrity rep',
+            id: 'technicalIntegrityReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getTechnicalIntegrityRepColumn,
+            width: 220
+        },
+        {
+            Header: 'Supplier rep',
+            id: 'supplierReps',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getSupplierRepColumn,
+            width: 220
+        },
+        {
+            Header: 'External rep',
+            id: 'externalGuests',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getExternalGuestColumn,
             width: 220
         },
     ];

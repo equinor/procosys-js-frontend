@@ -1,4 +1,3 @@
-import { Breakpoints } from '@procosys/core/styling';
 import styled from 'styled-components';
 
 export const ProCoSysRootLayout = styled.div`
@@ -23,11 +22,5 @@ input::-webkit-datetime-edit-year-field:focus {
     #root-content {
         overflow: auto;
         height: 100%;
-        ${Breakpoints.TABLET} {
-            margin-bottom: 50px;
-        }
-        ${Breakpoints.MOBILE} {
-            margin-bottom: 100px;
-        }
     }   
 `;

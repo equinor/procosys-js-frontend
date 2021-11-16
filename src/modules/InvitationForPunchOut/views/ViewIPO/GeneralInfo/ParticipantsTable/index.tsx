@@ -181,27 +181,20 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                 }
                 break;
             case OrganizationsEnum.ConstructionCompany:
-                if (status == IpoStatusEnum.ACCEPTED) {
-                    if (participant.sortKey == 1 && participant.canSign) {
+                if(participant.sortKey === 1) {
+                    if(participant.canSign && status === IpoStatusEnum.ACCEPTED) {
                         return getUnAcceptButton(handleUnAcceptPunchOut);
-                    }
-                    if (participant.signedBy) {
+                    } else if(participant.canSign && status === IpoStatusEnum.COMPLETED) {
+                        return getAcceptButton(handleAcceptPunchOut);
+                    } else if(participant.signedBy) {
                         return <span>{`${participant.signedBy.userName}`}</span>;
                     }
-                }
-
-                if (participant.canSign && status !== IpoStatusEnum.CANCELED) {
-                    if (participant.sortKey === 1) {
-                        if (status === IpoStatusEnum.COMPLETED) {
-                            return getAcceptButton(handleAcceptPunchOut);
-                        }
-                    } else {
+                } else {
+                    if(participant.signedBy) {
+                        return <span>{`${participant.signedBy.userName}`}</span>;
+                    } else if(participant.canSign && status != IpoStatusEnum.CANCELED) {
                         return getSignButton(handleSignPunchOut);
                     }
-                }
-
-                if (participant.signedBy) {
-                    return <span>{`${participant.signedBy.userName}`}</span>;
                 }
                 break;
             case OrganizationsEnum.Operation:
@@ -326,6 +319,16 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
         setAttNoteData([...updateData]);
     };
 
+    const getOrganizationText = (organization: string, sortKey: number): string | undefined => {
+        let organizationText = OrganizationMap.get(organization as Organization);
+        const organizationIsContractorOrConstructionCompany = organization === OrganizationsEnum.Contractor 
+            || organization === OrganizationsEnum.ConstructionCompany
+        if (sortKey > 1 && organizationIsContractorOrConstructionCompany) {
+            organizationText += ' additional'
+        }
+        return organizationText;
+    }
+
     return (
         <Container>
             {loading && (
@@ -380,7 +383,7 @@ const ParticipantsTable = ({ participants, status, complete, accept, update, sig
                             <Table.Row key={participant.sortKey} as="tr">
                                 <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>
                                     <Typography variant="body_short">
-                                        {OrganizationMap.get(participant.organization as Organization)}
+                                        {getOrganizationText(participant.organization, participant.sortKey)}
                                     </Typography>
                                 </Table.Cell>
                                 <Table.Cell as="td" style={{ verticalAlign: 'middle' }}>

@@ -24,7 +24,7 @@ export const Header = styled.header`
 
 export const Divider = styled.div`
     margin-top: calc(var(--grid-unit) * -3);
-    margin-bottom: -1000px;
+    margin-bottom: calc((var(--grid-unit) * -2) - 20px);
     margin-right: calc(var(--grid-unit) * 2);
     margin-left: calc(var(--grid-unit) * 5);
     border-left: solid 1px ${tokens.colors.ui.background__medium.rgba};

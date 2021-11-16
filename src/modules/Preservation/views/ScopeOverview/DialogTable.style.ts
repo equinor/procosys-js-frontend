@@ -8,9 +8,12 @@ export const Toolbar = styled.div`
 
 export const Container = styled.div`
     height: 100%;
+    display: flex;
 
     > div {
-        height: 65%;
+        max-height: 464px;
+        flex-grow: 1;
+        margin-bottom: 52px;
     }
     
     ${Breakpoints.TABLET} {

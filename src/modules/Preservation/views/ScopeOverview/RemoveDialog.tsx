@@ -6,6 +6,7 @@ import RequirementIcons from './RequirementIcons';
 import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
+import { MainContainer, TableContainer } from './Dialogs.style';
 
 interface RemoveDialogProps {
     removableTags: PreservedTag[];
@@ -35,18 +36,19 @@ const RemoveDialog = ({
     nonRemovableTags: nonRemovableTags
 }: RemoveDialogProps): JSX.Element => {
     return (
-
-        <Container>
+        <MainContainer>
             {nonRemovableTags.length > 0 && (
-                <div>
+                <TableContainer isHalfSize={removableTags.length > 0}>
                     <Typography variant="meta">{nonRemovableTags.length} tag(s)  cannot be removed. Tags are not voided, or are in use.</Typography>
                     <DialogTable tags={nonRemovableTags} columns={columns} toolbarText='tag(s) will not be removed' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
-                </div>
+                </TableContainer>
             )}
             {removableTags.length > 0 && (
-                <DialogTable tags={removableTags} columns={columns} toolbarText='tag(s) will be removed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                <TableContainer isHalfSize={nonRemovableTags.length > 0}>
+                    <DialogTable tags={removableTags} columns={columns} toolbarText='tag(s) will be removed' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
+                </TableContainer>
             )}
-        </Container>
+        </MainContainer>
     );
 };
 

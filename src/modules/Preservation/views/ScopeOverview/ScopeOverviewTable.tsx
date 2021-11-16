@@ -297,9 +297,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 orderBy={sortBy}
                 pageCount={0} />
         </Container>
-
     );
-
 };
 
 export default ScopeOverviewTable;

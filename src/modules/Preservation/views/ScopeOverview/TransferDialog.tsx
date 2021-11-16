@@ -7,6 +7,7 @@ import DialogTable from './DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
+import { MainContainer, TableContainer } from './Dialogs.style';
 
 interface TransferDialogProps {
     transferableTags: PreservedTag[];
@@ -99,14 +100,6 @@ const columns = [
     { Header: 'Req type', accessor: (d: UseTableRowProps<PreservedTag>): UseTableRowProps<PreservedTag> => d, Cell: getRequirementIcons }
 ];
 
-const MainContainer = styled.div`
-    height: 70vh;
-`;
-
-const TableContainer = styled.div`
-    height: 50%;
-`;
-
 const TransferDialog = ({
     transferableTags,
     nonTransferableTags
@@ -115,13 +108,13 @@ const TransferDialog = ({
     return (
         <MainContainer>
             {nonTransferableTags.length > 0 && (
-                <TableContainer>
+                <TableContainer isHalfSize={transferableTags.length > 0}>
                     <Typography variant="meta">{nonTransferableTags.length} tag(s) cannot be transferred. Tags are not started, already completed or voided.</Typography>
                     <DialogTable tags={nonTransferableTags} columns={columns} toolbarText='tag(s) cannot be transferred' toolbarColor={tokens.colors.interactive.danger__text.rgba} />
                 </TableContainer>
             )}
             {transferableTags.length > 0 && (
-                <TableContainer>
+                <TableContainer isHalfSize={nonTransferableTags.length > 0} >
                     <DialogTable tags={transferableTags} columns={columns} toolbarText='tag(s) will be transferred' toolbarColor={tokens.colors.interactive.primary__resting.rgba} />
                 </TableContainer>
             )}

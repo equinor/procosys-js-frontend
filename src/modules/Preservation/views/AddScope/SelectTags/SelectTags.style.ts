@@ -5,8 +5,6 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     width:100%;
-    flex-grow: 1;
-    max-height: calc(100% - 200px);
 
     input + svg {
         width: 24px;
@@ -94,7 +92,9 @@ export const LoadingContainer = styled.div`
 `;
 
 export const TableContainer = styled.div`
-    height: calc(100% - 90px);
+    min-height: 200px;
+    flex-grow: 1;
+    margin-bottom: 100px;
 `;
 
 export const OverflowColumn = styled.div`

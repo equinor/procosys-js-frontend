@@ -19,8 +19,8 @@ const WAIT_INTERVAL = 300;
 
 const Organizations: SelectItem[] = [
     { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
-    { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany },
-    { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
+    { text: `${OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string} additional`, value: OrganizationsEnum.ConstructionCompany },
+    { text: `${OrganizationMap.get(OrganizationsEnum.Contractor) as string} additional`, value: OrganizationsEnum.Contractor },
     { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
     { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
     { text: OrganizationMap.get(OrganizationsEnum.Supplier) as string, value: OrganizationsEnum.Supplier },
@@ -267,6 +267,17 @@ const Participants = ({
         };
     }, [personsFilter]);
 
+    const getOrganizationText = (organization: string, sortKey: number): string | undefined => {
+        let organizationText = organization;
+        const organizationIsContractorOrContructionCompany = 
+            organization === OrganizationMap.get(OrganizationsEnum.Contractor) 
+            || organization === OrganizationMap.get(OrganizationsEnum.ConstructionCompany);
+        if (sortKey > 1 && organizationIsContractorOrContructionCompany) {
+            organizationText += ' additional'
+        }
+        return organizationText;
+    }
+
     return (<Container>
         <FormContainer>
             <ParticipantRowsContainer>
@@ -280,7 +291,7 @@ const Participants = ({
                                     label={'Organization'}
                                     disabled={index < 2}
                                 >
-                                    {p.organization.text || 'Select'}
+                                    {p.organization.text? getOrganizationText(p.organization.text, index) : 'Select'}
                                 </SelectInput>
                             </div>
                             <div>

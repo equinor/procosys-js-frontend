@@ -53,14 +53,14 @@ const RoleSelector = ({
     }, [roles]);
 
     useEffect(() => {
-        if (selectedRole && selectedRole.notify) {
-            const index = roles.findIndex(r => r.code == selectedRole.code);
-            if (index === -1) {
-                console.log('exists is false')
-                setFunctionalRoleExists(false);
-                setFilteredRoles(roles);
-                return;
-            }
+        setFilteredRoles(roles);
+        if (!selectedRole) return;
+        const index = roles.findIndex(r => r.code == selectedRole.code);
+        if (index === -1) {
+            setFunctionalRoleExists(false);
+            return;
+        }
+        if (selectedRole.notify) {
             setFilteredRoles(() => {
                 const rolesCopy = [...roles];
                 rolesCopy[index].notify = true;
@@ -79,9 +79,10 @@ const RoleSelector = ({
 
     useEffect(() => {
         if (pickedRoleValue) {
-            setFunctionalRoleExists(true);
-        };
-    }, [pickedRoleValue]);
+            const pickedRoleExists = allRoles.some(r => r.code == pickedRoleValue);
+            setFunctionalRoleExists(pickedRoleExists);
+        }
+    }, [pickedRoleValue, selectedRole]);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);

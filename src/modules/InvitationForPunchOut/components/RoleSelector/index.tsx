@@ -56,6 +56,7 @@ const RoleSelector = ({
         if (selectedRole && selectedRole.notify) {
             const index = roles.findIndex(r => r.code == selectedRole.code);
             if (index === -1) {
+                console.log('exists is false')
                 setFunctionalRoleExists(false);
                 setFilteredRoles(roles);
                 return;
@@ -77,13 +78,8 @@ const RoleSelector = ({
     }, [selectedRole]);
 
     useEffect(() => {
-        if (selectedRole) {
-            const pickedRoleExists = allRoles.find(r => r.code == pickedRoleValue);
-            if(pickedRoleExists){
-                setFunctionalRoleExists(true);
-            } else {
-                setFunctionalRoleExists(false);
-            }
+        if (pickedRoleValue) {
+            setFunctionalRoleExists(true);
         };
     }, [pickedRoleValue]);
 

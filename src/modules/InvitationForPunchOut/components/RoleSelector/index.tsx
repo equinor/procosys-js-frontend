@@ -27,9 +27,6 @@ type RoleSelectorProps = {
     label?: string;
 };
 
-const KEYCODE_ENTER = 13;
-const KEYCODE_ESCAPE = 27;
-
 const RoleSelector = ({
     selectedRole,
     disabled = false,
@@ -47,6 +44,7 @@ const RoleSelector = ({
     const [allRoles, setAllRoles] = useState<RoleParticipant[]>(roles);
     const [filteredRoles, setFilteredRoles] = useState<RoleParticipant[]>(roles);
     const [pickedRoleValue, setPickedRoleValue] = useState<string | null>(null);
+    const [functionalRoleExists, setFunctionalRoleExists] = useState<boolean>(true);
 
     useEffect(() => {
         if (roles.length != allRoles.length) {
@@ -55,8 +53,14 @@ const RoleSelector = ({
     }, [roles]);
 
     useEffect(() => {
-        if (selectedRole && selectedRole.notify) {
-            const index = roles.findIndex(r => r.code == selectedRole.code);
+        setFilteredRoles(roles);
+        if (!selectedRole) return;
+        const index = roles.findIndex(r => r.code == selectedRole.code);
+        if (index === -1) {
+            setFunctionalRoleExists(false);
+            return;
+        }
+        if (selectedRole.notify) {
             setFilteredRoles(() => {
                 const rolesCopy = [...roles];
                 rolesCopy[index].notify = true;
@@ -72,6 +76,13 @@ const RoleSelector = ({
             setFilteredRoles(roles);
         }
     }, [selectedRole]);
+
+    useEffect(() => {
+        if (pickedRoleValue) {
+            const pickedRoleExists = allRoles.some(r => r.code == pickedRoleValue);
+            setFunctionalRoleExists(pickedRoleExists);
+        }
+    }, [pickedRoleValue, selectedRole]);
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -250,7 +261,7 @@ const RoleSelector = ({
             tabIndex={0}
             data-value={parentItem.code}
             onKeyDown={(e): void => {
-                e.keyCode === KEYCODE_ENTER &&
+                e.code === 'Enter' &&
                     selectItem(parentItem, parentIndex);
             }}
             onClick={(): void => {
@@ -273,7 +284,7 @@ const RoleSelector = ({
                     role="option"
                     tabIndex={0}
                     onKeyDown={(e): void => {
-                        e.keyCode === KEYCODE_ENTER &&
+                        e.code === 'Enter' &&
                             selectItem(itm, index);
                     }}
                     onClick={(): void => {
@@ -315,6 +326,7 @@ const RoleSelector = ({
                 disabled={disabled}
                 role="listbox"
                 isOpen={isOpen}
+                error={!functionalRoleExists}
                 aria-expanded={isOpen}
                 aria-haspopup={true}
             >
@@ -324,11 +336,14 @@ const RoleSelector = ({
                     <EdsIcon name='chevron_down' />
                 </DropdownIcon>
             </DropdownButton>
+            {
+                functionalRoleExists? null : <Label error>This functional role has been deleted or renamed. Please choose another one.</Label>
+            }
             {isOpen && !disabled && (
                 <ul ref={listRef}
                     className='container'
                     onKeyDown={(e): void => {
-                        e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
+                        e.code === 'Escape' && setIsOpen(false);
                     }}
                 >
                     <FilterContainer>

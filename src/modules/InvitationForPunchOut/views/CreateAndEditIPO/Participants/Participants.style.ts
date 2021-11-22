@@ -35,7 +35,6 @@ export const ParticipantRowsContainer = styled.div`
     grid-template-columns: 250px 180px 300px auto; 
     width: fit-content;
     padding: var(--grid-unit);
-    align-items: flex-end;
     > div {
         display: flex;
         margin-right: calc(var(--grid-unit) * 2);

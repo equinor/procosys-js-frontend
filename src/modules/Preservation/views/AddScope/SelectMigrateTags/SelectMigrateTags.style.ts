@@ -3,17 +3,19 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
-    width:70%;
+    width: 70%;
     flex-direction: column;
     input + svg {
         width: 24px;
         height: 24px;
     }
 
-    tbody, thead {
+    tbody,
+    thead {
         .MuiButtonBase-root {
             :hover {
-                background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+                background-color: ${tokens.colors.interactive.primary__hover_alt
+                    .rgba};
             }
             > .MuiIconButton-label > svg {
                 fill: ${tokens.colors.interactive.primary__resting.rgba};
@@ -21,7 +23,8 @@ export const Container = styled.div`
         }
 
         .MuiCheckbox-colorSecondary.Mui-checked:hover {
-            background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+            background-color: ${tokens.colors.interactive.primary__hover_alt
+                .rgba};
         }
 
         .MuiTouchRipple-root {
@@ -36,7 +39,7 @@ export const Container = styled.div`
 
 export const TableContainer = styled.div`
     min-height: 200px;
-    flex-grow:1;
+    flex-grow: 1;
     margin-bottom: 100px;
 `;
 
@@ -46,7 +49,7 @@ export const Header = styled.header`
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 `;
 
 export const InnerContainer = styled.div`
@@ -64,7 +67,7 @@ export const Search = styled.div`
 `;
 
 export const ButtonSeparator = styled.div`
-     margin-right: calc(var(--grid-unit) * 2);
+    margin-right: calc(var(--grid-unit) * 2);
 `;
 
 export const ButtonsContainer = styled.div`

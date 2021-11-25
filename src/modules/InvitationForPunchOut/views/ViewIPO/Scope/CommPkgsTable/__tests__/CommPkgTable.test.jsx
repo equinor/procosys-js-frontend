@@ -8,39 +8,39 @@ const commPkgScope = [
     {
         commPkgNo: '7101-C01',
         description: 'M30 LIFEBOAT',
-        status: 'OS'
+        status: 'OS',
     },
     {
         commPkgNo: '7101-C02',
         description: 'M30 LIFERAFT & DAVIT',
-        status: 'OS'
+        status: 'OS',
     },
     {
         commPkgNo: '7101-C08',
         description: 'M50 MISC LIFESAVING EQUIPMENT',
-        status: 'OS'
-    }
+        status: 'OS',
+    },
 ];
 
-
-jest.mock('@procosys/core/PlantContext',() => ({
+jest.mock('@procosys/core/PlantContext', () => ({
     useCurrentPlant: () => {
         return {
             plant: {
-                pathId: 'HEIMDAL'
-            }
+                pathId: 'HEIMDAL',
+            },
         };
-    }
+    },
 }));
 
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-
 describe('<CommPkgsTable />', () => {
     it('Renders Comm pkgs to table', async () => {
-        const { queryByText, queryAllByText } = renderWithTheme(<CommPkgsTable commPkgScope={commPkgScope} />);
+        const { queryByText, queryAllByText } = renderWithTheme(
+            <CommPkgsTable commPkgScope={commPkgScope} />
+        );
 
         expect(queryByText(commPkgScope[0].commPkgNo)).toBeInTheDocument();
         expect(queryByText(commPkgScope[1].commPkgNo)).toBeInTheDocument();
@@ -51,5 +51,3 @@ describe('<CommPkgsTable />', () => {
         expect(queryAllByText(commPkgScope[0].status).length).toBe(3);
     });
 });
-
-

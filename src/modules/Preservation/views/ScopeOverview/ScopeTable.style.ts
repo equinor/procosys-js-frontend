@@ -21,16 +21,19 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    color: ${(props): string => props.isVoided ?
-        '' :
-        props.isOverdue
+    color: ${(props): string =>
+        props.isVoided
+            ? ''
+            : props.isOverdue
             ? tokens.colors.interactive.danger__text.rgba
             : tokens.colors.interactive.primary__resting.rgba};
-    span { color: ${(props): string => props.isVoided ?
-        '' :
-        props.isOverdue
-            ? tokens.colors.interactive.danger__text.rgba
-            : tokens.colors.interactive.primary__resting.rgba};
+    span {
+        color: ${(props): string =>
+            props.isVoided
+                ? ''
+                : props.isOverdue
+                ? tokens.colors.interactive.danger__text.rgba
+                : tokens.colors.interactive.primary__resting.rgba};
     }
     text-decoration: underline;
     cursor: pointer;
@@ -39,13 +42,15 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
 export const Container = styled.div`
     input + svg {
         width: 24px;
-        height: 24px;       
+        height: 24px;
     }
-    
-    tbody, thead {
+
+    tbody,
+    thead {
         .MuiButtonBase-root {
             :hover {
-                background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+                background-color: ${tokens.colors.interactive.primary__hover_alt
+                    .rgba};
             }
             > .MuiIconButton-label > svg {
                 fill: ${tokens.colors.interactive.primary__resting.rgba};
@@ -53,7 +58,8 @@ export const Container = styled.div`
         }
 
         .MuiCheckbox-colorSecondary.Mui-checked:hover {
-            background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+            background-color: ${tokens.colors.interactive.primary__hover_alt
+                .rgba};
         }
 
         .MuiTouchRipple-root {
@@ -67,33 +73,34 @@ export const Container = styled.div`
         text-overflow: ellipsis;
         color: inherit;
     }
-    
+
     //Hide requirement column in the middle
-    thead tr th:nth-child(4), table tr td:nth-child(4)
-    { 
-        display:none;
-    }   
-    
+    thead tr th:nth-child(4),
+    table tr td:nth-child(4) {
+        display: none;
+    }
+
     ${Breakpoints.TABLET} {
         //hide columns
         thead tr th:nth-child(3), table tr td:nth-child(3) //description
         {
-            display: none;            
-        } 
+            display: none;
+        }
         //Show requirement column in the middle
-        thead tr th:nth-child(4), table tr td:nth-child(4)
-        {   
-            display:table-cell;
-        }        
+        thead tr th:nth-child(4),
+        table tr td:nth-child(4) {
+            display: table-cell;
+        }
         //Hide requirement column at the end
-        thead tr th:nth-child(13), table tr td:nth-child(13)
-        {   
-            display:none;
-        }               
+        thead tr th:nth-child(13),
+        table tr td:nth-child(13) {
+            display: none;
+        }
     }
-
 `;
 
 export const SingleIconContainer = styled.div`
-    margin-bottom: calc(var(--grid-unit) * -1); /* centers the icon vertically and prevents the row height from expanding */
+    margin-bottom: calc(
+        var(--grid-unit) * -1
+    ); /* centers the icon vertically and prevents the row height from expanding */
 `;

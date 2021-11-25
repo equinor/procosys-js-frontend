@@ -1,5 +1,11 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { Container, GridRow, IconContainer, Section, StyledButton } from './ActionExpanded.style';
+import {
+    Container,
+    GridRow,
+    IconContainer,
+    Section,
+    StyledButton,
+} from './ActionExpanded.style';
 import React, { useEffect, useState } from 'react';
 
 import ActionAttachments from './ActionAttachments';
@@ -11,7 +17,7 @@ import { getFormattedDate } from '../../../../../../core/services/DateService';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 
-const editIcon = <EdsIcon name='edit' size={16} />;
+const editIcon = <EdsIcon name="edit" size={16} />;
 
 interface ActionDetails {
     id: number;
@@ -55,7 +61,7 @@ const ActionExpanded = ({
     actionId,
     toggleDetails,
     getActionList,
-    setDirty
+    setDirty,
 }: ActionDetailsProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [actionDetails, setActionDetails] = useState<ActionDetails>();
@@ -67,11 +73,19 @@ const ActionExpanded = ({
         (async (): Promise<void> => {
             try {
                 if (tagId != null) {
-                    const actionDetails = await apiClient.getActionDetails(tagId, actionId, (cancel: Canceler) => requestCancellor = cancel);
+                    const actionDetails = await apiClient.getActionDetails(
+                        tagId,
+                        actionId,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
                     setActionDetails(actionDetails);
                 }
             } catch (error) {
-                console.error('Get action details failed: ', error.message, error.data);
+                console.error(
+                    'Get action details failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();
@@ -85,7 +99,11 @@ const ActionExpanded = ({
         setIsLoading(true);
         try {
             if (actionDetails) {
-                await apiClient.closeAction(tagId, actionId, actionDetails.rowVersion);
+                await apiClient.closeAction(
+                    tagId,
+                    actionId,
+                    actionDetails.rowVersion
+                );
                 setDirty();
                 getActionList();
                 toggleDetails();
@@ -106,7 +124,7 @@ const ActionExpanded = ({
     };
 
     if (!actionDetails || isLoading) {
-        return (<Spinner />);
+        return <Spinner />;
     }
 
     if (showEditMode) {
@@ -119,7 +137,10 @@ const ActionExpanded = ({
                 description={actionDetails.description}
                 dueTimeUtc={actionDetails.dueTimeUtc}
                 rowVersion={actionDetails.rowVersion}
-                backToParentView={(): void => { getActionList(); setShowEditMode(false); }}
+                backToParentView={(): void => {
+                    getActionList();
+                    setShowEditMode(false);
+                }}
                 setDirty={setDirty}
             />
         );
@@ -129,83 +150,131 @@ const ActionExpanded = ({
         <Container isClosed={actionDetails.isClosed}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Section>
-                    <Typography variant='caption'>Due date</Typography>
+                    <Typography variant="caption">Due date</Typography>
                     <Typography variant="body_short">
                         {getDateField(actionDetails.dueTimeUtc)}
                     </Typography>
                 </Section>
-                {
-                    (!isVoided && !actionDetails.isClosed) && (
-                        <IconContainer>
-                            <StyledButton
-                                data-testid="editIcon"
-                                variant='ghost'
-                                onClick={(): void => setShowEditMode(true)}>
-                                {editIcon}
-                            </StyledButton>
-                        </IconContainer>
-                    )
-                }
+                {!isVoided && !actionDetails.isClosed && (
+                    <IconContainer>
+                        <StyledButton
+                            data-testid="editIcon"
+                            variant="ghost"
+                            onClick={(): void => setShowEditMode(true)}
+                        >
+                            {editIcon}
+                        </StyledButton>
+                    </IconContainer>
+                )}
             </div>
-            {
-                actionDetails.isClosed && (
-                    <Section>
-                        <div>
-                            <GridRow>
-                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Closed at</Typography>
-                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Closed by</Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                    {getDateField(actionDetails.closedAtUtc)}
-                                </Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                    {actionDetails.closedBy.firstName} {actionDetails.closedBy.lastName}
-                                </Typography>
-                            </GridRow>
-                        </div>
-                    </Section>
-                )
-            }
-            {
-                !actionDetails.modifiedAtUtc && (
-                    <Section>
-                        <div>
-                            <GridRow>
-                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Added at</Typography>
-                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Added by</Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                    {getDateField(actionDetails.createdAtUtc)}
-                                </Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                    {actionDetails.createdBy.firstName} {actionDetails.createdBy.lastName}
-                                </Typography>
-                            </GridRow>
-                        </div>
-                    </Section>
-                )}
-            {
-                actionDetails.modifiedAtUtc && (
-                    <Section>
-                        <div>
-                            <GridRow>
-                                <Typography variant='caption' style={{ gridColumn: '1', gridRow: '1' }}>Modified at</Typography>
-                                <Typography variant='caption' style={{ gridColumn: '2', gridRow: '1' }}>Modified by</Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '1', gridRow: '2' }}>
-                                    {getDateField(actionDetails.modifiedAtUtc)}
-                                </Typography>
-                                <Typography variant='body_short' style={{ gridColumn: '2', gridRow: '2' }}>
-                                    {actionDetails.modifiedBy.firstName} {actionDetails.modifiedBy.lastName}
-                                </Typography>
-                            </GridRow>
-                        </div>
-                    </Section>
-                )}
+            {actionDetails.isClosed && (
+                <Section>
+                    <div>
+                        <GridRow>
+                            <Typography
+                                variant="caption"
+                                style={{ gridColumn: '1', gridRow: '1' }}
+                            >
+                                Closed at
+                            </Typography>
+                            <Typography
+                                variant="caption"
+                                style={{ gridColumn: '2', gridRow: '1' }}
+                            >
+                                Closed by
+                            </Typography>
+                            <Typography
+                                variant="body_short"
+                                style={{ gridColumn: '1', gridRow: '2' }}
+                            >
+                                {getDateField(actionDetails.closedAtUtc)}
+                            </Typography>
+                            <Typography
+                                variant="body_short"
+                                style={{ gridColumn: '2', gridRow: '2' }}
+                            >
+                                {actionDetails.closedBy.firstName}{' '}
+                                {actionDetails.closedBy.lastName}
+                            </Typography>
+                        </GridRow>
+                    </div>
+                </Section>
+            )}
+            {!actionDetails.modifiedAtUtc && (
+                <Section>
+                    <div>
+                        <GridRow>
+                            <Typography
+                                variant="caption"
+                                style={{ gridColumn: '1', gridRow: '1' }}
+                            >
+                                Added at
+                            </Typography>
+                            <Typography
+                                variant="caption"
+                                style={{ gridColumn: '2', gridRow: '1' }}
+                            >
+                                Added by
+                            </Typography>
+                            <Typography
+                                variant="body_short"
+                                style={{ gridColumn: '1', gridRow: '2' }}
+                            >
+                                {getDateField(actionDetails.createdAtUtc)}
+                            </Typography>
+                            <Typography
+                                variant="body_short"
+                                style={{ gridColumn: '2', gridRow: '2' }}
+                            >
+                                {actionDetails.createdBy.firstName}{' '}
+                                {actionDetails.createdBy.lastName}
+                            </Typography>
+                        </GridRow>
+                    </div>
+                </Section>
+            )}
+            {actionDetails.modifiedAtUtc && (
+                <Section>
+                    <div>
+                        <GridRow>
+                            <Typography
+                                variant="caption"
+                                style={{ gridColumn: '1', gridRow: '1' }}
+                            >
+                                Modified at
+                            </Typography>
+                            <Typography
+                                variant="caption"
+                                style={{ gridColumn: '2', gridRow: '1' }}
+                            >
+                                Modified by
+                            </Typography>
+                            <Typography
+                                variant="body_short"
+                                style={{ gridColumn: '1', gridRow: '2' }}
+                            >
+                                {getDateField(actionDetails.modifiedAtUtc)}
+                            </Typography>
+                            <Typography
+                                variant="body_short"
+                                style={{ gridColumn: '2', gridRow: '2' }}
+                            >
+                                {actionDetails.modifiedBy.firstName}{' '}
+                                {actionDetails.modifiedBy.lastName}
+                            </Typography>
+                        </GridRow>
+                    </div>
+                </Section>
+            )}
             <Section>
-                <Typography variant='caption'>Description</Typography>
-                <Typography variant="body_short">{actionDetails.description}</Typography>
+                <Typography variant="caption">Description</Typography>
+                <Typography variant="body_short">
+                    {actionDetails.description}
+                </Typography>
             </Section>
 
             <Section>
-                <Typography variant='caption'>Attachments</Typography>
+                <Typography variant="caption">Attachments</Typography>
                 <ActionAttachments
                     tagId={tagId}
                     isVoided={isVoided}
@@ -214,21 +283,19 @@ const ActionExpanded = ({
                 />
             </Section>
 
-            {
-                !actionDetails.isClosed && (
-                    <Section>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button
-                                disabled={isVoided}
-                                onClick={closeAction}>
-                                Close action
-                            </Button>
-                        </div>
-                    </Section>
-                )
-            }
-        </Container >
+            {!actionDetails.isClosed && (
+                <Section>
+                    <div
+                        style={{ display: 'flex', justifyContent: 'flex-end' }}
+                    >
+                        <Button disabled={isVoided} onClick={closeAction}>
+                            Close action
+                        </Button>
+                    </div>
+                </Section>
+            )}
+        </Container>
     );
 };
 
-export default ActionExpanded; 
+export default ActionExpanded;

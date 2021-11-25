@@ -3,10 +3,13 @@ import { ProjectDetails } from '../types';
 
 enum storageKeys {
     PRESERVATION = 'PRESERVATION',
-    PROJECT = 'PROJECT'
+    PROJECT = 'PROJECT',
 }
 
-const localStorageCache = new CacheService(storageKeys.PRESERVATION, localStorage);
+const localStorageCache = new CacheService(
+    storageKeys.PRESERVATION,
+    localStorage
+);
 
 const setDefaultProject = (project: ProjectDetails): void => {
     localStorageCache.setCache(storageKeys.PROJECT, project);
@@ -14,10 +17,10 @@ const setDefaultProject = (project: ProjectDetails): void => {
 
 const getDefaultProject = (): ProjectDetails | null => {
     const cache = localStorageCache.getCache(storageKeys.PROJECT);
-    return cache && cache.data || null;
+    return (cache && cache.data) || null;
 };
 
 export default {
     setDefaultProject,
-    getDefaultProject
+    getDefaultProject,
 };

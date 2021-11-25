@@ -1,4 +1,8 @@
-import {ErrorResponse, RegisterResponse, TagFunctionResponse} from './LibraryApiClient.types';
+import {
+    ErrorResponse,
+    RegisterResponse,
+    TagFunctionResponse,
+} from './LibraryApiClient.types';
 
 import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
@@ -23,7 +27,6 @@ export interface ResponsibleResponse {
 }
 
 class LibraryApiError extends Error {
-
     data: ErrorResponse | null;
 
     constructor(message: string, apiResponse?: ErrorResponse) {
@@ -42,12 +45,13 @@ function getLibraryApiError(error: any): LibraryApiError {
     let errorMessage = `${error.response.status} (${error.response.statusText})`;
 
     if (error.response.data) {
-        errorMessage = response.Errors.map(err => err.ErrorMessage).join(', ');
+        errorMessage = response.Errors.map((err) => err.ErrorMessage).join(
+            ', '
+        );
     }
 
     return new LibraryApiError(errorMessage, response);
 }
-
 
 /**
  * API for interacting with data in ProCoSys.
@@ -60,40 +64,40 @@ class LibraryApiClient extends ApiClient {
             ProCoSysSettings.libraryApi.url
         );
         this.client.interceptors.request.use(
-            config => {
+            (config) => {
                 config.params = {
                     ...config.params,
                 };
                 return config;
             },
-            error => Promise.reject(error)
+            (error) => Promise.reject(error)
         );
     }
 
     /**
-    * Holds a reference to an internal callbackID used to set the plantId on requests.
-    */
+     * Holds a reference to an internal callbackID used to set the plantId on requests.
+     */
     private plantIdInterceptorId: number | null = null;
 
     /**
-    * Sets the current context for relevant api requests
-    *
-    * @param plantId Plant ID
-    */
+     * Sets the current context for relevant api requests
+     *
+     * @param plantId Plant ID
+     */
     setCurrentPlant(plantId: string): void {
         if (this.plantIdInterceptorId) {
             this.client.interceptors.request.eject(this.plantIdInterceptorId);
             this.plantIdInterceptorId = null;
         }
         this.plantIdInterceptorId = this.client.interceptors.request.use(
-            config => {
+            (config) => {
                 config.headers = {
                     ...config.headers,
                     'x-plant': plantId,
                 };
                 return config;
             },
-            error => Promise.reject(error)
+            (error) => Promise.reject(error)
         );
     }
 
@@ -102,7 +106,9 @@ class LibraryApiClient extends ApiClient {
      *
      * @param setRequestCanceller Request Canceler
      */
-    async getRegisters(setRequestCanceller?: RequestCanceler): Promise<RegisterResponse[]> {
+    async getRegisters(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<RegisterResponse[]> {
         const endpoint = '/Registers';
 
         const settings: AxiosRequestConfig = {};
@@ -114,8 +120,7 @@ class LibraryApiClient extends ApiClient {
                 settings
             );
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw getLibraryApiError(error);
         }
     }
@@ -126,13 +131,16 @@ class LibraryApiClient extends ApiClient {
      * @param registerCode  Register to filter by
      * @param setRequestCanceller Request Canceler
      */
-    async getTagFunctions(registerCode: string, setRequestCanceller?: RequestCanceler): Promise<TagFunctionResponse[]> {
+    async getTagFunctions(
+        registerCode: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagFunctionResponse[]> {
         const endpoint = '/TagFunctions';
 
         const settings: AxiosRequestConfig = {
             params: {
-                registerCode: registerCode
-            }
+                registerCode: registerCode,
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -142,8 +150,7 @@ class LibraryApiClient extends ApiClient {
                 settings
             );
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw getLibraryApiError(error);
         }
     }
@@ -153,16 +160,20 @@ class LibraryApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getAreas(setRequestCanceller?: RequestCanceler): Promise<AreaResponse[]> {
+    async getAreas(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<AreaResponse[]> {
         const endpoint = '/Areas';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<AreaResponse[]>(endpoint, settings);
+            const result = await this.client.get<AreaResponse[]>(
+                endpoint,
+                settings
+            );
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw getLibraryApiError(error);
         }
     }
@@ -172,37 +183,44 @@ class LibraryApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getDisciplines(classifications: string[], setRequestCanceller?: RequestCanceler): Promise<DisciplineResponse[]> {
+    async getDisciplines(
+        classifications: string[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<DisciplineResponse[]> {
         const endpoint = '/Disciplines';
         const settings: AxiosRequestConfig = {
             params: {
-                classifications: classifications
+                classifications: classifications,
             },
-            paramsSerializer: function(params) {
-                return Qs.stringify(params, {arrayFormat: 'repeat'});
-            }
+            paramsSerializer: function (params) {
+                return Qs.stringify(params, { arrayFormat: 'repeat' });
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<DisciplineResponse[]>(endpoint, settings);
+            const result = await this.client.get<DisciplineResponse[]>(
+                endpoint,
+                settings
+            );
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw getLibraryApiError(error);
         }
     }
 
     /**
-    * Get responsibles
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
-    */
-    async getResponsibles(setRequestCanceller?: RequestCanceler): Promise<ResponsibleResponse[]> {
+     * Get responsibles
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getResponsibles(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<ResponsibleResponse[]> {
         const endpoint = '/Responsibles';
 
         const settings: AxiosRequestConfig = {
-            params: {}
+            params: {},
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -212,12 +230,10 @@ class LibraryApiClient extends ApiClient {
                 settings
             );
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw getLibraryApiError(error);
         }
     }
-
 }
 
 export default LibraryApiClient;

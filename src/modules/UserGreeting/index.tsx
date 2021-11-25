@@ -18,17 +18,19 @@ const UserGreeting = (): JSX.Element => {
     let imageRequestToken: null | Canceler = null;
     const graphClient = new GraphClient(auth);
 
-
     useEffect(() => {
         (async (): Promise<void> => {
             try {
-                const imageData = await graphClient.getProfilePictureAsync((cancel) => { profileRequestToken = cancel; });
+                const imageData = await graphClient.getProfilePictureAsync(
+                    (cancel) => {
+                        profileRequestToken = cancel;
+                    }
+                );
                 const imageUrl = URL.createObjectURL(imageData);
                 setImageUrl(imageUrl);
             } catch (error) {
                 console.error(error);
             }
-
         })();
 
         return (): void => {
@@ -39,12 +41,13 @@ const UserGreeting = (): JSX.Element => {
     useEffect(() => {
         (async (): Promise<void> => {
             try {
-                const data = await graphClient.getProfileDataAsync((cancel) => imageRequestToken = cancel);
+                const data = await graphClient.getProfileDataAsync(
+                    (cancel) => (imageRequestToken = cancel)
+                );
                 setProfileData(data);
             } catch (error) {
                 console.error(error);
             }
-
         })();
 
         return (): void => {
@@ -55,7 +58,9 @@ const UserGreeting = (): JSX.Element => {
     return (
         <Container>
             <Typography variant="h1">{user.name}</Typography>
-            <Typography variant="h2">{(profileData && profileData.jobTitle) || 'Loading user data'}</Typography>
+            <Typography variant="h2">
+                {(profileData && profileData.jobTitle) || 'Loading user data'}
+            </Typography>
             {(imageUrl && <img src={imageUrl} />) || 'Loading image'}
             <br />
             <Typography variant="h2">PLANT: {plant.title}</Typography>

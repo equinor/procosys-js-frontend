@@ -32,12 +32,10 @@ export const preservationIconList: Array<PreservationTypeIcon> = [
     { code: 'Nitrogen', title: 'Nitrogen' },
     { code: 'Pressure', title: 'Pressure' },
     { code: 'Rotate', title: 'Rotate' },
-    { code: 'Other', title: 'Other' }
+    { code: 'Other', title: 'Other' },
 ];
 
-const PreservationIcon = ({
-    variant
-}: IconProps): JSX.Element | null => {
+const PreservationIcon = ({ variant }: IconProps): JSX.Element | null => {
     switch (variant) {
         case 'Area':
             return <AreaIcon />;

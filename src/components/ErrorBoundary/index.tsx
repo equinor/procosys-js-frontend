@@ -7,11 +7,11 @@ import { Typography } from '@equinor/eds-core-react';
 export type ErrorProps = {
     message?: string;
     children: React.ReactChild;
-}
+};
 
 type ErrorState = {
     hasError: boolean;
-}
+};
 
 class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
     constructor(props: ErrorProps) {
@@ -34,14 +34,33 @@ class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
         if (this.state.hasError) {
             return (
                 <ErrorBoundaryContainer>
-                    <Typography variant="h1">{!this.props.message ? 'An unexpected error occured' : this.props.message}</Typography>
+                    <Typography variant="h1">
+                        {!this.props.message
+                            ? 'An unexpected error occured'
+                            : this.props.message}
+                    </Typography>
                     {!this.props.message && (
                         <>
-                            <Typography variant="h4">Please try to <a href="#" onClick={(): void => window.location.reload()}>refresh</a> the page, and see if the error persists.</Typography>
-                            <Typography variant="h6">The incident has been logged, contact support if the error is not resolved.</Typography>
+                            <Typography variant="h4">
+                                Please try to{' '}
+                                <a
+                                    href="#"
+                                    onClick={(): void =>
+                                        window.location.reload()
+                                    }
+                                >
+                                    refresh
+                                </a>{' '}
+                                the page, and see if the error persists.
+                            </Typography>
+                            <Typography variant="h6">
+                                The incident has been logged, contact support if
+                                the error is not resolved.
+                            </Typography>
                         </>
                     )}
-                </ErrorBoundaryContainer>);
+                </ErrorBoundaryContainer>
+            );
         }
 
         return this.props.children;

@@ -8,7 +8,7 @@ export const Container = styled.div`
 `;
 
 export const AddFile = styled.div`
-    display: flex;    
+    display: flex;
     align-items: center;
     justify-content: flex-end;
     padding: calc(var(--grid-unit) * 2);

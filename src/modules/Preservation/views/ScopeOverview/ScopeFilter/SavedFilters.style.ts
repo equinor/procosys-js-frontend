@@ -14,12 +14,12 @@ export const Container = styled.div`
 
 export const Header = styled.header`
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: space-between;
 `;
 
 export const Divider = styled.div`
-    border-top: 1px solid ${tokens.colors.interactive.disabled__border.rgba};      
+    border-top: 1px solid ${tokens.colors.interactive.disabled__border.rgba};
     box-sizing: border-box;
     margin-top: var(--grid-unit);
     padding-bottom: var(--grid-unit);
@@ -27,7 +27,7 @@ export const Divider = styled.div`
 
 export const ListContainer = styled.div`
     display: flex;
-    flex-direction: column;  
+    flex-direction: column;
 `;
 
 export const Link = styled.div`
@@ -41,9 +41,10 @@ export const Link = styled.div`
 
 export const Row = styled.div<SavedFiltersProps>`
     display: flex;
-    ${ ({ isSelectedFilter }): any => isSelectedFilter && css`
-        background:${tokens.colors.interactive.primary__selected_highlight.rgba};
-    `};
+    ${({ isSelectedFilter }): any =>
+        isSelectedFilter &&
+        css`
+            background: ${tokens.colors.interactive.primary__selected_highlight
+                .rgba};
+        `};
 `;
-
-

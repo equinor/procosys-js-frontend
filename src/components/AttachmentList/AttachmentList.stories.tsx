@@ -20,7 +20,7 @@ const deleteAttachment = (row: TableOptions<Attachment>): void => {
 };
 
 const addAttachments = (files: FileList | null): void => {
-    console.log('Adding file(s)')
+    console.log('Adding file(s)');
 };
 
 export default {
@@ -29,19 +29,19 @@ export default {
     args: {
         attachments: [
             {
-                fileName: "Filter-button.PNG",
+                fileName: 'Filter-button.PNG',
                 id: 97,
-                rowVersion: "AAAAAAAAKH0=",
-                uploadedAt: "2021-03-26T14:45:45.2989933Z",
+                rowVersion: 'AAAAAAAAKH0=',
+                uploadedAt: '2021-03-26T14:45:45.2989933Z',
                 uploadedBy: {
                     id: 10,
-                    firstName: "Jane",
-                    lastName: "Doe",
-                    userName: "JDOE",
-                    azureOid: "4jjfe",
-                    email: "JDOE@email.com",
-                    rowVersion: "AAAAAAAAIBL=",
-                }
+                    firstName: 'Jane',
+                    lastName: 'Doe',
+                    userName: 'JDOE',
+                    azureOid: '4jjfe',
+                    email: 'JDOE@email.com',
+                    rowVersion: 'AAAAAAAAIBL=',
+                },
             },
         ],
         disabled: false,
@@ -50,8 +50,7 @@ export default {
         downloadAttachment: downloadAttachment,
         deleteAttachment: deleteAttachment,
     },
-    argTypes: {
-    },
+    argTypes: {},
     parameters: {
         docs: {
             description: {
@@ -72,20 +71,30 @@ interface ChangedAttachmentListProps {
     detailed?: boolean;
 }
 
-export const Default: Story<ChangedAttachmentListProps> = (args: JSX.IntrinsicAttributes & ChangedAttachmentListProps) => {
+export const Default: Story<ChangedAttachmentListProps> = (
+    args: JSX.IntrinsicAttributes & ChangedAttachmentListProps
+) => {
     console.log(args);
     return (
         <Wrapper>
-            <AttachmentList {...args} addAttachments={undefined} ></AttachmentList>
+            <AttachmentList
+                {...args}
+                addAttachments={undefined}
+            ></AttachmentList>
         </Wrapper>
     );
 };
 
-export const WithAddAttachments: Story<ChangedAttachmentListProps> = (args: JSX.IntrinsicAttributes & ChangedAttachmentListProps) => {
+export const WithAddAttachments: Story<ChangedAttachmentListProps> = (
+    args: JSX.IntrinsicAttributes & ChangedAttachmentListProps
+) => {
     console.log(args);
     return (
         <Wrapper>
-            <AttachmentList {...args} addAttachments={addAttachments} ></AttachmentList>
+            <AttachmentList
+                {...args}
+                addAttachments={addAttachments}
+            ></AttachmentList>
         </Wrapper>
     );
 };

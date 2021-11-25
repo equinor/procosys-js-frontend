@@ -1,4 +1,13 @@
-import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
+import {
+    Container,
+    LinkIndicator,
+    StyledCard100,
+    StyledCard50,
+    StyledCardHeader,
+    StyledDivider,
+    StyledHeaderTitle,
+    StyledHeaderTitleLink,
+} from './style';
 
 import { Card } from '@equinor/eds-core-react';
 import { ContentDocument } from '../../http/QuickSearchApiClient';
@@ -13,32 +22,61 @@ export interface PunchListItemTabProperties {
     highlightOn: boolean;
 }
 
-const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItemTabProperties): JSX.Element => {
-
+const PunchListItemTab = ({
+    punchItem,
+    searchValue,
+    highlightOn,
+}: PunchListItemTabProperties): JSX.Element => {
     const navigateToTag = (): void => {
-        if (!punchItem.plant || !punchItem.punchItem || !punchItem.punchItem.tagNo) throw new Error("Unable to navigate.");
+        if (
+            !punchItem.plant ||
+            !punchItem.punchItem ||
+            !punchItem.punchItem.tagNo
+        )
+            throw new Error('Unable to navigate.');
 
-        let url = location.origin + "/" + punchItem.plant.replace('PCS$', '') + "/link";
-        url += "/Tag?tagNo=" + encodeURIComponent(punchItem.punchItem.tagNo ?? '') + "&project=" + encodeURIComponent(punchItem.project?.toLocaleUpperCase() ?? '');
+        let url =
+            location.origin +
+            '/' +
+            punchItem.plant.replace('PCS$', '') +
+            '/link';
+        url +=
+            '/Tag?tagNo=' +
+            encodeURIComponent(punchItem.punchItem.tagNo ?? '') +
+            '&project=' +
+            encodeURIComponent(punchItem.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 
     const navigateToPunchItem = (): void => {
-        if (!punchItem.plant || !punchItem.punchItem || !punchItem.punchItem.punchItemNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
+        if (
+            !punchItem.plant ||
+            !punchItem.punchItem ||
+            !punchItem.punchItem.punchItemNo
+        )
+            throw new Error('Unable to navigate. Plant or MCPkg is missing. ');
 
-        let url = location.origin + "/" + punchItem.plant.replace('PCS$', '') + "/link";
-        url += "/PunchListItem?punchListItemNo=" + encodeURIComponent(punchItem.punchItem.punchItemNo ?? '');
+        let url =
+            location.origin +
+            '/' +
+            punchItem.plant.replace('PCS$', '') +
+            '/link';
+        url +=
+            '/PunchListItem?punchListItemNo=' +
+            encodeURIComponent(punchItem.punchItem.punchItemNo ?? '');
         window.open(url, '_blank');
     };
 
     const highlightSearchValue = (text: string): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
 
-        return <Highlighter
-            searchWords={searchValue.split(' ')}
-            autoEscape={true}
-            textToHighlight={text}
-        />
+        return (
+            <Highlighter
+                searchWords={searchValue.split(' ')}
+                autoEscape={true}
+                textToHighlight={text}
+            />
+        );
     };
 
     return (
@@ -46,8 +84,17 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
             <StyledCard100>
                 <StyledCardHeader onClick={(): void => navigateToPunchItem()}>
                     <StyledHeaderTitleLink className="link-container">
-                        <Typography variant="caption">Punch List Item no.</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.punchItemNo ?? '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                        <Typography variant="caption">
+                            Punch List Item no.
+                        </Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                punchItem.punchItem?.punchItemNo ?? ''
+                            )}
+                            <LinkIndicator>
+                                <EdsIcon name="launch" />
+                            </LinkIndicator>
+                        </Typography>
                     </StyledHeaderTitleLink>
                 </StyledCardHeader>
             </StyledCard100>
@@ -57,7 +104,14 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                     <StyledCardHeader onClick={(): void => navigateToTag()}>
                         <StyledHeaderTitleLink className="link-container">
                             <Typography variant="caption">Tag no.</Typography>
-                            <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.tagNo ?? '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                            <Typography variant="body_short">
+                                {highlightSearchValue(
+                                    punchItem.punchItem?.tagNo ?? ''
+                                )}
+                                <LinkIndicator>
+                                    <EdsIcon name="launch" />
+                                </LinkIndicator>
+                            </Typography>
                         </StyledHeaderTitleLink>
                     </StyledCardHeader>
                 </StyledCard100>
@@ -67,7 +121,11 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.description ?? '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                punchItem.punchItem?.description ?? ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
@@ -76,7 +134,9 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.plantName ?? '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(punchItem.plantName ?? '')}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard50>
@@ -85,7 +145,9 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.project ?? '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(punchItem.project ?? '')}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard50>
@@ -94,7 +156,11 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Form type</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.formType ?? '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                punchItem.punchItem?.formType ?? ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard50>
@@ -103,7 +169,11 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Category</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.category ?? '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                punchItem.punchItem?.category ?? ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard50>
@@ -112,12 +182,16 @@ const PunchListItemTab = ({ punchItem, searchValue, highlightOn }: PunchListItem
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(punchItem.punchItem?.responsible ?? '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                punchItem.punchItem?.responsible ?? ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
         </Container>
-    )
+    );
 };
 
 export default PunchListItemTab;

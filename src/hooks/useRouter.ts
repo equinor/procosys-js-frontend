@@ -1,6 +1,11 @@
-import {useHistory, useLocation, useParams, useRouteMatch} from 'react-router-dom';
+import {
+    useHistory,
+    useLocation,
+    useParams,
+    useRouteMatch,
+} from 'react-router-dom';
 
-import {useMemo} from 'react';
+import { useMemo } from 'react';
 
 const useRouter = (): any => {
     const params = useParams();

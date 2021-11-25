@@ -16,7 +16,7 @@ export const Container = styled.div`
         z-index: 100;
         white-space: nowrap;
         div {
-           color: var(--text--default);
+            color: var(--text--default);
         }
     }
     :hover {
@@ -30,22 +30,30 @@ export const DropdownButton = styled(Button)`
     justify-content: center;
 
     svg path {
-        color: ${(props): string => props.disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba};
+        color: ${(props): string =>
+            props.disabled
+                ? tokens.colors.interactive.disabled__border.rgba
+                : tokens.colors.interactive.primary__resting.rgba};
     }
 
-    ${(props): any => props.isOpen && css`
-        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-    `}
+    ${(props): any =>
+        props.isOpen &&
+        css`
+            background-color: ${tokens.colors.interactive
+                .primary__selected_highlight.rgba};
+        `}
 `;
 
 export const IconContainer = styled.div<{ size: number }>`
-   ${({ size }): any => size && css`
-    svg {
+    ${({ size }): any =>
+        size &&
+        css`
+            svg {
+                height: ${size}px;
+                width: ${size}px;
+            }
             height: ${size}px;
-            width: ${size}px;
-        }
-    height: ${size}px;
-    `}
+        `}
 
     display: flex;
     align-items: center;
@@ -55,12 +63,12 @@ export const DropdownItem = styled.li`
     display: flex;
     align-items: center;
     border: 0;
-    text-align:left;
+    text-align: left;
     font-weight: normal;
     cursor: pointer;
 
     > * {
-        width: 100%
+        width: 100%;
     }
     div {
         display: flex;
@@ -72,5 +80,4 @@ export const DropdownItem = styled.li`
     div[disabled] {
         pointer-events: none;
     }
-
 `;

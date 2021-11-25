@@ -1,6 +1,6 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 
-import {IAuthService} from '../auth/AuthService';
+import { IAuthService } from '../auth/AuthService';
 import ProCoSysClient from '../http/ProCoSysClient';
 
 export interface IProcosysContext {
@@ -10,17 +10,22 @@ export interface IProcosysContext {
 
 type createContextOptions = {
     auth: IAuthService;
-}
+};
 
-const ProcosysContext = React.createContext<IProcosysContext>({} as IProcosysContext);
+const ProcosysContext = React.createContext<IProcosysContext>(
+    {} as IProcosysContext
+);
 
-export const createProcosysContext = ({auth}: createContextOptions): IProcosysContext => {
+export const createProcosysContext = ({
+    auth,
+}: createContextOptions): IProcosysContext => {
     return {
         auth: auth,
-        procosysApiClient: new ProCoSysClient(auth)
+        procosysApiClient: new ProCoSysClient(auth),
     };
 };
 
-export const useProcosysContext = (): IProcosysContext => useContext(ProcosysContext);
+export const useProcosysContext = (): IProcosysContext =>
+    useContext(ProcosysContext);
 
 export default ProcosysContext;

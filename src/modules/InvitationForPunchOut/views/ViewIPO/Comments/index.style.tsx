@@ -11,7 +11,6 @@ export const HeaderContainer = styled.div`
     padding: calc(var(--grid-unit) * 2);
 `;
 
-
 export const CommentContainer = styled.div`
     position: relative;
     margin: calc(var(--grid-unit) * 6) 0;
@@ -23,7 +22,7 @@ export const CommentContainer = styled.div`
 export const CommentHeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-bottom: var(--grid-unit);    
+    margin-bottom: var(--grid-unit);
 `;
 
 export const SpinnerContainer = styled.div`

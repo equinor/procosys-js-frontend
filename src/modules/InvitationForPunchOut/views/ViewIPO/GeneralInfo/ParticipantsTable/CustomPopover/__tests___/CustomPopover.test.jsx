@@ -7,9 +7,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from '../../../../../../../../assets/theme';
 
 const renderWithTheme = (Component) => {
-    return render(
-        <ThemeProvider theme={theme}>{Component}</ThemeProvider>
-    );
+    return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
 const participants = [
@@ -35,7 +33,6 @@ const participants = [
                     },
                     required: true,
                     response: OutlookResponseType.ATTENDING,
-        
                 },
                 {
                     person: {
@@ -48,22 +45,21 @@ const participants = [
                     },
                     required: true,
                     response: OutlookResponseType.NONE,
-        
                 },
             ],
             response: OutlookResponseType.TENTATIVE,
-            rowVersion: '123o875'
+            rowVersion: '123o875',
         },
         note: '',
         attended: true,
-    }
+    },
 ];
 
 describe('<CustomPopover />', () => {
     it('Should open the popover on click', async () => {
-        const { getByTestId, getAllByRole } = await renderWithTheme(<CustomPopover 
-            participant = { participants[0] }
-        />);
+        const { getByTestId, getAllByRole } = await renderWithTheme(
+            <CustomPopover participant={participants[0]} />
+        );
         await act(async () => {
             const button = getByTestId('popover-anchor-ref');
             fireEvent.click(button);
@@ -72,15 +68,17 @@ describe('<CustomPopover />', () => {
         expect(buttons).toHaveLength(2);
     });
     it('Should render every person and the correct responses for the correct people', async () => {
-        const { getByTestId } = renderWithTheme(<CustomPopover 
-            participant = { participants[0] }
-        />);
+        const { getByTestId } = renderWithTheme(
+            <CustomPopover participant={participants[0]} />
+        );
         await act(async () => {
             const button = getByTestId('popover-anchor-ref');
             fireEvent.click(button);
         });
         participants[0].functionalRole.persons.forEach((person) => {
-            const response = getByTestId(person.person.id.toString() + 'row', { exact: false });
+            const response = getByTestId(person.person.id.toString() + 'row', {
+                exact: false,
+            });
             expect(response).toHaveTextContent(person.person.firstName);
             expect(response).toHaveTextContent(person.response);
         });

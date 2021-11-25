@@ -1,6 +1,16 @@
-import { AddParticipantContainer, Container, DropdownItem, FormContainer, ParticipantRowsContainer } from './Participants.style';
+import {
+    AddParticipantContainer,
+    Container,
+    DropdownItem,
+    FormContainer,
+    ParticipantRowsContainer,
+} from './Participants.style';
 import { Button, TextField } from '@equinor/eds-core-react';
-import { Participant, Person, RoleParticipant } from '@procosys/modules/InvitationForPunchOut/types';
+import {
+    Participant,
+    Person,
+    RoleParticipant,
+} from '@procosys/modules/InvitationForPunchOut/types';
 import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -18,13 +28,40 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 const WAIT_INTERVAL = 300;
 
 const Organizations: SelectItem[] = [
-    { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
-    { text: `${OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string} additional`, value: OrganizationsEnum.ConstructionCompany },
-    { text: `${OrganizationMap.get(OrganizationsEnum.Contractor) as string} additional`, value: OrganizationsEnum.Contractor },
-    { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
-    { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
-    { text: OrganizationMap.get(OrganizationsEnum.Supplier) as string, value: OrganizationsEnum.Supplier },
-    { text: OrganizationMap.get(OrganizationsEnum.External) as string, value: OrganizationsEnum.External }
+    {
+        text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string,
+        value: OrganizationsEnum.Commissioning,
+    },
+    {
+        text: `${
+            OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string
+        } additional`,
+        value: OrganizationsEnum.ConstructionCompany,
+    },
+    {
+        text: `${
+            OrganizationMap.get(OrganizationsEnum.Contractor) as string
+        } additional`,
+        value: OrganizationsEnum.Contractor,
+    },
+    {
+        text: OrganizationMap.get(OrganizationsEnum.Operation) as string,
+        value: OrganizationsEnum.Operation,
+    },
+    {
+        text: OrganizationMap.get(
+            OrganizationsEnum.TechnicalIntegrity
+        ) as string,
+        value: OrganizationsEnum.TechnicalIntegrity,
+    },
+    {
+        text: OrganizationMap.get(OrganizationsEnum.Supplier) as string,
+        value: OrganizationsEnum.Supplier,
+    },
+    {
+        text: OrganizationMap.get(OrganizationsEnum.External) as string,
+        value: OrganizationsEnum.External,
+    },
 ];
 
 const ParticipantType: SelectItem[] = [
@@ -44,7 +81,10 @@ const Participants = ({
     availableRoles,
 }: ParticipantsProps): JSX.Element => {
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
-    const [personsFilter, setPersonsFilter] = useState<SelectItem>({ text: '', value: -1 }); //filter string and index of participant
+    const [personsFilter, setPersonsFilter] = useState<SelectItem>({
+        text: '',
+        value: -1,
+    }); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -58,14 +98,22 @@ const Participants = ({
             try {
                 (async (): Promise<void> => {
                     setIsLoading(true);
-                    const signerPersons = await apiClient.getSignerPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
-                        .then(persons => persons.map((person): SelectItem => {
-                            return {
-                                text: nameCombiner(person.firstName, person.lastName),
-                                value: person.azureOid,
-                                email: person.email
-                            };
-                        })
+                    const signerPersons = await apiClient
+                        .getSignerPersonsAsync(
+                            input,
+                            (cancel: Canceler) => (requestCanceler = cancel)
+                        )
+                        .then((persons) =>
+                            persons.map((person): SelectItem => {
+                                return {
+                                    text: nameCombiner(
+                                        person.firstName,
+                                        person.lastName
+                                    ),
+                                    value: person.azureOid,
+                                    email: person.email,
+                                };
+                            })
                         );
                     setFilteredPersons(signerPersons);
                     setIsLoading(false);
@@ -89,14 +137,22 @@ const Participants = ({
                 (async (): Promise<void> => {
                     setIsLoading(true);
 
-                    const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel)
-                        .then(persons => persons.map((person): SelectItem => {
-                            return {
-                                text: nameCombiner(person.firstName, person.lastName),
-                                value: person.azureOid,
-                                email: person.email
-                            };
-                        })
+                    const persons = await apiClient
+                        .getPersonsAsync(
+                            input,
+                            (cancel: Canceler) => (requestCanceler = cancel)
+                        )
+                        .then((persons) =>
+                            persons.map((person): SelectItem => {
+                                return {
+                                    text: nameCombiner(
+                                        person.firstName,
+                                        person.lastName
+                                    ),
+                                    value: person.azureOid,
+                                    email: person.email,
+                                };
+                            })
                         );
                     setFilteredPersons(persons);
                     setIsLoading(false);
@@ -105,7 +161,6 @@ const Participants = ({
                 showSnackbarNotification(error.message);
                 setIsLoading(false);
             }
-
         } else {
             setFilteredPersons([]);
         }
@@ -119,9 +174,11 @@ const Participants = ({
     };
 
     const setOrganization = (value: string, index: number): void => {
-        const organization = Organizations.find((o: SelectItem) => o.value === value);
+        const organization = Organizations.find(
+            (o: SelectItem) => o.value === value
+        );
         if (organization) {
-            setParticipants(p => {
+            setParticipants((p) => {
                 const participantsCopy = [...p];
                 participantsCopy[index].organization = organization;
                 return participantsCopy;
@@ -133,17 +190,21 @@ const Participants = ({
     };
 
     const setExternalEmail = (value: string, index: number): void => {
-        setParticipants(p => {
+        setParticipants((p) => {
             const participantsCopy = [...p];
             participantsCopy[index].role = null;
             participantsCopy[index].person = null;
-            participantsCopy[index].externalEmail = { id: null, rowVersion: null, email: value };
+            participantsCopy[index].externalEmail = {
+                id: null,
+                rowVersion: null,
+                email: value,
+            };
             return participantsCopy;
         });
     };
 
     const setType = (value: string, index: number): void => {
-        setParticipants(p => {
+        setParticipants((p) => {
             const participantsCopy = [...p];
             participantsCopy[index].type = value;
             participantsCopy[index].role = null;
@@ -153,14 +214,17 @@ const Participants = ({
     };
 
     const deleteParticipant = (index: number): void => {
-        setParticipants(p => {
+        setParticipants((p) => {
             const participantsCopy = [...p];
             participantsCopy.splice(index, 1);
             return participantsCopy;
         });
     };
 
-    const personsInRoleText = (textToDisplay: string, persons: Person[]): string => {
+    const personsInRoleText = (
+        textToDisplay: string,
+        persons: Person[]
+    ): string => {
         persons.forEach((p, i) => {
             textToDisplay += p.name;
             if (i + 1 < persons.length) {
@@ -176,10 +240,17 @@ const Participants = ({
             return participant.person.name;
         } else if (participant.role) {
             let textToDisplay = participant.role.code;
-            if (participant.role.persons.length > 0 && !participant.role.usePersonalEmail) {
+            if (
+                participant.role.persons.length > 0 &&
+                !participant.role.usePersonalEmail
+            ) {
                 textToDisplay += ' - ';
-                const cc = participant.role.persons.filter(p => p.radioOption == 'cc');
-                const to = participant.role.persons.filter(p => p.radioOption == 'to');
+                const cc = participant.role.persons.filter(
+                    (p) => p.radioOption == 'cc'
+                );
+                const to = participant.role.persons.filter(
+                    (p) => p.radioOption == 'to'
+                );
                 if (to.length > 0) {
                     textToDisplay += personsInRoleText('To: ', to);
                     if (cc.length > 0) {
@@ -202,13 +273,16 @@ const Participants = ({
             type: 'Functional role',
             externalEmail: null,
             person: null,
-            role: null
+            role: null,
         };
         setParticipants([...participants, newParticipant]);
     };
 
-    const setRoleOnParticipant = (value: RoleParticipant, index: number): void => {
-        setParticipants(p => {
+    const setRoleOnParticipant = (
+        value: RoleParticipant,
+        index: number
+    ): void => {
+        setParticipants((p) => {
             const participantsCopy = [...p];
             participantsCopy[index].role = value;
             participantsCopy[index].person = null;
@@ -217,11 +291,15 @@ const Participants = ({
         });
     };
 
-    const setPersonOnParticipant = (event: React.MouseEvent, personIndex: number, participantIndex: number): void => {
+    const setPersonOnParticipant = (
+        event: React.MouseEvent,
+        personIndex: number,
+        participantIndex: number
+    ): void => {
         event.preventDefault();
         const person = filteredPersons[personIndex];
         if (person && person.text) {
-            setParticipants(p => {
+            setParticipants((p) => {
                 const participantsCopy = [...p];
                 participantsCopy[participantIndex].role = null;
                 participantsCopy[participantIndex].externalEmail = null;
@@ -229,7 +307,7 @@ const Participants = ({
                     azureOid: person.value,
                     name: person.text ? person.text : '',
                     email: person.email ? person.email : '',
-                    radioOption: null
+                    radioOption: null,
                 };
                 return participantsCopy;
             });
@@ -237,13 +315,16 @@ const Participants = ({
     };
 
     const isSignerParticipant = (index: number): boolean => {
-        if (!participants[index] || !participants[index].organization) return false;
+        if (!participants[index] || !participants[index].organization)
+            return false;
 
-        if (participants[index].organization.value == Organizations[0].value ||
+        if (
+            participants[index].organization.value == Organizations[0].value ||
             participants[index].organization.value == Organizations[1].value ||
             participants[index].organization.value == Organizations[2].value ||
             participants[index].organization.value == Organizations[3].value ||
-            participants[index].organization.value == Organizations[4].value) {
+            participants[index].organization.value == Organizations[4].value
+        ) {
             return true;
         }
         return false;
@@ -267,118 +348,203 @@ const Participants = ({
         };
     }, [personsFilter]);
 
-    const getOrganizationText = (organization: string, sortKey: number): string | undefined => {
+    const getOrganizationText = (
+        organization: string,
+        sortKey: number
+    ): string | undefined => {
         let organizationText = organization;
-        const organizationIsContractorOrContructionCompany = 
-            organization === OrganizationMap.get(OrganizationsEnum.Contractor) 
-            || organization === OrganizationMap.get(OrganizationsEnum.ConstructionCompany);
+        const organizationIsContractorOrContructionCompany =
+            organization ===
+                OrganizationMap.get(OrganizationsEnum.Contractor) ||
+            organization ===
+                OrganizationMap.get(OrganizationsEnum.ConstructionCompany);
         if (sortKey > 1 && organizationIsContractorOrContructionCompany) {
-            organizationText += ' additional'
+            organizationText += ' additional';
         }
         return organizationText;
-    }
+    };
 
-    return (<Container>
-        <FormContainer>
-            <ParticipantRowsContainer>
-                {participants.map((p, index) => {
-                    return (
-                        <React.Fragment key={`participant_${index}`}>
-                            <div>
-                                <SelectInput
-                                    onChange={(value): void => setOrganization(value, index)}
-                                    data={Organizations}
-                                    label={'Organization'}
-                                    disabled={index < 2}
-                                >
-                                    {p.organization.text? getOrganizationText(p.organization.text, index) : 'Select'}
-                                </SelectInput>
-                            </div>
-                            <div>
-                                <SelectInput
-                                    onChange={(value): void => setType(value, index)}
-                                    data={ParticipantType}
-                                    label={'Type'}
-                                    disabled={p.organization.value == OrganizationsEnum.External}
-                                >
-                                    {p.type}
-                                </SelectInput>
-                            </div>
-                            { p.organization.value == OrganizationsEnum.External &&
+    return (
+        <Container>
+            <FormContainer>
+                <ParticipantRowsContainer>
+                    {participants.map((p, index) => {
+                        return (
+                            <React.Fragment key={`participant_${index}`}>
                                 <div>
-                                    <TextField
-                                        id={'guestEmail'}
-                                        placeholder='Email'
-                                        label='e-mail address'
-                                        defaultValue={p.externalEmail ? p.externalEmail.email : ''}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setExternalEmail(e.target.value, index)}
-                                    />
-                                </div>
-                            }
-                            { p.type == ParticipantType[1].text && p.organization.value != OrganizationsEnum.External &&
-                                <div>
-                                    <Dropdown
-                                        label={'Person'}
-                                        maxHeight='300px'
-                                        variant='form'
-                                        onFilter={(input: string): void => setPersonsFilter({ text: input, value: index })}
-                                        text={p.person ? getDisplayText(index) : 'Search to select'}
+                                    <SelectInput
+                                        onChange={(value): void =>
+                                            setOrganization(value, index)
+                                        }
+                                        data={Organizations}
+                                        label={'Organization'}
+                                        disabled={index < 2}
                                     >
-                                        {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
-                                        {!isLoading &&
-                                            filteredPersons.map((person, i) => {
-                                                return (
-                                                    <DropdownItem
-                                                        key={i}
-                                                        onClick={(event: React.MouseEvent): void =>
-                                                            setPersonOnParticipant(event, i, index)
-                                                        }
-                                                    >
-                                                        <div>{person.text}</div>
-                                                    </DropdownItem>
-                                                );
-                                            })}
-                                    </Dropdown>
-                                </div>
-                            }
-                            { p.type == ParticipantType[0].text &&
-                                <div>
-                                    <RoleSelector
-                                        selectedRole={p.role}
-                                        onChange={(value): void => setRoleOnParticipant(value, index)}
-                                        roles={getRolesCopy()}
-                                        label={'Role'}
-                                    >
-                                        {p.role ?
-                                            <Tooltip title={getDisplayText(index)} arrow={true} enterDelay={200} enterNextDelay={100}>
-                                                <div className='overflowControl'>
-                                                    {getDisplayText(index)}
-                                                </div>
-                                            </Tooltip>
+                                        {p.organization.text
+                                            ? getOrganizationText(
+                                                  p.organization.text,
+                                                  index
+                                              )
                                             : 'Select'}
-                                    </RoleSelector>
+                                    </SelectInput>
                                 </div>
-                            }
-                            <div>
-                                {index > 1 &&
-                                    <>
-                                        <Button title="Delete" variant='ghost' style={{ marginTop: '12px' }} onClick={(): void => deleteParticipant(index)}>
-                                            <EdsIcon name='delete_to_trash' />
-                                        </Button>
-                                    </>
-                                }
-                            </div>
-                        </React.Fragment>
-                    );
-                })}
-            </ParticipantRowsContainer>
-            <AddParticipantContainer>
-                <Button variant='ghost' onClick={addParticipant}>
-                    <EdsIcon name='add' /> Add organization
-                </Button>
-            </AddParticipantContainer>
-        </FormContainer>
-    </Container>);
+                                <div>
+                                    <SelectInput
+                                        onChange={(value): void =>
+                                            setType(value, index)
+                                        }
+                                        data={ParticipantType}
+                                        label={'Type'}
+                                        disabled={
+                                            p.organization.value ==
+                                            OrganizationsEnum.External
+                                        }
+                                    >
+                                        {p.type}
+                                    </SelectInput>
+                                </div>
+                                {p.organization.value ==
+                                    OrganizationsEnum.External && (
+                                    <div>
+                                        <TextField
+                                            id={'guestEmail'}
+                                            placeholder="Email"
+                                            label="e-mail address"
+                                            defaultValue={
+                                                p.externalEmail
+                                                    ? p.externalEmail.email
+                                                    : ''
+                                            }
+                                            onChange={(
+                                                e: React.ChangeEvent<HTMLInputElement>
+                                            ): void =>
+                                                setExternalEmail(
+                                                    e.target.value,
+                                                    index
+                                                )
+                                            }
+                                        />
+                                    </div>
+                                )}
+                                {p.type == ParticipantType[1].text &&
+                                    p.organization.value !=
+                                        OrganizationsEnum.External && (
+                                        <div>
+                                            <Dropdown
+                                                label={'Person'}
+                                                maxHeight="300px"
+                                                variant="form"
+                                                onFilter={(
+                                                    input: string
+                                                ): void =>
+                                                    setPersonsFilter({
+                                                        text: input,
+                                                        value: index,
+                                                    })
+                                                }
+                                                text={
+                                                    p.person
+                                                        ? getDisplayText(index)
+                                                        : 'Search to select'
+                                                }
+                                            >
+                                                {isLoading && (
+                                                    <div
+                                                        style={{
+                                                            margin: 'calc(var(--grid-unit))',
+                                                        }}
+                                                    >
+                                                        <Spinner medium />
+                                                    </div>
+                                                )}
+                                                {!isLoading &&
+                                                    filteredPersons.map(
+                                                        (person, i) => {
+                                                            return (
+                                                                <DropdownItem
+                                                                    key={i}
+                                                                    onClick={(
+                                                                        event: React.MouseEvent
+                                                                    ): void =>
+                                                                        setPersonOnParticipant(
+                                                                            event,
+                                                                            i,
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <div>
+                                                                        {
+                                                                            person.text
+                                                                        }
+                                                                    </div>
+                                                                </DropdownItem>
+                                                            );
+                                                        }
+                                                    )}
+                                            </Dropdown>
+                                        </div>
+                                    )}
+                                {p.type == ParticipantType[0].text && (
+                                    <div>
+                                        <RoleSelector
+                                            selectedRole={p.role}
+                                            onChange={(value): void =>
+                                                setRoleOnParticipant(
+                                                    value,
+                                                    index
+                                                )
+                                            }
+                                            roles={getRolesCopy()}
+                                            label={'Role'}
+                                        >
+                                            {p.role ? (
+                                                <Tooltip
+                                                    title={getDisplayText(
+                                                        index
+                                                    )}
+                                                    arrow={true}
+                                                    enterDelay={200}
+                                                    enterNextDelay={100}
+                                                >
+                                                    <div className="overflowControl">
+                                                        {getDisplayText(index)}
+                                                    </div>
+                                                </Tooltip>
+                                            ) : (
+                                                'Select'
+                                            )}
+                                        </RoleSelector>
+                                    </div>
+                                )}
+                                <div>
+                                    {index > 1 && (
+                                        <>
+                                            <Button
+                                                title="Delete"
+                                                variant="ghost"
+                                                style={{ marginTop: '12px' }}
+                                                onClick={(): void =>
+                                                    deleteParticipant(index)
+                                                }
+                                            >
+                                                <EdsIcon name="delete_to_trash" />
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
+                            </React.Fragment>
+                        );
+                    })}
+                </ParticipantRowsContainer>
+                <AddParticipantContainer>
+                    <Button variant="ghost" onClick={addParticipant}>
+                        <EdsIcon name="add" /> Add organization
+                    </Button>
+                </AddParticipantContainer>
+            </FormContainer>
+        </Container>
+    );
 };
 
 export default Participants;

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const InputContainer = styled.div`
-    margin:  calc(var(--grid-unit) * 2) 0px;
+    margin: calc(var(--grid-unit) * 2) 0px;
     display: flex;
 `;
 
@@ -23,7 +23,7 @@ export const Scrim = styled.div`
     justify-content: center;
     align-items: center;
     background-color: ${tokens.colors.ui.background__scrim.rgba};
-    z-index:100; 
+    z-index: 100;
 `;
 
 export const DialogContainer = styled.div<{ width: string }>`
@@ -40,13 +40,13 @@ export const DialogContainer = styled.div<{ width: string }>`
 `;
 
 export const Title = styled.div`
-    padding-top: calc( var(--grid-unit) * 2 - 4px );
+    padding-top: calc(var(--grid-unit) * 2 - 4px);
     padding-right: calc(var(--grid-unit) * 2);
     padding-left: calc(var(--grid-unit) * 2);
 `;
 
 export const Divider = styled.div`
-    border-top: 1px solid ${tokens.colors.interactive.disabled__border.rgba};      
+    border-top: 1px solid ${tokens.colors.interactive.disabled__border.rgba};
     box-sizing: border-box;
     margin-top: var(--grid-unit);
     padding-bottom: var(--grid-unit);
@@ -59,7 +59,7 @@ export const Content = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
-    display:flex;
+    display: flex;
     justify-content: flex-end;
     padding-bottom: calc(var(--grid-unit) * 2);
     padding-right: calc(var(--grid-unit) * 2);

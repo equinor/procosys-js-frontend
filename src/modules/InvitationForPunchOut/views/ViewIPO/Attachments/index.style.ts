@@ -11,7 +11,7 @@ export const Container = styled.div`
         .emptyTab {
             pointer-events: none;
         }
-    
+
         margin-left: calc(var(--margin-module--left) * -1);
         margin-right: calc(var(--margin-module--right) * -1);
     }

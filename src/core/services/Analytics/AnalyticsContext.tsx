@@ -8,23 +8,21 @@ const AnalyticsContext = React.createContext<IAnalytics>({} as IAnalytics);
 AnalyticsContext.displayName = 'AnalyticsContext';
 
 const AnalyticsContextProvider: React.FC = ({ children }): JSX.Element => {
-
     const history = useHistory();
     const analytics = new AnalyticsService(history);
 
-    return (<AnalyticsContext.Provider value={analytics} >
-        {children}
-    </AnalyticsContext.Provider>);
+    return (
+        <AnalyticsContext.Provider value={analytics}>
+            {children}
+        </AnalyticsContext.Provider>
+    );
 };
 
 AnalyticsContextProvider.propTypes = {
-    children: propTypes.node
+    children: propTypes.node,
 };
 
-const useAnalytics = (): IAnalytics => React.useContext<IAnalytics>(AnalyticsContext);
+const useAnalytics = (): IAnalytics =>
+    React.useContext<IAnalytics>(AnalyticsContext);
 
-export {
-    useAnalytics,
-    AnalyticsContext,
-    AnalyticsContextProvider
-};
+export { useAnalytics, AnalyticsContext, AnalyticsContextProvider };

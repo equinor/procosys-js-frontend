@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-    margin: calc(var(--grid-unit)*2);
+    margin: calc(var(--grid-unit) * 2);
     display: flex;
     flex-direction: row;
 `;
@@ -21,6 +21,6 @@ export const ActionContainer = styled.div`
     display: flex;
     flex-direction: row;
     button {
-        margin-left: calc(var(--grid-unit) * 2)
+        margin-left: calc(var(--grid-unit) * 2);
     }
 `;

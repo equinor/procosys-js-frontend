@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import ActionExpanded from './ActionExpanded';
-import { Collapse, CollapseInfo, ActionContainer, ActionList, Container, AddActionContainer, StyledButton } from './ActionTab.style';
+import {
+    Collapse,
+    CollapseInfo,
+    ActionContainer,
+    ActionList,
+    Container,
+    AddActionContainer,
+    StyledButton,
+} from './ActionTab.style';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EdsIcon from '../../../../../../components/EdsIcon';
@@ -10,9 +18,9 @@ import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
 import CreateOrEditAction from './CreateOrEditAction';
 
-const attachmentIcon = <EdsIcon name='attach_file' size={16} />;
-const notificationIcon = <EdsIcon name='notifications' size={16} />;
-const addIcon = <EdsIcon name='add_circle_filled' size={16} />;
+const attachmentIcon = <EdsIcon name="attach_file" size={16} />;
+const notificationIcon = <EdsIcon name="notifications" size={16} />;
+const addIcon = <EdsIcon name="add_circle_filled" size={16} />;
 
 export interface ActionListItem {
     id: number;
@@ -31,7 +39,7 @@ interface ActionTabProps {
 const ActionTab = ({
     tagId,
     isVoided,
-    setDirty
+    setDirty,
 }: ActionTabProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [expandedAction, setExpandedAction] = useState<number | null>();
@@ -43,11 +51,18 @@ const ActionTab = ({
         (async (): Promise<void> => {
             try {
                 if (tagId != null) {
-                    const actions = await apiClient.getActions(tagId, (cancel: Canceler) => requestCancellor = cancel);
+                    const actions = await apiClient.getActions(
+                        tagId,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
                     setActions(actions);
                 }
             } catch (error) {
-                console.error('Get action list failed: ', error.message, error.data);
+                console.error(
+                    'Get action list failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();
@@ -70,14 +85,13 @@ const ActionTab = ({
         }
     };
 
-
     const createActionSection = (action: ActionListItem): JSX.Element => {
         const isExpanded = action.id === expandedAction;
 
         const isDue = (): boolean => {
             if (action.dueTimeUtc) {
                 const today = new Date().getTime();
-                const dueTime = (new Date(action.dueTimeUtc)).getTime();
+                const dueTime = new Date(action.dueTimeUtc).getTime();
                 return dueTime <= today;
             } else {
                 return false;
@@ -89,15 +103,24 @@ const ActionTab = ({
 
         return (
             <ActionContainer isClosed={action.isClosed} key={action.id}>
-                <Collapse isClosed={action.isClosed} onClick={(): void => toggleDetails(action.id)} >
-                    <Button data-testid={`toggle-icon-${action.id}`} variant='ghost_icon'>
-                        {
-                            isExpanded
-                                ? <KeyboardArrowUpIcon />
-                                : <KeyboardArrowDownIcon />
-                        }
+                <Collapse
+                    isClosed={action.isClosed}
+                    onClick={(): void => toggleDetails(action.id)}
+                >
+                    <Button
+                        data-testid={`toggle-icon-${action.id}`}
+                        variant="ghost_icon"
+                    >
+                        {isExpanded ? (
+                            <KeyboardArrowUpIcon />
+                        ) : (
+                            <KeyboardArrowDownIcon />
+                        )}
                     </Button>
-                    <CollapseInfo isClosed={action.isClosed} isExpanded={isExpanded}>
+                    <CollapseInfo
+                        isClosed={action.isClosed}
+                        isExpanded={isExpanded}
+                    >
                         {action.title}
                     </CollapseInfo>
                     <div style={{ whiteSpace: 'nowrap' }}>
@@ -105,18 +128,25 @@ const ActionTab = ({
                         {showAttachmentIcon() && attachmentIcon}
                     </div>
                 </Collapse>
-                {
-                    isExpanded && (
-                        <ActionExpanded tagId={tagId} isVoided={isVoided} actionId={action.id} getActionList={getActionList} toggleDetails={(): void => { toggleDetails(action.id); }} setDirty={setDirty} />
-                    )
-                }
-            </ActionContainer >
+                {isExpanded && (
+                    <ActionExpanded
+                        tagId={tagId}
+                        isVoided={isVoided}
+                        actionId={action.id}
+                        getActionList={getActionList}
+                        toggleDetails={(): void => {
+                            toggleDetails(action.id);
+                        }}
+                        setDirty={setDirty}
+                    />
+                )}
+            </ActionContainer>
         );
     };
 
     return (
         <>
-            {showCreateAction &&
+            {showCreateAction && (
                 <CreateOrEditAction
                     tagId={tagId}
                     isVoided={isVoided}
@@ -126,27 +156,24 @@ const ActionTab = ({
                     }}
                     setDirty={setDirty}
                 />
-            }
-            {
-                !showCreateAction &&
+            )}
+            {!showCreateAction && (
                 <Container>
                     <AddActionContainer>
                         <StyledButton
                             disabled={isVoided}
-                            variant='ghost'
-                            onClick={(): void => setShowCreateAction(true)}>
+                            variant="ghost"
+                            onClick={(): void => setShowCreateAction(true)}
+                        >
                             {addIcon} Add action
                         </StyledButton>
                     </AddActionContainer>
 
                     <ActionList>
-                        {
-                            actions.map(action => createActionSection(action))
-                        }
+                        {actions.map((action) => createActionSection(action))}
                     </ActionList>
-
-                </Container >
-            }
+                </Container>
+            )}
         </>
     );
 };

@@ -33,7 +33,10 @@ export const showSnackbarNotification = (
     displayRight = false
 ): any => {
     clearTimeout(lastTimeoutId);
-    render(<Notification message={message} displayRight={displayRight} />, snackbarContainer);
+    render(
+        <Notification message={message} displayRight={displayRight} />,
+        snackbarContainer
+    );
 
     lastTimeoutId = window.setTimeout(() => {
         render(<></>, snackbarContainer);

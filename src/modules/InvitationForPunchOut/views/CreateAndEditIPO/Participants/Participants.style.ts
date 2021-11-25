@@ -8,17 +8,20 @@ interface DropdownProps {
 
 export const DropdownItem = styled.div<DropdownProps>`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
-    ${(props): any => !props.disabled && css`
-        :hover {
-            background-color: ${tokens.colors.ui.background__light.rgba}
-        }
-    `}
-    ${(props): any => props.disabled && css`
-        color: ${tokens.colors.interactive.disabled__border.rgba};
-        cursor: not-allowed;
-    `}
+    ${(props): any =>
+        !props.disabled &&
+        css`
+            :hover {
+                background-color: ${tokens.colors.ui.background__light.rgba};
+            }
+        `}
+    ${(props): any =>
+        props.disabled &&
+        css`
+            color: ${tokens.colors.interactive.disabled__border.rgba};
+            cursor: not-allowed;
+        `}
 `;
-
 
 export const Container = styled.div`
     display: flex;
@@ -32,7 +35,7 @@ export const FormContainer = styled.div`
 
 export const ParticipantRowsContainer = styled.div`
     display: grid;
-    grid-template-columns: 250px 180px 300px auto; 
+    grid-template-columns: 250px 180px 300px auto;
     width: fit-content;
     padding: var(--grid-unit);
     > div {

@@ -3,7 +3,12 @@ import Dropdown from '@procosys/components/Dropdown';
 import { Collapse, CollapseInfo } from '../ScopeFilter.style';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import { SelectedItemsContainer, Item, SelectedItem, FilterContainer } from './MultiSelectFilter.style';
+import {
+    SelectedItemsContainer,
+    Item,
+    SelectedItem,
+    FilterContainer,
+} from './MultiSelectFilter.style';
 import EdsIcon from '@procosys/components/EdsIcon';
 
 interface Item {
@@ -19,10 +24,9 @@ type MultiSelectProps = {
     selectedItems: string[] | null;
     onChange: (selectedItems: Item[]) => void;
     icon: JSX.Element;
-}
+};
 
 const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
-
     const [selectedItems, setSeletectedItems] = useState<Item[]>([]);
     const [filter, setFilter] = useState<string | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -31,7 +35,9 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
         if (props.items && props.selectedItems) {
             const selected: Item[] = [];
             props.selectedItems.map((id) => {
-                const item = props.items.find((e) => String(e.id) == String(id));
+                const item = props.items.find(
+                    (e) => String(e.id) == String(id)
+                );
                 if (item) {
                     selected.push(item);
                 }
@@ -46,52 +52,71 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
     };
 
     const onDeselect = (item: Item): void => {
-        const newItmList = selectedItems.filter(itm => String(itm.id) != String(item.id));
+        const newItmList = selectedItems.filter(
+            (itm) => String(itm.id) != String(item.id)
+        );
         props.onChange(newItmList);
     };
 
-    const selectableItems = props.items.map(itm => {
-        if (filter && !itm.title.toLowerCase().startsWith(filter.toLowerCase())) return;
-        const isSelected = selectedItems.findIndex(selectedItem => String(selectedItem.id) === String(itm.id)) > -1;
-        return (<Item onClick={(): void => onSelect(itm)} key={String(itm.id)}>
-            {isSelected ? <EdsIcon name="checkbox" /> : <EdsIcon name="checkbox_outline" />}
-            {itm.title}
-        </Item>);
+    const selectableItems = props.items.map((itm) => {
+        if (filter && !itm.title.toLowerCase().startsWith(filter.toLowerCase()))
+            return;
+        const isSelected =
+            selectedItems.findIndex(
+                (selectedItem) => String(selectedItem.id) === String(itm.id)
+            ) > -1;
+        return (
+            <Item onClick={(): void => onSelect(itm)} key={String(itm.id)}>
+                {isSelected ? (
+                    <EdsIcon name="checkbox" />
+                ) : (
+                    <EdsIcon name="checkbox_outline" />
+                )}
+                {itm.title}
+            </Item>
+        );
     });
 
-    const selectedItemsComponents = selectedItems.map(e => {
-        return (<SelectedItem key={e.id} onClick={(): void => onDeselect(e)}><EdsIcon name="close" size={16} /> {e.title}</SelectedItem>);
+    const selectedItemsComponents = selectedItems.map((e) => {
+        return (
+            <SelectedItem key={e.id} onClick={(): void => onDeselect(e)}>
+                <EdsIcon name="close" size={16} /> {e.title}
+            </SelectedItem>
+        );
     });
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="MultiSelectHeader" filterActive={selectedItems.length > 0} >
+            <Collapse
+                isExpanded={isExpanded}
+                onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)}
+                data-testid="MultiSelectHeader"
+                filterActive={selectedItems.length > 0}
+            >
                 {props.icon}
-                <CollapseInfo>
-                    {props.headerLabel}
-                </CollapseInfo>
-                {
-                    isExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
+                <CollapseInfo>{props.headerLabel}</CollapseInfo>
+                {isExpanded ? (
+                    <KeyboardArrowUpIcon />
+                ) : (
+                    <KeyboardArrowDownIcon />
+                )}
             </Collapse>
-            {
-                isExpanded && (
-                    <FilterContainer>
-                        <Dropdown text={props.inputPlaceholder} onFilter={setFilter} label={props.inputLabel}>
-                            {selectableItems}
-                        </Dropdown>
-                        <SelectedItemsContainer>
-                            {selectedItemsComponents}
-                        </SelectedItemsContainer>
-                    </FilterContainer>
-                )
-            }
-
+            {isExpanded && (
+                <FilterContainer>
+                    <Dropdown
+                        text={props.inputPlaceholder}
+                        onFilter={setFilter}
+                        label={props.inputLabel}
+                    >
+                        {selectableItems}
+                    </Dropdown>
+                    <SelectedItemsContainer>
+                        {selectedItemsComponents}
+                    </SelectedItemsContainer>
+                </FilterContainer>
+            )}
         </>
     );
 };
-
 
 export default MultiSelectFilter;

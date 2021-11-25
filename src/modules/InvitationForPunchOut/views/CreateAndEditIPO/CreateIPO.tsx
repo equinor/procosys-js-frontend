@@ -1,6 +1,18 @@
-import { Attachment, CommPkgRow, GeneralInfoDetails, McScope, Participant, RoleParticipant, Step } from '../../types';
+import {
+    Attachment,
+    CommPkgRow,
+    GeneralInfoDetails,
+    McScope,
+    Participant,
+    RoleParticipant,
+    Step,
+} from '../../types';
 import { ComponentName, IpoCustomEvents, OrganizationsEnum } from '../enums';
-import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import {
+    FunctionalRoleDto,
+    ParticipantDto,
+    PersonDto,
+} from '../../http/InvitationForPunchOutApiClient';
 import React, { useEffect, useState } from 'react';
 import { getEndTime, getNextHalfHourTimeString } from './utils';
 
@@ -26,74 +38,104 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     description: '',
     startTime: initialDate,
     endTime: getEndTime(initialDate),
-    location: ''
+    location: '',
 };
 
 const initialParticipants: Participant[] = [
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.Contractor) as string, value: OrganizationsEnum.Contractor },
+        organization: {
+            text: OrganizationMap.get(OrganizationsEnum.Contractor) as string,
+            value: OrganizationsEnum.Contractor,
+        },
         sortKey: null,
         type: 'Functional role',
         externalEmail: null,
         person: null,
-        role: null
+        role: null,
     },
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.ConstructionCompany) as string, value: OrganizationsEnum.ConstructionCompany },
+        organization: {
+            text: OrganizationMap.get(
+                OrganizationsEnum.ConstructionCompany
+            ) as string,
+            value: OrganizationsEnum.ConstructionCompany,
+        },
         sortKey: null,
         type: 'Functional role',
         externalEmail: null,
         person: null,
-        role: null
+        role: null,
     },
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.Commissioning) as string, value: OrganizationsEnum.Commissioning },
+        organization: {
+            text: OrganizationMap.get(
+                OrganizationsEnum.Commissioning
+            ) as string,
+            value: OrganizationsEnum.Commissioning,
+        },
         sortKey: null,
         type: 'Functional role',
         externalEmail: null,
         person: null,
-        role: null
+        role: null,
     },
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.Operation) as string, value: OrganizationsEnum.Operation },
+        organization: {
+            text: OrganizationMap.get(OrganizationsEnum.Operation) as string,
+            value: OrganizationsEnum.Operation,
+        },
         sortKey: null,
         type: 'Functional role',
         externalEmail: null,
         person: null,
-        role: null
+        role: null,
     },
     {
-        organization: { text: OrganizationMap.get(OrganizationsEnum.TechnicalIntegrity) as string, value: OrganizationsEnum.TechnicalIntegrity },
+        organization: {
+            text: OrganizationMap.get(
+                OrganizationsEnum.TechnicalIntegrity
+            ) as string,
+            value: OrganizationsEnum.TechnicalIntegrity,
+        },
         sortKey: null,
         type: 'Functional role',
         externalEmail: null,
         person: null,
-        role: null
-    }
+        role: null,
+    },
 ];
 
 const CreateIPO = (): JSX.Element => {
     const user = useCurrentUser();
-    const params = useParams<{ ipoId: any; projectName: any; commPkgNo: any }>();
+    const params =
+        useParams<{ ipoId: any; projectName: any; commPkgNo: any }>();
 
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },
         { title: 'Scope', isCompleted: false },
         { title: 'Participants', isCompleted: false },
         { title: 'Upload attachments', isCompleted: false },
-        { title: 'Summary & create', isCompleted: false }
+        { title: 'Summary & create', isCompleted: false },
     ];
 
-    const initialGeneralInfo = { ...emptyGeneralInfo, projectName: params.projectName ? params.projectName : '' };
-    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(initialGeneralInfo);
-    const [confirmationChecked, setConfirmationChecked] = useState<boolean>(false);
-    const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
+    const initialGeneralInfo = {
+        ...emptyGeneralInfo,
+        projectName: params.projectName ? params.projectName : '',
+    };
+    const [generalInfo, setGeneralInfo] =
+        useState<GeneralInfoDetails>(initialGeneralInfo);
+    const [confirmationChecked, setConfirmationChecked] =
+        useState<boolean>(false);
+    const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<
+        CommPkgRow[]
+    >([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         system: null,
         multipleDisciplines: false,
-        selected: []
+        selected: [],
     });
-    const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
+    const [participants, setParticipants] =
+        useState<Participant[]>(initialParticipants);
     const [fromMain, setFromMain] = useState<boolean>(false);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isCreating, setIsCreating] = useState<boolean>(false);
@@ -101,14 +143,21 @@ const CreateIPO = (): JSX.Element => {
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
-    const [projectNameFromMain] = useState<string | null>(params.projectName ? decodeURIComponent(params.projectName) : null);
-    const [commPkgNoFromMain] = useState<string | null>(params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null);
+    const [projectNameFromMain] = useState<string | null>(
+        params.projectName ? decodeURIComponent(params.projectName) : null
+    );
+    const [commPkgNoFromMain] = useState<string | null>(
+        params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null
+    );
 
-    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } = useDirtyContext();
+    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } =
+        useDirtyContext();
     const analystics = useAnalytics();
 
     useEffect(() => {
-        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+        if (
+            JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)
+        ) {
             setDirtyStateFor(ComponentName.GeneralInfo);
         } else {
             unsetDirtyStateFor(ComponentName.GeneralInfo);
@@ -116,29 +165,34 @@ const CreateIPO = (): JSX.Element => {
     }, [generalInfo]);
 
     /**
-     * Fetch available functional roles 
+     * Fetch available functional roles
      */
     useEffect(() => {
         let requestCanceler: Canceler;
         try {
             (async (): Promise<void> => {
-                const functionalRoles = await apiClient.getFunctionalRolesAsync()
-                    .then(roles => roles.map((role): RoleParticipant => {
-                        return {
-                            code: role.code,
-                            description: role.description,
-                            usePersonalEmail: role.usePersonalEmail,
-                            notify: false,
-                            persons: role.persons.map(p => {
-                                return {
-                                    azureOid: p.azureOid,
-                                    name: `${p.firstName} ${p.lastName}`,
-                                    email: p.email,
-                                    radioOption: role.usePersonalEmail ? 'to' : null,
-                                };
-                            })
-                        };
-                    }));
+                const functionalRoles = await apiClient
+                    .getFunctionalRolesAsync()
+                    .then((roles) =>
+                        roles.map((role): RoleParticipant => {
+                            return {
+                                code: role.code,
+                                description: role.description,
+                                usePersonalEmail: role.usePersonalEmail,
+                                notify: false,
+                                persons: role.persons.map((p) => {
+                                    return {
+                                        azureOid: p.azureOid,
+                                        name: `${p.firstName} ${p.lastName}`,
+                                        email: p.email,
+                                        radioOption: role.usePersonalEmail
+                                            ? 'to'
+                                            : null,
+                                    };
+                                }),
+                            };
+                        })
+                    );
                 setAvailableRoles(functionalRoles);
             })();
             return (): void => requestCanceler && requestCanceler();
@@ -148,7 +202,7 @@ const CreateIPO = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        setParticipants(p => {
+        setParticipants((p) => {
             const participantsCopy = [...p];
             participantsCopy[0].type = 'Person';
             participantsCopy[0].role = null;
@@ -156,7 +210,7 @@ const CreateIPO = (): JSX.Element => {
                 azureOid: user.id,
                 name: user.name,
                 email: '',
-                radioOption: null
+                radioOption: null,
             };
             return participantsCopy;
         });
@@ -171,7 +225,7 @@ const CreateIPO = (): JSX.Element => {
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             rowVersion: participant.person.rowVersion,
-            required: participant.person.radioOption == 'to'
+            required: participant.person.radioOption == 'to',
         };
     };
 
@@ -179,18 +233,20 @@ const CreateIPO = (): JSX.Element => {
         if (!role.persons || role.persons.length == 0) {
             return null;
         }
-        return role.persons.map(p => {
+        return role.persons.map((p) => {
             return {
                 id: p.id,
                 azureOid: p.azureOid,
                 email: p.email,
                 rowVersion: p.rowVersion,
-                required: p.radioOption == 'to' || role.usePersonalEmail
+                required: p.radioOption == 'to' || role.usePersonalEmail,
             };
         });
     };
 
-    const getFunctionalRole = (participant: Participant): FunctionalRoleDto | null => {
+    const getFunctionalRole = (
+        participant: Participant
+    ): FunctionalRoleDto | null => {
         if (!participant.role) {
             return null;
         }
@@ -198,17 +254,18 @@ const CreateIPO = (): JSX.Element => {
             id: participant.role.id,
             rowVersion: participant.role.rowVersion,
             code: participant.role.code,
-            persons: getPersons(participant.role)
+            persons: getPersons(participant.role),
         };
     };
 
     const getCommPkgScope = (): string[] => {
-        return selectedCommPkgScope.map(c => {
+        return selectedCommPkgScope.map((c) => {
             return c.commPkgNo;
         });
     };
 
-    const getMcScope = (): string[] | null => selectedMcPkgScope.selected.map(mc => mc.mcPkgNo);
+    const getMcScope = (): string[] | null =>
+        selectedMcPkgScope.selected.map((mc) => mc.mcPkgNo);
 
     const getParticipants = (): ParticipantDto[] => {
         return participants.map((p, i) => {
@@ -217,27 +274,41 @@ const CreateIPO = (): JSX.Element => {
                 sortKey: i,
                 externalEmail: p.externalEmail,
                 person: getPerson(p),
-                functionalRole: getFunctionalRole(p)
+                functionalRole: getFunctionalRole(p),
             };
         });
     };
 
     const uploadAllAttachments = async (ipoId: number): Promise<any> => {
-        await Promise.all(attachments.map(async (attachment) => {
-            if (attachment.file) {
-                try {
-                    await apiClient.uploadAttachment(ipoId, attachment.file, true);
-                } catch (error) {
-                    console.error('Upload attachment failed: ', error.message, error.data);
-                    showSnackbarNotification(error.message);
+        await Promise.all(
+            attachments.map(async (attachment) => {
+                if (attachment.file) {
+                    try {
+                        await apiClient.uploadAttachment(
+                            ipoId,
+                            attachment.file,
+                            true
+                        );
+                    } catch (error) {
+                        console.error(
+                            'Upload attachment failed: ',
+                            error.message,
+                            error.data
+                        );
+                        showSnackbarNotification(error.message);
+                    }
                 }
-            }
-        }));
+            })
+        );
     };
 
     const createNewIpo = async (): Promise<void> => {
         setIsCreating(true);
-        if (generalInfo.title && generalInfo.projectName && generalInfo.poType) {
+        if (
+            generalInfo.title &&
+            generalInfo.projectName &&
+            generalInfo.poType
+        ) {
             try {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
@@ -255,11 +326,17 @@ const CreateIPO = (): JSX.Element => {
                     mcPkgScope,
                     commPkgScope
                 );
-                analystics.trackUserAction(IpoCustomEvents.CREATED, { project: generalInfo.projectName, type: generalInfo.poType.value });
+                analystics.trackUserAction(IpoCustomEvents.CREATED, {
+                    project: generalInfo.projectName,
+                    type: generalInfo.poType.value,
+                });
 
                 await uploadAllAttachments(newIpoId);
 
-                unsetDirtyStateForMany([ComponentName.Attachments, ComponentName.GeneralInfo]);
+                unsetDirtyStateForMany([
+                    ComponentName.Attachments,
+                    ComponentName.GeneralInfo,
+                ]);
                 history.push('/' + newIpoId);
             } catch (error) {
                 console.error('Create IPO failed: ', error.message, error.data);
@@ -267,13 +344,14 @@ const CreateIPO = (): JSX.Element => {
             }
         }
         setIsCreating(false);
-
     };
 
     useEffect(() => {
         if (params.projectName && params.commPkgNo) {
             setFromMain(true);
-            setGeneralInfo(gi => { return { ...gi, projectName: projectNameFromMain }; });
+            setGeneralInfo((gi) => {
+                return { ...gi, projectName: projectNameFromMain };
+            });
         }
     }, [projectNameFromMain]);
 

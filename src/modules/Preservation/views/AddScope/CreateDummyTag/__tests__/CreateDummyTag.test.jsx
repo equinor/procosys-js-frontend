@@ -28,8 +28,8 @@ const mockAreas = [
 const mockPOs = [
     {
         title: '01',
-        description: 'po description 1'
-    }
+        description: 'po description 1',
+    },
 ];
 
 const mockValidTagNo = {
@@ -43,43 +43,43 @@ const mockTagDetails = {
     description: 'pre area test tag',
     areaCode: 'AC1',
     tagType: 'PreArea',
-    disciplineCode: 'DC1'
+    disciplineCode: 'DC1',
 };
 
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
 
-jest.mock('../../../../context/PreservationContext',() => ({
+jest.mock('../../../../context/PreservationContext', () => ({
     usePreservationContext: () => {
         return {
             project: {
                 id: 1,
                 name: 'test',
-                description: 'project'
+                description: 'project',
             },
             apiClient: {
                 checkAreaTagNo: () => Promise.resolve(mockValidTagNo),
-                getTagDetails: () => Promise.resolve(mockTagDetails)
+                getTagDetails: () => Promise.resolve(mockTagDetails),
             },
             libraryApiClient: {
                 getAreas: () => Promise.resolve(mockAreas),
-                getDisciplines: () => Promise.resolve(mockDisciplines)
-            }
+                getDisciplines: () => Promise.resolve(mockDisciplines),
+            },
         };
-    }
+    },
 }));
 
-jest.mock('../../../../../../core/ProcosysContext',() => ({
+jest.mock('../../../../../../core/ProcosysContext', () => ({
     useProcosysContext: () => {
         return {
             procosysApiClient: {
-                getPurchaseOrders: () => Promise.resolve(mockPOs)
-            }
+                getPurchaseOrders: () => Promise.resolve(mockPOs),
+            },
         };
-    }
+    },
 }));
 
 jest.mock('react-router-dom', () => ({
-    useHistory: () => {}
+    useHistory: () => {},
 }));
 
 const mockSetDirtyStateFor = jest.fn();
@@ -89,19 +89,27 @@ jest.mock('@procosys/core/DirtyContext', () => ({
     useDirtyContext: () => {
         return {
             setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor
+            unsetDirtyStateFor: mockUnsetDirtyStateFor,
         };
-    }
+    },
 }));
 
 describe('<CreateDummyTag />', () => {
-
     /** Because of API calls using effect hooks, we need to wrap everything in act */
     it('Next button should be disabled intially.', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
+            const { getByText } = render(
+                <CreateDummyTag
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            expect(getByText('Next').closest('button')).toHaveProperty(
+                'disabled',
+                true
+            );
         });
     });
 
@@ -109,7 +117,13 @@ describe('<CreateDummyTag />', () => {
         /** Because of API calls using effect hooks, we need to wrap everything in act */
         await act(async () => {
             var propFunc = jest.fn();
-            const { queryByText } = render(<CreateDummyTag setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc} />);
+            const { queryByText } = render(
+                <CreateDummyTag
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
 
             expect(queryByText('Dummy type')).toBeInTheDocument();
             expect(queryByText('Discipline')).toBeInTheDocument();
@@ -121,49 +135,121 @@ describe('<CreateDummyTag />', () => {
     it('Displays error message when suffix contains space', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { queryByText } = render(<CreateDummyTag suffix="1 2" setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument());
+            const { queryByText } = render(
+                <CreateDummyTag
+                    suffix="1 2"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            await waitFor(() =>
+                expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument()
+            );
         });
     });
 
-    it('\'Next\' button disabled when not all mandatory fields are passed', async () => {
+    it('"Next" button disabled when not all mandatory fields are passed', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='testDiscipline' suffix='12' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
+            const { getByText } = render(
+                <CreateDummyTag
+                    areaType={{ title: 'Normal', value: 'PreArea' }}
+                    discipline="testDiscipline"
+                    suffix="12"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            expect(getByText('Next').closest('button')).toHaveProperty(
+                'disabled',
+                true
+            );
         });
     });
 
-    it('\'Next\' button disabled when not all mandatory fields are passed for PO tag', async () => {
+    it('"Next" button disabled when not all mandatory fields are passed for PO tag', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='testDiscipline' description='test description' suffix='12' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
+            const { getByText } = render(
+                <CreateDummyTag
+                    areaType={{ title: 'Supplier', value: 'PoArea' }}
+                    discipline="testDiscipline"
+                    description="test description"
+                    suffix="12"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            expect(getByText('Next').closest('button')).toHaveProperty(
+                'disabled',
+                true
+            );
         });
     });
 
-    it('\'Next\' button enabled when all mandatory fields are passed', async () => {
+    it('"Next" button enabled when all mandatory fields are passed', async () => {
         await act(async () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(getByText('Next').closest('button')).toHaveProperty('disabled', false));
+            const { getByText } = render(
+                <CreateDummyTag
+                    areaType={{ title: 'Normal', value: 'PreArea' }}
+                    discipline="E"
+                    description="description text"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            await waitFor(() =>
+                expect(getByText('Next').closest('button')).toHaveProperty(
+                    'disabled',
+                    false
+                )
+            );
         });
     });
 
-    it('\'Next\' button enabled when all mandatory fields are passed for PO tag', async () => {
+    it('"Next" button enabled when all mandatory fields are passed for PO tag', async () => {
         await act(async () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' purchaseOrder='po' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(getByText('Next').closest('button')).toHaveProperty('disabled', false));
+            const { getByText } = render(
+                <CreateDummyTag
+                    areaType={{ title: 'Supplier', value: 'PoArea' }}
+                    discipline="E"
+                    description="description text"
+                    purchaseOrder="po"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            await waitFor(() =>
+                expect(getByText('Next').closest('button')).toHaveProperty(
+                    'disabled',
+                    false
+                )
+            );
         });
     });
 
     it('Should display area dropdown if areaType is Normal or Site', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Normal', value: 'PreArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
+            const { getByText } = render(
+                <CreateDummyTag
+                    areaType={{ title: 'Normal', value: 'PreArea' }}
+                    discipline="E"
+                    description="description text"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
             await waitFor(() => expect(getByText('Area')).toBeInTheDocument());
         });
     });
@@ -171,36 +257,95 @@ describe('<CreateDummyTag />', () => {
     it('Sould display PO/CO dropdown if areaType is Supplier', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag areaType={{title: 'Supplier', value: 'PoArea'}} discipline='E' description='description text' setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc}/>);
-            await waitFor(() => expect(getByText('PO/Calloff')).toBeInTheDocument());
+            const { getByText } = render(
+                <CreateDummyTag
+                    areaType={{ title: 'Supplier', value: 'PoArea' }}
+                    discipline="E"
+                    description="description text"
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                />
+            );
+            await waitFor(() =>
+                expect(getByText('PO/Calloff')).toBeInTheDocument()
+            );
         });
     });
 
-    it('Should display screen for duplication of dummy tag, and duplicate button should be disabled if not mandatory fields are filled in.', async () => {        
+    it('Should display screen for duplication of dummy tag, and duplicate button should be disabled if not mandatory fields are filled in.', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { getByText } = render(<CreateDummyTag duplicateTagId={1} areaType={{text: 'Area (#PRE)', value: 'PreArea'}} 
-                discipline={{code: 'DC1', description: 'Discipline description 1'}} area={{code: 'AC1', description: 'area description 1'}} 
-                setDescription={propFunc} setSelectedTags={propFunc} setArea={propFunc} setPurchaseOrder={propFunc} setDiscipline={propFunc} setAreaType={propFunc}/>);
+            const { getByText } = render(
+                <CreateDummyTag
+                    duplicateTagId={1}
+                    areaType={{ text: 'Area (#PRE)', value: 'PreArea' }}
+                    discipline={{
+                        code: 'DC1',
+                        description: 'Discipline description 1',
+                    }}
+                    area={{ code: 'AC1', description: 'area description 1' }}
+                    setDescription={propFunc}
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                    setDiscipline={propFunc}
+                    setAreaType={propFunc}
+                />
+            );
 
             expect(getByText('Duplicate dummy tag')).toBeInTheDocument();
-            await waitFor( () =>  expect(getByText('Area (#PRE)')).toBeInTheDocument());    
-            await waitFor( () =>  expect(getByText('Discipline description 1')).toBeInTheDocument());    
-            await waitFor( () =>  expect(getByText('area description 1')).toBeInTheDocument());    
-            expect(getByText('Duplicate').closest('button')).toHaveAttribute('disabled');
+            await waitFor(() =>
+                expect(getByText('Area (#PRE)')).toBeInTheDocument()
+            );
+            await waitFor(() =>
+                expect(
+                    getByText('Discipline description 1')
+                ).toBeInTheDocument()
+            );
+            await waitFor(() =>
+                expect(getByText('area description 1')).toBeInTheDocument()
+            );
+            expect(getByText('Duplicate').closest('button')).toHaveAttribute(
+                'disabled'
+            );
         });
-    });    
+    });
 
-    it('Should display screen for duplication of dummy tag, and Duplicate should be enabled if all mandatory fields are filled in.', async () => {        
+    it('Should display screen for duplication of dummy tag, and Duplicate should be enabled if all mandatory fields are filled in.', async () => {
         await act(async () => {
             var propFunc = jest.fn();
-            const { queryByText, getByTestId } = render(<CreateDummyTag duplicateTagId={1} areaType={{text: 'Area (#PRE)', value: 'PreArea'}} discipline={{code: 'DC1', description: 'Discipline description 1'}} 
-                area={{code: 'AC1', description: 'area description 1'}} setDescription={propFunc} setSelectedTags={propFunc} setArea={propFunc} 
-                setPurchaseOrder={propFunc} setDiscipline={propFunc} setAreaType={propFunc} suffix='suffixtest' description='description test'/>);
-                            
-            await waitFor( () => expect(getByTestId('suffix').value).toBe('suffixtest'));
-            await waitFor( () =>  expect(queryByText('description test')).toBeInTheDocument());    
-            await waitFor( () =>  expect(queryByText('Duplicate').closest('button')).not.toHaveAttribute('disabled'));
+            const { queryByText, getByTestId } = render(
+                <CreateDummyTag
+                    duplicateTagId={1}
+                    areaType={{ text: 'Area (#PRE)', value: 'PreArea' }}
+                    discipline={{
+                        code: 'DC1',
+                        description: 'Discipline description 1',
+                    }}
+                    area={{ code: 'AC1', description: 'area description 1' }}
+                    setDescription={propFunc}
+                    setSelectedTags={propFunc}
+                    setArea={propFunc}
+                    setPurchaseOrder={propFunc}
+                    setDiscipline={propFunc}
+                    setAreaType={propFunc}
+                    suffix="suffixtest"
+                    description="description test"
+                />
+            );
+
+            await waitFor(() =>
+                expect(getByTestId('suffix').value).toBe('suffixtest')
+            );
+            await waitFor(() =>
+                expect(queryByText('description test')).toBeInTheDocument()
+            );
+            await waitFor(() =>
+                expect(
+                    queryByText('Duplicate').closest('button')
+                ).not.toHaveAttribute('disabled')
+            );
         });
-    });   
+    });
 });

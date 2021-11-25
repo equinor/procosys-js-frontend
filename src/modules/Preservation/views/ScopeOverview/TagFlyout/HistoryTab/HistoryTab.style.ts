@@ -11,9 +11,11 @@ export const DetailsContainer = styled.div`
 `;
 
 export const DueContainer = styled.div<{ isOverdue: boolean }>`
-    ${(props): any => props.isOverdue && css`
-        color: ${tokens.colors.interactive.danger__text.rgba};
-    `}
+    ${(props): any =>
+        props.isOverdue &&
+        css`
+            color: ${tokens.colors.interactive.danger__text.rgba};
+        `}
 `;
 
 export const OverflowColumn = styled.div`

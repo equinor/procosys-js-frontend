@@ -12,4 +12,3 @@ export const CenterContainer = styled.div`
     position: relative;
     margin-top: 10%;
 `;
-

@@ -4,7 +4,7 @@ import React from 'react';
 
 type ModuleTabsProps = {
     onClick?: () => void;
-}
+};
 
 const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     const params = useParams<any>();
@@ -28,29 +28,24 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             <a href={`/${params.plant}/Documents`}>Document</a>
             <a href={`/${params.plant}/Notification`}>Notification</a>
             <a href={`/${params.plant}/Hookup`}>Hookup</a>
-            {
-                __DEV__ && (
-                    <span onClick={props.onClick}>
-
-                        <NavLink
-                            activeClassName={'active'}
-                            to={`/${params.plant}/libraryv2`}
-                        >
-                            Plant Configuration
-                        </NavLink>
-                    </span>
-                )
-            }
-            {
-                !__DEV__ && (
-                    <span onClick={props.onClick}>
-                        <a href={`/${params.plant}/PlantConfig`}>
-                            Plant Configuration
-                        </a>
-                    </span>
-                )
-            }
-        </SubNav >
+            {__DEV__ && (
+                <span onClick={props.onClick}>
+                    <NavLink
+                        activeClassName={'active'}
+                        to={`/${params.plant}/libraryv2`}
+                    >
+                        Plant Configuration
+                    </NavLink>
+                </span>
+            )}
+            {!__DEV__ && (
+                <span onClick={props.onClick}>
+                    <a href={`/${params.plant}/PlantConfig`}>
+                        Plant Configuration
+                    </a>
+                </span>
+            )}
+        </SubNav>
     );
 };
 

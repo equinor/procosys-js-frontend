@@ -1,4 +1,13 @@
-import { Collapse, CollapseInfo, Expand, ExpandHeader, ExpandSection, Header, TagContainer, TagList } from './TagDetails.style';
+import {
+    Collapse,
+    CollapseInfo,
+    Expand,
+    ExpandHeader,
+    ExpandSection,
+    Header,
+    TagContainer,
+    TagList,
+} from './TagDetails.style';
 import React, { useEffect, useState } from 'react';
 
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -19,9 +28,8 @@ const TagDetails = ({
     selectedTags,
     removeTag,
     collapsed = true,
-    showMCPkg = true
+    showMCPkg = true,
 }: TagDetailsProps): JSX.Element => {
-
     const [expandedTagNo, setExpandedTagNo] = useState<string | null>(null);
 
     useEffect((): void => {
@@ -43,38 +51,41 @@ const TagDetails = ({
         return (
             <TagContainer key={tag.tagNo}>
                 <Collapse>
-                    <IconButton size='small' onClick={(): void => toggleDetails(tag.tagNo)}>
-                        {
-                            isExpanded
-                                ? <KeyboardArrowUpIcon />
-                                : <KeyboardArrowDownIcon />
-                        }
+                    <IconButton
+                        size="small"
+                        onClick={(): void => toggleDetails(tag.tagNo)}
+                    >
+                        {isExpanded ? (
+                            <KeyboardArrowUpIcon />
+                        ) : (
+                            <KeyboardArrowDownIcon />
+                        )}
                     </IconButton>
-                    <CollapseInfo>
-                        {tag.tagNo}
-                    </CollapseInfo>
-                    {removeTag &&
-                        <IconButton size='small' title='Remove' onClick={(): void => removeTag(tag.tagNo)}>
+                    <CollapseInfo>{tag.tagNo}</CollapseInfo>
+                    {removeTag && (
+                        <IconButton
+                            size="small"
+                            title="Remove"
+                            onClick={(): void => removeTag(tag.tagNo)}
+                        >
                             <DeleteOutlineIcon />
                         </IconButton>
-                    }
+                    )}
                 </Collapse>
-                {
-                    (isExpanded) && (
-                        <Expand>
+                {isExpanded && (
+                    <Expand>
+                        <ExpandSection>
+                            <ExpandHeader>Tag description</ExpandHeader>
+                            <div>{tag.description}</div>
+                        </ExpandSection>
+                        {showMCPkg && (
                             <ExpandSection>
-                                <ExpandHeader>Tag description</ExpandHeader>
-                                <div>{tag.description}</div>
+                                <ExpandHeader>MC pkg</ExpandHeader>
+                                <div>{tag.mcPkgNo}</div>
                             </ExpandSection>
-                            {showMCPkg &&
-                                <ExpandSection>
-                                    <ExpandHeader>MC pkg</ExpandHeader>
-                                    <div>{tag.mcPkgNo}</div>
-                                </ExpandSection>
-                            }
-                        </Expand>
-                    )
-                }
+                        )}
+                    </Expand>
+                )}
             </TagContainer>
         );
     };
@@ -84,13 +95,9 @@ const TagDetails = ({
             <Header>
                 <Typography variant="h1">Selected tag(s)</Typography>
             </Header>
-            <div>
-                {selectedTags.length} tag(s) selected
-            </div>
+            <div>{selectedTags.length} tag(s) selected</div>
             <TagList>
-                {
-                    selectedTags.map(tag => createTagSection(tag))
-                }
+                {selectedTags.map((tag) => createTagSection(tag))}
             </TagList>
         </div>
     );

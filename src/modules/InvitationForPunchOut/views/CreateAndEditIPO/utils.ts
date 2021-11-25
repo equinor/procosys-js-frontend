@@ -30,11 +30,16 @@ export const isEmptyObject = (obj: Record<string, string>): boolean => {
     return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
 
-export const getAttachmentDownloadLink = (attachment: Attachment): string | undefined => {
+export const getAttachmentDownloadLink = (
+    attachment: Attachment
+): string | undefined => {
     if (attachment.downloadUri) {
         return attachment.downloadUri;
     }
-    if (attachment.file !== undefined && typeof window.URL.createObjectURL !== 'undefined') {
+    if (
+        attachment.file !== undefined &&
+        typeof window.URL.createObjectURL !== 'undefined'
+    ) {
         return window.URL.createObjectURL(attachment.file);
     }
 

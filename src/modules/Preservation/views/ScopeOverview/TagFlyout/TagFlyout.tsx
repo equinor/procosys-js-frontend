@@ -1,4 +1,14 @@
-import { Container, Header, HeaderActions, HeaderNotification, NotificationIcon, StatusLabel, StyledButton, Tabs, TagNoContainer } from './TagFlyout.style';
+import {
+    Container,
+    Header,
+    HeaderActions,
+    HeaderNotification,
+    NotificationIcon,
+    StatusLabel,
+    StyledButton,
+    Tabs,
+    TagNoContainer,
+} from './TagFlyout.style';
 import React, { useEffect, useState } from 'react';
 
 import ActionTab from './ActionTab/ActionTab';
@@ -21,7 +31,7 @@ enum PreservationStatus {
     NotStarted = 'Not started',
     Active = 'Active',
     Completed = 'Completed',
-    Unknown = 'Unknown'
+    Unknown = 'Unknown',
 }
 
 interface TagFlyoutProps {
@@ -30,16 +40,13 @@ interface TagFlyoutProps {
     setDirty: () => void;
 }
 
-const TagFlyout = ({
-    tagId,
-    close,
-    setDirty
-}: TagFlyoutProps): JSX.Element => {
+const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
     const [activeTab, setActiveTab] = useState<string>('preservation');
     const [tagDetails, setTagDetails] = useState<TagDetails | null>(null);
     const [mainTagId, setMainTagId] = useState<number>();
     const [isPreservingTag, setIsPreservingTag] = useState<boolean>(false);
-    const [isStartingPreservation, setIsStartingPreservation] = useState<boolean>(false);
+    const [isStartingPreservation, setIsStartingPreservation] =
+        useState<boolean>(false);
     const { apiClient, project } = usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
     const { plant } = useCurrentPlant();
@@ -48,21 +55,25 @@ const TagFlyout = ({
         try {
             const details = await apiClient.getTagDetails(tagId);
             setTagDetails(details);
-        }
-        catch (error) {
+        } catch (error) {
             console.error(`Get tag details failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
     };
 
-    const isStandardTag = (): boolean => tagDetails ? tagDetails.tagType === 'Standard' : false;
+    const isStandardTag = (): boolean =>
+        tagDetails ? tagDetails.tagType === 'Standard' : false;
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             if (tagDetails && isStandardTag()) {
                 try {
-                    const tag = await procosysApiClient.getTagId([tagDetails.tagNo], project.name, (cancel: Canceler) => requestCancellor = cancel);
+                    const tag = await procosysApiClient.getTagId(
+                        [tagDetails.tagNo],
+                        project.name,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
                     if (tag.length > 0) {
                         setMainTagId(tag[0].id);
                     }
@@ -78,7 +89,6 @@ const TagFlyout = ({
         };
     }, [tagDetails]);
 
-
     useEffect(() => {
         getTagDetails();
     }, [tagId]);
@@ -89,13 +99,15 @@ const TagFlyout = ({
             await apiClient.preserveSingleTag(tagId);
 
             setDirty();
-            showSnackbarNotification('This tag has been preserved.', 5000, true);
-        }
-        catch (error) {
+            showSnackbarNotification(
+                'This tag has been preserved.',
+                5000,
+                true
+            );
+        } catch (error) {
             console.error(`Preserve tag failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
-        }
-        finally {
+        } finally {
             setIsPreservingTag(false);
             getTagDetails();
         }
@@ -107,13 +119,17 @@ const TagFlyout = ({
             await apiClient.startPreservationForTag(tagId);
 
             setDirty();
-            showSnackbarNotification('Status was set to \'Active\' for this tag.', 5000, true);
-        }
-        catch (error) {
-            console.error(`Start preservation for tag failed: ${error.message}`);
+            showSnackbarNotification(
+                "Status was set to 'Active' for this tag.",
+                5000,
+                true
+            );
+        } catch (error) {
+            console.error(
+                `Start preservation for tag failed: ${error.message}`
+            );
             showSnackbarNotification(error.message, 5000, true);
-        }
-        finally {
+        } finally {
             setIsStartingPreservation(false);
             getTagDetails();
         }
@@ -127,25 +143,53 @@ const TagFlyout = ({
         return tagDetails.readyToBePreserved;
     };
 
-    const preservationIsNotStarted = tagDetails ? tagDetails.status === PreservationStatus.NotStarted : false;
-    const preservationIsStarted = tagDetails ? tagDetails.status === PreservationStatus.Active : false;
+    const preservationIsNotStarted = tagDetails
+        ? tagDetails.status === PreservationStatus.NotStarted
+        : false;
+    const preservationIsStarted = tagDetails
+        ? tagDetails.status === PreservationStatus.Active
+        : false;
     const isVoided = tagDetails ? tagDetails.isVoided : false;
 
     const getTabContent = (): JSX.Element => {
-
         switch (activeTab) {
             case 'preservation': {
                 if (tagDetails === null) {
-                    return <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner medium /></div>;
+                    return (
+                        <div
+                            style={{
+                                margin: 'calc(var(--grid-unit) * 5) auto',
+                            }}
+                        >
+                            <Spinner medium />
+                        </div>
+                    );
                 }
 
-                return <PreservationTab tagDetails={tagDetails} refreshTagDetails={getTagDetails} setDirty={setDirty} />;
+                return (
+                    <PreservationTab
+                        tagDetails={tagDetails}
+                        refreshTagDetails={getTagDetails}
+                        setDirty={setDirty}
+                    />
+                );
             }
             case 'actions': {
-                return <ActionTab tagId={tagId} isVoided={tagDetails ? tagDetails.isVoided : false} setDirty={setDirty} />;
+                return (
+                    <ActionTab
+                        tagId={tagId}
+                        isVoided={tagDetails ? tagDetails.isVoided : false}
+                        setDirty={setDirty}
+                    />
+                );
             }
             case 'attachments':
-                return <AttachmentTab tagId={tagId} isVoided={tagDetails ? tagDetails.isVoided : false} />;
+                return (
+                    <AttachmentTab
+                        tagId={tagId}
+                        isVoided={tagDetails ? tagDetails.isVoided : false}
+                    />
+                );
             case 'history':
                 return <HistoryTab tagId={tagId} />;
             default:
@@ -153,85 +197,111 @@ const TagFlyout = ({
         }
     };
 
-
     return (
         <Container>
-            {
-                (!isVoided && preservationIsNotStarted) &&
+            {!isVoided && preservationIsNotStarted && (
                 <HeaderNotification>
                     <NotificationIcon>
                         <NotificationsOutlinedIcon />
                     </NotificationIcon>
-                    <Typography variant='body_long' style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
-                        This tag is not being preserved yet. Click start preservation to enable writing preservation records.
+                    <Typography
+                        variant="body_long"
+                        style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}
+                    >
+                        This tag is not being preserved yet. Click start
+                        preservation to enable writing preservation records.
                     </Typography>
                 </HeaderNotification>
-            }
+            )}
             <Header>
-                <TagNoContainer isStandardTag={isStandardTag()} >
-                    <a href={mainTagId ? `/${plant.pathId}/Completion#Tag|${mainTagId}` : ''}>
+                <TagNoContainer isStandardTag={isStandardTag()}>
+                    <a
+                        href={
+                            mainTagId
+                                ? `/${plant.pathId}/Completion#Tag|${mainTagId}`
+                                : ''
+                        }
+                    >
                         <Typography variant="h1">
                             {tagDetails ? tagDetails.tagNo : '-'}
                         </Typography>
                     </a>
                 </TagNoContainer>
                 <HeaderActions>
-                    {(!isVoided && preservationIsStarted) &&
+                    {!isVoided && preservationIsStarted && (
                         <StyledButton
                             disabled={!isPreserveTagButtonEnabled()}
                             onClick={preserveTag}
                         >
                             {isPreservingTag && (
-                                <span style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ marginBottom: '4px' }}><Spinner /></span> Preserved this week
+                                <span
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <span style={{ marginBottom: '4px' }}>
+                                        <Spinner />
+                                    </span>{' '}
+                                    Preserved this week
                                 </span>
                             )}
-                            {!isPreservingTag && ('Preserved this week')}
-                        </StyledButton>}
-                    {(!isVoided && preservationIsNotStarted) &&
+                            {!isPreservingTag && 'Preserved this week'}
+                        </StyledButton>
+                    )}
+                    {!isVoided && preservationIsNotStarted && (
                         <StyledButton
-                            variant='ghost'
-                            title='Start preservation'
+                            variant="ghost"
+                            title="Start preservation"
                             disabled={isStartingPreservation}
                             onClick={startPreservation}
                         >
                             <PlayArrowOutlinedIcon />
-                        </StyledButton>}
-                    <StyledButton variant='ghost' title='Close' onClick={close}>
+                        </StyledButton>
+                    )}
+                    <StyledButton variant="ghost" title="Close" onClick={close}>
                         <CloseIcon />
                     </StyledButton>
                 </HeaderActions>
             </Header>
-            <StatusLabel status={isVoided ? 'Voided' : tagDetails && tagDetails.status}>
+            <StatusLabel
+                status={isVoided ? 'Voided' : tagDetails && tagDetails.status}
+            >
                 <span style={{ margin: '0 var(--grid-unit)' }}>
                     {isVoided ? 'Voided' : tagDetails && tagDetails.status}
                 </span>
             </StatusLabel>
             <Tabs>
                 <a
-                    className={activeTab === 'preservation' ? 'active' : 'preservation'}
-                    onClick={(): void => setActiveTab('preservation')}>
+                    className={
+                        activeTab === 'preservation' ? 'active' : 'preservation'
+                    }
+                    onClick={(): void => setActiveTab('preservation')}
+                >
                     Preservation
                 </a>
                 <a
                     className={activeTab === 'actions' ? 'active' : 'actions'}
-                    onClick={(): void => setActiveTab('actions')}>
+                    onClick={(): void => setActiveTab('actions')}
+                >
                     Preservation actions
                 </a>
                 <a
-                    className={activeTab === 'attachments' ? 'active' : 'attachments'}
-                    onClick={(): void => setActiveTab('attachments')}>
+                    className={
+                        activeTab === 'attachments' ? 'active' : 'attachments'
+                    }
+                    onClick={(): void => setActiveTab('attachments')}
+                >
                     Attachments
                 </a>
                 <a
                     className={activeTab === 'history' ? 'active' : 'history'}
-                    onClick={(): void => setActiveTab('history')}>
+                    onClick={(): void => setActiveTab('history')}
+                >
                     History
                 </a>
             </Tabs>
-            {
-                getTabContent()
-            }
+            {getTabContent()}
         </Container>
     );
 };

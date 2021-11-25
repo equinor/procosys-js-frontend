@@ -1,9 +1,9 @@
 type CacheItem = {
     data: any;
     cachedAt: Date;
-}
+};
 
-class MissingStorageKeyException extends Error { }
+class MissingStorageKeyException extends Error {}
 
 interface ICacheService {
     /**
@@ -33,7 +33,6 @@ interface ICacheService {
     clear(): void;
 }
 
-
 export default class CacheService implements ICacheService {
     private cacheKey: string;
     private storageEngine: Storage;
@@ -59,7 +58,7 @@ export default class CacheService implements ICacheService {
         const storageKey = this.getStorageKey(key);
         const cacheData: CacheItem = {
             data: dataToCache,
-            cachedAt: new Date()
+            cachedAt: new Date(),
         };
         this.storageEngine.setItem(storageKey, JSON.stringify(cacheData));
     }
@@ -94,5 +93,4 @@ export default class CacheService implements ICacheService {
             }
         }
     }
-
 }

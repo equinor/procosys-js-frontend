@@ -1,5 +1,13 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, Container, ContentContainer, ErrorContainer, Header, InputContainer, SpinnerContainer } from './EditTagProperties.style';
+import {
+    ButtonContainer,
+    Container,
+    ContentContainer,
+    ErrorContainer,
+    Header,
+    InputContainer,
+    SpinnerContainer,
+} from './EditTagProperties.style';
 import { Journey, RequirementType, Step, TagDetails } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../components/Select';
@@ -47,13 +55,23 @@ const EditTagProperties = (): JSX.Element => {
 
     const [description, setDescription] = useState<string | null>(null);
     const [tag, setTag] = useState<TagDetails>();
-    const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>([]);
-    const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
-    const [remarkOrStorageAreaEdited, setRemarkOrStorageAreaEdited] = useState<boolean>(false);
-    const [tagJourneyOrRequirementsEdited, setTagJourneyOrRequirementsEdited] = useState<boolean>(false);
+    const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>(
+        []
+    );
+    const [requirements, setRequirements] = useState<RequirementFormInput[]>(
+        []
+    );
+    const [remarkOrStorageAreaEdited, setRemarkOrStorageAreaEdited] =
+        useState<boolean>(false);
+    const [tagJourneyOrRequirementsEdited, setTagJourneyOrRequirementsEdited] =
+        useState<boolean>(false);
     const [poTag, setPoTag] = useState<boolean>(false);
-    const [originalRequirements, setOriginalRequirements] = useState<RequirementFormInput[]>([]);
-    const [validationErrorMessage, setValidationErrorMessage] = useState<string | null>();
+    const [originalRequirements, setOriginalRequirements] = useState<
+        RequirementFormInput[]
+    >([]);
+    const [validationErrorMessage, setValidationErrorMessage] = useState<
+        string | null
+    >();
 
     const [loading, setLoading] = useState(true);
 
@@ -72,7 +90,10 @@ const EditTagProperties = (): JSX.Element => {
         (async (): Promise<void> => {
             if (tagId) {
                 try {
-                    const details = await apiClient.getTagDetails(Number.parseInt(tagId), (cancel: Canceler) => requestCancellor = cancel);
+                    const details = await apiClient.getTagDetails(
+                        Number.parseInt(tagId),
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
                     setTag(details);
                     if (details.tagNo.substr(0, 4) == '#PO-') {
                         setPoTag(true);
@@ -80,7 +101,11 @@ const EditTagProperties = (): JSX.Element => {
                     setRowVersion(details.rowVersion);
                     setDescription(details.description);
                 } catch (error) {
-                    console.error('Get tag details failed: ', error.message, error.data);
+                    console.error(
+                        'Get tag details failed: ',
+                        error.message,
+                        error.data
+                    );
                     showSnackbarNotification(error.message);
                 }
             }
@@ -116,25 +141,35 @@ const EditTagProperties = (): JSX.Element => {
         (async (): Promise<void> => {
             if (tagId) {
                 try {
-                    const response = await apiClient.getTagRequirements(Number.parseInt(tagId), true, true, (cancel: Canceler) => requestCancellor = cancel);
-                    const mappedResponse = response.map(itm => {
+                    const response = await apiClient.getTagRequirements(
+                        Number.parseInt(tagId),
+                        true,
+                        true,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
+                    const mappedResponse = response.map((itm) => {
                         return {
                             requirementDefinitionId: -1,
                             requirementId: itm.id,
                             intervalWeeks: itm.intervalWeeks,
                             requirementTypeTitle: itm.requirementType.title,
-                            requirementDefinitionTitle: itm.requirementDefinition.title,
+                            requirementDefinitionTitle:
+                                itm.requirementDefinition.title,
                             editingRequirements: true,
                             isVoided: itm.isVoided,
                             isInUse: itm.isInUse,
-                            rowVersion: itm.rowVersion
+                            rowVersion: itm.rowVersion,
                         };
                     });
                     setRequirements([...mappedResponse]);
                     setOriginalRequirements([...mappedResponse]);
                     setRequirementsFetched(true);
                 } catch (error) {
-                    console.error('Get requirement failed: ', error.message, error.data);
+                    console.error(
+                        'Get requirement failed: ',
+                        error.message,
+                        error.data
+                    );
                     showSnackbarNotification(error.message);
                 }
             }
@@ -153,10 +188,17 @@ const EditTagProperties = (): JSX.Element => {
         (async (): Promise<void> => {
             if (tagId) {
                 try {
-                    const response = await apiClient.getRequirementTypes(false, (cancel: Canceler) => requestCancellor = cancel);
+                    const response = await apiClient.getRequirementTypes(
+                        false,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
                     setRequirementTypes(response);
                 } catch (error) {
-                    console.error('Get requirement types failed: ', error.message, error.data);
+                    console.error(
+                        'Get requirement types failed: ',
+                        error.message,
+                        error.data
+                    );
                     showSnackbarNotification(error.message);
                 }
             }
@@ -174,10 +216,17 @@ const EditTagProperties = (): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await apiClient.getJourneys(true, (cancel: Canceler) => requestCancellor = cancel);
+                const data = await apiClient.getJourneys(
+                    true,
+                    (cancel: Canceler) => (requestCancellor = cancel)
+                );
                 setJourneys(data);
             } catch (error) {
-                console.error('Get journeys failed: ', error.message, error.data);
+                console.error(
+                    'Get journeys failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message);
             }
         })();
@@ -189,15 +238,22 @@ const EditTagProperties = (): JSX.Element => {
 
     const setSelectedStep = (journeyIndex: number, stepId: number): void => {
         if (tag) {
-            let selectedStep: Step | undefined = journeys[journeyIndex].steps.find((pStep: Step) => pStep.id === stepId);
+            let selectedStep: Step | undefined = journeys[
+                journeyIndex
+            ].steps.find((pStep: Step) => pStep.id === stepId);
             if (!selectedStep) {
                 //Set dummy step to handle voided step
                 selectedStep = {
                     id: stepId,
                     isVoided: true,
                     title: tag.step.title,
-                    mode: { id: -1, title: '', rowVersion: '', forSupplier: false },
-                    rowVersion: ''
+                    mode: {
+                        id: -1,
+                        title: '',
+                        rowVersion: '',
+                        forSupplier: false,
+                    },
+                    rowVersion: '',
                 };
             }
             setStep(selectedStep);
@@ -206,7 +262,9 @@ const EditTagProperties = (): JSX.Element => {
 
     useEffect(() => {
         if (journeys.length > 0 && tag && requirementsFetched) {
-            const initialJourney = journeys.findIndex((pJourney: Journey) => pJourney.title === tag.journey.title);
+            const initialJourney = journeys.findIndex(
+                (pJourney: Journey) => pJourney.title === tag.journey.title
+            );
             setJourney(initialJourney);
             setSelectedStep(initialJourney, tag.step.id);
             setLoading(false);
@@ -220,25 +278,27 @@ const EditTagProperties = (): JSX.Element => {
         const validJourneys: SelectItem[] = [];
         if (tag) {
             journeys.forEach((journey) => {
-                if ((journey.id == tag.journey.id)   //If journey is currently set, include even if it is not currently valid
-                    || (!journey.isVoided
-                        && (!poTag || (poTag && journey.steps.some((step) => step.mode.forSupplier)))) // If PO tag, only include if a supplier step exists
+                if (
+                    journey.id == tag.journey.id || //If journey is currently set, include even if it is not currently valid
+                    (!journey.isVoided &&
+                        (!poTag ||
+                            (poTag &&
+                                journey.steps.some(
+                                    (step) => step.mode.forSupplier
+                                )))) // If PO tag, only include if a supplier step exists
                 ) {
-
                     validJourneys.push({
                         text: journey.title,
-                        value: journey.id
+                        value: journey.id,
                     });
                 }
             });
             setMappedJourneys(validJourneys);
         }
-
     }, [journeys, tag]);
 
-
     /**
-     * Map Journey steps into menu elements, and set step if necessary. 
+     * Map Journey steps into menu elements, and set step if necessary.
      */
     useEffect(() => {
         if (newJourney) {
@@ -249,13 +309,14 @@ const EditTagProperties = (): JSX.Element => {
         if (tag && journeys.length > 0 && journeys[journey]) {
             const validSteps: SelectItem[] = [];
             journeys[journey].steps.forEach((step) => {
-                if ((tag.step.id == step.id)   //If step is currently set, include even if it is not currently valid
-                    || (!step.isVoided
-                        && (!poTag || (poTag && step.mode.forSupplier))) //for PO tags, only supplier step can be choosen
+                if (
+                    tag.step.id == step.id || //If step is currently set, include even if it is not currently valid
+                    (!step.isVoided &&
+                        (!poTag || (poTag && step.mode.forSupplier))) //for PO tags, only supplier step can be choosen
                 ) {
                     validSteps.push({
                         text: step.title,
-                        value: step.id
+                        value: step.id,
                     });
                 }
             });
@@ -264,38 +325,55 @@ const EditTagProperties = (): JSX.Element => {
 
             // If purchase order tag, set current step to the supplier step (the only valid state)
             if (poTag) {
-                const stepForSupplier = journeys[journey].steps.find((step) => step.mode.forSupplier);
+                const stepForSupplier = journeys[journey].steps.find(
+                    (step) => step.mode.forSupplier
+                );
                 if (!stepForSupplier) {
-                    showSnackbarNotification('Warning: Selected journey does not have a supplier step.', 5000);
+                    showSnackbarNotification(
+                        'Warning: Selected journey does not have a supplier step.',
+                        5000
+                    );
                 } else {
                     setStep(stepForSupplier);
                 }
             }
-
         }
     }, [journey]);
 
-    const handleErrorFromBackend = (error: ProCoSysApiError, errorMessageConsole: string): void => {
+    const handleErrorFromBackend = (
+        error: ProCoSysApiError,
+        errorMessageConsole: string
+    ): void => {
         if (error.data && error.data.status == 400) {
             console.error(errorMessageConsole, error.message, error.data);
             setValidationErrorMessage(error.message);
-            throw (showSnackbarNotification('Validation error. Changes are not saved.'));
+            throw showSnackbarNotification(
+                'Validation error. Changes are not saved.'
+            );
         } else {
             console.error(errorMessageConsole, error.message, error.data);
-            throw (showSnackbarNotification(error.message));
+            throw showSnackbarNotification(error.message);
         }
     };
 
     const setJourneyFromForm = (value: number): void => {
         const j = journeys.find((pJourney: Journey) => pJourney.id === value);
         if (j) {
-            setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
+            setJourney(
+                journeys.findIndex((pJourney: Journey) => pJourney.id === value)
+            );
             setNewJourney(j.title);
         }
     };
 
     const remarkOrStorageAreaChange = (): void => {
-        if (tag && remarkInputRef.current && storageAreaInputRef.current && (remarkInputRef.current.value != tag.remark || storageAreaInputRef.current.value != tag.storageArea)) {
+        if (
+            tag &&
+            remarkInputRef.current &&
+            storageAreaInputRef.current &&
+            (remarkInputRef.current.value != tag.remark ||
+                storageAreaInputRef.current.value != tag.storageArea)
+        ) {
             setRemarkOrStorageAreaEdited(true);
         } else {
             setRemarkOrStorageAreaEdited(false);
@@ -306,7 +384,14 @@ const EditTagProperties = (): JSX.Element => {
      * Check if any changes have been made to journey, step requirements, or description
      */
     useEffect(() => {
-        if (tag && ((newJourney && newJourney != tag.journey.title) || (step && step.id != tag.step.id) || JSON.stringify(requirements) != JSON.stringify(originalRequirements) || (description && description != tag.description))) {
+        if (
+            tag &&
+            ((newJourney && newJourney != tag.journey.title) ||
+                (step && step.id != tag.step.id) ||
+                JSON.stringify(requirements) !=
+                    JSON.stringify(originalRequirements) ||
+                (description && description != tag.description))
+        ) {
             setTagJourneyOrRequirementsEdited(true);
         } else {
             setTagJourneyOrRequirementsEdited(false);
@@ -316,46 +401,70 @@ const EditTagProperties = (): JSX.Element => {
     const updateRemarkAndStorageArea = async (): Promise<string> => {
         try {
             if (tag && remarkInputRef.current && storageAreaInputRef.current) {
-                const updatedRowVersion = await apiClient.setRemarkAndStorageArea(tag.id, remarkInputRef.current.value, storageAreaInputRef.current.value, rowVersion);
+                const updatedRowVersion =
+                    await apiClient.setRemarkAndStorageArea(
+                        tag.id,
+                        remarkInputRef.current.value,
+                        storageAreaInputRef.current.value,
+                        rowVersion
+                    );
                 setRowVersion(updatedRowVersion);
                 return updatedRowVersion;
             }
             return rowVersion;
         } catch (error) {
-            handleErrorFromBackend(error, 'Error updating remark and storage area');
-            throw (error.message);
+            handleErrorFromBackend(
+                error,
+                'Error updating remark and storage area'
+            );
+            throw error.message;
         }
     };
 
-    const updateTagJourneyAndRequirements = async (currentRowVersion: string): Promise<void> => {
+    const updateTagJourneyAndRequirements = async (
+        currentRowVersion: string
+    ): Promise<void> => {
         try {
             if (tag && step && description) {
                 let newRequirements: RequirementFormInput[] = [];
-                const numberOfNewReq = requirements.length - originalRequirements.length;
+                const numberOfNewReq =
+                    requirements.length - originalRequirements.length;
                 if (requirements.length > originalRequirements.length) {
                     newRequirements = [...requirements.slice(-numberOfNewReq)];
                 }
-                const updatedRequirements = requirements.slice(0, originalRequirements.length).map(req => {
-                    return {
-                        requirementId: req.requirementId,
-                        intervalWeeks: req.intervalWeeks,
-                        isVoided: req.isVoided,
-                        rowVersion: req.rowVersion
-                    };
-                });
-                const deletedRequirements = requirements.filter(req => req.isVoided && req.isDeleted)
-                    .map(
-                        req => {
-                            return {
-                                requirementId: req.requirementId,
-                                rowVersion: req.rowVersion
-                            };
-                        }
-                    );
-                await apiClient.updateTagStepAndRequirements(tag.id, description, step.id, currentRowVersion, updatedRequirements, newRequirements, deletedRequirements);
+                const updatedRequirements = requirements
+                    .slice(0, originalRequirements.length)
+                    .map((req) => {
+                        return {
+                            requirementId: req.requirementId,
+                            intervalWeeks: req.intervalWeeks,
+                            isVoided: req.isVoided,
+                            rowVersion: req.rowVersion,
+                        };
+                    });
+                const deletedRequirements = requirements
+                    .filter((req) => req.isVoided && req.isDeleted)
+                    .map((req) => {
+                        return {
+                            requirementId: req.requirementId,
+                            rowVersion: req.rowVersion,
+                        };
+                    });
+                await apiClient.updateTagStepAndRequirements(
+                    tag.id,
+                    description,
+                    step.id,
+                    currentRowVersion,
+                    updatedRequirements,
+                    newRequirements,
+                    deletedRequirements
+                );
             }
         } catch (error) {
-            handleErrorFromBackend(error, 'Error updating journey, step, requirements, or description');
+            handleErrorFromBackend(
+                error,
+                'Error updating journey, step, requirements, or description'
+            );
         }
     };
 
@@ -367,7 +476,7 @@ const EditTagProperties = (): JSX.Element => {
                 currentRowVersion = await updateRemarkAndStorageArea();
             } catch (error) {
                 setLoading(false);
-                throw ('error');
+                throw 'error';
             }
         }
         if (tagJourneyOrRequirementsEdited) {
@@ -375,7 +484,7 @@ const EditTagProperties = (): JSX.Element => {
                 await updateTagJourneyAndRequirements(currentRowVersion);
             } catch (error) {
                 setLoading(false);
-                throw ('error');
+                throw 'error';
             }
         }
         setLoading(false);
@@ -394,7 +503,8 @@ const EditTagProperties = (): JSX.Element => {
             null,
             'Save',
             save,
-            true);
+            true
+        );
     };
 
     const cancel = (): void => {
@@ -404,94 +514,109 @@ const EditTagProperties = (): JSX.Element => {
     return (
         <Container>
             <Header>
-                <Typography variant="h1">{tag ? `Editing ${tag.tagNo}` : 'Editing'}</Typography>
+                <Typography variant="h1">
+                    {tag ? `Editing ${tag.tagNo}` : 'Editing'}
+                </Typography>
                 <div>{project.name}</div>
             </Header>
-            {
-                loading ?
-                    <SpinnerContainer>
-                        <Spinner large />
-                    </SpinnerContainer>
-                    :
-                    <ContentContainer>
-                        <div>
-                            {validationErrorMessage &&
-                                <ErrorContainer>
-                                    <Typography variant="caption">{validationErrorMessage}</Typography>
-                                </ErrorContainer>
-                            }
-                            <InputContainer style={{ maxWidth: '480px' }}>
-                                <TextField
-                                    id={'Description'}
-                                    label='Tag description'
-                                    defaultValue={tag ? tag.description : ''}
-                                    disabled={tag && !dummyTagTypes.includes(tag.tagType)}
-                                    placeholder={'Write here'}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.target.value)}
-                                />
-                            </InputContainer>
-                            <InputContainer>
-                                <SelectInput
-                                    maxHeight={'300px'}
-                                    onChange={setJourneyFromForm}
-                                    data={mappedJourneys}
-                                    label={'Preservation journey for selected tag'}
-                                >
-                                    {(journey > -1 && journeys[journey].title) || 'Select journey'}
-                                </SelectInput>
-                            </InputContainer>
-                            <InputContainer>
-                                <SelectInput
-                                    onChange={(stepId): void => setSelectedStep(journey, stepId)}
-                                    data={mappedSteps}
-                                    disabled={poTag}
-                                    label={'Preservation step'}
-                                >
-                                    {(step && step.title) || 'Select step'}
-                                </SelectInput>
-                            </InputContainer>
-                            <InputContainer style={{ maxWidth: '480px' }}>
-                                <TextField
-                                    id={'Remark'}
-                                    label='Remark for whole preservation journey'
-                                    defaultValue={tag ? tag.remark : ''}
-                                    inputRef={remarkInputRef}
-                                    placeholder={'Write here'}
-                                    meta='Optional'
-                                    onChange={remarkOrStorageAreaChange}
-                                    multiline='true'
-                                />
-                            </InputContainer>
-                            <InputContainer style={{ maxWidth: '150px' }}>
-                                <TextField
-                                    id={'StorageArea'}
-                                    label='Storage area'
-                                    defaultValue={tag ? tag.storageArea : ''}
-                                    inputRef={storageAreaInputRef}
-                                    placeholder='Write here'
-                                    meta='Optional'
-                                    onChange={remarkOrStorageAreaChange}
-                                />
-                            </InputContainer>
-                            <h2>Requirements for all selected tags</h2>
-                            <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)} />
-                        </div>
-                        <ButtonContainer>
-                            <Button onClick={cancel} variant="outlined">
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={saveDialog}
-                                color="primary"
-                                disabled={(!hasUnsavedChanges() || !step)}
+            {loading ? (
+                <SpinnerContainer>
+                    <Spinner large />
+                </SpinnerContainer>
+            ) : (
+                <ContentContainer>
+                    <div>
+                        {validationErrorMessage && (
+                            <ErrorContainer>
+                                <Typography variant="caption">
+                                    {validationErrorMessage}
+                                </Typography>
+                            </ErrorContainer>
+                        )}
+                        <InputContainer style={{ maxWidth: '480px' }}>
+                            <TextField
+                                id={'Description'}
+                                label="Tag description"
+                                defaultValue={tag ? tag.description : ''}
+                                disabled={
+                                    tag && !dummyTagTypes.includes(tag.tagType)
+                                }
+                                placeholder={'Write here'}
+                                onChange={(
+                                    e: React.ChangeEvent<HTMLInputElement>
+                                ): void => setDescription(e.target.value)}
+                            />
+                        </InputContainer>
+                        <InputContainer>
+                            <SelectInput
+                                maxHeight={'300px'}
+                                onChange={setJourneyFromForm}
+                                data={mappedJourneys}
+                                label={'Preservation journey for selected tag'}
                             >
-                                Save
-                            </Button>
-                        </ButtonContainer>
-                    </ContentContainer>
-            }
-        </Container >
-
+                                {(journey > -1 && journeys[journey].title) ||
+                                    'Select journey'}
+                            </SelectInput>
+                        </InputContainer>
+                        <InputContainer>
+                            <SelectInput
+                                onChange={(stepId): void =>
+                                    setSelectedStep(journey, stepId)
+                                }
+                                data={mappedSteps}
+                                disabled={poTag}
+                                label={'Preservation step'}
+                            >
+                                {(step && step.title) || 'Select step'}
+                            </SelectInput>
+                        </InputContainer>
+                        <InputContainer style={{ maxWidth: '480px' }}>
+                            <TextField
+                                id={'Remark'}
+                                label="Remark for whole preservation journey"
+                                defaultValue={tag ? tag.remark : ''}
+                                inputRef={remarkInputRef}
+                                placeholder={'Write here'}
+                                meta="Optional"
+                                onChange={remarkOrStorageAreaChange}
+                                multiline="true"
+                            />
+                        </InputContainer>
+                        <InputContainer style={{ maxWidth: '150px' }}>
+                            <TextField
+                                id={'StorageArea'}
+                                label="Storage area"
+                                defaultValue={tag ? tag.storageArea : ''}
+                                inputRef={storageAreaInputRef}
+                                placeholder="Write here"
+                                meta="Optional"
+                                onChange={remarkOrStorageAreaChange}
+                            />
+                        </InputContainer>
+                        <h2>Requirements for all selected tags</h2>
+                        <RequirementsSelector
+                            requirementTypes={requirementTypes}
+                            requirements={requirements}
+                            onChange={(newList): void =>
+                                setRequirements(newList)
+                            }
+                        />
+                    </div>
+                    <ButtonContainer>
+                        <Button onClick={cancel} variant="outlined">
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={saveDialog}
+                            color="primary"
+                            disabled={!hasUnsavedChanges() || !step}
+                        >
+                            Save
+                        </Button>
+                    </ButtonContainer>
+                </ContentContainer>
+            )}
+        </Container>
     );
 };
 

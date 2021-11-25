@@ -8,15 +8,19 @@ export const Overlay = styled.div`
     top: 0;
     width: 100%;
     height: 100%;
-    
+
     z-index: 100;
 `;
 
-export const FlyoutContainer = styled.div<{ position: string, minWidth: string, maxWidth: string }>`
+export const FlyoutContainer = styled.div<{
+    position: string;
+    minWidth: string;
+    maxWidth: string;
+}>`
     background: ${tokens.colors.ui.background__default.rgba};
-    box-shadow: ${tokens.elevation.above_scrim}; 
+    box-shadow: ${tokens.elevation.above_scrim};
     position: fixed;
-       
+
     ${({ position }): FlattenSimpleInterpolation => {
         if (position && position == 'left') {
             return css`
@@ -28,7 +32,7 @@ export const FlyoutContainer = styled.div<{ position: string, minWidth: string, 
             `;
         }
     }};
- 
+
     top: 0;
     min-width: ${(props): string => props.minWidth};
     max-width: ${(props): string => props.maxWidth};

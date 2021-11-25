@@ -8,4 +8,3 @@ export const Container = styled.div`
     padding-right: calc(var(--grid-unit) * 5);
     padding-left: calc(var(--grid-unit) * 5);
 `;
-

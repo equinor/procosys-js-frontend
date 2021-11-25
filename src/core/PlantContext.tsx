@@ -16,20 +16,22 @@ type PlantContextDetails = {
     id: string;
     title: string;
     pathId: string;
-}
+};
 
-const PlantContext = React.createContext<PlantContextProps>({} as PlantContextProps);
+const PlantContext = React.createContext<PlantContextProps>(
+    {} as PlantContextProps
+);
 type PlantContextProps = {
     plant: PlantContextDetails;
     setCurrentPlant: (plantId: string) => void;
     permissions: string[];
-}
+};
 
 type LoadingState = {
     permissions: boolean;
-}
+};
 
-class InvalidParameterException extends Error { }
+class InvalidParameterException extends Error {}
 
 const cache = new CacheService('Default', localStorage);
 
@@ -39,23 +41,34 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     const { history, location } = useRouter();
     const { plant: plantInPath } = useParams() as any;
     const [permissions, setPermissions] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState<LoadingState>({ permissions: true });
+    const [isLoading, setIsLoading] = useState<LoadingState>({
+        permissions: true,
+    });
     const analytics = useAnalytics();
 
     if (!plantInPath || plantInPath === '') {
-        return <ErrorComponent title='Missing plant in path' />;
+        return <ErrorComponent title="Missing plant in path" />;
     }
 
-    const [currentPlant, setCurrentPlantInContext] = useState<PlantContextDetails>(() => {
-        const plant = user.plants.filter(plant => plant.id === `PCS$${plantInPath}`)[0];
-        return { id: plant.id, title: plant.title, pathId: plantInPath };
-    });
+    const [currentPlant, setCurrentPlantInContext] =
+        useState<PlantContextDetails>(() => {
+            const plant = user.plants.filter(
+                (plant) => plant.id === `PCS$${plantInPath}`
+            )[0];
+            return { id: plant.id, title: plant.title, pathId: plantInPath };
+        });
 
     const setCurrentPlant = (plantId: string): void => {
-        const normalizedPlantId = (plantId.indexOf('PCS$') != -1 && plantId.replace('PCS$', '')) || plantId;
-        const plantsFiltered = user.plants.filter(plant => plant.id === `PCS$${normalizedPlantId}`);
+        const normalizedPlantId =
+            (plantId.indexOf('PCS$') != -1 && plantId.replace('PCS$', '')) ||
+            plantId;
+        const plantsFiltered = user.plants.filter(
+            (plant) => plant.id === `PCS$${normalizedPlantId}`
+        );
         if (plantsFiltered.length <= 0) {
-            throw new InvalidParameterException(`PlantID: ${plantId} does not exist`);
+            throw new InvalidParameterException(
+                `PlantID: ${plantId} does not exist`
+            );
         }
         const plant = plantsFiltered[0] as PlantContextDetails;
         plant.pathId = normalizedPlantId;
@@ -76,14 +89,20 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         let requestCanceler: Canceler;
         (async (): Promise<void> => {
             try {
-                const permissions = await procosysApiClient.getPermissionsForCurrentUser((e) => requestCanceler = e);
+                const permissions =
+                    await procosysApiClient.getPermissionsForCurrentUser(
+                        (e) => (requestCanceler = e)
+                    );
                 setPermissions(permissions);
             } catch (error) {
                 if (Axios.isCancel(error)) return;
                 console.error('Failed to load permissions', error);
                 analytics.trackException(error);
             }
-            setIsLoading((currentLoadingState) => ({ ...currentLoadingState, permissions: false }));
+            setIsLoading((currentLoadingState) => ({
+                ...currentLoadingState,
+                permissions: false,
+            }));
         })();
         return (): void => requestCanceler && requestCanceler();
     }, [currentPlant]);
@@ -93,23 +112,28 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     }, [plantInPath]);
 
     if (!currentPlant) {
-        return (<Loading title="Loading plant information" />);
+        return <Loading title="Loading plant information" />;
     }
     if (isLoading.permissions) {
-        return (<Loading title="Loading plant permissions" />);
+        return <Loading title="Loading plant permissions" />;
     }
 
     return (
-        <PlantContext.Provider value={{
-            plant: currentPlant, setCurrentPlant, permissions
-        }}>
+        <PlantContext.Provider
+            value={{
+                plant: currentPlant,
+                setCurrentPlant,
+                permissions,
+            }}
+        >
             {children}
         </PlantContext.Provider>
     );
 };
 
 PlantContextProvider.propTypes = {
-    children: propTypes.node.isRequired
+    children: propTypes.node.isRequired,
 };
 
-export const useCurrentPlant = (): PlantContextProps => React.useContext<PlantContextProps>(PlantContext);
+export const useCurrentPlant = (): PlantContextProps =>
+    React.useContext<PlantContextProps>(PlantContext);

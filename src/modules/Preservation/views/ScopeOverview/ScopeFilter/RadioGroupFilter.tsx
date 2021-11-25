@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -19,8 +19,13 @@ interface RadioGroupFilterProps {
     icon: string;
 }
 
-const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGroupFilterProps): JSX.Element => {
-
+const RadioGroupFilter = ({
+    options,
+    value,
+    onChange,
+    label = '',
+    icon,
+}: RadioGroupFilterProps): JSX.Element => {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const [isActiveFilter, setIsActiveFilter] = useState<boolean>(false);
 
@@ -29,12 +34,15 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
         return `RadioGroup_${Date.now()}`;
     });
 
-    const onSelectionChanged = (e: React.ChangeEvent<HTMLInputElement>, newValue: string): void => {
+    const onSelectionChanged = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        newValue: string
+    ): void => {
         onChange(newValue);
     };
 
     useEffect(() => {
-        const option = options.find(o => o.value == value);
+        const option = options.find((o) => o.value == value);
         if (option) {
             setIsActiveFilter(option.default ? false : true);
         } else {
@@ -44,26 +52,42 @@ const RadioGroupFilter = ({options, value, onChange, label = '', icon}: RadioGro
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)} data-testid="RadioGroupHeader" filterActive={isActiveFilter}>
+            <Collapse
+                isExpanded={isExpanded}
+                onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)}
+                data-testid="RadioGroupHeader"
+                filterActive={isActiveFilter}
+            >
                 <EdsIcon name={icon} />
-                <CollapseInfo>
-                    {label}
-                </CollapseInfo>
-                {
-                    isExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
+                <CollapseInfo>{label}</CollapseInfo>
+                {isExpanded ? (
+                    <KeyboardArrowUpIcon />
+                ) : (
+                    <KeyboardArrowDownIcon />
+                )}
             </Collapse>
-            {
-                isExpanded && (
-                    <ExpandedContainer>
-                        <RadioGroup value={value} name={inputName} onChange={onSelectionChanged}>
-                            {options.map(option => (<FormControlLabel key={option.value} value={option.value} label={option.title} checked={((!value && option.default) || option.value === value)} control={<Radio />} />))}
-                        </RadioGroup>
-                    </ExpandedContainer>
-                )
-            }
+            {isExpanded && (
+                <ExpandedContainer>
+                    <RadioGroup
+                        value={value}
+                        name={inputName}
+                        onChange={onSelectionChanged}
+                    >
+                        {options.map((option) => (
+                            <FormControlLabel
+                                key={option.value}
+                                value={option.value}
+                                label={option.title}
+                                checked={
+                                    (!value && option.default) ||
+                                    option.value === value
+                                }
+                                control={<Radio />}
+                            />
+                        ))}
+                    </RadioGroup>
+                </ExpandedContainer>
+            )}
         </>
     );
 };

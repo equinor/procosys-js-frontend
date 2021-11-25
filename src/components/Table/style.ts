@@ -33,10 +33,12 @@ export const TableHeadCell = styled.div<{ align?: string }>`
     font-weight: 500;
     background-color: rgb(247, 247, 247);
     line-height: 1.5rem;
-    justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
+    justify-content: ${(props): string =>
+        props.align === 'right' ? 'flex-end' : 'flex-start'};
     align-items: 'flex-start';
     display: 'flex';
-    text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
+    text-align: ${(props): string =>
+        props.align === 'right' ? 'right' : 'left'};
     :last-child {
         border-right: none;
     }
@@ -68,13 +70,14 @@ export const TableRow = styled.div<{ selected: boolean }>`
     :last-child {
         border-bottom: none;
     }
-    ${(props): any => props.selected && css`
-        background-color: rgb(230, 250, 236);
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.07);
-        }
-    `}
-
+    ${(props): any =>
+        props.selected &&
+        css`
+            background-color: rgb(230, 250, 236);
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.07);
+            }
+        `}
 `;
 
 export const LoadingDiv = styled.div`
@@ -86,7 +89,6 @@ export const LoadingDiv = styled.div`
     }
 `;
 
-
 export const TableCell = styled.div<{ align?: string }>`
     padding: 0;
     font-size: inherit;
@@ -97,12 +99,14 @@ export const TableCell = styled.div<{ align?: string }>`
     white-space: pre-wrap;
     text-overflow: ellipsis;
     color: inherit;
-    justify-content: ${(props): string => props.align === 'right' ? 'flex-end' : 'flex-start'};
+    justify-content: ${(props): string =>
+        props.align === 'right' ? 'flex-end' : 'flex-start'};
     align-items: center;
     display: flex;
     min-height: 40px;
     flex-direction: row;
-    text-align: ${(props): string => props.align === 'right' ? 'right' : 'left'};
+    text-align: ${(props): string =>
+        props.align === 'right' ? 'right' : 'left'};
     :last-child {
         border-right: none;
     }
@@ -125,15 +129,17 @@ export const ResizeHandleComponent = styled.div<{ handleActive: boolean }>`
     transition: all linear 100ms;
     right: -2px;
     width: 3px;
-    ${(props): any => props.handleActive && css`
-        opacity: 1;
-        border: none;
-        background-color: rgba(0, 0, 0, 0.5);
-        height: calc(100% - 4px);
-        top: 2px;
-        right: -1px;
-        width: 1px;
-    `}
+    ${(props): any =>
+        props.handleActive &&
+        css`
+            opacity: 1;
+            border: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: calc(100% - 4px);
+            top: 2px;
+            right: -1px;
+            width: 1px;
+        `}
 `;
 
 export const HeaderCheckbox = styled(Checkbox)`

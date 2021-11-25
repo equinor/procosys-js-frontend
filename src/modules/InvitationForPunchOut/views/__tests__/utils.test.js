@@ -29,7 +29,3 @@ describe('Common IPO utilities', () => {
         expect(fileExt3).toBe('');
     });
 });
-
-
-
-

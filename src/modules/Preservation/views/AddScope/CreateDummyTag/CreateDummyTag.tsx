@@ -1,6 +1,17 @@
 import { Area, CheckAreaTagNo, Discipline, PurchaseOrder, Tag } from '../types';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { ButtonsContainer, CenterContent, Container, DropdownItem, ErrorContainer, FormFieldSpacer, Header, InputContainer, SuffixTextField, TopContainer } from './CreateDummyTag.style';
+import {
+    ButtonsContainer,
+    CenterContent,
+    Container,
+    DropdownItem,
+    ErrorContainer,
+    FormFieldSpacer,
+    Header,
+    InputContainer,
+    SuffixTextField,
+    TopContainer,
+} from './CreateDummyTag.style';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -15,14 +26,16 @@ import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
-const invalidTagNoMessage = 'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
+const invalidTagNoMessage =
+    'An area tag with this tag number already exists. Please adjust the parameters to create a unique tag number.';
 const spacesInTagNoMessage = 'The suffix cannot containt spaces.';
-const errorIcon = <EdsIcon name='error_filled' size={16} />;
+const errorIcon = <EdsIcon name="error_filled" size={16} />;
 
 const areaTypes: SelectItem[] = [
     { text: 'Area (#PRE)', value: 'PreArea' },
     { text: 'Local storage (#SITE)', value: 'SiteArea' },
-    { text: 'Supplier (#PO)', value: 'PoArea' }];
+    { text: 'Supplier (#PO)', value: 'PoArea' },
+];
 
 type AreaItem = {
     text: string;
@@ -55,23 +68,30 @@ type CreateDummyTagProps = {
     submit?: () => Promise<void>;
     duplicateTagId?: number;
     isSubmittingScope: boolean;
-}
+};
 
 const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
-    const { apiClient, libraryApiClient, project, purchaseOrderNumber } = usePreservationContext();
+    const { apiClient, libraryApiClient, project, purchaseOrderNumber } =
+        usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
 
-    const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>([]);
+    const [mappedDisciplines, setMappedDisciplines] = useState<SelectItem[]>(
+        []
+    );
     const suffixInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
     const [disciplines, setDisciplines] = useState<Discipline[]>();
     const [filterForAreas, setFilterForAreas] = useState<string>('');
     const [allAreas, setAllAreas] = useState<AreaItem[]>();
-    const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(allAreas ? allAreas : []);
+    const [filteredAreas, setFilteredAreas] = useState<AreaItem[]>(
+        allAreas ? allAreas : []
+    );
     const [filterForPOs, setFilterForPOs] = useState<string>('');
     const [allPOs, setAllPOs] = useState<POItem[]>([]);
     const [filteredPOs, setFilteredPOs] = useState<POItem[]>(allPOs);
-    const [tagNoValidationError, setTagNoValidationError] = useState<string | null>(null);
+    const [tagNoValidationError, setTagNoValidationError] = useState<
+        string | null
+    >(null);
     const [tagNoValid, setTagNoValid] = useState<boolean>(false);
     const [icon, setIcon] = useState<JSX.Element | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -80,14 +100,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     useEffect(() => {
-        (allAreas && disciplines) ? setIsLoading(false) : setIsLoading(true);
+        allAreas && disciplines ? setIsLoading(false) : setIsLoading(true);
     }, [allAreas, disciplines]);
 
     const getTagDetails = async (tagId: number): Promise<Tag | null> => {
         try {
             return await apiClient.getTagDetails(tagId);
-        }
-        catch (error) {
+        } catch (error) {
             console.error(`Get tag details failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
         }
@@ -99,8 +118,12 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const response = await libraryApiClient.getAreas((cancel: Canceler) => { requestCancellor = cancel; });
-                const areas = response.map(area => ({
+                const response = await libraryApiClient.getAreas(
+                    (cancel: Canceler) => {
+                        requestCancellor = cancel;
+                    }
+                );
+                const areas = response.map((area) => ({
                     text: area.code + ' - ' + area.description,
                     value: area.code,
                 }));
@@ -116,7 +139,6 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         };
     }, []);
 
-
     /** Fill in values from tag to duplicate, if applicable */
     useEffect(() => {
         let requestCancellor: Canceler;
@@ -126,7 +148,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                 if (response && response.tagType) {
                     setAreaTypeForm(response.tagType);
                     response.areaCode && setAreaForm(response.areaCode);
-                    response.disciplineCode && setDisciplineForm(response.disciplineCode);
+                    response.disciplineCode &&
+                        setDisciplineForm(response.disciplineCode);
                     props.setDescription(response.description);
                 }
             }
@@ -138,14 +161,23 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const response = await procosysApiClient.getPurchaseOrders(project.name, (cancel: Canceler) => { requestCancellor = cancel; });
-                const purchaseOrders = response.map(po => ({
+                const response = await procosysApiClient.getPurchaseOrders(
+                    project.name,
+                    (cancel: Canceler) => {
+                        requestCancellor = cancel;
+                    }
+                );
+                const purchaseOrders = response.map((po) => ({
                     text: po.title + ' - ' + po.description,
                     value: po.title,
                 }));
                 setAllPOs(purchaseOrders);
             } catch (error) {
-                console.error('Get purchase ordres failed: ', error.message, error.data);
+                console.error(
+                    'Get purchase ordres failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message);
             }
         })();
@@ -160,7 +192,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         event.preventDefault();
         const newArea = {
             code: filteredAreas[areaIndex].value,
-            description: filteredAreas[areaIndex].text
+            description: filteredAreas[areaIndex].text,
         } as Area;
         props.setArea(newArea);
     };
@@ -170,13 +202,16 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         props.setArea(null);
     };
 
-    const changePO = (event: React.MouseEvent | null, poIndex: number): void => {
+    const changePO = (
+        event: React.MouseEvent | null,
+        poIndex: number
+    ): void => {
         if (event) {
             event.preventDefault();
         }
         const newPO = {
             title: filteredPOs[poIndex].value,
-            description: filteredPOs[poIndex].text
+            description: filteredPOs[poIndex].text,
         } as PurchaseOrder;
         props.setPurchaseOrder(newPO);
     };
@@ -188,7 +223,14 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                 setFilteredAreas(allAreas);
                 return;
             }
-            setFilteredAreas(allAreas.filter((p: AreaItem) => p.text.toLowerCase().indexOf(filterForAreas.toLowerCase()) > -1));
+            setFilteredAreas(
+                allAreas.filter(
+                    (p: AreaItem) =>
+                        p.text
+                            .toLowerCase()
+                            .indexOf(filterForAreas.toLowerCase()) > -1
+                )
+            );
         }
     }, [filterForAreas, allAreas]);
 
@@ -197,18 +239,31 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             setFilteredPOs(allPOs);
             return;
         }
-        setFilteredPOs(allPOs.filter((p: POItem) => p.text.toLowerCase().indexOf(filterForPOs.toLowerCase()) > -1));
+        setFilteredPOs(
+            allPOs.filter(
+                (p: POItem) =>
+                    p.text.toLowerCase().indexOf(filterForPOs.toLowerCase()) >
+                    -1
+            )
+        );
     }, [filterForPOs, allPOs]);
 
     useEffect(() => {
         if (purchaseOrderNumber && filteredPOs && filteredPOs.length > 0) {
-            props.setAreaType(areaTypes.find((areaType) => areaType.value === 'PoArea'));
+            props.setAreaType(
+                areaTypes.find((areaType) => areaType.value === 'PoArea')
+            );
 
-            const poIndex = filteredPOs.findIndex((po) => po.value === purchaseOrderNumber);
+            const poIndex = filteredPOs.findIndex(
+                (po) => po.value === purchaseOrderNumber
+            );
             if (poIndex > -1) {
                 changePO(null, poIndex);
             } else {
-                showSnackbarNotification('Error occured. Purchase order number not found in list.', 5000);
+                showSnackbarNotification(
+                    'Error occured. Purchase order number not found in list.',
+                    5000
+                );
             }
         }
     }, [purchaseOrderNumber, filteredPOs]);
@@ -218,10 +273,17 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await libraryApiClient.getDisciplines(['PRESERVATION'], (cancel: Canceler) => requestCancellor = cancel);
+                const data = await libraryApiClient.getDisciplines(
+                    ['PRESERVATION'],
+                    (cancel: Canceler) => (requestCancellor = cancel)
+                );
                 setDisciplines(data);
             } catch (error) {
-                console.error('Get disciplines failed: ', error.message, error.data);
+                console.error(
+                    'Get disciplines failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -247,9 +309,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         } else if (props.areaType.value == 'PoArea' && props.purchaseOrder) {
             newTagNo = `${newTagNo}-${props.purchaseOrder.title}`;
         }
-        props.suffix ? newTagNo = `${newTagNo}-${props.suffix}` : null;
+        props.suffix ? (newTagNo = `${newTagNo}-${props.suffix}`) : null;
     }
-
 
     /** Map disciplines into select elements */
     useEffect(() => {
@@ -257,7 +318,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             const mapped = disciplines.map((itm: Discipline) => {
                 return {
                     text: itm.description,
-                    value: itm.code
+                    value: itm.code,
                 };
             });
             setMappedDisciplines(mapped);
@@ -265,7 +326,9 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     }, [disciplines]);
 
     const setAreaTypeForm = (value: string): void => {
-        const newAreaType = areaTypes.find((p: SelectItem) => p.value === value);
+        const newAreaType = areaTypes.find(
+            (p: SelectItem) => p.value === value
+        );
         props.setAreaType(newAreaType);
     };
 
@@ -278,16 +341,22 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     }, [props.areaType]);
 
     useEffect(() => {
-        descriptionInputRef.current && props.description ? descriptionInputRef.current.value = props.description : null;
+        descriptionInputRef.current && props.description
+            ? (descriptionInputRef.current.value = props.description)
+            : null;
     }, [props.description]);
 
     useEffect(() => {
-        suffixInputRef.current && props.suffix ? suffixInputRef.current.value = props.suffix : null;
+        suffixInputRef.current && props.suffix
+            ? (suffixInputRef.current.value = props.suffix)
+            : null;
     }, [props.suffix]);
 
     const setDisciplineForm = (value: string): void => {
         if (disciplines) {
-            props.setDiscipline(disciplines.find((p: Discipline) => p.code === value));
+            props.setDiscipline(
+                disciplines.find((p: Discipline) => p.code === value)
+            );
         }
     };
 
@@ -297,10 +366,10 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             if (area) {
                 const newArea = {
                     code: area.value,
-                    description: area.text
+                    description: area.text,
                 } as Area;
                 props.setArea(newArea);
-            };
+            }
         }
     };
 
@@ -318,7 +387,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         }
     };
 
-    const checkTagNo = async (areaType: string, discipline: string, area: string | null, po: string | null, suffix: string | null): Promise<CheckAreaTagNo> => {
+    const checkTagNo = async (
+        areaType: string,
+        discipline: string,
+        area: string | null,
+        po: string | null,
+        suffix: string | null
+    ): Promise<CheckAreaTagNo> => {
         try {
             const response = await apiClient.checkAreaTagNo(
                 project.name,
@@ -326,7 +401,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                 discipline,
                 area,
                 po,
-                suffix);
+                suffix
+            );
 
             return response;
         } catch (error) {
@@ -337,7 +413,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     };
 
     const hasUnsavedChanges = (): boolean => {
-        return props.areaType || props.discipline || props.area || props.description || props.suffix ? true : false;
+        return props.areaType ||
+            props.discipline ||
+            props.area ||
+            props.description ||
+            props.suffix
+            ? true
+            : false;
     };
 
     /** Verify tagno and update global dirty state */
@@ -349,28 +431,59 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         }
 
         const checkTagNos = async (): Promise<void> => {
-            if (props.discipline && props.areaType && props.areaType.value != 'PoArea') {
-                const areaCode = (props.area) ? props.area.code : null;
-                const response = await checkTagNo(props.areaType.value, props.discipline.code, areaCode, null, props.suffix || null);
-                props.setSelectedTags([{
-                    tagNo: response.tagNo,
-                    description: props.description || ''
-                }]);
+            if (
+                props.discipline &&
+                props.areaType &&
+                props.areaType.value != 'PoArea'
+            ) {
+                const areaCode = props.area ? props.area.code : null;
+                const response = await checkTagNo(
+                    props.areaType.value,
+                    props.discipline.code,
+                    areaCode,
+                    null,
+                    props.suffix || null
+                );
+                props.setSelectedTags([
+                    {
+                        tagNo: response.tagNo,
+                        description: props.description || '',
+                    },
+                ]);
                 setTagNoValid(!response.exists);
-                setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
-            } else if (props.areaType && props.discipline && props.purchaseOrder && props.areaType.value == 'PoArea') {
-                const response = await checkTagNo(props.areaType.value, props.discipline.code, null, props.purchaseOrder.title, props.suffix || null);
-                props.setSelectedTags([{
-                    tagNo: response.tagNo,
-                    description: props.description || ''
-                }]);
+                setTagNoValidationError(
+                    !response.exists ? null : invalidTagNoMessage
+                );
+            } else if (
+                props.areaType &&
+                props.discipline &&
+                props.purchaseOrder &&
+                props.areaType.value == 'PoArea'
+            ) {
+                const response = await checkTagNo(
+                    props.areaType.value,
+                    props.discipline.code,
+                    null,
+                    props.purchaseOrder.title,
+                    props.suffix || null
+                );
+                props.setSelectedTags([
+                    {
+                        tagNo: response.tagNo,
+                        description: props.description || '',
+                    },
+                ]);
                 setTagNoValid(!response.exists);
-                setTagNoValidationError(!response.exists ? null : invalidTagNoMessage);
+                setTagNoValidationError(
+                    !response.exists ? null : invalidTagNoMessage
+                );
             } else {
-                props.setSelectedTags([{
-                    tagNo: 'type-discipline-area/PO-suffix',
-                    description: props.description || ''
-                }]);
+                props.setSelectedTags([
+                    {
+                        tagNo: 'type-discipline-area/PO-suffix',
+                        description: props.description || '',
+                    },
+                ]);
                 setTagNoValid(false);
                 setTagNoValidationError(null);
             }
@@ -389,7 +502,13 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
             clearTimeout(timer);
             unsetDirtyStateFor(moduleName);
         };
-    }, [props.discipline, props.area, props.areaType, props.suffix, props.purchaseOrder]);
+    }, [
+        props.discipline,
+        props.area,
+        props.areaType,
+        props.suffix,
+        props.purchaseOrder,
+    ]);
 
     const checkSuffix = (e: React.ChangeEvent<HTMLInputElement>): void => {
         props.setSuffix(e.target.value.toUpperCase());
@@ -402,10 +521,11 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
 
     useEffect(() => {
         if (props.selectedTags && props.selectedTags.length > 0) {
-            props.setSelectedTags([{
-                tagNo: props.selectedTags[0].tagNo,
-                description: props.description || ''
-            }
+            props.setSelectedTags([
+                {
+                    tagNo: props.selectedTags[0].tagNo,
+                    description: props.description || '',
+                },
             ]);
         }
     }, [props.description]);
@@ -417,16 +537,26 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     return (
         <div>
             <Header>
-                {!props.duplicateTagId && <Typography variant="h1">Create dummy tag</Typography>}
-                {props.duplicateTagId && <Typography variant="h1">Duplicate dummy tag</Typography>}
+                {!props.duplicateTagId && (
+                    <Typography variant="h1">Create dummy tag</Typography>
+                )}
+                {props.duplicateTagId && (
+                    <Typography variant="h1">Duplicate dummy tag</Typography>
+                )}
                 <div>{project.name}</div>
-                {purchaseOrderNumber &&
-                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>PO number: {purchaseOrderNumber}</div>
-                }
+                {purchaseOrderNumber && (
+                    <div style={{ marginLeft: 'calc(var(--grid-unit) * 4)' }}>
+                        PO number: {purchaseOrderNumber}
+                    </div>
+                )}
             </Header>
             <TopContainer>
                 <ErrorContainer>
-                    {tagNoValidationError && (<Typography variant="caption">{tagNoValidationError}</Typography>)}
+                    {tagNoValidationError && (
+                        <Typography variant="caption">
+                            {tagNoValidationError}
+                        </Typography>
+                    )}
                 </ErrorContainer>
                 <Container>
                     <InputContainer>
@@ -436,9 +566,16 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                 onChange={setAreaTypeForm}
                                 data={areaTypes}
                                 label={'Dummy type'}
-                                disabled={isLoading || purchaseOrderNumber ? true : false || props.duplicateTagId ? true : false}
+                                disabled={
+                                    isLoading || purchaseOrderNumber
+                                        ? true
+                                        : false || props.duplicateTagId
+                                        ? true
+                                        : false
+                                }
                             >
-                                {(props.areaType && props.areaType.text) || 'Select'}
+                                {(props.areaType && props.areaType.text) ||
+                                    'Select'}
                             </SelectInput>
                         </FormFieldSpacer>
                         <FormFieldSpacer>
@@ -448,16 +585,27 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                 data={mappedDisciplines}
                                 label={'Discipline'}
                             >
-                                {(props.discipline && props.discipline.description) || 'Select'}
+                                {(props.discipline &&
+                                    props.discipline.description) ||
+                                    'Select'}
                             </SelectInput>
                         </FormFieldSpacer>
                         <FormFieldSpacer>
-                            {(props.areaType && props.areaType.value == 'PoArea') ?
+                            {props.areaType &&
+                            props.areaType.value == 'PoArea' ? (
                                 <Dropdown
-                                    disabled={isLoading || purchaseOrderNumber ? true : false}
+                                    disabled={
+                                        isLoading || purchaseOrderNumber
+                                            ? true
+                                            : false
+                                    }
                                     label={'PO/Calloff'}
-                                    variant='form'
-                                    text={(props.purchaseOrder && props.purchaseOrder.description) || 'Type to select'}
+                                    variant="form"
+                                    text={
+                                        (props.purchaseOrder &&
+                                            props.purchaseOrder.description) ||
+                                        'Type to select'
+                                    }
                                     onFilter={setFilterForPOs}
                                 >
                                     {filteredPOs.map((POItem, index) => {
@@ -473,16 +621,29 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                         );
                                     })}
                                 </Dropdown>
-                                :
+                            ) : (
                                 <Dropdown
                                     disabled={isLoading || !props.areaType}
                                     label={props.areaType ? 'Area' : ''}
-                                    variant='form'
+                                    variant="form"
                                     meta={props.areaType ? 'Optional' : ''}
-                                    Icon={(props.area && props.area.description)
-                                        ? <div id='dropdownIcon' onClick={clearArea}><EdsIcon name='close' /></div>
-                                        : <KeyboardArrowDownIcon />}
-                                    text={(props.area && props.area.description) || 'Type to select'}
+                                    Icon={
+                                        props.area && props.area.description ? (
+                                            <div
+                                                id="dropdownIcon"
+                                                onClick={clearArea}
+                                            >
+                                                <EdsIcon name="close" />
+                                            </div>
+                                        ) : (
+                                            <KeyboardArrowDownIcon />
+                                        )
+                                    }
+                                    text={
+                                        (props.area &&
+                                            props.area.description) ||
+                                        'Type to select'
+                                    }
                                     onFilter={setFilterForAreas}
                                 >
                                     {filteredAreas.map((areaItem, index) => {
@@ -498,22 +659,36 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                         );
                                     })}
                                 </Dropdown>
-                            }
+                            )}
                         </FormFieldSpacer>
                         <ButtonsContainer>
-                            <Button onClick={cancel} variant='outlined' >Cancel</Button>
-                            <Button onClick={nextStep} disabled={newTagNo === '' || !tagNoValid || props.isSubmittingScope} >
+                            <Button onClick={cancel} variant="outlined">
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={nextStep}
+                                disabled={
+                                    newTagNo === '' ||
+                                    !tagNoValid ||
+                                    props.isSubmittingScope
+                                }
+                            >
                                 {props.isSubmittingScope && (
                                     <CenterContent>
-                                        <Spinner />{props.duplicateTagId ? 'Duplicate' : 'Next'}
+                                        <Spinner />
+                                        {props.duplicateTagId
+                                            ? 'Duplicate'
+                                            : 'Next'}
                                     </CenterContent>
                                 )}
-                                {!props.isSubmittingScope && (props.duplicateTagId ? 'Duplicate' : 'Next')}
-
+                                {!props.isSubmittingScope &&
+                                    (props.duplicateTagId
+                                        ? 'Duplicate'
+                                        : 'Next')}
                             </Button>
                         </ButtonsContainer>
                     </InputContainer>
-                </Container >
+                </Container>
             </TopContainer>
             <InputContainer>
                 <SuffixTextField
@@ -538,7 +713,9 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     value={props.description}
                     multiline={true}
                     placeholder="Write here"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => props.setDescription(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+                        props.setDescription(e.target.value)
+                    }
                 />
             </InputContainer>
         </div>

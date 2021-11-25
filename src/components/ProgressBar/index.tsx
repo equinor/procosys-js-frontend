@@ -6,7 +6,7 @@ import React from 'react';
 type ProgressBarSteps = {
     title: string;
     isCompleted: boolean;
-}
+};
 
 export interface ProgressBarProps {
     steps: ProgressBarSteps[];
@@ -17,7 +17,7 @@ export interface ProgressBarProps {
 const ProgressBar = ({
     steps,
     currentStep,
-    goTo
+    goTo,
 }: ProgressBarProps): JSX.Element => {
     const handleGoToStep = (stepNo: number): void => {
         goTo && goTo(stepNo);
@@ -25,12 +25,26 @@ const ProgressBar = ({
 
     return (
         <Container>
-            {steps.map((step, i) => {     
-                return (<StepContainer key={i} currentStep={currentStep == i+1} stepCompleted={step.isCompleted}>
-                    <IconContainer onClick={():void => handleGoToStep(i+1)}>{ step.isCompleted && currentStep != i+1 ? <EdsIcon name='done' size={16} /> : i+1 }</IconContainer>
-                    <div>{ step.title }</div>
-                    { steps.length != i+1 && <div className='line'/> }
-                </StepContainer>); 
+            {steps.map((step, i) => {
+                return (
+                    <StepContainer
+                        key={i}
+                        currentStep={currentStep == i + 1}
+                        stepCompleted={step.isCompleted}
+                    >
+                        <IconContainer
+                            onClick={(): void => handleGoToStep(i + 1)}
+                        >
+                            {step.isCompleted && currentStep != i + 1 ? (
+                                <EdsIcon name="done" size={16} />
+                            ) : (
+                                i + 1
+                            )}
+                        </IconContainer>
+                        <div>{step.title}</div>
+                        {steps.length != i + 1 && <div className="line" />}
+                    </StepContainer>
+                );
             })}
         </Container>
     );

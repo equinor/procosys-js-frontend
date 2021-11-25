@@ -1,21 +1,22 @@
-import axios, { Canceler as AxiosCanceler, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {
+    Canceler as AxiosCanceler,
+    AxiosInstance,
+    AxiosRequestConfig,
+} from 'axios';
 
-const axiosSettings: AxiosRequestConfig = {
-};
+const axiosSettings: AxiosRequestConfig = {};
 
 /**
  * Callback for setting up request canceler
  */
-export type RequestCanceler = ((callback: Canceler) => void);
+export type RequestCanceler = (callback: Canceler) => void;
 
 export type Canceler = AxiosCanceler;
-
 
 /**
  * Generic HTTP Client with common configuration
  */
 export default class HttpClient {
-
     protected client: AxiosInstance;
 
     /**
@@ -26,7 +27,7 @@ export default class HttpClient {
         const instance = axios.create({
             ...axiosSettings,
             baseURL: baseUrl,
-            ...customSettings
+            ...customSettings,
         });
 
         this.client = instance;
@@ -37,7 +38,10 @@ export default class HttpClient {
      * @param settings Settings object to manipulate
      * @param cancelorCallback Callback function which received the cancel token
      */
-    protected setupRequestCanceler(settings: AxiosRequestConfig, cancelorCallback?: RequestCanceler): void {
+    protected setupRequestCanceler(
+        settings: AxiosRequestConfig,
+        cancelorCallback?: RequestCanceler
+    ): void {
         if (cancelorCallback) {
             const cancelToken = new axios.CancelToken((c) => {
                 cancelorCallback(c);
@@ -46,5 +50,4 @@ export default class HttpClient {
             settings.cancelToken = cancelToken;
         }
     }
-
 }

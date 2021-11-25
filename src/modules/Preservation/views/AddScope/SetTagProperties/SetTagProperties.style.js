@@ -6,7 +6,7 @@ export const Header = styled.header`
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 `;
 
 export const InputContainer = styled.div`
@@ -37,5 +37,5 @@ export const CenterContent = styled.span`
 
 export const RequirementMessage = styled.div`
     font-weight: bold;
-    margin-top: calc(var(--grid-unit)*6);
+    margin-top: calc(var(--grid-unit) * 6);
 `;

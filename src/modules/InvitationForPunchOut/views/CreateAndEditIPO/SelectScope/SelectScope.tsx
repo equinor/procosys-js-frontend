@@ -1,6 +1,14 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { CommPkgRow, McScope } from '@procosys/modules/InvitationForPunchOut/types';
-import { Container, Divider, Header, SelectComponent } from './SelectScope.style';
+import {
+    CommPkgRow,
+    McScope,
+} from '@procosys/modules/InvitationForPunchOut/types';
+import {
+    Container,
+    Divider,
+    Header,
+    SelectComponent,
+} from './SelectScope.style';
 import McPkgTable, { multipleDisciplines } from './McPkgTable';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -25,7 +33,7 @@ const SelectScope = ({
     selectedMcPkgScope,
     setSelectedMcPkgScope,
     commPkgNo,
-    projectName
+    projectName,
 }: SelectScopeProps): JSX.Element => {
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
     const commPkgRef = useRef<any>();
@@ -42,11 +50,23 @@ const SelectScope = ({
         if (mcPkgRef.current) {
             mcPkgRef.current.removeSelectedMcPkg(mcPkgNo);
         } else {
-            const selectedIndex = selectedMcPkgScope.selected.findIndex(mcPkg => mcPkg.mcPkgNo === mcPkgNo);
+            const selectedIndex = selectedMcPkgScope.selected.findIndex(
+                (mcPkg) => mcPkg.mcPkgNo === mcPkgNo
+            );
             if (selectedIndex > -1) {
                 // remove from selected mcPkgs
-                const newSelected = [...selectedMcPkgScope.selected.slice(0, selectedIndex), ...selectedMcPkgScope.selected.slice(selectedIndex + 1)];
-                const newSelectedMcPkgScope = { system: newSelected.length > 0 ? selectedMcPkgScope.system : null, multipleDisciplines: multipleDisciplines(newSelected), selected: newSelected };
+                const newSelected = [
+                    ...selectedMcPkgScope.selected.slice(0, selectedIndex),
+                    ...selectedMcPkgScope.selected.slice(selectedIndex + 1),
+                ];
+                const newSelectedMcPkgScope = {
+                    system:
+                        newSelected.length > 0
+                            ? selectedMcPkgScope.system
+                            : null,
+                    multipleDisciplines: multipleDisciplines(newSelected),
+                    selected: newSelected,
+                };
                 setSelectedMcPkgScope(newSelectedMcPkgScope);
             }
         }
@@ -56,10 +76,15 @@ const SelectScope = ({
         if (commPkgRef.current) {
             commPkgRef.current.removeSelectedCommPkg(commPkgNo);
         } else {
-            const selectedIndex = selectedCommPkgScope.findIndex(commPkg => commPkg.commPkgNo === commPkgNo);
+            const selectedIndex = selectedCommPkgScope.findIndex(
+                (commPkg) => commPkg.commPkgNo === commPkgNo
+            );
             if (selectedIndex > -1) {
                 // remove from selected commPkgs
-                const newSelectedCommPkgScope = [...selectedCommPkgScope.slice(0, selectedIndex), ...selectedCommPkgScope.slice(selectedIndex + 1)];
+                const newSelectedCommPkgScope = [
+                    ...selectedCommPkgScope.slice(0, selectedIndex),
+                    ...selectedCommPkgScope.slice(selectedIndex + 1),
+                ];
                 setSelectedCommPkgScope(newSelectedCommPkgScope);
             }
         }
@@ -69,28 +94,27 @@ const SelectScope = ({
         <Container>
             <SelectComponent>
                 <Header>
-                    {(currentCommPkg != null && commPkgNo == null) &&
+                    {currentCommPkg != null && commPkgNo == null && (
                         <Button
-                            id='backButton'
+                            id="backButton"
                             onClick={(): void => setCurrentCommPkg(null)}
                             variant="ghost_icon"
                         >
-                            <EdsIcon name='arrow_back' />
+                            <EdsIcon name="arrow_back" />
                         </Button>
-                    }
-                    <Typography variant='h2'>
-                        {
-                            currentCommPkg == null ? 
-                                type === 'DP' ? 
-                                    'Click on the arrow next to a comm pkg to open MC scope' 
-                                    : 'Select commissioning packages'
-                                : type === 'DP' ?
-                                    'Select MC packages in comm pkg ' + currentCommPkg
-                                    : 'Scope has been preselected'
-                        }
+                    )}
+                    <Typography variant="h2">
+                        {currentCommPkg == null
+                            ? type === 'DP'
+                                ? 'Click on the arrow next to a comm pkg to open MC scope'
+                                : 'Select commissioning packages'
+                            : type === 'DP'
+                            ? 'Select MC packages in comm pkg ' + currentCommPkg
+                            : 'Scope has been preselected'}
                     </Typography>
                 </Header>
-                {(currentCommPkg == null || (commPkgNo != null && type == 'MDP')) &&
+                {(currentCommPkg == null ||
+                    (commPkgNo != null && type == 'MDP')) && (
                     <div>
                         <CommPkgTable
                             ref={commPkgRef}
@@ -105,23 +129,29 @@ const SelectScope = ({
                             commPkgNo={commPkgNo}
                         />
                     </div>
-                }
-                {(currentCommPkg != null && ((commPkgNo == null) || (commPkgNo != null && type == 'DP'))) &&
-                    <McPkgTable
-                        ref={mcPkgRef}  
-                        selectedMcPkgScope={selectedMcPkgScope}
-                        setSelectedMcPkgScope={setSelectedMcPkgScope}
-                        projectName={projectName}
-                        commPkgNo={currentCommPkg}
-                    />
-                }
+                )}
+                {currentCommPkg != null &&
+                    (commPkgNo == null ||
+                        (commPkgNo != null && type == 'DP')) && (
+                        <McPkgTable
+                            ref={mcPkgRef}
+                            selectedMcPkgScope={selectedMcPkgScope}
+                            setSelectedMcPkgScope={setSelectedMcPkgScope}
+                            projectName={projectName}
+                            commPkgNo={currentCommPkg}
+                        />
+                    )}
             </SelectComponent>
             <Divider />
             <SelectedScope
                 selectedCommPkgs={selectedCommPkgScope}
-                removeCommPkg={(commPkgNo: string): void => handleRemoveCommPkg(commPkgNo)}
+                removeCommPkg={(commPkgNo: string): void =>
+                    handleRemoveCommPkg(commPkgNo)
+                }
                 selectedMcPkgs={selectedMcPkgScope.selected}
-                removeMcPkg={(mcPkgNo: string): void => handleRemoveMcPkg(mcPkgNo)}
+                removeMcPkg={(mcPkgNo: string): void =>
+                    handleRemoveMcPkg(mcPkgNo)
+                }
                 multipleDisciplines={selectedMcPkgScope.multipleDisciplines}
             />
         </Container>

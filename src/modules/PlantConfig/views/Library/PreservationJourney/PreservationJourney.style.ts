@@ -21,16 +21,16 @@ export const InputContainer = styled.div`
 export const Container = styled.div`
     display: flex;
     width: 100%;
-    flex-direction: column; 
+    flex-direction: column;
     padding: var(--grid-unit);
 `;
 
 export const StepsContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto auto; 
+    grid-template-columns: auto auto auto auto auto;
     width: fit-content;
     padding: var(--grid-unit);
-    align-items:flex-end;
+    align-items: flex-end;
 `;
 
 export const IconContainer = styled.div`
@@ -40,7 +40,7 @@ export const IconContainer = styled.div`
 export const DropdownItem = styled.div`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
     :hover {
-        background-color: ${tokens.colors.ui.background__light.rgba}
+        background-color: ${tokens.colors.ui.background__light.rgba};
     }
 `;
 

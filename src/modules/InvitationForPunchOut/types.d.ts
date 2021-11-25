@@ -4,12 +4,12 @@ export type ProjectDetails = {
     id: number;
     name: string;
     description: string;
-}
+};
 
 export type Step = {
     title: string;
     isCompleted: boolean;
-}
+};
 
 export type GeneralInfoDetails = {
     projectName: string | null;
@@ -19,7 +19,7 @@ export type GeneralInfoDetails = {
     startTime: Date | undefined;
     endTime: Date | undefined;
     location?: string | null;
-}
+};
 
 export type Person = {
     id?: number;
@@ -28,7 +28,7 @@ export type Person = {
     email: string;
     rowVersion?: string;
     radioOption: string | null;
-}
+};
 
 export type RoleParticipant = {
     id?: number;
@@ -38,13 +38,13 @@ export type RoleParticipant = {
     usePersonalEmail: boolean;
     notify: boolean;
     persons: Person[];
-}
+};
 
 type ExternalEmail = {
     id: number | null;
     email: string;
     rowVersion: string | null;
-}
+};
 
 export type Participant = {
     organization: SelectItem;
@@ -53,7 +53,7 @@ export type Participant = {
     externalEmail: ExternalEmail | null;
     person: Person | null;
     role: RoleParticipant | null;
-}
+};
 
 export type Attachment = {
     fileName: string;
@@ -70,8 +70,8 @@ export type Attachment = {
         azureOid: string;
         email: string;
         rowVersion: string;
-    }
-}
+    };
+};
 
 export interface CommPkgRow {
     commPkgNo: string;
@@ -101,5 +101,11 @@ export interface McScope {
     selected: McPkgRow[];
 }
 
-export type Organization = 'Commissioning' | 'ConstructionCompany' | 'Contractor' | 'Operation' | 'TechnicalIntegrity' | 'Supplier' | 'External';
-
+export type Organization =
+    | 'Commissioning'
+    | 'ConstructionCompany'
+    | 'Contractor'
+    | 'Operation'
+    | 'TechnicalIntegrity'
+    | 'Supplier'
+    | 'External';

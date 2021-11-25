@@ -8,17 +8,20 @@ interface DropdownProps {
 
 export const DropdownItem = styled.div<DropdownProps>`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
-    ${(props): any => !props.disabled && css`
-        :hover {
-            background-color: ${tokens.colors.ui.background__light.rgba}
-        }
-    `}
-    ${(props): any => props.disabled && css`
-        color: ${tokens.colors.interactive.disabled__border.rgba};
-        cursor: not-allowed;
-    `}
+    ${(props): any =>
+        !props.disabled &&
+        css`
+            :hover {
+                background-color: ${tokens.colors.ui.background__light.rgba};
+            }
+        `}
+    ${(props): any =>
+        props.disabled &&
+        css`
+            color: ${tokens.colors.interactive.disabled__border.rgba};
+            cursor: not-allowed;
+        `}
 `;
-
 
 export const Container = styled.div`
     display: flex;

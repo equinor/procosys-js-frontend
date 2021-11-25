@@ -40,7 +40,8 @@ export const TableSection = styled.div`
     h5 {
         margin-bottom: calc(var(--grid-unit) * 2);
     }
-    th, td {
+    th,
+    td {
         vertical-align: middle;
     }
 `;

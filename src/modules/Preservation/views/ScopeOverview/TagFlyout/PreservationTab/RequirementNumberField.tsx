@@ -7,52 +7,69 @@ interface RequirementNumberFieldProps {
     requirementId: number;
     field: TagRequirementField;
     readonly: boolean;
-    onFieldChange: (requirementId: number, fieldId: number, value: string) => void;
+    onFieldChange: (
+        requirementId: number,
+        fieldId: number,
+        value: string
+    ) => void;
 }
 
 const RequirementNumberField = ({
     requirementId,
     field,
     readonly,
-    onFieldChange
+    onFieldChange,
 }: RequirementNumberFieldProps): JSX.Element => {
-
     let currentValue: string | number | null = '';
     if (field.currentValue) {
-        currentValue = field.currentValue.isNA ? 'N/A' : field.currentValue.value;
+        currentValue = field.currentValue.isNA
+            ? 'N/A'
+            : field.currentValue.value;
     }
 
     let previousValue: string | number | null = '';
     if (field.previousValue) {
-        previousValue = field.previousValue.isNA ? 'N/A' : field.previousValue.value;
+        previousValue = field.previousValue.isNA
+            ? 'N/A'
+            : field.previousValue.value;
     }
 
     return (
-        <div style={{display: 'flex', alignItems: 'flex-end'}}>
-            <div style={{maxWidth: '25%'}}>
+        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ maxWidth: '25%' }}>
                 <TextField
                     id={`field${field.id}`}
                     label={field.label}
                     meta={`(${field.unit})`}
                     defaultValue={currentValue}
                     disabled={readonly}
-                    onChange={(event: React.FormEvent<HTMLInputElement>): void => {
-                        onFieldChange(requirementId, field.id, event.currentTarget.value);
+                    onChange={(
+                        event: React.FormEvent<HTMLInputElement>
+                    ): void => {
+                        onFieldChange(
+                            requirementId,
+                            field.id,
+                            event.currentTarget.value
+                        );
                     }}
                 />
             </div>
-            {
-                field.showPrevious &&
-                <div style={{maxWidth: '25%', marginLeft: 'calc(var(--grid-unit) * 3)'}}>
+            {field.showPrevious && (
+                <div
+                    style={{
+                        maxWidth: '25%',
+                        marginLeft: 'calc(var(--grid-unit) * 3)',
+                    }}
+                >
                     <TextField
                         id={`fieldPrevious${field.id}`}
-                        label='Previous value'
+                        label="Previous value"
                         meta={`(${field.unit})`}
                         defaultValue={previousValue}
                         disabled
                     />
-                </div>                            
-            }
+                </div>
+            )}
         </div>
     );
 };

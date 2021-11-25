@@ -5,5 +5,5 @@ export const Breakpoints = {
 
 export const JSXBreakpoints = {
     MOBILE: 639,
-    TABLET: 1279
+    TABLET: 1279,
 };

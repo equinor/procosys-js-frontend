@@ -61,19 +61,76 @@ import {
     warning_filled,
     warning_outlined,
     world,
-    clear
+    clear,
 } from '@equinor/eds-icons';
 
 import { Icon } from '@equinor/eds-core-react';
 import React from 'react';
 
 const icons = {
-    error_filled, close, cloud_download, checkbox, checkbox_outline, done_all, add_circle_filled, attach_file, comment, comment_chat,
-    notifications, chevron_down, chevron_up, edit, delete_to_trash, calendar_today, person, alarm_on, world, link,
-    place, pressure, vertical_split, category, search, bookmark_collection, add, arrow_down, arrow_up, file, file_description, image, filter_list, more_vertical,
-    warning_filled, delete_forever, restore_from_trash, edit_text, account_circle, lock, info_circle, iphone, print, fast_forward, play,
-    copy, star_filled, star_outlined, microsoft_excel, done, chevron_right, arrow_back, warning_outlined, more_horizontal, microsoft_outlook,
-    microsoft_powerpoint, microsoft_word, calendar_date_range, menu, calendar_reject, launch, share, clear
+    error_filled,
+    close,
+    cloud_download,
+    checkbox,
+    checkbox_outline,
+    done_all,
+    add_circle_filled,
+    attach_file,
+    comment,
+    comment_chat,
+    notifications,
+    chevron_down,
+    chevron_up,
+    edit,
+    delete_to_trash,
+    calendar_today,
+    person,
+    alarm_on,
+    world,
+    link,
+    place,
+    pressure,
+    vertical_split,
+    category,
+    search,
+    bookmark_collection,
+    add,
+    arrow_down,
+    arrow_up,
+    file,
+    file_description,
+    image,
+    filter_list,
+    more_vertical,
+    warning_filled,
+    delete_forever,
+    restore_from_trash,
+    edit_text,
+    account_circle,
+    lock,
+    info_circle,
+    iphone,
+    print,
+    fast_forward,
+    play,
+    copy,
+    star_filled,
+    star_outlined,
+    microsoft_excel,
+    done,
+    chevron_right,
+    arrow_back,
+    warning_outlined,
+    more_horizontal,
+    microsoft_outlook,
+    microsoft_powerpoint,
+    microsoft_word,
+    calendar_date_range,
+    menu,
+    calendar_reject,
+    launch,
+    share,
+    clear,
 };
 
 Icon.add(icons);
@@ -84,16 +141,15 @@ type IconProps = {
     color?: string;
     rotation?: number;
     size?: number;
-}
+};
 
 const EdsIcon = ({
     name,
     title,
     color,
     rotation,
-    size
+    size,
 }: IconProps): JSX.Element => {
-
     return (
         <Icon
             name={name}

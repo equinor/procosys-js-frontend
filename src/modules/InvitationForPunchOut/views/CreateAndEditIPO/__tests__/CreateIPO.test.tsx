@@ -19,24 +19,28 @@ const mockRoles = [
                 azureOid: '00-11-22',
                 firstName: 'Elisabeth',
                 lastName: 'Bratli',
-                email: 'elisabeth@email.com'
-            }
-        ]
-    }
+                email: 'elisabeth@email.com',
+            },
+        ],
+    },
 ];
 
 jest.mock('react-router-dom', () => ({
-    useParams: (): { projectId: any, commPkgNo: any } => ({
+    useParams: (): { projectId: any; commPkgNo: any } => ({
         projectId: '1001',
         commPkgNo: '1',
     }),
 }));
 
-jest.mock('@procosys/hooks/useRouter', () => jest.fn(() => ({
-    history: (): any => ({
-        push: jest.fn((): void => { return; })
-    })
-})));
+jest.mock('@procosys/hooks/useRouter', () =>
+    jest.fn(() => ({
+        history: (): any => ({
+            push: jest.fn((): void => {
+                return;
+            }),
+        }),
+    }))
+);
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
     useInvitationForPunchOutContext: (): any => {
@@ -48,13 +52,13 @@ jest.mock('../../../context/InvitationForPunchOutContext', () => ({
                         {
                             id: 123,
                             name: 'project.name',
-                            description: 'project.description'
-                        }
+                            description: 'project.description',
+                        },
                     ]);
-                }
-            }
+                },
+            },
         };
-    }
+    },
 }));
 
 const mockSetDirtyStateFor = jest.fn();
@@ -64,9 +68,9 @@ jest.mock('@procosys/core/DirtyContext', () => ({
     useDirtyContext: (): any => {
         return {
             setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor
+            unsetDirtyStateFor: mockUnsetDirtyStateFor,
         };
-    }
+    },
 }));
 
 describe('<CreateIPO />', () => {
@@ -83,17 +87,27 @@ describe('<CreateIPO />', () => {
         const utils = within(selectContainer);
         const button = utils.getByRole('listbox');
         fireEvent.click(button);
-        await waitFor(() => expect(result.getByText('DP (Discipline Punch)')).toBeInTheDocument());
-        await waitFor(() => expect(result.getByText('MDP (Multi Discipline Punch)')).toBeInTheDocument());
+        await waitFor(() =>
+            expect(
+                result.getByText('DP (Discipline Punch)')
+            ).toBeInTheDocument()
+        );
+        await waitFor(() =>
+            expect(
+                result.getByText('MDP (Multi Discipline Punch)')
+            ).toBeInTheDocument()
+        );
     });
 
     it('Should render Next button enabled', async () => {
         let result: any;
         await act(async () => {
-
             result = render(<CreateIPO />);
         });
-        expect(result.getByText('Next').closest('button')).toHaveProperty('disabled', false);
+        expect(result.getByText('Next').closest('button')).toHaveProperty(
+            'disabled',
+            false
+        );
     });
 
     it('Should render Previous button enabled', async () => {
@@ -101,7 +115,11 @@ describe('<CreateIPO />', () => {
         await act(async () => {
             result = render(<CreateIPO />);
         });
-        await waitFor(() => expect(result.getByText('Previous').closest('button')).toHaveProperty('disabled', true));
+        await waitFor(() =>
+            expect(
+                result.getByText('Previous').closest('button')
+            ).toHaveProperty('disabled', true)
+        );
     });
 
     it('Should update end time when entering start time > end time', async () => {
@@ -130,7 +148,6 @@ describe('<CreateIPO />', () => {
         await waitFor(() => expect(endTime).toHaveValue('23:23'));
     });
 
-
     it('Should not update time when invalid (empty)', async () => {
         let result: any;
         await act(async () => {
@@ -151,8 +168,15 @@ describe('<CreateIPO />', () => {
         const startTime = result.getByTestId('startTime');
         fireEvent.change(startTime, { target: { value: '13:30' } });
         fireEvent.change(endTime, { target: { value: '12:30' } });
-        await waitFor(() => expect(result.getByText('Next').closest('button')).toHaveProperty('disabled', true));
-        expect(result.getByText('Start time must precede end time.')).toBeInTheDocument();
+        await waitFor(() =>
+            expect(result.getByText('Next').closest('button')).toHaveProperty(
+                'disabled',
+                true
+            )
+        );
+        expect(
+            result.getByText('Start time must precede end time.')
+        ).toBeInTheDocument();
     });
 
     it('Should not allow to proceed with title exceeding 250 characters', async () => {
@@ -160,11 +184,20 @@ describe('<CreateIPO />', () => {
         await act(async () => {
             result = render(<CreateIPO />);
         });
-        const longString = [...Array(251)].map(() => (~~(Math.random()*36)).toString(36)).join('');
+        const longString = [...Array(251)]
+            .map(() => (~~(Math.random() * 36)).toString(36))
+            .join('');
         const title = result.getByTestId('title');
         fireEvent.change(title, { target: { value: longString } });
-        await waitFor(() => expect(result.getByText('Next').closest('button')).toHaveProperty('disabled', true));
-        expect(result.getByText('Title is too long. Maximum 250 characters.')).toBeInTheDocument();
+        await waitFor(() =>
+            expect(result.getByText('Next').closest('button')).toHaveProperty(
+                'disabled',
+                true
+            )
+        );
+        expect(
+            result.getByText('Title is too long. Maximum 250 characters.')
+        ).toBeInTheDocument();
     });
 
     it('Should indicate required fields when clicking next button', async () => {
@@ -174,10 +207,9 @@ describe('<CreateIPO />', () => {
         });
         const button = result.getByText('Next').closest('button');
         fireEvent.click(button);
-        await waitFor(() => expect((result.getAllByText('Required field.')).length).toBe(3));
+        await waitFor(() =>
+            expect(result.getAllByText('Required field.').length).toBe(3)
+        );
         expect(result.getByText('Confirmation required.')).toBeInTheDocument();
     });
-
 });
-
-

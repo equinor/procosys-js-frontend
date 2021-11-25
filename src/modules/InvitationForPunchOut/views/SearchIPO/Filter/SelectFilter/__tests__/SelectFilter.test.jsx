@@ -7,26 +7,38 @@ import SelectFilter from '../index';
 const roles = [
     {
         text: 'Role 1',
-        value: 'role1'
+        value: 'role1',
     },
     {
         text: 'Role 2',
-        value: 'role2'
-    }
+        value: 'role2',
+    },
 ];
 
 describe('<SelectFilter />', () => {
     it('Should render with title', async () => {
         const { getByText } = render(
-            <SelectFilter headerLabel="Header label"  onChange={jest.fn()} selectedItems={['', '']} roles={roles} icon={<EdsIcon name='person' />} />
-        );          
+            <SelectFilter
+                headerLabel="Header label"
+                onChange={jest.fn()}
+                selectedItems={['', '']}
+                roles={roles}
+                icon={<EdsIcon name="person" />}
+            />
+        );
         expect(getByText('Header label')).toBeInTheDocument();
     });
 
     it('Should render subfilters when expanded', async () => {
         const { getByText, getByTestId } = render(
-            <SelectFilter headerLabel="Header label"  onChange={jest.fn()} selectedItems={['', '']} roles={roles} icon={<EdsIcon name='person' />} />
-        );          
+            <SelectFilter
+                headerLabel="Header label"
+                onChange={jest.fn()}
+                selectedItems={['', '']}
+                roles={roles}
+                icon={<EdsIcon name="person" />}
+            />
+        );
         fireEvent.click(getByTestId('selectfilter-collapse'));
         expect(getByText('Role')).toBeInTheDocument();
         expect(getByText('Select')).toBeInTheDocument();
@@ -34,9 +46,3 @@ describe('<SelectFilter />', () => {
         expect(getByText('Search to select')).toBeInTheDocument();
     });
 });
-
-
-
-
-
-

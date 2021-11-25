@@ -1,7 +1,7 @@
-import { SideSheet } from "@equinor/eds-core-react";
-import { tokens } from "@equinor/eds-tokens";
-import { Breakpoints } from "@procosys/core/styling";
-import styled from "styled-components";
+import { SideSheet } from '@equinor/eds-core-react';
+import { tokens } from '@equinor/eds-tokens';
+import { Breakpoints } from '@procosys/core/styling';
+import styled from 'styled-components';
 
 export const Tabs = styled.nav`
     border-bottom: 2px solid ${tokens.colors.ui.background__medium.rgba};
@@ -15,7 +15,8 @@ export const Tabs = styled.nav`
 
         &.active {
             color: ${tokens.colors.interactive.primary__resting.rgba};
-            border-bottom: 2px solid ${tokens.colors.interactive.primary__resting.rgba};
+            border-bottom: 2px solid
+                ${tokens.colors.interactive.primary__resting.rgba};
             margin-bottom: -2px;
         }
     }

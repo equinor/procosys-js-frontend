@@ -1,4 +1,11 @@
-import { ButtonContainer, CenterContent, Container, Header, InputContainer, RequirementMessage } from './SetTagProperties.style';
+import {
+    ButtonContainer,
+    CenterContent,
+    Container,
+    Header,
+    InputContainer,
+    RequirementMessage,
+} from './SetTagProperties.style';
 import { Journey, Requirement, RequirementType, Step } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -14,7 +21,12 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 type SetTagPropertiesProps = {
     areaType: string;
-    submitForm: (stepId: number, requirements: Requirement[], remark?: string | null, storageArea?: string) => Promise<void>;
+    submitForm: (
+        stepId: number,
+        requirements: Requirement[],
+        remark?: string | null,
+        storageArea?: string
+    ) => Promise<void>;
     previousStep: () => void;
     journeys: Journey[];
     requirementTypes: RequirementType[];
@@ -36,13 +48,15 @@ const SetTagProperties = ({
     journeys = [],
     requirementTypes = [],
     addScopeMethod,
-    isLoading
+    isLoading,
 }: SetTagPropertiesProps): JSX.Element => {
     const { project } = usePreservationContext();
 
     const [journey, setJourney] = useState(-1);
     const [step, setStep] = useState<Step | null>();
-    const [requirements, setRequirements] = useState<RequirementFormInput[]>([]);
+    const [requirements, setRequirements] = useState<RequirementFormInput[]>(
+        []
+    );
     const [remark, setRemark] = useState<string>('');
     const [storageArea, setStorageArea] = useState<string>('');
     const [formIsValid, setFormIsValid] = useState(false);
@@ -52,11 +66,13 @@ const SetTagProperties = ({
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     const hasUnsavedChanges = (): boolean => {
-        return (journey && journey != -1)
-            || (step && step != null)
-            || (requirements && requirements.length > 0)
-            || remark != ''
-            || storageArea != '';
+        return (
+            (journey && journey != -1) ||
+            (step && step != null) ||
+            (requirements && requirements.length > 0) ||
+            remark != '' ||
+            storageArea != ''
+        );
     };
 
     /** Update global dirty state */
@@ -83,10 +99,16 @@ const SetTagProperties = ({
             }
 
             if (requirements.length > 0) {
-                const hasAllPropertiesSet = (req: RequirementFormInput): boolean => {
-                    return req.intervalWeeks != null && req.requirementDefinitionId != null;
+                const hasAllPropertiesSet = (
+                    req: RequirementFormInput
+                ): boolean => {
+                    return (
+                        req.intervalWeeks != null &&
+                        req.requirementDefinitionId != null
+                    );
                 };
-                const requirementsIsValid = requirements.every(hasAllPropertiesSet);
+                const requirementsIsValid =
+                    requirements.every(hasAllPropertiesSet);
 
                 setFormIsValid(requirementsIsValid);
                 return;
@@ -102,7 +124,7 @@ const SetTagProperties = ({
         const mapped = journeys.map((itm: Journey) => {
             return {
                 text: itm.title,
-                value: itm.id
+                value: itm.id,
             };
         });
         setMappedJourneys(mapped);
@@ -120,13 +142,12 @@ const SetTagProperties = ({
                 }
                 return {
                     text: itm.title,
-                    value: itm.id
+                    value: itm.id,
                 };
             });
             setMappedSteps(mapped);
         }
     }, [journey]);
-
 
     const submit = async (): Promise<void> => {
         if (step) {
@@ -135,35 +156,57 @@ const SetTagProperties = ({
             } else {
                 const requirementsMappedForApi: Requirement[] = [];
                 requirements.forEach((req) => {
-                    if (req.intervalWeeks != null && req.requirementDefinitionId != null) {
+                    if (
+                        req.intervalWeeks != null &&
+                        req.requirementDefinitionId != null
+                    ) {
                         requirementsMappedForApi.push({
-                            requirementDefinitionId: req.requirementDefinitionId,
-                            intervalWeeks: req.intervalWeeks
+                            requirementDefinitionId:
+                                req.requirementDefinitionId,
+                            intervalWeeks: req.intervalWeeks,
                         });
                     }
                 });
                 if (requirementsMappedForApi.length > 0) {
-                    await submitForm(step.id, requirementsMappedForApi, remark, storageArea);
+                    await submitForm(
+                        step.id,
+                        requirementsMappedForApi,
+                        remark,
+                        storageArea
+                    );
                 } else {
-                    showSnackbarNotification('Error occured. Requirements are not provided.', 5000);
+                    showSnackbarNotification(
+                        'Error occured. Requirements are not provided.',
+                        5000
+                    );
                 }
             }
         } else {
-            showSnackbarNotification('Error occured. Step is not provided.', 5000);
+            showSnackbarNotification(
+                'Error occured. Step is not provided.',
+                5000
+            );
         }
     };
 
     const setJourneyFromForm = (value: number): void => {
-        setJourney(journeys.findIndex((pJourney: Journey) => pJourney.id === value));
+        setJourney(
+            journeys.findIndex((pJourney: Journey) => pJourney.id === value)
+        );
     };
 
     const setStepFromForm = (stepId: number): void => {
-        const step = journeys[journey].steps.find((pStep: Step) => pStep.id === stepId);
+        const step = journeys[journey].steps.find(
+            (pStep: Step) => pStep.id === stepId
+        );
         setStep(step);
     };
 
-
-    if (journeys.length <= 0 || (addScopeMethod !== AddScopeMethod.AddTagsAutoscope && requirementTypes.length <= 0)) {
+    if (
+        journeys.length <= 0 ||
+        (addScopeMethod !== AddScopeMethod.AddTagsAutoscope &&
+            requirementTypes.length <= 0)
+    ) {
         return (
             <div>
                 <Header>
@@ -172,7 +215,8 @@ const SetTagProperties = ({
                 </Header>
                 <Container>
                     <div>
-                        Missing journey or requirement definitions. Please create this first, and try again.
+                        Missing journey or requirement definitions. Please
+                        create this first, and try again.
                     </div>
                     <ButtonContainer>
                         <Button onClick={previousStep} variant="outlined">
@@ -187,18 +231,15 @@ const SetTagProperties = ({
     return (
         <div>
             <Header>
+                {addScopeMethod === AddScopeMethod.MigrateTags && (
+                    <Typography variant="h1">
+                        Migrate preservation scope
+                    </Typography>
+                )}
 
-                {
-                    addScopeMethod === AddScopeMethod.MigrateTags && (
-                        <Typography variant="h1">Migrate preservation scope</Typography>
-                    )
-                }
-
-                {
-                    addScopeMethod !== AddScopeMethod.MigrateTags && (
-                        <Typography variant="h1">Add preservation scope</Typography>
-                    )
-                }
+                {addScopeMethod !== AddScopeMethod.MigrateTags && (
+                    <Typography variant="h1">Add preservation scope</Typography>
+                )}
 
                 <div>{project.name}</div>
             </Header>
@@ -211,14 +252,17 @@ const SetTagProperties = ({
                             data={mappedJourneys}
                             label={'Preservation journey for all selected tags'}
                         >
-                            {(journey > -1 && journeys[journey].title) || 'Select journey'}
+                            {(journey > -1 && journeys[journey].title) ||
+                                'Select journey'}
                         </SelectInput>
                     </InputContainer>
                     <InputContainer>
                         <SelectInput
                             onChange={setStepFromForm}
                             data={mappedSteps}
-                            disabled={mappedSteps.length <= 0 || areaType == 'PoArea'}
+                            disabled={
+                                mappedSteps.length <= 0 || areaType == 'PoArea'
+                            }
                             label={'Preservation step'}
                         >
                             {(step && step.title) || 'Select step'}
@@ -228,7 +272,9 @@ const SetTagProperties = ({
                         <TextField
                             id={'Remark'}
                             label="Remark for whole preservation journey"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setRemark(e.target.value)}
+                            onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                            ): void => setRemark(e.target.value)}
                             value={remark}
                             placeholder="Write here"
                             helpertext="For example: Check according to predecure 123, or check specifications from supplier"
@@ -239,7 +285,9 @@ const SetTagProperties = ({
                         <TextField
                             id={'StorageArea'}
                             label="Storage area"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setStorageArea(e.target.value)}
+                            onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                            ): void => setStorageArea(e.target.value)}
                             value={storageArea}
                             placeholder="Write here"
                             helpertext="For example: AR123"
@@ -247,40 +295,49 @@ const SetTagProperties = ({
                         />
                     </InputContainer>
 
-                    {
-                        addScopeMethod === AddScopeMethod.AddTagsAutoscope && (
-                            <RequirementMessage>Requirements are automatically added for each tag function. Changes to requirements can be done after adding to scope.</RequirementMessage>
-                        )
-                    }
-                    {
-                        addScopeMethod !== AddScopeMethod.AddTagsAutoscope && (
-                            <>
-                                <h2>Requirements for all selected tags</h2>
-                                <RequirementsSelector requirementTypes={requirementTypes} requirements={requirements} onChange={(newList): void => setRequirements(newList)} />
-                            </>
-                        )
-                    }
+                    {addScopeMethod === AddScopeMethod.AddTagsAutoscope && (
+                        <RequirementMessage>
+                            Requirements are automatically added for each tag
+                            function. Changes to requirements can be done after
+                            adding to scope.
+                        </RequirementMessage>
+                    )}
+                    {addScopeMethod !== AddScopeMethod.AddTagsAutoscope && (
+                        <>
+                            <h2>Requirements for all selected tags</h2>
+                            <RequirementsSelector
+                                requirementTypes={requirementTypes}
+                                requirements={requirements}
+                                onChange={(newList): void =>
+                                    setRequirements(newList)
+                                }
+                            />
+                        </>
+                    )}
                 </div>
                 <ButtonContainer>
-                    <Button onClick={previousStep} variant="outlined" disabled={isLoading}>
+                    <Button
+                        onClick={previousStep}
+                        variant="outlined"
+                        disabled={isLoading}
+                    >
                         Previous
                     </Button>
                     <Button
                         onClick={submit}
                         color="primary"
-                        disabled={(!formIsValid || isLoading)}
+                        disabled={!formIsValid || isLoading}
                     >
                         {isLoading && (
                             <CenterContent>
                                 <Spinner /> Add to scope
                             </CenterContent>
                         )}
-                        {!isLoading && ('Add to scope')}
+                        {!isLoading && 'Add to scope'}
                     </Button>
                 </ButtonContainer>
             </Container>
         </div>
-
     );
 };
 

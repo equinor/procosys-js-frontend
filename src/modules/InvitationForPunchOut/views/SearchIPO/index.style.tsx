@@ -25,7 +25,7 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
     }};
     overflow: hidden;
     ${Breakpoints.MOBILE} {
-            overflow-y: scroll;
+        overflow-y: scroll;
     }
     flex-direction: column;
     margin-top: var(--margin-module--top);
@@ -34,11 +34,10 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
 
 export const HeaderContainer = styled.div`
     display: flex;
-    justify-content:space-between;
-    width:100%;
-    flex-wrap: wrap;     
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
 `;
-
 
 export const Header = styled.header`
     display: block;
@@ -48,8 +47,6 @@ export const Header = styled.header`
         margin-right: calc(var(--grid-unit) * 2);
     }
 `;
-
-
 
 export const StyledButton = styled(Button)`
     display: flex;
@@ -63,17 +60,21 @@ interface DropdownProps {
 
 export const DropdownItem = styled.div<DropdownProps>`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
-    ${(props): any => !props.disabled && css`
-        :hover {
-            background-color: ${tokens.colors.ui.background__light.rgba}
-        }
-    `}
+    ${(props): any =>
+        !props.disabled &&
+        css`
+            :hover {
+                background-color: ${tokens.colors.ui.background__light.rgba};
+            }
+        `}
 
-    ${(props): any => props.disabled && css`
-        color: ${tokens.colors.interactive.disabled__border.rgba} !important;
-        cursor: not-allowed;
-    `}
-
+    ${(props): any =>
+        props.disabled &&
+        css`
+            color: ${tokens.colors.interactive.disabled__border
+                .rgba} !important;
+            cursor: not-allowed;
+        `}
 `;
 
 export const FilterContainer = styled.div<{ maxHeight: number }>`

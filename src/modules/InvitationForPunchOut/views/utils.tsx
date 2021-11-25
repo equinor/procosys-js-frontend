@@ -15,7 +15,6 @@ const createOrganizationMap = (): Map<Organization, string> => {
 
 export const OrganizationMap = createOrganizationMap();
 
-
 export const getFileTypeIconName = (fileName: string): string => {
     const ext = getFileExtension(fileName).toUpperCase();
 
@@ -40,19 +39,15 @@ export const getFileTypeIconName = (fileName: string): string => {
             return 'microsoft_powerpoint';
         default:
             return 'file';
-
     }
 };
 
 export const getFileExtension = (filename: string): string => {
-    return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2);
 };
 
 export const getFileName = (fullName: string): string => {
-    return fullName.includes('.') ? (
-        fullName.split('.').slice(0, -1).join('.')
-    ) :
-        (
-            fullName
-        );
+    return fullName.includes('.')
+        ? fullName.split('.').slice(0, -1).join('.')
+        : fullName;
 };

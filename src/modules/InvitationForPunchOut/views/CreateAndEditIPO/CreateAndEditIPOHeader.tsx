@@ -1,5 +1,10 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, ButtonSpacer, Container, HeaderContainer } from './CreateAndEditIPOHeader.style';
+import {
+    ButtonContainer,
+    ButtonSpacer,
+    Container,
+    HeaderContainer,
+} from './CreateAndEditIPOHeader.style';
 import React, { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
@@ -17,53 +22,57 @@ type ProgressBarProps = {
     next: () => void;
     previous: () => void;
     goTo: (stepNo: number) => void;
-}
+};
 
 const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
-    const [validNext, setValidNext] = useState<boolean>(props.steps[props.currentStep - 1].isCompleted);
+    const [validNext, setValidNext] = useState<boolean>(
+        props.steps[props.currentStep - 1].isCompleted
+    );
 
     useEffect(() => {
-        props.currentStep == StepsEnum.UploadAttachments ?
-            setValidNext(true) :
-            props.currentStep == StepsEnum.SummaryAndCreate ?
-                setValidNext(false) :
-                setValidNext(props.steps[props.currentStep - 1].isCompleted);
+        props.currentStep == StepsEnum.UploadAttachments
+            ? setValidNext(true)
+            : props.currentStep == StepsEnum.SummaryAndCreate
+            ? setValidNext(false)
+            : setValidNext(props.steps[props.currentStep - 1].isCompleted);
     }, [props.steps, props.currentStep]);
 
-    const cancel = ():void => {
+    const cancel = (): void => {
         history.back();
     };
 
     return (
         <Container>
             <HeaderContainer>
-                {!props.ipoId && <Typography variant="h2">Create invitation for punch-out</Typography>}
-                {props.ipoId && <Typography variant="h2">Edit {props.title}</Typography>}
+                {!props.ipoId && (
+                    <Typography variant="h2">
+                        Create invitation for punch-out
+                    </Typography>
+                )}
+                {props.ipoId && (
+                    <Typography variant="h2">Edit {props.title}</Typography>
+                )}
 
                 <ButtonContainer>
-                    {props.ipoId &&
+                    {props.ipoId && (
                         <Link to={`/${props.ipoId}`}>
-                            <Button
-                                variant='outlined'>
-                                Cancel
-                            </Button>
+                            <Button variant="outlined">Cancel</Button>
                         </Link>
-                    }
+                    )}
 
-                    {!props.ipoId &&
-                        <Button
-                            onClick={cancel}
-                            variant='outlined'>
+                    {!props.ipoId && (
+                        <Button onClick={cancel} variant="outlined">
                             Cancel
                         </Button>
-                    }
+                    )}
 
                     <ButtonSpacer />
 
                     <Button
-                        constiant='outlined'
+                        constiant="outlined"
                         disabled={props.currentStep === 1}
-                        onClick={props.previous}>
+                        onClick={props.previous}
+                    >
                         Previous
                     </Button>
 
@@ -78,17 +87,17 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
                         </Button>
                     )}
                     {props.currentStep != StepsEnum.SummaryAndCreate && (
-                        (<Button
-                            disabled={!validNext}
-                            onClick={props.next}
-                        >
+                        <Button disabled={!validNext} onClick={props.next}>
                             Next
                         </Button>
-                        )
                     )}
                 </ButtonContainer>
             </HeaderContainer>
-            <ProgressBar steps={props.steps} currentStep={props.currentStep} goTo={props.goTo} />
+            <ProgressBar
+                steps={props.steps}
+                currentStep={props.currentStep}
+                goTo={props.goTo}
+            />
         </Container>
     );
 };

@@ -9,25 +9,25 @@ const tagDetails = {
     tagNo: 'tag-no',
     description: 'tag-description',
     status: 'tag-status',
-    journey: {title: 'journey-title'},
-    mode: {title:'journey-mode'},
-    responsible: {code: 'responsible-name'},
+    journey: { title: 'journey-title' },
+    mode: { title: 'journey-mode' },
+    responsible: { code: 'responsible-name' },
     commPkgNo: 'commpkg-no',
     mcPkgNo: 'mcpkg-no',
     purchaseOrderNo: 'po-no',
     areaCode: 'area-code',
     remark: 'remark text',
-    storageArea: 'SA123'
+    storageArea: 'SA123',
 };
 
 jest.mock('../../../../../context/PreservationContext', () => ({
     usePreservationContext: jest.fn(() => {
         return {
             apiClient: {
-                getTagRequirements: () => Promise.resolve(null)
-            }
+                getTagRequirements: () => Promise.resolve(null),
+            },
         };
-    })
+    }),
 }));
 
 const mockSetDirtyStateFor = jest.fn();
@@ -37,16 +37,17 @@ jest.mock('@procosys/core/DirtyContext', () => ({
     useDirtyContext: () => {
         return {
             setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor
+            unsetDirtyStateFor: mockUnsetDirtyStateFor,
         };
-    }
+    },
 }));
 
 describe('<PreservationTab />', () => {
-
     it('Should render tag details', async () => {
         await act(async () => {
-            const { getByText, getByTestId } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const { getByText, getByTestId } = render(
+                <PreservationTab tagId={100} tagDetails={tagDetails} />
+            );
 
             expect(getByText('tag-description')).toBeInTheDocument();
             expect(getByText('journey-title')).toBeInTheDocument();
@@ -56,14 +57,20 @@ describe('<PreservationTab />', () => {
             expect(getByText('mcpkg-no')).toBeInTheDocument();
             expect(getByText('po-no')).toBeInTheDocument();
             expect(getByText('area-code')).toBeInTheDocument();
-            expect(getByTestId('remarkReadOnly')).toHaveTextContent('remark text');
-            expect(getByTestId('storageAreaReadOnly')).toHaveTextContent('SA123');
+            expect(getByTestId('remarkReadOnly')).toHaveTextContent(
+                'remark text'
+            );
+            expect(getByTestId('storageAreaReadOnly')).toHaveTextContent(
+                'SA123'
+            );
         });
     });
 
     it('Should render spinner when given no requirements', async () => {
         await act(async () => {
-            const { getByTitle } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const { getByTitle } = render(
+                <PreservationTab tagId={100} tagDetails={tagDetails} />
+            );
 
             expect(getByTitle('Loading')).toBeInTheDocument();
         });
@@ -71,15 +78,21 @@ describe('<PreservationTab />', () => {
 
     it('Should not render  remark and storage area text fields when read only', async () => {
         await act(async () => {
-            const { queryByLabelText } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
-            expect(queryByLabelText('Remark', {exact:  false})).toBeNull();
-            expect(queryByLabelText('Storage area', {exact:  false})).toBeNull();
+            const { queryByLabelText } = render(
+                <PreservationTab tagId={100} tagDetails={tagDetails} />
+            );
+            expect(queryByLabelText('Remark', { exact: false })).toBeNull();
+            expect(
+                queryByLabelText('Storage area', { exact: false })
+            ).toBeNull();
         });
     });
 
     it('Should have two edit icons on render', async () => {
         await act(async () => {
-            const { getByTestId } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const { getByTestId } = render(
+                <PreservationTab tagId={100} tagDetails={tagDetails} />
+            );
 
             expect(getByTestId('remarkEditIcon')).toBeInTheDocument();
             expect(getByTestId('storageAreaEditIcon')).toBeInTheDocument();
@@ -88,15 +101,25 @@ describe('<PreservationTab />', () => {
 
     it('Should be able to edit text fields', async () => {
         await act(async () => {
-            const { getByTestId } = render(<PreservationTab tagId={100} tagDetails={tagDetails} />);
+            const { getByTestId } = render(
+                <PreservationTab tagId={100} tagDetails={tagDetails} />
+            );
 
             fireEvent.click(getByTestId('remarkEditIcon'));
-            await waitFor(() => expect(document.getElementById('remark').disabled).not.toBeTruthy());
+            await waitFor(() =>
+                expect(
+                    document.getElementById('remark').disabled
+                ).not.toBeTruthy()
+            );
             expect(getByTestId('remarkClearIcon')).toBeInTheDocument();
             expect(getByTestId('remarkCheckIcon')).toBeInTheDocument();
 
             fireEvent.click(getByTestId('storageAreaEditIcon'));
-            await waitFor(() => expect(document.getElementById('storageArea').disabled).not.toBeTruthy());
+            await waitFor(() =>
+                expect(
+                    document.getElementById('storageArea').disabled
+                ).not.toBeTruthy()
+            );
             expect(getByTestId('storageAreaClearIcon')).toBeInTheDocument();
             expect(getByTestId('storageAreaCheckIcon')).toBeInTheDocument();
         });

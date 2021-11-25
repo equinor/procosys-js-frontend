@@ -10,14 +10,16 @@ type ParsedUser = {
     username: string;
     fullname: string;
     id: string;
-}
-
+};
 
 export default class AuthUser implements IAuthUser {
-
     static fromToken(token: string): AuthUser {
         const userToken = AuthToken.parse(token);
-        return new AuthUser({username: userToken.username, fullname: userToken.name, id: userToken.oid});
+        return new AuthUser({
+            username: userToken.username,
+            fullname: userToken.name,
+            id: userToken.oid,
+        });
     }
 
     constructor(user: ParsedUser) {

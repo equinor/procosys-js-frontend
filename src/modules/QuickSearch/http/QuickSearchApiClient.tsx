@@ -1,16 +1,16 @@
-import { ProCoSysApiError } from "@procosys/core/ProCoSysApiError";
-import ProCoSysSettings from "@procosys/core/ProCoSysSettings";
-import ApiClient from "@procosys/http/ApiClient";
-import { RequestCanceler } from "@procosys/http/HttpClient";
-import { AxiosRequestConfig } from "axios";
-import { IAuthService } from "src/auth/AuthService";
+import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
+import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
+import ApiClient from '@procosys/http/ApiClient';
+import { RequestCanceler } from '@procosys/http/HttpClient';
+import { AxiosRequestConfig } from 'axios';
+import { IAuthService } from 'src/auth/AuthService';
 
 export enum ResultTypeEnum {
     COMM_PKG = 'C',
     MC_PKG = 'MC',
     TAG = 'T',
     PUNCH_ITEM = 'PI',
-    OTHER = 'OTHER'
+    OTHER = 'OTHER',
 }
 
 export interface ContentDocument {
@@ -79,83 +79,119 @@ export interface SearchResult {
 }
 
 class QuickSearchApiClient extends ApiClient {
-
     constructor(authService: IAuthService) {
         super(
             authService,
-            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.scope ? ProCoSysSettings.searchApi.scope.join(' ') : '',
-            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.url ? ProCoSysSettings.searchApi.url : ''
+            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.scope
+                ? ProCoSysSettings.searchApi.scope.join(' ')
+                : '',
+            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.url
+                ? ProCoSysSettings.searchApi.url
+                : ''
         );
         this.client.interceptors.request.use(
-            config => {
+            (config) => {
                 config.params = {
                     ...config.params,
                 };
                 return config;
             },
-            error => Promise.reject(error)
+            (error) => Promise.reject(error)
         );
     }
 
-
-    async doPreviewSearch(searchString: string, plantId: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
-        const endpoint = '/Search?preview=true&plant=' + plantId + '&query=' + encodeURIComponent(searchString);
+    async doPreviewSearch(
+        searchString: string,
+        plantId: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<SearchResult> {
+        const endpoint =
+            '/Search?preview=true&plant=' +
+            plantId +
+            '&query=' +
+            encodeURIComponent(searchString);
         const settings: AxiosRequestConfig = {};
 
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<SearchResult>(endpoint, settings);
+            const result = await this.client.get<SearchResult>(
+                endpoint,
+                settings
+            );
             result.data.items.map((item: ContentDocument) => {
-                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG
-                    : item.mcPkg ? ResultTypeEnum.MC_PKG 
-                    : item.tag ? ResultTypeEnum.TAG
-                    : item.punchItem ? ResultTypeEnum.PUNCH_ITEM
+                item.type = item.commPkg
+                    ? ResultTypeEnum.COMM_PKG
+                    : item.mcPkg
+                    ? ResultTypeEnum.MC_PKG
+                    : item.tag
+                    ? ResultTypeEnum.TAG
+                    : item.punchItem
+                    ? ResultTypeEnum.PUNCH_ITEM
                     : ResultTypeEnum.OTHER;
             });
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw new ProCoSysApiError(error);
         }
     }
 
-    async doSearch(searchString: string, plantId?: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
-        const endpoint = '/Search?' + (plantId ? 'plant=' + plantId + '&' : '') + 'query=' + encodeURIComponent(searchString);
+    async doSearch(
+        searchString: string,
+        plantId?: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<SearchResult> {
+        const endpoint =
+            '/Search?' +
+            (plantId ? 'plant=' + plantId + '&' : '') +
+            'query=' +
+            encodeURIComponent(searchString);
         const settings: AxiosRequestConfig = {};
 
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<SearchResult>(endpoint, settings);
+            const result = await this.client.get<SearchResult>(
+                endpoint,
+                settings
+            );
             result.data.items.map((item: ContentDocument) => {
-                item.type = item.commPkg ? ResultTypeEnum.COMM_PKG
-                    : item.mcPkg ? ResultTypeEnum.MC_PKG 
-                    : item.tag ? ResultTypeEnum.TAG
-                    : item.punchItem ? ResultTypeEnum.PUNCH_ITEM
+                item.type = item.commPkg
+                    ? ResultTypeEnum.COMM_PKG
+                    : item.mcPkg
+                    ? ResultTypeEnum.MC_PKG
+                    : item.tag
+                    ? ResultTypeEnum.TAG
+                    : item.punchItem
+                    ? ResultTypeEnum.PUNCH_ITEM
                     : ResultTypeEnum.OTHER;
             });
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw new ProCoSysApiError(error);
         }
     }
 
-    async getMCPackages(commPkgNo: string, plant: string, setRequestCanceller?: RequestCanceler): Promise<SearchResult> {
-        const endpoint = '/Search?plant=' + plant + "&mcPkgComPkg=" + commPkgNo;
+    async getMCPackages(
+        commPkgNo: string,
+        plant: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<SearchResult> {
+        const endpoint = '/Search?plant=' + plant + '&mcPkgComPkg=' + commPkgNo;
         const settings: AxiosRequestConfig = {};
 
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.get<SearchResult>(endpoint, settings);
+            const result = await this.client.get<SearchResult>(
+                endpoint,
+                settings
+            );
             result.data.items.map((item: ContentDocument) => {
                 item.type = ResultTypeEnum.MC_PKG;
             });
             return result.data;
-        }
-        catch (error) {
+        } catch (error) {
             throw new ProCoSysApiError(error);
         }
     }

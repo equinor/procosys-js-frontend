@@ -15,13 +15,12 @@ export const Container = styled.div`
         flex-grow: 1;
         margin-bottom: 52px;
     }
-    
+
     ${Breakpoints.TABLET} {
         //hide columns
         thead tr th:nth-child(2), table tr td:nth-child(2) //description
         {
-            display: none;            
-        } 
+            display: none;
+        }
     }
-
 `;

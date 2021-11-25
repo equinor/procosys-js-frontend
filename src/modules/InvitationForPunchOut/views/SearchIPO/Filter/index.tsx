@@ -1,5 +1,12 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import { Collapse, CollapseInfo, Container, Header, Link, Section } from './index.style';
+import {
+    Collapse,
+    CollapseInfo,
+    Container,
+    Header,
+    Link,
+    Section,
+} from './index.style';
 import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -16,7 +23,7 @@ import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 import { isValidDate } from '@procosys/core/services/DateService';
 
-const ExcelIcon = <EdsIcon name='microsoft_excel' size={16} />;
+const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
 interface InvitationsFilterProps {
     project: ProjectDetails | undefined;
@@ -42,80 +49,71 @@ export interface CheckboxFilterValue {
     title: string;
 }
 
-export type filterParamType = 
-    'ipoStatuses' |
-    'punchOutDates';
+export type filterParamType = 'ipoStatuses' | 'punchOutDates';
 
-export type dateFilterParamType = 
-    'punchOutDateFromUtc' |
-    'punchOutDateToUtc' |
-    'lastChangedAtFromUtc' |
-    'lastChangedAtToUtc';
+export type dateFilterParamType =
+    | 'punchOutDateFromUtc'
+    | 'punchOutDateToUtc'
+    | 'lastChangedAtFromUtc'
+    | 'lastChangedAtToUtc';
 
-export type rolePersonParamType = 
-    'personOid' |
-    'functionalRoleCode';
+export type rolePersonParamType = 'personOid' | 'functionalRoleCode';
 
-const dueDates: FilterInput[] =
-    [
-        {
-            id: 'OverDue',
-            title: 'Overdue',
-        },
-        {
-            id: 'ThisWeek',
-            title: 'This week',
-        },
-        {
-            id: 'NextWeek',
-            title: 'Next week',
-        }
-    ];
+const dueDates: FilterInput[] = [
+    {
+        id: 'OverDue',
+        title: 'Overdue',
+    },
+    {
+        id: 'ThisWeek',
+        title: 'This week',
+    },
+    {
+        id: 'NextWeek',
+        title: 'Next week',
+    },
+];
 
-const ipoStatuses: FilterInput[] =
-    [
-        {
-            id: IpoStatusEnum.CANCELED,
-            title: 'Canceled',
-        },
-        {
-            id: IpoStatusEnum.PLANNED,
-            title: 'Planned',
-        },
-        {
-            id: IpoStatusEnum.COMPLETED,
-            title: 'Completed',
-        },
-        {
-            id: IpoStatusEnum.ACCEPTED,
-            title: 'Accepted',
-        }
-    ];
+const ipoStatuses: FilterInput[] = [
+    {
+        id: IpoStatusEnum.CANCELED,
+        title: 'Canceled',
+    },
+    {
+        id: IpoStatusEnum.PLANNED,
+        title: 'Planned',
+    },
+    {
+        id: IpoStatusEnum.COMPLETED,
+        title: 'Completed',
+    },
+    {
+        id: IpoStatusEnum.ACCEPTED,
+        title: 'Accepted',
+    },
+];
 
-const punchOutDateFields: FilterInput[] =
-    [
-        {
-            id: 'punchOutDateFromUtc',
-            title: 'Punch out from',
-        },
-        {
-            id: 'punchOutDateToUtc',
-            title: 'Punch out to'
-        }
-    ];
+const punchOutDateFields: FilterInput[] = [
+    {
+        id: 'punchOutDateFromUtc',
+        title: 'Punch out from',
+    },
+    {
+        id: 'punchOutDateToUtc',
+        title: 'Punch out to',
+    },
+];
 
-const lastChangedDateFields: FilterInput[] =
-    [
-        {
-            id: 'lastChangedAtFromUtc',
-            title: 'Last changed from'
-        },
-        {
-            id: 'lastChangedAtToUtc',
-            title: 'Last changed to'
-        }
-    ];
-
+const lastChangedDateFields: FilterInput[] = [
+    {
+        id: 'lastChangedAtFromUtc',
+        title: 'Last changed from',
+    },
+    {
+        id: 'lastChangedAtToUtc',
+        title: 'Last changed to',
+    },
+];
 
 const clearFilter: IPOFilter = {
     ipoStatuses: [],
@@ -125,7 +123,7 @@ const clearFilter: IPOFilter = {
     commPkgNoStartsWith: '',
     mcPkgNoStartsWith: '',
     titleStartsWith: '',
-    punchOutDates: []
+    punchOutDates: [],
 };
 
 const InvitationsFilter = ({
@@ -141,8 +139,6 @@ const InvitationsFilter = ({
     roles,
     exportInvitationsToExcel,
 }: InvitationsFilterProps): JSX.Element => {
-
-
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
     const [localFilter, setLocalFilter] = useState<IPOFilter>({ ...filter });
 
@@ -150,7 +146,9 @@ const InvitationsFilter = ({
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [showSavedFilters, setShowSavedFilters] = useState<boolean>(false);
     const [anchorElement, setAnchorElement] = React.useState(null);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState<number | null>();
+    const [selectedFilterIndex, setSelectedFilterIndex] = useState<
+        number | null
+    >();
 
     const KEYCODE_ENTER = 13;
 
@@ -163,41 +161,55 @@ const InvitationsFilter = ({
         setLocalFilter(newFilter);
         setFilter(newFilter);
     };
-    
+
     useEffect((): void => {
         setLocalFilter(filter);
     }, [filter]);
 
     useEffect((): void => {
         if (savedFilters && selectedSavedFilterTitle) {
-            if(savedFilters.length != 0) {
-                const filterIndex = savedFilters.findIndex((filter) => filter.title == selectedSavedFilterTitle);
+            if (savedFilters.length != 0) {
+                const filterIndex = savedFilters.findIndex(
+                    (filter) => filter.title == selectedSavedFilterTitle
+                );
                 setSelectedFilterIndex(filterIndex);
-                if(JSON.stringify(localFilter) != savedFilters[filterIndex].criteria) {
+                if (
+                    JSON.stringify(localFilter) !=
+                    savedFilters[filterIndex].criteria
+                ) {
                     setSelectedSavedFilterTitle(null);
                     setSelectedFilterIndex(null);
                 }
-            }else{
+            } else {
                 setSelectedSavedFilterTitle(null);
                 setSelectedFilterIndex(null);
             }
-        }else{
+        } else {
             setSelectedSavedFilterTitle(null);
             setSelectedFilterIndex(null);
         }
     }, [savedFilters, localFilter]);
 
-    const onCheckboxFilterChange = (filterParam: filterParamType, id: string, checked: boolean): void => {
+    const onCheckboxFilterChange = (
+        filterParam: filterParamType,
+        id: string,
+        checked: boolean
+    ): void => {
         const newIPOFilter: IPOFilter = { ...localFilter };
         if (checked) {
             newIPOFilter[filterParam] = [...localFilter[filterParam], id];
         } else {
-            newIPOFilter[filterParam] = [...localFilter[filterParam].filter(item => item != id)];
+            newIPOFilter[filterParam] = [
+                ...localFilter[filterParam].filter((item) => item != id),
+            ];
         }
         setLocalFilter(newIPOFilter);
     };
 
-    const onDateChange = (filterParam: dateFilterParamType, value: string): void => {
+    const onDateChange = (
+        filterParam: dateFilterParamType,
+        value: string
+    ): void => {
         const date = new Date(value);
 
         const newIPOFilter: IPOFilter = { ...localFilter };
@@ -205,7 +217,10 @@ const InvitationsFilter = ({
         setLocalFilter(newIPOFilter);
     };
 
-    const onRolePersonChange = (filterParam: rolePersonParamType, value: string): void => {
+    const onRolePersonChange = (
+        filterParam: rolePersonParamType,
+        value: string
+    ): void => {
         const newIPOFilter: IPOFilter = { ...localFilter };
         newIPOFilter[filterParam] = value;
         setLocalFilter(newIPOFilter);
@@ -217,7 +232,9 @@ const InvitationsFilter = ({
 
         const handleUpdate = async (): Promise<void> => {
             triggerIPOListUpdate();
-            const activeFilters = Object.values(localFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+            const activeFilters = Object.values(localFilter).filter(
+                (v) => v && JSON.stringify(v) != JSON.stringify([])
+            );
             setFilterActive(activeFilters.length > 0);
         };
 
@@ -228,24 +245,47 @@ const InvitationsFilter = ({
         return (): void => {
             clearTimeout(timer);
         };
-    }, [localFilter.titleStartsWith, localFilter.commPkgNoStartsWith, localFilter.ipoIdStartsWith, localFilter.mcPkgNoStartsWith]);
+    }, [
+        localFilter.titleStartsWith,
+        localFilter.commPkgNoStartsWith,
+        localFilter.ipoIdStartsWith,
+        localFilter.mcPkgNoStartsWith,
+    ]);
 
     //Handle changes in all filters except text field filters
     useEffect((): void => {
         if (isFirstRender.current) return;
         triggerIPOListUpdate();
-        const activeFilters = Object.values(localFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+        const activeFilters = Object.values(localFilter).filter(
+            (v) => v && JSON.stringify(v) != JSON.stringify([])
+        );
         setFilterActive(activeFilters.length > 0);
-    }, [localFilter.functionalRoleCode, localFilter.ipoStatuses, localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc, localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc, localFilter.punchOutDates, localFilter.personOid]);
+    }, [
+        localFilter.functionalRoleCode,
+        localFilter.ipoStatuses,
+        localFilter.lastChangedAtFromUtc,
+        localFilter.lastChangedAtToUtc,
+        localFilter.punchOutDateFromUtc,
+        localFilter.punchOutDateToUtc,
+        localFilter.punchOutDates,
+        localFilter.personOid,
+    ]);
 
     useEffect(() => {
         isFirstRender.current = false;
-        const activeFilters = Object.values(localFilter).filter(v => v && JSON.stringify(v) != JSON.stringify([]));
+        const activeFilters = Object.values(localFilter).filter(
+            (v) => v && JSON.stringify(v) != JSON.stringify([])
+        );
         setFilterActive(activeFilters.length > 0);
     }, []);
 
     const checkSearchFilter = (): boolean => {
-        if (!localFilter.ipoIdStartsWith && !localFilter.titleStartsWith && !localFilter.commPkgNoStartsWith && !localFilter.mcPkgNoStartsWith ) {
+        if (
+            !localFilter.ipoIdStartsWith &&
+            !localFilter.titleStartsWith &&
+            !localFilter.commPkgNoStartsWith &&
+            !localFilter.mcPkgNoStartsWith
+        ) {
             return false;
         }
         return true;
@@ -256,16 +296,32 @@ const InvitationsFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    <Button variant='ghost' title='Export filtered tags to Excel' onClick={exportInvitationsToExcel}>
+                    <Button
+                        variant="ghost"
+                        title="Export filtered tags to Excel"
+                        onClick={exportInvitationsToExcel}
+                    >
                         {ExcelIcon}
                     </Button>
-                    <Button variant='ghost' title='Open saved filters' onClick={(event: any): void => {
-                        showSavedFilters ? setShowSavedFilters(false) : setShowSavedFilters(true);
-                        setAnchorElement(event.currentTarget);
-                    }}>
+                    <Button
+                        variant="ghost"
+                        title="Open saved filters"
+                        onClick={(event: any): void => {
+                            showSavedFilters
+                                ? setShowSavedFilters(false)
+                                : setShowSavedFilters(true);
+                            setAnchorElement(event.currentTarget);
+                        }}
+                    >
                         <SavedFiltersIcon />
                     </Button>
-                    <Button variant='ghost' title='Close' onClick={(): void => { onCloseRequest(); }}>
+                    <Button
+                        variant="ghost"
+                        title="Close"
+                        onClick={(): void => {
+                            onCloseRequest();
+                        }}
+                    >
                         <CloseIcon />
                     </Button>
                 </div>
@@ -292,95 +348,161 @@ const InvitationsFilter = ({
                     selectedSavedFilterTitle={selectedSavedFilterTitle}
                     setSelectedSavedFilterTitle={setSelectedSavedFilterTitle}
                     setIPOFilter={setLocalFilter}
-                    onCloseRequest={(): void => setShowSavedFilters(false)} 
+                    onCloseRequest={(): void => setShowSavedFilters(false)}
                     selectedFilterIndex={selectedFilterIndex}
                     setSelectedFilterIndex={setSelectedFilterIndex}
                 />
-            </Popover >
+            </Popover>
             <Section>
-                <Typography variant='caption'>{filterActive ? `Filter result ${numberOfIPOs} items` : 'No active filters'}</Typography>
-                <Link onClick={(e): void => filterActive ? resetFilter() : e.preventDefault()} filterActive={filterActive}>
-                    <Typography variant='caption'>Reset filter</Typography>
+                <Typography variant="caption">
+                    {filterActive
+                        ? `Filter result ${numberOfIPOs} items`
+                        : 'No active filters'}
+                </Typography>
+                <Link
+                    onClick={(e): void =>
+                        filterActive ? resetFilter() : e.preventDefault()
+                    }
+                    filterActive={filterActive}
+                >
+                    <Typography variant="caption">Reset filter</Typography>
                 </Link>
             </Section>
-            <Collapse data-testid={'search-fields'} isExpanded={searchIsExpanded} onClick={(): void => setSearchIsExpanded(!searchIsExpanded)} filterActive={checkSearchFilter()}>
-                <EdsIcon name='search' />
-                <CollapseInfo>
-                    Search
-                </CollapseInfo>
-                {
-                    searchIsExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
+            <Collapse
+                data-testid={'search-fields'}
+                isExpanded={searchIsExpanded}
+                onClick={(): void => setSearchIsExpanded(!searchIsExpanded)}
+                filterActive={checkSearchFilter()}
+            >
+                <EdsIcon name="search" />
+                <CollapseInfo>Search</CollapseInfo>
+                {searchIsExpanded ? (
+                    <KeyboardArrowUpIcon />
+                ) : (
+                    <KeyboardArrowDownIcon />
+                )}
             </Collapse>
-            {
-                searchIsExpanded && (
-                    <>
-                        <Section>
-                            <TextField
-                                id="ipoIdSearch"
-                                onChange={(e: any): void => {
-                                    setLocalFilter({ ...localFilter, ipoIdStartsWith: e.target.value });
-                                }}
-                                value={localFilter.ipoIdStartsWith || ''}
-                                placeholder="Search IPO number"
-                                onKeyDown={(e: any): void => {
-                                    e.keyCode === KEYCODE_ENTER && triggerIPOListUpdate();
-                                }}
-                            />
-                        </Section>
-                        <Section>
-                            <TextField
-                                id="ipoTitleSearch"
-                                placeholder="Search IPO title"
-                                onChange={(e: any): void => {
-                                    setLocalFilter({ ...localFilter, titleStartsWith: e.target.value });
-                                }}
-                                value={localFilter.titleStartsWith || ''}
-                                onKeyDown={(e: any): void => {
-                                    e.keyCode === KEYCODE_ENTER && triggerIPOListUpdate();
-                                }}
-                            />
-                        </Section>
-                        <Section>
-                            <TextField
-                                id="commPkgNoSearch"
-                                placeholder="Search comm pkg"
-                                onChange={(e: any): void => {
-                                    setLocalFilter({ ...localFilter, commPkgNoStartsWith: e.target.value });
-                                }}
-                                value={localFilter.commPkgNoStartsWith || ''}
-                                onKeyDown={(e: any): void => {
-                                    e.keyCode === KEYCODE_ENTER && triggerIPOListUpdate();
-                                }}
-                            />
-                        </Section>
-                        <Section>
-                            <TextField
-                                id="mcPgkNoSearch"
-                                placeholder="Search mc pkg"
-                                onChange={(e: any): void => {
-                                    setLocalFilter({ ...localFilter, mcPkgNoStartsWith: e.target.value });
-                                }}
-                                value={localFilter.mcPkgNoStartsWith || ''}
-                                onKeyDown={(e: any): void => {
-                                    e.keyCode === KEYCODE_ENTER && triggerIPOListUpdate();
-                                }}
-                            />
-                        </Section>
-                    </>
-                )
-            }
+            {searchIsExpanded && (
+                <>
+                    <Section>
+                        <TextField
+                            id="ipoIdSearch"
+                            onChange={(e: any): void => {
+                                setLocalFilter({
+                                    ...localFilter,
+                                    ipoIdStartsWith: e.target.value,
+                                });
+                            }}
+                            value={localFilter.ipoIdStartsWith || ''}
+                            placeholder="Search IPO number"
+                            onKeyDown={(e: any): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    triggerIPOListUpdate();
+                            }}
+                        />
+                    </Section>
+                    <Section>
+                        <TextField
+                            id="ipoTitleSearch"
+                            placeholder="Search IPO title"
+                            onChange={(e: any): void => {
+                                setLocalFilter({
+                                    ...localFilter,
+                                    titleStartsWith: e.target.value,
+                                });
+                            }}
+                            value={localFilter.titleStartsWith || ''}
+                            onKeyDown={(e: any): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    triggerIPOListUpdate();
+                            }}
+                        />
+                    </Section>
+                    <Section>
+                        <TextField
+                            id="commPkgNoSearch"
+                            placeholder="Search comm pkg"
+                            onChange={(e: any): void => {
+                                setLocalFilter({
+                                    ...localFilter,
+                                    commPkgNoStartsWith: e.target.value,
+                                });
+                            }}
+                            value={localFilter.commPkgNoStartsWith || ''}
+                            onKeyDown={(e: any): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    triggerIPOListUpdate();
+                            }}
+                        />
+                    </Section>
+                    <Section>
+                        <TextField
+                            id="mcPgkNoSearch"
+                            placeholder="Search mc pkg"
+                            onChange={(e: any): void => {
+                                setLocalFilter({
+                                    ...localFilter,
+                                    mcPkgNoStartsWith: e.target.value,
+                                });
+                            }}
+                            value={localFilter.mcPkgNoStartsWith || ''}
+                            onKeyDown={(e: any): void => {
+                                e.keyCode === KEYCODE_ENTER &&
+                                    triggerIPOListUpdate();
+                            }}
+                        />
+                    </Section>
+                </>
+            )}
 
-
-            <CheckboxFilterWithDates title='Punch-out date' filterValues={dueDates} filterParam='punchOutDates' dateFields={punchOutDateFields} dateValues={[localFilter.punchOutDateFromUtc, localFilter.punchOutDateToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={[...filter.punchOutDates, filter.punchOutDateFromUtc, filter.punchOutDateToUtc]} icon={'alarm_on'} />
-            <CheckboxFilterWithDates title='Current IPO status' filterValues={ipoStatuses} filterParam='ipoStatuses' dateFields={lastChangedDateFields} dateValues={[localFilter.lastChangedAtFromUtc, localFilter.lastChangedAtToUtc]} onDateChange={onDateChange} onCheckboxFilterChange={onCheckboxFilterChange} itemsChecked={[...filter.ipoStatuses, filter.lastChangedAtFromUtc, filter.lastChangedAtToUtc]} icon={'world'} />
-            <SelectFilter headerLabel="Roles and persons"  onChange={onRolePersonChange} selectedItems={[localFilter.functionalRoleCode, localFilter.personOid]} roles={roles} icon={<EdsIcon name='person' />} />
-
-        </Container >
+            <CheckboxFilterWithDates
+                title="Punch-out date"
+                filterValues={dueDates}
+                filterParam="punchOutDates"
+                dateFields={punchOutDateFields}
+                dateValues={[
+                    localFilter.punchOutDateFromUtc,
+                    localFilter.punchOutDateToUtc,
+                ]}
+                onDateChange={onDateChange}
+                onCheckboxFilterChange={onCheckboxFilterChange}
+                itemsChecked={[
+                    ...filter.punchOutDates,
+                    filter.punchOutDateFromUtc,
+                    filter.punchOutDateToUtc,
+                ]}
+                icon={'alarm_on'}
+            />
+            <CheckboxFilterWithDates
+                title="Current IPO status"
+                filterValues={ipoStatuses}
+                filterParam="ipoStatuses"
+                dateFields={lastChangedDateFields}
+                dateValues={[
+                    localFilter.lastChangedAtFromUtc,
+                    localFilter.lastChangedAtToUtc,
+                ]}
+                onDateChange={onDateChange}
+                onCheckboxFilterChange={onCheckboxFilterChange}
+                itemsChecked={[
+                    ...filter.ipoStatuses,
+                    filter.lastChangedAtFromUtc,
+                    filter.lastChangedAtToUtc,
+                ]}
+                icon={'world'}
+            />
+            <SelectFilter
+                headerLabel="Roles and persons"
+                onChange={onRolePersonChange}
+                selectedItems={[
+                    localFilter.functionalRoleCode,
+                    localFilter.personOid,
+                ]}
+                roles={roles}
+                icon={<EdsIcon name="person" />}
+            />
+        </Container>
     );
 };
 
 export default InvitationsFilter;
-

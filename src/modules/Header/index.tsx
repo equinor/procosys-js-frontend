@@ -9,7 +9,7 @@ import {
     PlantSelector,
     ShowOnDesktop,
     ShowOnMobile,
-    StyledSearch
+    StyledSearch,
 } from './style';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -26,9 +26,19 @@ import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
 import { useProcosysContext } from '../../core/ProcosysContext';
 import { useQuickSearchContext } from '../QuickSearch/context/QuickSearchContext';
-import { ContentDocument, SearchResult } from '../QuickSearch/http/QuickSearchApiClient';
+import {
+    ContentDocument,
+    SearchResult,
+} from '../QuickSearch/http/QuickSearchApiClient';
 import debounce from 'lodash.debounce';
-import { QuickSearchPreviewSection, QuickSearchResultsContainer, QuickSearchResultsContainerFooter, QuickSearchResultsContainerHeader, QuickSearchResultsFoundIn, SearchingDiv } from '../QuickSearch/style';
+import {
+    QuickSearchPreviewSection,
+    QuickSearchResultsContainer,
+    QuickSearchResultsContainerFooter,
+    QuickSearchResultsContainerHeader,
+    QuickSearchResultsFoundIn,
+    SearchingDiv,
+} from '../QuickSearch/style';
 import QuickSearchPreviewHit from '../QuickSearch/QuickSearchPreviewHit';
 import Spinner from '@procosys/components/Spinner';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -58,53 +68,72 @@ const Header: React.FC = (): JSX.Element => {
     const KEYCODE_ENTER = 13;
 
     const [allPlants] = useState<PlantItem[]>(() => {
-        return user.plants.map(plant => ({
+        return user.plants.map((plant) => ({
             text: plant.title,
             value: plant.id,
         }));
     });
 
-    useHotkeys('esc', () => {
-        setIsOpen(false);
-    }, { enableOnTags: ['INPUT'] });
+    useHotkeys(
+        'esc',
+        () => {
+            setIsOpen(false);
+        },
+        { enableOnTags: ['INPUT'] }
+    );
 
-    useHotkeys('down', () => {
-        if (counter < 1) return;
+    useHotkeys(
+        'down',
+        () => {
+            if (counter < 1) return;
 
-        if ((currentHit + 1) > counter) {
-            return;
-        }
+            if (currentHit + 1 > counter) {
+                return;
+            }
 
-        const hit = document.getElementById('hit_' + (currentHit + 1)) as HTMLDivElement;
-        if (hit) {
-            (document.activeElement as HTMLElement).blur();
-            hit.focus();
-        }
+            const hit = document.getElementById(
+                'hit_' + (currentHit + 1)
+            ) as HTMLDivElement;
+            if (hit) {
+                (document.activeElement as HTMLElement).blur();
+                hit.focus();
+            }
 
-        setCurrentHit(currentHit + 1 === counter ? currentHit : currentHit + 1);
-    }, { enableOnTags: ['INPUT'] });
+            setCurrentHit(
+                currentHit + 1 === counter ? currentHit : currentHit + 1
+            );
+        },
+        { enableOnTags: ['INPUT'] }
+    );
 
+    useHotkeys(
+        'up',
+        () => {
+            let hits = searchResult?.items.length;
+            if (!hits) return;
 
-    useHotkeys('up', () => {
-        let hits = searchResult?.items.length;
-        if (!hits) return;
+            if (hits > 5) hits = 5;
 
-        if (hits > 5) hits = 5;
+            if (currentHit <= 0) {
+                (
+                    document.getElementById('procosys-qs') as HTMLDivElement
+                ).focus();
+                setCurrentHit(-1);
+                return;
+            }
 
-        if (currentHit <= 0) {
-            (document.getElementById('procosys-qs') as HTMLDivElement).focus();
-            setCurrentHit(-1);
-            return;
-        }
+            const hit = document.getElementById(
+                'hit_' + (currentHit - 1)
+            ) as HTMLDivElement;
+            if (hit) {
+                (document.activeElement as HTMLElement).blur();
+                hit.focus();
+            }
 
-        const hit = document.getElementById('hit_' + (currentHit - 1)) as HTMLDivElement;
-        if (hit) {
-            (document.activeElement as HTMLElement).blur();
-            hit.focus();
-        }
-
-        setCurrentHit(currentHit - 1);
-    }, { enableOnTags: ['INPUT'] });
+            setCurrentHit(currentHit - 1);
+        },
+        { enableOnTags: ['INPUT'] }
+    );
 
     useClickOutsideNotifier(() => {
         setIsOpen(false);
@@ -114,7 +143,8 @@ const Header: React.FC = (): JSX.Element => {
 
     const { apiClient } = useQuickSearchContext();
 
-    const [filteredPlants, setFilteredPlants] = useState<PlantItem[]>(allPlants);
+    const [filteredPlants, setFilteredPlants] =
+        useState<PlantItem[]>(allPlants);
 
     const changePlant = (event: React.MouseEvent, plantIndex: number): void => {
         event.preventDefault();
@@ -128,43 +158,62 @@ const Header: React.FC = (): JSX.Element => {
     const debounceSearchHandler = useCallback(
         debounce((value: string) => {
             cancelerRef.current && cancelerRef.current();
-            apiClient.doPreviewSearch(value, plant.id, (c) => { cancelerRef.current = c; }).then((searchResult: SearchResult) => {
-                setSearchResult(searchResult);
-                let searchCount = searchResult.hits > 6 ? 6 : searchResult.hits;
+            apiClient
+                .doPreviewSearch(value, plant.id, (c) => {
+                    cancelerRef.current = c;
+                })
+                .then((searchResult: SearchResult) => {
+                    setSearchResult(searchResult);
+                    let searchCount =
+                        searchResult.hits > 6 ? 6 : searchResult.hits;
 
-                if (searchCount > 0) {
-                    searchCount = searchResult.totalCommPkgHits > 0 ? searchCount + 1 : searchCount;
-                    searchCount = searchResult.totalMcPkgHits > 0 ? searchCount + 1 : searchCount;
-                    searchCount = searchResult.totalPunchItemHits > 0 ? searchCount + 1 : searchCount;
-                    searchCount = searchResult.totalTagHits > 0 ? searchCount + 1 : searchCount;
-                }
-                setCurrentHit(-1);
-                setSearching(false);
-            }
-            );
+                    if (searchCount > 0) {
+                        searchCount =
+                            searchResult.totalCommPkgHits > 0
+                                ? searchCount + 1
+                                : searchCount;
+                        searchCount =
+                            searchResult.totalMcPkgHits > 0
+                                ? searchCount + 1
+                                : searchCount;
+                        searchCount =
+                            searchResult.totalPunchItemHits > 0
+                                ? searchCount + 1
+                                : searchCount;
+                        searchCount =
+                            searchResult.totalTagHits > 0
+                                ? searchCount + 1
+                                : searchCount;
+                    }
+                    setCurrentHit(-1);
+                    setSearching(false);
+                });
         }, 750),
         [plant]
     );
 
-    const handleQuickSearchChange = useCallback((e: { target: { value: string; }; }) => {
-        const searchVal = e.target.value;
-        const searchInput = document.getElementById('procosys-qs');
-        if (searchInput) {
-            const rect = searchInput.getBoundingClientRect();
-            setQuickSearchLeftPos(rect.left);
-        }
+    const handleQuickSearchChange = useCallback(
+        (e: { target: { value: string } }) => {
+            const searchVal = e.target.value;
+            const searchInput = document.getElementById('procosys-qs');
+            if (searchInput) {
+                const rect = searchInput.getBoundingClientRect();
+                setQuickSearchLeftPos(rect.left);
+            }
 
-        setIsOpen(true);
-        setSearchResult(undefined);
-        setSearching(true);
-        setSearchValue(searchVal);
-        if (searchVal === '') {
-            setSearching(false);
-            return;
-        }
+            setIsOpen(true);
+            setSearchResult(undefined);
+            setSearching(true);
+            setSearchValue(searchVal);
+            if (searchVal === '') {
+                setSearching(false);
+                return;
+            }
 
-        debounceSearchHandler(searchVal);
-    }, [debounceSearchHandler]);
+            debounceSearchHandler(searchVal);
+        },
+        [debounceSearchHandler]
+    );
 
     const handleQuickSearchFocus = (): void => {
         const searchInput = document.getElementById('procosys-qs');
@@ -173,41 +222,54 @@ const Header: React.FC = (): JSX.Element => {
             setQuickSearchLeftPos(rect.left);
         }
         setIsOpen(true);
-    }
-
+    };
 
     useEffect(() => {
         if (filterForPlants.length <= 0) {
             setFilteredPlants(allPlants);
             return;
         }
-        setFilteredPlants(allPlants.filter(p => p.text.toLowerCase().indexOf(filterForPlants.toLowerCase()) > -1));
+        setFilteredPlants(
+            allPlants.filter(
+                (p) =>
+                    p.text
+                        .toLowerCase()
+                        .indexOf(filterForPlants.toLowerCase()) > -1
+            )
+        );
     }, [filterForPlants]);
 
     const goToFilteredQuicksearch = (filterType: string): void => {
         setCurrentHit(0);
-        history.push('/' + plant.pathId + '/quicksearch?query=' + filterType + ':' + searchValue);
+        history.push(
+            '/' +
+                plant.pathId +
+                '/quicksearch?query=' +
+                filterType +
+                ':' +
+                searchValue
+        );
         setIsOpen(false);
         setSearchValue('');
         setSearchResult(undefined);
-    }
+    };
 
     const goToQuicksearch = (): void => {
         history.push('/' + plant.pathId + '/quicksearch?query=' + searchValue);
         setIsOpen(false);
         setSearchValue('');
         setSearchResult(undefined);
-    }
+    };
 
     const goToFirstItemInResult = (): void => {
         if (!searching && searchResult && searchResult.items[0]) {
-            const item = (document.getElementById('hit_0') as HTMLDivElement);
+            const item = document.getElementById('hit_0') as HTMLDivElement;
             item.focus();
             setTimeout(() => {
                 item.click();
             }, 250);
         }
-    }
+    };
 
     let counter = 0;
     return (
@@ -215,19 +277,16 @@ const Header: React.FC = (): JSX.Element => {
             <Nav>
                 <IconContainer>
                     <Button
-                        variant='ghost'
-                        onClick={(): void => setShowMobileMenu(!showMobileMenu)}>
+                        variant="ghost"
+                        onClick={(): void => setShowMobileMenu(!showMobileMenu)}
+                    >
                         <EdsIcon name="menu" />
                     </Button>
 
-                    <ProcosysLogo id='logo' fontSize='inherit' />
+                    <ProcosysLogo id="logo" fontSize="inherit" />
                 </IconContainer>
                 <LogoContainer>
-                    <a
-                        href={`/${params.plant}/`}
-                    >
-                        ProCoSys
-                    </a>
+                    <a href={`/${params.plant}/`}>ProCoSys</a>
                 </LogoContainer>
                 <PlantSelector>
                     <Dropdown text={plant.title} onFilter={setFilterForPlants}>
@@ -248,7 +307,6 @@ const Header: React.FC = (): JSX.Element => {
                 <MenuContainer>
                     <MenuContainerItem>
                         <Dropdown text="New">
-
                             <a
                                 href={`/${params.plant}/Completion/NewCertificate`}
                             >
@@ -257,16 +315,22 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Completion#CommPkg|?bf=1`}
                             >
-                                <DropdownItem>Commissioning package</DropdownItem>
+                                <DropdownItem>
+                                    Commissioning package
+                                </DropdownItem>
                             </a>
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            {(ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <Link to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}>
-                                    <DropdownItem>Invitation for punch-out</DropdownItem>
+                            {ProCoSysSettings.featureIsEnabled('IPO') && (
+                                <Link
+                                    to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}
+                                >
+                                    <DropdownItem>
+                                        Invitation for punch-out
+                                    </DropdownItem>
                                 </Link>
-                            }
+                            )}
                             <a href={`/${params.plant}/Hookup/New`}>
                                 <DropdownItem>Certificate</DropdownItem>
                             </a>
@@ -278,7 +342,9 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Preservation#PreservationTag|`}
                             >
-                                <DropdownItem>Preservation area tag</DropdownItem>
+                                <DropdownItem>
+                                    Preservation area tag
+                                </DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/PurchaseOrders#PurchaseOrder|`}
@@ -289,9 +355,13 @@ const Header: React.FC = (): JSX.Element => {
                                 <DropdownItem>Query</DropdownItem>
                             </a>
                             <a href={`/${params.plant}/SWAP/New`}>
-                                <DropdownItem>Software change record</DropdownItem>
+                                <DropdownItem>
+                                    Software change record
+                                </DropdownItem>
                             </a>
-                            <a href={`/${params.plant}/Completion#Tag|`}><DropdownItem>Tag</DropdownItem></a>
+                            <a href={`/${params.plant}/Completion#Tag|`}>
+                                <DropdownItem>Tag</DropdownItem>
+                            </a>
                         </Dropdown>
                     </MenuContainerItem>
                     <MenuContainerItem>
@@ -314,7 +384,9 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Commissioning%20Packages`}
                             >
-                                <DropdownItem>Commissioning packages</DropdownItem>
+                                <DropdownItem>
+                                    Commissioning packages
+                                </DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Documents`}
@@ -331,11 +403,15 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            {(ProCoSysSettings.featureIsEnabled('IPO')) &&
-                                <Link to={`/${params.plant}/InvitationForPunchOut`}>
-                                    <DropdownItem>Invitation for punch-out</DropdownItem>
+                            {ProCoSysSettings.featureIsEnabled('IPO') && (
+                                <Link
+                                    to={`/${params.plant}/InvitationForPunchOut`}
+                                >
+                                    <DropdownItem>
+                                        Invitation for punch-out
+                                    </DropdownItem>
                                 </Link>
-                            }
+                            )}
                             <a
                                 href={`/${params.plant}/Search?searchType=Libraries`}
                             >
@@ -389,7 +465,9 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Software%20Change%20Records`}
                             >
-                                <DropdownItem>Software change records</DropdownItem>
+                                <DropdownItem>
+                                    Software change records
+                                </DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Tag%20Functions`}
@@ -412,116 +490,225 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuContainerItem>
                     <MenuContainerItem>
                         <a href={`/${params.plant}/Reports`}>
-                            <Button variant={'ghost'}>
-                                Reports
-                            </Button>
+                            <Button variant={'ghost'}>Reports</Button>
                         </a>
                     </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    {(ProCoSysSettings.featureIsEnabled('quickSearch')) && (
+                    {ProCoSysSettings.featureIsEnabled('quickSearch') && (
                         <MenuContainerItem>
                             <StyledSearch
                                 placeholder={'Quick Search'}
                                 onChange={handleQuickSearchChange}
                                 onFocus={handleQuickSearchFocus}
-                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+                                onKeyDown={(
+                                    e: React.KeyboardEvent<HTMLInputElement>
+                                ): void => {
                                     e.keyCode === KEYCODE_ENTER &&
-                                        goToFirstItemInResult()
+                                        goToFirstItemInResult();
                                 }}
                                 value={searchValue}
                                 name="procosys-qs"
                                 id="procosys-qs"
-                                autocomplete="on" autoFocus />
+                                autocomplete="on"
+                                autoFocus
+                            />
 
                             {!searching && searchValue && isOpen && (
-                                <QuickSearchResultsContainer style={{ left: quickSearchLeftPos - 30 + 'px' }} ref={containerRef}>
-                                    <QuickSearchResultsContainerHeader group="navigation" variant="label">Results</QuickSearchResultsContainerHeader>
-                                    {
-                                        searchResult && searchResult.items.length > 0 ? (
-                                            searchResult.items.map((item: ContentDocument) => {
+                                <QuickSearchResultsContainer
+                                    style={{
+                                        left: quickSearchLeftPos - 30 + 'px',
+                                    }}
+                                    ref={containerRef}
+                                >
+                                    <QuickSearchResultsContainerHeader
+                                        group="navigation"
+                                        variant="label"
+                                    >
+                                        Results
+                                    </QuickSearchResultsContainerHeader>
+                                    {searchResult &&
+                                    searchResult.items.length > 0 ? (
+                                        searchResult.items.map(
+                                            (item: ContentDocument) => {
                                                 if (counter > 5) return;
-                                                return <QuickSearchPreviewHit hitNumber={counter++} key={item.key} searchValue={searchValue} item={item}></QuickSearchPreviewHit>
-                                            })
-                                        ) : <SearchingDiv>Nothing here... &#129300;</SearchingDiv>
-                                    }
-
-                                    {
-                                        searchResult && searchResult.items.length > 0 && (
-                                            <>
-                                                <QuickSearchResultsFoundIn group="navigation" variant="label">Results found in</QuickSearchResultsFoundIn>
-
-                                                {searchResult.totalCommPkgHits > 0 &&
-                                                    <QuickSearchPreviewSection
-                                                        tabIndex={counter++}
-                                                        id={'hit_' + (counter - 1)}
-                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                                                            e.keyCode === KEYCODE_ENTER &&
-                                                                goToFilteredQuicksearch('c')
-                                                        }}
-                                                        onClick={(): void => goToFilteredQuicksearch('c')}>
-                                                        <span>Commissioning packages</span>
-                                                        <KeyboardArrowRightIcon className='arrowIcon' />
-                                                    </QuickSearchPreviewSection>
-                                                }
-
-                                                {searchResult.totalMcPkgHits > 0 &&
-                                                    <QuickSearchPreviewSection
-                                                        tabIndex={counter++}
-                                                        id={'hit_' + (counter - 1)}
-                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                                                            e.keyCode === KEYCODE_ENTER &&
-                                                                goToFilteredQuicksearch('m')
-                                                        }}
-                                                        onClick={(): void => goToFilteredQuicksearch('m')}>
-                                                        <span>MC packages</span><KeyboardArrowRightIcon className='arrowIcon' />
-                                                    </QuickSearchPreviewSection>
-                                                }
-
-                                                {searchResult.totalTagHits > 0 &&
-                                                    <QuickSearchPreviewSection
-                                                        tabIndex={counter++}
-                                                        id={'hit_' + (counter - 1)}
-                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                                                            e.keyCode === KEYCODE_ENTER &&
-                                                                goToFilteredQuicksearch('t')
-                                                        }}
-                                                        onClick={(): void => goToFilteredQuicksearch('t')}>
-                                                        <span>Tags</span><KeyboardArrowRightIcon className='arrowIcon' />
-                                                    </QuickSearchPreviewSection>
-                                                }
-
-                                                {searchResult.totalPunchItemHits > 0 &&
-                                                    <QuickSearchPreviewSection
-                                                        tabIndex={counter++}
-                                                        id={'hit_' + (counter - 1)}
-                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                                                            e.keyCode === KEYCODE_ENTER &&
-                                                                goToFilteredQuicksearch('p')
-                                                        }}
-                                                        onClick={(): void => goToFilteredQuicksearch('p')}>
-                                                        <span>Punch List items</span><KeyboardArrowRightIcon className='arrowIcon' />
-                                                    </QuickSearchPreviewSection>
-                                                }
-
-                                                <QuickSearchResultsContainerFooter onClick={(): void => goToQuicksearch()} variant="ghost">Show all results</QuickSearchResultsContainerFooter>
-                                            </>
+                                                return (
+                                                    <QuickSearchPreviewHit
+                                                        hitNumber={counter++}
+                                                        key={item.key}
+                                                        searchValue={
+                                                            searchValue
+                                                        }
+                                                        item={item}
+                                                    ></QuickSearchPreviewHit>
+                                                );
+                                            }
                                         )
-                                    }
+                                    ) : (
+                                        <SearchingDiv>
+                                            Nothing here... &#129300;
+                                        </SearchingDiv>
+                                    )}
+
+                                    {searchResult &&
+                                        searchResult.items.length > 0 && (
+                                            <>
+                                                <QuickSearchResultsFoundIn
+                                                    group="navigation"
+                                                    variant="label"
+                                                >
+                                                    Results found in
+                                                </QuickSearchResultsFoundIn>
+
+                                                {searchResult.totalCommPkgHits >
+                                                    0 && (
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={
+                                                            'hit_' +
+                                                            (counter - 1)
+                                                        }
+                                                        onKeyDown={(
+                                                            e: React.KeyboardEvent<HTMLInputElement>
+                                                        ): void => {
+                                                            e.keyCode ===
+                                                                KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch(
+                                                                    'c'
+                                                                );
+                                                        }}
+                                                        onClick={(): void =>
+                                                            goToFilteredQuicksearch(
+                                                                'c'
+                                                            )
+                                                        }
+                                                    >
+                                                        <span>
+                                                            Commissioning
+                                                            packages
+                                                        </span>
+                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                    </QuickSearchPreviewSection>
+                                                )}
+
+                                                {searchResult.totalMcPkgHits >
+                                                    0 && (
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={
+                                                            'hit_' +
+                                                            (counter - 1)
+                                                        }
+                                                        onKeyDown={(
+                                                            e: React.KeyboardEvent<HTMLInputElement>
+                                                        ): void => {
+                                                            e.keyCode ===
+                                                                KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch(
+                                                                    'm'
+                                                                );
+                                                        }}
+                                                        onClick={(): void =>
+                                                            goToFilteredQuicksearch(
+                                                                'm'
+                                                            )
+                                                        }
+                                                    >
+                                                        <span>MC packages</span>
+                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                    </QuickSearchPreviewSection>
+                                                )}
+
+                                                {searchResult.totalTagHits >
+                                                    0 && (
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={
+                                                            'hit_' +
+                                                            (counter - 1)
+                                                        }
+                                                        onKeyDown={(
+                                                            e: React.KeyboardEvent<HTMLInputElement>
+                                                        ): void => {
+                                                            e.keyCode ===
+                                                                KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch(
+                                                                    't'
+                                                                );
+                                                        }}
+                                                        onClick={(): void =>
+                                                            goToFilteredQuicksearch(
+                                                                't'
+                                                            )
+                                                        }
+                                                    >
+                                                        <span>Tags</span>
+                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                    </QuickSearchPreviewSection>
+                                                )}
+
+                                                {searchResult.totalPunchItemHits >
+                                                    0 && (
+                                                    <QuickSearchPreviewSection
+                                                        tabIndex={counter++}
+                                                        id={
+                                                            'hit_' +
+                                                            (counter - 1)
+                                                        }
+                                                        onKeyDown={(
+                                                            e: React.KeyboardEvent<HTMLInputElement>
+                                                        ): void => {
+                                                            e.keyCode ===
+                                                                KEYCODE_ENTER &&
+                                                                goToFilteredQuicksearch(
+                                                                    'p'
+                                                                );
+                                                        }}
+                                                        onClick={(): void =>
+                                                            goToFilteredQuicksearch(
+                                                                'p'
+                                                            )
+                                                        }
+                                                    >
+                                                        <span>
+                                                            Punch List items
+                                                        </span>
+                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                    </QuickSearchPreviewSection>
+                                                )}
+
+                                                <QuickSearchResultsContainerFooter
+                                                    onClick={(): void =>
+                                                        goToQuicksearch()
+                                                    }
+                                                    variant="ghost"
+                                                >
+                                                    Show all results
+                                                </QuickSearchResultsContainerFooter>
+                                            </>
+                                        )}
                                 </QuickSearchResultsContainer>
                             )}
 
                             {searching && isOpen && (
-                                <QuickSearchResultsContainer style={{ left: quickSearchLeftPos - 30 + 'px' }}>
-                                    <SearchingDiv>Searching... <Spinner medium></Spinner></SearchingDiv>
+                                <QuickSearchResultsContainer
+                                    style={{
+                                        left: quickSearchLeftPos - 30 + 'px',
+                                    }}
+                                >
+                                    <SearchingDiv>
+                                        Searching... <Spinner medium></Spinner>
+                                    </SearchingDiv>
                                 </QuickSearchResultsContainer>
                             )}
-
                         </MenuContainerItem>
                     )}
-                    <MenuContainerItem className='compact'>
-                        <OptionsDropdown variant={'ghost'} icon='link'>
-                            <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">
+                    <MenuContainerItem className="compact">
+                        <OptionsDropdown variant={'ghost'} icon="link">
+                            <a
+                                href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx"
+                                target="_blank"
+                            >
                                 <DropdownItem>
                                     C&amp;C digital toolbox
                                 </DropdownItem>
@@ -531,7 +718,10 @@ const Header: React.FC = (): JSX.Element => {
                                     DCP – Digitalized Commissioning Procedure
                                 </DropdownItem>
                             </a>
-                            <a href="https://fusion.equinor.com" target="_blank">
+                            <a
+                                href="https://fusion.equinor.com"
+                                target="_blank"
+                            >
                                 <DropdownItem>
                                     FUSION – Project information portal
                                 </DropdownItem>
@@ -546,78 +736,96 @@ const Header: React.FC = (): JSX.Element => {
                                     STID - Technical Information Portal
                                 </DropdownItem>
                             </a>
-                            <a href="https://accessit.equinor.com" target="_blank">
+                            <a
+                                href="https://accessit.equinor.com"
+                                target="_blank"
+                            >
                                 <DropdownItem>
-                                    Access IT – Access Managing Control System for Equinor
-                                </DropdownItem>
-                            </a>
-                        </OptionsDropdown>
-                    </MenuContainerItem >
-                    <MenuContainerItem className='compact'>
-                        <OptionsDropdown variant={'ghost'} icon='info_circle' iconSize={24}>
-                            <a href={'https://procosyspublictoc.azurewebsites.net/'}>
-                                <DropdownItem>
-                                    ProCoSys Help
-                                </DropdownItem>
-                            </a>
-                            <a href={'https://equinor.service-now.com/selfservice?id=sc_cat_item&sys_id=67053df4dbe82b008a0f9407db9619d1'}>
-                                <DropdownItem>
-                                    Open a Request Item
-                                </DropdownItem>
-                            </a>
-                            <a href={'https://equinor.service-now.com/selfservice/?id=sc_cat_item&sys_id=3373cf4cdb97f200bc7af7461d96195b'}>
-                                <DropdownItem>
-                                    Report an error
+                                    Access IT – Access Managing Control System
+                                    for Equinor
                                 </DropdownItem>
                             </a>
                         </OptionsDropdown>
                     </MenuContainerItem>
-                    <MenuContainerItem className='compact'>
-                        <OptionsDropdown variant={'ghost'} icon='lock'>
-                            <a href={`/${params.plant}/Security/User`}>
-                                <DropdownItem>
-                                    Users
-                                </DropdownItem>
+                    <MenuContainerItem className="compact">
+                        <OptionsDropdown
+                            variant={'ghost'}
+                            icon="info_circle"
+                            iconSize={24}
+                        >
+                            <a
+                                href={
+                                    'https://procosyspublictoc.azurewebsites.net/'
+                                }
+                            >
+                                <DropdownItem>ProCoSys Help</DropdownItem>
                             </a>
-                            <a href={`/${params.plant}/Security/UserRole`}>
-                                <DropdownItem>
-                                    User Roles
-                                </DropdownItem>
+                            <a
+                                href={
+                                    'https://equinor.service-now.com/selfservice?id=sc_cat_item&sys_id=67053df4dbe82b008a0f9407db9619d1'
+                                }
+                            >
+                                <DropdownItem>Open a Request Item</DropdownItem>
                             </a>
-                            <a href={`/${params.plant}/Security/PrivilegeGroup`}>
-                                <DropdownItem>
-                                    Privilige Groups
-                                </DropdownItem>
-                            </a>
-                            <a href={`/${params.plant}/Security/RestrictionRole`}>
-                                <DropdownItem>
-                                    Restriction Roles
-                                </DropdownItem>
+                            <a
+                                href={
+                                    'https://equinor.service-now.com/selfservice/?id=sc_cat_item&sys_id=3373cf4cdb97f200bc7af7461d96195b'
+                                }
+                            >
+                                <DropdownItem>Report an error</DropdownItem>
                             </a>
                         </OptionsDropdown>
-                    </MenuContainerItem >
+                    </MenuContainerItem>
+                    <MenuContainerItem className="compact">
+                        <OptionsDropdown variant={'ghost'} icon="lock">
+                            <a href={`/${params.plant}/Security/User`}>
+                                <DropdownItem>Users</DropdownItem>
+                            </a>
+                            <a href={`/${params.plant}/Security/UserRole`}>
+                                <DropdownItem>User Roles</DropdownItem>
+                            </a>
+                            <a
+                                href={`/${params.plant}/Security/PrivilegeGroup`}
+                            >
+                                <DropdownItem>Privilige Groups</DropdownItem>
+                            </a>
+                            <a
+                                href={`/${params.plant}/Security/RestrictionRole`}
+                            >
+                                <DropdownItem>Restriction Roles</DropdownItem>
+                            </a>
+                        </OptionsDropdown>
+                    </MenuContainerItem>
                     <MenuContainerItem className={'compact'}>
                         <a href={`/${params.plant}/Security/User/EditSelf`}>
-                            <Button variant={'ghost'} >
-                                <EdsIcon name='account_circle' />
+                            <Button variant={'ghost'}>
+                                <EdsIcon name="account_circle" />
                                 {user.name}
                             </Button>
                         </a>
                     </MenuContainerItem>
-                    <MenuContainerItem className='compact lastButton'>
-                        <Button variant={'ghost'} onClick={(): void => auth.logout()}>
+                    <MenuContainerItem className="compact lastButton">
+                        <Button
+                            variant={'ghost'}
+                            onClick={(): void => auth.logout()}
+                        >
                             Logout
                         </Button>
                     </MenuContainerItem>
                 </MenuContainer>
             </Nav>
-            {showMobileMenu &&
+            {showMobileMenu && (
                 <ShowOnMobile>
-                    <Flyout position='left' close={(): void => setShowMobileMenu(false)}>
-                        <ModuleTabs onClick={(): void => setShowMobileMenu(false)} />
+                    <Flyout
+                        position="left"
+                        close={(): void => setShowMobileMenu(false)}
+                    >
+                        <ModuleTabs
+                            onClick={(): void => setShowMobileMenu(false)}
+                        />
                     </Flyout>
                 </ShowOnMobile>
-            }
+            )}
             <ShowOnDesktop>
                 <ModuleTabs />
             </ShowOnDesktop>

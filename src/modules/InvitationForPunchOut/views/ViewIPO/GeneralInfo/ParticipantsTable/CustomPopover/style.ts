@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Popover } from '@equinor/eds-core-react';
 
 export const CustomTable = styled.div`
-    display:table;
+    display: table;
     width: 100%;
 `;
 

@@ -1,4 +1,3 @@
-
 export interface ErrorResponse {
     ErrorCount: number;
     Errors: {

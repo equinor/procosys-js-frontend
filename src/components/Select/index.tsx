@@ -1,4 +1,14 @@
-import { CascadingItem, Container, DropdownButton, DropdownIcon, ItemContent, SelectableItem, Label, TitleItem, TitleContent } from './style';
+import {
+    CascadingItem,
+    Container,
+    DropdownButton,
+    DropdownIcon,
+    ItemContent,
+    SelectableItem,
+    Label,
+    TitleItem,
+    TitleContent,
+} from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -38,7 +48,7 @@ const Select = ({
     label,
     isVoided = false,
     maxHeight,
-    title
+    title,
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -68,7 +78,7 @@ const Select = ({
             const listLeftPosition = listRef.current.offsetLeft;
             const windowWidth = window.innerWidth;
 
-            if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
+            if (windowWidth - listLeftPosition < listWidth + 5) {
                 listRef.current.style.right = '2px';
             }
         }
@@ -77,61 +87,64 @@ const Select = ({
     const createNodesForItems = (items: SelectItem[]): JSX.Element[] => {
         return items.map((itm, index) => {
             if (itm.title) {
-                return <TitleItem
-                    key={index}
-                    tabIndex={0}
-                >
-                    <TitleContent borderTop={index > 0} >
-                        {itm.text}
-                    </TitleContent>
-                </TitleItem>;
+                return (
+                    <TitleItem key={index} tabIndex={0}>
+                        <TitleContent borderTop={index > 0}>
+                            {itm.text}
+                        </TitleContent>
+                    </TitleItem>
+                );
             }
 
             if (!itm.children) {
-                return (<SelectableItem
+                return (
+                    <SelectableItem
+                        key={index}
+                        role="option"
+                        selected={!!itm.selected}
+                        tabIndex={0}
+                        data-value={itm.value}
+                        onKeyDown={(e): void => {
+                            e.keyCode === KEYCODE_ENTER &&
+                                selectItem(itm.value);
+                        }}
+                        onClick={(): void => {
+                            selectItem(itm.value);
+                        }}
+                        data-selected={!!itm.selected}
+                    >
+                        <ItemContent>
+                            {itm.icon || null}
+                            {itm.text}
+                        </ItemContent>
+                    </SelectableItem>
+                );
+            }
+
+            return (
+                <SelectableItem
                     key={index}
                     role="option"
                     selected={!!itm.selected}
-                    tabIndex={0}
                     data-value={itm.value}
+                    tabIndex={0}
                     onKeyDown={(e): void => {
-                        e.keyCode === KEYCODE_ENTER &&
-                            selectItem(itm.value);
-                    }}
-                    onClick={(): void => {
-                        selectItem(itm.value);
+                        if (e.keyCode === KEYCODE_ENTER) {
+                            // We should do something to support keyboard navigation
+                        }
                     }}
                     data-selected={!!itm.selected}
                 >
                     <ItemContent>
                         {itm.icon || null}
                         {itm.text}
+                        <KeyboardArrowRightIcon className="arrowIcon" />
                     </ItemContent>
-                </SelectableItem>);
-            }
-
-            return (<SelectableItem
-                key={index}
-                role="option"
-                selected={!!itm.selected}
-                data-value={itm.value}
-                tabIndex={0}
-                onKeyDown={(e): void => {
-                    if (e.keyCode === KEYCODE_ENTER) {
-                        // We should do something to support keyboard navigation
-                    }
-                }}
-                data-selected={!!itm.selected}
-            >
-                <ItemContent>
-                    {itm.icon || null}
-                    {itm.text}
-                    <KeyboardArrowRightIcon className='arrowIcon' />
-                </ItemContent>
-                <CascadingItem>
-                    {createNodesForItems(itm.children)}
-                </CascadingItem>
-            </SelectableItem>);
+                    <CascadingItem>
+                        {createNodesForItems(itm.children)}
+                    </CascadingItem>
+                </SelectableItem>
+            );
         });
     };
 
@@ -150,13 +163,14 @@ const Select = ({
             >
                 {children}
 
-                <DropdownIcon voided={isVoided} disabled={disabled} >
+                <DropdownIcon voided={isVoided} disabled={disabled}>
                     <KeyboardArrowDownIcon />
                 </DropdownIcon>
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (
-                <ul ref={listRef}
-                    className='container'
+                <ul
+                    ref={listRef}
+                    className="container"
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && setIsOpen(false);
                     }}

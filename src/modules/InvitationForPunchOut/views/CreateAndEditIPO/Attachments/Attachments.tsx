@@ -16,7 +16,7 @@ interface AttachmentsProps {
 
 const Attachments = ({
     attachments,
-    setAttachments
+    setAttachments,
 }: AttachmentsProps): JSX.Element => {
     const { setDirtyStateFor } = useDirtyContext();
 
@@ -28,9 +28,10 @@ const Attachments = ({
             setAttachments([...attachments]);
         } else {
             //Attachments not yet uploaded can be removed from the attachments array
-            setAttachments(currentAttachments =>
-                [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]
-            );
+            setAttachments((currentAttachments) => [
+                ...currentAttachments.slice(0, index),
+                ...currentAttachments.slice(index + 1),
+            ]);
         }
         setDirtyStateFor(ComponentName.Attachments);
     };
@@ -41,14 +42,18 @@ const Attachments = ({
             return;
         }
 
-        Array.from(files).forEach(file => {
+        Array.from(files).forEach((file) => {
             try {
                 fileTypeValidator(file.name);
-                setAttachments(currentAttachments => currentAttachments.concat({ fileName: file.name, file: file }));
+                setAttachments((currentAttachments) =>
+                    currentAttachments.concat({
+                        fileName: file.name,
+                        file: file,
+                    })
+                );
             } catch (error) {
                 showSnackbarNotification(error.message);
             }
-
         });
         setDirtyStateFor(ComponentName.Attachments);
     };
@@ -61,8 +66,10 @@ const Attachments = ({
     return (
         <Container>
             <FormContainer>
-                <AttachmentList 
-                    attachments={attachments.filter((attachment) => !attachment.toBeDeleted)}
+                <AttachmentList
+                    attachments={attachments.filter(
+                        (attachment) => !attachment.toBeDeleted
+                    )}
                     disabled={false}
                     addAttachments={addAttachments}
                     deleteAttachment={removeAttachment}

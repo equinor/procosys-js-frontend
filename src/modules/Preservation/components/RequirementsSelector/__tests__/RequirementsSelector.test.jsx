@@ -16,13 +16,15 @@ const requirementTypes = [
         isVoided: false,
         rowVersion: '-',
         title: 'Area preservation',
-        requirementDefinitions: [{
-            defaultIntervalWeeks: 4,
-            id: 2,
-            isVoided: false,
-            needsUserInput: true,
-            title: 'By discipline Electrical'
-        }]
+        requirementDefinitions: [
+            {
+                defaultIntervalWeeks: 4,
+                id: 2,
+                isVoided: false,
+                needsUserInput: true,
+                title: 'By discipline Electrical',
+            },
+        ],
     },
     {
         id: 2,
@@ -30,34 +32,54 @@ const requirementTypes = [
         isVoided: false,
         rowVersion: '-',
         title: 'Motor preservation',
-        requirementDefinitions: [{
-            defaultIntervalWeeks: 2,
-            id: 3,
-            isVoided: false,
-            needsUserInput: false,
-            title: 'Spin it 30 deg'
-        }]
+        requirementDefinitions: [
+            {
+                defaultIntervalWeeks: 2,
+                id: 3,
+                isVoided: false,
+                needsUserInput: false,
+                title: 'Spin it 30 deg',
+            },
+        ],
     },
 ];
 
 describe('<RequirementsSelector />', () => {
     it('Renders with no default value', async () => {
-        const { queryByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} />);
+        const { queryByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={[]}
+            />
+        );
         expect(queryByText('Interval')).toBeNull();
     });
 
     it('Renders with default value', async () => {
-        const selectedItems = [{
-            requirementDefinitionId: 1,
-            intervalWeeks: 2,
-        }];
-        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} />);
+        const selectedItems = [
+            {
+                requirementDefinitionId: 1,
+                intervalWeeks: 2,
+            },
+        ];
+        const { getByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={selectedItems}
+            />
+        );
         expect(getByText('2 weeks')).toBeInTheDocument();
     });
 
     it('Triggers onChange when item is selected', async () => {
         const mySpy = jest.fn();
-        const { getAllByText, getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={[]} onChange={mySpy} />);
+        const { getAllByText, getByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={[]}
+                onChange={mySpy}
+            />
+        );
         getByText('Add requirement').click();
         getAllByText('Select')[0].click();
         getByText('Area preservation').click();
@@ -68,11 +90,19 @@ describe('<RequirementsSelector />', () => {
 
     it('Triggers onChange when interval is changed', async () => {
         const mySpy = jest.fn();
-        const selectedItems = [{
-            requirementDefinitionId: 1,
-            intervalWeeks: 2,
-        }];
-        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        const selectedItems = [
+            {
+                requirementDefinitionId: 1,
+                intervalWeeks: 2,
+            },
+        ];
+        const { getByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={selectedItems}
+                onChange={mySpy}
+            />
+        );
         getByText('2 weeks').click();
         getByText('4 weeks').click();
 
@@ -81,12 +111,20 @@ describe('<RequirementsSelector />', () => {
 
     it('Triggers onchange when a requirement is voided', async () => {
         const mySpy = jest.fn();
-        const selectedItems = [{
-            requirementDefinitionId: 1,
-            intervalWeeks: 2,
-            editingRequirements: true,
-        }];
-        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        const selectedItems = [
+            {
+                requirementDefinitionId: 1,
+                intervalWeeks: 2,
+                editingRequirements: true,
+            },
+        ];
+        const { getByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={selectedItems}
+                onChange={mySpy}
+            />
+        );
         getByText('Void').click();
 
         await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
@@ -94,13 +132,21 @@ describe('<RequirementsSelector />', () => {
 
     it('Triggers onchange when a requirement is unvoided', async () => {
         const mySpy = jest.fn();
-        const selectedItems = [{
-            requirementDefinitionId: 1,
-            intervalWeeks: 2,
-            isVoided: true,
-            editingRequirements: true,
-        }];
-        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        const selectedItems = [
+            {
+                requirementDefinitionId: 1,
+                intervalWeeks: 2,
+                isVoided: true,
+                editingRequirements: true,
+            },
+        ];
+        const { getByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={selectedItems}
+                onChange={mySpy}
+            />
+        );
         getByText('Unvoid').click();
 
         await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));
@@ -108,13 +154,21 @@ describe('<RequirementsSelector />', () => {
 
     it('Triggers onchange when a requirement is deleted', async () => {
         const mySpy = jest.fn();
-        const selectedItems = [{
-            requirementDefinitionId: 1,
-            intervalWeeks: 2,
-            isVoided: true,
-            editingRequirements: true,
-        }];
-        const { getByText } = renderWithTheme(<RequirementsSelector requirementTypes={requirementTypes} requirements={selectedItems} onChange={mySpy} />);
+        const selectedItems = [
+            {
+                requirementDefinitionId: 1,
+                intervalWeeks: 2,
+                isVoided: true,
+                editingRequirements: true,
+            },
+        ];
+        const { getByText } = renderWithTheme(
+            <RequirementsSelector
+                requirementTypes={requirementTypes}
+                requirements={selectedItems}
+                onChange={mySpy}
+            />
+        );
         getByText('Delete').click();
 
         await waitFor(() => expect(mySpy).toHaveBeenCalledTimes(1));

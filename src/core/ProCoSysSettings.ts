@@ -6,30 +6,29 @@ const localSettings = require('../../settings.json');
 
 interface FeatureConfig {
     url: string;
-    scope: Array<string>,
+    scope: Array<string>;
     version?: string;
 }
 
 interface FeatureFlags {
-    IPO: boolean
-    library: boolean
-    preservation: boolean
-    main: boolean
-    quickSearch: boolean
+    IPO: boolean;
+    library: boolean;
+    preservation: boolean;
+    main: boolean;
+    quickSearch: boolean;
 }
 
 interface ConfigResponse {
     configuration: {
-        procosysApi: FeatureConfig
-        graphApi: FeatureConfig
-        preservationApi: FeatureConfig
+        procosysApi: FeatureConfig;
+        graphApi: FeatureConfig;
+        preservationApi: FeatureConfig;
         searchApi: FeatureConfig;
-        ipoApi: FeatureConfig
-        libraryApi: FeatureConfig
-        instrumentationKey: string
-    }
-    featureFlags: FeatureFlags
-    
+        ipoApi: FeatureConfig;
+        libraryApi: FeatureConfig;
+        instrumentationKey: string;
+    };
+    featureFlags: FeatureFlags;
 }
 
 interface AuthConfigResponse {
@@ -41,7 +40,7 @@ interface AuthConfigResponse {
 export enum AsyncState {
     READY,
     INITIALIZING,
-    ERROR
+    ERROR,
 }
 //#endregion types
 
@@ -57,7 +56,7 @@ class ProCoSysSettings {
      * ERROR - Settings initializer encountered an error while loading
      * READY - Settings are finished loading
      */
-    configState:AsyncState = AsyncState.INITIALIZING;
+    configState: AsyncState = AsyncState.INITIALIZING;
 
     /**
      * Validates the async state
@@ -65,7 +64,7 @@ class ProCoSysSettings {
      * ERROR - Settings initializer encountered an error while loading
      * READY - Settings are finished loading
      */
-    authConfigState:AsyncState = AsyncState.INITIALIZING;
+    authConfigState: AsyncState = AsyncState.INITIALIZING;
 
     /**
      * A random number to validate instance
@@ -90,7 +89,7 @@ class ProCoSysSettings {
     /**
      * URI to the login authority
      */
-    authority!:string;
+    authority!: string;
     /**
      * Default scopes to ask for concent for when logging in
      */
@@ -113,10 +112,10 @@ class ProCoSysSettings {
     ipoApi!: FeatureConfig;
     libraryApi!: FeatureConfig;
 
-    featureFlags!: FeatureFlags
+    featureFlags!: FeatureFlags;
 
     /**
-     * Returns true or false based on if the feature is enabled or disabled. 
+     * Returns true or false based on if the feature is enabled or disabled.
      * @returns TRUE: feature is enabled
      * @returns FALSE: feature is disabled
      * @default false - if the feature is not configured
@@ -132,8 +131,14 @@ class ProCoSysSettings {
         }
 
         this.instanceId = Math.floor(Math.random() * 9999);
-        if (!localSettings.configurationEndpoint || !localSettings.configurationScope) {
-            console.error('Missing local configuration for Config API', localSettings);
+        if (
+            !localSettings.configurationEndpoint ||
+            !localSettings.configurationScope
+        ) {
+            console.error(
+                'Missing local configuration for Config API',
+                localSettings
+            );
             throw 'Missing local configuration for Config API';
         }
         this.featureFlags = {
@@ -141,9 +146,11 @@ class ProCoSysSettings {
             preservation: true,
             main: true,
             library: true,
-            quickSearch: true
+            quickSearch: true,
         };
-        this.settingsConfigurationApiClient = new SettingsApiClient(localSettings.configurationEndpoint);
+        this.settingsConfigurationApiClient = new SettingsApiClient(
+            localSettings.configurationEndpoint
+        );
 
         ProCoSysSettings.instance = this;
     }
@@ -151,18 +158,26 @@ class ProCoSysSettings {
     async loadAuthConfiguration(): Promise<void> {
         this.authConfigState = AsyncState.INITIALIZING;
         try {
-            this.authConfigResponse = this.settingsConfigurationApiClient.getAuthConfig();
+            this.authConfigResponse =
+                this.settingsConfigurationApiClient.getAuthConfig();
             const response = await this.authConfigResponse;
             this.mapFromAuthConfigResponse(response);
             this.authConfigState = AsyncState.READY;
         } catch (error) {
             this.authConfigState = AsyncState.ERROR;
-            console.error('Failed to load configuration from remote source', error);
+            console.error(
+                'Failed to load configuration from remote source',
+                error
+            );
         }
     }
 
     async loadConfiguration(authService: IAuthService): Promise<void> {
-        this.configurationResponse = this.settingsConfigurationApiClient.getConfig(authService, localSettings.configurationScope);
+        this.configurationResponse =
+            this.settingsConfigurationApiClient.getConfig(
+                authService,
+                localSettings.configurationScope
+            );
 
         try {
             const configResponse = await this.configurationResponse;
@@ -171,27 +186,38 @@ class ProCoSysSettings {
                 this.configState = AsyncState.READY;
             } catch (error) {
                 this.configState = AsyncState.ERROR;
-                console.error('Failed to parse configuration from remote source' , error);
+                console.error(
+                    'Failed to parse configuration from remote source',
+                    error
+                );
             }
-
         } catch (error) {
             this.configState = AsyncState.ERROR;
-            console.error('Failed to load configuration from remote source', error);
+            console.error(
+                'Failed to load configuration from remote source',
+                error
+            );
         }
     }
 
-    private mapFromAuthConfigResponse(authConfigResponse: AuthConfigResponse): void {
+    private mapFromAuthConfigResponse(
+        authConfigResponse: AuthConfigResponse
+    ): void {
         this.authority = authConfigResponse.authority;
         this.clientId = authConfigResponse.clientId;
         this.defaultScopes = authConfigResponse.scopes;
     }
 
-    private mapFromConfigurationResponse(configurationResponse: ConfigResponse): void {
+    private mapFromConfigurationResponse(
+        configurationResponse: ConfigResponse
+    ): void {
         try {
-            this.instrumentationKey = configurationResponse.configuration.instrumentationKey;
+            this.instrumentationKey =
+                configurationResponse.configuration.instrumentationKey;
 
             this.graphApi = configurationResponse.configuration.graphApi;
-            this.preservationApi = configurationResponse.configuration.preservationApi;
+            this.preservationApi =
+                configurationResponse.configuration.preservationApi;
             this.searchApi = configurationResponse.configuration.searchApi;
             this.ipoApi = configurationResponse.configuration.ipoApi;
             this.libraryApi = configurationResponse.configuration.libraryApi;
@@ -200,11 +226,17 @@ class ProCoSysSettings {
             // Feature flags
             this.featureFlags.IPO = configurationResponse.featureFlags.IPO;
             this.featureFlags.main = configurationResponse.featureFlags.main;
-            this.featureFlags.library = configurationResponse.featureFlags.library;
-            this.featureFlags.preservation = configurationResponse.featureFlags.preservation;
-            this.featureFlags.quickSearch = configurationResponse.featureFlags.quickSearch;
+            this.featureFlags.library =
+                configurationResponse.featureFlags.library;
+            this.featureFlags.preservation =
+                configurationResponse.featureFlags.preservation;
+            this.featureFlags.quickSearch =
+                configurationResponse.featureFlags.quickSearch;
         } catch (error) {
-            console.error('Failed to parse Configuration from remote server', error);
+            console.error(
+                'Failed to parse Configuration from remote server',
+                error
+            );
             throw error;
         }
 
@@ -220,35 +252,57 @@ class ProCoSysSettings {
         // Auth elements
         localSettings.clientId && (this.clientId = localSettings.clientId);
         localSettings.authority && (this.authority = localSettings.authority);
-        localSettings.defaultScopes && (this.defaultScopes = localSettings.defaultScopes);
+        localSettings.defaultScopes &&
+            (this.defaultScopes = localSettings.defaultScopes);
     }
 
     private overrideFromLocalConfiguration(): void {
         if (localSettings.configuration) {
             // Configuration elements
-            console.info('Overriding configuration from settings: ', localSettings.configuration);
-            localSettings.configuration.instrumentationKey && (this.instrumentationKey = localSettings.configuration.instrumentationKey);
-            localSettings.configuration.graphApi && (this.graphApi = localSettings.configuration.graphApi);
-            localSettings.configuration.preservationApi && (this.preservationApi = localSettings.configuration.preservationApi);
-            localSettings.configuration.searchApi && (this.searchApi = localSettings.configuration.searchApi);
-            localSettings.configuration.ipoApi && (this.ipoApi = localSettings.configuration.ipoApi);
-            localSettings.configuration.libraryApi && (this.libraryApi = localSettings.configuration.libraryApi);
-            localSettings.configuration.procosysApi && (this.procosysApi = localSettings.configuration.procosysApi);
+            console.info(
+                'Overriding configuration from settings: ',
+                localSettings.configuration
+            );
+            localSettings.configuration.instrumentationKey &&
+                (this.instrumentationKey =
+                    localSettings.configuration.instrumentationKey);
+            localSettings.configuration.graphApi &&
+                (this.graphApi = localSettings.configuration.graphApi);
+            localSettings.configuration.preservationApi &&
+                (this.preservationApi =
+                    localSettings.configuration.preservationApi);
+            localSettings.configuration.searchApi &&
+                (this.searchApi = localSettings.configuration.searchApi);
+            localSettings.configuration.ipoApi &&
+                (this.ipoApi = localSettings.configuration.ipoApi);
+            localSettings.configuration.libraryApi &&
+                (this.libraryApi = localSettings.configuration.libraryApi);
+            localSettings.configuration.procosysApi &&
+                (this.procosysApi = localSettings.configuration.procosysApi);
         }
-        
+
         // Feature flags
         if (localSettings.featureFlags) {
-            console.info('Overriding feature flags from settings: ', localSettings.featureFlags);
+            console.info(
+                'Overriding feature flags from settings: ',
+                localSettings.featureFlags
+            );
 
-            localSettings.featureFlags.main != undefined && (this.featureFlags.main = localSettings.featureFlags.main);
-            localSettings.featureFlags.IPO != undefined && (this.featureFlags.IPO = localSettings.featureFlags.IPO);
-            localSettings.featureFlags.library != undefined && (this.featureFlags.library = localSettings.featureFlags.library);
-            localSettings.featureFlags.preservation != undefined && (this.featureFlags.preservation = localSettings.featureFlags.preservation);
-            localSettings.featureFlags.quickSearch != undefined && (this.featureFlags.quickSearch = localSettings.featureFlags.quickSearch);
+            localSettings.featureFlags.main != undefined &&
+                (this.featureFlags.main = localSettings.featureFlags.main);
+            localSettings.featureFlags.IPO != undefined &&
+                (this.featureFlags.IPO = localSettings.featureFlags.IPO);
+            localSettings.featureFlags.library != undefined &&
+                (this.featureFlags.library =
+                    localSettings.featureFlags.library);
+            localSettings.featureFlags.preservation != undefined &&
+                (this.featureFlags.preservation =
+                    localSettings.featureFlags.preservation);
+            localSettings.featureFlags.quickSearch != undefined &&
+                (this.featureFlags.quickSearch =
+                    localSettings.featureFlags.quickSearch);
         }
-
     }
-
 }
 
 export default new ProCoSysSettings();

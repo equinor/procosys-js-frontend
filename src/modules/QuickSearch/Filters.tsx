@@ -1,4 +1,13 @@
-import { AccordionContent, FiltersContainer, FiltersTypes, FlexDiv, Header, SearchFilters, StyledAccordionHeader, StyledAccordionPanel } from './style';
+import {
+    AccordionContent,
+    FiltersContainer,
+    FiltersTypes,
+    FlexDiv,
+    Header,
+    SearchFilters,
+    StyledAccordionHeader,
+    StyledAccordionPanel,
+} from './style';
 
 import { Accordion } from '@equinor/eds-core-react';
 import { Button } from '@equinor/eds-core-react';
@@ -39,9 +48,8 @@ const QuickSearchFilters = ({
     clearFilters,
     onCheckboxTypeFilterChange,
     setSearchAllPlants,
-    searchAllPlants
+    searchAllPlants,
 }: QuickSearchFiltersProps): JSX.Element => {
-
     const getFilterType = (type: string): string => {
         switch (type) {
             case 'C':
@@ -51,13 +59,13 @@ const QuickSearchFilters = ({
             case 'T':
                 return 'Tag';
             case 'PI':
-                return "Punch List Item";
+                return 'Punch List Item';
             case 'OTHER':
                 return 'Other';
             default:
-                return 'Other'
+                return 'Other';
         }
-    }
+    };
 
     return (
         <FiltersContainer>
@@ -65,43 +73,88 @@ const QuickSearchFilters = ({
                 <Header filterActive={true}>
                     <Typography variant="h1">Filters</Typography>
                     <FlexDiv>
-                        <Button variant='ghost' title='Close' onClick={(): void => setShowFilter(false)}>
+                        <Button
+                            variant="ghost"
+                            title="Close"
+                            onClick={(): void => setShowFilter(false)}
+                        >
                             <CloseIcon />
                         </Button>
                     </FlexDiv>
                 </Header>
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button onClick={clearFilters} variant="ghost">Reset filters</Button>
+                    <Button onClick={clearFilters} variant="ghost">
+                        Reset filters
+                    </Button>
                 </div>
                 <FiltersTypes>
-
                     <Accordion chevronPosition="right" headerLevel="h2">
-                        <Accordion.Item isExpanded={typeFilterExpanded} onClick={(): void => setTypeFilterExpanded(prevState => !prevState)}>
-                            <StyledAccordionHeader active={selectedTypes && selectedTypes.length > 0}>Type</StyledAccordionHeader>
+                        <Accordion.Item
+                            isExpanded={typeFilterExpanded}
+                            onClick={(): void =>
+                                setTypeFilterExpanded((prevState) => !prevState)
+                            }
+                        >
+                            <StyledAccordionHeader
+                                active={
+                                    selectedTypes && selectedTypes.length > 0
+                                }
+                            >
+                                Type
+                            </StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>
-                                    {
-                                        filterTypes.sort().map((type: string, i: number) => {
+                                    {filterTypes
+                                        .sort()
+                                        .map((type: string, i: number) => {
                                             return (
                                                 <Checkbox
                                                     key={type}
-                                                    checked={selectedTypes.some(elementId => {
-                                                        return type === String(elementId);
-                                                    })}
-                                                    onChange={(checked: boolean): void => {
-                                                        onCheckboxTypeFilterChange(type, checked);
+                                                    checked={selectedTypes.some(
+                                                        (elementId) => {
+                                                            return (
+                                                                type ===
+                                                                String(
+                                                                    elementId
+                                                                )
+                                                            );
+                                                        }
+                                                    )}
+                                                    onChange={(
+                                                        checked: boolean
+                                                    ): void => {
+                                                        onCheckboxTypeFilterChange(
+                                                            type,
+                                                            checked
+                                                        );
                                                     }}
                                                 >
-                                                    <Typography variant='body_long'>{getFilterType(type)}</Typography>
+                                                    <Typography variant="body_long">
+                                                        {getFilterType(type)}
+                                                    </Typography>
                                                 </Checkbox>
-                                            )
-                                        })
-                                    }
+                                            );
+                                        })}
                                 </AccordionContent>
                             </StyledAccordionPanel>
                         </Accordion.Item>
-                        <Accordion.Item isExpanded={plantFilterExpanded} onClick={(): void => setPlantFilterExpanded(prevState => !prevState)}>
-                            <StyledAccordionHeader active={searchAllPlants || (selectedPlants && selectedPlants.length > 0)}>Plant</StyledAccordionHeader>
+                        <Accordion.Item
+                            isExpanded={plantFilterExpanded}
+                            onClick={(): void =>
+                                setPlantFilterExpanded(
+                                    (prevState) => !prevState
+                                )
+                            }
+                        >
+                            <StyledAccordionHeader
+                                active={
+                                    searchAllPlants ||
+                                    (selectedPlants &&
+                                        selectedPlants.length > 0)
+                                }
+                            >
+                                Plant
+                            </StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>
                                     <Checkbox
@@ -110,34 +163,50 @@ const QuickSearchFilters = ({
                                         }}
                                         checked={searchAllPlants}
                                     >
-                                        <Typography variant='body_long'>Search across all plants</Typography>
+                                        <Typography variant="body_long">
+                                            Search across all plants
+                                        </Typography>
                                     </Checkbox>
                                     {searchAllPlants &&
-                                        filterPlants.sort().map((plant: string, i: number) => {
-                                            return (
-                                                <Checkbox
-                                                    key={plant}
-                                                    checked={selectedPlants.some(elementId => {
-                                                        return plant === String(elementId);
-                                                    })}
-                                                    onChange={(checked: boolean): void => {
-                                                        onCheckboxPlantFilterChange(plant, checked);
-                                                    }}
-                                                >
-                                                    <Typography variant='body_long'>{plant}</Typography>
-                                                </Checkbox>
-                                            )
-                                        })
-                                    }
+                                        filterPlants
+                                            .sort()
+                                            .map((plant: string, i: number) => {
+                                                return (
+                                                    <Checkbox
+                                                        key={plant}
+                                                        checked={selectedPlants.some(
+                                                            (elementId) => {
+                                                                return (
+                                                                    plant ===
+                                                                    String(
+                                                                        elementId
+                                                                    )
+                                                                );
+                                                            }
+                                                        )}
+                                                        onChange={(
+                                                            checked: boolean
+                                                        ): void => {
+                                                            onCheckboxPlantFilterChange(
+                                                                plant,
+                                                                checked
+                                                            );
+                                                        }}
+                                                    >
+                                                        <Typography variant="body_long">
+                                                            {plant}
+                                                        </Typography>
+                                                    </Checkbox>
+                                                );
+                                            })}
                                 </AccordionContent>
                             </StyledAccordionPanel>
                         </Accordion.Item>
-
                     </Accordion>
                 </FiltersTypes>
             </SearchFilters>
         </FiltersContainer>
     );
-}
+};
 
 export default QuickSearchFilters;

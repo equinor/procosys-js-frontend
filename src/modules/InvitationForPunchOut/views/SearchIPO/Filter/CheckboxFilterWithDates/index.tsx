@@ -1,4 +1,8 @@
-import { CheckboxFilterValue, dateFilterParamType, filterParamType } from '../index';
+import {
+    CheckboxFilterValue,
+    dateFilterParamType,
+    filterParamType,
+} from '../index';
 import { CheckboxSection, DateField, DatesContainer } from './index.style';
 import { Collapse, CollapseInfo } from '../index.style';
 import React, { ChangeEvent, useState } from 'react';
@@ -16,9 +20,13 @@ interface CheckboxFilterWithDatesProps {
     itemsChecked: any[];
     filterParam: filterParamType;
     dateFields: CheckboxFilterValue[];
-    dateValues: (Date|undefined)[];
+    dateValues: (Date | undefined)[];
     onDateChange: (filterParam: dateFilterParamType, value: string) => void;
-    onCheckboxFilterChange: (filterParam: filterParamType, id: string, checked: boolean) => void;
+    onCheckboxFilterChange: (
+        filterParam: filterParamType,
+        id: string,
+        checked: boolean
+    ) => void;
     icon: string;
 }
 
@@ -31,71 +39,92 @@ const CheckboxFilterWithDates = ({
     dateValues,
     onDateChange,
     onCheckboxFilterChange,
-    icon
+    icon,
 }: CheckboxFilterWithDatesProps): JSX.Element => {
-
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const filterActive = itemsChecked.find(item => item !== undefined) !== undefined;
+    const filterActive =
+        itemsChecked.find((item) => item !== undefined) !== undefined;
 
     return (
         <>
-            <Collapse isExpanded={isExpanded} onClick={(): void => setIsExpanded(!isExpanded)} data-testid="checkbox-collapse" filterActive={filterActive} >
+            <Collapse
+                isExpanded={isExpanded}
+                onClick={(): void => setIsExpanded(!isExpanded)}
+                data-testid="checkbox-collapse"
+                filterActive={filterActive}
+            >
                 <EdsIcon name={icon} />
-                <CollapseInfo >
-                    {title}
-                </CollapseInfo>
-                {
-                    isExpanded
-                        ? <KeyboardArrowUpIcon />
-                        : <KeyboardArrowDownIcon />
-                }
+                <CollapseInfo>{title}</CollapseInfo>
+                {isExpanded ? (
+                    <KeyboardArrowUpIcon />
+                ) : (
+                    <KeyboardArrowDownIcon />
+                )}
             </Collapse>
-            {
-                isExpanded && (
-                    <div>
-                        {
-                            filterValues.map(value => {
-                                return (<CheckboxSection key={value.id}>
-                                    <Checkbox
-                                        checked={itemsChecked.some(elementId => {
-                                            return String(value.id) === String(elementId);
-                                        })}
-                                        onChange={(checked: boolean): void => {
-                                            onCheckboxFilterChange(filterParam, String(value.id), checked);
-                                        }}
-                                    >
-                                        <Typography variant='body_long'>{value.title}</Typography>
-                                    </Checkbox>
-                                </CheckboxSection>);
-                            })
-                        }
-                        <DatesContainer>
-                            {
-                                dateFields.map((value, index) => {
-                                    const dateValue = dateValues[index];
-                                    return (
-                                        <DateField
-                                            InputProps={{inputProps: { max: '2121-01-01'} }}
-                                            key={value.id}
-                                            label={value.title}
-                                            type='date'
-                                            value={formatForDatePicker(dateValue, 'yyyy-MM-dd')}
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => onDateChange(value.id as dateFilterParamType, event.target.value)}
-                                        />
-                                    );
-                                })
-                            }
-
-                        </DatesContainer>
-                    </div>
-                )
-            }
+            {isExpanded && (
+                <div>
+                    {filterValues.map((value) => {
+                        return (
+                            <CheckboxSection key={value.id}>
+                                <Checkbox
+                                    checked={itemsChecked.some((elementId) => {
+                                        return (
+                                            String(value.id) ===
+                                            String(elementId)
+                                        );
+                                    })}
+                                    onChange={(checked: boolean): void => {
+                                        onCheckboxFilterChange(
+                                            filterParam,
+                                            String(value.id),
+                                            checked
+                                        );
+                                    }}
+                                >
+                                    <Typography variant="body_long">
+                                        {value.title}
+                                    </Typography>
+                                </Checkbox>
+                            </CheckboxSection>
+                        );
+                    })}
+                    <DatesContainer>
+                        {dateFields.map((value, index) => {
+                            const dateValue = dateValues[index];
+                            return (
+                                <DateField
+                                    InputProps={{
+                                        inputProps: { max: '2121-01-01' },
+                                    }}
+                                    key={value.id}
+                                    label={value.title}
+                                    type="date"
+                                    value={formatForDatePicker(
+                                        dateValue,
+                                        'yyyy-MM-dd'
+                                    )}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    onChange={(
+                                        event: ChangeEvent<
+                                            | HTMLInputElement
+                                            | HTMLTextAreaElement
+                                        >
+                                    ): void =>
+                                        onDateChange(
+                                            value.id as dateFilterParamType,
+                                            event.target.value
+                                        )
+                                    }
+                                />
+                            );
+                        })}
+                    </DatesContainer>
+                </div>
+            )}
         </>
     );
 };
 
 export default CheckboxFilterWithDates;
-

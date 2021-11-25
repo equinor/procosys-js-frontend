@@ -1,6 +1,6 @@
-import { Card } from "@equinor/eds-core-react";
-import { Divider } from "@equinor/eds-core-react";
-import styled from "styled-components";
+import { Card } from '@equinor/eds-core-react';
+import { Divider } from '@equinor/eds-core-react';
+import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
@@ -33,20 +33,22 @@ export const StyledHeaderTitleLink = styled(Card.HeaderTitle)`
         align-items: center;
         color: ${tokens.colors.interactive.primary__resting.rgba};
     }
-    
+
     mark {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
 
     p > span:last-child {
-            margin-top: -6px;
-            margin-left: 5px;
-        }
+        margin-top: -6px;
+        margin-left: 5px;
+    }
 `;
 
 export const StyledHeaderTitle = styled(Card.HeaderTitle)`
     mark {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
 `;
 

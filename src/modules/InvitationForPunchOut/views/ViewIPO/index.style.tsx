@@ -9,7 +9,7 @@ export const Container = styled.div`
         width: 100%;
         min-width: 300px;
         overflow-x: auto;
-        >div:first-child {
+        > div:first-child {
             grid-template-columns: auto auto auto auto 1fr;
         }
         .emptyTab {
@@ -26,7 +26,6 @@ export const CommentsContainer = styled.div<{ maxHeight: number }>`
     background: var(--ui-background--default);
     overflow-y: scroll;
 `;
-
 
 export const CommentsIconContainer = styled.div`
     position: absolute;

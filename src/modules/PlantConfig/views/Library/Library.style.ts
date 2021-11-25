@@ -22,9 +22,11 @@ export const LibraryItemContainer = styled.div<LibraryItemProps>`
     flex: 1;
     overflow-y: scroll;
     overflow-x: hidden;
-    ${(props): any => props.addPaddingRight && css`
-        padding-right: calc(var(--grid-unit) * 2);
-    `}
+    ${(props): any =>
+        props.addPaddingRight &&
+        css`
+            padding-right: calc(var(--grid-unit) * 2);
+        `}
 `;
 
 export const Breadcrumbs = styled.section`
@@ -36,9 +38,9 @@ export const Breadcrumbs = styled.section`
 
 export const ButtonContainer = styled.div`
     display: flex;
-    justify-content:space-between;
-    width:100%;
-    flex-wrap: wrap;     
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
 `;
 
 export const ButtonContainerRight = styled.div`

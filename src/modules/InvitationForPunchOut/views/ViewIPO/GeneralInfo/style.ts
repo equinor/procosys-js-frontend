@@ -10,7 +10,8 @@ export const HeaderContainer = styled.div`
 `;
 
 export const ProjectInfoContainer = styled.div`
-    margin: var(--grid-unit) var(--grid-unit) calc(var(--grid-unit) * 4) var(--grid-unit);
+    margin: var(--grid-unit) var(--grid-unit) calc(var(--grid-unit) * 4)
+        var(--grid-unit);
     max-width: 600px;
 `;
 
@@ -31,4 +32,3 @@ export const DateTimeItem = styled.div`
     height: var(--margin-module-top);
     margin: 0 calc(var(--grid-unit) * 4) 0 0;
 `;
-

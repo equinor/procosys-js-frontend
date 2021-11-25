@@ -15,7 +15,8 @@ export const NodeContainer = styled.div<NodeContainerProps>`
     align-items: center;
     margin-bottom: var(--grid-unit);
 
-    margin-left: ${(props): string => `calc(var(--grid-unit) * ${props.indentMultiplier} - 4px)`};
+    margin-left: ${(props): string =>
+        `calc(var(--grid-unit) * ${props.indentMultiplier} - 4px)`};
 `;
 
 interface ExpandCollapseIconProps {
@@ -31,21 +32,26 @@ export const ExpandCollapseIcon = styled.div<ExpandCollapseIconProps>`
     width: 24px;
 
     :hover {
-        background: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+        background: ${tokens.colors.interactive.primary__selected_highlight
+            .rgba};
         border-radius: 100%;
     }
 
-    ${(props): any => props.isExpanded && css`
-        svg path {
-            fill: ${tokens.colors.interactive.primary__resting.rgba};
-        }
-    `}
+    ${(props): any =>
+        props.isExpanded &&
+        css`
+            svg path {
+                fill: ${tokens.colors.interactive.primary__resting.rgba};
+            }
+        `}
 
-    ${(props): any => props.spinner && css`
-        svg {
-            padding: 2px;
-        }
-    `}
+    ${(props): any =>
+        props.spinner &&
+        css`
+            svg {
+                padding: 2px;
+            }
+        `}
 `;
 
 interface NodeNameProps {
@@ -63,21 +69,28 @@ export const NodeName = styled.div<NodeNameProps>`
     overflow: hidden;
     text-overflow: ellipsis;
 
-    ${(props): any => props.isExpanded && css`
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-    `}
+    ${(props): any =>
+        props.isExpanded &&
+        css`
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+        `}
 
-    ${(props): any => props.isVoided && css`
-        opacity: 0.5;
-    `}
+    ${(props): any =>
+        props.isVoided &&
+        css`
+            opacity: 0.5;
+        `}
 
-    ${(props): any => (props.isSelected) && css`
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-        background: ${tokens.colors.ui.background__light.rgba};
-`}
+    ${(props): any =>
+        props.isSelected &&
+        css`
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+            background: ${tokens.colors.ui.background__light.rgba};
+        `}
 
     /* add margin to nodes without children, to align with those that do (with expand/collapse icon) */
-    margin-left: ${(props): string => !props.hasChildren ? 'calc(var(--grid-unit) * 6.5)' : '0'};
+    margin-left: ${(props): string =>
+        !props.hasChildren ? 'calc(var(--grid-unit) * 6.5)' : '0'};
 `;
 
 interface NodeLinkProps {
@@ -89,20 +102,29 @@ interface NodeLinkProps {
 export const NodeLink = styled.span<NodeLinkProps>`
     cursor: pointer;
 
-    ${(props): any => (props.isExpanded) && css`
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-    `}
+    ${(props): any =>
+        props.isExpanded &&
+        css`
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+        `}
 
-    ${(props): any => props.isVoided && css`
-        opacity: 0.5;
-    `}
+    ${(props): any =>
+        props.isVoided &&
+        css`
+            opacity: 0.5;
+        `}
 
-    ${(props): any => (props.isSelected) && css`
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-        background: ${tokens.colors.ui.background__light.rgba};
-    `}
+    ${(props): any =>
+        props.isSelected &&
+        css`
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+            background: ${tokens.colors.ui.background__light.rgba};
+        `}
 
     :hover {
-        color: ${(props): string => !props.isVoided ? tokens.colors.interactive.primary__resting.rgba : ''}
+        color: ${(props): string =>
+            !props.isVoided
+                ? tokens.colors.interactive.primary__resting.rgba
+                : ''};
     }
 `;

@@ -15,15 +15,14 @@ export enum LibraryType {
     PRES_REQUIREMENT = 'PresRequirement',
     PRES_REQUIREMENT_TYPE = 'PresReqType',
     PRES_REQUIREMENT_DEFINITION = 'PresReqDef',
-    NOT_SELECTED = 'NotSelected'
+    NOT_SELECTED = 'NotSelected',
 }
 
 const Library = (): JSX.Element => {
-
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
-    const [update, forceUpdate] = useReducer(x => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
+    const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
 
     const match = useRouteMatch();
     const params: any = match.params;
@@ -34,9 +33,11 @@ const Library = (): JSX.Element => {
 
     return (
         <Container>
-            {selectedLibraryType && (<Helmet>
-                <title>{` - ${selectedLibraryType}`}</title>
-            </Helmet>)}
+            {selectedLibraryType && (
+                <Helmet>
+                    <title>{` - ${selectedLibraryType}`}</title>
+                </Helmet>
+            )}
             <LibraryTreeview
                 forceUpdate={forceUpdate}
                 setSelectedLibraryType={setSelectedLibraryType}
@@ -46,7 +47,11 @@ const Library = (): JSX.Element => {
             />
 
             <Divider />
-            <LibraryItemContainer addPaddingRight={selectedLibraryType != LibraryType.TAG_FUNCTION}>
+            <LibraryItemContainer
+                addPaddingRight={
+                    selectedLibraryType != LibraryType.TAG_FUNCTION
+                }
+            >
                 <LibraryItemDetails
                     forceUpdate={update}
                     libraryType={selectedLibraryType}
@@ -56,7 +61,6 @@ const Library = (): JSX.Element => {
                     setDirtyLibraryType={setDirtyLibraryType}
                 />
             </LibraryItemContainer>
-
         </Container>
     );
 };

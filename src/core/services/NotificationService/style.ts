@@ -17,11 +17,15 @@ export const StyledSnackbarNotification = styled.div<NotificationProps>`
 
     bottom: calc(var(--grid-unit) * 4);
 
-    ${(props): any => props.displayRight && css`
-        right: calc(var(--grid-unit) * 4);
-    `}
+    ${(props): any =>
+        props.displayRight &&
+        css`
+            right: calc(var(--grid-unit) * 4);
+        `}
 
-    ${(props): any => !props.displayRight && css`
-        left: calc(var(--grid-unit) * 4);
-    `}
+    ${(props): any =>
+        !props.displayRight &&
+        css`
+            left: calc(var(--grid-unit) * 4);
+        `}
 `;

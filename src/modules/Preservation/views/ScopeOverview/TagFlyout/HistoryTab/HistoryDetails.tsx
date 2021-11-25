@@ -8,15 +8,17 @@ interface HistoryDetailsProps {
 
 const HistoryDetails = ({
     close,
-    children
+    children,
 }: HistoryDetailsProps): JSX.Element => {
     return (
         <Overlay onMouseDown={close}>
-            <Container onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
-                <Details>
-                    {children}
-                </Details>
-            </Container>            
+            <Container
+                onMouseDown={(event: MouseEvent): void =>
+                    event.stopPropagation()
+                }
+            >
+                <Details>{children}</Details>
+            </Container>
         </Overlay>
     );
 };

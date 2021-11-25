@@ -25,9 +25,11 @@ export const Container = styled.div`
 `;
 
 export const DropdownList = styled.ul<{ maxHeight?: string }>`
-    ${({ maxHeight }): any => maxHeight && css`
-        max-height: ${maxHeight};
-    `}
+    ${({ maxHeight }): any =>
+        maxHeight &&
+        css`
+            max-height: ${maxHeight};
+        `}
 `;
 
 export const IconContainer = styled.div`
@@ -56,31 +58,39 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     color: var(--text--default);
 
     path {
-        ${({ disabled }): any => disabled && css`
-            fill: ${tokens.colors.interactive.disabled__text.rgba};
-        `}
+        ${({ disabled }): any =>
+            disabled &&
+            css`
+                fill: ${tokens.colors.interactive.disabled__text.rgba};
+            `}
     }
 
-    ${({ disabled }): any => disabled && css`
-        color: ${tokens.colors.interactive.disabled__text.rgba};
-    `}
+    ${({ disabled }): any =>
+        disabled &&
+        css`
+            color: ${tokens.colors.interactive.disabled__text.rgba};
+        `}
 
-    ${(props): any => props.isOpen && css`
-        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-        /* :focus & {
+    ${(props): any =>
+        props.isOpen &&
+        css`
+            background-color: ${tokens.colors.interactive
+                .primary__selected_highlight.rgba};
+            /* :focus & {
             outline: none;
         } */
-    `}
-    ${(props): any => props.variant === 'form' && css`
-        background-color: ${tokens.colors.ui.background__light.rgba};
-        border-bottom: 1px solid black;
-    `}
-
+        `}
+    ${(props): any =>
+        props.variant === 'form' &&
+        css`
+            background-color: ${tokens.colors.ui.background__light.rgba};
+            border-bottom: 1px solid black;
+        `}
 `;
 
 export const DropdownItem = styled.li`
     border: 0;
-    text-align:left;
+    text-align: left;
     font-weight: normal;
     cursor: pointer;
     div {
@@ -99,12 +109,11 @@ export const FilterContainer = styled.li`
     overflow-x: hidden;
     input {
         width: 100%;
-        padding: calc(var(--grid-unit)*2);
+        padding: calc(var(--grid-unit) * 2);
         border: none;
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid #efefef;
         &:focus {
             outline: none;
         }
     }
-
 `;

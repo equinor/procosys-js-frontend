@@ -1,5 +1,10 @@
 import React, { ReactElement } from 'react';
-import { Route, BrowserRouter as Router, Switch, useRouteMatch } from 'react-router-dom';
+import {
+    Route,
+    BrowserRouter as Router,
+    Switch,
+    useRouteMatch,
+} from 'react-router-dom';
 
 import { Container } from './style';
 import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
@@ -14,8 +19,7 @@ const InvitationForPunchOut = (): JSX.Element => {
     const { url } = useRouteMatch();
     return (
         <>
-            <Helmet titleTemplate={'ProCoSys - IPO %s'}>
-            </Helmet>
+            <Helmet titleTemplate={'ProCoSys - IPO %s'}></Helmet>
             <InvitationForPunchOutContextProvider>
                 <Container>
                     <Router basename={url}>
@@ -29,7 +33,8 @@ const InvitationForPunchOut = (): JSX.Element => {
                                             <title>{'- Search'}</title>
                                         </Helmet>
                                         <SearchIPO />
-                                    </>)}
+                                    </>
+                                )}
                             />
                             <Route
                                 path={'/CreateIPO/:projectName?/:commPkgNo?'}
@@ -40,7 +45,8 @@ const InvitationForPunchOut = (): JSX.Element => {
                                             <title>{'- Create'}</title>
                                         </Helmet>
                                         <CreateIPO />
-                                    </>)}
+                                    </>
+                                )}
                             />
                             <Route
                                 path={'/EditIPO/:ipoId'}
@@ -51,7 +57,8 @@ const InvitationForPunchOut = (): JSX.Element => {
                                             <title>{'- Edit'}</title>
                                         </Helmet>
                                         <EditIPO />
-                                    </>)}
+                                    </>
+                                )}
                             />
 
                             <Route
@@ -63,7 +70,8 @@ const InvitationForPunchOut = (): JSX.Element => {
                                             <title>{'- View'}</title>
                                         </Helmet>
                                         <ViewIPO />
-                                    </>)}
+                                    </>
+                                )}
                             />
                             <Route
                                 component={(): ReactElement => (
@@ -72,7 +80,8 @@ const InvitationForPunchOut = (): JSX.Element => {
                                             <title>{'- NotFound'}</title>
                                         </Helmet>
                                         <h2>Sorry, this page does not exist</h2>
-                                    </>)}
+                                    </>
+                                )}
                             />
                         </Switch>
                     </Router>

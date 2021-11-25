@@ -8,7 +8,6 @@ export const SelectedItemsContainer = styled.div`
     margin: var(--grid-unit) 0px;
 `;
 
-
 export const Item = styled.div`
     padding: 12px 24px;
     display: flex;
@@ -22,13 +21,14 @@ export const Item = styled.div`
 `;
 
 export const FilterContainer = styled.div`
-    display:flex;
+    display: flex;
     flex-direction: column;
     margin: var(--grid-unit) calc(2 * var(--grid-unit));
     button {
         background-color: ${tokens.colors.ui.background__light.rgba};
         color: ${tokens.colors.text.static_icons__tertiary.rgba};
-        border-bottom: 1px solid ${tokens.colors.text.static_icons__tertiary.rgba};
+        border-bottom: 1px solid
+            ${tokens.colors.text.static_icons__tertiary.rgba};
     }
 `;
 

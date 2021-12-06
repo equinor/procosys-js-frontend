@@ -8,14 +8,14 @@ jest.mock('../../../../context/PreservationContext', () => ({
             project: {
                 id: 1,
                 name: 'test',
-                description: 'project'
-            }
+                description: 'project',
+            },
         };
-    })
+    }),
 }));
 
 jest.mock('react-router-dom', () => ({
-    useHistory: () => { }
+    useHistory: () => {},
 }));
 
 const mockSetDirtyStateFor = jest.fn();
@@ -25,9 +25,9 @@ jest.mock('@procosys/core/DirtyContext', () => ({
     useDirtyContext: () => {
         return {
             setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor
+            unsetDirtyStateFor: mockUnsetDirtyStateFor,
         };
-    }
+    },
 }));
 
 const tableData = [
@@ -37,29 +37,53 @@ const tableData = [
         purchaseOrderTitle: 'pono-test',
         commPkgNo: 'commpkg-test',
         mcPkgNo: 'mcpkgno-test',
-        isPreserved: false
-    }
+        isPreserved: false,
+    },
 ];
 
 describe('Module: <SelectTags />', () => {
-
     it('Should render Next button disabled when no rows are selected', () => {
-        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={[]} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
-        expect(getByText('Next').closest('button')).toHaveProperty('disabled', true);
+        const { getByText } = render(
+            <SelectTags
+                selectedTags={[]}
+                scopeTableData={[]}
+                setSelectedTags={() => void 0}
+                setSelectedTableRows={() => void 0}
+            />
+        );
+        expect(getByText('Next').closest('button')).toHaveProperty(
+            'disabled',
+            true
+        );
     });
 
     it('Should render Next button enabled when rows are selected', () => {
-        const selectedTags = [
-            { 'tagNo': 'test' }
-        ];
+        const selectedTags = [{ tagNo: 'test' }];
 
-        const { getByText } = render(<SelectTags selectedTags={selectedTags} scopeTableData={tableData} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
+        const { getByText } = render(
+            <SelectTags
+                selectedTags={selectedTags}
+                scopeTableData={tableData}
+                setSelectedTags={() => void 0}
+                setSelectedTableRows={() => void 0}
+            />
+        );
 
-        expect(getByText('Next').closest('button')).toHaveProperty('disabled', false);
+        expect(getByText('Next').closest('button')).toHaveProperty(
+            'disabled',
+            false
+        );
     });
 
     it('Should render Tag info in table', () => {
-        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
+        const { getByText } = render(
+            <SelectTags
+                selectedTags={[]}
+                scopeTableData={tableData}
+                setSelectedTags={() => void 0}
+                setSelectedTableRows={() => void 0}
+            />
+        );
 
         expect(getByText('tagno-test')).toBeInTheDocument();
         expect(getByText('description-test')).toBeInTheDocument();
@@ -87,7 +111,8 @@ describe('Module: <SelectTags />', () => {
                 scopeTableData={tableData}
                 setSelectedTags={setSelectedTags}
                 setSelectedTableRows={() => 1}
-            />);
+            />
+        );
 
         const checkboxes = container.querySelectorAll('input[type="checkbox"]');
         fireEvent.click(checkboxes[1]); // fist checkbox after "select all"
@@ -95,7 +120,14 @@ describe('Module: <SelectTags />', () => {
     });
 
     it('Should render Tag info in table', () => {
-        const { getByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
+        const { getByText } = render(
+            <SelectTags
+                selectedTags={[]}
+                scopeTableData={tableData}
+                setSelectedTags={() => void 0}
+                setSelectedTableRows={() => void 0}
+            />
+        );
 
         expect(getByText('tagno-test')).toBeInTheDocument();
         expect(getByText('description-test')).toBeInTheDocument();
@@ -105,13 +137,36 @@ describe('Module: <SelectTags />', () => {
     });
 
     it('Should not render search field when add-scope-method is autoscope.', () => {
-        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsAutoscope' setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
-        expect(queryByText('Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.')).not.toBeInTheDocument();
+        const { queryByText } = render(
+            <SelectTags
+                selectedTags={[]}
+                scopeTableData={tableData}
+                addScopeMethod="AddTagsAutoscope"
+                setSelectedTags={() => void 0}
+                setSelectedTableRows={() => void 0}
+            />
+        );
+        expect(
+            queryByText(
+                'Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.'
+            )
+        ).not.toBeInTheDocument();
     });
 
     it('Should render search field when add-scope-method is manually', () => {
-        const { queryByText } = render(<SelectTags selectedTags={[]} scopeTableData={tableData} addScopeMethod='AddTagsManually' setSelectedTags={() => void 0} setSelectedTableRows={() => void 0} />);
-        expect(queryByText('Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.')).toBeInTheDocument();
+        const { queryByText } = render(
+            <SelectTags
+                selectedTags={[]}
+                scopeTableData={tableData}
+                addScopeMethod="AddTagsManually"
+                setSelectedTags={() => void 0}
+                setSelectedTableRows={() => void 0}
+            />
+        );
+        expect(
+            queryByText(
+                'Type the start of a tag number and press enter to load tags. Note: Minimum two characters are required.'
+            )
+        ).toBeInTheDocument();
     });
-
 });

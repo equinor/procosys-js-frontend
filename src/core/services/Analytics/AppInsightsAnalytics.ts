@@ -8,7 +8,6 @@ import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 class AppInsightsAnalytics implements IAnalytics {
-
     _service: ApplicationInsights;
     _plant: string;
 
@@ -19,25 +18,28 @@ class AppInsightsAnalytics implements IAnalytics {
                 instrumentationKey: ProCoSysSettings.instrumentationKey,
                 extensions: [reactPlugin],
                 extensionConfig: {
-                    [reactPlugin.identifier]: { history: history }
-                }
-            }
+                    [reactPlugin.identifier]: { history: history },
+                },
+            },
         });
         this._service.loadAppInsights();
         this._plant = '';
-    };
+    }
 
     setCurrentPlant(plant: string): void {
         this._plant = plant;
     }
 
     trackUserAction(name: string, data?: ICustomProperties): void {
-        this._service.trackEvent({ name: name }, { plant: this._plant, ...data });
+        this._service.trackEvent(
+            { name: name },
+            { plant: this._plant, ...data }
+        );
     }
 
     trackException(exception: Error, id?: string): void {
         const data: IExceptionTelemetry = {
-            exception: exception
+            exception: exception,
         };
         if (id) {
             data.id = id;

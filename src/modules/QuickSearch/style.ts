@@ -20,13 +20,12 @@ export const SearchContainer = styled.div<{ withSidePanel?: boolean }>`
     ${({ withSidePanel }): FlattenSimpleInterpolation | undefined => {
         if (withSidePanel) {
             return css`
-            ${Breakpoints.MOBILE} {
-                width: 0;
-            }
+                ${Breakpoints.MOBILE} {
+                    width: 0;
+                }
                 width: calc(100% - 300px);
                 margin-right: var(--grid-unit);
             `;
-
         }
     }};
     overflow: hidden;
@@ -58,7 +57,12 @@ export const Header = styled.header<HeaderProps>`
     padding-bottom: calc(var(--grid-unit) * 4);
     margin-left: var(--grid-unit);
     margin-top: var(--margin-module--top);
-    h1 { color: ${(props): string => props.filterActive ? tokens.colors.interactive.primary__resting.rgba : 'initial'} }
+    h1 {
+        color: ${(props): string =>
+            props.filterActive
+                ? tokens.colors.interactive.primary__resting.rgba
+                : 'initial'};
+    }
 `;
 
 export const FlexDiv = styled.div`
@@ -102,7 +106,8 @@ export const FiltersAndSortRow = styled.div<FiltersAndSortRowProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%'};
+    width: ${(props): string =>
+        props.currentItem ? 'calc(100% - 480px)' : '100%'};
 `;
 
 export const SelectedFilters = styled.div`
@@ -111,16 +116,14 @@ export const SelectedFilters = styled.div`
     flex-wrap: wrap;
 `;
 
-
 interface ResultsContainerProps {
     currentItem?: ContentDocument;
 }
 
 export const ResultsContainer = styled.div<ResultsContainerProps>`
-    width: ${(props): string => props.currentItem ? 'calc(100% - 480px)' : '100%'};
+    width: ${(props): string =>
+        props.currentItem ? 'calc(100% - 480px)' : '100%'};
 `;
-
-
 
 export const LinkButton = styled(Button)`
     height: 24px;
@@ -194,9 +197,11 @@ interface StyledAccordionHeaderProps {
     active: boolean;
 }
 
-export const StyledAccordionHeader = styled(Accordion.Header)<StyledAccordionHeaderProps>`
+export const StyledAccordionHeader = styled(
+    Accordion.Header
+)<StyledAccordionHeaderProps>`
     border: none;
-    font-weight: ${(props): string => props.active ? '600' : '500'};
+    font-weight: ${(props): string => (props.active ? '600' : '500')};
 `;
 
 export const StyledAccordionPanel = styled(Accordion.Panel)`
@@ -230,7 +235,8 @@ export const FilterChip = styled(Chip)`
 
 export const ResultCell = styled(Typography)`
     mark {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
 `;
 
@@ -240,7 +246,8 @@ export const PackageNoPart = styled.div`
     flex: 0 0 120px;
 
     mark {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
 `;
 
@@ -255,7 +262,6 @@ export const StyledHeader = styled(Typography)`
     flex: 0 1 325px;
     margin-right: 30px;
 `;
-
 
 export const QuickSearchResultsContainer = styled.div`
     position: absolute;
@@ -294,13 +300,16 @@ export const QuickSearchResultItem = styled.div`
     cursor: pointer;
     padding: 4px 4px 4px 24px;
     :hover {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
     :focus {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
     mark {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
     :focus-visible {
         outline: none;
@@ -313,7 +322,8 @@ export const SearchResultItemPart = styled(Typography)`
     text-overflow: ellipsis;
     overflow: hidden;
     mark {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
 `;
 
@@ -336,10 +346,12 @@ export const QuickSearchPreviewSection = styled.div`
     align-items: center;
     cursor: pointer;
     :hover {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
     :focus {
-        background-color: ${tokens.colors.infographic.primary__moss_green_21.rgba};
+        background-color: ${tokens.colors.infographic.primary__moss_green_21
+            .rgba};
     }
     :focus-visible {
         outline: none;

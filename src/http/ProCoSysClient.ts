@@ -8,21 +8,21 @@ import { RequestCanceler } from './HttpClient';
 export type PlantResponse = {
     id: string;
     title: string;
-}
+};
 
 export type ProjectResponse = {
     id: number;
     name: string;
     description: string;
     parentDescription: string;
-}
+};
 
 export type SingleProjectResponse = {
     id: number;
     name: string;
     description: string;
     isClosed: boolean;
-}
+};
 
 interface TagFunctionResponse {
     id: number;
@@ -45,16 +45,22 @@ interface TagIdResponse {
  * API for interacting with data in ProCoSys.
  */
 class ProCoSysClient extends ApiClient {
-
     constructor(authService: IAuthService) {
-        super(authService, ProCoSysSettings.procosysApi.scope.join(' '), ProCoSysSettings.procosysApi.url);
-        this.client.interceptors.request.use((config) => {
-            config.params = {
-                ...config.params,
-                'api-version': ProCoSysSettings.procosysApi.version
-            };
-            return config;
-        }, (error) => Promise.reject(error));
+        super(
+            authService,
+            ProCoSysSettings.procosysApi.scope.join(' '),
+            ProCoSysSettings.procosysApi.url
+        );
+        this.client.interceptors.request.use(
+            (config) => {
+                config.params = {
+                    ...config.params,
+                    'api-version': ProCoSysSettings.procosysApi.version,
+                };
+                return config;
+            },
+            (error) => Promise.reject(error)
+        );
     }
 
     /**
@@ -73,17 +79,21 @@ class ProCoSysClient extends ApiClient {
             this.plantIdInterceptorId = null;
         }
         // const plant = plantId.replace('PCS$', '');
-        this.plantIdInterceptorId = this.client.interceptors.request.use((config) => {
-
-            config.params = {
-                ...config.params,
-                'plantId': plantId
-            };
-            return config;
-        }, (error) => Promise.reject(error));
+        this.plantIdInterceptorId = this.client.interceptors.request.use(
+            (config) => {
+                config.params = {
+                    ...config.params,
+                    plantId: plantId,
+                };
+                return config;
+            },
+            (error) => Promise.reject(error)
+        );
     }
 
-    async getPermissionsForCurrentUser(setRequestCanceller?: RequestCanceler): Promise<string[]> {
+    async getPermissionsForCurrentUser(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<string[]> {
         const endpoint = '/permissions';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -96,13 +106,16 @@ class ProCoSysClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getAllPlantsForUserAsync(setRequestCanceller?: RequestCanceler): Promise<PlantResponse[]> {
+    async getAllPlantsForUserAsync(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<PlantResponse[]> {
         const endpoint = '/plants';
-        const settings: AxiosRequestConfig = {
-        };
+        const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
-        return PascalCaseConverter.objectToCamelCase(result.data) as PlantResponse[];
+        return PascalCaseConverter.objectToCamelCase(
+            result.data
+        ) as PlantResponse[];
     }
 
     /**
@@ -110,30 +123,39 @@ class ProCoSysClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getAllProjectsForUserAsync(setRequestCanceller?: RequestCanceler): Promise<ProjectResponse[]> {
+    async getAllProjectsForUserAsync(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<ProjectResponse[]> {
         const endpoint = '/projects';
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
-        return PascalCaseConverter.objectToCamelCase(result.data) as ProjectResponse[];
+        return PascalCaseConverter.objectToCamelCase(
+            result.data
+        ) as ProjectResponse[];
     }
 
     /**
-     * Get project 
+     * Get project
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getProjectAsync(projectId: number, setRequestCanceller?: RequestCanceler): Promise<SingleProjectResponse> {
+    async getProjectAsync(
+        projectId: number,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<SingleProjectResponse> {
         const endpoint = '/project';
 
         const settings: AxiosRequestConfig = {
             params: {
-                projectId
-            }
+                projectId,
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
-        return PascalCaseConverter.objectToCamelCase(result.data) as SingleProjectResponse;
+        return PascalCaseConverter.objectToCamelCase(
+            result.data
+        ) as SingleProjectResponse;
     }
 
     /**
@@ -143,17 +165,23 @@ class ProCoSysClient extends ApiClient {
      * @param registerCode Register Code
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getTagFunction(tagFunctionCode: string, registerCode: string, setRequestCanceller?: RequestCanceler): Promise<TagFunctionResponse> {
+    async getTagFunction(
+        tagFunctionCode: string,
+        registerCode: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagFunctionResponse> {
         const endpoint = '/Library/TagFunction';
         const settings: AxiosRequestConfig = {
             params: {
                 tagFunctionCode,
-                registerCode
-            }
+                registerCode,
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
-        return PascalCaseConverter.objectToCamelCase(result.data) as TagFunctionResponse;
+        return PascalCaseConverter.objectToCamelCase(
+            result.data
+        ) as TagFunctionResponse;
     }
 
     /**
@@ -162,38 +190,49 @@ class ProCoSysClient extends ApiClient {
      * @param tagNo Tag no
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async getTagId(tagNos: string[], projectName: string, setRequestCanceller?: RequestCanceler): Promise<TagIdResponse[]> {
+    async getTagId(
+        tagNos: string[],
+        projectName: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<TagIdResponse[]> {
         const endpoint = '/Tag/ByTagNos';
         const settings: AxiosRequestConfig = {
             params: {
                 tagNos,
-                projectName
-            }
+                projectName,
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
-        return PascalCaseConverter.objectToCamelCase(result.data) as TagIdResponse[];
+        return PascalCaseConverter.objectToCamelCase(
+            result.data
+        ) as TagIdResponse[];
     }
 
     /**
-    * Get Purchase orders
-    *
-    * @param setRequestCanceller Returns a function that can be called to cancel the request
-    */
-    async getPurchaseOrders(projectName: string, setRequestCanceller?: RequestCanceler): Promise<PurchaseOrderResponse[]> {
+     * Get Purchase orders
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async getPurchaseOrders(
+        projectName: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<PurchaseOrderResponse[]> {
         const endpoint = '/PurchaseOrders';
         const settings: AxiosRequestConfig = {
             params: {
-                projectName: projectName
-            }
+                projectName: projectName,
+            },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
         const result = await this.client.get(endpoint, settings);
-        return PascalCaseConverter.objectToCamelCase(result.data) as PurchaseOrderResponse[];
+        return PascalCaseConverter.objectToCamelCase(
+            result.data
+        ) as PurchaseOrderResponse[];
     }
 
     /**
-     * Mark tags as migrated.  
+     * Mark tags as migrated.
      */
     async markTagsAsMigrated(
         projectName: string,

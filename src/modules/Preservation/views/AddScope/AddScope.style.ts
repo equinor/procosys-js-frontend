@@ -3,7 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 export const Container = styled.div`
     display: flex;
-    height: calc( 100% - var(--grid-unit) * 4);
+    height: calc(100% - var(--grid-unit) * 4);
     overflow: hidden;
     margin: calc(var(--grid-unit) * 2);
 `;

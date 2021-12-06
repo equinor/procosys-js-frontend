@@ -12,7 +12,7 @@ export const Container = styled.div`
         .emptyTab {
             pointer-events: none;
         }
-    
+
         margin-left: calc(var(--margin-module--left) * -1);
         margin-right: calc(var(--margin-module--right) * -1);
     }
@@ -25,7 +25,6 @@ export const FormContainer = styled.div`
         margin-bottom: calc(var(--grid-unit) * 3);
     }
 `;
-
 
 export const SpinnerContainer = styled.div`
     position: absolute;
@@ -43,4 +42,3 @@ export const SpinnerContainer = styled.div`
 export const HistoryTable = styled.table`
     width: 95%;
 `;
-

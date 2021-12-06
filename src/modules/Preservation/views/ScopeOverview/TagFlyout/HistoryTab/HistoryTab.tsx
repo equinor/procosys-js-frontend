@@ -1,4 +1,9 @@
-import { Container, DetailsContainer, DueContainer, OverflowColumn } from './HistoryTab.style';
+import {
+    Container,
+    DetailsContainer,
+    DueContainer,
+    OverflowColumn,
+} from './HistoryTab.style';
 import React, { useEffect, useState } from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
 
@@ -33,15 +38,14 @@ interface HistoryTabProps {
     tagId: number;
 }
 
-const HistoryTab = ({
-    tagId
-}: HistoryTabProps): JSX.Element => {
-
+const HistoryTab = ({ tagId }: HistoryTabProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
     const [historyLog, setHistoryLog] = useState<HistoryLogItem[]>([]);
-    const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryLogItem | null>(null);
+    const [selectedHistoryItem, setSelectedHistoryItem] =
+        useState<HistoryLogItem | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showRequirementDialog, setShowRequirementDialog] = useState<boolean>(false);
+    const [showRequirementDialog, setShowRequirementDialog] =
+        useState<boolean>(false);
 
     const getHistoryLog = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
@@ -49,11 +53,18 @@ const HistoryTab = ({
             try {
                 if (tagId != null) {
                     setIsLoading(true);
-                    const historyLog = await apiClient.getHistory(tagId, (cancel: Canceler) => requestCancellor = cancel);
+                    const historyLog = await apiClient.getHistory(
+                        tagId,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
                     setHistoryLog(historyLog);
                 }
             } catch (error) {
-                console.error('Get history log failed: ', error.message, error.data);
+                console.error(
+                    'Get history log failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000, true);
             }
             setIsLoading(false);
@@ -94,7 +105,12 @@ const HistoryTab = ({
     const getUserColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
         const historyItem = row.value as HistoryLogItem;
         return (
-            <Tooltip title={`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip
+                title={`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
+                arrow={true}
+                enterDelay={200}
+                enterNextDelay={100}
+            >
                 <OverflowColumn>
                     {`${historyItem.createdBy.firstName} ${historyItem.createdBy.lastName}`}
                 </OverflowColumn>
@@ -111,13 +127,28 @@ const HistoryTab = ({
         );
     };
 
-    const getDetailsColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+    const getDetailsColumn = (
+        row: TableOptions<HistoryLogItem>
+    ): JSX.Element => {
         const historyItem = row.value as HistoryLogItem;
         if (historyItem.eventType === 'RequirementPreserved') {
             return (
-                <Tooltip title={'Show details'} arrow={true} enterDelay={200} enterNextDelay={100}>
-                    <DetailsContainer onClick={(): void => showHistoryDetails(historyItem)}>
-                        <EdsIcon name='info_circle' size={24} color={tokens.colors.text.static_icons__tertiary.rgba} />
+                <Tooltip
+                    title={'Show details'}
+                    arrow={true}
+                    enterDelay={200}
+                    enterNextDelay={100}
+                >
+                    <DetailsContainer
+                        onClick={(): void => showHistoryDetails(historyItem)}
+                    >
+                        <EdsIcon
+                            name="info_circle"
+                            size={24}
+                            color={
+                                tokens.colors.text.static_icons__tertiary.rgba
+                            }
+                        />
                     </DetailsContainer>
                 </Tooltip>
             );
@@ -126,51 +157,68 @@ const HistoryTab = ({
         return <div></div>;
     };
 
-    const getDescriptionColumn = (row: TableOptions<HistoryLogItem>): JSX.Element => {
+    const getDescriptionColumn = (
+        row: TableOptions<HistoryLogItem>
+    ): JSX.Element => {
         const historyItem = row.value as HistoryLogItem;
 
         return (
-            <Tooltip title={historyItem.description || ''} arrow={true} enterDelay={200} enterNextDelay={100}>
+            <Tooltip
+                title={historyItem.description || ''}
+                arrow={true}
+                enterDelay={200}
+                enterNextDelay={100}
+            >
                 <OverflowColumn>{historyItem.description}</OverflowColumn>
             </Tooltip>
         );
-
     };
 
     if (isLoading) {
         return (
-            <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}><Spinner large /></div>
+            <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}>
+                <Spinner large />
+            </div>
         );
     }
-
 
     const columns = [
         {
             Header: 'Date',
-            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
-            Cell: getDateColumn
+            accessor: (
+                d: UseTableRowProps<HistoryLogItem>
+            ): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDateColumn,
         },
         {
             Header: 'User',
-            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
-            Cell: getUserColumn
+            accessor: (
+                d: UseTableRowProps<HistoryLogItem>
+            ): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getUserColumn,
         },
         {
             Header: 'Due',
-            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
-            Cell: getDueColumn
+            accessor: (
+                d: UseTableRowProps<HistoryLogItem>
+            ): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDueColumn,
         },
         {
             Header: 'Description',
             field: 'description',
-            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
-            Cell: getDescriptionColumn
+            accessor: (
+                d: UseTableRowProps<HistoryLogItem>
+            ): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDescriptionColumn,
         },
         {
             Header: ' ',
             field: 'eventType',
-            accessor: (d: UseTableRowProps<HistoryLogItem>): UseTableRowProps<HistoryLogItem> => d,
-            Cell: getDetailsColumn
+            accessor: (
+                d: UseTableRowProps<HistoryLogItem>
+            ): UseTableRowProps<HistoryLogItem> => d,
+            Cell: getDetailsColumn,
         },
     ];
 
@@ -186,24 +234,25 @@ const HistoryTab = ({
                     clientPagination={true}
                     clientSorting={true}
                     loading={false}
-                    pageCount={Math.ceil(historyLog.length / 10)} />
+                    pageCount={Math.ceil(historyLog.length / 10)}
+                />
             </Container>
-            {
-                showRequirementDialog && (
-                    <HistoryDetails close={(): void => closeHistoryDetails()}>
-                        {
-                            selectedHistoryItem && (
-                                <PreservedRequirement
-                                    tagId={tagId}
-                                    tagRequirementId={selectedHistoryItem.tagRequirementId}
-                                    preservationRecordGuid={selectedHistoryItem.preservationRecordGuid}
-                                    close={closeHistoryDetails}
-                                />
-                            )
-                        }
-                    </HistoryDetails>
-                )
-            }
+            {showRequirementDialog && (
+                <HistoryDetails close={(): void => closeHistoryDetails()}>
+                    {selectedHistoryItem && (
+                        <PreservedRequirement
+                            tagId={tagId}
+                            tagRequirementId={
+                                selectedHistoryItem.tagRequirementId
+                            }
+                            preservationRecordGuid={
+                                selectedHistoryItem.preservationRecordGuid
+                            }
+                            close={closeHistoryDetails}
+                        />
+                    )}
+                </HistoryDetails>
+            )}
         </>
     );
 };

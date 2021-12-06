@@ -1,8 +1,8 @@
 import ApiClient from './ApiClient';
 import { AxiosRequestConfig } from 'axios';
-import {IAuthService} from '../auth/AuthService';
+import { IAuthService } from '../auth/AuthService';
 import ProCoSysSettings from '../core/ProCoSysSettings';
-import {RequestCanceler} from './HttpClient';
+import { RequestCanceler } from './HttpClient';
 
 const RESOURCE_ID = ProCoSysSettings.graphApi.scope.join(' ');
 const BASE_URL = `${ProCoSysSettings.graphApi.url}${ProCoSysSettings.graphApi.version}`;
@@ -15,13 +15,12 @@ export type ProfileResponse = {
     surname: string;
     id: string;
     jobTitle: string;
-}
+};
 
 /**
  * Exposes the Azure AD Graph Api
  */
 export default class GraphClient extends ApiClient {
-
     constructor(authService: IAuthService) {
         super(authService, RESOURCE_ID, BASE_URL);
     }
@@ -30,11 +29,12 @@ export default class GraphClient extends ApiClient {
      * Get the current users profile data from the Graph API
      * @param setRequestCanceller Callback function used to receive the cancel token for executed request
      */
-    async getProfileDataAsync(setRequestCanceller?: RequestCanceler): Promise<ProfileResponse> {
+    async getProfileDataAsync(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<ProfileResponse> {
         const endpoint = '/me';
 
-        const settings: AxiosRequestConfig = {
-        };
+        const settings: AxiosRequestConfig = {};
 
         this.setupRequestCanceler(settings, setRequestCanceller);
 
@@ -47,11 +47,13 @@ export default class GraphClient extends ApiClient {
      * Get the current users profile picture from Azure AD
      * @param setRequestCanceller Callback function used to receive the cancel token for executed request
      */
-    async getProfilePictureAsync(setRequestCanceller?: RequestCanceler): Promise<Blob> {
+    async getProfilePictureAsync(
+        setRequestCanceller?: RequestCanceler
+    ): Promise<Blob> {
         const endpoint = '/me/photo/$value';
 
         const settings: AxiosRequestConfig = {
-            responseType: 'blob'
+            responseType: 'blob',
         };
 
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -60,6 +62,4 @@ export default class GraphClient extends ApiClient {
 
         return response.data as Blob;
     }
-
 }
-

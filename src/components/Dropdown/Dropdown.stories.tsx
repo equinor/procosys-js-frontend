@@ -3,13 +3,11 @@ import Dropdown, { DropdownProps } from '@procosys/components/Dropdown';
 import { Story, Meta } from '@storybook/react';
 import styled from 'styled-components';
 
-
-
 const Wrapper = styled.div`
-  margin: 32px;
-  display: grid;
-  grid-gap: 32px;
-  grid-template-columns: repeat(4, fit-content(100%));
+    margin: 32px;
+    display: grid;
+    grid-gap: 32px;
+    grid-template-columns: repeat(4, fit-content(100%));
 `;
 
 const DropdownItem = styled.div<DropdownProps>`
@@ -37,20 +35,23 @@ export default {
                 component: `Dropdown component used in Procosys.
         `,
             },
-        }
+        },
     },
-    argTypes:{
-        Icon:{
-            control:false
-        }
-    }
+    argTypes: {
+        Icon: {
+            control: false,
+        },
+    },
 } as Meta;
 
-export const Default: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & DropdownProps & { children?: React.ReactNode; }) => {
+export const Default: Story<DropdownProps> = (
+    args: JSX.IntrinsicAttributes &
+        DropdownProps & { children?: React.ReactNode }
+) => {
     args.text = 'I am a dropdown';
     return (
         <Wrapper>
-            <Dropdown {...args} >
+            <Dropdown {...args}>
                 {optionsArr.map((option, index) => {
                     return (
                         <DropdownItem key={index}>
@@ -64,14 +65,21 @@ export const Default: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & Dr
     );
 };
 
-export const Filtered: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & DropdownProps & { children?: React.ReactNode; }) => {
-    const [filteredOptions, setFilteredOptions] = useState<string[]>(generateOptions(7));
+export const Filtered: Story<DropdownProps> = (
+    args: JSX.IntrinsicAttributes &
+        DropdownProps & { children?: React.ReactNode }
+) => {
+    const [filteredOptions, setFilteredOptions] = useState<string[]>(
+        generateOptions(7)
+    );
     const [selectedText, setSelectedText] = useState<string>('I am a dropdown');
 
     const handleChange = (val: string): void => {
-        const _filteredOptions = JSON.parse(JSON.stringify(optionsArr)).filter((p: string) => {
-            return p.toLowerCase().indexOf(val.toLowerCase()) > -1;
-        });
+        const _filteredOptions = JSON.parse(JSON.stringify(optionsArr)).filter(
+            (p: string) => {
+                return p.toLowerCase().indexOf(val.toLowerCase()) > -1;
+            }
+        );
         setFilteredOptions(_filteredOptions);
     };
 
@@ -84,14 +92,21 @@ export const Filtered: Story<DropdownProps> = (args: JSX.IntrinsicAttributes & D
     return (
         <Wrapper>
             <Dropdown onFilter={handleChange} {...args}>
-                {filteredOptions && filteredOptions.length > 0 &&  filteredOptions.map((option, index) => {
-                    return (
-                        <DropdownItem key={index} onClick={(event): void => setSelected(event, index)}>
-                            <div>{option}</div>
-                            <div>Subtext {option}</div>
-                        </DropdownItem>
-                    );
-                })}
+                {filteredOptions &&
+                    filteredOptions.length > 0 &&
+                    filteredOptions.map((option, index) => {
+                        return (
+                            <DropdownItem
+                                key={index}
+                                onClick={(event): void =>
+                                    setSelected(event, index)
+                                }
+                            >
+                                <div>{option}</div>
+                                <div>Subtext {option}</div>
+                            </DropdownItem>
+                        );
+                    })}
             </Dropdown>
         </Wrapper>
     );

@@ -33,9 +33,9 @@ export const ContentContainer = styled.div<{ withSidePanel?: boolean }>`
 
 export const HeaderContainer = styled.div`
     display: flex;
-    justify-content:space-between;
-    width:100%;
-    flex-wrap: wrap;     
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
 `;
 
 export const LeftPartOfHeader = styled.div`
@@ -46,7 +46,6 @@ export const LeftPartOfHeader = styled.div`
         width: 100%;
     }
 `;
-
 
 export const Header = styled.header`
     display: flex;
@@ -62,15 +61,15 @@ export const Header = styled.header`
     }
 
     .showOnlyOnTablet {
-        display:none;
-    }  
+        display: none;
+    }
 
     ${Breakpoints.TABLET} {
         width: 100%;
         .showOnlyOnTablet {
-            display:flex;
-        }  
-    }   
+            display: flex;
+        }
+    }
 `;
 
 export const ActionsContainer = styled.div<{ showActions?: boolean }>`
@@ -79,24 +78,26 @@ export const ActionsContainer = styled.div<{ showActions?: boolean }>`
     flex-wrap: wrap;
 
     .showOnlyOnTablet {
-            display:none;
-    }   
-       
-    > div {	
-       margin-right: calc(var(--grid-unit) * 2);	
+        display: none;
+    }
+
+    > div {
+        margin-right: calc(var(--grid-unit) * 2);
     }
 
     ${Breakpoints.TABLET} {
-        ${(props): any => props.showActions == false && css`
-            display:none;    
-        `}
+        ${(props): any =>
+            props.showActions == false &&
+            css`
+                display: none;
+            `}
 
         .hideOnTablet {
-            display:none;
-        } 
+            display: none;
+        }
 
         .showOnlyOnTablet {
-            display:flex;
+            display: flex;
         }
     }
 `;
@@ -113,7 +114,7 @@ export const IconBar = styled.div`
     button {
         margin-left: var(--grid-unit);
     }
-    
+
     ${Breakpoints.TABLET} {
         justify-content: flex-start;
         button {
@@ -134,17 +135,21 @@ interface DropdownProps {
 
 export const DropdownItem = styled.div<DropdownProps>`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
-    ${(props): any => !props.disabled && css`
-        :hover {
-            background-color: ${tokens.colors.ui.background__light.rgba}
-        }
-    `}
+    ${(props): any =>
+        !props.disabled &&
+        css`
+            :hover {
+                background-color: ${tokens.colors.ui.background__light.rgba};
+            }
+        `}
 
-    ${(props): any => props.disabled && css`
-        color: ${tokens.colors.interactive.disabled__border.rgba} !important;
-        cursor: not-allowed;
-    `}
-
+    ${(props): any =>
+        props.disabled &&
+        css`
+            color: ${tokens.colors.interactive.disabled__border
+                .rgba} !important;
+            cursor: not-allowed;
+        `}
 `;
 
 export const FilterContainer = styled.div<{ maxHeight: number }>`

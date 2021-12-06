@@ -19,53 +19,88 @@ type LibraryItemProps = {
 };
 
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
-
     switch (props.libraryType) {
         case LibraryType.TAG_FUNCTION: {
-            const [registerCode, tagFunctionCode] = props.libraryItem.split('|');
-            return <TagFunction tagFunctionCode={tagFunctionCode} registerCode={registerCode} />;
+            const [registerCode, tagFunctionCode] =
+                props.libraryItem.split('|');
+            return (
+                <TagFunction
+                    tagFunctionCode={tagFunctionCode}
+                    registerCode={registerCode}
+                />
+            );
         }
         case LibraryType.MODE:
-            return <Mode
-                forceUpdate={props.forceUpdate}
-                modeId={Number(props.libraryItem)}
-                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.MODE)}
-            />;
+            return (
+                <Mode
+                    forceUpdate={props.forceUpdate}
+                    modeId={Number(props.libraryItem)}
+                    setDirtyLibraryType={(): void =>
+                        props.setDirtyLibraryType(LibraryType.MODE)
+                    }
+                />
+            );
         case LibraryType.PRES_JOURNEY:
-            return <PreservationJourney
-                forceUpdate={props.forceUpdate}
-                journeyId={Number(props.libraryItem)}
-                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_JOURNEY)}
-            />;
+            return (
+                <PreservationJourney
+                    forceUpdate={props.forceUpdate}
+                    journeyId={Number(props.libraryItem)}
+                    setDirtyLibraryType={(): void =>
+                        props.setDirtyLibraryType(LibraryType.PRES_JOURNEY)
+                    }
+                />
+            );
         case LibraryType.PRES_REQUIREMENT:
-            return <PreservationRequirements
-                forceUpdate={props.forceUpdate}
-                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
-            />;
+            return (
+                <PreservationRequirements
+                    forceUpdate={props.forceUpdate}
+                    setDirtyLibraryType={(): void =>
+                        props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)
+                    }
+                />
+            );
         case LibraryType.PRES_REQUIREMENT_TYPE:
-            return <PreservationRequirementType
-                requirementTypeId={Number(props.libraryItem)}
-                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
-                addNewRequirementDefinition={(): void => {
-                    props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT_DEFINITION);
-                    props.setSelectedLibraryItem('-1');
-                }}
-                cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
-            />;
+            return (
+                <PreservationRequirementType
+                    requirementTypeId={Number(props.libraryItem)}
+                    setDirtyLibraryType={(): void =>
+                        props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)
+                    }
+                    addNewRequirementDefinition={(): void => {
+                        props.setSelectedLibraryType(
+                            LibraryType.PRES_REQUIREMENT_DEFINITION
+                        );
+                        props.setSelectedLibraryItem('-1');
+                    }}
+                    cancel={(): void => {
+                        props.setSelectedLibraryType(
+                            LibraryType.PRES_REQUIREMENT
+                        );
+                    }}
+                />
+            );
         case LibraryType.PRES_REQUIREMENT_DEFINITION:
-            return <PreservationRequirementDefinition
-                requirementDefinitionId={Number(props.libraryItem)}
-                setDirtyLibraryType={(): void => props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)}
-                cancel={(): void => { props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT); }}
-                addNewRequirementType={(): void => {
-                    props.setSelectedLibraryType(LibraryType.PRES_REQUIREMENT_TYPE);
-                    props.setSelectedLibraryItem('-1');
-                }}
-
-            />;
+            return (
+                <PreservationRequirementDefinition
+                    requirementDefinitionId={Number(props.libraryItem)}
+                    setDirtyLibraryType={(): void =>
+                        props.setDirtyLibraryType(LibraryType.PRES_REQUIREMENT)
+                    }
+                    cancel={(): void => {
+                        props.setSelectedLibraryType(
+                            LibraryType.PRES_REQUIREMENT
+                        );
+                    }}
+                    addNewRequirementType={(): void => {
+                        props.setSelectedLibraryType(
+                            LibraryType.PRES_REQUIREMENT_TYPE
+                        );
+                        props.setSelectedLibraryItem('-1');
+                    }}
+                />
+            );
         default:
             return <Breadcrumbs>Library /</Breadcrumbs>;
-
     }
 };
 

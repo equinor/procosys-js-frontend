@@ -14,9 +14,8 @@ const DialogTable = ({
     tags,
     columns,
     toolbarText,
-    toolbarColor
+    toolbarColor,
 }: TableProps): JSX.Element => {
-
     const numTags = tags.length;
 
     return (

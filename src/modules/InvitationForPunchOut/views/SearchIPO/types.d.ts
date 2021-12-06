@@ -29,7 +29,7 @@ export type ProjectDetails = {
     id: number;
     name: string;
     description: string;
-}
+};
 
 export type IPOFilter = {
     ipoStatuses: string[];

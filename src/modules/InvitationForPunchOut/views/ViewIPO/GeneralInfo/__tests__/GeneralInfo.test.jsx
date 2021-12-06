@@ -1,4 +1,7 @@
-import { getFormattedDate, getFormattedTime } from '../../../../../../core/services/DateService';
+import {
+    getFormattedDate,
+    getFormattedTime,
+} from '../../../../../../core/services/DateService';
 
 import GeneralInfo from '../index';
 import React from 'react';
@@ -9,13 +12,13 @@ import theme from '../../../../../../assets/theme';
 const mcPkgScope = {
     mcPkgNo: 'L123-432',
     description: 'An mC pkg',
-    commPkgNo: 'C01-123'
+    commPkgNo: 'C01-123',
 };
 
 const commPkgScope = {
     commPkgNo: 'C01-123',
     description: 'A comm pkg',
-    status: 'hot'
+    status: 'hot',
 };
 
 const invitation = {
@@ -29,38 +32,46 @@ const invitation = {
     endTimeUtc: new Date(2020, 11, 6, 13, 0).toString(),
     participants: [],
     mcPkgScope: mcPkgScope,
-    commPkgScope: commPkgScope
+    commPkgScope: commPkgScope,
 };
 
-const mockSetDirtyStateFor = jest.fn((arg) => { return arg; });
-const mockUnsetDirtyStateFor = jest.fn((arg) => { return arg; });
+const mockSetDirtyStateFor = jest.fn((arg) => {
+    return arg;
+});
+const mockUnsetDirtyStateFor = jest.fn((arg) => {
+    return arg;
+});
 
 jest.mock('@procosys/core/DirtyContext', () => ({
     useDirtyContext: () => {
         return {
             setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor
+            unsetDirtyStateFor: mockUnsetDirtyStateFor,
         };
-    }
+    },
 }));
-
 
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-
 describe('<GeneralInfo />', () => {
     it('Renders with provided invitation data', async () => {
-        const { queryByText } = renderWithTheme(<GeneralInfo invitation={invitation} />);
+        const { queryByText } = renderWithTheme(
+            <GeneralInfo invitation={invitation} />
+        );
 
         expect(queryByText(invitation.title)).toBeInTheDocument();
         expect(queryByText(invitation.description)).toBeInTheDocument();
         expect(queryByText(invitation.location)).toBeInTheDocument();
-        expect(queryByText(getFormattedDate(invitation.startTimeUtc))).toBeInTheDocument();
-        expect(queryByText(getFormattedTime(invitation.startTimeUtc))).toBeInTheDocument();
-        expect(queryByText(getFormattedTime(invitation.endTimeUtc))).toBeInTheDocument();
+        expect(
+            queryByText(getFormattedDate(invitation.startTimeUtc))
+        ).toBeInTheDocument();
+        expect(
+            queryByText(getFormattedTime(invitation.startTimeUtc))
+        ).toBeInTheDocument();
+        expect(
+            queryByText(getFormattedTime(invitation.endTimeUtc))
+        ).toBeInTheDocument();
     });
 });
-
-

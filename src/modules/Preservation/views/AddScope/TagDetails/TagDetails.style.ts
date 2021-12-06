@@ -40,10 +40,10 @@ export const CollapseInfo = styled.div`
     padding-top: calc(var(--grid-unit) * 2 + 4px);
     padding-right: calc(var(--grid-unit) * 2);
     padding-bottom: calc(var(--grid-unit) * 2);
-    padding-left: calc(var(--grid-unit) * 2);    
+    padding-left: calc(var(--grid-unit) * 2);
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;    
+    overflow: hidden;
 `;
 
 export const Expand = styled.div`

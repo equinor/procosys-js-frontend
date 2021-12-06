@@ -11,17 +11,19 @@ export const Container = styled.div`
         border-radius: 4px;
         z-index: 100;
         white-space: nowrap;
-        
+
         li > div {
-            box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+            box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.12),
+                0px 2px 4px rgba(0, 0, 0, 0.14);
         }
 
         li:first-child > div {
             border-radius: 4px 4px 0px 0px;
-            box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
         }
         li:only-child > div {
-            box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2),
+                0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14);
             border-radius: 4px;
         }
 
@@ -29,7 +31,8 @@ export const Container = styled.div`
             border-radius: 0px 0px 4px 4px;
         }
 
-        > div:hover, li[data-selected="true"] > div {
+        > div:hover,
+        li[data-selected='true'] > div {
             background-color: ${tokens.colors.ui.background__light.rgba};
         }
     }
@@ -43,7 +46,6 @@ interface IconProps {
     disabled: boolean;
 }
 
-
 export const DropdownIcon = styled.div<IconProps>`
     padding-left: 8px;
     display: flex;
@@ -51,9 +53,11 @@ export const DropdownIcon = styled.div<IconProps>`
     justify-content: flex-end;
     align-items: right;
     path {
-        ${({disabled}): any => disabled && css`
-            fill: ${tokens.colors.interactive.disabled__text.rgba};
-        `}
+        ${({ disabled }): any =>
+            disabled &&
+            css`
+                fill: ${tokens.colors.interactive.disabled__text.rgba};
+            `}
     }
     min-height: calc(var(--grid-unit) * 3);
 `;
@@ -64,7 +68,7 @@ interface DropdownButtonProps {
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    border: ${(props): string => props.error? 'solid' : 'none'};
+    border: ${(props): string => (props.error ? 'solid' : 'none')};
     border-color: ${tokens.colors.interactive.danger__resting.rgba};
     display: flex;
     width: 100%;
@@ -72,9 +76,12 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     padding: 6px;
     background-color: ${tokens.colors.ui.background__light.rgba};
     border-bottom: 1px solid black;
-    ${(props): any => props.isOpen && css`
-        background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
-    `}
+    ${(props): any =>
+        props.isOpen &&
+        css`
+            background-color: ${tokens.colors.interactive
+                .primary__selected_highlight.rgba};
+        `}
 `;
 
 export type SelectableItemProps = {
@@ -89,9 +96,11 @@ export const SelectableItem = styled.li<SelectableItemProps>`
         display: block;
     }
 
-    ${(props): any => props.hideItems && css`
-        display: none;
-    `}
+    ${(props): any =>
+        props.hideItems &&
+        css`
+            display: none;
+        `}
 `;
 
 export const TitleItem = styled.li`
@@ -123,7 +132,10 @@ export const Info = styled.div`
     background-color: ${tokens.colors.ui.background__default.rgba};
 `;
 
-export const ItemContent = styled.div<{ readOnlyItem: boolean; greenText?: boolean }>`
+export const ItemContent = styled.div<{
+    readOnlyItem: boolean;
+    greenText?: boolean;
+}>`
     display: flex;
     align-items: center;
     padding: calc(var(--grid-unit) * 2);
@@ -131,13 +143,15 @@ export const ItemContent = styled.div<{ readOnlyItem: boolean; greenText?: boole
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
 
-    ${(props): any => !props.readOnlyItem && css`
-        cursor: pointer;
-        :hover {
-            background-color: ${tokens.colors.ui.background__light.rgba};
-        }
-    `}
- 
+    ${(props): any =>
+        !props.readOnlyItem &&
+        css`
+            cursor: pointer;
+            :hover {
+                background-color: ${tokens.colors.ui.background__light.rgba};
+            }
+        `}
+
     label > span {
         padding: 0px;
     }
@@ -160,14 +174,18 @@ export const ItemContent = styled.div<{ readOnlyItem: boolean; greenText?: boole
         label {
             justify-content: center;
         }
-        div, span, label {
+        div,
+        span,
+        label {
             padding: 0px;
             margin: 0px;
         }
     }
-    ${(props): any => props.greenText && css`
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-    `}
+    ${(props): any =>
+        props.greenText &&
+        css`
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+        `}
 `;
 
 interface TitleContentProps {
@@ -184,17 +202,21 @@ export const TitleContent = styled.div<TitleContentProps>`
         display: flex;
     }
 
-    ${(props): any => props.marginBottom && css`
-        > div:first-child {
-            margin-bottom: calc(var(--grid-unit) * 2);
-        }
-    `}
+    ${(props): any =>
+        props.marginBottom &&
+        css`
+            > div:first-child {
+                margin-bottom: calc(var(--grid-unit) * 2);
+            }
+        `}
 
-    ${(props): any => props.hideToCc && css`
-        .toCc {
-            display: none;
-        }
-    `}
+    ${(props): any =>
+        props.hideToCc &&
+        css`
+            .toCc {
+                display: none;
+            }
+        `}
     
     div {
         margin-left: 0px;
@@ -205,13 +227,17 @@ export const TitleContent = styled.div<TitleContentProps>`
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
     margin-left: var(--grid-unit);
-    ${(props): any => props.borderTop && css`
-        border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
-    `}
+    ${(props): any =>
+        props.borderTop &&
+        css`
+            border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
+        `}
 
     .toCc {
         margin-top: var(--grid-unit);
-        label, div, span {
+        label,
+        div,
+        span {
             padding: 0px;
             margin: 0px;
         }
@@ -223,21 +249,23 @@ export const TitleContent = styled.div<TitleContentProps>`
     }
 `;
 
-export const Label = styled.div<{ error?: boolean; }>`
+export const Label = styled.div<{ error?: boolean }>`
     font-size: 12px;
-    ${(props): any => props.error && css`
-        color: ${tokens.colors.interactive.danger__resting.rgba};
-    `}
+    ${(props): any =>
+        props.error &&
+        css`
+            color: ${tokens.colors.interactive.danger__resting.rgba};
+        `}
 `;
 
 export const FilterContainer = styled.li`
     overflow-x: hidden;
-    box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14);
     input {
         width: 100%;
-        padding: calc(var(--grid-unit)*2);
+        padding: calc(var(--grid-unit) * 2);
         border: none;
-        border-bottom: 1px solid #EFEFEF;
+        border-bottom: 1px solid #efefef;
         &:focus {
             outline: none;
         }

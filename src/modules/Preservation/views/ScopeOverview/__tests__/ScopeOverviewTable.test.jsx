@@ -4,48 +4,49 @@ import { screen, render } from '@testing-library/react';
 
 const mockTags = {
     maxAvailable: 1,
-    tags: [{
-        actionStatus: 'active',
-        areaCode: 'areacode',
-        calloffNo: 'calloffno',
-        commPkgNo: 'commpkno',
-        description: 'descripotion',
-        disciplineCode: 'T',
-        id: 1,
-        isNew: true,
-        isVoided: false,
-        mcPkgNo: 'mcpkgno',
-        mode: 'mode',
-        nextMode: 'nextMode',
-        nextResponsibleCode: 'nextresp',
-        purchaseOrderNo: 'purchorderno',
-        readyToBePreserved: true,
-        readyToBeStarted: false,
-        readyToBeTransferred: true,
-        readyToBeCompleted: false,
-        readyToBeRescheduled: true,
-        isInUse: true,
-        requirements: [
-            {
-                id: 1,
-                requirementTypeCode: 'Area',
-                requirementTypeIcon: 'Area',
-                nextDueTimeUtc: '2020-06-24T07:41:29.8405826Z',
-                nextDueAsYearAndWeek: '2020w26',
-                nextDueWeeks: 10,
-                readyToBePreserved: true
-            }
-        ],
-        status: 'Active',
-        responsibleCode: '1',
-        responsibleDescription: 'respdesc',
-        tagFunctionCode: 'tfc',
-        tagNo: 'tagno',
-        tagType: 'Standard',
-        rowVersion: '1',
-    }]
+    tags: [
+        {
+            actionStatus: 'active',
+            areaCode: 'areacode',
+            calloffNo: 'calloffno',
+            commPkgNo: 'commpkno',
+            description: 'descripotion',
+            disciplineCode: 'T',
+            id: 1,
+            isNew: true,
+            isVoided: false,
+            mcPkgNo: 'mcpkgno',
+            mode: 'mode',
+            nextMode: 'nextMode',
+            nextResponsibleCode: 'nextresp',
+            purchaseOrderNo: 'purchorderno',
+            readyToBePreserved: true,
+            readyToBeStarted: false,
+            readyToBeTransferred: true,
+            readyToBeCompleted: false,
+            readyToBeRescheduled: true,
+            isInUse: true,
+            requirements: [
+                {
+                    id: 1,
+                    requirementTypeCode: 'Area',
+                    requirementTypeIcon: 'Area',
+                    nextDueTimeUtc: '2020-06-24T07:41:29.8405826Z',
+                    nextDueAsYearAndWeek: '2020w26',
+                    nextDueWeeks: 10,
+                    readyToBePreserved: true,
+                },
+            ],
+            status: 'Active',
+            responsibleCode: '1',
+            responsibleDescription: 'respdesc',
+            tagFunctionCode: 'tfc',
+            tagNo: 'tagno',
+            tagType: 'Standard',
+            rowVersion: '1',
+        },
+    ],
 };
-
 
 var getData = jest.fn(async () => {
     return mockTags;
@@ -64,11 +65,13 @@ describe('<ScopeOverviewTable />', () => {
                 getData={getData}
                 pageSize={10}
                 pageIndex={0}
-                setRefreshScopeListCallback={propFunc} />
+                setRefreshScopeListCallback={propFunc}
+            />
         );
 
         let exists = false;
-        await screen.findByRole('new-indicator')
+        await screen
+            .findByRole('new-indicator')
             .then(() => {
                 exists = true;
             })

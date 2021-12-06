@@ -1,5 +1,11 @@
 import { Button, Typography } from '@equinor/eds-core-react';
-import { ButtonContainer, ButtonSpacer, Container, HeaderContainer, ProgressBarContainer } from './ViewIPOHeader.style';
+import {
+    ButtonContainer,
+    ButtonSpacer,
+    Container,
+    HeaderContainer,
+    ProgressBarContainer,
+} from './ViewIPOHeader.style';
 import React, { useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
@@ -21,20 +27,23 @@ type ProgressBarProps = {
     showEditButton: boolean;
     isCancelable: boolean;
     cancelPunchOut: () => void;
-}
+};
 
 const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
-
     const confirmCancelIpo = (): void => {
         showModalDialog(
             'Cancel IPO',
-            <div>Are you sure you want to cancel the IPO and send a cancellation to invited participants?</div>,
+            <div>
+                Are you sure you want to cancel the IPO and send a cancellation
+                to invited participants?
+            </div>,
             '18vw',
             'No',
             null,
             'Yes',
             props.cancelPunchOut,
-            true);
+            true
+        );
     };
 
     return (
@@ -46,19 +55,20 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 <ButtonContainer>
                     <Button
                         disabled={!props.isCancelable}
-                        variant='outlined'
+                        variant="outlined"
                         onClick={(): void => confirmCancelIpo()}
                     >
-                        <EdsIcon name='calendar_reject' /> Cancel IPO
+                        <EdsIcon name="calendar_reject" /> Cancel IPO
                     </Button>
-                    { props.showEditButton && (
+                    {props.showEditButton && (
                         <>
                             <ButtonSpacer />
                             <Link to={`/EditIPO/${props.ipoId}`}>
                                 <Button
                                     disabled={!props.isEditable}
-                                    variant='outlined'>
-                                    <EdsIcon name='edit' /> Edit
+                                    variant="outlined"
+                                >
+                                    <EdsIcon name="edit" /> Edit
                                 </Button>
                             </Link>
                         </>
@@ -66,7 +76,10 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                 </ButtonContainer>
             </HeaderContainer>
             <ProgressBarContainer>
-                <ProgressBar steps={props.steps} currentStep={props.currentStep} />
+                <ProgressBar
+                    steps={props.steps}
+                    currentStep={props.currentStep}
+                />
             </ProgressBarContainer>
         </Container>
     );

@@ -1,4 +1,4 @@
-import ProCoSysSettings, {AsyncState} from '@procosys/core/ProCoSysSettings';
+import ProCoSysSettings, { AsyncState } from '@procosys/core/ProCoSysSettings';
 
 import AuthService from './auth/AuthService';
 import Error from './components/Error';
@@ -15,20 +15,23 @@ element.setAttribute('id', 'app-container');
 document.body.appendChild(element);
 
 const getHelmetBaseConfig = (): JSX.Element => {
-    return <Helmet titleTemplate="ProCoSys %s">
-        <title>- Authenticating</title>
-        <link rel="icon" type="image/png" href={favicon} sizes="16x16" />
-    </Helmet>;
+    return (
+        <Helmet titleTemplate="ProCoSys %s">
+            <title>- Authenticating</title>
+            <link rel="icon" type="image/png" href={favicon} sizes="16x16" />
+        </Helmet>
+    );
 };
 
 render(
-    <>{getHelmetBaseConfig()}
+    <>
+        {getHelmetBaseConfig()}
         <Loading title="Loading configuration" />
     </>,
-    element);
+    element
+);
 
 const validateConfigurationState = async (): Promise<void> => {
-
     await ProCoSysSettings.loadAuthConfiguration();
 
     if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
@@ -37,7 +40,8 @@ const validateConfigurationState = async (): Promise<void> => {
                 {getHelmetBaseConfig()}
                 <Error title="Failed to initialize auth config" large />
             </>,
-            element);
+            element
+        );
     } else {
         const authService = new AuthService();
         authService.handleRedirectCallback();
@@ -55,18 +59,19 @@ const validateConfigurationState = async (): Promise<void> => {
                         {getHelmetBaseConfig()}
                         <Login />
                     </>,
-                    element);
+                    element
+                );
             } else {
                 render(
                     <>
                         {getHelmetBaseConfig()}
                         <Root authService={authService} />
                     </>,
-                    element);
+                    element
+                );
             }
         }
     }
 };
 
 validateConfigurationState();
-

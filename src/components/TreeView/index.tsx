@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { TreeContainer, NodeContainer, ExpandCollapseIcon, NodeName, NodeLink } from './style';
+import {
+    TreeContainer,
+    NodeContainer,
+    ExpandCollapseIcon,
+    NodeName,
+    NodeLink,
+} from './style';
 import Spinner from '../Spinner';
 
 /**
@@ -41,19 +47,22 @@ const TreeView = ({
     dirtyNodeId,
     resetDirtyNode,
     hasUnsavedChanges = false,
-    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?'
+    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?',
 }: TreeViewProps): JSX.Element => {
-
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
     const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
-    const [pathToExpandTree, setPathToExpandTree] = useState<(string | number)[]>();
+    const [pathToExpandTree, setPathToExpandTree] =
+        useState<(string | number)[]>();
 
-    const getNodeChildCountAndCollapse = (parentNodeId: string | number): number => {
+    const getNodeChildCountAndCollapse = (
+        parentNodeId: string | number
+    ): number => {
         let childCount = 0;
 
-        treeData.forEach(treeNode => {
-            let nodeParentId: number | string | null | undefined = treeNode.parentId;
+        treeData.forEach((treeNode) => {
+            let nodeParentId: number | string | null | undefined =
+                treeNode.parentId;
 
             while (nodeParentId) {
                 // check whether the child exists under the parent node in question (and collapse)
@@ -63,7 +72,9 @@ const TreeView = ({
                 }
 
                 // move up the tree
-                const parent = treeData.find(data => data.id === nodeParentId);
+                const parent = treeData.find(
+                    (data) => data.id === nodeParentId
+                );
                 nodeParentId = parent ? parent.parentId : null;
             }
         });
@@ -81,7 +92,7 @@ const TreeView = ({
         }
 
         // set parent relation for all children
-        children.forEach(child => child.parentId = node.id);
+        children.forEach((child) => (child.parentId = node.id));
 
         // set child relations for the parent
         node.children = children;
@@ -94,7 +105,9 @@ const TreeView = ({
         node.isExpanded = false;
 
         const collapsingNodeId = node.id;
-        const collapsingNodeIndex = treeData.findIndex(data => data.id === collapsingNodeId);
+        const collapsingNodeIndex = treeData.findIndex(
+            (data) => data.id === collapsingNodeId
+        );
 
         // get number of child nodes to remove
         const childCount = getNodeChildCountAndCollapse(collapsingNodeId);
@@ -121,7 +134,9 @@ const TreeView = ({
         }
 
         // insert children after parent
-        const expandingNodeIndex = treeData.findIndex(data => data.id === node.id);
+        const expandingNodeIndex = treeData.findIndex(
+            (data) => data.id === node.id
+        );
 
         const newTreeData = [...treeData];
         newTreeData.splice(expandingNodeIndex + 1, 0, ...children);
@@ -130,8 +145,11 @@ const TreeView = ({
     };
 
     /** Find path to selected node, recusively */
-    const getPathToSelectedNode = (nodeId: string | number, path: (string | number)[]): (string | number)[] => {
-        const node = treeData.find(data => data.id === nodeId);
+    const getPathToSelectedNode = (
+        nodeId: string | number,
+        path: (string | number)[]
+    ): (string | number)[] => {
+        const node = treeData.find((data) => data.id === nodeId);
 
         if (node && node.parentId) {
             path.unshift(node.parentId);
@@ -149,7 +167,9 @@ const TreeView = ({
         }
 
         const refreshingNodeId = node.id;
-        const refreshingNodeIndex = treeData.findIndex(data => data.id === refreshingNodeId);
+        const refreshingNodeIndex = treeData.findIndex(
+            (data) => data.id === refreshingNodeId
+        );
 
         // get number of child nodes to remove
         const childCount = getNodeChildCountAndCollapse(refreshingNodeId);
@@ -173,7 +193,7 @@ const TreeView = ({
 
         // add indentation based on number of parents up the tree
         while (parentId) {
-            const parent = treeData.find(node => node.id === parentId);
+            const parent = treeData.find((node) => node.id === parentId);
 
             if (parent) {
                 parentId = parent.parentId;
@@ -198,20 +218,28 @@ const TreeView = ({
             <ExpandCollapseIcon
                 isExpanded={isExpanded}
                 onClick={async (): Promise<void> => {
-                    loading ? null : (isExpanded ? collapseNode(node) : await expandNode(node));
+                    loading
+                        ? null
+                        : isExpanded
+                        ? collapseNode(node)
+                        : await expandNode(node);
                 }}
                 spinner={loading == node.id}
             >
-                {(isExpanded && loading != node.id) && <KeyboardArrowDownIcon />}
-                {(!isExpanded && loading != node.id) && <KeyboardArrowRightIcon />}
-                {(loading == node.id) && <Spinner />}
+                {isExpanded && loading != node.id && <KeyboardArrowDownIcon />}
+                {!isExpanded && loading != node.id && (
+                    <KeyboardArrowRightIcon />
+                )}
+                {loading == node.id && <Spinner />}
             </ExpandCollapseIcon>
         );
     };
 
     const selectNode = (node: NodeData): void => {
         if (selectedNodeId) {
-            const currentSelectedNodeIndex = treeData.findIndex(node => node.id === selectedNodeId);
+            const currentSelectedNodeIndex = treeData.findIndex(
+                (node) => node.id === selectedNodeId
+            );
             if (currentSelectedNodeIndex != -1) {
                 treeData[currentSelectedNodeIndex].isSelected = false;
             }
@@ -234,22 +262,21 @@ const TreeView = ({
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
                 isSelected={node.isSelected === true}
-                title={node.name}>
-                {
-                    node.onClick && (
-                        <NodeLink
-                            isExpanded={node.isExpanded === true}
-                            isVoided={node.isVoided === true}
-                            onClick={(): void => { handleOnClick(node); }}
-                            isSelected={node.isSelected ? true : false}
-                        >
-                            {node.name}
-                        </NodeLink>
-                    )
-                }
-                {
-                    !node.onClick && node.name
-                }
+                title={node.name}
+            >
+                {node.onClick && (
+                    <NodeLink
+                        isExpanded={node.isExpanded === true}
+                        isVoided={node.isVoided === true}
+                        onClick={(): void => {
+                            handleOnClick(node);
+                        }}
+                        isSelected={node.isSelected ? true : false}
+                    >
+                        {node.name}
+                    </NodeLink>
+                )}
+                {!node.onClick && node.name}
             </NodeName>
         );
     };
@@ -267,9 +294,13 @@ const TreeView = ({
 
     useEffect(() => {
         if (dirtyNodeId && dirtyNodeId !== '') {
-            const dirtyNode = treeData.find(node => node.id === dirtyNodeId);
+            const dirtyNode = treeData.find((node) => node.id === dirtyNodeId);
 
-            if (dirtyNode && dirtyNode.children && dirtyNode.children.length > 0) {
+            if (
+                dirtyNode &&
+                dirtyNode.children &&
+                dirtyNode.children.length > 0
+            ) {
                 refreshNode(dirtyNode);
                 resetDirtyNode && resetDirtyNode();
             }
@@ -280,7 +311,7 @@ const TreeView = ({
         (async (): Promise<void> => {
             if (pathToExpandTree) {
                 for (const nodeId of pathToExpandTree) {
-                    const node = treeData.find(node => node.id === nodeId);
+                    const node = treeData.find((node) => node.id === nodeId);
                     if (node && !node.isExpanded) {
                         await expandNode(node);
                     }
@@ -288,7 +319,9 @@ const TreeView = ({
                 setPathToExpandTree([]);
             }
             if (selectedNodeId) {
-                const selected = treeData.find((node) => node.id === selectedNodeId);
+                const selected = treeData.find(
+                    (node) => node.id === selectedNodeId
+                );
                 if (selected) {
                     selected.isSelected = true;
                 }
@@ -297,11 +330,7 @@ const TreeView = ({
     }, [treeData]);
 
     return (
-        <TreeContainer>
-            {
-                treeData.map(node => getNode(node))
-            }
-        </TreeContainer>
+        <TreeContainer>{treeData.map((node) => getNode(node))}</TreeContainer>
     );
 };
 

@@ -9,12 +9,12 @@ export const Header = styled.header`
         margin-bottom: calc(var(--grid-unit) * 2);
         font-size: calc(var(--grid-unit) * 3);
         line-height: calc(var(--grid-unit) * 5);
-    };
+    }
 `;
 
 export const Container = styled.div`
-    display:flex;
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
     padding: calc(var(--grid-unit) * 2);
 `;
 
@@ -31,14 +31,11 @@ export const AttachmentsContainer = styled.div`
     flex-direction: column;
 `;
 
-
 export const ButtonContainer = styled.div`
-    display:flex;
-    justify-content:flex-end; 
+    display: flex;
+    justify-content: flex-end;
 `;
 
 export const ButtonSpacer = styled.div`
-   margin-right: calc(var(--grid-unit) * 2);
+    margin-right: calc(var(--grid-unit) * 2);
 `;
-
-

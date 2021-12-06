@@ -7,12 +7,12 @@ export const Header = styled.header`
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 `;
 
 export const InputContainer = styled.div`
     display: flex;
-    margin-bottom: calc(var(--grid-unit) *2);
+    margin-bottom: calc(var(--grid-unit) * 2);
 `;
 
 export const FormFieldSpacer = styled.div`

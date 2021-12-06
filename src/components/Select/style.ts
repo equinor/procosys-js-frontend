@@ -12,25 +12,27 @@ export const Container = styled.div<{ maxHeight?: string }>`
         z-index: 100;
         white-space: nowrap;
 
-
-        ${(props): any => props.maxHeight && css`
-            max-height: ${props.maxHeight};
-            overflow-y: auto;
-            box-shadow: ${tokens.elevation.raised};
-        `}
-        
+        ${(props): any =>
+            props.maxHeight &&
+            css`
+                max-height: ${props.maxHeight};
+                overflow-y: auto;
+                box-shadow: ${tokens.elevation.raised};
+            `}
 
         li div {
-            box-shadow: 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+            box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.12),
+                0px 2px 4px rgba(0, 0, 0, 0.14);
         }
 
         li:first-child > div {
             border-radius: 4px 4px 0px 0px;
-            box-shadow: 0px -2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
         }
 
         li:only-child > div {
-            box-shadow: 0px 1px 5px rgba(0,0,0,0.2), 0px 3px 4px rgba(0,0,0,0.12), 0px 2px 4px rgba(0,0,0,0.14);
+            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2),
+                0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14);
             border-radius: 4px;
         }
 
@@ -38,7 +40,8 @@ export const Container = styled.div<{ maxHeight?: string }>`
             border-radius: 0px 0px 4px 4px;
         }
 
-        > div:hover, li[data-selected="true"] > div {
+        > div:hover,
+        li[data-selected='true'] > div {
             background-color: ${tokens.colors.ui.background__light.rgba};
         }
     }
@@ -53,7 +56,6 @@ interface IconProps {
     voided: boolean;
 }
 
-
 export const DropdownIcon = styled.div<IconProps>`
     padding-left: 8px;
     display: flex;
@@ -61,16 +63,20 @@ export const DropdownIcon = styled.div<IconProps>`
     justify-content: flex-end;
     align-items: right;
     path {
-        ${({disabled}): any => disabled && css`
-            fill: ${tokens.colors.interactive.disabled__text.rgba};
-        `}
+        ${({ disabled }): any =>
+            disabled &&
+            css`
+                fill: ${tokens.colors.interactive.disabled__text.rgba};
+            `}
     }
     min-height: calc(var(--grid-unit) * 3);
-    ${({voided}): any => voided && css`
-        svg {
-            display: none;
-        }
-    `}
+    ${({ voided }): any =>
+        voided &&
+        css`
+            svg {
+                display: none;
+            }
+        `}
 `;
 
 interface DropdownButtonProps {
@@ -79,10 +85,12 @@ interface DropdownButtonProps {
 }
 
 export const DropdownButton = styled.button<DropdownButtonProps>`
-    ${(props): any => props.isVoided && css`
-        cursor: not-allowed;
-        color: ${tokens.colors.interactive.disabled__text.rgba};
-    `}
+    ${(props): any =>
+        props.isVoided &&
+        css`
+            cursor: not-allowed;
+            color: ${tokens.colors.interactive.disabled__text.rgba};
+        `}
     border: none;
     display: flex;
     width: 100%;
@@ -93,7 +101,8 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
     ${(props): any =>
         props.isOpen &&
         css`
-            background-color: ${tokens.colors.interactive.primary__selected_highlight.rgba};
+            background-color: ${tokens.colors.interactive
+                .primary__selected_highlight.rgba};
         `}
 `;
 
@@ -107,9 +116,9 @@ export const SelectableItem = styled.li<SelectableItemProps>`
 
     :first-child {
         background-color: ${(props): any =>
-        props.selected
-            ? tokens.colors.ui.background__light.rgba
-            : 'transparent'};
+            props.selected
+                ? tokens.colors.ui.background__light.rgba
+                : 'transparent'};
     }
 
     :hover > ul {
@@ -161,7 +170,7 @@ export const ItemContent = styled.div`
     svg:first-of-type {
         padding-right: calc(var(--grid-unit) * 2);
     }
-    
+
     .arrowIcon {
         margin-left: auto;
     }
@@ -179,9 +188,11 @@ export const TitleContent = styled.div<TitleContentProps>`
     font-weight: normal;
     background-color: ${tokens.colors.ui.background__default.rgba};
     margin-left: var(--grid-unit);
-    ${(props): any => props.borderTop && css`
-        border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
-    `}
+    ${(props): any =>
+        props.borderTop &&
+        css`
+            border-top: 1px solid ${tokens.colors.ui.background__medium.rgba};
+        `}
 `;
 
 interface LabelProps {
@@ -190,7 +201,9 @@ interface LabelProps {
 
 export const Label = styled.div<LabelProps>`
     font-size: 12px;
-    ${(props): any => props.isVoided && css`
-        color: ${tokens.colors.interactive.disabled__text.rgba};
-    `}
+    ${(props): any =>
+        props.isVoided &&
+        css`
+            color: ${tokens.colors.interactive.disabled__text.rgba};
+        `}
 `;

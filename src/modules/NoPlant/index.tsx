@@ -12,7 +12,6 @@ import useRouter from '../../hooks/useRouter';
 const cache = new CacheService('default', localStorage);
 
 const NoPlant = (): JSX.Element => {
-
     const [selectedPlant, setSelectedPlant] = useState<string | null>(null);
     const { history } = useRouter();
     const { plants } = useCurrentUser();
@@ -42,14 +41,18 @@ const NoPlant = (): JSX.Element => {
                 <Helmet>
                     <title>{'- NoPlants'}</title>
                 </Helmet>
-                <Typography variant="h1">You dont have access to any plants</Typography></Container>);
+                <Typography variant="h1">
+                    You dont have access to any plants
+                </Typography>
+            </Container>
+        );
     }
 
     if (selectedPlant) {
         return (
             <Redirect
                 to={{
-                    pathname: `/${selectedPlant}/`
+                    pathname: `/${selectedPlant}/`,
                 }}
             />
         );
@@ -60,10 +63,16 @@ const NoPlant = (): JSX.Element => {
             <Helmet>
                 <title>{'- Initializing'}</title>
             </Helmet>
-            <div><Spinner large /></div>
-            <div><Typography variant="h1">Initializing application...</Typography></div>
-        </Container>);
-
+            <div>
+                <Spinner large />
+            </div>
+            <div>
+                <Typography variant="h1">
+                    Initializing application...
+                </Typography>
+            </div>
+        </Container>
+    );
 };
 
 export default NoPlant;

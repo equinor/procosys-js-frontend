@@ -5,7 +5,9 @@ import { render } from '@testing-library/react';
 describe('<CommPkgTable />', () => {
     it('Should render table', () => {
         const propFunc = jest.fn();
-        const { queryByText } = render(<CommPkgTable setSelectedCommPkgScope={propFunc} />);
+        const { queryByText } = render(
+            <CommPkgTable setSelectedCommPkgScope={propFunc} />
+        );
         expect(queryByText('Description')).toBeInTheDocument();
         expect(queryByText('Comm status')).toBeInTheDocument();
         expect(queryByText('Comm pkg')).toBeInTheDocument();
@@ -34,8 +36,13 @@ describe('<CommPkgTable />', () => {
 
     it('Should render the search field as disabled if the type is MDP and the commPkgNo is in the URL', () => {
         const propFunc = jest.fn();
-        const { queryByPlaceholderText } = render(<CommPkgTable type='MDP' commPkgNo={50} setSelectedCommPkgScope={propFunc} />);
+        const { queryByPlaceholderText } = render(
+            <CommPkgTable
+                type="MDP"
+                commPkgNo={50}
+                setSelectedCommPkgScope={propFunc}
+            />
+        );
         expect(queryByPlaceholderText('Search')).toBeDisabled();
     });
-
 });

@@ -14,4 +14,3 @@ export const CustomTable = styled.table`
     white-space: nowrap;
     width: 100%;
 `;
-

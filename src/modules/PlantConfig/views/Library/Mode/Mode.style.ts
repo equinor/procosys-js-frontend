@@ -13,16 +13,16 @@ export const InputContainer = styled.div`
 export const Container = styled.div`
     display: flex;
     width: 100%;
-    flex-direction: column; 
+    flex-direction: column;
     padding: var(--grid-unit);
 `;
 
 export const StepsContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto; 
+    grid-template-columns: auto auto auto auto;
     width: fit-content;
     padding: var(--grid-unit);
-    align-items:flex-end;
+    align-items: flex-end;
 `;
 
 export const ButtonContainer = styled.div`

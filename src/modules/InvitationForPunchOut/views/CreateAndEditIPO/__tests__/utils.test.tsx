@@ -57,6 +57,3 @@ describe('Create IPO utilities', () => {
         expect(endDate.toString()).toBe(expectedDate.toString());
     });
 });
-
-
-

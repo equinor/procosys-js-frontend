@@ -15,9 +15,8 @@ const Flyout = ({
     minWidth,
     maxWidth,
     close,
-    children
+    children,
 }: FlyoutProps): JSX.Element => {
-
     const flyoutRef = useRef<HTMLDivElement>(null);
 
     // fade-in effect
@@ -30,14 +29,16 @@ const Flyout = ({
     }, [flyoutRef]);
 
     return (
-        <Overlay
-            onMouseDown={close}>
+        <Overlay onMouseDown={close}>
             <FlyoutContainer
                 position={position ? position : 'right'}
                 minWidth={minWidth ? minWidth : '300px'}
                 maxWidth={maxWidth ? maxWidth : '580px'}
                 ref={flyoutRef}
-                onMouseDown={(event: MouseEvent): void => event.stopPropagation()}>
+                onMouseDown={(event: MouseEvent): void =>
+                    event.stopPropagation()
+                }
+            >
                 {children}
             </FlyoutContainer>
         </Overlay>

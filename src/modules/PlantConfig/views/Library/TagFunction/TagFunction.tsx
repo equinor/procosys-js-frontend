@@ -1,5 +1,15 @@
-import { Breadcrumbs, Container, DetailsSection, InformationContainer, Section, SpinnerContainer, TabBar, TabBarButton, TabBarFiller } from './TagFunction.style';
-import React, {useEffect, useState} from 'react';
+import {
+    Breadcrumbs,
+    Container,
+    DetailsSection,
+    InformationContainer,
+    Section,
+    SpinnerContainer,
+    TabBar,
+    TabBarButton,
+    TabBarFiller,
+} from './TagFunction.style';
+import React, { useEffect, useState } from 'react';
 import { TextField, Typography } from '@equinor/eds-core-react';
 
 import { Canceler } from 'axios';
@@ -22,8 +32,9 @@ interface TagFunction {
 }
 
 const TagFunction = (props: TagFunctionProps): JSX.Element => {
-
-    const [tagFunctionData, setTagFunctionData] = useState<TagFunction | null>(null);
+    const [tagFunctionData, setTagFunctionData] = useState<TagFunction | null>(
+        null
+    );
 
     const { procosysApiClient } = useProcosysContext();
 
@@ -31,10 +42,18 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const data = await procosysApiClient.getTagFunction(props.tagFunctionCode, props.registerCode, (cancel: Canceler) => requestCancellor = cancel);
+                const data = await procosysApiClient.getTagFunction(
+                    props.tagFunctionCode,
+                    props.registerCode,
+                    (cancel: Canceler) => (requestCancellor = cancel)
+                );
                 setTagFunctionData(data);
             } catch (error) {
-                console.error('Get tag function details failed: ', error.message, error.data);
+                console.error(
+                    'Get tag function details failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000);
             }
         })();
@@ -53,23 +72,43 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
             <SpinnerContainer>
                 <Spinner large />
                 <Typography variant="h3">Loading library data</Typography>
-            </SpinnerContainer>);
+            </SpinnerContainer>
+        );
     }
     return (
-
         <Container>
-            <Breadcrumbs>Library / Tag functions / {tagFunctionData.registerDescription} / {tagFunctionData.code}, {tagFunctionData.description}</Breadcrumbs>
+            <Breadcrumbs>
+                Library / Tag functions / {tagFunctionData.registerDescription}{' '}
+                / {tagFunctionData.code}, {tagFunctionData.description}
+            </Breadcrumbs>
             <DetailsSection>
-                <Typography variant="h3">{tagFunctionData.code}, {tagFunctionData.description}</Typography>
+                <Typography variant="h3">
+                    {tagFunctionData.code}, {tagFunctionData.description}
+                </Typography>
                 <InformationContainer>
                     <div className="inputRow">
-                        <TextField id="inp_register" value={tagFunctionData.registerDescription} label="Register" disabled />
+                        <TextField
+                            id="inp_register"
+                            value={tagFunctionData.registerDescription}
+                            label="Register"
+                            disabled
+                        />
                     </div>
                     <div className="inputRow">
-                        <TextField id="inp_tag_function" value={tagFunctionData.code} label="Tag function" disabled />
+                        <TextField
+                            id="inp_tag_function"
+                            value={tagFunctionData.code}
+                            label="Tag function"
+                            disabled
+                        />
                     </div>
                     <div className="inputRow">
-                        <TextField id="inp_description" value={tagFunctionData.description} label="Description" disabled />
+                        <TextField
+                            id="inp_description"
+                            value={tagFunctionData.description}
+                            label="Description"
+                            disabled
+                        />
                     </div>
                 </InformationContainer>
             </DetailsSection>
@@ -78,9 +117,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                     {/* <TabBarButton disabled>
                         Completion
                     </TabBarButton > */}
-                    <TabBarButton current>
-                        Preservation
-                    </TabBarButton>
+                    <TabBarButton current>Preservation</TabBarButton>
                     {/* <TabBarButton disabled>
                         DCCL
                     </TabBarButton>
@@ -101,10 +138,12 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                     </TabBarFiller>
                 </TabBar>
                 <Section>
-                    <PreservationTab registerCode={props.registerCode} tagFunctionCode={props.tagFunctionCode} />
+                    <PreservationTab
+                        registerCode={props.registerCode}
+                        tagFunctionCode={props.tagFunctionCode}
+                    />
                 </Section>
             </Section>
-
         </Container>
     );
 };

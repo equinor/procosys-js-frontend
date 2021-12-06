@@ -1,7 +1,21 @@
-import { Attachment, CommPkgRow, ExternalEmail, GeneralInfoDetails, McScope, Participant, Person, RoleParticipant, Step } from '../../types';
+import {
+    Attachment,
+    CommPkgRow,
+    ExternalEmail,
+    GeneralInfoDetails,
+    McScope,
+    Participant,
+    Person,
+    RoleParticipant,
+    Step,
+} from '../../types';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { ComponentName, IpoCustomEvents } from '../enums';
-import { FunctionalRoleDto, ParticipantDto, PersonDto } from '../../http/InvitationForPunchOutApiClient';
+import {
+    FunctionalRoleDto,
+    ParticipantDto,
+    PersonDto,
+} from '../../http/InvitationForPunchOutApiClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -26,38 +40,46 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     description: '',
     startTime: new Date(),
     endTime: new Date(),
-    location: ''
+    location: '',
 };
 
 const EditIPO = (): JSX.Element => {
-
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: true },
         { title: 'Scope', isCompleted: true },
         { title: 'Participants', isCompleted: true },
         { title: 'Upload attachments', isCompleted: true },
-        { title: 'Summary & update', isCompleted: true }
+        { title: 'Summary & update', isCompleted: true },
     ];
 
     const params = useParams<{ ipoId: any }>();
     const [attachments, setAttachments] = useState<Attachment[]>([]);
-    const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [initialGeneralInfo, setInitialGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [confirmationChecked, setConfirmationChecked] = useState<boolean>(true);
-    const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
-    const [initialSelectedCommPkgScope, setInitialSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
+    const [generalInfo, setGeneralInfo] =
+        useState<GeneralInfoDetails>(emptyGeneralInfo);
+    const [initialGeneralInfo, setInitialGeneralInfo] =
+        useState<GeneralInfoDetails>(emptyGeneralInfo);
+    const [confirmationChecked, setConfirmationChecked] =
+        useState<boolean>(true);
+    const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<
+        CommPkgRow[]
+    >([]);
+    const [initialSelectedCommPkgScope, setInitialSelectedCommPkgScope] =
+        useState<CommPkgRow[]>([]);
     const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
         system: null,
         multipleDisciplines: false,
-        selected: []
+        selected: [],
     });
-    const [initialSelectedMcPkgScope, setInitialSelectedMcPkgScope] = useState<McScope>({
-        system: null,
-        multipleDisciplines: false,
-        selected: []
-    });
+    const [initialSelectedMcPkgScope, setInitialSelectedMcPkgScope] =
+        useState<McScope>({
+            system: null,
+            multipleDisciplines: false,
+            selected: [],
+        });
     const [participants, setParticipants] = useState<Participant[]>([]);
-    const [initialParticipants, setInitialParticipants] = useState<Participant[]>([]);
+    const [initialParticipants, setInitialParticipants] = useState<
+        Participant[]
+    >([]);
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [invitation, setInvitation] = useState<Invitation>();
@@ -66,7 +88,8 @@ const EditIPO = (): JSX.Element => {
 
     const { apiClient } = useInvitationForPunchOutContext();
     const { history } = useRouter();
-    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } = useDirtyContext();
+    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } =
+        useDirtyContext();
     const analystics = useAnalytics();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
 
@@ -74,7 +97,9 @@ const EditIPO = (): JSX.Element => {
      * Check and set dirty state for all components
      */
     useEffect(() => {
-        if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+        if (
+            JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)
+        ) {
             setDirtyStateFor(ComponentName.GeneralInfo);
         } else {
             unsetDirtyStateFor(ComponentName.GeneralInfo);
@@ -82,8 +107,10 @@ const EditIPO = (): JSX.Element => {
     }, [generalInfo]);
 
     useEffect(() => {
-        const newScope = selectedCommPkgScope.map(({commPkgNo}) => commPkgNo);
-        const initialScope = initialSelectedCommPkgScope.map(({commPkgNo}) => commPkgNo);
+        const newScope = selectedCommPkgScope.map(({ commPkgNo }) => commPkgNo);
+        const initialScope = initialSelectedCommPkgScope.map(
+            ({ commPkgNo }) => commPkgNo
+        );
         if (JSON.stringify(newScope) !== JSON.stringify(initialScope)) {
             setDirtyStateFor(ComponentName.Scope);
         } else {
@@ -92,9 +119,16 @@ const EditIPO = (): JSX.Element => {
     }, [selectedCommPkgScope]);
 
     useEffect(() => {
-        const mcPkgs = selectedMcPkgScope.selected.map(({mcPkgNo}) => mcPkgNo);
-        const initialMcPkgs = initialSelectedMcPkgScope.selected.map(({mcPkgNo}) => mcPkgNo);
-        if (JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) || selectedMcPkgScope.system !== initialSelectedMcPkgScope.system) {
+        const mcPkgs = selectedMcPkgScope.selected.map(
+            ({ mcPkgNo }) => mcPkgNo
+        );
+        const initialMcPkgs = initialSelectedMcPkgScope.selected.map(
+            ({ mcPkgNo }) => mcPkgNo
+        );
+        if (
+            JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) ||
+            selectedMcPkgScope.system !== initialSelectedMcPkgScope.system
+        ) {
             setDirtyStateFor(ComponentName.Scope);
         } else {
             unsetDirtyStateFor(ComponentName.Scope);
@@ -102,7 +136,9 @@ const EditIPO = (): JSX.Element => {
     }, [selectedMcPkgScope]);
 
     useEffect(() => {
-        if (JSON.stringify(participants) !== JSON.stringify(initialParticipants)) {
+        if (
+            JSON.stringify(participants) !== JSON.stringify(initialParticipants)
+        ) {
             setDirtyStateFor(ComponentName.Participants);
         } else {
             unsetDirtyStateFor(ComponentName.Participants);
@@ -110,41 +146,52 @@ const EditIPO = (): JSX.Element => {
     }, [participants]);
 
     /**
-     * Fetch and set available functional roles 
+     * Fetch and set available functional roles
      */
-    const getFunctionalRoles = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
-        try {
-            const functionalRoles = await apiClient.getFunctionalRolesAsync(requestCanceller)
-                .then(roles => roles.map((role): RoleParticipant => {
-                    return {
-                        code: role.code,
-                        description: role.description,
-                        usePersonalEmail: role.usePersonalEmail,
-                        notify: false,
-                        persons: role.persons.map(p => {
+    const getFunctionalRoles = useCallback(
+        async (
+            requestCanceller?: (cancelCallback: Canceler) => void
+        ): Promise<void> => {
+            try {
+                const functionalRoles = await apiClient
+                    .getFunctionalRolesAsync(requestCanceller)
+                    .then((roles) =>
+                        roles.map((role): RoleParticipant => {
                             return {
-                                azureOid: p.azureOid,
-                                name: `${p.firstName} ${p.lastName}`,
-                                email: p.email,
-                                radioOption: role.usePersonalEmail ? 'to' : null,
+                                code: role.code,
+                                description: role.description,
+                                usePersonalEmail: role.usePersonalEmail,
+                                notify: false,
+                                persons: role.persons.map((p) => {
+                                    return {
+                                        azureOid: p.azureOid,
+                                        name: `${p.firstName} ${p.lastName}`,
+                                        email: p.email,
+                                        radioOption: role.usePersonalEmail
+                                            ? 'to'
+                                            : null,
+                                    };
+                                }),
                             };
                         })
-                    };
-                }));
-            setAvailableRoles(functionalRoles);
-        } catch (error) {
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
-    }, [params.ipoId]);
+                    );
+                setAvailableRoles(functionalRoles);
+            } catch (error) {
+                console.error(error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+        },
+        [params.ipoId]
+    );
 
     const getCommPkgScope = (): string[] => {
-        return selectedCommPkgScope.map(c => {
+        return selectedCommPkgScope.map((c) => {
             return c.commPkgNo;
         });
     };
 
-    const getMcScope = (): string[] | null => selectedMcPkgScope.selected.map(mc => mc.mcPkgNo);
+    const getMcScope = (): string[] | null =>
+        selectedMcPkgScope.selected.map((mc) => mc.mcPkgNo);
 
     const getPerson = (participant: Participant): PersonDto | null => {
         if (!participant.person) {
@@ -155,7 +202,7 @@ const EditIPO = (): JSX.Element => {
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             rowVersion: participant.person.rowVersion,
-            required: participant.person.radioOption == 'to'
+            required: participant.person.radioOption == 'to',
         };
     };
 
@@ -163,18 +210,20 @@ const EditIPO = (): JSX.Element => {
         if (!role.persons || role.persons.length == 0) {
             return null;
         }
-        return role.persons.map(p => {
+        return role.persons.map((p) => {
             return {
                 id: p.id,
                 azureOid: p.azureOid,
                 email: p.email,
                 rowVersion: p.rowVersion,
-                required: p.radioOption == 'to' || role.usePersonalEmail
+                required: p.radioOption == 'to' || role.usePersonalEmail,
             };
         });
     };
 
-    const getFunctionalRole = (participant: Participant): FunctionalRoleDto | null => {
+    const getFunctionalRole = (
+        participant: Participant
+    ): FunctionalRoleDto | null => {
         if (!participant.role) {
             return null;
         }
@@ -182,7 +231,7 @@ const EditIPO = (): JSX.Element => {
             id: participant.role.id,
             rowVersion: participant.role.rowVersion,
             code: participant.role.code,
-            persons: getPersons(participant.role)
+            persons: getPersons(participant.role),
         };
     };
 
@@ -193,33 +242,56 @@ const EditIPO = (): JSX.Element => {
                 sortKey: i,
                 externalEmail: p.externalEmail,
                 person: getPerson(p),
-                functionalRole: getFunctionalRole(p)
+                functionalRole: getFunctionalRole(p),
             };
         });
     };
 
     const uploadOrRemoveAttachments = async (ipoId: number): Promise<any> => {
-        await Promise.all(attachments.map(async (attachment) => {
-            try {
-                //Attachments without 'file' is already uploaded
-                if (attachment.file) {
-                    await apiClient.uploadAttachment(ipoId, attachment.file, true);
-                }
+        await Promise.all(
+            attachments.map(async (attachment) => {
+                try {
+                    //Attachments without 'file' is already uploaded
+                    if (attachment.file) {
+                        await apiClient.uploadAttachment(
+                            ipoId,
+                            attachment.file,
+                            true
+                        );
+                    }
 
-                //Attachments already uploaded can be marked to be deleted
-                if (attachment.id && attachment.rowVersion && attachment.toBeDeleted) {
-                    await apiClient.deleteAttachment(ipoId, attachment.id, attachment.rowVersion);
+                    //Attachments already uploaded can be marked to be deleted
+                    if (
+                        attachment.id &&
+                        attachment.rowVersion &&
+                        attachment.toBeDeleted
+                    ) {
+                        await apiClient.deleteAttachment(
+                            ipoId,
+                            attachment.id,
+                            attachment.rowVersion
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        'Upload or delete of attachment failed: ',
+                        error.message,
+                        error.data
+                    );
+                    showSnackbarNotification(error.message);
                 }
-            } catch (error) {
-                console.error('Upload or delete of attachment failed: ', error.message, error.data);
-                showSnackbarNotification(error.message);
-            }
-        }));
+            })
+        );
     };
 
-    const getAttachments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    const getAttachments = async (
+        requestCanceller?: (cancelCallback: Canceler) => void
+    ): Promise<void> => {
         try {
-            const response = await apiClient.getAttachments(params.ipoId, requestCanceller);
+            const response = await apiClient.getAttachments(
+                params.ipoId,
+                requestCanceller
+            );
             setAttachments(response);
         } catch (error) {
             console.error(error.message, error.data);
@@ -229,7 +301,12 @@ const EditIPO = (): JSX.Element => {
 
     const saveUpdatedIpo = async (): Promise<void> => {
         setIsSaving(true);
-        if (generalInfo.title && generalInfo.projectName && generalInfo.poType && invitation) {
+        if (
+            generalInfo.title &&
+            generalInfo.projectName &&
+            generalInfo.poType &&
+            invitation
+        ) {
             try {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
@@ -248,7 +325,10 @@ const EditIPO = (): JSX.Element => {
                     commPkgScope,
                     invitation.rowVersion
                 );
-                analystics.trackUserAction(IpoCustomEvents.EDITED, { project: generalInfo.projectName, type: generalInfo.poType.value });
+                analystics.trackUserAction(IpoCustomEvents.EDITED, {
+                    project: generalInfo.projectName,
+                    type: generalInfo.poType.value,
+                });
 
                 await uploadOrRemoveAttachments(params.ipoId);
 
@@ -256,42 +336,61 @@ const EditIPO = (): JSX.Element => {
                     ComponentName.GeneralInfo,
                     ComponentName.Scope,
                     ComponentName.Participants,
-                    ComponentName.Attachments]);
+                    ComponentName.Attachments,
+                ]);
                 history.push('/' + params.ipoId);
             } catch (error) {
-                console.error('Save updated IPO failed: ', error.message, error.data);
+                console.error(
+                    'Save updated IPO failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message);
             }
         }
         setIsSaving(false);
     };
 
-    const getInvitation = useCallback(async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
-        try {
-            const response = await apiClient.getIPO(params.ipoId, requestCanceller);
-            setInvitation(response);
-        } catch (error) {
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
-        }
-    }, [params.ipoId]);
+    const getInvitation = useCallback(
+        async (
+            requestCanceller?: (cancelCallback: Canceler) => void
+        ): Promise<void> => {
+            try {
+                const response = await apiClient.getIPO(
+                    params.ipoId,
+                    requestCanceller
+                );
+                setInvitation(response);
+            } catch (error) {
+                console.error(error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+        },
+        [params.ipoId]
+    );
 
     /**
-     *  Populate forms based on invitation to edit 
+     *  Populate forms based on invitation to edit
      */
     useEffect(() => {
         if (invitation) {
             //General information
-            const poType = poTypes.find((p: SelectItem) => p.value === invitation.type);
+            const poType = poTypes.find(
+                (p: SelectItem) => p.value === invitation.type
+            );
             const info = {
                 ...emptyGeneralInfo,
-                projectName: invitation.projectName ? invitation.projectName : '',
+                projectName: invitation.projectName
+                    ? invitation.projectName
+                    : '',
                 poType: poType ? poType : null,
                 title: invitation.title ? invitation.title : '',
-                description: invitation.description ? invitation.description : '',
+                description: invitation.description
+                    ? invitation.description
+                    : '',
                 startTime: new Date(invitation.startTimeUtc),
                 endTime: new Date(invitation.endTimeUtc),
-                location: invitation.location ? invitation.location : ''
+                location: invitation.location ? invitation.location : '',
             };
             setGeneralInfo({ ...info });
             setInitialGeneralInfo({ ...info });
@@ -305,14 +404,21 @@ const EditIPO = (): JSX.Element => {
                         commPkgNo: commPkg.commPkgNo,
                         description: commPkg.description,
                         system: commPkg.system,
-                        status: commPkg.status
+                        status: commPkg.status,
                     });
                 });
                 setSelectedCommPkgScope(commPkgScope);
                 setInitialSelectedCommPkgScope(commPkgScope);
-            } else if (invitation.mcPkgScope && invitation.mcPkgScope.length > 0) {
+            } else if (
+                invitation.mcPkgScope &&
+                invitation.mcPkgScope.length > 0
+            ) {
                 //MCPkg
-                const mcPkgScope: McScope = { system: null, multipleDisciplines: false, selected: [] };
+                const mcPkgScope: McScope = {
+                    system: null,
+                    multipleDisciplines: false,
+                    selected: [],
+                };
 
                 invitation.mcPkgScope.forEach((mcPkg) => {
                     if (!mcPkgScope.system) {
@@ -323,7 +429,7 @@ const EditIPO = (): JSX.Element => {
                         description: mcPkg.description,
                         system: mcPkg.system,
                         commPkgNo: mcPkg.commPkgNo,
-                        discipline: ''
+                        discipline: '',
                     });
                 });
                 setSelectedMcPkgScope(mcPkgScope);
@@ -333,7 +439,6 @@ const EditIPO = (): JSX.Element => {
             //Participants
             const participants: Participant[] = [];
             invitation.participants.forEach((participant) => {
-
                 let participantType = '';
                 let person: Person | null = null;
                 let roleParticipant: RoleParticipant | null = null;
@@ -347,7 +452,7 @@ const EditIPO = (): JSX.Element => {
                         azureOid: participant.person.person.azureOid,
                         name: `${participant.person.person.firstName} ${participant.person.person.lastName}`,
                         email: participant.person.person.email,
-                        radioOption: null
+                        radioOption: null,
                     };
                 } else if (participant.functionalRole) {
                     participantType = 'Functional role';
@@ -360,36 +465,48 @@ const EditIPO = (): JSX.Element => {
                             azureOid: person.person.azureOid,
                             name: `${person.person.firstName} ${person.person.lastName}`,
                             email: person.person.email,
-                            radioOption: person.required ? 'to' : 'cc'
+                            radioOption: person.required ? 'to' : 'cc',
                         });
                     });
 
-                    const funcRole = availableRoles ? availableRoles.find((role) => role.code === participant.functionalRole.code) : null;
+                    const funcRole = availableRoles
+                        ? availableRoles.find(
+                              (role) =>
+                                  role.code === participant.functionalRole.code
+                          )
+                        : null;
                     roleParticipant = {
                         id: participant.functionalRole.id,
                         rowVersion: participant.functionalRole.rowVersion,
                         code: participant.functionalRole.code,
                         description: funcRole ? funcRole.description : '',
-                        usePersonalEmail: funcRole ? funcRole.usePersonalEmail : false,
-                        notify: (persons && persons.length > 0) ? true : false,
-                        persons: persons
+                        usePersonalEmail: funcRole
+                            ? funcRole.usePersonalEmail
+                            : false,
+                        notify: persons && persons.length > 0 ? true : false,
+                        persons: persons,
                     };
                 } else if (participant.externalEmail) {
                     participantType = 'Person';
                     externalEmail = {
                         id: participant.externalEmail.id,
                         email: participant.externalEmail.externalEmail,
-                        rowVersion: participant.externalEmail.rowVersion
+                        rowVersion: participant.externalEmail.rowVersion,
                     };
                 }
-                const organizationText = OrganizationMap.get(participant.organization as Organization);
+                const organizationText = OrganizationMap.get(
+                    participant.organization as Organization
+                );
                 const newParticipant: Participant = {
-                    organization: { text: organizationText ? organizationText : 'Unknown', value: participant.organization },
+                    organization: {
+                        text: organizationText ? organizationText : 'Unknown',
+                        value: participant.organization,
+                    },
                     sortKey: participant.sortKey,
                     type: participantType,
                     externalEmail: externalEmail,
                     person: person,
-                    role: roleParticipant
+                    role: roleParticipant,
                 };
                 participants.push(newParticipant);
             });
@@ -400,16 +517,22 @@ const EditIPO = (): JSX.Element => {
     }, [invitation]);
 
     /**
-     * For edit, fetch data for existing ipo 
+     * For edit, fetch data for existing ipo
      */
     useEffect(() => {
         if (params.ipoId && availableRoles) {
             let requestCancellor: Canceler | null = null;
             (async (): Promise<void> => {
                 setIsLoading(true);
-                await getFunctionalRoles((cancel: Canceler) => { requestCancellor = cancel; });
-                await getInvitation((cancel: Canceler) => { requestCancellor = cancel; });
-                await getAttachments((cancel: Canceler) => { requestCancellor = cancel; });
+                await getFunctionalRoles((cancel: Canceler) => {
+                    requestCancellor = cancel;
+                });
+                await getInvitation((cancel: Canceler) => {
+                    requestCancellor = cancel;
+                });
+                await getAttachments((cancel: Canceler) => {
+                    requestCancellor = cancel;
+                });
                 setIsLoading(false);
             })();
             return (): void => {

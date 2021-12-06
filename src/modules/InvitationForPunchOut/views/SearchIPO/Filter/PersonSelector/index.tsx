@@ -2,7 +2,7 @@ import { Container, DropdownItem } from './index.style';
 import React, { useEffect, useState } from 'react';
 
 import { Canceler } from '@procosys/http/HttpClient';
-import Dropdown  from '@procosys/components/Dropdown';
+import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
@@ -12,12 +12,10 @@ import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationFor
 
 const WAIT_INTERVAL = 300;
 
-
 interface PersonSelectorProps {
     personOid: string;
     onChange: (filterParam: rolePersonParamType, value: string) => void;
 }
-
 
 const PersonSelector = ({
     personOid,
@@ -34,9 +32,8 @@ const PersonSelector = ({
     };
 
     useEffect(() => {
-        setSelectedPerson(filteredPersons.find(p => p.value === personOid));
+        setSelectedPerson(filteredPersons.find((p) => p.value === personOid));
     }, [personOid]);
-
 
     const getPersons = (input: string): Canceler | null => {
         let requestCanceler: Canceler | null = null;
@@ -45,14 +42,21 @@ const PersonSelector = ({
                 (async (): Promise<void> => {
                     setIsLoading(true);
 
-                    const persons = await apiClient.getPersonsAsync(input, (cancel: Canceler) => requestCanceler = cancel);
-                    setFilteredPersons(persons.map((person): SelectItem => {
-                        return {
-                            text: nameCombiner(person.firstName, person.lastName),
-                            value: person.azureOid,
-                            email: person.email
-                        };
-                    })
+                    const persons = await apiClient.getPersonsAsync(
+                        input,
+                        (cancel: Canceler) => (requestCanceler = cancel)
+                    );
+                    setFilteredPersons(
+                        persons.map((person): SelectItem => {
+                            return {
+                                text: nameCombiner(
+                                    person.firstName,
+                                    person.lastName
+                                ),
+                                value: person.azureOid,
+                                email: person.email,
+                            };
+                        })
                     );
                     setIsLoading(false);
                 })();
@@ -60,7 +64,6 @@ const PersonSelector = ({
                 showSnackbarNotification(error.message);
                 setIsLoading(false);
             }
-
         } else {
             setFilteredPersons([]);
         }
@@ -81,7 +84,6 @@ const PersonSelector = ({
         onChange('personOid', person ? person.value : '');
     };
 
-
     useEffect(() => {
         const handleFilterChange = async (): Promise<void> => {
             getPersons(personsFilter);
@@ -96,32 +98,43 @@ const PersonSelector = ({
         };
     }, [personsFilter]);
 
-    return (<Container>
-        <Dropdown
-            label={'Person'}
-            maxHeight='300px'
-            variant='form'
-            onFilter={(input: string): void => setPersonsFilter(input)}
-            text={selectedPerson ? selectedPerson.text : 'Search to select'}
-            Icon={selectedPerson ? <div onClick={(e): void => clearPerson(e)}><EdsIcon name="clear" size={18} /></div> : undefined}
-        >
-            {isLoading && <div style={{ margin: 'calc(var(--grid-unit))' }} ><Spinner medium /></div>}
-            {!isLoading &&
-                                            filteredPersons.map((person, i) => {
-                                                return (
-                                                    <DropdownItem
-                                                        key={i}
-                                                        onClick={(event: React.MouseEvent): void =>
-                                                            setPerson(event, i)
-                                                        }
-                                                    >
-                                                        <div>{person.text}</div>
-                                                    </DropdownItem>
-                                                );
-                                            })}
-        </Dropdown>
-    </Container>);
+    return (
+        <Container>
+            <Dropdown
+                label={'Person'}
+                maxHeight="300px"
+                variant="form"
+                onFilter={(input: string): void => setPersonsFilter(input)}
+                text={selectedPerson ? selectedPerson.text : 'Search to select'}
+                Icon={
+                    selectedPerson ? (
+                        <div onClick={(e): void => clearPerson(e)}>
+                            <EdsIcon name="clear" size={18} />
+                        </div>
+                    ) : undefined
+                }
+            >
+                {isLoading && (
+                    <div style={{ margin: 'calc(var(--grid-unit))' }}>
+                        <Spinner medium />
+                    </div>
+                )}
+                {!isLoading &&
+                    filteredPersons.map((person, i) => {
+                        return (
+                            <DropdownItem
+                                key={i}
+                                onClick={(event: React.MouseEvent): void =>
+                                    setPerson(event, i)
+                                }
+                            >
+                                <div>{person.text}</div>
+                            </DropdownItem>
+                        );
+                    })}
+            </Dropdown>
+        </Container>
+    );
 };
 
 export default PersonSelector;
-

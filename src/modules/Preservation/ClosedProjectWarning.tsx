@@ -19,14 +19,21 @@ const CloseProjectWarning = (): JSX.Element | null => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
             try {
-                const response = await procosysApiClient.getProjectAsync(project.id, (cancelerCallback) => requestCancellor = cancelerCallback);
+                const response = await procosysApiClient.getProjectAsync(
+                    project.id,
+                    (cancelerCallback) => (requestCancellor = cancelerCallback)
+                );
                 if (response.isClosed) {
                     setIsProjectClosed(true);
                 } else {
                     setIsProjectClosed(false);
                 }
             } catch (error) {
-                console.error('Get project closed statue failed: ', error.message, error.data);
+                console.error(
+                    'Get project closed statue failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000, true);
             }
         })();
@@ -39,8 +46,14 @@ const CloseProjectWarning = (): JSX.Element | null => {
     if (isProjectClosed) {
         return (
             <ClosedProjectContainer>
-                <EdsIcon name='warning_outlined' color={tokens.colors.interactive.warning__resting.rgba} size={24} />
-                <TextSpacer>Selected project {project.name} is closed.</TextSpacer>
+                <EdsIcon
+                    name="warning_outlined"
+                    color={tokens.colors.interactive.warning__resting.rgba}
+                    size={24}
+                />
+                <TextSpacer>
+                    Selected project {project.name} is closed.
+                </TextSpacer>
             </ClosedProjectContainer>
         );
     }

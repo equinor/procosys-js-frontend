@@ -1,4 +1,13 @@
-import { Container, LinkIndicator, StyledCard100, StyledCard50, StyledCardHeader, StyledDivider, StyledHeaderTitle, StyledHeaderTitleLink } from './style';
+import {
+    Container,
+    LinkIndicator,
+    StyledCard100,
+    StyledCard50,
+    StyledCardHeader,
+    StyledDivider,
+    StyledHeaderTitle,
+    StyledHeaderTitleLink,
+} from './style';
 
 import { Card } from '@equinor/eds-core-react';
 import { ContentDocument } from '../../http/QuickSearchApiClient';
@@ -13,32 +22,51 @@ export interface MCPkgTabProperties {
     highlightOn: boolean;
 }
 
-const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.Element => {
-
+const MCPkgTab = ({
+    mcPkg,
+    searchValue,
+    highlightOn,
+}: MCPkgTabProperties): JSX.Element => {
     const navigateToCommPkg = (): void => {
-        if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo) throw new Error("Unable to navigate. Plant or CommPkg is missing. ");
+        if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.commPkgNo)
+            throw new Error(
+                'Unable to navigate. Plant or CommPkg is missing. '
+            );
 
-        let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
-        url += "/CommPkg?commPkgNo=" + encodeURIComponent(mcPkg.mcPkg.commPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project?.toLocaleUpperCase() ?? '');
+        let url =
+            location.origin + '/' + mcPkg.plant.replace('PCS$', '') + '/link';
+        url +=
+            '/CommPkg?commPkgNo=' +
+            encodeURIComponent(mcPkg.mcPkg.commPkgNo ?? '') +
+            '&project=' +
+            encodeURIComponent(mcPkg.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 
     const navigateToMCPkg = (): void => {
-        if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo) throw new Error("Unable to navigate. Plant or MCPkg is missing. ");
+        if (!mcPkg.plant || !mcPkg.mcPkg || !mcPkg.mcPkg.mcPkgNo)
+            throw new Error('Unable to navigate. Plant or MCPkg is missing. ');
 
-        let url = location.origin + "/" + mcPkg.plant.replace('PCS$', '') + "/link";
-        url += "/MCPkg?mcPkgNo=" + encodeURIComponent(mcPkg.mcPkg.mcPkgNo ?? '') + "&project=" + encodeURIComponent(mcPkg.project?.toLocaleUpperCase() ?? '');
+        let url =
+            location.origin + '/' + mcPkg.plant.replace('PCS$', '') + '/link';
+        url +=
+            '/MCPkg?mcPkgNo=' +
+            encodeURIComponent(mcPkg.mcPkg.mcPkgNo ?? '') +
+            '&project=' +
+            encodeURIComponent(mcPkg.project?.toLocaleUpperCase() ?? '');
         window.open(url, '_blank');
     };
 
     const highlightSearchValue = (text: string): JSX.Element => {
         if (!highlightOn) return <span>{text}</span>;
 
-        return <Highlighter
-            searchWords={searchValue.split(' ')}
-            autoEscape={true}
-            textToHighlight={text}
-        />
+        return (
+            <Highlighter
+                searchWords={searchValue.split(' ')}
+                autoEscape={true}
+                textToHighlight={text}
+            />
+        );
     };
 
     return (
@@ -47,7 +75,12 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <StyledCardHeader onClick={(): void => navigateToMCPkg()}>
                     <StyledHeaderTitleLink className="link-container">
                         <Typography variant="caption">MC pkg.</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.mcPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(mcPkg.mcPkg?.mcPkgNo || '')}
+                            <LinkIndicator>
+                                <EdsIcon name="launch" />
+                            </LinkIndicator>
+                        </Typography>
                     </StyledHeaderTitleLink>
                 </StyledCardHeader>
             </StyledCard100>
@@ -56,7 +89,11 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                mcPkg.mcPkg?.description || ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
@@ -65,7 +102,9 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Plant</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.plantName || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(mcPkg.plantName || '')}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard50>
@@ -74,7 +113,9 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Project</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.project || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(mcPkg.project || '')}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard50>
@@ -83,7 +124,11 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Discipline</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.discipline || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                mcPkg.mcPkg?.discipline || ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
@@ -92,7 +137,9 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Area</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.area || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(mcPkg.mcPkg?.area || '')}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
@@ -101,7 +148,11 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Responsible</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.responsible || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                mcPkg.mcPkg?.responsible || ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
@@ -110,33 +161,40 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Remark</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.remark || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(mcPkg.mcPkg?.remark || '')}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
 
-            <StyledDivider
-                color="medium"
-                variant="small"
-            />
+            <StyledDivider color="medium" variant="small" />
 
             <Typography variant="h6">Comm package info</Typography>
 
             <StyledCard100>
-                <StyledCardHeader onClick={(): void => mcPkg.mcPkg?.commPkgNo ? navigateToCommPkg() : undefined}>
-                    {
-                        mcPkg.mcPkg?.commPkgNo ? (
-                            <StyledHeaderTitleLink className="link-container">
-                                <Typography variant="caption">Comm pkg.</Typography>
-                                <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.commPkgNo || '')}<LinkIndicator><EdsIcon name='launch' /></LinkIndicator></Typography>
-                            </StyledHeaderTitleLink>
-                        ) : (
-                            <StyledHeaderTitle className="link-container">
-                                <Typography variant="caption">Comm pkg.</Typography>
-                            </StyledHeaderTitle>
-                        )
+                <StyledCardHeader
+                    onClick={(): void =>
+                        mcPkg.mcPkg?.commPkgNo ? navigateToCommPkg() : undefined
                     }
-
+                >
+                    {mcPkg.mcPkg?.commPkgNo ? (
+                        <StyledHeaderTitleLink className="link-container">
+                            <Typography variant="caption">Comm pkg.</Typography>
+                            <Typography variant="body_short">
+                                {highlightSearchValue(
+                                    mcPkg.mcPkg?.commPkgNo || ''
+                                )}
+                                <LinkIndicator>
+                                    <EdsIcon name="launch" />
+                                </LinkIndicator>
+                            </Typography>
+                        </StyledHeaderTitleLink>
+                    ) : (
+                        <StyledHeaderTitle className="link-container">
+                            <Typography variant="caption">Comm pkg.</Typography>
+                        </StyledHeaderTitle>
+                    )}
                 </StyledCardHeader>
             </StyledCard100>
 
@@ -144,12 +202,16 @@ const MCPkgTab = ({ mcPkg, searchValue, highlightOn }: MCPkgTabProperties): JSX.
                 <Card.Header>
                     <StyledHeaderTitle>
                         <Typography variant="caption">Description.</Typography>
-                        <Typography variant="body_short">{highlightSearchValue(mcPkg.mcPkg?.description || '')}</Typography>
+                        <Typography variant="body_short">
+                            {highlightSearchValue(
+                                mcPkg.mcPkg?.description || ''
+                            )}
+                        </Typography>
                     </StyledHeaderTitle>
                 </Card.Header>
             </StyledCard100>
         </Container>
-    )
+    );
 };
 
 export default MCPkgTab;

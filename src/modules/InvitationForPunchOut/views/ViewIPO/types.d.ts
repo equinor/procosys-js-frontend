@@ -3,14 +3,14 @@ export type McPkgScope = {
     description: string;
     system: string;
     commPkgNo: string;
-}
+};
 
 export type CommPkgScope = {
     commPkgNo: string;
     description: string;
     system: string;
     status: string;
-}
+};
 
 type Participant = {
     organization: string;
@@ -22,19 +22,19 @@ type Participant = {
     signedAtUtc?: Date;
     signedBy?: {
         userName: string;
-    },
+    };
     note: string;
     attended: boolean;
-}
+};
 
 type FunctionalRole = {
     id: number;
     code: string;
     email: string;
-    persons: Person[]
+    persons: Person[];
     response?: string;
     rowVersion: string;
-}
+};
 
 type Person = {
     person: {
@@ -44,17 +44,17 @@ type Person = {
         azureOid: string;
         email: string;
         rowVersion: string;
-    },
+    };
     response?: string;
     required: boolean;
-}
+};
 
 type ExternalEmail = {
     id: number;
     externalEmail: string;
     response?: string;
     rowVersion: string;
-}
+};
 
 export type Invitation = {
     canEdit: boolean;
@@ -69,13 +69,13 @@ export type Invitation = {
         azureOid?: string;
         firstName: string;
         lastName: string;
-    }
+    };
     startTimeUtc: string;
     endTimeUtc: string;
     participants: Participant[];
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];
-}
+};
 
 export type IpoComment = {
     id: number;
@@ -84,8 +84,8 @@ export type IpoComment = {
     createdBy: {
         firstName: string;
         lastName: string;
-    }
-}
+    };
+};
 
 export type HistoryItem = {
     id: number;
@@ -93,5 +93,5 @@ export type HistoryItem = {
     createdAtUtc: string;
     createdBy: {
         userName: string;
-    },
-}
+    };
+};

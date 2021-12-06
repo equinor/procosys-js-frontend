@@ -4,7 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from '../../../../assets/theme';
 import { showSnackbarNotification } from '../index';
 
-const renderWithTheme = Component => {
+const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
@@ -27,7 +27,7 @@ describe('NotificationService', () => {
 
         getByText('Click on me').click();
         expect(queryByText('This is a notification')).toBeInTheDocument();
-        await new Promise(r => setTimeout(r, 3100));
+        await new Promise((r) => setTimeout(r, 3100));
         expect(queryByText('This is a notification')).not.toBeInTheDocument();
     });
 });

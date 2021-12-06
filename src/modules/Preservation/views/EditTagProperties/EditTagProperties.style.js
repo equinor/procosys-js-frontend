@@ -7,7 +7,7 @@ export const Header = styled.header`
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 `;
 
 export const InputContainer = styled.div`
@@ -19,7 +19,7 @@ export const InputContainer = styled.div`
 
 export const Container = styled.div`
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
     padding: var(--margin-module--top) var(--margin-module--right);
 `;
 
@@ -52,5 +52,5 @@ export const ErrorContainer = styled.div`
         min-height: 1rem;
         height: calc(var(--grid-unit) * 2);
         color: ${tokens.colors.interactive.danger__text.rgba};
-    }    
+    }
 `;

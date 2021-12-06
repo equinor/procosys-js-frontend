@@ -1,4 +1,12 @@
-import { Container, DropdownButton, DropdownItem, DropdownList, FilterContainer, IconContainer, TopTextContainer } from './style';
+import {
+    Container,
+    DropdownButton,
+    DropdownItem,
+    DropdownList,
+    FilterContainer,
+    IconContainer,
+    TopTextContainer,
+} from './style';
 import React, { useEffect, useRef, useState } from 'react';
 
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -15,7 +23,7 @@ export interface DropdownProps {
     variant?: string;
     meta?: string;
     maxHeight?: string;
-};
+}
 
 const KEYCODE_ESCAPE = 27;
 
@@ -35,7 +43,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     const listRef = useRef<HTMLUListElement>(null);
     children = children ? React.Children.toArray(children) : [];
 
-    if(!Icon) Icon = <KeyboardArrowDownIcon />;
+    if (!Icon) Icon = <KeyboardArrowDownIcon />;
 
     useClickOutsideNotifier(() => {
         if (onFilter) {
@@ -62,7 +70,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             const listLeftPosition = listRef.current.offsetLeft;
             const windowWidth = window.innerWidth;
 
-            if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
+            if (windowWidth - listLeftPosition < listWidth + 5) {
                 listRef.current.style.right = '2px';
             }
         }
@@ -70,12 +78,12 @@ const Dropdown: React.FC<DropdownProps> = ({
 
     return (
         <Container ref={containerRef}>
-            {(label || meta) &&
+            {(label || meta) && (
                 <TopTextContainer>
                     <div>{label}</div>
                     <div>{meta}</div>
                 </TopTextContainer>
-            }
+            )}
             <DropdownButton
                 onClick={toggleDropdown}
                 disabled={disabled}
@@ -90,7 +98,8 @@ const Dropdown: React.FC<DropdownProps> = ({
                 <IconContainer>{Icon}</IconContainer>
             </DropdownButton>
             {isOpen && (
-                <DropdownList ref={listRef}
+                <DropdownList
+                    ref={listRef}
                     maxHeight={maxHeight}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && toggleDropdown();
@@ -98,10 +107,18 @@ const Dropdown: React.FC<DropdownProps> = ({
                 >
                     {onFilter && (
                         <FilterContainer>
-                            <input autoFocus type="text" onKeyUp={(e): void => onFilter(e.currentTarget.value)} placeholder="Filter" />
+                            <input
+                                autoFocus
+                                type="text"
+                                onKeyUp={(e): void =>
+                                    onFilter(e.currentTarget.value)
+                                }
+                                placeholder="Filter"
+                            />
                         </FilterContainer>
                     )}
-                    {children && React.Children.count(children) > 0 && (
+                    {children &&
+                        React.Children.count(children) > 0 &&
                         React.Children.map(children, (item, index) => {
                             return (
                                 <DropdownItem
@@ -113,14 +130,12 @@ const Dropdown: React.FC<DropdownProps> = ({
                                     {item}
                                 </DropdownItem>
                             );
-                        })
-                    )}
+                        })}
                     {(!children || React.Children.count(children) <= 0) && (
                         <ul style={{ boxShadow: 'none' }}>
                             <li data-value={-1}>No items found</li>
                         </ul>
                     )}
-
                 </DropdownList>
             )}
         </Container>

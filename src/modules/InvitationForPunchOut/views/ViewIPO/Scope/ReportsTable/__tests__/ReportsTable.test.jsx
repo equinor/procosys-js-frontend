@@ -8,51 +8,52 @@ const mcPkgScope = [
     {
         mcPkgNo: '7101-F001',
         description: 'M30 LIFEBOAT',
-        commPkgNo: '7101-C01'
+        commPkgNo: '7101-C01',
     },
-    { 
+    {
         mcPkgNo: '7101-E001',
         description: 'LIFEBOAT FOR M30',
-        commPkgNo: '7101-C01'
-    }
+        commPkgNo: '7101-C01',
+    },
 ];
 
 const commPkgScope = [
     {
         commPkgNo: '7101-C01',
         description: 'M30 LIFEBOAT',
-        status: 'OS'
+        status: 'OS',
     },
     {
         commPkgNo: '7101-C02',
         description: 'M30 LIFERAFT & DAVIT',
-        status: 'OS'
+        status: 'OS',
     },
     {
         commPkgNo: '7101-C08',
         description: 'M50 MISC LIFESAVING EQUIPMENT',
-        status: 'OS'
-    }
+        status: 'OS',
+    },
 ];
 
-jest.mock('@procosys/core/PlantContext',() => ({
+jest.mock('@procosys/core/PlantContext', () => ({
     useCurrentPlant: () => {
         return {
             plant: {
-                pathId: 'HEIMDAL'
-            }
+                pathId: 'HEIMDAL',
+            },
         };
-    }
+    },
 }));
 
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-
 describe('<ReportsTable />', () => {
     it('Renders Report types with MC Scope', async () => {
-        const { queryByText } = renderWithTheme(<ReportsTable mcPkgScope={mcPkgScope} commPkgScope={[]} />);
+        const { queryByText } = renderWithTheme(
+            <ReportsTable mcPkgScope={mcPkgScope} commPkgScope={[]} />
+        );
 
         expect(queryByText('MC32D')).toBeInTheDocument();
         expect(queryByText('MC84')).toBeInTheDocument();
@@ -60,13 +61,12 @@ describe('<ReportsTable />', () => {
     });
 
     it('Renders Report types with Comm Scope', async () => {
-        const { queryByText } = renderWithTheme(<ReportsTable mcPkgScope={[]} commPkgScope={commPkgScope} />);
+        const { queryByText } = renderWithTheme(
+            <ReportsTable mcPkgScope={[]} commPkgScope={commPkgScope} />
+        );
 
         expect(queryByText('MC32D')).toBeInTheDocument();
         expect(queryByText('MC84')).toBeInTheDocument();
         expect(queryByText('CDP06')).toBeInTheDocument();
     });
 });
-
-
-

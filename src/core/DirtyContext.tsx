@@ -11,7 +11,8 @@ export interface IDirtyContext {
     clearDirtyState: () => void;
 }
 
-export const unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?';
+export const unsavedChangesConfirmationMessage =
+    'You have unsaved changes. Are you sure you want to continue?';
 
 const DirtyContext = React.createContext<IDirtyContext>({} as IDirtyContext);
 
@@ -23,14 +24,14 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     }, [dirtyList]);
 
     function setDirtyStateFor(componentName: string): void {
-        setDirtyList(oldDirtyList => {
+        setDirtyList((oldDirtyList) => {
             const newList = new Set(oldDirtyList);
             return newList.add(componentName);
         });
     }
 
     function unsetDirtyStateFor(componentName: string): void {
-        setDirtyList(oldDirtyList => {
+        setDirtyList((oldDirtyList) => {
             const newList = new Set(oldDirtyList);
             newList.delete(componentName);
             return newList;
@@ -38,9 +39,11 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     }
 
     function unsetDirtyStateForMany(componentNames: string[]): void {
-        setDirtyList(oldDirtyList => {
+        setDirtyList((oldDirtyList) => {
             const newList = new Set(oldDirtyList);
-            componentNames.forEach(componentName => newList.delete(componentName));
+            componentNames.forEach((componentName) =>
+                newList.delete(componentName)
+            );
             return newList;
         });
     }
@@ -58,8 +61,8 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
 
     function handleBeforeUnloadEvent(e: BeforeUnloadEvent): void {
         e.preventDefault();
-        //On older browsers, the return value will be displayed in the dialog box. For newer browser, the text is 
-        //controlled by the browser. 
+        //On older browsers, the return value will be displayed in the dialog box. For newer browser, the text is
+        //controlled by the browser.
         e.returnValue = unsavedChangesConfirmationMessage;
     }
 
@@ -68,25 +71,36 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         if (isDirty) {
             window.addEventListener('beforeunload', handleBeforeUnloadEvent);
             return (): void => {
-                window.removeEventListener('beforeunload', handleBeforeUnloadEvent);
+                window.removeEventListener(
+                    'beforeunload',
+                    handleBeforeUnloadEvent
+                );
             };
         }
     }, [isDirty]);
 
-    return (<DirtyContext.Provider value={{
-        setDirtyStateFor: setDirtyStateFor,
-        unsetDirtyStateFor,
-        unsetDirtyStateForMany,
-        clearDirtyState,
-        isDirty,
-    }}>
-        <Prompt message={unsavedChangesConfirmationMessage} when={isDirty} />
-        {children}
-    </DirtyContext.Provider>);
+    return (
+        <DirtyContext.Provider
+            value={{
+                setDirtyStateFor: setDirtyStateFor,
+                unsetDirtyStateFor,
+                unsetDirtyStateForMany,
+                clearDirtyState,
+                isDirty,
+            }}
+        >
+            <Prompt
+                message={unsavedChangesConfirmationMessage}
+                when={isDirty}
+            />
+            {children}
+        </DirtyContext.Provider>
+    );
 };
 
 DirtyContextProvider.propTypes = {
-    children: propTypes.node
+    children: propTypes.node,
 };
 
-export const useDirtyContext = (): IDirtyContext => React.useContext<IDirtyContext>(DirtyContext);
+export const useDirtyContext = (): IDirtyContext =>
+    React.useContext<IDirtyContext>(DirtyContext);

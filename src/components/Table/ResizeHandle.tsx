@@ -5,9 +5,12 @@ import { ResizeHandleComponent } from './style';
 export const ResizeHandle = ({
     column,
 }: {
-    column: ColumnInstance
+    column: ColumnInstance;
 }): ReactElement => {
     return (
-        <ResizeHandleComponent handleActive={column.isResizing} {...column.getResizerProps()} />
+        <ResizeHandleComponent
+            handleActive={column.isResizing}
+            {...column.getResizerProps()}
+        />
     );
 };

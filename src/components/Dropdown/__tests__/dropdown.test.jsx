@@ -9,34 +9,33 @@ const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-const items = [
-    (<h1 key="1">Item 1</h1>),
-    (<h2 key="2">Item 2</h2>),
-];
+const items = [<h1 key="1">Item 1</h1>, <h2 key="2">Item 2</h2>];
 
 describe('<Dropdown />', () => {
     it('Renders with no default value', async () => {
-        const { getByText } = renderWithTheme(<Dropdown text='Heading' />);
+        const { getByText } = renderWithTheme(<Dropdown text="Heading" />);
         expect(getByText('Heading')).toBeInTheDocument();
     });
 
     it('Renders with no supplied select items', async () => {
-        const { getByText } = renderWithTheme(<Dropdown text='Heading' />);
+        const { getByText } = renderWithTheme(<Dropdown text="Heading" />);
         getByText('Heading').click();
         expect(getByText('No items found')).toBeInTheDocument();
     });
 
     it('Should be disabled', () => {
-        const { queryByText, getByText } = renderWithTheme(<Dropdown text='Heading' disabled />);
+        const { queryByText, getByText } = renderWithTheme(
+            <Dropdown text="Heading" disabled />
+        );
         getByText('Heading').click();
 
         expect(queryByText('No items found')).toBeNull();
     });
 
     it('Should contain all items given by options', () => {
-        const { queryAllByText, getByText } = renderWithTheme(<Dropdown text='Heading'>
-            {items}
-        </Dropdown>);
+        const { queryAllByText, getByText } = renderWithTheme(
+            <Dropdown text="Heading">{items}</Dropdown>
+        );
         getByText('Heading').click();
         expect(queryAllByText('Item', { exact: false }).length).toBe(2);
     });
@@ -45,9 +44,7 @@ describe('<Dropdown />', () => {
         const { getByText, queryByText } = render(
             <div>
                 <div>ClickMe</div>
-                <Dropdown text='Heading'>
-                    {items}
-                </Dropdown>
+                <Dropdown text="Heading">{items}</Dropdown>
             </div>
         );
 
@@ -59,9 +56,7 @@ describe('<Dropdown />', () => {
 
     it('Hides dropdown when selecting option', () => {
         const { getByText, queryByText } = renderWithTheme(
-            <Dropdown text='Heading'>
-                {items}
-            </Dropdown>
+            <Dropdown text="Heading">{items}</Dropdown>
         );
 
         getByText('Heading').click();
@@ -70,10 +65,9 @@ describe('<Dropdown />', () => {
     });
 
     it('Renders text input when onFilter prop is set', () => {
-
         const filter = jest.fn();
         const { getByText, getByPlaceholderText } = renderWithTheme(
-            <Dropdown text='Heading' onFilter={filter}>
+            <Dropdown text="Heading" onFilter={filter}>
                 {items}
             </Dropdown>
         );
@@ -83,10 +77,9 @@ describe('<Dropdown />', () => {
     });
 
     it('Triggers onFilter when input is altered', () => {
-
         const filter = jest.fn();
         const { getByText, getByPlaceholderText } = renderWithTheme(
-            <Dropdown text='Heading' onFilter={filter}>
+            <Dropdown text="Heading" onFilter={filter}>
                 {items}
             </Dropdown>
         );
@@ -99,10 +92,9 @@ describe('<Dropdown />', () => {
     });
 
     it('Triggers onFilter with correct value', () => {
-
         const filter = jest.fn();
         const { getByText, getByPlaceholderText } = renderWithTheme(
-            <Dropdown text='Heading' onFilter={filter}>
+            <Dropdown text="Heading" onFilter={filter}>
                 {items}
             </Dropdown>
         );
@@ -115,10 +107,9 @@ describe('<Dropdown />', () => {
     });
 
     it('Resets onFilter when closing dropdown', () => {
-
         const filter = jest.fn();
         const { getByText, getByPlaceholderText } = renderWithTheme(
-            <Dropdown text='Heading' onFilter={filter}>
+            <Dropdown text="Heading" onFilter={filter}>
                 {items}
             </Dropdown>
         );
@@ -132,10 +123,9 @@ describe('<Dropdown />', () => {
     });
 
     it('Renders with autofocus on filter input', () => {
-
         const filter = jest.fn();
         const { getByText, getByPlaceholderText } = renderWithTheme(
-            <Dropdown text='Heading' onFilter={filter}>
+            <Dropdown text="Heading" onFilter={filter}>
                 {items}
             </Dropdown>
         );

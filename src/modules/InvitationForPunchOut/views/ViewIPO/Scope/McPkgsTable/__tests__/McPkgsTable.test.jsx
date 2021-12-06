@@ -8,34 +8,34 @@ const mcPkgScope = [
     {
         mcPkgNo: '7101-F001',
         description: 'M30 LIFEBOAT',
-        commPkgNo: '7101-C01'
+        commPkgNo: '7101-C01',
     },
-    { 
+    {
         mcPkgNo: '7101-E001',
         description: 'LIFEBOAT FOR M30',
-        commPkgNo: '7101-C01'
-    }
+        commPkgNo: '7101-C01',
+    },
 ];
 
-jest.mock('@procosys/core/PlantContext',() => ({
+jest.mock('@procosys/core/PlantContext', () => ({
     useCurrentPlant: () => {
         return {
             plant: {
-                pathId: 'HEIMDAL'
-            }
+                pathId: 'HEIMDAL',
+            },
         };
-    }
+    },
 }));
-
 
 const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
-
 describe('<McPkgsTable />', () => {
     it('Renders MC pkgs to table', async () => {
-        const { queryByText, queryAllByText } = renderWithTheme(<McPkgsTable mcPkgScope={mcPkgScope} />);
+        const { queryByText, queryAllByText } = renderWithTheme(
+            <McPkgsTable mcPkgScope={mcPkgScope} />
+        );
 
         expect(queryByText(mcPkgScope[0].mcPkgNo)).toBeInTheDocument();
         expect(queryByText(mcPkgScope[1].mcPkgNo)).toBeInTheDocument();
@@ -44,6 +44,3 @@ describe('<McPkgsTable />', () => {
         expect(queryAllByText(mcPkgScope[0].commPkgNo).length).toBe(2);
     });
 });
-
-
-

@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 const mockIPOs = [];
 
 const mockGetIPOs = jest.fn(async () => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         resolve(mockIPOs);
     });
 });
@@ -19,7 +19,7 @@ describe('<InvitationsTable />', () => {
         const { getByText } = render(
             <InvitationsTable
                 getIPOs={mockGetIPOs}
-                data-testId='invitations-table'
+                data-testId="invitations-table"
                 pageSize={10}
                 setPageSize={jest.fn()}
                 shouldSelectFirstPage={false}
@@ -51,6 +51,3 @@ describe('<InvitationsTable />', () => {
         expect(getByText('External rep')).toBeInTheDocument();
     });
 });
-
-
-

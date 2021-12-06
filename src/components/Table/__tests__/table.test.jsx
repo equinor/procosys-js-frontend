@@ -11,48 +11,47 @@ const columns = [
         id: 'tagNo',
         width: 180,
         maxWidth: 400,
-        minWidth: 150
+        minWidth: 150,
     },
     {
         Header: 'Description',
         accessor: 'description',
         width: 250,
         maxWidth: 400,
-        minWidth: 150
+        minWidth: 150,
     },
     {
         Header: 'Resp',
-        accessor: 'responsibleCode'
+        accessor: 'responsibleCode',
     },
     {
         Header: 'Disc',
-        accessor: 'disciplineCode'
+        accessor: 'disciplineCode',
     },
     {
         Header: 'Status',
-        accessor: 'actionStatus'
-    }
+        accessor: 'actionStatus',
+    },
 ];
-
 
 const maxRows = 10;
 
 describe('<ProcosysTable />', () => {
     it('Render test', async () => {
         const { queryAllByRole, queryAllByText } = render(
-
             <ProcosysTable
-                setPageSize={() => { }}
-                onSort={() => { }}
-                onSelectedChange={() => { }}
+                setPageSize={() => {}}
+                onSort={() => {}}
+                onSelectedChange={() => {}}
                 pageIndex={0}
                 pageSize={100}
                 columns={columns}
                 maxRowCount={maxRows}
                 data={tags.tags}
-                fetchData={() => { }}
+                fetchData={() => {}}
                 loading={false}
-                pageCount={1} />
+                pageCount={1}
+            />
         );
 
         expect(queryAllByText('ACPF').length).toBe(12);

@@ -28,10 +28,9 @@ export const TextFieldLabelReadOnly = styled.div`
 export const TextFieldReadOnly = styled.div`
     padding: 11px 8px 11px 8px;
     background: #f7f7f7;
-    min-height: 16px; 
+    min-height: 16px;
     overflow-wrap: anywhere;
 `;
-
 
 export const StyledButton = styled(Button)`
     display: flex;
@@ -80,6 +79,6 @@ export const GridSecondRow = styled.div`
 
 export const IconContainer = styled.div`
     display: flex;
-    margin-right:var(--grid-unit);
-    padding-top:calc(var(--grid-unit)*2);
+    margin-right: var(--grid-unit);
+    padding-top: calc(var(--grid-unit) * 2);
 `;

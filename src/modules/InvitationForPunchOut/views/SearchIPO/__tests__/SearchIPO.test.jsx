@@ -9,21 +9,22 @@ const mockProject = [
     {
         id: 1,
         name: '886',
-        description: 'Test'
-    }
+        description: 'Test',
+    },
 ];
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
     useInvitationForPunchOutContext: () => {
         return {
             apiClient: {
-                getIPOs: () => Promise.resolve({maxAvailable: 0, invitations: []}),
+                getIPOs: () =>
+                    Promise.resolve({ maxAvailable: 0, invitations: [] }),
                 getAllProjectsForUserAsync: () => Promise.resolve(mockProject),
                 getFunctionalRolesAsync: () => Promise.resolve([]),
-                getSavedIPOFilters: () => Promise.resolve([])
-            }
+                getSavedIPOFilters: () => Promise.resolve([]),
+            },
         };
-    }
+    },
 }));
 
 describe('<SearchIPO />', () => {
@@ -33,10 +34,16 @@ describe('<SearchIPO />', () => {
             <Router history={history}>
                 <SearchIPO />
             </Router>
-        );          
-        await waitFor(() => expect(getByText('Invitation for punch-out')).toBeInTheDocument());
-        await waitFor(() => expect(getByText('Select project')).toBeInTheDocument());
-        await waitFor(() => expect(getByText('No records to display')).toBeInTheDocument());
+        );
+        await waitFor(() =>
+            expect(getByText('Invitation for punch-out')).toBeInTheDocument()
+        );
+        await waitFor(() =>
+            expect(getByText('Select project')).toBeInTheDocument()
+        );
+        await waitFor(() =>
+            expect(getByText('No records to display')).toBeInTheDocument()
+        );
         await waitFor(() => expect(getByText('New IPO')).toBeInTheDocument());
     });
 
@@ -46,9 +53,14 @@ describe('<SearchIPO />', () => {
             <Router history={history}>
                 <SearchIPO />
             </Router>
-        );          
+        );
         await waitFor(() => expect(getByText('New IPO')).toBeInTheDocument());
-        await waitFor(() => expect(getByText('New IPO').closest('a')).toHaveAttribute('href', '/CreateIPO'));
+        await waitFor(() =>
+            expect(getByText('New IPO').closest('a')).toHaveAttribute(
+                'href',
+                '/CreateIPO'
+            )
+        );
     });
 
     it('Should change the link in the "New IPO" button when project is changed', async () => {
@@ -57,11 +69,18 @@ describe('<SearchIPO />', () => {
             <Router history={history}>
                 <SearchIPO />
             </Router>
-        );          
-        await waitFor(() => expect(getByText('Select project')).toBeInTheDocument());
+        );
+        await waitFor(() =>
+            expect(getByText('Select project')).toBeInTheDocument()
+        );
         fireEvent.click(getByText('Select project'));
         await waitFor(() => expect(getByText('886')).toBeInTheDocument());
         fireEvent.click(getByText('886'));
-        await waitFor(() => expect(getByText('New IPO').closest('a')).toHaveAttribute('href', '/CreateIPO/886'));
+        await waitFor(() =>
+            expect(getByText('New IPO').closest('a')).toHaveAttribute(
+                'href',
+                '/CreateIPO/886'
+            )
+        );
     });
 });

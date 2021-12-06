@@ -1,4 +1,3 @@
-
 type ParsedToken = {
     aud: string;
     iss: string;
@@ -14,17 +13,17 @@ type ParsedToken = {
     tid: string;
     uti: string;
     ver: string;
-}
+};
 
 class InvalidToken extends Error {}
 
 export default class AuthToken {
-
     static parse(token: string): AuthToken {
         try {
-            const userData = JSON.parse(atob(token.split('.')[1])) as ParsedToken;
+            const userData = JSON.parse(
+                atob(token.split('.')[1])
+            ) as ParsedToken;
             return new AuthToken(userData);
-
         } catch (err) {
             throw new InvalidToken(err);
         }

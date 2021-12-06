@@ -22,12 +22,13 @@ const PreservedRequirement = ({
     tagId,
     tagRequirementId,
     preservationRecordGuid,
-    close
+    close,
 }: PreservedRequirementProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [preservationRecord, setPreservationRecord] = useState<TagRequirement | null>(null);
+    const [preservationRecord, setPreservationRecord] =
+        useState<TagRequirement | null>(null);
 
     const getPreservationRecord = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
@@ -35,15 +36,21 @@ const PreservedRequirement = ({
             try {
                 setIsLoading(true);
 
-                const preservationRecord = await apiClient.getPreservationRecord(
-                    tagId,
-                    tagRequirementId,
-                    preservationRecordGuid,
-                    (cancel: Canceler) => requestCancellor = cancel);
+                const preservationRecord =
+                    await apiClient.getPreservationRecord(
+                        tagId,
+                        tagRequirementId,
+                        preservationRecordGuid,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
 
                 setPreservationRecord(preservationRecord);
             } catch (error) {
-                console.error('Get preservation record failed: ', error.message, error.data);
+                console.error(
+                    'Get preservation record failed: ',
+                    error.message,
+                    error.data
+                );
                 showSnackbarNotification(error.message, 5000, true);
             }
 
@@ -62,12 +69,20 @@ const PreservedRequirement = ({
 
     const downloadAttachment = async (): Promise<void> => {
         try {
-            const url = await apiClient.getDownloadUrlForAttachmentOnPreservationRecord(tagId, tagRequirementId, preservationRecordGuid);
+            const url =
+                await apiClient.getDownloadUrlForAttachmentOnPreservationRecord(
+                    tagId,
+                    tagRequirementId,
+                    preservationRecordGuid
+                );
             window.open(url, '_blank');
             showSnackbarNotification('Attachment is downloaded.', 5000, true);
-        }
-        catch (error) {
-            console.error('Not able to get download url for preservation record attachment: ', error.message, error.data);
+        } catch (error) {
+            console.error(
+                'Not able to get download url for preservation record attachment: ',
+                error.message,
+                error.data
+            );
             showSnackbarNotification(error.message, 5000, true);
         }
     };
@@ -75,15 +90,21 @@ const PreservedRequirement = ({
     const getRequirementField = (field: TagRequirementField): JSX.Element => {
         switch (field.fieldType.toLowerCase()) {
             case 'info':
-                return <Typography variant='body_long'>{field.label}</Typography>;
+                return (
+                    <Typography variant="body_long">{field.label}</Typography>
+                );
             case 'checkbox':
                 return (
                     <RequirementCheckboxField
                         requirementId={0}
                         field={field}
                         readonly={true}
-                        isChecked={field.currentValue && field.currentValue.isChecked}
-                        onFieldChange={(): void => { return; }}
+                        isChecked={
+                            field.currentValue && field.currentValue.isChecked
+                        }
+                        onFieldChange={(): void => {
+                            return;
+                        }}
                     />
                 );
             case 'number':
@@ -92,7 +113,9 @@ const PreservedRequirement = ({
                         requirementId={0}
                         field={field}
                         readonly={true}
-                        onFieldChange={(): void => { return; }}
+                        onFieldChange={(): void => {
+                            return;
+                        }}
                     />
                 );
             case 'attachment':
@@ -111,7 +134,14 @@ const PreservedRequirement = ({
 
     if (isLoading || preservationRecord === null) {
         return (
-            <div style={{ margin: 'calc(var(--grid-unit) * 5) auto', width: '10%' }}><Spinner medium /></div>
+            <div
+                style={{
+                    margin: 'calc(var(--grid-unit) * 5) auto',
+                    width: '10%',
+                }}
+            >
+                <Spinner medium />
+            </div>
         );
     }
 
@@ -119,41 +149,56 @@ const PreservedRequirement = ({
         <div>
             <Section>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant='h4'>
+                    <Typography variant="h4">
                         {preservationRecord.requirementType.title}
                     </Typography>
                     <div style={{ marginLeft: 'calc(var(--grid-unit) * 2)' }}>
-                        <PreservationIcon variant={preservationRecord.requirementType.icon} />
+                        <PreservationIcon
+                            variant={preservationRecord.requirementType.icon}
+                        />
                     </div>
                     <div style={{ marginLeft: 'auto' }}>
-                        <Button variant='ghost' title='Close' onClick={(): void => close()}>
-                            <EdsIcon name='close' size={24} />
+                        <Button
+                            variant="ghost"
+                            title="Close"
+                            onClick={(): void => close()}
+                        >
+                            <EdsIcon name="close" size={24} />
                         </Button>
                     </div>
                 </div>
-                <Typography variant='h6'>
+                <Typography variant="h6">
                     {preservationRecord.requirementDefinition.title}
                 </Typography>
-                <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 'var(--grid-unit)' }}>
-                    <Typography variant='caption'>Interval</Typography>
-                    <Typography variant='body_short' bold style={{ marginLeft: 'var(--grid-unit)' }}>{`${preservationRecord.intervalWeeks} weeks`}</Typography>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        marginTop: 'var(--grid-unit)',
+                    }}
+                >
+                    <Typography variant="caption">Interval</Typography>
+                    <Typography
+                        variant="body_short"
+                        bold
+                        style={{ marginLeft: 'var(--grid-unit)' }}
+                    >{`${preservationRecord.intervalWeeks} weeks`}</Typography>
                 </div>
             </Section>
             <Section>
-                {
-                    preservationRecord.fields.map(field => {
-                        return (
-                            <Field key={field.id}>
-                                {
-                                    getRequirementField(field)
-                                }
-                            </Field>
-                        );
-                    })
-                }
+                {preservationRecord.fields.map((field) => {
+                    return (
+                        <Field key={field.id}>
+                            {getRequirementField(field)}
+                        </Field>
+                    );
+                })}
             </Section>
             <Section>
-                <Typography variant='caption' style={{ marginBottom: 'var(--grid-unit)' }}>
+                <Typography
+                    variant="caption"
+                    style={{ marginBottom: 'var(--grid-unit)' }}
+                >
                     Comment for this preservation period (optional)
                 </Typography>
                 {preservationRecord.comment ? preservationRecord.comment : '-'}

@@ -8,10 +8,12 @@ export const Container = styled.div`
     flex-grow: 1;
     margin-bottom: 52px;
 
-    tbody, thead {
+    tbody,
+    thead {
         .MuiButtonBase-root {
             :hover {
-                background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+                background-color: ${tokens.colors.interactive.primary__hover_alt
+                    .rgba};
             }
             > .MuiIconButton-label > svg {
                 fill: ${tokens.colors.interactive.primary__resting.rgba};
@@ -19,7 +21,8 @@ export const Container = styled.div`
         }
 
         .MuiCheckbox-colorSecondary.Mui-checked:hover {
-            background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+            background-color: ${tokens.colors.interactive.primary__hover_alt
+                .rgba};
         }
 
         .MuiTouchRipple-root {

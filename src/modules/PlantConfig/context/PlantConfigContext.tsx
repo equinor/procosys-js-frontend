@@ -8,16 +8,22 @@ import PreservationApiClient from '@procosys/modules/Preservation/http/Preservat
 type PlantConfigContextProps = {
     libraryApiClient: LibraryApiClient;
     preservationApiClient: PreservationApiClient;
-}
+};
 
-const PlantConfigContext = React.createContext<PlantConfigContextProps>({} as PlantConfigContextProps);
+const PlantConfigContext = React.createContext<PlantConfigContextProps>(
+    {} as PlantConfigContextProps
+);
 
-export const PlantConfigContextProvider: React.FC = ({ children }): JSX.Element => {
-
+export const PlantConfigContextProvider: React.FC = ({
+    children,
+}): JSX.Element => {
     const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
-    const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
+    const preservationApiClient = useMemo(
+        () => new PreservationApiClient(auth),
+        [auth]
+    );
 
     useMemo(() => {
         libraryApiClient.setCurrentPlant(plant.id);
@@ -25,17 +31,20 @@ export const PlantConfigContextProvider: React.FC = ({ children }): JSX.Element 
     }, [plant]);
 
     return (
-        <PlantConfigContext.Provider value={{
-            libraryApiClient: libraryApiClient,
-            preservationApiClient: preservationApiClient,
-        }}>
+        <PlantConfigContext.Provider
+            value={{
+                libraryApiClient: libraryApiClient,
+                preservationApiClient: preservationApiClient,
+            }}
+        >
             {children}
         </PlantConfigContext.Provider>
     );
 };
 
 PlantConfigContextProvider.propTypes = {
-    children: propTypes.node.isRequired
+    children: propTypes.node.isRequired,
 };
 
-export const usePlantConfigContext = (): PlantConfigContextProps => React.useContext<PlantConfigContextProps>(PlantConfigContext);
+export const usePlantConfigContext = (): PlantConfigContextProps =>
+    React.useContext<PlantConfigContextProps>(PlantConfigContext);

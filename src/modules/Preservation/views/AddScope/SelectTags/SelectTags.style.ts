@@ -4,17 +4,19 @@ import { tokens } from '@equinor/eds-tokens';
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width:100%;
+    width: 100%;
 
     input + svg {
         width: 24px;
         height: 24px;
     }
 
-    tbody, thead {
+    tbody,
+    thead {
         .MuiButtonBase-root {
             :hover {
-                background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+                background-color: ${tokens.colors.interactive.primary__hover_alt
+                    .rgba};
             }
             > .MuiIconButton-label > svg {
                 fill: ${tokens.colors.interactive.primary__resting.rgba};
@@ -22,7 +24,8 @@ export const Container = styled.div`
         }
 
         .MuiCheckbox-colorSecondary.Mui-checked:hover {
-            background-color:  ${tokens.colors.interactive.primary__hover_alt.rgba};
+            background-color: ${tokens.colors.interactive.primary__hover_alt
+                .rgba};
         }
 
         .MuiTouchRipple-root {
@@ -41,7 +44,7 @@ export const Header = styled.header`
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 `;
 
 export const InnerContainer = styled.div`
@@ -50,7 +53,7 @@ export const InnerContainer = styled.div`
 `;
 
 export const Search = styled.div`
-    display: flex;    
+    display: flex;
     flex: 1;
     padding-bottom: calc(var(--grid-unit) * 3);
     padding-left: 2px;

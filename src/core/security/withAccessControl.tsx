@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactElement } from 'react';
-import {useCurrentPlant} from '../PlantContext';
+import { useCurrentPlant } from '../PlantContext';
 import styled from 'styled-components';
 import Error from '../../components/Error';
 import { Loading } from '../../components';
@@ -13,54 +13,69 @@ const CenterContainer = styled.div`
     margin-top: 1rem;
 `;
 
-const withAccessControl = (WrappedComponent: () => JSX.Element, requiredPermissions: string[] = [], featureFlags: string[] = [] ): React.ComponentType<any> => (props: any): ReactElement => {
+const withAccessControl =
+    (
+        WrappedComponent: () => JSX.Element,
+        requiredPermissions: string[] = [],
+        featureFlags: string[] = []
+    ): React.ComponentType<any> =>
+    (props: any): ReactElement => {
+        const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+        const [featureEnabled, setFeatureEnabled] = useState<boolean | null>(
+            null
+        );
 
-    const [hasAccess, setHasAccess] = useState<boolean | null>(null);
-    const [featureEnabled, setFeatureEnabled] = useState<boolean | null>(null);
+        const { permissions } = useCurrentPlant();
 
-    const {permissions} = useCurrentPlant();
+        useEffect(() => {
+            if (
+                requiredPermissions.every(
+                    (item) => permissions.indexOf(item) >= 0
+                )
+            ) {
+                setHasAccess(true);
+            } else {
+                setHasAccess(false);
+            }
+        }, [permissions]);
 
-    useEffect(() => {
-        if (requiredPermissions.every((item) => permissions.indexOf(item) >= 0)) {
-            setHasAccess(true);
-        } else {
-            setHasAccess(false);
+        useEffect(() => {
+            if (
+                featureFlags.every((item) =>
+                    ProCoSysSettings.featureIsEnabled(item)
+                )
+            ) {
+                setFeatureEnabled(true);
+            } else {
+                setFeatureEnabled(false);
+            }
+        }, [featureFlags]);
+
+        if (hasAccess === null || featureEnabled === null) {
+            return (
+                <CenterContainer>
+                    <Loading />
+                </CenterContainer>
+            );
         }
-    }, [permissions]);
 
-    useEffect(() => {
-        if (featureFlags.every((item) => ProCoSysSettings.featureIsEnabled(item))) {
-            setFeatureEnabled(true);
-        } else {
-            setFeatureEnabled(false);
+        if (!featureEnabled) {
+            return (
+                <CenterContainer>
+                    <Error title="Feature disabled" large />
+                </CenterContainer>
+            );
         }
-    }, [featureFlags]);
 
-    if (hasAccess === null || featureEnabled === null) {
+        if (hasAccess && featureEnabled) {
+            return <WrappedComponent {...props} />;
+        }
+
         return (
             <CenterContainer>
-                <Loading />
+                <Error title="Access restricted" large />
             </CenterContainer>
         );
-    }
-
-    if (!featureEnabled) {
-        return (
-            <CenterContainer>
-                <Error title='Feature disabled' large />
-            </CenterContainer>
-        );
-    }
-
-    if (hasAccess && featureEnabled) {
-        return (<WrappedComponent {...props} />);
-    }
-
-    return (
-        <CenterContainer>
-            <Error title='Access restricted' large />
-        </CenterContainer>
-    );
-};
+    };
 
 export default withAccessControl;

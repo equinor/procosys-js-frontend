@@ -5,7 +5,7 @@ import Select from '../index';
 import { ThemeProvider } from 'styled-components';
 import theme from '../../../assets/theme';
 
-const renderWithTheme = Component => {
+const renderWithTheme = (Component) => {
     return render(<ThemeProvider theme={theme}>{Component}</ThemeProvider>);
 };
 
@@ -45,7 +45,7 @@ describe('<Select />', () => {
     });
 
     it('Should trigger onChange when new item is selected', () => {
-        const eventWatcher = jest.fn(() => { });
+        const eventWatcher = jest.fn(() => {});
         const { getByText } = renderWithTheme(
             <Select data={items} onChange={eventWatcher}>
                 Select
@@ -65,9 +65,7 @@ describe('<Select />', () => {
         const itemsCopy = [...items];
         itemsCopy[0].selected = true;
         const { getByText } = renderWithTheme(
-            <Select data={items}>
-                Irrelevant
-            </Select>
+            <Select data={items}>Irrelevant</Select>
         );
         getByText('Irrelevant').click();
 

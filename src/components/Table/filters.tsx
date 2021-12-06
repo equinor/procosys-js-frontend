@@ -28,7 +28,9 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-export const DefaultColumnFilter = ( { column }: ColumnFilterProps<DefaultFilter>) : JSX.Element => {
+export const DefaultColumnFilter = ({
+    column,
+}: ColumnFilterProps<DefaultFilter>): JSX.Element => {
     const { setFilter, filterPlaceholder } = column;
     return (
         <ColumnFilter>
@@ -39,24 +41,23 @@ export const DefaultColumnFilter = ( { column }: ColumnFilterProps<DefaultFilter
                 }}
                 value={column.filterValue}
                 inputIcon={<FilterListIcon />}
-                type='search' />
+                type="search"
+            />
         </ColumnFilter>
     );
 };
 
-
 // Need to use material-ui Select until further -> EDS-SingleSelect cannot handle overflow:hidden in row.
-export const SelectColumnFilter = ({ column } : ColumnFilterProps<SelectFilter>): JSX.Element => {
+export const SelectColumnFilter = ({
+    column,
+}: ColumnFilterProps<SelectFilter>): JSX.Element => {
     const { preFilteredRows, id, filterValue, setFilter } = column;
     const options = React.useMemo(() => {
         const options = new Set<string>();
         preFilteredRows.forEach((row: Record<IdType<any>, CellValue>) => {
-            if (typeof (row.values[id]) === 'object') {
-                if (row.values[id][id])
-                    options.add(row.values[id][id]);
-            }
-            else if (row.values[id])
-                options.add(row.values[id]);
+            if (typeof row.values[id] === 'object') {
+                if (row.values[id][id]) options.add(row.values[id][id]);
+            } else if (row.values[id]) options.add(row.values[id]);
         });
         return [...options.values()];
     }, [id, preFilteredRows]);
@@ -64,7 +65,11 @@ export const SelectColumnFilter = ({ column } : ColumnFilterProps<SelectFilter>)
     const selectValue = filterValue || '_all_';
 
     const handleChange = (e: React.ChangeEvent<{ value: unknown }>): void => {
-        setFilter((e.target.value as string) === '_all_' ? undefined : (e.target.value as string));
+        setFilter(
+            (e.target.value as string) === '_all_'
+                ? undefined
+                : (e.target.value as string)
+        );
     };
 
     return (
@@ -73,7 +78,9 @@ export const SelectColumnFilter = ({ column } : ColumnFilterProps<SelectFilter>)
             value={selectValue}
             onChange={handleChange}
         >
-            <MenuItem key="_all_" value="_all_">All</MenuItem>
+            <MenuItem key="_all_" value="_all_">
+                All
+            </MenuItem>
             {options.map((option, i) => (
                 <MenuItem key={i} value={option}>
                     {option}

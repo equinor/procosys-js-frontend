@@ -1,7 +1,9 @@
 import '../assets/sass/procosys-styles.scss';
 
 import ProCoSysSettings, { AsyncState } from '@procosys/core/ProCoSysSettings';
-import ProcosysContext, { createProcosysContext } from '../core/ProcosysContext';
+import ProcosysContext, {
+    createProcosysContext,
+} from '../core/ProcosysContext';
 import React, { useEffect, useRef, useState } from 'react';
 
 import App from './index';
@@ -13,18 +15,20 @@ import { hot } from 'react-hot-loader';
 
 type AppProps = {
     authService: IAuthService;
-}
+};
 
 /**
- * Loads initial application configuration before 
+ * Loads initial application configuration before
  * rendering the main application
- * @param props 
+ * @param props
  */
 const Root = (props: AppProps): JSX.Element => {
     const rootRef = useRef<HTMLDivElement | null>(null);
     const overlayRef = useRef<HTMLDivElement | null>(null);
-    
-    const [configurationState, setConfigurationState] = useState<AsyncState>(ProCoSysSettings.configState);
+
+    const [configurationState, setConfigurationState] = useState<AsyncState>(
+        ProCoSysSettings.configState
+    );
 
     const updateConfigurationState = async (): Promise<void> => {
         await ProCoSysSettings.loadConfiguration(props.authService);
@@ -33,27 +37,26 @@ const Root = (props: AppProps): JSX.Element => {
 
     useEffect(() => {
         updateConfigurationState();
-    },[]);
+    }, []);
 
     const loadingConfiguration = (): JSX.Element => {
-        return (<Loading title="Loading configuration" />);
+        return <Loading title="Loading configuration" />;
     };
 
     const failedToLoadConfig = (): JSX.Element => {
-        return (<Error title="Failed to load remote configuration" large />);
+        return <Error title="Failed to load remote configuration" large />;
     };
 
-    switch(configurationState) {
-        case AsyncState.INITIALIZING: 
+    switch (configurationState) {
+        case AsyncState.INITIALIZING:
             return loadingConfiguration();
-        case AsyncState.ERROR: 
+        case AsyncState.ERROR:
             return failedToLoadConfig();
     }
 
     const context = createProcosysContext({
         auth: props.authService,
     });
-
 
     return (
         <ProcosysContext.Provider value={context}>

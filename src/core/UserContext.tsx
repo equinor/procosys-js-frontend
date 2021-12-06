@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Canceler } from '../http/HttpClient';
 import Error from '../components/Error';
@@ -10,7 +10,7 @@ import { useProcosysContext } from './ProcosysContext';
 type Plant = {
     id: string;
     title: string;
-}
+};
 
 export type User = {
     name: string;
@@ -19,7 +19,7 @@ export type User = {
     setName(name: string): void;
     setId(id: string): void;
     setPlants(plants: Array<Plant>): void;
-}
+};
 
 const UserContext = React.createContext<User>({} as User);
 
@@ -28,8 +28,8 @@ const Container = styled.div`
 `;
 
 export const UserContextProvider: React.FC = (props): JSX.Element => {
-    const {auth, procosysApiClient} = useProcosysContext();
-    const {children} = props;
+    const { auth, procosysApiClient } = useProcosysContext();
+    const { children } = props;
     const [name, setName] = useState(() => {
         const account = auth.getCurrentUser();
         return (account && account.fullname) || '';
@@ -45,7 +45,10 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
 
     async function fetchPlants(): Promise<void> {
         try {
-            const plantResponse = await procosysApiClient.getAllPlantsForUserAsync((c) => {plantRequestCanceler = c;});
+            const plantResponse =
+                await procosysApiClient.getAllPlantsForUserAsync((c) => {
+                    plantRequestCanceler = c;
+                });
             setPlants(plantResponse);
         } catch (error) {
             console.error(error);
@@ -58,31 +61,56 @@ export const UserContextProvider: React.FC = (props): JSX.Element => {
     useEffect(() => {
         fetchPlants();
         return (): void => plantRequestCanceler && plantRequestCanceler();
-    },[]);
+    }, []);
 
     if (loading) {
-        return (<Container><Loading title="Collecting information about your account" /></Container>);
+        return (
+            <Container>
+                <Loading title="Collecting information about your account" />
+            </Container>
+        );
     }
 
     if (errorEncountered) {
-        return (<Container><Error large title='We encountered an unexpected error, try again or contact support for further assistance' /></Container>);
+        return (
+            <Container>
+                <Error
+                    large
+                    title="We encountered an unexpected error, try again or contact support for further assistance"
+                />
+            </Container>
+        );
     }
 
     if (name === '' || !plants.length) {
-        return (<Container><Error large title='You dont seem to have an account in ProCoSys - use AccessIT to request access' /></Container>);
+        return (
+            <Container>
+                <Error
+                    large
+                    title="You dont seem to have an account in ProCoSys - use AccessIT to request access"
+                />
+            </Container>
+        );
     }
 
     return (
-        <UserContext.Provider value={{
-            name, id, plants, setName, setId, setPlants
-        }}>
+        <UserContext.Provider
+            value={{
+                name,
+                id,
+                plants,
+                setName,
+                setId,
+                setPlants,
+            }}
+        >
             {children}
         </UserContext.Provider>
     );
 };
 
 UserContextProvider.propTypes = {
-    children: propTypes.node.isRequired
+    children: propTypes.node.isRequired,
 };
 
 export const useCurrentUser = (): User => React.useContext<User>(UserContext);

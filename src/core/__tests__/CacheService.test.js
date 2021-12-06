@@ -1,10 +1,9 @@
 import CacheService from '../services/CacheService';
 
 describe('Caching Service', () => {
-
     const service = new CacheService('Testing');
     beforeEach(() => sessionStorage.clear());
-    const storedData = {hello: 'world'};
+    const storedData = { hello: 'world' };
 
     it('Should lowercase keys', () => {
         service.setCache('Dataset_1', storedData);

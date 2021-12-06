@@ -1,4 +1,3 @@
-
 export interface RequirementDefinition {
     id: number;
     title: string;
@@ -19,7 +18,8 @@ export interface RequirementDefinition {
             showPrevious: boolean;
             isInUse: boolean;
             rowVersion: string;
-        }];
+        }
+    ];
     needsUserInput: boolean;
 }
 
@@ -34,5 +34,3 @@ export interface RequirementType {
     rowVersion: string;
     requirementDefinitions: RequirementDefinition[];
 }
-
-

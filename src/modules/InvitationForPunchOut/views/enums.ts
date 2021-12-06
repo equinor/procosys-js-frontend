@@ -1,4 +1,3 @@
-
 export enum OrganizationsEnum {
     Commissioning = 'Commissioning',
     ConstructionCompany = 'ConstructionCompany',
@@ -7,7 +6,7 @@ export enum OrganizationsEnum {
     TechnicalIntegrity = 'TechnicalIntegrity',
     Supplier = 'Supplier',
     External = 'External',
-};
+}
 
 export enum ComponentName {
     CreateAndEditIPO = 'CreateAndEditIPO',
@@ -15,14 +14,14 @@ export enum ComponentName {
     GeneralInfo = 'GeneralInfo',
     Scope = 'Scope',
     Participants = 'Participants',
-    Attachments = 'Attachments'
+    Attachments = 'Attachments',
 }
 
 export enum IpoStatusEnum {
     PLANNED = 'Planned',
     COMPLETED = 'Completed',
     ACCEPTED = 'Accepted',
-    CANCELED = 'Canceled'
+    CANCELED = 'Canceled',
 }
 
 export enum IpoCustomEvents {
@@ -35,5 +34,5 @@ export enum IpoCustomEvents {
     UNACCEPTED = 'IPO_Unaccepted',
     UPDATED_PARTICIPANTS = 'IPO_UpdatedParticipants',
     SIGNED = 'IPO_Signed',
-    COMMENT_ADDED = 'IPO_CommentAdded'
+    COMMENT_ADDED = 'IPO_CommentAdded',
 }

@@ -90,7 +90,6 @@ export interface Responsible {
     rowVersion: string;
 }
 
-
 /**
  * Requirement type
  */

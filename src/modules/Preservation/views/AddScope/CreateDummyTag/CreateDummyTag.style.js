@@ -8,7 +8,7 @@ export const Header = styled.header`
 
     h1 {
         margin-right: calc(var(--grid-unit) * 2);
-    };
+    }
 `;
 
 export const Container = styled.div`
@@ -29,7 +29,7 @@ export const TopContainer = styled.div`
 `;
 
 export const InputContainer = styled.div`
-    margin:  calc(var(--grid-unit) * 2) 0px;
+    margin: calc(var(--grid-unit) * 2) 0px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -71,11 +71,10 @@ export const CenterContent = styled.span`
 export const DropdownItem = styled.div`
     padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
     :hover {
-        background-color: ${tokens.colors.ui.background__light.rgba}
+        background-color: ${tokens.colors.ui.background__light.rgba};
     }
 `;
 
 export const ErrorContainer = styled.div`
     min-height: 1rem;
 `;
-

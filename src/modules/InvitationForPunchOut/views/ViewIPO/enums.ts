@@ -4,12 +4,11 @@ export enum OutlookResponseType {
     TENTATIVELY_ACCEPTED = 'TentativelyAccepted',
     NONE = 'None',
     UNKNOWN = 'Unknown',
-    DECLINED = 'Declined'
+    DECLINED = 'Declined',
 }
-
 
 export enum ReportIdEnum {
     MC32D = 48430,
     MC84 = 144,
-    CDP06 = 118
+    CDP06 = 118,
 }

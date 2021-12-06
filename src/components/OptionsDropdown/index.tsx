@@ -1,4 +1,9 @@
-import { Container, DropdownButton, DropdownItem, IconContainer } from './style';
+import {
+    Container,
+    DropdownButton,
+    DropdownItem,
+    IconContainer,
+} from './style';
 import React, { useEffect, useRef, useState } from 'react';
 
 import EdsIcon from '../EdsIcon';
@@ -16,7 +21,6 @@ export type DropdownProps = {
     iconSize?: number;
 };
 
-
 const KEYCODE_ESCAPE = 27;
 
 const OptionsDropdown: React.FC<DropdownProps> = ({
@@ -25,7 +29,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
     icon,
     children,
     variant,
-    iconSize = 24
+    iconSize = 24,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -51,7 +55,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
             const listLeftPosition = listRef.current.offsetLeft;
             const windowWidth = window.innerWidth;
 
-            if ((windowWidth - listLeftPosition) < (listWidth + 5)) {
+            if (windowWidth - listLeftPosition < listWidth + 5) {
                 listRef.current.style.right = '2px';
             }
         }
@@ -68,16 +72,32 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                 aria-haspopup={true}
                 variant={variant}
             >
-                {icon && <IconContainer size={iconSize}><EdsIcon name={icon} size={iconSize} color={disabled ? tokens.colors.interactive.disabled__border.rgba : tokens.colors.interactive.primary__resting.rgba } /></IconContainer>}
+                {icon && (
+                    <IconContainer size={iconSize}>
+                        <EdsIcon
+                            name={icon}
+                            size={iconSize}
+                            color={
+                                disabled
+                                    ? tokens.colors.interactive.disabled__border
+                                          .rgba
+                                    : tokens.colors.interactive.primary__resting
+                                          .rgba
+                            }
+                        />
+                    </IconContainer>
+                )}
                 {text}
             </DropdownButton>
             {isOpen && (
-                <ul ref={listRef}
+                <ul
+                    ref={listRef}
                     onKeyDown={(e): void => {
                         e.keyCode === KEYCODE_ESCAPE && toggleDropdown();
                     }}
                 >
-                    {children && React.Children.count(children) > 0 && (
+                    {children &&
+                        React.Children.count(children) > 0 &&
                         React.Children.map(children, (item, index) => {
                             return (
                                 <DropdownItem
@@ -88,8 +108,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                                     {item}
                                 </DropdownItem>
                             );
-                        })
-                    )}
+                        })}
                 </ul>
             )}
         </Container>

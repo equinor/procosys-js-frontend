@@ -44,7 +44,7 @@ export const attachmentsMock = [
             rowVersion: 'string',
         },
         uploadedAt: new Date(),
-    }
+    },
 ];
 
 const downloadAttachment = jest.fn();
@@ -57,7 +57,7 @@ describe('<AttachmentList />', () => {
 
     it('Should render an empty table if there are no attachments', () => {
         const { queryByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={[]}
                 disabled={false}
                 downloadAttachment={downloadAttachment}
@@ -68,7 +68,7 @@ describe('<AttachmentList />', () => {
 
     it('Should render attachments in table', () => {
         const { queryByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 downloadAttachment={downloadAttachment}
@@ -82,7 +82,7 @@ describe('<AttachmentList />', () => {
 
     it('Should render "add files" button and DragAndDropField if an addAttachments prop is passed', () => {
         const { queryByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 addAttachments={addAttachments}
@@ -90,24 +90,32 @@ describe('<AttachmentList />', () => {
             />
         );
         expect(queryByText('Add files')).toBeInTheDocument();
-        expect(queryByText('Drag and drop to add files, or click on the button below')).toBeInTheDocument();
+        expect(
+            queryByText(
+                'Drag and drop to add files, or click on the button below'
+            )
+        ).toBeInTheDocument();
     });
 
     it('Should not render the "add files" button and DragAndDropField if an addAttachments prop is not passed', () => {
         const { queryByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 downloadAttachment={downloadAttachment}
             />
         );
         expect(queryByText('Add files')).not.toBeInTheDocument();
-        expect(queryByText('Drag and drop to add files, or click on the button above')).not.toBeInTheDocument();
+        expect(
+            queryByText(
+                'Drag and drop to add files, or click on the button above'
+            )
+        ).not.toBeInTheDocument();
     });
 
     it('Should call the downloadAttachment function if a filename is clicked', () => {
         const { getByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 addAttachments={addAttachments}
@@ -120,9 +128,9 @@ describe('<AttachmentList />', () => {
         expect(downloadAttachment).toHaveBeenCalledTimes(1);
     });
 
-    it('Should render with more details if it\'s the detailed version', () => {
+    it("Should render with more details if it's the detailed version", () => {
         const { getByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 addAttachments={addAttachments}
@@ -135,9 +143,9 @@ describe('<AttachmentList />', () => {
         expect(details).toBeInTheDocument();
     });
 
-    it('Should render without column headers if it\'s the small version', () => {
+    it("Should render without column headers if it's the small version", () => {
         const { queryByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 addAttachments={addAttachments}
@@ -148,9 +156,9 @@ describe('<AttachmentList />', () => {
         expect(header).not.toBeInTheDocument();
     });
 
-    it('Should render with column headers if it\'s the large version', () => {
+    it("Should render with column headers if it's the large version", () => {
         const { getByText } = render(
-            <AttachmentList 
+            <AttachmentList
                 attachments={attachmentsMock}
                 disabled={false}
                 addAttachments={addAttachments}

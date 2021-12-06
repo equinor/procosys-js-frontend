@@ -11,11 +11,8 @@ export const Header = styled.div`
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    padding:
-        calc(var(--grid-unit) * 2)
-        calc(var(--grid-unit) * 2)
-        var(--grid-unit)
-        var(--grid-unit);
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2)
+        var(--grid-unit) var(--grid-unit);
 
     h1 {
         font-size: calc(var(--grid-unit) * 3);
@@ -29,7 +26,8 @@ export const HeaderNotification = styled.div`
     display: flex;
     align-items: center;
     padding: calc(var(--grid-unit) * 2);
-    border-bottom: 2px solid ${tokens.colors.infographic.primary__energy_red_13.rgba};
+    border-bottom: 2px solid
+        ${tokens.colors.infographic.primary__energy_red_13.rgba};
 `;
 
 export const NotificationIcon = styled.div`
@@ -38,7 +36,7 @@ export const NotificationIcon = styled.div`
     background: ${tokens.colors.infographic.primary__energy_red_13.rgba};
 
     svg path {
-        color: ${tokens.colors.interactive.danger__resting.rgba}
+        color: ${tokens.colors.interactive.danger__resting.rgba};
     }
 `;
 
@@ -49,9 +47,10 @@ export const StatusLabel = styled.div<{ status?: string | null }>`
     border-radius: calc(var(--grid-unit) * 2);
 
     /* todo: conditional formatting when "overdue" */
-    background: ${(props): any => props.status === 'Active'
-        ? tokens.colors.interactive.primary__selected_highlight.rgba
-        : tokens.colors.ui.background__light.rgba};
+    background: ${(props): any =>
+        props.status === 'Active'
+            ? tokens.colors.interactive.primary__selected_highlight.rgba
+            : tokens.colors.ui.background__light.rgba};
 
     span {
         color: ${tokens.colors.interactive.primary__resting.rgba};
@@ -86,7 +85,8 @@ export const Tabs = styled.nav`
 
         &.active {
             color: ${tokens.colors.interactive.primary__resting.rgba};
-            border-bottom: 2px solid ${tokens.colors.interactive.primary__resting.rgba};
+            border-bottom: 2px solid
+                ${tokens.colors.interactive.primary__resting.rgba};
             margin-bottom: -2px;
         }
     }
@@ -103,18 +103,22 @@ interface TagProps {
     isStandardTag: boolean;
 }
 export const TagNoContainer = styled.div<TagProps>`
-    display:flex;
+    display: flex;
     flex-wrap: wrap;
     padding: 0px var(--grid-unit);
-    
-    ${(props): any => !props.isStandardTag && css`
-        pointer-events: none;
-    `}
 
-    ${(props): any => props.isStandardTag && css`
-        :hover {
-            background-color: ${tokens.colors.ui.background__light.rgba}
-        }
-        cursor: pointer;
-    `}
+    ${(props): any =>
+        !props.isStandardTag &&
+        css`
+            pointer-events: none;
+        `}
+
+    ${(props): any =>
+        props.isStandardTag &&
+        css`
+            :hover {
+                background-color: ${tokens.colors.ui.background__light.rgba};
+            }
+            cursor: pointer;
+        `}
 `;

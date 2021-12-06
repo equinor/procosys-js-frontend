@@ -5,11 +5,11 @@ import ProcosysRouter from './ProcosysRouter';
 import React from 'react';
 
 const Page404: React.FC = (): JSX.Element => {
-    return (<h3>404</h3>);
+    return <h3>404</h3>;
 };
 
 /**
- * Makes sure that the user has selected a plant 
+ * Makes sure that the user has selected a plant
  * before continuing their journey into the main application
  */
 const GeneralRouter = (): JSX.Element => {

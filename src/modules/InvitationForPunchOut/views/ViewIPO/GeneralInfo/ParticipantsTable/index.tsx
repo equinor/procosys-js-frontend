@@ -41,6 +41,7 @@ interface ParticipantsTableProps {
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
+    unsign: (p: Participant) => Promise<any>;
 }
 
 const ParticipantsTable = ({
@@ -52,6 +53,7 @@ const ParticipantsTable = ({
     sign,
     unaccept,
     uncomplete,
+    unsign,
 }: ParticipantsTableProps): JSX.Element => {
     const cleanData = participants.map((p) => {
         const x = p.person
@@ -140,6 +142,7 @@ const ParticipantsTable = ({
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
+                unsign={unsign}
             />
         ),
         [status]

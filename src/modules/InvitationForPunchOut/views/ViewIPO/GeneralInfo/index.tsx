@@ -24,6 +24,7 @@ interface GeneralInfoProps {
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
+    unsign: (p: Participant) => Promise<any>;
 }
 
 const GeneralInfo = ({
@@ -34,6 +35,7 @@ const GeneralInfo = ({
     sign,
     unaccept,
     uncomplete,
+    unsign,
 }: GeneralInfoProps): JSX.Element => {
     const participants = invitation.participants.sort(
         (p1, p2): number => p1.sortKey - p2.sortKey
@@ -130,6 +132,7 @@ const GeneralInfo = ({
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
+                unsign={unsign}
             />
         </Container>
     );

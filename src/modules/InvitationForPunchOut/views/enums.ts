@@ -34,5 +34,6 @@ export enum IpoCustomEvents {
     UNACCEPTED = 'IPO_Unaccepted',
     UPDATED_PARTICIPANTS = 'IPO_UpdatedParticipants',
     SIGNED = 'IPO_Signed',
+    UNSIGNED = 'IPO_Unsigned',
     COMMENT_ADDED = 'IPO_CommentAdded',
 }

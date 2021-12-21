@@ -109,7 +109,7 @@ type AttachmentResponse = {
     fileName: string;
     rowVersion: string;
     uploadedAt: Date;
-    uploadedBy: PersonResponse;
+    uploadedBy: PersonResponseWithRowVersion;
 };
 
 type ProjectResponse = {
@@ -141,6 +141,16 @@ interface PersonResponse {
     firstName: string;
     lastName: string;
     email: string;
+}
+
+interface PersonResponseWithRowVersion {
+    id: number;
+    azureOid: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    rowVersion: string;
 }
 
 //This interface is used for objects comming from main, and does not have an id or rowVersion
@@ -213,13 +223,11 @@ export type PersonDto = {
     id?: number;
     azureOid: string | null;
     email: string;
-    rowVersion?: string;
     required: boolean;
 };
 
 export type FunctionalRoleDto = {
     id?: number;
-    rowVersion?: string;
     code: string;
     persons: PersonDto[] | null;
 };
@@ -227,12 +235,12 @@ export type FunctionalRoleDto = {
 export type ExternalEmailDto = {
     id: number | null;
     email: string;
-    rowVersion: string | null;
 };
 
 export type ParticipantDto = {
     organization: string;
     sortKey: number;
+    rowVersion?: string;
     externalEmail: ExternalEmailDto | null;
     person: PersonDto | null;
     functionalRole: FunctionalRoleDto | null;

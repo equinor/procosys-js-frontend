@@ -16,6 +16,7 @@ type Participant = {
     organization: string;
     sortKey: number;
     canSign: boolean;
+    rowVersion: string;
     externalEmail: ExternalEmail;
     person: Person;
     functionalRole: FunctionalRole;
@@ -33,7 +34,6 @@ type FunctionalRole = {
     email: string;
     persons: Person[];
     response?: string;
-    rowVersion: string;
 };
 
 type Person = {
@@ -43,7 +43,6 @@ type Person = {
         lastName: string;
         azureOid: string;
         email: string;
-        rowVersion: string;
     };
     response?: string;
     required: boolean;
@@ -53,7 +52,6 @@ type ExternalEmail = {
     id: number;
     externalEmail: string;
     response?: string;
-    rowVersion: string;
 };
 
 export type Invitation = {

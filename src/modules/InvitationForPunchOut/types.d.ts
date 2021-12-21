@@ -26,13 +26,11 @@ export type Person = {
     azureOid: string;
     name: string;
     email: string;
-    rowVersion?: string;
     radioOption: string | null;
 };
 
 export type RoleParticipant = {
     id?: number;
-    rowVersion?: string;
     code: string;
     description: string;
     usePersonalEmail: boolean;
@@ -43,13 +41,13 @@ export type RoleParticipant = {
 type ExternalEmail = {
     id: number | null;
     email: string;
-    rowVersion: string | null;
 };
 
 export type Participant = {
     organization: SelectItem;
     sortKey: number | null;
     type: string;
+    rowVersion?: string;
     externalEmail: ExternalEmail | null;
     person: Person | null;
     role: RoleParticipant | null;

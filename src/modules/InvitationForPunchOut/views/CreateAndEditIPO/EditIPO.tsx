@@ -201,7 +201,6 @@ const EditIPO = (): JSX.Element => {
             id: participant.person.id,
             azureOid: participant.person.azureOid,
             email: participant.person.email,
-            rowVersion: participant.person.rowVersion,
             required: participant.person.radioOption == 'to',
         };
     };
@@ -215,7 +214,6 @@ const EditIPO = (): JSX.Element => {
                 id: p.id,
                 azureOid: p.azureOid,
                 email: p.email,
-                rowVersion: p.rowVersion,
                 required: p.radioOption == 'to' || role.usePersonalEmail,
             };
         });
@@ -229,7 +227,6 @@ const EditIPO = (): JSX.Element => {
         }
         return {
             id: participant.role.id,
-            rowVersion: participant.role.rowVersion,
             code: participant.role.code,
             persons: getPersons(participant.role),
         };
@@ -240,6 +237,7 @@ const EditIPO = (): JSX.Element => {
             return {
                 organization: p.organization.value,
                 sortKey: i,
+                rowVersion: p.rowVersion,
                 externalEmail: p.externalEmail,
                 person: getPerson(p),
                 functionalRole: getFunctionalRole(p),
@@ -448,7 +446,6 @@ const EditIPO = (): JSX.Element => {
                     participantType = 'Person';
                     person = {
                         id: participant.person.person.id,
-                        rowVersion: participant.person.person.rowVersion,
                         azureOid: participant.person.person.azureOid,
                         name: `${participant.person.person.firstName} ${participant.person.person.lastName}`,
                         email: participant.person.person.email,
@@ -461,7 +458,6 @@ const EditIPO = (): JSX.Element => {
                     participant.functionalRole.persons.forEach((person) => {
                         persons.push({
                             id: person.person.id,
-                            rowVersion: person.person.rowVersion,
                             azureOid: person.person.azureOid,
                             name: `${person.person.firstName} ${person.person.lastName}`,
                             email: person.person.email,
@@ -477,7 +473,6 @@ const EditIPO = (): JSX.Element => {
                         : null;
                     roleParticipant = {
                         id: participant.functionalRole.id,
-                        rowVersion: participant.functionalRole.rowVersion,
                         code: participant.functionalRole.code,
                         description: funcRole ? funcRole.description : '',
                         usePersonalEmail: funcRole
@@ -491,7 +486,6 @@ const EditIPO = (): JSX.Element => {
                     externalEmail = {
                         id: participant.externalEmail.id,
                         email: participant.externalEmail.externalEmail,
-                        rowVersion: participant.externalEmail.rowVersion,
                     };
                 }
                 const organizationText = OrganizationMap.get(
@@ -504,6 +498,7 @@ const EditIPO = (): JSX.Element => {
                     },
                     sortKey: participant.sortKey,
                     type: participantType,
+                    rowVersion: participant.rowVersion,
                     externalEmail: externalEmail,
                     person: person,
                     role: roleParticipant,

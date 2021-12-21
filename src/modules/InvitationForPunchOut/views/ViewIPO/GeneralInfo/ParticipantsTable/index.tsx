@@ -88,7 +88,7 @@ const ParticipantsTable = ({
             id: x.id,
             attended: attendedStatus,
             note: p.note ? p.note : '',
-            rowVersion: x.rowVersion,
+            rowVersion: p.rowVersion,
         };
     });
     const [loading, setLoading] = useState<boolean>(false);

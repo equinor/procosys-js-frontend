@@ -54,6 +54,7 @@ type ParticipantInvitationResponse = {
     organization: string;
     sortKey: number;
     canSign: boolean;
+    rowVersion: string;
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;
     functionalRole: FunctionalRoleInvitationResponse;
@@ -81,7 +82,6 @@ type PersonInvitationResponse = {
 type ExternalEmailInvitationResponse = {
     id: number;
     externalEmail: string;
-    rowVersion: string;
 };
 
 type CommentResponse = {
@@ -141,7 +141,6 @@ interface PersonResponse {
     firstName: string;
     lastName: string;
     email: string;
-    rowVersion: string;
 }
 
 //This interface is used for objects comming from main, and does not have an id or rowVersion

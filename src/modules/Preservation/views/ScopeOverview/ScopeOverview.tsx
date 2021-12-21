@@ -1125,7 +1125,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                                       .rgba
                                         }
                                     />
-                                    Edit
+                                    Update Requirements
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={selectedTags.length === 0}
+                                    onClick={(): void =>
+                                        setShowEditTagJourneyDialog(true)
+                                    }
+                                >
+                                    <EdsIcon
+                                        name="edit_text"
+                                        color={
+                                            !unvoidedTagsSelected // TODO: decide on color decider
+                                                ? tokens.colors.interactive
+                                                      .disabled__border.rgba
+                                                : tokens.colors.text
+                                                      .static_icons__tertiary
+                                                      .rgba
+                                        }
+                                    />
+                                    Update Journey
                                 </DropdownItem>
                                 <DropdownItem
                                     disabled={selectedTags.length === 0}

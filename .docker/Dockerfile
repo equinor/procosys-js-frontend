@@ -1,5 +1,5 @@
 # build environment
-FROM node:14.17.0 as build
+FROM node:17.3.0 as build
 WORKDIR /app
 COPY . /app
 RUN yarn install

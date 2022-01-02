@@ -1,5 +1,5 @@
 import React from 'react';
-import PreservedDialog from '../PreservedDialog';
+import PreservedDialog from '../Dialogs/PreservedDialog';
 import { render } from '@testing-library/react';
 
 const preservableTags = [

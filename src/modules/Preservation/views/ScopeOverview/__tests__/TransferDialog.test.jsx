@@ -1,5 +1,5 @@
 import React from 'react';
-import TransferDialog from '../TransferDialog';
+import TransferDialog from '../Dialogs/TransferDialog';
 import { render } from '@testing-library/react';
 
 const transferableTags = [

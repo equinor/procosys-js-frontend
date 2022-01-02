@@ -1,17 +1,20 @@
 import React from 'react';
-import { PreservedTag } from './types';
+import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import RequirementIcons from './RequirementIcons';
-import DialogTable from './DialogTable';
+import RequirementIcons from '../RequirementIcons';
+import DialogTable from './Shared components/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
-import { MainContainer, TableContainer } from './Dialogs.style';
+import {
+    MainContainer,
+    TableContainer,
+} from './Shared components/Dialogs.style';
 
-interface CompleteDialogProps {
-    completableTags: PreservedTag[];
-    nonCompletableTags: PreservedTag[];
+interface StartPreservationDialogProps {
+    startableTags: PreservedTag[];
+    nonStartableTags: PreservedTag[];
 }
 
 const OverflowColumn = styled.div`
@@ -98,34 +101,34 @@ const columns = [
     },
 ];
 
-const CompleteDialog = ({
-    completableTags,
-    nonCompletableTags,
-}: CompleteDialogProps): JSX.Element => {
+const StartPreservationDialog = ({
+    startableTags,
+    nonStartableTags,
+}: StartPreservationDialogProps): JSX.Element => {
     return (
         <MainContainer>
-            {nonCompletableTags.length > 0 && (
-                <TableContainer isHalfSize={completableTags.length > 0}>
+            {nonStartableTags.length > 0 && (
+                <TableContainer isHalfSize={startableTags.length > 0}>
                     <Typography variant="meta">
-                        {nonCompletableTags.length} tag(s) cannot be completed.
-                        Tags are not started, already completed or voided.
+                        {nonStartableTags.length} tag(s) cannot be started. Tags
+                        are already started, or are voided.
                     </Typography>
                     <DialogTable
-                        tags={nonCompletableTags}
+                        tags={nonStartableTags}
                         columns={columns}
-                        toolbarText="tag(s) will not be completed"
+                        toolbarText="tag(s) will not be started"
                         toolbarColor={
                             tokens.colors.interactive.danger__text.rgba
                         }
                     />
                 </TableContainer>
             )}
-            {completableTags.length > 0 && (
-                <TableContainer isHalfSize={nonCompletableTags.length > 0}>
+            {startableTags.length > 0 && (
+                <TableContainer isHalfSize={nonStartableTags.length > 0}>
                     <DialogTable
-                        tags={completableTags}
+                        tags={startableTags}
                         columns={columns}
-                        toolbarText="tag(s) will be completed"
+                        toolbarText="tag(s) will be started"
                         toolbarColor={
                             tokens.colors.interactive.primary__resting.rgba
                         }
@@ -136,4 +139,4 @@ const CompleteDialog = ({
     );
 };
 
-export default CompleteDialog;
+export default StartPreservationDialog;

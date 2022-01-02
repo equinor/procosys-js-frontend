@@ -1,13 +1,16 @@
 import React from 'react';
-import { PreservedTag } from './types';
+import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import RequirementIcons from './RequirementIcons';
-import DialogTable from './DialogTable';
+import RequirementIcons from '../RequirementIcons';
+import DialogTable from './Shared components/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
-import { MainContainer, TableContainer } from './Dialogs.style';
+import {
+    MainContainer,
+    TableContainer,
+} from './Shared components/Dialogs.style';
 
 interface TransferDialogProps {
     transferableTags: PreservedTag[];

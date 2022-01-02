@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { PreservedTag } from './types';
+import { PreservedTag } from '../types';
 import { tokens } from '@equinor/eds-tokens';
-import RequirementIcons from './RequirementIcons';
-import DialogTable from './DialogTable';
+import RequirementIcons from '../RequirementIcons';
+import DialogTable from './Shared components/DialogTable';
 import {
     ButtonContainer,
     ButtonSpacer,
@@ -14,19 +14,22 @@ import {
     Scrim,
     Title,
 } from './RescheduleDialog.style';
-import SelectInput, { SelectItem } from '../../../../components/Select';
+import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Button } from '@equinor/eds-core-react';
 import { Content } from '@procosys/core/services/ModalDialogService/style';
 import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
-import { usePreservationContext } from '../../context/PreservationContext';
+import { usePreservationContext } from '../../../context/PreservationContext';
 import Spinner from '@procosys/components/Spinner';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
-import { MainContainer, TableContainer } from './Dialogs.style';
+import {
+    MainContainer,
+    TableContainer,
+} from './Shared components/Dialogs.style';
 
 const errorIcon = (
     <EdsIcon

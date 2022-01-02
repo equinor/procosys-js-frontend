@@ -1,5 +1,5 @@
 import React from 'react';
-import { PreservedTag } from './types';
+import { PreservedTag } from '../../types';
 import { Container } from './DialogTable.style';
 import ProcosysTable from '@procosys/components/Table';
 

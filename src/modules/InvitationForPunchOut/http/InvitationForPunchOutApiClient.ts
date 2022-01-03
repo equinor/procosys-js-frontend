@@ -74,9 +74,15 @@ type FunctionalRoleInvitationResponse = {
 };
 
 type PersonInvitationResponse = {
-    person: PersonResponse;
     response?: string;
+    id: number;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    azureOid: string;
+    email: string;
     required: boolean;
+    rowVersion: string;
 };
 
 type ExternalEmailInvitationResponse = {

@@ -252,7 +252,7 @@ const ViewIPO = (): JSX.Element => {
         attNoteData: AttNoteData[]
     ): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -281,7 +281,7 @@ const ViewIPO = (): JSX.Element => {
         participant: Participant
     ): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -311,7 +311,7 @@ const ViewIPO = (): JSX.Element => {
         attNoteData: AttNoteData[]
     ): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -339,7 +339,7 @@ const ViewIPO = (): JSX.Element => {
 
     const unacceptPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -366,7 +366,7 @@ const ViewIPO = (): JSX.Element => {
 
     const signPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;

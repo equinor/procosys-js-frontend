@@ -88,6 +88,8 @@ type PersonInvitationResponse = {
 type ExternalEmailInvitationResponse = {
     id: number;
     externalEmail: string;
+    response?: string;
+    rowVersion: string;
 };
 
 type CommentResponse = {
@@ -115,7 +117,7 @@ type AttachmentResponse = {
     fileName: string;
     rowVersion: string;
     uploadedAt: Date;
-    uploadedBy: PersonResponseWithRowVersion;
+    uploadedBy: PersonResponse;
 };
 
 type ProjectResponse = {
@@ -141,15 +143,6 @@ interface McPkgResponse {
 }
 
 interface PersonResponse {
-    id: number;
-    azureOid: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-}
-
-interface PersonResponseWithRowVersion {
     id: number;
     azureOid: string;
     userName: string;
@@ -230,23 +223,26 @@ export type PersonDto = {
     azureOid: string | null;
     email: string;
     required: boolean;
+    rowVersion?: string;
 };
 
 export type FunctionalRoleDto = {
     id?: number;
     code: string;
     persons: PersonDto[] | null;
+    rowVersion?: string;
 };
 
 export type ExternalEmailDto = {
     id: number | null;
     email: string;
+    rowVersion: string | null;
 };
 
 export type ParticipantDto = {
     organization: string;
     sortKey: number;
-    rowVersion?: string;
+    rowVersion?: string; // TODO: is this needed??
     externalEmail: ExternalEmailDto | null;
     person: PersonDto | null;
     functionalRole: FunctionalRoleDto | null;

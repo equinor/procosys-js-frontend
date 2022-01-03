@@ -202,6 +202,7 @@ const EditIPO = (): JSX.Element => {
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             required: participant.person.radioOption == 'to',
+            rowVersion: participant.person.rowVersion,
         };
     };
 
@@ -215,6 +216,7 @@ const EditIPO = (): JSX.Element => {
                 azureOid: p.azureOid,
                 email: p.email,
                 required: p.radioOption == 'to' || role.usePersonalEmail,
+                rowVersion: p.rowVersion,
             };
         });
     };
@@ -229,6 +231,7 @@ const EditIPO = (): JSX.Element => {
             id: participant.role.id,
             code: participant.role.code,
             persons: getPersons(participant.role),
+            rowVersion: participant.role.rowVersion,
         };
     };
 
@@ -445,10 +448,11 @@ const EditIPO = (): JSX.Element => {
                 if (participant.person) {
                     participantType = 'Person';
                     person = {
-                        id: participant.person.person.id,
-                        azureOid: participant.person.person.azureOid,
-                        name: `${participant.person.person.firstName} ${participant.person.person.lastName}`,
-                        email: participant.person.person.email,
+                        id: participant.person.id,
+                        azureOid: participant.person.azureOid,
+                        name: `${participant.person.firstName} ${participant.person.lastName}`,
+                        email: participant.person.email,
+                        rowVersion: participant.person.rowVersion,
                         radioOption: null,
                     };
                 } else if (participant.functionalRole) {
@@ -457,10 +461,11 @@ const EditIPO = (): JSX.Element => {
                     const persons: Person[] = [];
                     participant.functionalRole.persons.forEach((person) => {
                         persons.push({
-                            id: person.person.id,
-                            azureOid: person.person.azureOid,
-                            name: `${person.person.firstName} ${person.person.lastName}`,
-                            email: person.person.email,
+                            id: person.id,
+                            azureOid: person.azureOid,
+                            name: `${person.firstName} ${person.lastName}`,
+                            email: person.email,
+                            rowVersion: person.rowVersion,
                             radioOption: person.required ? 'to' : 'cc',
                         });
                     });
@@ -486,6 +491,7 @@ const EditIPO = (): JSX.Element => {
                     externalEmail = {
                         id: participant.externalEmail.id,
                         email: participant.externalEmail.externalEmail,
+                        rowVersion: participant.externalEmail.rowVersion,
                     };
                 }
                 const organizationText = OrganizationMap.get(

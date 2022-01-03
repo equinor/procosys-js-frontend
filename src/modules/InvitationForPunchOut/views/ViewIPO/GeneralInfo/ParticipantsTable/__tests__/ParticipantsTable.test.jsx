@@ -37,6 +37,7 @@ const participants = [
         },
         attended: false,
         note: '',
+        rowVersion: '12312ss3',
     },
     {
         organization: OrganizationsEnum.TechnicalIntegrity,
@@ -56,20 +57,19 @@ const participants = [
         signedBy: 'signer3',
         signedAtUtc: new Date(2020, 11, 6, 11),
         note: '',
+        rowVersion: '12312333',
     },
     {
         organization: OrganizationsEnum.Contractor,
         sortKey: 0,
         canSign: false,
         person: {
-            person: {
-                id: 123,
-                firstName: 'Adwa',
-                lastName: 'ASdsklandasnd',
-                azureOid: 'azure1',
-                email: 'asdadasd@dwwdwd.com',
-                rowVersion: '123123',
-            },
+            id: 123,
+            firstName: 'Adwa',
+            lastName: 'ASdsklandasnd',
+            azureOid: 'azure1',
+            email: 'asdadasd@dwwdwd.com',
+            rowVersion: '123123',
             required: true,
             response: OutlookResponseType.ATTENDING,
         },
@@ -87,20 +87,19 @@ const participants = [
         signedAtUtc: new Date(2020, 11, 6, 11),
         attended: true,
         note: '',
+        rowVersion: '123123',
     },
     {
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
         canSign: false,
         person: {
-            person: {
-                id: 234,
-                firstName: 'Oakjfcv',
-                lastName: 'Alkjljsdf',
-                azureOid: 'azure2',
-                email: 'lkjlkjsdf@dwwdwd.com',
-                rowVersion: '123123',
-            },
+            id: 234,
+            firstName: 'Oakjfcv',
+            lastName: 'Alkjljsdf',
+            azureOid: 'azure2',
+            email: 'lkjlkjsdf@dwwdwd.com',
+            rowVersion: '123123',
             required: true,
             response: OutlookResponseType.ATTENDING,
         },
@@ -118,6 +117,7 @@ const participants = [
         signedAtUtc: new Date(2020, 11, 6, 12),
         attended: true,
         note: '',
+        rowVersion: '1231dd23',
     },
     {
         organization: OrganizationsEnum.Contractor,
@@ -131,26 +131,22 @@ const participants = [
             email: 'funcitonalRole@asd.com',
             persons: [
                 {
-                    person: {
-                        id: 1,
-                        firstName: 'First',
-                        lastName: 'ASdsklandasnd',
-                        azureOid: 'azure1',
-                        email: 'asdadasd@dwwdwd.com',
-                        rowVersion: '123123',
-                    },
+                    id: 1,
+                    firstName: 'First',
+                    lastName: 'ASdsklandasnd',
+                    azureOid: 'azure1',
+                    email: 'asdadasd@dwwdwd.com',
+                    rowVersion: '123123',
                     required: true,
                     response: OutlookResponseType.NONE,
                 },
                 {
-                    person: {
-                        id: 2,
-                        firstName: 'Second',
-                        lastName: 'ASdsklandasnd',
-                        azureOid: 'azure2',
-                        email: 'asdadasd2@dwwdwd.com',
-                        rowVersion: '1231234',
-                    },
+                    id: 2,
+                    firstName: 'Second',
+                    lastName: 'ASdsklandasnd',
+                    azureOid: 'azure2',
+                    email: 'asdadasd2@dwwdwd.com',
+                    rowVersion: '1231234',
                     required: true,
                     response: OutlookResponseType.NONE,
                 },
@@ -160,6 +156,7 @@ const participants = [
         },
         note: '',
         attended: false,
+        rowVersion: '12312333',
     },
 ];
 
@@ -169,14 +166,12 @@ const participants_canSign = [
         sortKey: 0,
         canSign: true,
         person: {
-            person: {
-                id: 123,
-                firstName: 'Adwa',
-                lastName: 'ASdsklandasnd',
-                azureOid: 'azure1',
-                email: 'asdadasd@dwwdwd.com',
-                rowVersion: '123123',
-            },
+            id: 123,
+            firstName: 'Adwa',
+            lastName: 'ASdsklandasnd',
+            azureOid: 'azure1',
+            email: 'asdadasd@dwwdwd.com',
+            rowVersion: '123123',
             required: true,
             response: OutlookResponseType.ATTENDING,
         },
@@ -194,20 +189,19 @@ const participants_canSign = [
         signedAtUtc: new Date(2020, 11, 6, 11),
         attended: true,
         note: '',
+        rowVersion: '12333123',
     },
     {
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
         canSign: true,
         person: {
-            person: {
-                id: 234,
-                firstName: 'Oakjfcv',
-                lastName: 'Alkjljsdf',
-                azureOid: 'azure2',
-                email: 'lkjlkjsdf@dwwdwd.com',
-                rowVersion: '123123',
-            },
+            id: 234,
+            firstName: 'Oakjfcv',
+            lastName: 'Alkjljsdf',
+            azureOid: 'azure2',
+            email: 'lkjlkjsdf@dwwdwd.com',
+            rowVersion: '123123',
             required: true,
             response: OutlookResponseType.ATTENDING,
         },
@@ -225,6 +219,7 @@ const participants_canSign = [
         signedAtUtc: new Date(2020, 11, 6, 12),
         attended: true,
         note: '',
+        rowVersion: '123333123',
     },
 ];
 
@@ -263,23 +258,15 @@ describe('<ParticipantsTable />', () => {
 
         expect(
             queryByText(
-                `${
-                    participants[ParticipantIndex.COMPLETER].person.person
-                        .firstName
-                } ${
-                    participants[ParticipantIndex.COMPLETER].person.person
-                        .lastName
+                `${participants[ParticipantIndex.COMPLETER].person.firstName} ${
+                    participants[ParticipantIndex.COMPLETER].person.lastName
                 }`
             )
         ).toBeInTheDocument();
         expect(
             queryByText(
-                `${
-                    participants[ParticipantIndex.ACCEPTER].person.person
-                        .firstName
-                } ${
-                    participants[ParticipantIndex.ACCEPTER].person.person
-                        .lastName
+                `${participants[ParticipantIndex.ACCEPTER].person.firstName} ${
+                    participants[ParticipantIndex.ACCEPTER].person.lastName
                 }`
             )
         ).toBeInTheDocument();

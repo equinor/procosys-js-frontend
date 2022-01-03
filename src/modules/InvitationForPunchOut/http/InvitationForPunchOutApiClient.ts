@@ -242,7 +242,7 @@ export type ExternalEmailDto = {
 export type ParticipantDto = {
     organization: string;
     sortKey: number;
-    rowVersion?: string; // TODO: is this needed??
+    rowVersion?: string;
     externalEmail: ExternalEmailDto | null;
     person: PersonDto | null;
     functionalRole: FunctionalRoleDto | null;

@@ -32,11 +32,21 @@ type FunctionalRole = {
     id: number;
     code: string;
     email: string;
-    persons: Person[];
+    persons: PersonInRole[];
     response?: string;
 };
 
 type Person = {
+    response?: string;
+    id: number;
+    firstName: string;
+    lastName: string;
+    azureOid: string;
+    email: string;
+    required: boolean;
+};
+
+type PersonInRole = {
     response?: string;
     id: number;
     firstName: string;
@@ -51,7 +61,6 @@ type ExternalEmail = {
     id: number;
     externalEmail: string;
     response?: string;
-    rowVersion: string | null;
 };
 
 export type Invitation = {

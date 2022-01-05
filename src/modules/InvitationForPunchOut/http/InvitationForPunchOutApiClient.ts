@@ -68,8 +68,19 @@ type FunctionalRoleInvitationResponse = {
     id: number;
     code: string;
     email: string;
-    persons: PersonInvitationResponse[];
+    persons: PersonInFunctionalRoleResponse[];
     response?: string;
+};
+
+type PersonInFunctionalRoleResponse = {
+    response?: string;
+    id: number;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    azureOid: string;
+    email: string;
+    required: boolean;
     rowVersion: string;
 };
 
@@ -82,14 +93,12 @@ type PersonInvitationResponse = {
     azureOid: string;
     email: string;
     required: boolean;
-    rowVersion: string;
 };
 
 type ExternalEmailInvitationResponse = {
     id: number;
     externalEmail: string;
     response?: string;
-    rowVersion: string;
 };
 
 type CommentResponse = {
@@ -223,20 +232,26 @@ export type PersonDto = {
     azureOid: string | null;
     email: string;
     required: boolean;
+};
+
+export type PersonInRoleDto = {
+    id?: number;
+    azureOid: string | null;
+    email: string;
+    required: boolean;
     rowVersion?: string;
 };
 
 export type FunctionalRoleDto = {
     id?: number;
     code: string;
-    persons: PersonDto[] | null;
+    persons: PersonInRoleDto[] | null;
     rowVersion?: string;
 };
 
 export type ExternalEmailDto = {
     id: number | null;
     email: string;
-    rowVersion: string | null;
 };
 
 export type ParticipantDto = {

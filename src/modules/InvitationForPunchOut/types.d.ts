@@ -26,24 +26,30 @@ export type Person = {
     azureOid: string;
     name: string;
     email: string;
+    radioOption: string | null;
+};
+
+export type PersonInRole = {
+    id?: number;
+    azureOid: string;
+    name: string;
+    email: string;
     rowVersion?: string;
     radioOption: string | null;
 };
 
 export type RoleParticipant = {
     id?: number;
-    rowVersion?: string;
     code: string;
     description: string;
     usePersonalEmail: boolean;
     notify: boolean;
-    persons: Person[];
+    persons: PersonInRole[];
 };
 
 type ExternalEmail = {
     id: number | null;
     email: string;
-    rowVersion: string | null;
 };
 
 export type Participant = {

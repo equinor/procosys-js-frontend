@@ -6,6 +6,7 @@ import {
     McScope,
     Participant,
     Person,
+    PersonInRole,
     RoleParticipant,
     Step,
 } from '../../types';
@@ -15,6 +16,7 @@ import {
     FunctionalRoleDto,
     ParticipantDto,
     PersonDto,
+    PersonInRoleDto,
 } from '../../http/InvitationForPunchOutApiClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -202,11 +204,10 @@ const EditIPO = (): JSX.Element => {
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             required: participant.person.radioOption == 'to',
-            rowVersion: participant.person.rowVersion,
         };
     };
 
-    const getPersons = (role: RoleParticipant): PersonDto[] | null => {
+    const getPersons = (role: RoleParticipant): PersonInRoleDto[] | null => {
         if (!role.persons || role.persons.length == 0) {
             return null;
         }
@@ -231,7 +232,6 @@ const EditIPO = (): JSX.Element => {
             id: participant.role.id,
             code: participant.role.code,
             persons: getPersons(participant.role),
-            rowVersion: participant.role.rowVersion,
         };
     };
 
@@ -452,13 +452,12 @@ const EditIPO = (): JSX.Element => {
                         azureOid: participant.person.azureOid,
                         name: `${participant.person.firstName} ${participant.person.lastName}`,
                         email: participant.person.email,
-                        rowVersion: participant.person.rowVersion,
                         radioOption: null,
                     };
                 } else if (participant.functionalRole) {
                     participantType = 'Functional role';
 
-                    const persons: Person[] = [];
+                    const persons: PersonInRole[] = [];
                     participant.functionalRole.persons.forEach((person) => {
                         persons.push({
                             id: person.id,
@@ -491,7 +490,6 @@ const EditIPO = (): JSX.Element => {
                     externalEmail = {
                         id: participant.externalEmail.id,
                         email: participant.externalEmail.externalEmail,
-                        rowVersion: participant.externalEmail.rowVersion,
                     };
                 }
                 const organizationText = OrganizationMap.get(

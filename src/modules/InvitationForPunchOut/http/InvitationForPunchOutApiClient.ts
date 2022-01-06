@@ -232,6 +232,7 @@ export type PersonDto = {
     azureOid: string | null;
     email: string;
     required: boolean;
+    rowVersion?: string;
 };
 
 export type PersonInRoleDto = {
@@ -252,12 +253,12 @@ export type FunctionalRoleDto = {
 export type ExternalEmailDto = {
     id: number | null;
     email: string;
+    rowVersion?: string;
 };
 
 export type ParticipantDto = {
     organization: string;
     sortKey: number;
-    rowVersion?: string;
     externalEmail: ExternalEmailDto | null;
     person: PersonDto | null;
     functionalRole: FunctionalRoleDto | null;

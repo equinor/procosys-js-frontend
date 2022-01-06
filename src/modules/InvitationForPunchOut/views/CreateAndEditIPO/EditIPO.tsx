@@ -13,6 +13,7 @@ import {
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { ComponentName, IpoCustomEvents } from '../enums';
 import {
+    ExternalEmailDto,
     FunctionalRoleDto,
     ParticipantDto,
     PersonDto,
@@ -204,6 +205,7 @@ const EditIPO = (): JSX.Element => {
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             required: participant.person.radioOption == 'to',
+            rowVersion: participant.rowVersion,
         };
     };
 
@@ -232,6 +234,18 @@ const EditIPO = (): JSX.Element => {
             id: participant.role.id,
             code: participant.role.code,
             persons: getPersons(participant.role),
+            rowVersion: participant.rowVersion,
+        };
+    };
+
+    const getExternalEmail = (
+        participant: Participant
+    ): ExternalEmailDto | null => {
+        if (!participant.externalEmail) return null;
+        return {
+            id: participant.externalEmail.id,
+            email: participant.externalEmail.email,
+            rowVersion: participant.rowVersion,
         };
     };
 
@@ -240,8 +254,7 @@ const EditIPO = (): JSX.Element => {
             return {
                 organization: p.organization.value,
                 sortKey: i,
-                rowVersion: p.rowVersion,
-                externalEmail: p.externalEmail,
+                externalEmail: getExternalEmail(p),
                 person: getPerson(p),
                 functionalRole: getFunctionalRole(p),
             };

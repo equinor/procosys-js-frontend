@@ -196,7 +196,6 @@ const Participants = ({
             participantsCopy[index].person = null;
             participantsCopy[index].externalEmail = {
                 id: null,
-                rowVersion: null,
                 email: value,
             };
             return participantsCopy;

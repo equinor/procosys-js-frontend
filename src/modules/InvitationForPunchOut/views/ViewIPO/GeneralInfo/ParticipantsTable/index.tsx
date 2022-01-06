@@ -68,7 +68,7 @@ const ParticipantsTable = ({
 }: ParticipantsTableProps): JSX.Element => {
     const cleanData = participants.map((p) => {
         const x = p.person
-            ? p.person.person
+            ? p.person
             : p.functionalRole
             ? p.functionalRole
             : p.externalEmail;
@@ -88,7 +88,7 @@ const ParticipantsTable = ({
             id: x.id,
             attended: attendedStatus,
             note: p.note ? p.note : '',
-            rowVersion: x.rowVersion,
+            rowVersion: p.rowVersion,
         };
     });
     const [loading, setLoading] = useState<boolean>(false);
@@ -503,7 +503,7 @@ const ParticipantsTable = ({
                     {participants.map(
                         (participant: Participant, index: number) => {
                             const representative = participant.person
-                                ? `${participant.person.person.firstName} ${participant.person.person.lastName}`
+                                ? `${participant.person.firstName} ${participant.person.lastName}`
                                 : participant.functionalRole
                                 ? participant.functionalRole.code
                                 : participant.externalEmail.externalEmail;
@@ -523,7 +523,7 @@ const ParticipantsTable = ({
                                 : '';
 
                             const id = participant.person
-                                ? participant.person.person.id
+                                ? participant.person.id
                                 : participant.functionalRole
                                 ? participant.functionalRole.id
                                 : participant.externalEmail.id;

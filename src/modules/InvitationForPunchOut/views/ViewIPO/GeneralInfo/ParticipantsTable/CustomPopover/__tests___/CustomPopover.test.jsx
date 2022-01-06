@@ -23,26 +23,22 @@ const participants = [
             email: 'funcitonalRole@asd.com',
             persons: [
                 {
-                    person: {
-                        id: 1,
-                        firstName: 'First',
-                        lastName: 'ASdsklandasnd',
-                        azureOid: 'azure1',
-                        email: 'asdadasd@dwwdwd.com',
-                        rowVersion: '123123',
-                    },
+                    id: 1,
+                    firstName: 'First',
+                    lastName: 'ASdsklandasnd',
+                    azureOid: 'azure1',
+                    email: 'asdadasd@dwwdwd.com',
+                    rowVersion: '123123',
                     required: true,
                     response: OutlookResponseType.ATTENDING,
                 },
                 {
-                    person: {
-                        id: 2,
-                        firstName: 'Second',
-                        lastName: 'ASdsklandasnd',
-                        azureOid: 'azure2',
-                        email: 'asdadasd2@dwwdwd.com',
-                        rowVersion: '1231234',
-                    },
+                    id: 2,
+                    firstName: 'Second',
+                    lastName: 'ASdsklandasnd',
+                    azureOid: 'azure2',
+                    email: 'asdadasd2@dwwdwd.com',
+                    rowVersion: '1231234',
                     required: true,
                     response: OutlookResponseType.NONE,
                 },
@@ -52,6 +48,7 @@ const participants = [
         },
         note: '',
         attended: true,
+        rowVersion: '123123',
     },
 ];
 
@@ -76,10 +73,10 @@ describe('<CustomPopover />', () => {
             fireEvent.click(button);
         });
         participants[0].functionalRole.persons.forEach((person) => {
-            const response = getByTestId(person.person.id.toString() + 'row', {
+            const response = getByTestId(person.id.toString() + 'row', {
                 exact: false,
             });
-            expect(response).toHaveTextContent(person.person.firstName);
+            expect(response).toHaveTextContent(person.firstName);
             expect(response).toHaveTextContent(person.response);
         });
     });

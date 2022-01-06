@@ -43,7 +43,6 @@ type Person = {
     lastName: string;
     azureOid: string;
     email: string;
-    required: boolean;
 };
 
 type PersonInRole = {

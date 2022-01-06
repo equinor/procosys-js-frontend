@@ -92,7 +92,6 @@ type PersonInvitationResponse = {
     userName: string;
     azureOid: string;
     email: string;
-    required: boolean;
 };
 
 type ExternalEmailInvitationResponse = {

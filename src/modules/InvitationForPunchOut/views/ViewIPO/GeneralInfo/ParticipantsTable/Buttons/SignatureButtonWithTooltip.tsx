@@ -1,5 +1,5 @@
 import { Button } from '@equinor/eds-core-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomTooltip from '../CustomTooltip';
 
 interface SignatureButtonWithTooltipProps {
@@ -15,8 +15,21 @@ const SignatureButtonWithTooltip = ({
     onClick,
     disabled,
 }: SignatureButtonWithTooltipProps): JSX.Element => {
+    const [show, setShow] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (disabled) setShow(false);
+    }, [disabled]);
+
     return (
-        <CustomTooltip title={tooltip} arrow>
+        <CustomTooltip
+            title={tooltip}
+            open={show}
+            disableHoverListener
+            onMouseEnter={(): void => (disabled ? undefined : setShow(true))}
+            onMouseLeave={(): void => setShow(false)}
+            arrow
+        >
             <span>
                 <Button onClick={onClick} disabled={disabled}>
                     {name}

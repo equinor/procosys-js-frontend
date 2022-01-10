@@ -602,7 +602,7 @@ const ParticipantsTable = ({
                                                 attNoteData[index]
                                                     ? attNoteData[index]
                                                           .attended
-                                                    : null
+                                                    : false
                                             }
                                             onChange={(): void =>
                                                 handleEditAttended(id)

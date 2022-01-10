@@ -1107,11 +1107,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         selectedTags.length != 1 ||
                                         voidedTagsSelected
                                     }
-                                    onClick={(): void =>
-                                        history.push(
-                                            `/EditTagProperties/${selectedTagId}`
-                                        )
-                                    }
+                                    onClick={setShowEditRequirementsDialog(
+                                        true
+                                    )}
                                 >
                                     <EdsIcon
                                         name="edit_text"

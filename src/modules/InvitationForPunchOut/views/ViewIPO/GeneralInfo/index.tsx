@@ -13,7 +13,7 @@ import {
     getFormattedTime,
 } from '@procosys/core/services/DateService';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography } from '@equinor/eds-core-react';
 
 interface GeneralInfoProps {
@@ -37,9 +37,14 @@ const GeneralInfo = ({
     uncomplete,
     unsign,
 }: GeneralInfoProps): JSX.Element => {
-    const participants = invitation.participants.sort(
-        (p1, p2): number => p1.sortKey - p2.sortKey
-    );
+    const [participants, setParticipants] = useState<Participant[]>([]);
+
+    useEffect(() => {
+        const newParticipants = invitation.participants.sort(
+            (p1, p2): number => p1.sortKey - p2.sortKey
+        );
+        setParticipants(newParticipants);
+    }, [invitation]);
 
     return (
         <Container>

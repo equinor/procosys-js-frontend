@@ -51,19 +51,14 @@ const CustomPopover = ({ participant }: CustomPopoverProps): JSX.Element => {
                         {participant.functionalRole.persons.map((person) => {
                             return (
                                 <TableRow
-                                    key={person.person.id}
-                                    data-testid={
-                                        person.person.id.toString() + 'row'
-                                    }
+                                    key={person.id}
+                                    data-testid={person.id.toString() + 'row'}
                                 >
                                     <TableCell>
-                                        {' '}
-                                        {person.person.firstName}{' '}
-                                        {person.person.lastName}{' '}
+                                        {person.firstName} {person.lastName}
                                     </TableCell>
                                     <TableCellRight>
-                                        {' '}
-                                        {person.response}{' '}
+                                        {person.response}
                                     </TableCellRight>
                                 </TableRow>
                             );

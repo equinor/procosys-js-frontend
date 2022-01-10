@@ -6,15 +6,18 @@ import {
     McScope,
     Participant,
     Person,
+    PersonInRole,
     RoleParticipant,
     Step,
 } from '../../types';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { ComponentName, IpoCustomEvents } from '../enums';
 import {
+    ExternalEmailDto,
     FunctionalRoleDto,
     ParticipantDto,
     PersonDto,
+    PersonInRoleDto,
 } from '../../http/InvitationForPunchOutApiClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -201,12 +204,12 @@ const EditIPO = (): JSX.Element => {
             id: participant.person.id,
             azureOid: participant.person.azureOid,
             email: participant.person.email,
-            rowVersion: participant.person.rowVersion,
             required: participant.person.radioOption == 'to',
+            rowVersion: participant.rowVersion,
         };
     };
 
-    const getPersons = (role: RoleParticipant): PersonDto[] | null => {
+    const getPersons = (role: RoleParticipant): PersonInRoleDto[] | null => {
         if (!role.persons || role.persons.length == 0) {
             return null;
         }
@@ -215,8 +218,8 @@ const EditIPO = (): JSX.Element => {
                 id: p.id,
                 azureOid: p.azureOid,
                 email: p.email,
-                rowVersion: p.rowVersion,
                 required: p.radioOption == 'to' || role.usePersonalEmail,
+                rowVersion: p.rowVersion,
             };
         });
     };
@@ -229,9 +232,20 @@ const EditIPO = (): JSX.Element => {
         }
         return {
             id: participant.role.id,
-            rowVersion: participant.role.rowVersion,
             code: participant.role.code,
             persons: getPersons(participant.role),
+            rowVersion: participant.rowVersion,
+        };
+    };
+
+    const getExternalEmail = (
+        participant: Participant
+    ): ExternalEmailDto | null => {
+        if (!participant.externalEmail) return null;
+        return {
+            id: participant.externalEmail.id,
+            email: participant.externalEmail.email,
+            rowVersion: participant.rowVersion,
         };
     };
 
@@ -240,7 +254,7 @@ const EditIPO = (): JSX.Element => {
             return {
                 organization: p.organization.value,
                 sortKey: i,
-                externalEmail: p.externalEmail,
+                externalEmail: getExternalEmail(p),
                 person: getPerson(p),
                 functionalRole: getFunctionalRole(p),
             };
@@ -447,24 +461,23 @@ const EditIPO = (): JSX.Element => {
                 if (participant.person) {
                     participantType = 'Person';
                     person = {
-                        id: participant.person.person.id,
-                        rowVersion: participant.person.person.rowVersion,
-                        azureOid: participant.person.person.azureOid,
-                        name: `${participant.person.person.firstName} ${participant.person.person.lastName}`,
-                        email: participant.person.person.email,
+                        id: participant.person.id,
+                        azureOid: participant.person.azureOid,
+                        name: `${participant.person.firstName} ${participant.person.lastName}`,
+                        email: participant.person.email,
                         radioOption: null,
                     };
                 } else if (participant.functionalRole) {
                     participantType = 'Functional role';
 
-                    const persons: Person[] = [];
+                    const persons: PersonInRole[] = [];
                     participant.functionalRole.persons.forEach((person) => {
                         persons.push({
-                            id: person.person.id,
-                            rowVersion: person.person.rowVersion,
-                            azureOid: person.person.azureOid,
-                            name: `${person.person.firstName} ${person.person.lastName}`,
-                            email: person.person.email,
+                            id: person.id,
+                            azureOid: person.azureOid,
+                            name: `${person.firstName} ${person.lastName}`,
+                            email: person.email,
+                            rowVersion: person.rowVersion,
                             radioOption: person.required ? 'to' : 'cc',
                         });
                     });
@@ -477,7 +490,6 @@ const EditIPO = (): JSX.Element => {
                         : null;
                     roleParticipant = {
                         id: participant.functionalRole.id,
-                        rowVersion: participant.functionalRole.rowVersion,
                         code: participant.functionalRole.code,
                         description: funcRole ? funcRole.description : '',
                         usePersonalEmail: funcRole
@@ -491,7 +503,6 @@ const EditIPO = (): JSX.Element => {
                     externalEmail = {
                         id: participant.externalEmail.id,
                         email: participant.externalEmail.externalEmail,
-                        rowVersion: participant.externalEmail.rowVersion,
                     };
                 }
                 const organizationText = OrganizationMap.get(
@@ -504,6 +515,7 @@ const EditIPO = (): JSX.Element => {
                     },
                     sortKey: participant.sortKey,
                     type: participantType,
+                    rowVersion: participant.rowVersion,
                     externalEmail: externalEmail,
                     person: person,
                     role: roleParticipant,

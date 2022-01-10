@@ -224,7 +224,6 @@ const CreateIPO = (): JSX.Element => {
             id: participant.person.id,
             azureOid: participant.person.azureOid,
             email: participant.person.email,
-            rowVersion: participant.person.rowVersion,
             required: participant.person.radioOption == 'to',
         };
     };
@@ -238,7 +237,6 @@ const CreateIPO = (): JSX.Element => {
                 id: p.id,
                 azureOid: p.azureOid,
                 email: p.email,
-                rowVersion: p.rowVersion,
                 required: p.radioOption == 'to' || role.usePersonalEmail,
             };
         });
@@ -252,7 +250,6 @@ const CreateIPO = (): JSX.Element => {
         }
         return {
             id: participant.role.id,
-            rowVersion: participant.role.rowVersion,
             code: participant.role.code,
             persons: getPersons(participant.role),
         };

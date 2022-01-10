@@ -252,7 +252,7 @@ const ViewIPO = (): JSX.Element => {
         attNoteData: AttNoteData[]
     ): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -262,7 +262,7 @@ const ViewIPO = (): JSX.Element => {
         try {
             await apiClient.completePunchOut(params.ipoId, {
                 invitationRowVersion: invitation.rowVersion,
-                participantRowVersion: signer.rowVersion,
+                participantRowVersion: participant.rowVersion,
                 participants: attNoteData,
             });
             analytics.trackUserAction(IpoCustomEvents.COMPLETED, {
@@ -281,7 +281,7 @@ const ViewIPO = (): JSX.Element => {
         participant: Participant
     ): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -292,7 +292,7 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.uncompletePunchOut(
                 params.ipoId,
                 invitation.rowVersion,
-                signer.rowVersion
+                participant.rowVersion
             );
             analytics.trackUserAction(IpoCustomEvents.UNCOMPLETED, {
                 project: invitation.projectName,
@@ -311,7 +311,7 @@ const ViewIPO = (): JSX.Element => {
         attNoteData: AttNoteData[]
     ): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -320,7 +320,7 @@ const ViewIPO = (): JSX.Element => {
 
         const acceptDetails: AcceptIPODto = {
             invitationRowVersion: invitation.rowVersion,
-            participantRowVersion: signer.rowVersion,
+            participantRowVersion: participant.rowVersion,
             participants: attNoteData,
         };
         try {
@@ -339,7 +339,7 @@ const ViewIPO = (): JSX.Element => {
 
     const unacceptPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -350,7 +350,7 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.unacceptPunchOut(
                 params.ipoId,
                 invitation.rowVersion,
-                signer.rowVersion
+                participant.rowVersion
             );
             analytics.trackUserAction(IpoCustomEvents.UNACCEPTED, {
                 project: invitation.projectName,
@@ -366,7 +366,7 @@ const ViewIPO = (): JSX.Element => {
 
     const signPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -375,7 +375,7 @@ const ViewIPO = (): JSX.Element => {
 
         const signDetails: SignIPODto = {
             participantId: signer.id,
-            participantRowVersion: signer.rowVersion,
+            participantRowVersion: participant.rowVersion,
         };
 
         try {
@@ -394,7 +394,7 @@ const ViewIPO = (): JSX.Element => {
 
     const unsignPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
-            ? participant.person.person
+            ? participant.person
             : participant.functionalRole
             ? participant.functionalRole
             : undefined;
@@ -405,7 +405,7 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.unsignPunchOut(
                 params.ipoId,
                 signer.id,
-                signer.rowVersion
+                participant.rowVersion
             );
             analytics.trackUserAction(IpoCustomEvents.UNSIGNED, {
                 project: invitation.projectName,

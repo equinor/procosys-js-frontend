@@ -4,13 +4,19 @@ import React from 'react';
 interface SignatureButtonProps {
     name: string;
     onClick: () => void;
+    disabled: boolean;
 }
 
 const SignatureButton = ({
     name,
     onClick,
+    disabled,
 }: SignatureButtonProps): JSX.Element => {
-    return <Button onClick={onClick}>{name}</Button>;
+    return (
+        <Button onClick={onClick} disabled={disabled}>
+            {name}
+        </Button>
+    );
 };
 
 export default SignatureButton;

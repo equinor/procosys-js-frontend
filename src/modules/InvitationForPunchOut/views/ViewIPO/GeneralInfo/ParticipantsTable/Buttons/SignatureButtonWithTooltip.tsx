@@ -6,17 +6,21 @@ interface SignatureButtonWithTooltipProps {
     name: string;
     tooltip: JSX.Element;
     onClick: () => void;
+    disabled: boolean;
 }
 
 const SignatureButtonWithTooltip = ({
     name,
     tooltip,
     onClick,
+    disabled,
 }: SignatureButtonWithTooltipProps): JSX.Element => {
     return (
         <CustomTooltip title={tooltip} arrow>
             <span>
-                <Button onClick={onClick}>{name}</Button>
+                <Button onClick={onClick} disabled={disabled}>
+                    {name}
+                </Button>
             </span>
         </CustomTooltip>
     );

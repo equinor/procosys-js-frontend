@@ -41,6 +41,7 @@ interface SignatureButtonsProps {
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
+    canUpdate: boolean;
 }
 
 const SignatureButtons = ({
@@ -58,6 +59,7 @@ const SignatureButtons = ({
     unaccept,
     uncomplete,
     unsign,
+    canUpdate,
 }: SignatureButtonsProps): JSX.Element => {
     // TODO: are buttons disabled while loading in current?
     const handleCompletePunchOut = async (): Promise<any> => {
@@ -108,18 +110,19 @@ const SignatureButtons = ({
     };
 
     const getUnCompleteAndUpdateParticipantsButtons = (): JSX.Element => {
-        // TODO: handle enabled/disabled state of update button.
         return (
             <>
                 <SignatureButtonWithTooltip
                     name={'Update'}
                     tooltip={tooltipUpdate}
                     onClick={handleUpdateParticipants}
+                    disabled={!canUpdate || loading}
                 />
                 <span> </span>
                 <SignatureButton
                     name={'Uncomplete'}
                     onClick={handleUnCompletePunchOut}
+                    disabled={loading}
                 />
             </>
         );
@@ -130,6 +133,7 @@ const SignatureButtons = ({
             <SignatureButton
                 name={'Sign punch-out'}
                 onClick={handleSignPunchOut}
+                disabled={loading}
             />
         );
     };
@@ -138,6 +142,7 @@ const SignatureButtons = ({
             <SignatureButton
                 name={'Unsign punch-out'}
                 onClick={handleUnsignPunchOut}
+                disabled={loading}
             />
         );
     };
@@ -151,6 +156,7 @@ const SignatureButtons = ({
                             name={'Complete punch-out'}
                             tooltip={tooltipComplete}
                             onClick={handleCompletePunchOut}
+                            disabled={loading}
                         />
                     );
                 } else if (
@@ -177,6 +183,7 @@ const SignatureButtons = ({
                         <SignatureButton
                             name={'Unaccept punch-out'}
                             onClick={handleUnAcceptPunchOut}
+                            disabled={loading}
                         />
                     );
                 } else if (
@@ -188,6 +195,7 @@ const SignatureButtons = ({
                             name={'Accept punch-out'}
                             tooltip={tooltipAccept}
                             onClick={handleAcceptPunchOut}
+                            disabled={loading}
                         />
                     );
                 }

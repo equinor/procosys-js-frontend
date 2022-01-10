@@ -66,31 +66,6 @@ const ParticipantsTable = ({
     unaccept,
     uncomplete,
 }: ParticipantsTableProps): JSX.Element => {
-    const cleanData = participants.map((p) => {
-        const x = p.person
-            ? p.person
-            : p.functionalRole
-            ? p.functionalRole
-            : p.externalEmail;
-        const attendedStatus =
-            status === IpoStatusEnum.PLANNED
-                ? p.person
-                    ? p.person.response
-                        ? p.person.response === OutlookResponseType.ATTENDING
-                        : false
-                    : (x as FunctionalRole | ExternalEmail).response
-                    ? (x as FunctionalRole | ExternalEmail).response ===
-                      OutlookResponseType.ATTENDING
-                    : false
-                : p.attended;
-
-        return {
-            id: x.id,
-            attended: attendedStatus,
-            note: p.note ? p.note : '',
-            rowVersion: p.rowVersion,
-        };
-    });
     const [loading, setLoading] = useState<boolean>(false);
     const [editAttendedDisabled, setEditAttendedDisabled] =
         useState<boolean>(true);
@@ -100,7 +75,8 @@ const ParticipantsTable = ({
     const btnAcceptRef = useRef<HTMLButtonElement>();
     const btnUnAcceptRef = useRef<HTMLButtonElement>();
     const btnUpdateRef = useRef<HTMLButtonElement>();
-    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>(cleanData);
+    const [attNoteData, setAttNoteData] = useState<AttNoteData[]>([]);
+    const [cleanData, setCleanData] = useState<AttNoteData[]>([]);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const btnSignRef = useRef<HTMLButtonElement>();
 
@@ -137,6 +113,37 @@ const ParticipantsTable = ({
                 btnUpdateRef.current.setAttribute('disabled', 'disabled');
         }
     }, [attNoteData]);
+
+    useEffect(() => {
+        const newCleanData = participants.map((participant) => {
+            const x = participant.person
+                ? participant.person
+                : participant.functionalRole
+                ? participant.functionalRole
+                : participant.externalEmail;
+            const attendedStatus =
+                status === IpoStatusEnum.PLANNED
+                    ? participant.person
+                        ? participant.person.response
+                            ? participant.person.response ===
+                              OutlookResponseType.ATTENDING
+                            : false
+                        : (x as FunctionalRole | ExternalEmail).response
+                        ? (x as FunctionalRole | ExternalEmail).response ===
+                          OutlookResponseType.ATTENDING
+                        : false
+                    : participant.attended;
+
+            return {
+                id: x.id,
+                attended: attendedStatus,
+                note: participant.note ? participant.note : '',
+                rowVersion: participant.rowVersion,
+            };
+        });
+        setCleanData(newCleanData);
+        setAttNoteData(newCleanData);
+    }, [participants]);
 
     const getCompleteButton = (
         completePunchout: (index: number) => void
@@ -584,12 +591,18 @@ const ParticipantsTable = ({
                                             disabled={editAttendedDisabled}
                                             default
                                             label={
-                                                attNoteData[index].attended
-                                                    ? 'Attended'
-                                                    : 'Did not attend'
+                                                attNoteData[index]
+                                                    ? attNoteData[index]
+                                                          .attended
+                                                        ? 'Attended'
+                                                        : 'Did not attend'
+                                                    : null
                                             }
                                             checked={
-                                                attNoteData[index].attended
+                                                attNoteData[index]
+                                                    ? attNoteData[index]
+                                                          .attended
+                                                    : false
                                             }
                                             onChange={(): void =>
                                                 handleEditAttended(id)
@@ -608,7 +621,9 @@ const ParticipantsTable = ({
                                             id={`textfield${id}`}
                                             disabled={editNotesDisabled}
                                             defaultValue={
-                                                attNoteData[index].note
+                                                participant.note
+                                                    ? participant.note
+                                                    : ''
                                             }
                                             onChange={(e: any): void =>
                                                 handleEditNotes(e, id)

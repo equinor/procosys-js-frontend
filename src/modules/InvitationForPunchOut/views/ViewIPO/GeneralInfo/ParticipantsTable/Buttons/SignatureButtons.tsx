@@ -59,6 +59,7 @@ const SignatureButtons = ({
     uncomplete,
     unsign,
 }: SignatureButtonsProps): JSX.Element => {
+    // TODO: are buttons disabled while loading in current?
     const handleCompletePunchOut = async (): Promise<any> => {
         setLoading(true);
         await complete(participant, attNoteData);
@@ -107,6 +108,7 @@ const SignatureButtons = ({
     };
 
     const getUnCompleteAndUpdateParticipantsButtons = (): JSX.Element => {
+        // TODO: handle enabled/disabled state of update button.
         return (
             <>
                 <SignatureButtonWithTooltip

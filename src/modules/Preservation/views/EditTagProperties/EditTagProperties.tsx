@@ -52,40 +52,6 @@ const EditTagProperties = (): JSX.Element => {
 
     const [rowVersion, setRowVersion] = useState<string>('');
 
-    /**
-     * Get tag details
-     */
-    useEffect(() => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            if (tagId) {
-                try {
-                    const details = await apiClient.getTagDetails(
-                        Number.parseInt(tagId),
-                        (cancel: Canceler) => (requestCancellor = cancel)
-                    );
-                    setTag(details);
-                    if (details.tagNo.substr(0, 4) == '#PO-') {
-                        setPoTag(true);
-                    }
-                    setRowVersion(details.rowVersion);
-                    setDescription(details.description);
-                } catch (error) {
-                    console.error(
-                        'Get tag details failed: ',
-                        error.message,
-                        error.data
-                    );
-                    showSnackbarNotification(error.message);
-                }
-            }
-        })();
-
-        return (): void => {
-            requestCancellor && requestCancellor();
-        };
-    }, []);
-
     const hasUnsavedChanges = (): boolean => {
         return tagJourneyOrRequirementsEdited || remarkOrStorageAreaEdited;
     };

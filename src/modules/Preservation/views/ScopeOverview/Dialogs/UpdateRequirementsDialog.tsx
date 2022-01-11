@@ -21,6 +21,7 @@ import {
 import { Typography } from '@equinor/eds-core-react';
 import { Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
+import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 
 const moduleName = 'PreservationUpdateRequirementsDialog';
 
@@ -37,16 +38,20 @@ interface RequirementFormInput {
 }
 
 interface UpdateRequirementsDialogProps {
-    tagId: string;
     open: boolean;
     onClose: () => void;
+    tagId?: number;
 }
 
 const UpdateRequirementsDialog = ({
-    tagId,
     open,
     onClose,
-}: UpdateRequirementsDialogProps): JSX.Element => {
+    tagId,
+}: UpdateRequirementsDialogProps): JSX.Element | null => {
+    if (!open) {
+        // TODO: decide on where to put this if block
+        return null;
+    }
     const { apiClient } = usePreservationContext();
     const [tag, setTag] = useState<TagDetails>();
     const [description, setDescription] = useState<string | null>(null);
@@ -73,6 +78,9 @@ const UpdateRequirementsDialog = ({
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
     const remarkInputRef = useRef<HTMLInputElement>(null);
     const dummyTagTypes = ['PreArea', 'SiteArea', 'PoArea'];
+    const [validationErrorMessage, setValidationErrorMessage] = useState<
+        string | null
+    >();
 
     useEffect(() => {
         let requestCancellor: Canceler | null = null;
@@ -80,7 +88,7 @@ const UpdateRequirementsDialog = ({
             if (tagId) {
                 try {
                     const details = await apiClient.getTagDetails(
-                        Number.parseInt(tagId),
+                        tagId,
                         (cancel: Canceler) => (requestCancellor = cancel)
                     );
                     setTag(details);
@@ -223,6 +231,93 @@ const UpdateRequirementsDialog = ({
         }
     };
 
+    const updateRemarkAndStorageArea = async (): Promise<string> => {
+        try {
+            if (tag && remarkInputRef.current && storageAreaInputRef.current) {
+                const updatedRowVersion =
+                    await apiClient.setRemarkAndStorageArea(
+                        tag.id,
+                        remarkInputRef.current.value,
+                        storageAreaInputRef.current.value,
+                        rowVersion
+                    );
+                setRowVersion(updatedRowVersion);
+                return updatedRowVersion;
+            }
+            return rowVersion;
+        } catch (error) {
+            handleErrorFromBackend(
+                error,
+                'Error updating remark and storage area'
+            );
+            throw error.message;
+        }
+    };
+
+    const handleErrorFromBackend = (
+        error: ProCoSysApiError,
+        errorMessageConsole: string
+    ): void => {
+        if (error.data && error.data.status == 400) {
+            console.error(errorMessageConsole, error.message, error.data);
+            setValidationErrorMessage(error.message);
+            throw showSnackbarNotification(
+                'Validation error. Changes are not saved.'
+            );
+        } else {
+            console.error(errorMessageConsole, error.message, error.data);
+            throw showSnackbarNotification(error.message);
+        }
+    };
+
+    const updateTagJourneyAndRequirements = async (
+        currentRowVersion: string
+    ): Promise<void> => {
+        try {
+            if (tag && step && description) {
+                let newRequirements: RequirementFormInput[] = [];
+                const numberOfNewReq =
+                    requirements.length - originalRequirements.length;
+                if (requirements.length > originalRequirements.length) {
+                    newRequirements = [...requirements.slice(-numberOfNewReq)];
+                }
+                const updatedRequirements = requirements
+                    .slice(0, originalRequirements.length)
+                    .map((req) => {
+                        return {
+                            requirementId: req.requirementId,
+                            intervalWeeks: req.intervalWeeks,
+                            isVoided: req.isVoided,
+                            rowVersion: req.rowVersion,
+                        };
+                    });
+                const deletedRequirements = requirements
+                    .filter((req) => req.isVoided && req.isDeleted)
+                    .map((req) => {
+                        return {
+                            requirementId: req.requirementId,
+                            rowVersion: req.rowVersion,
+                        };
+                    });
+                // TODO: change to use new requirements thing
+                // await apiClient.updateTagStepAndRequirements(
+                //     tag.id,
+                //     description,
+                //     step.id,
+                //     currentRowVersion,
+                //     updatedRequirements,
+                //     newRequirements,
+                //     deletedRequirements
+                // );
+            }
+        } catch (error) {
+            handleErrorFromBackend(
+                error,
+                'Error updating journey, step, requirements, or description'
+            );
+        }
+    };
+
     const save = async (): Promise<void> => {
         setShowSpinner(true);
         let currentRowVersion = rowVersion;
@@ -249,6 +344,8 @@ const UpdateRequirementsDialog = ({
         onClose();
     };
 
+    // TODO: add loading state handling using show spinner og rename to loading
+    // TODO: fix styling
     return (
         <Scrim>
             <DialogContainer width={'80vw'}>
@@ -259,6 +356,11 @@ const UpdateRequirementsDialog = ({
                 </Title>
                 <Divider />
                 <Content>
+                    {validationErrorMessage && (
+                        <Typography variant="caption">
+                            {validationErrorMessage}
+                        </Typography>
+                    )}
                     <InputContainer style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Description'}

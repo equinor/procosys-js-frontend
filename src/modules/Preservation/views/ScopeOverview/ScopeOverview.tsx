@@ -52,6 +52,8 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 import ScopeOverviewTable from './ScopeOverviewTable';
+import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
+import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 
 export const getFirstUpcomingRequirement = (
     tag: PreservedTag
@@ -165,7 +167,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [duplicatableTagSelected, setDuplicatableTagSelected] =
         useState<boolean>();
 
-    const [selectedTagId, setSelectedTagId] = useState<string | number>();
+    const [selectedTagId, setSelectedTagId] = useState<number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] =
@@ -184,6 +186,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [showTagRescheduleDialog, setShowTagRescheduleDialog] =
         useState<boolean>(false);
     const [showActions, setShowActions] = useState<boolean>(false);
+    const [showEditTagJourneyDialog, setShowEditTagJourneyDialog] =
+        useState<boolean>(false);
+    const [showEditRequirementsDialog, setShowEditRequirementsDialog] =
+        useState<boolean>(false);
 
     const history = useHistory();
     const location = useLocation();
@@ -384,7 +390,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
         } else {
-            setSelectedTagId('');
+            setSelectedTagId(-1);
         }
     }, [selectedTags]);
 
@@ -1323,6 +1329,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 tags={selectedTags}
                 onClose={closeReschededuleDialog}
             />
+            <UpdateRequirementsDialog
+                open={showEditRequirementsDialog}
+                onClose={(): void => {
+                    setShowEditRequirementsDialog(false);
+                    refreshScopeList();
+                }}
+                tagId={selectedTagId}
+            />
+            <UpdateJourneyDialog />
         </Container>
     );
 };

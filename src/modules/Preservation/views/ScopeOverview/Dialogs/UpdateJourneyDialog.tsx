@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
@@ -11,11 +11,6 @@ import {
     MainContainer,
     TableContainer,
 } from './Shared components/Dialogs.style';
-
-interface UpdateJourneyDialogProps {
-    updateableTags: PreservedTag[];
-    nonUpdateableTags: PreservedTag[];
-}
 
 const OverflowColumn = styled.div`
     text-overflow: ellipsis;
@@ -101,11 +96,23 @@ const columns = [
     },
 ];
 
+interface UpdateJourneyDialogProps {
+    tags: PreservedTag[];
+    open: boolean;
+    onClose: () => void;
+}
+
 const UpdateJourneyDialog = ({
-    updateableTags,
-    nonUpdateableTags,
+    tags,
+    open,
+    onClose,
 }: UpdateJourneyDialogProps): JSX.Element => {
     // TODO: add the form for actually changing the journey, and then add the stuff for actually making it work
+    const [nonUpdateableTags, setNonUpdateableTags] = useState<PreservedTag[]>(
+        []
+    );
+    const [updateableTags, setUpdateableTags] = useState<PreservedTag[]>([]);
+
     return (
         <MainContainer>
             {nonUpdateableTags.length > 0 && (

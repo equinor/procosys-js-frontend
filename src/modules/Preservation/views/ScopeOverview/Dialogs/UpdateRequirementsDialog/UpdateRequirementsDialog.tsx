@@ -1,23 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PreservedTag, RequirementType } from '../types';
-import { MainContainer } from './Shared components/Dialogs.style';
+import { PreservedTag, RequirementType } from '../../types';
+import {
+    ButtonContainer,
+    ButtonSpacer,
+    Content,
+    DialogContainer,
+    Divider,
+    MainContainer,
+    Scrim,
+    Title,
+} from '../SharedCode/Dialogs.style';
 import { InputContainer } from './UpdateRequirementsDialog.style';
 import { ProjectDetails } from '@procosys/modules/Preservation/types';
 import { TextField } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
 import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
-import { TagDetails } from '../TagFlyout/types';
+import { TagDetails } from '../../TagFlyout/types';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import RequirementsSelector from '@procosys/modules/Preservation/components/RequirementsSelector/RequirementsSelector';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import {
-    ButtonContainer,
-    Content,
-    DialogContainer,
-    Divider,
-    Scrim,
-    Title,
-} from './RescheduleDialog.style';
 import { Typography } from '@equinor/eds-core-react';
 import { Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
@@ -49,13 +50,11 @@ const UpdateRequirementsDialog = ({
     tagId,
 }: UpdateRequirementsDialogProps): JSX.Element | null => {
     if (!open) {
-        // TODO: decide on where to put this if block
         return null;
     }
     const { apiClient } = usePreservationContext();
     const [tag, setTag] = useState<TagDetails>();
     const [description, setDescription] = useState<string | null>(null);
-    const [poTag, setPoTag] = useState<boolean>(false);
     const [rowVersion, setRowVersion] = useState<string>('');
     const [requirementTypes, setRequirementTypes] = useState<RequirementType[]>(
         []
@@ -72,7 +71,6 @@ const UpdateRequirementsDialog = ({
         requirementsOrDescriptionEdited,
         setRequirementsOrDescriptionEdited,
     ] = useState<boolean>(false);
-    const [requirementsFetched, setRequirementsFetched] = useState(false);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const storageAreaInputRef = useRef<HTMLInputElement>(null);
@@ -92,12 +90,10 @@ const UpdateRequirementsDialog = ({
                         (cancel: Canceler) => (requestCancellor = cancel)
                     );
                     setTag(details);
-                    if (details.tagNo.substr(0, 4) == '#PO-') {
-                        setPoTag(true);
-                    }
                     setRowVersion(details.rowVersion);
                     setDescription(details.description);
                 } catch (error) {
+                    if (!(error instanceof ProCoSysApiError)) return;
                     console.error(
                         'Get tag details failed: ',
                         error.message,
@@ -114,12 +110,11 @@ const UpdateRequirementsDialog = ({
 
     /** Update global and local dirty state */
     useEffect(() => {
-        if (remarkOrStorageAreaEdited) {
+        if (remarkOrStorageAreaEdited || requirementsOrDescriptionEdited) {
             setDirtyStateFor(moduleName);
         } else {
             unsetDirtyStateFor(moduleName);
         }
-
         return (): void => {
             unsetDirtyStateFor(moduleName);
         };
@@ -134,7 +129,7 @@ const UpdateRequirementsDialog = ({
             if (tagId) {
                 try {
                     const response = await apiClient.getTagRequirements(
-                        Number.parseInt(tagId),
+                        tagId,
                         true,
                         true,
                         (cancel: Canceler) => (requestCancellor = cancel)
@@ -155,8 +150,8 @@ const UpdateRequirementsDialog = ({
                     });
                     setRequirements([...mappedResponse]);
                     setOriginalRequirements([...mappedResponse]);
-                    setRequirementsFetched(true);
                 } catch (error) {
+                    if (!(error instanceof ProCoSysApiError)) return;
                     console.error(
                         'Get requirement failed: ',
                         error.message,
@@ -186,6 +181,7 @@ const UpdateRequirementsDialog = ({
                     );
                     setRequirementTypes(response);
                 } catch (error) {
+                    if (!(error instanceof ProCoSysApiError)) return;
                     console.error(
                         'Get requirement types failed: ',
                         error.message,
@@ -202,7 +198,7 @@ const UpdateRequirementsDialog = ({
     }, []);
 
     /**
-     * Check if any changes have been made to step requirements, or description
+     * Check if any changes have been made to requirements, or description
      */
     useEffect(() => {
         if (
@@ -246,11 +242,14 @@ const UpdateRequirementsDialog = ({
             }
             return rowVersion;
         } catch (error) {
-            handleErrorFromBackend(
-                error,
-                'Error updating remark and storage area'
-            );
-            throw error.message;
+            if (error instanceof ProCoSysApiError) {
+                handleErrorFromBackend(
+                    error,
+                    'Error updating remark and storage area'
+                );
+                throw error.message;
+            }
+            throw new Error();
         }
     };
 
@@ -274,7 +273,7 @@ const UpdateRequirementsDialog = ({
         currentRowVersion: string
     ): Promise<void> => {
         try {
-            if (tag && step && description) {
+            if (tag && description) {
                 let newRequirements: RequirementFormInput[] = [];
                 const numberOfNewReq =
                     requirements.length - originalRequirements.length;
@@ -299,18 +298,17 @@ const UpdateRequirementsDialog = ({
                             rowVersion: req.rowVersion,
                         };
                     });
-                // TODO: change to use new requirements thing
-                // await apiClient.updateTagStepAndRequirements(
-                //     tag.id,
-                //     description,
-                //     step.id,
-                //     currentRowVersion,
-                //     updatedRequirements,
-                //     newRequirements,
-                //     deletedRequirements
-                // );
+                await apiClient.updateTagRequirements(
+                    tag.id,
+                    description,
+                    currentRowVersion,
+                    updatedRequirements,
+                    newRequirements,
+                    deletedRequirements
+                );
             }
         } catch (error) {
+            if (!(error instanceof ProCoSysApiError)) return;
             handleErrorFromBackend(
                 error,
                 'Error updating journey, step, requirements, or description'
@@ -344,7 +342,6 @@ const UpdateRequirementsDialog = ({
         onClose();
     };
 
-    // TODO: add loading state handling using show spinner og rename to loading
     // TODO: fix styling
     return (
         <Scrim>
@@ -412,6 +409,7 @@ const UpdateRequirementsDialog = ({
                     <Button onClick={onClose} variant="outlined">
                         Cancel
                     </Button>
+                    <ButtonSpacer />
                     <Button
                         onClick={save}
                         color="primary"

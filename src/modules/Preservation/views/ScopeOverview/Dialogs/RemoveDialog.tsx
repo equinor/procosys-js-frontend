@@ -3,13 +3,10 @@ import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from '../RequirementIcons';
-import DialogTable from './Shared components/DialogTable';
+import DialogTable from './SharedCode/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
-import {
-    MainContainer,
-    TableContainer,
-} from './Shared components/Dialogs.style';
+import { MainContainer, TableContainer } from './SharedCode/Dialogs.style';
 
 interface RemoveDialogProps {
     removableTags: PreservedTag[];

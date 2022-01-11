@@ -4,15 +4,12 @@ import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from '../RequirementIcons';
-import DialogTable from './Shared components/DialogTable';
+import DialogTable from './SharedCode/DialogTable';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tooltip } from '@material-ui/core';
 import { OverflowColumn } from './RescheduleDialog.style';
-import {
-    MainContainer,
-    TableContainer,
-} from './Shared components/Dialogs.style';
+import { MainContainer, TableContainer } from './SharedCode/Dialogs.style';
 
 interface VoidDialogProps {
     voidableTags: PreservedTag[];

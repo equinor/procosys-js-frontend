@@ -2,17 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { PreservedTag } from '../types';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from '../RequirementIcons';
-import DialogTable from './Shared components/DialogTable';
+import DialogTable from './SharedCode/DialogTable';
 import {
-    ButtonContainer,
-    ButtonSpacer,
-    DialogContainer,
-    Divider,
     FormFieldSpacer,
     InputContainer,
     OverflowColumn,
-    Scrim,
-    Title,
 } from './RescheduleDialog.style';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Button } from '@equinor/eds-core-react';
@@ -27,9 +21,16 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
 import {
+    ButtonContainer,
+    ButtonSpacer,
+    DialogContainer,
+    Divider,
     MainContainer,
+    Scrim,
     TableContainer,
-} from './Shared components/Dialogs.style';
+    Title,
+} from './SharedCode/Dialogs.style';
+import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 
 const errorIcon = (
     <EdsIcon
@@ -180,6 +181,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
             setShowSpinner(false);
             props.onClose();
         } catch (error) {
+            if (!(error instanceof ProCoSysApiError)) return;
             console.error('Reschedule failed: ', error.message, error.data);
             showSnackbarNotification(error.message);
         }

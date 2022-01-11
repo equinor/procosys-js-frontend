@@ -52,7 +52,7 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 import ScopeOverviewTable from './ScopeOverviewTable';
-import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
+import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog/UpdateRequirementsDialog';
 import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 
 export const getFirstUpcomingRequirement = (
@@ -1113,9 +1113,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         selectedTags.length != 1 ||
                                         voidedTagsSelected
                                     }
-                                    onClick={setShowEditRequirementsDialog(
-                                        true
-                                    )}
+                                    onClick={(): void =>
+                                        setShowEditRequirementsDialog(true)
+                                    }
                                 >
                                     <EdsIcon
                                         name="edit_text"
@@ -1337,7 +1337,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 }}
                 tagId={selectedTagId}
             />
-            <UpdateJourneyDialog />
+            <UpdateJourneyDialog
+                tags={selectedTags}
+                open={showEditTagJourneyDialog}
+                onClose={(): void => {
+                    setShowEditTagJourneyDialog(false);
+                    refreshScopeList();
+                }}
+            />
         </Container>
     );
 };

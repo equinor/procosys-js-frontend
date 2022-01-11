@@ -3,14 +3,11 @@ import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 import RequirementIcons from '../RequirementIcons';
-import DialogTable from './Shared components/DialogTable';
+import DialogTable from './SharedCode/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
 import { Tooltip } from '@material-ui/core';
-import {
-    MainContainer,
-    TableContainer,
-} from './Shared components/Dialogs.style';
+import { MainContainer, TableContainer } from './SharedCode/Dialogs.style';
 
 const OverflowColumn = styled.div`
     text-overflow: ellipsis;
@@ -106,12 +103,18 @@ const UpdateJourneyDialog = ({
     tags,
     open,
     onClose,
-}: UpdateJourneyDialogProps): JSX.Element => {
+}: UpdateJourneyDialogProps): JSX.Element | null => {
+    if (!open) {
+        return null;
+    }
+    // TODO: remember po tag => only one valid step.
     // TODO: add the form for actually changing the journey, and then add the stuff for actually making it work
     const [nonUpdateableTags, setNonUpdateableTags] = useState<PreservedTag[]>(
         []
     );
     const [updateableTags, setUpdateableTags] = useState<PreservedTag[]>([]);
+    // following is used in a useEffect thing, but why??
+    const [requirementsFetched, setRequirementsFetched] = useState(false);
 
     return (
         <MainContainer>

@@ -1,6 +1,6 @@
-import { Button } from '@equinor/eds-core-react';
 import React, { useEffect, useState } from 'react';
 import CustomTooltip from '../CustomTooltip';
+import SignatureButton from './SignatureButton';
 
 interface SignatureButtonWithTooltipProps {
     name: string;
@@ -31,9 +31,11 @@ const SignatureButtonWithTooltip = ({
             arrow
         >
             <span>
-                <Button onClick={onClick} disabled={disabled}>
-                    {name}
-                </Button>
+                <SignatureButton
+                    name={name}
+                    onClick={onClick}
+                    disabled={disabled}
+                />
             </span>
         </CustomTooltip>
     );

@@ -87,16 +87,12 @@ const ParticipantsTable = ({
     }, [participants, status]);
 
     useEffect(() => {
-        console.log(JSON.stringify(attNoteData));
-        console.log(JSON.stringify(cleanData));
         if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
             setDirtyStateFor(ComponentName.ParticipantsTable);
             setCanUpdate(true);
-            console.log('can update');
         } else {
             unsetDirtyStateFor(ComponentName.ParticipantsTable);
             setCanUpdate(false);
-            console.log('cannot update');
         }
     }, [attNoteData]);
 
@@ -135,7 +131,6 @@ const ParticipantsTable = ({
         (
             participant: Participant,
             status: string,
-            index: number,
             canUpdate: boolean,
             attNoteData: AttNoteData[],
             loading: boolean
@@ -143,7 +138,6 @@ const ParticipantsTable = ({
             <SignatureButtons
                 participant={participant}
                 status={status}
-                index={index}
                 attNoteData={attNoteData}
                 loading={loading}
                 setLoading={setLoading}
@@ -162,7 +156,6 @@ const ParticipantsTable = ({
     );
 
     const handleEditAttended = (id: number): void => {
-        console.log('handle edit attended');
         const updateData = [...attNoteData];
         const index = updateData.findIndex((x) => x.id === id);
         updateData[index] = {
@@ -397,7 +390,6 @@ const ParticipantsTable = ({
                                             {getSignatureButton(
                                                 participant,
                                                 status,
-                                                index,
                                                 canUpdate,
                                                 attNoteData,
                                                 loading

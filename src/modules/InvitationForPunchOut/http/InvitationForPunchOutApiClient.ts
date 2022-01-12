@@ -966,7 +966,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * SignPunchOut
+     * UnsignPunchOut
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */

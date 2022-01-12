@@ -1,4 +1,3 @@
-import { Button } from '@equinor/eds-core-react';
 import React from 'react';
 import { AttNoteData } from '..';
 import {
@@ -29,7 +28,6 @@ const tooltipAccept = <div>Punch round has been checked by company.</div>;
 interface SignatureButtonsProps {
     participant: Participant;
     status: string;
-    index: number;
     attNoteData: AttNoteData[];
     loading: boolean;
     setLoading: (isLoasing: boolean) => void;
@@ -47,7 +45,6 @@ interface SignatureButtonsProps {
 const SignatureButtons = ({
     participant,
     status,
-    index,
     attNoteData,
     loading,
     setLoading,
@@ -61,7 +58,6 @@ const SignatureButtons = ({
     unsign,
     canUpdate,
 }: SignatureButtonsProps): JSX.Element => {
-    // TODO: are buttons disabled while loading in current?
     const handleCompletePunchOut = async (): Promise<any> => {
         setLoading(true);
         await complete(participant, attNoteData);

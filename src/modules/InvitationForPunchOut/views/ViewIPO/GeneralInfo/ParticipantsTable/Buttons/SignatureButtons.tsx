@@ -58,50 +58,20 @@ const SignatureButtons = ({
     unsign,
     canUpdate,
 }: SignatureButtonsProps): JSX.Element => {
-    const handleCompletePunchOut = async (): Promise<any> => {
+    const handleButtonClick = async (
+        buttonAction: () => Promise<any>
+    ): Promise<void> => {
         setLoading(true);
-        await complete(participant, attNoteData);
+        await buttonAction();
         setLoading(false);
         unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
-    const handleUnCompletePunchOut = async (): Promise<any> => {
+    const handleSignButtonClick = async (
+        buttonAction: () => Promise<any>
+    ): Promise<void> => {
         setLoading(true);
-        await uncomplete(participant);
-        setLoading(false);
-        unsetDirtyStateFor(ComponentName.ParticipantsTable);
-    };
-
-    const handleAcceptPunchOut = async (): Promise<any> => {
-        setLoading(true);
-        await accept(participant, attNoteData);
-        setLoading(false);
-        unsetDirtyStateFor(ComponentName.ParticipantsTable);
-    };
-
-    const handleUnAcceptPunchOut = async (): Promise<any> => {
-        setLoading(true);
-        await unaccept(participant);
-        setLoading(false);
-        unsetDirtyStateFor(ComponentName.ParticipantsTable);
-    };
-
-    const handleUpdateParticipants = async (): Promise<any> => {
-        setLoading(true);
-        await update(attNoteData);
-        setLoading(false);
-        unsetDirtyStateFor(ComponentName.ParticipantsTable);
-    };
-
-    const handleSignPunchOut = async (): Promise<any> => {
-        setLoading(true);
-        await sign(participant);
-        setLoading(false);
-    };
-
-    const handleUnsignPunchOut = async (): Promise<any> => {
-        setLoading(true);
-        await unsign(participant);
+        await buttonAction();
         setLoading(false);
     };
 
@@ -111,13 +81,21 @@ const SignatureButtons = ({
                 <SignatureButtonWithTooltip
                     name={'Update'}
                     tooltip={tooltipUpdate}
-                    onClick={handleUpdateParticipants}
+                    onClick={(): Promise<void> =>
+                        handleButtonClick(async (): Promise<any> => {
+                            return await update(attNoteData);
+                        })
+                    }
                     disabled={!canUpdate || loading}
                 />
                 <span> </span>
                 <SignatureButton
                     name={'Uncomplete'}
-                    onClick={handleUnCompletePunchOut}
+                    onClick={(): Promise<void> =>
+                        handleButtonClick(async (): Promise<any> => {
+                            return await uncomplete(participant);
+                        })
+                    }
                     disabled={loading}
                 />
             </>
@@ -128,7 +106,11 @@ const SignatureButtons = ({
         return (
             <SignatureButton
                 name={'Sign punch-out'}
-                onClick={handleSignPunchOut}
+                onClick={(): Promise<void> =>
+                    handleSignButtonClick(async (): Promise<any> => {
+                        return await sign(participant);
+                    })
+                }
                 disabled={loading}
             />
         );
@@ -137,7 +119,11 @@ const SignatureButtons = ({
         return (
             <SignatureButton
                 name={'Unsign punch-out'}
-                onClick={handleUnsignPunchOut}
+                onClick={(): Promise<void> =>
+                    handleSignButtonClick(async (): Promise<any> => {
+                        return await unsign(participant);
+                    })
+                }
                 disabled={loading}
             />
         );
@@ -151,7 +137,14 @@ const SignatureButtons = ({
                         <SignatureButtonWithTooltip
                             name={'Complete punch-out'}
                             tooltip={tooltipComplete}
-                            onClick={handleCompletePunchOut}
+                            onClick={(): Promise<void> =>
+                                handleButtonClick(async (): Promise<any> => {
+                                    return await complete(
+                                        participant,
+                                        attNoteData
+                                    );
+                                })
+                            }
                             disabled={loading}
                         />
                     );
@@ -178,7 +171,11 @@ const SignatureButtons = ({
                     return (
                         <SignatureButton
                             name={'Unaccept punch-out'}
-                            onClick={handleUnAcceptPunchOut}
+                            onClick={(): Promise<void> =>
+                                handleButtonClick(async (): Promise<any> => {
+                                    return await unaccept(participant);
+                                })
+                            }
                             disabled={loading}
                         />
                     );
@@ -190,7 +187,14 @@ const SignatureButtons = ({
                         <SignatureButtonWithTooltip
                             name={'Accept punch-out'}
                             tooltip={tooltipAccept}
-                            onClick={handleAcceptPunchOut}
+                            onClick={(): Promise<void> =>
+                                handleButtonClick(async (): Promise<any> => {
+                                    return await accept(
+                                        participant,
+                                        attNoteData
+                                    );
+                                })
+                            }
                             disabled={loading}
                         />
                     );
@@ -206,12 +210,12 @@ const SignatureButtons = ({
         case OrganizationsEnum.Operation:
         case OrganizationsEnum.TechnicalIntegrity:
         case OrganizationsEnum.Commissioning:
+            if (!participant.canSign) break;
             if (participant.signedBy) {
                 return getUnsignButton();
-            } else if (participant.canSign) {
+            } else {
                 return getSignButton();
             }
-            break;
     }
 
     return <span>-</span>;

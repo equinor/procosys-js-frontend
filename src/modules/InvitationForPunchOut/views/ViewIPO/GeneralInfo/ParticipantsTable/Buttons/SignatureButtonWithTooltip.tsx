@@ -5,7 +5,7 @@ import SignatureButton from './SignatureButton';
 interface SignatureButtonWithTooltipProps {
     name: string;
     tooltip: JSX.Element;
-    onClick: () => void;
+    onClick: () => Promise<void>;
     disabled: boolean;
 }
 

@@ -3,7 +3,7 @@ import React from 'react';
 
 interface SignatureButtonProps {
     name: string;
-    onClick: () => void;
+    onClick: () => Promise<void>;
     disabled: boolean;
 }
 

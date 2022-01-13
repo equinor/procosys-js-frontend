@@ -411,7 +411,10 @@ const UpdateRequirementsDialog = ({
                     <Button
                         onClick={save}
                         color="primary"
-                        disabled={!remarkOrStorageAreaEdited}
+                        disabled={
+                            !remarkOrStorageAreaEdited &&
+                            !requirementsOrDescriptionEdited
+                        }
                     >
                         Save
                     </Button>

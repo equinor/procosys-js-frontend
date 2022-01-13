@@ -266,7 +266,6 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
         }
     };
 
-    // TODO: fix styling? Don't have dialog be scrollable
     return (
         <Scrim>
             <DialogContainer width={'80vw'}>

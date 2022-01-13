@@ -388,7 +388,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 : false
         );
         setEditableTagSelected(
-            selectedTags.length == 1 && selectedTags[0].readyToBeEdited
+            selectedTags.find((t) => t.readyToBeEdited && !t.isVoided)
                 ? true
                 : false
         );
@@ -1117,7 +1117,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <DropdownItem
                                     disabled={
                                         selectedTags.length != 1 ||
-                                        editableTagSelected
+                                        !editableTagSelected
                                     }
                                     onClick={(): void =>
                                         setShowEditRequirementsDialog(true)
@@ -1127,7 +1127,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         name="edit_text"
                                         color={
                                             selectedTags.length != 1 ||
-                                            voidedTagsSelected
+                                            !editableTagSelected
                                                 ? tokens.colors.interactive
                                                       .disabled__border.rgba
                                                 : tokens.colors.text

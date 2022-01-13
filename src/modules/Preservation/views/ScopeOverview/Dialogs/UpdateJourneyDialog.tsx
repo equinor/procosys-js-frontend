@@ -10,7 +10,6 @@ import { Tooltip } from '@material-ui/core';
 import {
     ButtonContainer,
     ButtonSpacer,
-    Content,
     DialogContainer,
     Divider,
     MainContainer,
@@ -28,6 +27,7 @@ import { usePreservationContext } from '@procosys/modules/Preservation/context/P
 import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { Journey } from '../../AddScope/types';
+import { Content } from '@procosys/core/services/ModalDialogService/style';
 
 const moduleName = 'PreservationUpdateJourneyDialog';
 
@@ -35,11 +35,6 @@ const OverflowColumn = styled.div`
     text-overflow: ellipsis;
     overflow: hidden;
 `;
-
-const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
-    const tag = row.value as PreservedTag;
-    return <RequirementIcons tag={tag} />;
-};
 
 const getTagNoCell = (row: TableOptions<PreservedTag>): JSX.Element => {
     const tag = row.value as PreservedTag;
@@ -105,14 +100,6 @@ const columns = [
         ): UseTableRowProps<PreservedTag> => d,
         Cell: getStatusCell,
     },
-    {
-        Header: 'Req type',
-        accessor: (
-            d: UseTableRowProps<PreservedTag>
-        ): UseTableRowProps<PreservedTag> => d,
-        id: 'reqtype',
-        Cell: getRequirementIcons,
-    },
 ];
 
 interface UpdateJourneyDialogProps {
@@ -161,9 +148,9 @@ const UpdateJourneyDialog = ({
                 setPoTag(true);
             }
             if (tag.readyToBeEdited) {
-                tempNonUpdateableTags.push(tag);
-            } else {
                 tempUpdateableTags.push(tag);
+            } else {
+                tempNonUpdateableTags.push(tag);
             }
         });
         setNonUpdateableTags(tempNonUpdateableTags);
@@ -348,6 +335,7 @@ const UpdateJourneyDialog = ({
                 await apiClient.updateTagStep(tagDtos, step.id);
             }
         } catch (error) {
+            if (!(error instanceof ProCoSysApiError)) return;
             handleErrorFromBackend(
                 error,
                 'Error updating journey, step, requirements, or description'
@@ -405,43 +393,43 @@ const UpdateJourneyDialog = ({
                             {(step && step.title) || 'Select step'}
                         </SelectInput>
                     </InputContainer>
-                    {nonUpdateableTags.length > 0 && (
-                        <TableContainer isHalfSize={updateableTags.length > 0}>
-                            <Typography variant="meta">
-                                Journey cannot be updated for
-                                {nonUpdateableTags.length} tag(s). Tags are not
-                                started, already completed or voided.
-                                {
-                                    // TODO: check when journey cannot be updated for tags.
-                                }
-                            </Typography>
-                            <DialogTable
-                                tags={nonUpdateableTags}
-                                columns={columns}
-                                toolbarText="journey for tag(s) will not be updated"
-                                toolbarColor={
-                                    tokens.colors.interactive.danger__text.rgba
-                                }
-                            />
-                        </TableContainer>
-                    )}
-                    {updateableTags.length > 0 && (
-                        <TableContainer
-                            isHalfSize={nonUpdateableTags.length > 0}
-                        >
-                            <DialogTable
-                                tags={updateableTags}
-                                columns={columns}
-                                toolbarText="journey for tag(s) will be updated"
-                                toolbarColor={
-                                    tokens.colors.interactive.primary__resting
-                                        .rgba
-                                }
-                            />
-                        </TableContainer>
-                    )}
+                    <MainContainer>
+                        {nonUpdateableTags.length > 0 && (
+                            <TableContainer
+                                isHalfSize={updateableTags.length > 0}
+                            >
+                                <Typography variant="meta">
+                                    Journey cannot be updated for
+                                    {nonUpdateableTags.length} tag(s).
+                                </Typography>
+                                <DialogTable
+                                    tags={nonUpdateableTags}
+                                    columns={columns}
+                                    toolbarText="journey for tag(s) will not be updated"
+                                    toolbarColor={
+                                        tokens.colors.interactive.danger__text
+                                            .rgba
+                                    }
+                                />
+                            </TableContainer>
+                        )}
+                        {updateableTags.length > 0 && (
+                            <TableContainer
+                                isHalfSize={nonUpdateableTags.length > 0}
+                            >
+                                <DialogTable
+                                    tags={updateableTags}
+                                    columns={columns}
+                                    toolbarText="journey for tag(s) will be updated"
+                                    toolbarColor={
+                                        tokens.colors.interactive
+                                            .primary__resting.rgba
+                                    }
+                                />
+                            </TableContainer>
+                        )}
+                    </MainContainer>
                 </Content>
-
                 <ButtonContainer>
                     <Button onClick={onClose} variant="outlined">
                         Cancel

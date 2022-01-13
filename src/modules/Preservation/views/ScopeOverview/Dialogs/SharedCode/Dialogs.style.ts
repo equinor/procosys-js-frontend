@@ -27,16 +27,15 @@ export const Content = styled.div`
 `;
 
 export const DialogContainer = styled.div<{ width: string }>`
-    ${(props): any => `
-        display: block;
-        max-height: 90%;
-        height: 80%;
-        overflow: auto;
-        width: ${props.width};
-        background-color: ${tokens.colors.ui.background__default.rgba};       
-        box-shadow: ${tokens.elevation.above_scrim}; 
-        border-radius: ${tokens.shape.corners.borderRadius}; 
-       `}
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    height: 80vh;
+    overflow: auto;
+    width: ${(props): any => props.width};
+    background-color: ${tokens.colors.ui.background__default.rgba};
+    box-shadow: ${tokens.elevation.above_scrim};
+    border-radius: ${tokens.shape.corners.borderRadius};
 `;
 
 export const Divider = styled.div`
@@ -54,6 +53,7 @@ export const Scrim = styled.div`
     height: 100vh;
     justify-content: center;
     align-items: center;
+    margin-left: calc(var(--margin-module--left) * -1);
     background-color: ${tokens.colors.ui.background__scrim.rgba};
     z-index: 100;
 `;

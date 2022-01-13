@@ -142,12 +142,10 @@ const UpdateJourneyDialog = ({
         const tempNonUpdateableTags: PreservedTag[] = [];
         const tempUpdateableTags: PreservedTag[] = [];
         tags.map((tag) => {
-            // TODO: replace deprecated
-            if (tag.tagNo.substr(0, 4) == '#PO-') {
-                // TODO: add a warning to ui if po tag is true
+            if (tag.tagNo.substring(0, 4) == '#PO-') {
                 setPoTag(true);
             }
-            if (tag.readyToBeEdited) {
+            if (tag.readyToBeEdited && !tag.isVoided) {
                 tempUpdateableTags.push(tag);
             } else {
                 tempNonUpdateableTags.push(tag);
@@ -392,6 +390,13 @@ const UpdateJourneyDialog = ({
                         >
                             {(step && step.title) || 'Select step'}
                         </SelectInput>
+                        {poTag && (
+                            <Typography variant="meta">
+                                At least one purchase order tag has been chosen.
+                                Step must therefore be supplier step and will be
+                                set automatically.
+                            </Typography>
+                        )}
                     </InputContainer>
                     <MainContainer>
                         {nonUpdateableTags.length > 0 && (

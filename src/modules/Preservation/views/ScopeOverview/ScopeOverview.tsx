@@ -166,6 +166,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         useState<boolean>();
     const [duplicatableTagSelected, setDuplicatableTagSelected] =
         useState<boolean>();
+    const [editableTagSelected, setEditableTagSelected] = useState<boolean>();
 
     const [selectedTagId, setSelectedTagId] = useState<number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
@@ -383,6 +384,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         );
         setDuplicatableTagSelected(
             selectedTags.length == 1 && selectedTags[0].readyToBeDuplicated
+                ? true
+                : false
+        );
+        setEditableTagSelected(
+            selectedTags.length == 1 && selectedTags[0].readyToBeEdited
                 ? true
                 : false
         );
@@ -1111,7 +1117,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <DropdownItem
                                     disabled={
                                         selectedTags.length != 1 ||
-                                        voidedTagsSelected
+                                        editableTagSelected
                                     }
                                     onClick={(): void =>
                                         setShowEditRequirementsDialog(true)
@@ -1132,7 +1138,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     Update Requirements
                                 </DropdownItem>
                                 <DropdownItem
-                                    disabled={selectedTags.length === 0}
+                                    disabled={!editableTagSelected}
                                     onClick={(): void =>
                                         setShowEditTagJourneyDialog(true)
                                     }
@@ -1140,7 +1146,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     <EdsIcon
                                         name="edit_text"
                                         color={
-                                            !unvoidedTagsSelected // TODO: decide on color decider
+                                            !editableTagSelected
                                                 ? tokens.colors.interactive
                                                       .disabled__border.rgba
                                                 : tokens.colors.text

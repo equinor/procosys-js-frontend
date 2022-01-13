@@ -43,7 +43,7 @@ interface UpdateRequirementsDialogProps {
     onClose: () => void;
     tagId?: number;
 }
-
+// TODO: clean up file
 const UpdateRequirementsDialog = ({
     open,
     onClose,
@@ -269,7 +269,7 @@ const UpdateRequirementsDialog = ({
         }
     };
 
-    const updateTagJourneyAndRequirements = async (
+    const updateRequirementsAndDescription = async (
         currentRowVersion: string
     ): Promise<void> => {
         try {
@@ -329,7 +329,7 @@ const UpdateRequirementsDialog = ({
         }
         if (requirementsOrDescriptionEdited) {
             try {
-                await updateTagJourneyAndRequirements(currentRowVersion);
+                await updateRequirementsAndDescription(currentRowVersion);
             } catch (error) {
                 setShowSpinner(false);
                 throw 'error';
@@ -347,9 +347,7 @@ const UpdateRequirementsDialog = ({
         <Scrim>
             <DialogContainer width={'80vw'}>
                 <Title>
-                    <Typography variant="h6">
-                        Reschedule preservation
-                    </Typography>
+                    <Typography variant="h6">Update requirements</Typography>
                 </Title>
                 <Divider />
                 <Content>

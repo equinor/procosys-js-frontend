@@ -17,6 +17,7 @@ export interface PreservedTag {
     nextMode: string;
     nextResponsibleCode: string;
     purchaseOrderNo: string;
+    readyToBeEdited: boolean;
     readyToBePreserved: boolean;
     readyToBeStarted: boolean;
     readyToBeTransferred: boolean;
@@ -101,4 +102,19 @@ export interface RequirementField {
     fieldType: string;
     unit: string | null;
     showPrevious: boolean;
+}
+
+export interface Step {
+    id: number;
+    title: string;
+    isVoided: boolean;
+    mode: Mode;
+    rowVersion: string;
+}
+
+export interface Mode {
+    id: number;
+    title: string;
+    forSupplier: boolean;
+    rowVersion: string;
 }

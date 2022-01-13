@@ -25,6 +25,7 @@ interface PreservedTagResponse {
             nextMode: string;
             nextResponsibleCode: string;
             purchaseOrderNo: string;
+            readyToBeEdited: boolean;
             readyToBePreserved: boolean;
             readyToBeStarted: boolean;
             readyToBeTransferred: boolean;
@@ -456,6 +457,11 @@ interface HistoryResponse {
     preservationRecordGuid: string;
 }
 
+interface StepUpdateTagDto {
+    id: number;
+    rowVersion: string;
+}
+
 export class PreservationApiError extends ProCoSysApiError {
     constructor(error: AxiosError) {
         super(error);
@@ -565,31 +571,20 @@ class PreservationApiClient extends ApiClient {
         }
     }
 
-    // TODO: rewrite to only update step
-    // TODO: rewrite to work for several tags, not for one
     async updateTagStep(
-        tagId: number,
-        description: string,
+        tagDtos: StepUpdateTagDto[],
         stepId: number,
-        rowVersion: string,
-        updatedRequirements: RequirementForUpdate[],
-        newRequirements: RequirementFormInput[],
-        deletedRequirements: RequirementForDelete[],
         setRequestCanceller?: RequestCanceler
     ): Promise<string> {
-        const endpoint = `/Tags/${tagId}/UpdateTagStep`;
+        const endpoint = `/Tags/UpdateTagStep`;
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
             const result = await this.client.put(
                 endpoint,
                 {
-                    description,
+                    tagDtos,
                     stepId,
-                    newRequirements,
-                    updatedRequirements,
-                    deletedRequirements,
-                    rowVersion,
                 },
                 settings
             );

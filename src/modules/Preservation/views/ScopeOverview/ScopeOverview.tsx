@@ -52,6 +52,7 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 import ScopeOverviewTable from './ScopeOverviewTable';
+import UndoStartPreservationDialog from './Dialogs/UndoStartPreservationDialog';
 
 export const getFirstUpcomingRequirement = (
     tag: PreservedTag
@@ -164,7 +165,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         useState<boolean>();
     const [duplicatableTagSelected, setDuplicatableTagSelected] =
         useState<boolean>();
-
+    const [unStartableTagsSelected, setUnstartableTagsSelected] =
+        useState<boolean>();
     const [selectedTagId, setSelectedTagId] = useState<string | number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
@@ -377,6 +379,11 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         );
         setDuplicatableTagSelected(
             selectedTags.length == 1 && selectedTags[0].readyToBeDuplicated
+                ? true
+                : false
+        );
+        setUnstartableTagsSelected(
+            selectedTags.find((t) => t.readyToUndoStarted && !t.isVoided)
                 ? true
                 : false
         );
@@ -823,6 +830,59 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         );
     };
 
+    let unstartableTags: PreservedTag[];
+    let nonUnstartableTags: PreservedTag[];
+
+    const unStartPreservation = async (): Promise<void> => {
+        try {
+            await apiClient.undoStartPreservation(unstartableTags);
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification(
+                "Status was set to 'Not started' for selected tag(s)."
+            );
+        } catch (error) {
+            console.error(
+                'Undo start preservation failed: ',
+                error.message,
+                error.data
+            );
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const undoStartPreservationDialog = (): void => {
+        unstartableTags = [];
+        nonUnstartableTags = [];
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToUndoStarted && !tag.isVoided) {
+                unstartableTags.push(newTag);
+            } else {
+                nonUnstartableTags.push(newTag);
+            }
+        });
+
+        const undoStartButton =
+            startableTags.length > 0 ? 'Undo "start preservation"' : null;
+        const undoStartFunc =
+            startableTags.length > 0 ? unStartPreservation : null;
+
+        showModalDialog(
+            'Undo "start preservation"',
+            <UndoStartPreservationDialog
+                unstartableTags={startableTags}
+                nonUnstartableTags={nonStartableTags}
+            />,
+            '80vw',
+            backToListButton,
+            null,
+            undoStartButton,
+            undoStartFunc
+        );
+    };
+
     const openFlyout = (tag: PreservedTag): void => {
         setFlyoutTagId(tag.id);
         setDisplayFlyout(true);
@@ -1196,6 +1256,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         }
                                     />
                                     Unvoid
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={!unStartableTagsSelected}
+                                    onClick={undoStartPreservationDialog}
+                                >
+                                    <EdsIcon
+                                        name="edit_text"
+                                        color={
+                                            !unStartableTagsSelected
+                                                ? tokens.colors.interactive
+                                                      .disabled__border.rgba
+                                                : tokens.colors.text
+                                                      .static_icons__tertiary
+                                                      .rgba
+                                        }
+                                    />
+                                    Undo start
                                 </DropdownItem>
                             </OptionsDropdown>
                             <Tooltip

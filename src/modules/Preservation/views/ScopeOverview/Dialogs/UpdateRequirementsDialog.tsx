@@ -1,21 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PreservedTag, RequirementType } from '../../types';
+import { RequirementType } from '../types';
 import {
     ButtonContainer,
     ButtonSpacer,
     Content,
     DialogContainer,
     Divider,
-    MainContainer,
     Scrim,
     Title,
-} from '../SharedCode/Dialogs.style';
-import { InputContainer } from './UpdateRequirementsDialog.style';
-import { ProjectDetails } from '@procosys/modules/Preservation/types';
+} from './SharedCode/Dialogs.style';
 import { TextField } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
 import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
-import { TagDetails } from '../../TagFlyout/types';
+import { TagDetails } from '../TagFlyout/types';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import RequirementsSelector from '@procosys/modules/Preservation/components/RequirementsSelector/RequirementsSelector';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
@@ -43,7 +40,6 @@ interface UpdateRequirementsDialogProps {
     onClose: () => void;
     tagId?: number;
 }
-// TODO: clean up file
 const UpdateRequirementsDialog = ({
     open,
     onClose,
@@ -342,7 +338,6 @@ const UpdateRequirementsDialog = ({
         onClose();
     };
 
-    // TODO: fix styling
     return (
         <Scrim>
             <DialogContainer width={'80vw'}>
@@ -356,7 +351,7 @@ const UpdateRequirementsDialog = ({
                             {validationErrorMessage}
                         </Typography>
                     )}
-                    <InputContainer style={{ maxWidth: '480px' }}>
+                    <div style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Description'}
                             label="Tag description"
@@ -371,8 +366,8 @@ const UpdateRequirementsDialog = ({
                                 e: React.ChangeEvent<HTMLInputElement>
                             ): void => setDescription(e.target.value)}
                         />
-                    </InputContainer>
-                    <InputContainer style={{ maxWidth: '480px' }}>
+                    </div>
+                    <div style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Remark'}
                             label="Remark for whole preservation journey"
@@ -383,8 +378,8 @@ const UpdateRequirementsDialog = ({
                             onChange={remarkOrStorageAreaChange}
                             multiline="true"
                         />
-                    </InputContainer>
-                    <InputContainer style={{ maxWidth: '150px' }}>
+                    </div>
+                    <div style={{ maxWidth: '150px' }}>
                         <TextField
                             id={'StorageArea'}
                             label="Storage area"
@@ -394,7 +389,7 @@ const UpdateRequirementsDialog = ({
                             meta="Optional"
                             onChange={remarkOrStorageAreaChange}
                         />
-                    </InputContainer>
+                    </div>
                     <h2>Update requirements</h2>
                     <RequirementsSelector
                         requirementTypes={requirementTypes}

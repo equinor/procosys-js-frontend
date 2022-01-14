@@ -52,7 +52,7 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 import ScopeOverviewTable from './ScopeOverviewTable';
-import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog/UpdateRequirementsDialog';
+import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
 import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 
 export const getFirstUpcomingRequirement = (

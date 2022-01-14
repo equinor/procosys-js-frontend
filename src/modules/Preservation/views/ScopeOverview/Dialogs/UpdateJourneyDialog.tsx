@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { PreservedTag, Step } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import RequirementIcons from '../RequirementIcons';
 import DialogTable from './SharedCode/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
@@ -17,7 +16,6 @@ import {
     TableContainer,
     Title,
 } from './SharedCode/Dialogs.style';
-import { InputContainer } from './UpdateRequirementsDialog/UpdateRequirementsDialog.style';
 import SelectInput, { SelectItem } from '@procosys/components/Select';
 import { Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
@@ -128,7 +126,7 @@ const UpdateJourneyDialog = ({
     const [tagJourneyAndStepValid, setTagJourneyAndStepValid] =
         useState<boolean>(false);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-    const { apiClient, project } = usePreservationContext();
+    const { apiClient } = usePreservationContext();
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [step, setStep] = useState<Step | null>();
     const [poTag, setPoTag] = useState<boolean>(false);
@@ -369,7 +367,7 @@ const UpdateJourneyDialog = ({
                             {validationErrorMessage}
                         </Typography>
                     )}
-                    <InputContainer>
+                    <div>
                         <SelectInput
                             maxHeight={'300px'}
                             onChange={setJourneyFromForm}
@@ -378,8 +376,8 @@ const UpdateJourneyDialog = ({
                         >
                             {journey ? journey.title : 'Select journey'}
                         </SelectInput>
-                    </InputContainer>
-                    <InputContainer>
+                    </div>
+                    <div>
                         <SelectInput
                             onChange={(stepId): void =>
                                 setSelectedStep(stepId, journey)
@@ -397,7 +395,7 @@ const UpdateJourneyDialog = ({
                                 set automatically.
                             </Typography>
                         )}
-                    </InputContainer>
+                    </div>
                     <MainContainer>
                         {nonUpdateableTags.length > 0 && (
                             <TableContainer

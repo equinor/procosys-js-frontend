@@ -200,7 +200,7 @@ const ActionExpanded = ({
                     </div>
                 </Section>
             )}
-            {!actionDetails.modifiedAtUtc && (
+            {actionDetails.createdAtUtc && (
                 <Section>
                     <div>
                         <GridRow>

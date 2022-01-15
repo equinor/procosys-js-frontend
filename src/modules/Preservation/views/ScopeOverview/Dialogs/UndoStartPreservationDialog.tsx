@@ -15,15 +15,14 @@ const UndoStartPreservationDialog = ({
     unstartableTags,
     nonUnstartableTags,
 }: UndoStartPreservationDialogProps): JSX.Element => {
-    // TODO: figure out why this doesn't open, and why the button in more options is fucked
     return (
         <MainContainer>
             {nonUnstartableTags.length > 0 && (
                 <TableContainer isHalfSize={unstartableTags.length > 0}>
                     <Typography variant="meta">
                         Cannot undo start preservation for
-                        {nonUnstartableTags.length} tag(s). Tags aren&apos;t
-                        already started, or are voided.
+                        {nonUnstartableTags.length} tag(s). Tags don&apos;t have
+                        status &apos;active&apos;, or are voided.
                     </Typography>
                     <DialogTable
                         tags={nonUnstartableTags}
@@ -40,7 +39,7 @@ const UndoStartPreservationDialog = ({
                     <DialogTable
                         tags={unstartableTags}
                         columns={columns}
-                        toolbarText="tag(s) will no longer be started"
+                        toolbarText="tag(s) will be set to status 'Not started'"
                         toolbarColor={
                             tokens.colors.interactive.primary__resting.rgba
                         }

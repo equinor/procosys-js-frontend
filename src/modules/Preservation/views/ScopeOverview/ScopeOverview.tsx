@@ -865,15 +865,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         });
 
         const undoStartButton =
-            startableTags.length > 0 ? 'Undo "start preservation"' : null;
+            unstartableTags.length > 0 ? 'Undo "start preservation"' : null;
         const undoStartFunc =
-            startableTags.length > 0 ? unStartPreservation : null;
+            unstartableTags.length > 0 ? unStartPreservation : null;
 
         showModalDialog(
             'Undo "start preservation"',
             <UndoStartPreservationDialog
-                unstartableTags={startableTags}
-                nonUnstartableTags={nonStartableTags}
+                unstartableTags={unstartableTags}
+                nonUnstartableTags={nonUnstartableTags}
             />,
             '80vw',
             backToListButton,

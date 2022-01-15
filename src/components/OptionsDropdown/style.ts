@@ -10,6 +10,8 @@ export const Container = styled.div`
         position: absolute;
         margin-top: 0.5rem;
         max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
         background-color: ${tokens.colors.ui.background__default.rgba};
         border-radius: 4px;
         box-shadow: ${tokens.elevation.raised};

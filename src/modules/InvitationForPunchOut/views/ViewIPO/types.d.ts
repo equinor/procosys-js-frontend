@@ -23,6 +23,8 @@ type Participant = {
     signedAtUtc?: Date;
     signedBy?: {
         userName: string;
+        firstName: string;
+        lastName: string;
     };
     note: string;
     attended: boolean;

@@ -406,7 +406,7 @@ const ParticipantsTable = ({
                                         <Typography variant="body_short">
                                             <span>
                                                 {participant.signedBy
-                                                    ? `${participant.signedBy.userName}`
+                                                    ? `${participant.signedBy.lastName}, ${participant.signedBy.firstName}`
                                                     : ''}
                                             </span>
                                         </Typography>

@@ -392,6 +392,33 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
+    const unsignPunchOut = async (participant: Participant): Promise<any> => {
+        const signer = participant.person
+            ? participant.person
+            : participant.functionalRole
+            ? participant.functionalRole
+            : undefined;
+
+        if (!signer || !invitation) return;
+
+        try {
+            await apiClient.unsignPunchOut(
+                params.ipoId,
+                signer.id,
+                participant.rowVersion
+            );
+            analytics.trackUserAction(IpoCustomEvents.UNSIGNED, {
+                project: invitation.projectName,
+                type: invitation.type,
+            });
+            await getInvitation();
+            showSnackbarNotification('Punch-out unsigned');
+        } catch (error) {
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
     const cancelPunchOut = async (): Promise<any> => {
         if (invitation) {
             try {
@@ -464,6 +491,7 @@ const ViewIPO = (): JSX.Element => {
                                                 update={updateParticipants}
                                                 unaccept={unacceptPunchOut}
                                                 uncomplete={uncompletePunchOut}
+                                                unsign={unsignPunchOut}
                                             />
                                         </Tabs.Panel>
                                         <Tabs.Panel>

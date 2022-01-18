@@ -24,6 +24,7 @@ interface GeneralInfoProps {
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
+    unsign: (p: Participant) => Promise<any>;
 }
 
 const GeneralInfo = ({
@@ -34,6 +35,7 @@ const GeneralInfo = ({
     sign,
     unaccept,
     uncomplete,
+    unsign,
 }: GeneralInfoProps): JSX.Element => {
     const [participants, setParticipants] = useState<Participant[]>([]);
 
@@ -135,6 +137,7 @@ const GeneralInfo = ({
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
+                unsign={unsign}
             />
         </Container>
     );

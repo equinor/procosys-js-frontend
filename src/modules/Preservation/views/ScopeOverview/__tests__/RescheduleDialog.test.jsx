@@ -1,5 +1,5 @@
 import React from 'react';
-import RescheduleDialog from '../RescheduleDialog';
+import RescheduleDialog from '../Dialogs/RescheduleDialog';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 const reschedulableTags = [

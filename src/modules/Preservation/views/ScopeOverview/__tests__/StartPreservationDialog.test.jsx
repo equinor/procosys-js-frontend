@@ -1,5 +1,5 @@
 import React from 'react';
-import StartPreservationDialog from '../StartPreservationDialog';
+import StartPreservationDialog from '../Dialogs/StartPreservationDialog';
 import { render } from '@testing-library/react';
 
 const startableTags = [

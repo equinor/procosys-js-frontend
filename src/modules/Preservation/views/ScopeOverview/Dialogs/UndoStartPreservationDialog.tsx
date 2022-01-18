@@ -1,9 +1,9 @@
 import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import DialogTable from '../DialogTable';
+import DialogTable from './SharedCode/DialogTable';
 import { PreservedTag } from '../types';
-import { MainContainer, TableContainer } from '../Dialogs.style';
+import { MainContainer, TableContainer } from './SharedCode/Dialogs.style';
 import { columns } from './SharedCode/TableColumns';
 
 interface UndoStartPreservationDialogProps {
@@ -39,7 +39,7 @@ const UndoStartPreservationDialog = ({
                     <DialogTable
                         tags={unstartableTags}
                         columns={columns}
-                        toolbarText="tag(s) will be set to status 'Not started'"
+                        toolbarText="tag(s) will have status set to 'Not started'"
                         toolbarColor={
                             tokens.colors.interactive.primary__resting.rgba
                         }

@@ -1,16 +1,16 @@
 import React from 'react';
-import { PreservedTag } from './types';
+import { PreservedTag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import RequirementIcons from './RequirementIcons';
-import DialogTable from './DialogTable';
+import RequirementIcons from '../RequirementIcons';
+import DialogTable from './SharedCode/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
-import { MainContainer, TableContainer } from './Dialogs.style';
+import { MainContainer, TableContainer } from './SharedCode/Dialogs.style';
 
-interface RemoveDialogProps {
-    removableTags: PreservedTag[];
-    nonRemovableTags: PreservedTag[];
+interface PreservedDialogProps {
+    preservableTags: PreservedTag[];
+    nonPreservableTags: PreservedTag[];
 }
 
 const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
@@ -32,38 +32,34 @@ const columns = [
     },
 ];
 
-const Container = styled.div`
-    height: 65vh;
-`;
-
-const RemoveDialog = ({
-    removableTags: removableTags,
-    nonRemovableTags: nonRemovableTags,
-}: RemoveDialogProps): JSX.Element => {
+const PreservedDialog = ({
+    preservableTags,
+    nonPreservableTags,
+}: PreservedDialogProps): JSX.Element => {
     return (
         <MainContainer>
-            {nonRemovableTags.length > 0 && (
-                <TableContainer isHalfSize={removableTags.length > 0}>
+            {nonPreservableTags.length > 0 && (
+                <TableContainer isHalfSize={preservableTags.length > 0}>
                     <Typography variant="meta">
-                        {nonRemovableTags.length} tag(s) cannot be removed. Tags
-                        are not voided, or are in use.
+                        {nonPreservableTags.length} tag(s) cannot be preserved
+                        this week.
                     </Typography>
                     <DialogTable
-                        tags={nonRemovableTags}
+                        tags={nonPreservableTags}
                         columns={columns}
-                        toolbarText="tag(s) will not be removed"
+                        toolbarText="tag(s) will not be preserved for this week"
                         toolbarColor={
                             tokens.colors.interactive.danger__text.rgba
                         }
                     />
                 </TableContainer>
             )}
-            {removableTags.length > 0 && (
-                <TableContainer isHalfSize={nonRemovableTags.length > 0}>
+            {preservableTags.length > 0 && (
+                <TableContainer isHalfSize={nonPreservableTags.length > 0}>
                     <DialogTable
-                        tags={removableTags}
+                        tags={preservableTags}
                         columns={columns}
-                        toolbarText="tag(s) will be removed"
+                        toolbarText="tag(s) will be preserved for this week"
                         toolbarColor={
                             tokens.colors.interactive.primary__resting.rgba
                         }
@@ -74,4 +70,4 @@ const RemoveDialog = ({
     );
 };
 
-export default RemoveDialog;
+export default PreservedDialog;

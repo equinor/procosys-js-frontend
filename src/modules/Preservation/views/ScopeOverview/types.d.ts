@@ -17,6 +17,7 @@ export interface PreservedTag {
     nextMode: string;
     nextResponsibleCode: string;
     purchaseOrderNo: string;
+    readyToBeEdited: boolean;
     readyToBePreserved: boolean;
     readyToBeStarted: boolean;
     readyToBeTransferred: boolean;
@@ -69,5 +70,51 @@ export interface SavedTagListFilter {
     title: string;
     criteria: string;
     defaultFilter: boolean;
+    rowVersion: string;
+}
+
+export interface RequirementType {
+    id: number;
+    code: string;
+    title: string;
+    isVoided: boolean;
+    icon: string;
+    sortKey: number;
+    requirementDefinitions: RequirementDefinition[];
+}
+
+export interface RequirementDefinition {
+    id: number;
+    title: string;
+    isVoided: boolean;
+    defaultIntervalWeeks: number;
+    sortKey: number;
+    fields: RequirementField[];
+    needsUserInput: boolean;
+    usage: string;
+}
+
+export interface RequirementField {
+    id: number;
+    label: string;
+    isVoided: boolean;
+    sortKey: number;
+    fieldType: string;
+    unit: string | null;
+    showPrevious: boolean;
+}
+
+export interface Step {
+    id: number;
+    title: string;
+    isVoided: boolean;
+    mode: Mode;
+    rowVersion: string;
+}
+
+export interface Mode {
+    id: number;
+    title: string;
+    forSupplier: boolean;
     rowVersion: string;
 }

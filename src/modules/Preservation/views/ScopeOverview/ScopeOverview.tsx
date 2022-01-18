@@ -25,26 +25,26 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@equinor/eds-core-react';
 import CacheService from '@procosys/core/services/CacheService';
 import { Canceler } from '@procosys/http/HttpClient';
-import CompleteDialog from './CompleteDialog';
+import CompleteDialog from './Dialogs/CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
 import EdsIcon from '../../../../components/EdsIcon';
 import Flyout from './../../../../components/Flyout';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import OptionsDropdown from '../../../../components/OptionsDropdown';
-import PreservedDialog from './PreservedDialog';
+import PreservedDialog from './Dialogs/PreservedDialog';
 import { ProjectDetails } from '../../types';
 import Qs from 'qs';
-import RemoveDialog from './RemoveDialog';
-import RescheduleDialog from './RescheduleDialog';
+import RemoveDialog from './Dialogs/RemoveDialog';
+import RescheduleDialog from './Dialogs/RescheduleDialog';
 import ScopeFilter from './ScopeFilter/ScopeFilter';
 import Spinner from '@procosys/components/Spinner';
-import StartPreservationDialog from './StartPreservationDialog';
+import StartPreservationDialog from './Dialogs/StartPreservationDialog';
 import TagFlyout from './TagFlyout/TagFlyout';
 import { Tooltip } from '@material-ui/core';
-import TransferDialog from './TransferDialog';
+import TransferDialog from './Dialogs/TransferDialog';
 import { Typography } from '@equinor/eds-core-react';
-import VoidDialog from './VoidDialog';
+import VoidDialog from './Dialogs/VoidDialog';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
@@ -52,6 +52,8 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../context/PreservationContext';
 import ScopeOverviewTable from './ScopeOverviewTable';
+import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
+import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 
 export const getFirstUpcomingRequirement = (
     tag: PreservedTag
@@ -164,8 +166,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         useState<boolean>();
     const [duplicatableTagSelected, setDuplicatableTagSelected] =
         useState<boolean>();
+    const [editableTagSelected, setEditableTagSelected] = useState<boolean>();
 
-    const [selectedTagId, setSelectedTagId] = useState<string | number>();
+    const [selectedTagId, setSelectedTagId] = useState<number>();
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [filteredProjects, setFilteredProjects] =
@@ -184,6 +187,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [showTagRescheduleDialog, setShowTagRescheduleDialog] =
         useState<boolean>(false);
     const [showActions, setShowActions] = useState<boolean>(false);
+    const [showEditTagJourneyDialog, setShowEditTagJourneyDialog] =
+        useState<boolean>(false);
+    const [showEditRequirementsDialog, setShowEditRequirementsDialog] =
+        useState<boolean>(false);
 
     const history = useHistory();
     const location = useLocation();
@@ -380,11 +387,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 ? true
                 : false
         );
+        setEditableTagSelected(
+            selectedTags.find((t) => t.readyToBeEdited && !t.isVoided)
+                ? true
+                : false
+        );
 
         if (selectedTags.length == 1) {
             setSelectedTagId(selectedTags[0].id);
         } else {
-            setSelectedTagId('');
+            setSelectedTagId(-1);
         }
     }, [selectedTags]);
 
@@ -1105,19 +1117,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <DropdownItem
                                     disabled={
                                         selectedTags.length != 1 ||
-                                        voidedTagsSelected
+                                        !editableTagSelected
                                     }
                                     onClick={(): void =>
-                                        history.push(
-                                            `/EditTagProperties/${selectedTagId}`
-                                        )
+                                        setShowEditRequirementsDialog(true)
                                     }
                                 >
                                     <EdsIcon
                                         name="edit_text"
                                         color={
                                             selectedTags.length != 1 ||
-                                            voidedTagsSelected
+                                            !editableTagSelected
                                                 ? tokens.colors.interactive
                                                       .disabled__border.rgba
                                                 : tokens.colors.text
@@ -1125,7 +1135,26 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                                       .rgba
                                         }
                                     />
-                                    Edit
+                                    Update Requirements
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={!editableTagSelected}
+                                    onClick={(): void =>
+                                        setShowEditTagJourneyDialog(true)
+                                    }
+                                >
+                                    <EdsIcon
+                                        name="edit_text"
+                                        color={
+                                            !editableTagSelected
+                                                ? tokens.colors.interactive
+                                                      .disabled__border.rgba
+                                                : tokens.colors.text
+                                                      .static_icons__tertiary
+                                                      .rgba
+                                        }
+                                    />
+                                    Update Journey
                                 </DropdownItem>
                                 <DropdownItem
                                     disabled={selectedTags.length === 0}
@@ -1305,6 +1334,22 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 open={showTagRescheduleDialog}
                 tags={selectedTags}
                 onClose={closeReschededuleDialog}
+            />
+            <UpdateRequirementsDialog
+                open={showEditRequirementsDialog}
+                onClose={(): void => {
+                    setShowEditRequirementsDialog(false);
+                    refreshScopeList();
+                }}
+                tagId={selectedTagId}
+            />
+            <UpdateJourneyDialog
+                tags={selectedTags}
+                open={showEditTagJourneyDialog}
+                onClose={(): void => {
+                    setShowEditTagJourneyDialog(false);
+                    refreshScopeList();
+                }}
             />
         </Container>
     );

@@ -15,6 +15,7 @@ import { ComponentName, IpoCustomEvents } from '../enums';
 import {
     ExternalEmailDto,
     FunctionalRoleDto,
+    IpoApiError,
     ParticipantDto,
     PersonDto,
     PersonInRoleDto,
@@ -180,6 +181,11 @@ const EditIPO = (): JSX.Element => {
                     );
                 setAvailableRoles(functionalRoles);
             } catch (error) {
+                if (!(error instanceof IpoApiError)) {
+                    console.error(error);
+                    showSnackbarNotification('Unknown error');
+                    return;
+                }
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);
             }
@@ -287,6 +293,11 @@ const EditIPO = (): JSX.Element => {
                         );
                     }
                 } catch (error) {
+                    if (!(error instanceof IpoApiError)) {
+                        console.error(error);
+                        showSnackbarNotification('Unknown error');
+                        return;
+                    }
                     console.error(
                         'Upload or delete of attachment failed: ',
                         error.message,
@@ -308,6 +319,11 @@ const EditIPO = (): JSX.Element => {
             );
             setAttachments(response);
         } catch (error) {
+            if (!(error instanceof IpoApiError)) {
+                console.error(error);
+                showSnackbarNotification('Unknown error');
+                return;
+            }
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -354,6 +370,11 @@ const EditIPO = (): JSX.Element => {
                 ]);
                 history.push('/' + params.ipoId);
             } catch (error) {
+                if (!(error instanceof IpoApiError)) {
+                    console.error(error);
+                    showSnackbarNotification('Unknown error');
+                    return;
+                }
                 console.error(
                     'Save updated IPO failed: ',
                     error.message,
@@ -376,6 +397,11 @@ const EditIPO = (): JSX.Element => {
                 );
                 setInvitation(response);
             } catch (error) {
+                if (!(error instanceof IpoApiError)) {
+                    console.error(error);
+                    showSnackbarNotification('Unknown error');
+                    return;
+                }
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);
             }

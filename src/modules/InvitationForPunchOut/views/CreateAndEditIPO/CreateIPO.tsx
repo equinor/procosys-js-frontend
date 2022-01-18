@@ -221,7 +221,7 @@ const CreateIPO = (): JSX.Element => {
             return null;
         }
         return {
-            id: participant.person.id,
+            id: participant.id,
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             required: participant.person.radioOption == 'to',
@@ -249,7 +249,7 @@ const CreateIPO = (): JSX.Element => {
             return null;
         }
         return {
-            id: participant.role.id,
+            id: participant.id,
             code: participant.role.code,
             persons: getPersons(participant.role),
         };

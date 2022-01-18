@@ -117,7 +117,7 @@ const ParticipantsTable = ({
                     : participant.attended;
 
             return {
-                id: x.id,
+                id: participant.id,
                 attended: attendedStatus,
                 note: participant.note ? participant.note : '',
                 rowVersion: participant.rowVersion,
@@ -278,11 +278,12 @@ const ParticipantsTable = ({
                                     : ''
                                 : '';
 
-                            const id = participant.person
-                                ? participant.person.id
-                                : participant.functionalRole
-                                ? participant.functionalRole.id
-                                : participant.externalEmail.id;
+                            // TODO: may need to use ID of person in func. role.
+                            // const id = participant.person
+                            //     ? participant.person
+                            //     : participant.functionalRole
+                            //     ? participant.functionalRole.id
+                            //     : participant.externalEmail.id;
 
                             const addPopover = participant.functionalRole
                                 ? participant.functionalRole.response
@@ -336,7 +337,7 @@ const ParticipantsTable = ({
                                         }}
                                     >
                                         <Switch
-                                            id={`attendance${id}`}
+                                            id={`attendance${participant.id}`}
                                             disabled={editAttendedDisabled}
                                             default
                                             label={
@@ -354,7 +355,9 @@ const ParticipantsTable = ({
                                                     : false
                                             }
                                             onChange={(): void =>
-                                                handleEditAttended(id)
+                                                handleEditAttended(
+                                                    participant.id
+                                                )
                                             }
                                         />
                                     </Table.Cell>
@@ -367,7 +370,7 @@ const ParticipantsTable = ({
                                         }}
                                     >
                                         <TextField
-                                            id={`textfield${id}`}
+                                            id={`textfield${participant.id}`}
                                             disabled={editNotesDisabled}
                                             defaultValue={
                                                 participant.note
@@ -375,7 +378,10 @@ const ParticipantsTable = ({
                                                     : ''
                                             }
                                             onChange={(e: any): void =>
-                                                handleEditNotes(e, id)
+                                                handleEditNotes(
+                                                    e,
+                                                    participant.id
+                                                )
                                             }
                                         />
                                     </Table.Cell>

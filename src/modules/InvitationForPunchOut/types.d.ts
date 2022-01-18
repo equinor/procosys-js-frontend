@@ -22,7 +22,6 @@ export type GeneralInfoDetails = {
 };
 
 export type Person = {
-    id?: number;
     azureOid: string;
     name: string;
     email: string;
@@ -39,7 +38,6 @@ export type PersonInRole = {
 };
 
 export type RoleParticipant = {
-    id?: number;
     code: string;
     description: string;
     usePersonalEmail: boolean;
@@ -48,11 +46,11 @@ export type RoleParticipant = {
 };
 
 type ExternalEmail = {
-    id: number | null;
     email: string;
 };
 
 export type Participant = {
+    id?: number; // TODO: make optional
     organization: SelectItem;
     sortKey: number | null;
     type: string;

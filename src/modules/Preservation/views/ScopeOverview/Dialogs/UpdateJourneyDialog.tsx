@@ -128,10 +128,10 @@ const UpdateJourneyDialog = ({
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const { apiClient } = usePreservationContext();
     const [journeys, setJourneys] = useState<Journey[]>([]);
-    const [step, setStep] = useState<Step | null>();
+    const [step, setStep] = useState<Step | null>(null);
     const [poTag, setPoTag] = useState<boolean>(false);
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
-    const [newJourneyTitle, setNewJourneyTitle] = useState<string>('');
+    const [isNewJourney, setIsNewJourney] = useState<boolean>(true);
     const [journey, setJourney] = useState<Journey>();
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
@@ -165,6 +165,10 @@ const UpdateJourneyDialog = ({
             unsetDirtyStateFor(moduleName);
         };
     }, [tagJourneyOrStepEdited]);
+    /** Update global and local dirty state */
+    useEffect(() => {
+        console.log(isNewJourney);
+    }, [isNewJourney]);
 
     /**
      * Get Journeys
@@ -244,9 +248,9 @@ const UpdateJourneyDialog = ({
      * Map Journey steps into menu elements, and set step if necessary.
      */
     useEffect(() => {
-        if (newJourneyTitle) {
+        if (isNewJourney && journey) {
             setStep(null);
-            setNewJourneyTitle('');
+            setIsNewJourney(false);
         }
         //Map steps to menu elements
         if (journeys.length > 0 && journey) {
@@ -284,6 +288,7 @@ const UpdateJourneyDialog = ({
         const j = journeys.find((pJourney: Journey) => pJourney.id === value);
         if (j) {
             setJourney(j);
+            setIsNewJourney(true);
         }
     };
 
@@ -384,7 +389,7 @@ const UpdateJourneyDialog = ({
                                 setSelectedStep(stepId, journey)
                             }
                             data={mappedSteps}
-                            disabled={poTag}
+                            disabled={poTag || isNewJourney}
                             label={'Preservation step'}
                         >
                             {(step && step.title) || 'Select step'}

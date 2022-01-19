@@ -331,6 +331,7 @@ const UpdateRequirementsDialog = ({
                 throw 'error';
             }
         }
+        unsetDirtyStateFor(moduleName);
         setShowSpinner(false);
         if (tag) {
             showSnackbarNotification(`Changes to ${tag.tagNo} have been saved`);

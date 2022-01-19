@@ -349,6 +349,7 @@ const UpdateJourneyDialog = ({
                 throw 'error';
             }
         }
+        unsetDirtyStateFor(moduleName);
         setShowSpinner(false);
         showSnackbarNotification(`Changes to tags have been saved`);
         onClose();

@@ -208,13 +208,13 @@ const ActionExpanded = ({
                                 variant="caption"
                                 style={{ gridColumn: '1', gridRow: '1' }}
                             >
-                                Added at
+                                Created at
                             </Typography>
                             <Typography
                                 variant="caption"
                                 style={{ gridColumn: '2', gridRow: '1' }}
                             >
-                                Added by
+                                Created by
                             </Typography>
                             <Typography
                                 variant="body_short"

@@ -24,6 +24,7 @@ export interface PreservedTag {
     readyToBeCompleted: boolean;
     readyToBeRescheduled: boolean;
     readyToBeDuplicated: boolean;
+    readyToUndoStarted: boolean;
     isInUse: boolean;
     requirements: Requirement[];
     status: string;

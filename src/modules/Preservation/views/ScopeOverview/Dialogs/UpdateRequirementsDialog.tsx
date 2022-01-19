@@ -6,6 +6,8 @@ import {
     Content,
     DialogContainer,
     Divider,
+    Header,
+    InputSpacer,
     Scrim,
     Title,
 } from './SharedCode/Dialogs.style';
@@ -331,6 +333,7 @@ const UpdateRequirementsDialog = ({
                 throw 'error';
             }
         }
+        unsetDirtyStateFor(moduleName);
         setShowSpinner(false);
         if (tag) {
             showSnackbarNotification(`Changes to ${tag.tagNo} have been saved`);
@@ -351,7 +354,7 @@ const UpdateRequirementsDialog = ({
                             {validationErrorMessage}
                         </Typography>
                     )}
-                    <div style={{ maxWidth: '480px' }}>
+                    <InputSpacer style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Description'}
                             label="Tag description"
@@ -366,8 +369,8 @@ const UpdateRequirementsDialog = ({
                                 e: React.ChangeEvent<HTMLInputElement>
                             ): void => setDescription(e.target.value)}
                         />
-                    </div>
-                    <div style={{ maxWidth: '480px' }}>
+                    </InputSpacer>
+                    <InputSpacer style={{ maxWidth: '480px' }}>
                         <TextField
                             id={'Remark'}
                             label="Remark for whole preservation journey"
@@ -378,8 +381,8 @@ const UpdateRequirementsDialog = ({
                             onChange={remarkOrStorageAreaChange}
                             multiline="true"
                         />
-                    </div>
-                    <div style={{ maxWidth: '150px' }}>
+                    </InputSpacer>
+                    <InputSpacer style={{ maxWidth: '150px' }}>
                         <TextField
                             id={'StorageArea'}
                             label="Storage area"
@@ -389,8 +392,8 @@ const UpdateRequirementsDialog = ({
                             meta="Optional"
                             onChange={remarkOrStorageAreaChange}
                         />
-                    </div>
-                    <h2>Update requirements</h2>
+                    </InputSpacer>
+                    <Header>Requirements</Header>
                     <RequirementsSelector
                         requirementTypes={requirementTypes}
                         requirements={requirements}

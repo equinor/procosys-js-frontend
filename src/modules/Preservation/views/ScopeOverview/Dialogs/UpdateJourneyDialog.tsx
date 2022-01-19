@@ -11,6 +11,7 @@ import {
     ButtonSpacer,
     DialogContainer,
     Divider,
+    InputSpacer,
     MainContainer,
     Scrim,
     TableContainer,
@@ -128,10 +129,10 @@ const UpdateJourneyDialog = ({
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
     const { apiClient } = usePreservationContext();
     const [journeys, setJourneys] = useState<Journey[]>([]);
-    const [step, setStep] = useState<Step | null>();
+    const [step, setStep] = useState<Step | null>(null);
     const [poTag, setPoTag] = useState<boolean>(false);
     const [mappedJourneys, setMappedJourneys] = useState<SelectItem[]>([]);
-    const [newJourneyTitle, setNewJourneyTitle] = useState<string>('');
+    const [isNewJourney, setIsNewJourney] = useState<boolean>(true);
     const [journey, setJourney] = useState<Journey>();
     const [mappedSteps, setMappedSteps] = useState<SelectItem[]>([]);
     const [showSpinner, setShowSpinner] = useState<boolean>(false);
@@ -244,9 +245,9 @@ const UpdateJourneyDialog = ({
      * Map Journey steps into menu elements, and set step if necessary.
      */
     useEffect(() => {
-        if (newJourneyTitle) {
+        if (isNewJourney && journey) {
             setStep(null);
-            setNewJourneyTitle('');
+            setIsNewJourney(false);
         }
         //Map steps to menu elements
         if (journeys.length > 0 && journey) {
@@ -284,6 +285,7 @@ const UpdateJourneyDialog = ({
         const j = journeys.find((pJourney: Journey) => pJourney.id === value);
         if (j) {
             setJourney(j);
+            setIsNewJourney(true);
         }
     };
 
@@ -349,6 +351,7 @@ const UpdateJourneyDialog = ({
                 throw 'error';
             }
         }
+        unsetDirtyStateFor(moduleName);
         setShowSpinner(false);
         showSnackbarNotification(`Changes to tags have been saved`);
         onClose();
@@ -367,7 +370,7 @@ const UpdateJourneyDialog = ({
                             {validationErrorMessage}
                         </Typography>
                     )}
-                    <div>
+                    <InputSpacer>
                         <SelectInput
                             maxHeight={'300px'}
                             onChange={setJourneyFromForm}
@@ -376,14 +379,14 @@ const UpdateJourneyDialog = ({
                         >
                             {journey ? journey.title : 'Select journey'}
                         </SelectInput>
-                    </div>
-                    <div>
+                    </InputSpacer>
+                    <InputSpacer>
                         <SelectInput
                             onChange={(stepId): void =>
                                 setSelectedStep(stepId, journey)
                             }
                             data={mappedSteps}
-                            disabled={poTag}
+                            disabled={poTag || isNewJourney}
                             label={'Preservation step'}
                         >
                             {(step && step.title) || 'Select step'}
@@ -395,7 +398,7 @@ const UpdateJourneyDialog = ({
                                 set automatically.
                             </Typography>
                         )}
-                    </div>
+                    </InputSpacer>
                     <MainContainer>
                         {nonUpdateableTags.length > 0 && (
                             <TableContainer

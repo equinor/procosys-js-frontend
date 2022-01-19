@@ -32,6 +32,7 @@ interface PreservedTagResponse {
             readyToBeCompleted: boolean;
             readyToBeRescheduled: boolean;
             readyToBeDuplicated: boolean;
+            readyToUndoStarted: boolean;
             isInUse: boolean;
             requirements: [
                 {
@@ -1052,6 +1053,20 @@ class PreservationApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.put(endpoint, null, settings);
+        } catch (error) {
+            throw new PreservationApiError(error);
+        }
+    }
+
+    /**
+     * Undo start preservation for the given tags.
+     * @param tags  List of objects with tag ID and rowVersion
+     */
+    async undoStartPreservation(tags: PreservedTag[]): Promise<void> {
+        const endpoint = '/Tags/UndoStartPreservation';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, tags, settings);
         } catch (error) {
             throw new PreservationApiError(error);
         }

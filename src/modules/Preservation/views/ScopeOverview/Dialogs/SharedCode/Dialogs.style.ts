@@ -64,3 +64,12 @@ export const Title = styled.div`
     padding-right: calc(var(--grid-unit) * 2);
     padding-left: calc(var(--grid-unit) * 2);
 `;
+
+export const InputSpacer = styled.div`
+    padding-bottom: var(--grid-unit);
+`;
+
+export const Header = styled.div`
+    padding-top: var(--grid-unit);
+    padding-bottom: calc(var(--grid-unit) * 2);
+`;

@@ -11,6 +11,7 @@ import {
     ButtonSpacer,
     DialogContainer,
     Divider,
+    InputSpacer,
     MainContainer,
     Scrim,
     TableContainer,
@@ -165,10 +166,6 @@ const UpdateJourneyDialog = ({
             unsetDirtyStateFor(moduleName);
         };
     }, [tagJourneyOrStepEdited]);
-    /** Update global and local dirty state */
-    useEffect(() => {
-        console.log(isNewJourney);
-    }, [isNewJourney]);
 
     /**
      * Get Journeys
@@ -373,7 +370,7 @@ const UpdateJourneyDialog = ({
                             {validationErrorMessage}
                         </Typography>
                     )}
-                    <div>
+                    <InputSpacer>
                         <SelectInput
                             maxHeight={'300px'}
                             onChange={setJourneyFromForm}
@@ -382,8 +379,8 @@ const UpdateJourneyDialog = ({
                         >
                             {journey ? journey.title : 'Select journey'}
                         </SelectInput>
-                    </div>
-                    <div>
+                    </InputSpacer>
+                    <InputSpacer>
                         <SelectInput
                             onChange={(stepId): void =>
                                 setSelectedStep(stepId, journey)
@@ -401,7 +398,7 @@ const UpdateJourneyDialog = ({
                                 set automatically.
                             </Typography>
                         )}
-                    </div>
+                    </InputSpacer>
                     <MainContainer>
                         {nonUpdateableTags.length > 0 && (
                             <TableContainer

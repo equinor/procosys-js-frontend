@@ -72,7 +72,7 @@
         "prettier": "^2.5.1",
         "react-hot-loader": "^4.13.0",
         "sass-extract": "^2.1.0",
-        "sass-loader": "12.1.0",
+        "sass-loader": "12.4.0",
         "source-map-loader": "^3.0.1",
         "storybook-addon-jsx": "^7.3.14",
         "style-loader": "^2.0.0",

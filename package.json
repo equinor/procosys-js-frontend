@@ -97,7 +97,7 @@
         "@types/lodash.debounce": "^4.0.6",
         "axios": "0.21.1",
         "date-fns": "^2.22.1",
-        "msal": "^1.4.11",
+        "msal": "^1.4.15",
         "qs": "^6.10.1",
         "query-string": "^7.0.0",
         "react": "^17.0.2",

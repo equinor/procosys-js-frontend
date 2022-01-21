@@ -24,13 +24,13 @@ const ParticipantIndex = Object.freeze({
 
 const participants = [
     {
+        id: 0,
         organization: OrganizationsEnum.External,
         canSign: false,
         sortKey: 2,
         person: null,
         functionalRole: null,
         externalEmail: {
-            id: 0,
             externalEmail: 'asdasd@asdasd.com',
             response: OutlookResponseType.NONE,
             rowVersion: '00101',
@@ -40,12 +40,12 @@ const participants = [
         rowVersion: '12312ss3',
     },
     {
+        id: 1,
         organization: OrganizationsEnum.TechnicalIntegrity,
         sortKey: 3,
         canSign: false,
         person: null,
         functionalRole: {
-            id: 1,
             code: 'asdasdasd',
             email: 'funcitonalRole@asd.com',
             persons: [],
@@ -60,11 +60,11 @@ const participants = [
         rowVersion: '12312333',
     },
     {
+        id: 123,
         organization: OrganizationsEnum.Contractor,
         sortKey: 0,
         canSign: false,
         person: {
-            id: 123,
             firstName: 'Adwa',
             lastName: 'ASdsklandasnd',
             azureOid: 'azure1',
@@ -90,11 +90,11 @@ const participants = [
         rowVersion: '123123',
     },
     {
+        id: 234,
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
         canSign: false,
         person: {
-            id: 234,
             firstName: 'Oakjfcv',
             lastName: 'Alkjljsdf',
             azureOid: 'azure2',
@@ -120,13 +120,13 @@ const participants = [
         rowVersion: '1231dd23',
     },
     {
+        id: 12,
         organization: OrganizationsEnum.Contractor,
         sortKey: 4,
         canSign: false,
         externalEmail: null,
         person: null,
         functionalRole: {
-            id: 12,
             code: 'one',
             email: 'funcitonalRole@asd.com',
             persons: [
@@ -268,11 +268,6 @@ describe('<ParticipantsTable />', () => {
                 `${participants[ParticipantIndex.ACCEPTER].person.firstName} ${
                     participants[ParticipantIndex.ACCEPTER].person.lastName
                 }`
-            )
-        ).toBeInTheDocument();
-        expect(
-            queryByText(
-                `${participants[ParticipantIndex.COMPLETER].signedBy.userName}`
             )
         ).toBeInTheDocument();
         expect(
@@ -468,14 +463,6 @@ describe('<ParticipantsTable />', () => {
         await waitFor(() => {
             expect(
                 queryByText(
-                    newParticipants[ParticipantIndex.COMPLETER].signedBy
-                        .userName
-                )
-            ).toBeInTheDocument();
-        });
-        await waitFor(() => {
-            expect(
-                queryByText(
                     getFormattedDateAndTime(
                         newParticipants[ParticipantIndex.COMPLETER].signedAtUtc
                     )
@@ -497,7 +484,7 @@ describe('<ParticipantsTable />', () => {
             signedBy: null,
             canSign: true,
         };
-        const { queryByText, getByText } = renderWithTheme(
+        const { queryByText } = renderWithTheme(
             <ParticipantsTable
                 participants={newParticipants}
                 status={IpoStatusEnum.COMPLETED}
@@ -509,11 +496,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
-        expect(
-            getByText(
-                newParticipants[ParticipantIndex.COMPLETER].signedBy.userName
-            )
-        ).toBeInTheDocument();
         expect(
             queryByText(
                 getFormattedDateAndTime(
@@ -550,11 +532,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
-        expect(
-            queryByText(
-                `${participants[ParticipantIndex.COMPLETER].signedBy.userName}`
-            )
-        ).toBeInTheDocument();
         expect(queryByText('Unaccept punch-out')).not.toBeInTheDocument();
         expect(
             queryByText(
@@ -596,11 +573,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
-        expect(
-            queryByText(
-                `${participants[ParticipantIndex.COMPLETER].signedBy.userName}`
-            )
-        ).toBeInTheDocument();
         expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
         expect(
             queryByText(
@@ -626,7 +598,7 @@ describe('<ParticipantsTable />', () => {
             signedBy: null,
             canSign: true,
         };
-        const { queryByText, getByText } = renderWithTheme(
+        const { queryByText } = renderWithTheme(
             <ParticipantsTable
                 participants={newParticipants}
                 status={IpoStatusEnum.ACCEPTED}
@@ -638,11 +610,6 @@ describe('<ParticipantsTable />', () => {
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
-        expect(
-            getByText(
-                newParticipants[ParticipantIndex.COMPLETER].signedBy.userName
-            )
-        ).toBeInTheDocument();
         expect(queryByText('Unaccept punch-out')).not.toBeInTheDocument();
         expect(
             queryByText(

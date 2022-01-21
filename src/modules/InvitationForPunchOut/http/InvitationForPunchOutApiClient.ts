@@ -51,6 +51,7 @@ type CommPkgPagingResponse = {
 };
 
 type ParticipantInvitationResponse = {
+    id: number;
     organization: string;
     sortKey: number;
     canSign: boolean;
@@ -65,7 +66,6 @@ type ParticipantInvitationResponse = {
 };
 
 type FunctionalRoleInvitationResponse = {
-    id: number;
     code: string;
     email: string;
     persons: PersonInFunctionalRoleResponse[];
@@ -86,7 +86,6 @@ type PersonInFunctionalRoleResponse = {
 
 type PersonInvitationResponse = {
     response?: string;
-    id: number;
     firstName: string;
     lastName: string;
     userName: string;
@@ -95,7 +94,6 @@ type PersonInvitationResponse = {
 };
 
 type ExternalEmailInvitationResponse = {
-    id: number;
     externalEmail: string;
     response?: string;
 };
@@ -250,7 +248,7 @@ export type FunctionalRoleDto = {
 };
 
 export type ExternalEmailDto = {
-    id: number | null;
+    id?: number | null;
     email: string;
     rowVersion?: string;
 };

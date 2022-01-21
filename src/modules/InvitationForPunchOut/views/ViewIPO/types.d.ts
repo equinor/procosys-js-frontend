@@ -13,6 +13,7 @@ export type CommPkgScope = {
 };
 
 type Participant = {
+    id: number;
     organization: string;
     sortKey: number;
     canSign: boolean;
@@ -23,13 +24,14 @@ type Participant = {
     signedAtUtc?: Date;
     signedBy?: {
         userName: string;
+        firstName: string;
+        lastName: string;
     };
     note: string;
     attended: boolean;
 };
 
 type FunctionalRole = {
-    id: number;
     code: string;
     email: string;
     persons: PersonInRole[];
@@ -38,7 +40,6 @@ type FunctionalRole = {
 
 type Person = {
     response?: string;
-    id: number;
     firstName: string;
     lastName: string;
     azureOid: string;
@@ -57,7 +58,6 @@ type PersonInRole = {
 };
 
 type ExternalEmail = {
-    id: number;
     externalEmail: string;
     response?: string;
 };

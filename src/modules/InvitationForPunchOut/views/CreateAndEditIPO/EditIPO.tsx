@@ -15,6 +15,7 @@ import { ComponentName, IpoCustomEvents } from '../enums';
 import {
     ExternalEmailDto,
     FunctionalRoleDto,
+    IpoApiError,
     ParticipantDto,
     PersonDto,
     PersonInRoleDto,
@@ -180,6 +181,11 @@ const EditIPO = (): JSX.Element => {
                     );
                 setAvailableRoles(functionalRoles);
             } catch (error) {
+                if (!(error instanceof IpoApiError)) {
+                    console.error(error);
+                    showSnackbarNotification('Unknown error');
+                    return;
+                }
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);
             }
@@ -201,7 +207,7 @@ const EditIPO = (): JSX.Element => {
             return null;
         }
         return {
-            id: participant.person.id,
+            id: participant.id,
             azureOid: participant.person.azureOid,
             email: participant.person.email,
             required: participant.person.radioOption == 'to',
@@ -231,7 +237,7 @@ const EditIPO = (): JSX.Element => {
             return null;
         }
         return {
-            id: participant.role.id,
+            id: participant.id,
             code: participant.role.code,
             persons: getPersons(participant.role),
             rowVersion: participant.rowVersion,
@@ -243,7 +249,7 @@ const EditIPO = (): JSX.Element => {
     ): ExternalEmailDto | null => {
         if (!participant.externalEmail) return null;
         return {
-            id: participant.externalEmail.id,
+            id: participant.id,
             email: participant.externalEmail.email,
             rowVersion: participant.rowVersion,
         };
@@ -287,6 +293,11 @@ const EditIPO = (): JSX.Element => {
                         );
                     }
                 } catch (error) {
+                    if (!(error instanceof IpoApiError)) {
+                        console.error(error);
+                        showSnackbarNotification('Unknown error');
+                        return;
+                    }
                     console.error(
                         'Upload or delete of attachment failed: ',
                         error.message,
@@ -308,6 +319,11 @@ const EditIPO = (): JSX.Element => {
             );
             setAttachments(response);
         } catch (error) {
+            if (!(error instanceof IpoApiError)) {
+                console.error(error);
+                showSnackbarNotification('Unknown error');
+                return;
+            }
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -354,6 +370,11 @@ const EditIPO = (): JSX.Element => {
                 ]);
                 history.push('/' + params.ipoId);
             } catch (error) {
+                if (!(error instanceof IpoApiError)) {
+                    console.error(error);
+                    showSnackbarNotification('Unknown error');
+                    return;
+                }
                 console.error(
                     'Save updated IPO failed: ',
                     error.message,
@@ -376,6 +397,11 @@ const EditIPO = (): JSX.Element => {
                 );
                 setInvitation(response);
             } catch (error) {
+                if (!(error instanceof IpoApiError)) {
+                    console.error(error);
+                    showSnackbarNotification('Unknown error');
+                    return;
+                }
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);
             }
@@ -461,7 +487,6 @@ const EditIPO = (): JSX.Element => {
                 if (participant.person) {
                     participantType = 'Person';
                     person = {
-                        id: participant.person.id,
                         azureOid: participant.person.azureOid,
                         name: `${participant.person.firstName} ${participant.person.lastName}`,
                         email: participant.person.email,
@@ -489,7 +514,6 @@ const EditIPO = (): JSX.Element => {
                           )
                         : null;
                     roleParticipant = {
-                        id: participant.functionalRole.id,
                         code: participant.functionalRole.code,
                         description: funcRole ? funcRole.description : '',
                         usePersonalEmail: funcRole
@@ -501,7 +525,6 @@ const EditIPO = (): JSX.Element => {
                 } else if (participant.externalEmail) {
                     participantType = 'Person';
                     externalEmail = {
-                        id: participant.externalEmail.id,
                         email: participant.externalEmail.externalEmail,
                     };
                 }
@@ -509,6 +532,7 @@ const EditIPO = (): JSX.Element => {
                     participant.organization as Organization
                 );
                 const newParticipant: Participant = {
+                    id: participant.id,
                     organization: {
                         text: organizationText ? organizationText : 'Unknown',
                         value: participant.organization,

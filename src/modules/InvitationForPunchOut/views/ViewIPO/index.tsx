@@ -374,7 +374,7 @@ const ViewIPO = (): JSX.Element => {
         if (!signer || !invitation) return;
 
         const signDetails: SignIPODto = {
-            participantId: signer.id,
+            participantId: participant.id,
             participantRowVersion: participant.rowVersion,
         };
 
@@ -404,7 +404,7 @@ const ViewIPO = (): JSX.Element => {
         try {
             await apiClient.unsignPunchOut(
                 params.ipoId,
-                signer.id,
+                participant.id,
                 participant.rowVersion
             );
             analytics.trackUserAction(IpoCustomEvents.UNSIGNED, {

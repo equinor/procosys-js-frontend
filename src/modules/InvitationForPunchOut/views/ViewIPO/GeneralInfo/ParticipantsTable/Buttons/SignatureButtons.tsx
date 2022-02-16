@@ -40,6 +40,7 @@ interface SignatureButtonsProps {
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
     canUpdate: boolean;
+    isUsingAdminRights: boolean;
 }
 
 const SignatureButtons = ({
@@ -57,6 +58,7 @@ const SignatureButtons = ({
     uncomplete,
     unsign,
     canUpdate,
+    isUsingAdminRights,
 }: SignatureButtonsProps): JSX.Element => {
     const handleButtonClick = async (
         buttonAction: () => Promise<any>
@@ -149,13 +151,16 @@ const SignatureButtons = ({
                         />
                     );
                 } else if (
-                    participant.canSign &&
+                    (participant.canSign || isUsingAdminRights) &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
                     return getUnCompleteAndUpdateParticipantsButtons();
                 }
             } else {
-                if (participant.signedBy) {
+                if (
+                    (participant.canSign || isUsingAdminRights) &&
+                    participant.signedBy
+                ) {
                     return getUnsignButton();
                 } else if (
                     participant.canSign &&
@@ -167,7 +172,10 @@ const SignatureButtons = ({
             break;
         case OrganizationsEnum.ConstructionCompany:
             if (participant.sortKey === 1) {
-                if (participant.canSign && status === IpoStatusEnum.ACCEPTED) {
+                if (
+                    (participant.canSign || isUsingAdminRights) &&
+                    status === IpoStatusEnum.ACCEPTED
+                ) {
                     return (
                         <SignatureButton
                             name={'Unaccept punch-out'}
@@ -200,7 +208,10 @@ const SignatureButtons = ({
                     );
                 }
             } else {
-                if (participant.signedBy) {
+                if (
+                    (participant.canSign || isUsingAdminRights) &&
+                    participant.signedBy
+                ) {
                     return getUnsignButton();
                 } else if (participant.canSign) {
                     return getSignButton();
@@ -210,10 +221,12 @@ const SignatureButtons = ({
         case OrganizationsEnum.Operation:
         case OrganizationsEnum.TechnicalIntegrity:
         case OrganizationsEnum.Commissioning:
-            if (!participant.canSign) break;
-            if (participant.signedBy) {
+            if (
+                (participant.canSign || isUsingAdminRights) &&
+                participant.signedBy
+            ) {
                 return getUnsignButton();
-            } else {
+            } else if (participant.canSign) {
                 return getSignButton();
             }
     }

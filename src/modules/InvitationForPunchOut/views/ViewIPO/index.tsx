@@ -506,6 +506,9 @@ const ViewIPO = (): JSX.Element => {
                                                 unaccept={unacceptPunchOut}
                                                 uncomplete={uncompletePunchOut}
                                                 unsign={unsignPunchOut}
+                                                isUsingAdminRights={
+                                                    isUsingAdminRights
+                                                }
                                             />
                                         </Tabs.Panel>
                                         <Tabs.Panel>

@@ -14,7 +14,7 @@ import {
 } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
 import { IpoCustomEvents, IpoStatusEnum } from '../enums';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
@@ -34,6 +34,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
@@ -68,6 +69,10 @@ const ViewIPO = (): JSX.Element => {
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
     const analytics = useAnalytics();
+    const [isUsingAdminRights, setIsUsingAdminRights] =
+        useState<boolean>(false);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const { permissions } = useCurrentPlant();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -140,6 +145,12 @@ const ViewIPO = (): JSX.Element => {
             }
         }
     }, [invitation]);
+
+    useEffect(() => {
+        // TODO: change to actual value
+        //setIsAdmin(permissions.includes('IPO/ADMIN'));
+        setIsAdmin(true);
+    });
 
     const getInvitation = async (
         requestCanceller?: (cancelCallback: Canceler) => void
@@ -463,6 +474,9 @@ const ViewIPO = (): JSX.Element => {
                             invitation.status == IpoStatusEnum.COMPLETED
                         }
                         cancelPunchOut={cancelPunchOut}
+                        isAdmin={isAdmin}
+                        isUsingAdminRights={isUsingAdminRights}
+                        setIsUsingAdminRights={setIsUsingAdminRights}
                     />
                     <InvitationContentContainer>
                         <TabsContainer>

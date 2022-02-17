@@ -1,5 +1,6 @@
 import {
     AcceptIPODto,
+    IpoApiError,
     SignIPODto,
 } from '../../http/InvitationForPunchOutApiClient';
 import {
@@ -162,6 +163,7 @@ const ViewIPO = (): JSX.Element => {
             );
             setInvitation(response);
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -177,6 +179,7 @@ const ViewIPO = (): JSX.Element => {
             );
             setComments(response);
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -207,6 +210,7 @@ const ViewIPO = (): JSX.Element => {
                 });
             await getComments();
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -253,6 +257,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Participants updated');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -283,6 +288,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out completed');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -312,6 +318,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out uncompleted');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -343,6 +350,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out accepted');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -370,6 +378,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out unaccepted');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -398,6 +407,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out signed');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -425,6 +435,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out unsigned');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -446,6 +457,7 @@ const ViewIPO = (): JSX.Element => {
                     'Invitation for punch-out is cancelled.'
                 );
             } catch (error) {
+                if (!(error instanceof IpoApiError)) return;
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);
             }

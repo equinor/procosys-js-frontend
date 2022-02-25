@@ -166,7 +166,7 @@ class ProCoSysSettings {
         } catch (error) {
             this.authConfigState = AsyncState.ERROR;
             console.error(
-                'Failed to load configuration from remote source',
+                'Failed to load auth configuration from remote source',
                 error
             );
         }

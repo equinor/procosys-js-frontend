@@ -1,4 +1,4 @@
-import { Configuration, UserAgentApplication } from 'msal';
+import { AuthError, Configuration, UserAgentApplication } from 'msal';
 
 import AuthUser from './AuthUser';
 import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
@@ -96,6 +96,10 @@ export default class AuthService implements IAuthService {
                 expiresAt: response.expiresOn,
             };
         } catch (authError) {
+            if (!(authError instanceof AuthError)) {
+                //throw 'Unknown error in getAccessToken';
+                console.log('Unknown error in getAccessToken'); // TODO: remove once bug is fixed
+            }
             // Normally, 'login_required' should be handled with a login call
             // But due to 3rd party cookie blocking, from Safari
             // the user always gets this response on a silent request, so we need to handle
@@ -108,7 +112,9 @@ export default class AuthService implements IAuthService {
                     'login_required',
                 ].indexOf(authError.errorCode) !== -1
             ) {
+                console.log('Consent issue'); // TODO: remove once bug is fixed
                 this.aquireConcent(resource);
+                console.log('Consent accuired'); // TODO: remove once bug is fixed
             }
         }
         throw 'Failed to login';

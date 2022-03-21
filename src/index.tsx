@@ -44,7 +44,7 @@ const validateConfigurationState = async (): Promise<void> => {
         );
     } else {
         const authService = new AuthService();
-        authService.handleRedirectCallback();
+        await authService.loadAuthModule();
         /**
          * Prevent the application from loading itself when triggered from an iFrame
          * This is done by the MSAL library, when trying to do a silent refresh
@@ -53,7 +53,6 @@ const validateConfigurationState = async (): Promise<void> => {
             console.info('Aborted further app loading iFrame');
         } else {
             if (authService.getCurrentUser() === null) {
-                authService.login();
                 render(
                     <>
                         {getHelmetBaseConfig()}

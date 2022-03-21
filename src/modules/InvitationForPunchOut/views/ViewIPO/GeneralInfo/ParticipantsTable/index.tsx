@@ -67,7 +67,7 @@ const ParticipantsTable = ({
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     useEffect(() => {
-        const participant = participants.find((p) => p.canSign);
+        const participant = participants.find((p) => p.isSigner);
         if (
             participant &&
             participant.sortKey === 0 &&

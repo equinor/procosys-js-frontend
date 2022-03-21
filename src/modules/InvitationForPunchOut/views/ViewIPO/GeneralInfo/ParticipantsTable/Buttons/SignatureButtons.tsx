@@ -134,7 +134,7 @@ const SignatureButtons = ({
     switch (participant.organization) {
         case OrganizationsEnum.Contractor:
             if (participant.sortKey === 0) {
-                if (participant.canSign && status === IpoStatusEnum.PLANNED) {
+                if (participant.isSigner && status === IpoStatusEnum.PLANNED) {
                     return (
                         <SignatureButtonWithTooltip
                             name={'Complete punch-out'}
@@ -151,19 +151,19 @@ const SignatureButtons = ({
                         />
                     );
                 } else if (
-                    (participant.canSign || isUsingAdminRights) &&
+                    (participant.isSigner || isUsingAdminRights) &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
                     return getUnCompleteAndUpdateParticipantsButtons();
                 }
             } else {
                 if (
-                    (participant.canSign || isUsingAdminRights) &&
+                    (participant.isSigner || isUsingAdminRights) &&
                     participant.signedBy
                 ) {
                     return getUnsignButton();
                 } else if (
-                    participant.canSign &&
+                    participant.isSigner &&
                     status !== IpoStatusEnum.CANCELED
                 ) {
                     return getSignButton();
@@ -173,7 +173,7 @@ const SignatureButtons = ({
         case OrganizationsEnum.ConstructionCompany:
             if (participant.sortKey === 1) {
                 if (
-                    (participant.canSign || isUsingAdminRights) &&
+                    (participant.isSigner || isUsingAdminRights) &&
                     status === IpoStatusEnum.ACCEPTED
                 ) {
                     return (
@@ -188,7 +188,7 @@ const SignatureButtons = ({
                         />
                     );
                 } else if (
-                    participant.canSign &&
+                    participant.isSigner &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
                     return (
@@ -209,11 +209,11 @@ const SignatureButtons = ({
                 }
             } else {
                 if (
-                    (participant.canSign || isUsingAdminRights) &&
+                    (participant.isSigner || isUsingAdminRights) &&
                     participant.signedBy
                 ) {
                     return getUnsignButton();
-                } else if (participant.canSign) {
+                } else if (participant.isSigner) {
                     return getSignButton();
                 }
             }
@@ -222,11 +222,11 @@ const SignatureButtons = ({
         case OrganizationsEnum.TechnicalIntegrity:
         case OrganizationsEnum.Commissioning:
             if (
-                (participant.canSign || isUsingAdminRights) &&
+                (participant.isSigner || isUsingAdminRights) &&
                 participant.signedBy
             ) {
                 return getUnsignButton();
-            } else if (participant.canSign) {
+            } else if (participant.isSigner) {
                 return getSignButton();
             }
     }

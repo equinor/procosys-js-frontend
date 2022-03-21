@@ -26,7 +26,7 @@ const participants = [
     {
         id: 0,
         organization: OrganizationsEnum.External,
-        canSign: false,
+        isSigner: false,
         sortKey: 2,
         person: null,
         functionalRole: null,
@@ -43,7 +43,7 @@ const participants = [
         id: 1,
         organization: OrganizationsEnum.TechnicalIntegrity,
         sortKey: 3,
-        canSign: false,
+        isSigner: false,
         person: null,
         functionalRole: {
             code: 'asdasdasd',
@@ -63,7 +63,7 @@ const participants = [
         id: 123,
         organization: OrganizationsEnum.Contractor,
         sortKey: 0,
-        canSign: false,
+        isSigner: false,
         person: {
             firstName: 'Adwa',
             lastName: 'ASdsklandasnd',
@@ -93,7 +93,7 @@ const participants = [
         id: 234,
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
-        canSign: false,
+        isSigner: false,
         person: {
             firstName: 'Oakjfcv',
             lastName: 'Alkjljsdf',
@@ -123,7 +123,7 @@ const participants = [
         id: 12,
         organization: OrganizationsEnum.Contractor,
         sortKey: 4,
-        canSign: false,
+        isSigner: false,
         externalEmail: null,
         person: null,
         functionalRole: {
@@ -164,7 +164,7 @@ const participants_canSign = [
     {
         organization: OrganizationsEnum.Contractor,
         sortKey: 0,
-        canSign: true,
+        isSigner: true,
         person: {
             id: 123,
             firstName: 'Adwa',
@@ -194,7 +194,7 @@ const participants_canSign = [
     {
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
-        canSign: true,
+        isSigner: true,
         person: {
             id: 234,
             firstName: 'Oakjfcv',
@@ -253,6 +253,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.ACCEPTED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -290,6 +291,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.PLANNED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -312,7 +314,7 @@ describe('<ParticipantsTable />', () => {
             ...participants[ParticipantIndex.FUNCROLE],
             signedAtUtc: null,
             signedBy: null,
-            canSign: true,
+            isSigner: true,
         };
         newParticipants[ParticipantIndex.COMPLETER] = {
             ...participants[ParticipantIndex.COMPLETER],
@@ -330,6 +332,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.PLANNED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -347,7 +350,7 @@ describe('<ParticipantsTable />', () => {
             ...participants[ParticipantIndex.COMPLETER],
             signedAtUtc: null,
             signedBy: null,
-            canSign: true,
+            isSigner: true,
         };
         newParticipants[ParticipantIndex.ACCEPTER] = {
             ...participants[ParticipantIndex.ACCEPTER],
@@ -365,6 +368,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.PLANNED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -383,7 +387,7 @@ describe('<ParticipantsTable />', () => {
         const newParticipants = [...participants];
         newParticipants[ParticipantIndex.COMPLETER] = {
             ...participants[ParticipantIndex.COMPLETER],
-            canSign: true,
+            isSigner: true,
         };
         newParticipants[ParticipantIndex.ACCEPTER] = {
             ...participants[ParticipantIndex.ACCEPTER],
@@ -401,6 +405,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.COMPLETED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -433,7 +438,7 @@ describe('<ParticipantsTable />', () => {
             ...participants[ParticipantIndex.ACCEPTER],
             signedAtUtc: null,
             signedBy: null,
-            canSign: true,
+            isSigner: true,
         };
         newParticipants[ParticipantIndex.FUNCROLE] = {
             ...participants[ParticipantIndex.FUNCROLE],
@@ -446,6 +451,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.COMPLETED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
         await waitFor(() => {
@@ -482,7 +488,7 @@ describe('<ParticipantsTable />', () => {
             ...participants[ParticipantIndex.FUNCROLE],
             signedAtUtc: null,
             signedBy: null,
-            canSign: true,
+            isSigner: true,
         };
         const { queryByText } = renderWithTheme(
             <ParticipantsTable
@@ -490,6 +496,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.COMPLETED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
         expect(queryByText('Update')).not.toBeInTheDocument();
@@ -509,7 +516,7 @@ describe('<ParticipantsTable />', () => {
         const newParticipants = [...participants];
         newParticipants[ParticipantIndex.COMPLETER] = {
             ...participants[ParticipantIndex.COMPLETER],
-            canSign: true,
+            isSigner: true,
         };
         newParticipants[ParticipantIndex.ACCEPTER] = {
             ...participants[ParticipantIndex.ACCEPTER],
@@ -525,6 +532,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.ACCEPTED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -553,7 +561,7 @@ describe('<ParticipantsTable />', () => {
         const newParticipants = [...participants];
         newParticipants[ParticipantIndex.ACCEPTER] = {
             ...participants[ParticipantIndex.ACCEPTER],
-            canSign: true,
+            isSigner: true,
         };
         newParticipants[ParticipantIndex.FUNCROLE] = {
             ...participants[ParticipantIndex.FUNCROLE],
@@ -566,6 +574,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.ACCEPTED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -596,7 +605,7 @@ describe('<ParticipantsTable />', () => {
             ...participants[ParticipantIndex.FUNCROLE],
             signedAtUtc: null,
             signedBy: null,
-            canSign: true,
+            isSigner: true,
         };
         const { queryByText } = renderWithTheme(
             <ParticipantsTable
@@ -604,6 +613,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.ACCEPTED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
         expect(queryByText('Update')).not.toBeInTheDocument();
@@ -631,7 +641,7 @@ describe('<ParticipantsTable />', () => {
         const newParticipants = [...participants];
         newParticipants[ParticipantIndex.COMPLETER] = {
             ...participants[ParticipantIndex.COMPLETER],
-            canSign: true,
+            isSigner: true,
         };
         const { queryByText } = renderWithTheme(
             <ParticipantsTable
@@ -639,6 +649,7 @@ describe('<ParticipantsTable />', () => {
                 status="Canceled"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -656,6 +667,7 @@ describe('<ParticipantsTable />', () => {
                 status="Canceled"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -673,6 +685,7 @@ describe('<ParticipantsTable />', () => {
                 status="Planned"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -687,6 +700,7 @@ describe('<ParticipantsTable />', () => {
                 status="Completed"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -701,6 +715,7 @@ describe('<ParticipantsTable />', () => {
                 status="Planned"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -723,6 +738,7 @@ describe('<ParticipantsTable />', () => {
                 status="Planned"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -745,6 +761,7 @@ describe('<ParticipantsTable />', () => {
                 status="Planned"
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
 
@@ -777,6 +794,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.COMPLETED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
         expect(queryByText('Accept punch-out')).toBeInTheDocument();
@@ -789,6 +807,7 @@ describe('<ParticipantsTable />', () => {
                 status={IpoStatusEnum.ACCEPTED}
                 accept={acceptPunchOut}
                 complete={completePunchOut}
+                isUsingAdminRights={false}
             />
         );
         expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
@@ -802,6 +821,7 @@ describe('<ParticipantsTable />', () => {
                     status={IpoStatusEnum.ACCEPTED}
                     accept={acceptPunchOut}
                     complete={completePunchOut}
+                    isUsingAdminRights={false}
                 />
             );
             participants.forEach((participant) => {
@@ -821,6 +841,7 @@ describe('<ParticipantsTable />', () => {
                     status={IpoStatusEnum.ACCEPTED}
                     accept={acceptPunchOut}
                     complete={completePunchOut}
+                    isUsingAdminRights={false}
                 />
             );
             participants.forEach((participant) => {
@@ -843,6 +864,7 @@ describe('<ParticipantsTable />', () => {
                     status={IpoStatusEnum.ACCEPTED}
                     accept={acceptPunchOut}
                     complete={completePunchOut}
+                    isUsingAdminRights={false}
                 />
             );
             participants.forEach((participant) => {
@@ -857,6 +879,51 @@ describe('<ParticipantsTable />', () => {
                     expect(anchor).toBeInTheDocument();
                 }
             });
+        });
+    });
+
+    describe('<ParticipantsTable /> admin mode', () => {
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('Admin can unaccept', async () => {
+            const { queryByText } = renderWithTheme(
+                <ParticipantsTable
+                    participants={participants}
+                    status={IpoStatusEnum.ACCEPTED}
+                    accept={acceptPunchOut}
+                    complete={completePunchOut}
+                    isUsingAdminRights={true}
+                />
+            );
+            expect(queryByText('Unaccept punch-out')).toBeInTheDocument();
+        });
+
+        it('Admin can unSign', async () => {
+            const { queryByText } = renderWithTheme(
+                <ParticipantsTable
+                    participants={participants}
+                    status={IpoStatusEnum.ACCEPTED}
+                    accept={acceptPunchOut}
+                    complete={completePunchOut}
+                    isUsingAdminRights={true}
+                />
+            );
+            expect(queryByText('Unsign punch-out')).toBeInTheDocument();
+        });
+
+        it('Admin can uncomplete', async () => {
+            const { queryByText } = renderWithTheme(
+                <ParticipantsTable
+                    participants={participants}
+                    status={IpoStatusEnum.COMPLETED}
+                    accept={acceptPunchOut}
+                    complete={completePunchOut}
+                    isUsingAdminRights={true}
+                />
+            );
+            expect(queryByText('Uncomplete')).toBeInTheDocument();
         });
     });
 });

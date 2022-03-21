@@ -9,8 +9,6 @@ import {
     LogLevel,
     PopupRequest,
     PublicClientApplication,
-    RedirectRequest,
-    SilentRequest,
     SsoSilentRequest,
 } from '@azure/msal-browser';
 import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
@@ -238,7 +236,7 @@ export default class AuthService implements IAuthService {
                     'consent_required',
                     'interaction_required',
                     'login_required',
-                ].indexOf(authError.errorCode) !== -1
+                ].indexOf((authError as AuthError).errorCode) !== -1
             ) {
                 console.log('Consent issue'); // TODO: remove once bug is fixed
                 await this.myMSALObj.acquireTokenRedirect({

@@ -148,9 +148,7 @@ const ViewIPO = (): JSX.Element => {
     }, [invitation]);
 
     useEffect(() => {
-        // TODO: change to actual value
-        //setIsAdmin(permissions.includes('IPO/ADMIN'));
-        setIsAdmin(true);
+        setIsAdmin(permissions.includes('IPO/ADMIN'));
     });
 
     const getInvitation = async (

@@ -80,7 +80,8 @@ module.exports = {
         //contentBase: path.join(__dirname, 'build/'),
         port: 3000,
         /*HTML5 - Always route to index.html (React handles routing) */
-        historyApiFallback: true
+        historyApiFallback: true,
+        disableHostCheck: true
     },
     devtool: 'source-map',
     optimization: {

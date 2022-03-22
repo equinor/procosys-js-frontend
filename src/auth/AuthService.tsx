@@ -225,7 +225,9 @@ export default class AuthService implements IAuthService {
             if (!(authError instanceof AuthError)) {
                 throw 'Unknown error in getAccessToken';
             }
-            this.login();
+            this.myMSALObj.acquireTokenRedirect({
+                scopes: [resource],
+            });
         }
         throw 'Failed to login';
     }

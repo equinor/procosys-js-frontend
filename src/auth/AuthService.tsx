@@ -145,7 +145,7 @@ export default class AuthService implements IAuthService {
      * Handles the response from a popup or redirect. If response is null, will check if we have any accounts and attempt to sign in.
      * @param response
      */
-    handleResponse(response: AuthenticationResult | null) {
+    handleResponse(response: AuthenticationResult | null): void {
         if (response !== null) {
             this.account = response.account;
         } else {
@@ -161,7 +161,7 @@ export default class AuthService implements IAuthService {
      * Calls ssoSilent to attempt silent flow. If it fails due to interaction required error, it will prompt the user to login using popup.
      * @param request
      */
-    attemptSsoSilent() {
+    attemptSsoSilent(): void {
         this.myMSALObj
             .ssoSilent(this.silentLoginRequest)
             .then(() => {
@@ -223,8 +223,7 @@ export default class AuthService implements IAuthService {
             };
         } catch (authError) {
             if (!(authError instanceof AuthError)) {
-                //throw 'Unknown error in getAccessToken';
-                console.log('Unknown error in getAccessToken'); // TODO: remove once bug is fixed
+                throw 'Unknown error in getAccessToken';
             }
             // Normally, 'login_required' should be handled with a login call
             // But due to 3rd party cookie blocking, from Safari
@@ -238,12 +237,9 @@ export default class AuthService implements IAuthService {
                     'login_required',
                 ].indexOf((authError as AuthError).errorCode) !== -1
             ) {
-                console.log('Consent issue'); // TODO: remove once bug is fixed
                 await this.myMSALObj.acquireTokenRedirect({
                     scopes: [resource],
                 });
-
-                console.log('Consent acquired'); // TODO: remove once bug is fixed
             }
         }
         throw 'Failed to login';

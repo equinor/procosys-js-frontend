@@ -225,22 +225,7 @@ export default class AuthService implements IAuthService {
             if (!(authError instanceof AuthError)) {
                 throw 'Unknown error in getAccessToken';
             }
-            // Normally, 'login_required' should be handled with a login call
-            // But due to 3rd party cookie blocking, from Safari
-            // the user always gets this response on a silent request, so we need to handle
-            // this as consent required, and trust that the user is atleast logged in before the
-            // api is put to use.
-            if (
-                [
-                    'consent_required',
-                    'interaction_required',
-                    'login_required',
-                ].indexOf((authError as AuthError).errorCode) !== -1
-            ) {
-                await this.myMSALObj.acquireTokenRedirect({
-                    scopes: [resource],
-                });
-            }
+            this.login();
         }
         throw 'Failed to login';
     }

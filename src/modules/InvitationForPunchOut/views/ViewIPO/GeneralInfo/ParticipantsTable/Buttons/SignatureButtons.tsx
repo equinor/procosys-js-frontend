@@ -40,6 +40,7 @@ interface SignatureButtonsProps {
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
     canUpdate: boolean;
+    isUsingAdminRights: boolean;
 }
 
 const SignatureButtons = ({
@@ -57,6 +58,7 @@ const SignatureButtons = ({
     uncomplete,
     unsign,
     canUpdate,
+    isUsingAdminRights,
 }: SignatureButtonsProps): JSX.Element => {
     const handleButtonClick = async (
         buttonAction: () => Promise<any>
@@ -132,7 +134,7 @@ const SignatureButtons = ({
     switch (participant.organization) {
         case OrganizationsEnum.Contractor:
             if (participant.sortKey === 0) {
-                if (participant.canSign && status === IpoStatusEnum.PLANNED) {
+                if (participant.isSigner && status === IpoStatusEnum.PLANNED) {
                     return (
                         <SignatureButtonWithTooltip
                             name={'Complete punch-out'}
@@ -149,16 +151,19 @@ const SignatureButtons = ({
                         />
                     );
                 } else if (
-                    participant.canSign &&
+                    (participant.isSigner || isUsingAdminRights) &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
                     return getUnCompleteAndUpdateParticipantsButtons();
                 }
             } else {
-                if (participant.signedBy) {
+                if (
+                    (participant.isSigner || isUsingAdminRights) &&
+                    participant.signedBy
+                ) {
                     return getUnsignButton();
                 } else if (
-                    participant.canSign &&
+                    participant.isSigner &&
                     status !== IpoStatusEnum.CANCELED
                 ) {
                     return getSignButton();
@@ -167,7 +172,10 @@ const SignatureButtons = ({
             break;
         case OrganizationsEnum.ConstructionCompany:
             if (participant.sortKey === 1) {
-                if (participant.canSign && status === IpoStatusEnum.ACCEPTED) {
+                if (
+                    (participant.isSigner || isUsingAdminRights) &&
+                    status === IpoStatusEnum.ACCEPTED
+                ) {
                     return (
                         <SignatureButton
                             name={'Unaccept punch-out'}
@@ -180,7 +188,7 @@ const SignatureButtons = ({
                         />
                     );
                 } else if (
-                    participant.canSign &&
+                    participant.isSigner &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
                     return (
@@ -200,9 +208,12 @@ const SignatureButtons = ({
                     );
                 }
             } else {
-                if (participant.signedBy) {
+                if (
+                    (participant.isSigner || isUsingAdminRights) &&
+                    participant.signedBy
+                ) {
                     return getUnsignButton();
-                } else if (participant.canSign) {
+                } else if (participant.isSigner) {
                     return getSignButton();
                 }
             }
@@ -210,10 +221,12 @@ const SignatureButtons = ({
         case OrganizationsEnum.Operation:
         case OrganizationsEnum.TechnicalIntegrity:
         case OrganizationsEnum.Commissioning:
-            if (!participant.canSign) break;
-            if (participant.signedBy) {
+            if (
+                (participant.isSigner || isUsingAdminRights) &&
+                participant.signedBy
+            ) {
                 return getUnsignButton();
-            } else {
+            } else if (participant.isSigner) {
                 return getSignButton();
             }
     }

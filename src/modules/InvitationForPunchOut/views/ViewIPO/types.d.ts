@@ -16,7 +16,7 @@ type Participant = {
     id: number;
     organization: string;
     sortKey: number;
-    canSign: boolean;
+    isSigner: boolean;
     rowVersion: string;
     externalEmail: ExternalEmail;
     person: Person;

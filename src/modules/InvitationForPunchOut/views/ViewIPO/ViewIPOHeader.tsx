@@ -14,7 +14,7 @@ import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
 import { showModalDialog } from '@procosys/core/services/ModalDialogService';
-import { tokens } from '@equinor/eds-tokens';
+import { Switch } from '@equinor/eds-core-react';
 
 type ProgressBarProps = {
     ipoId: number;
@@ -27,9 +27,26 @@ type ProgressBarProps = {
     showEditButton: boolean;
     isCancelable: boolean;
     cancelPunchOut: () => void;
+    isAdmin: boolean;
+    isUsingAdminRights: boolean;
+    setIsUsingAdminRights: (b: React.SetStateAction<boolean>) => void;
 };
 
-const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
+const ViewIPOHeader = ({
+    ipoId,
+    steps,
+    currentStep,
+    title,
+    participants,
+    organizer,
+    isEditable,
+    showEditButton,
+    isCancelable,
+    cancelPunchOut,
+    isAdmin,
+    isUsingAdminRights,
+    setIsUsingAdminRights,
+}: ProgressBarProps): JSX.Element => {
     const confirmCancelIpo = (): void => {
         showModalDialog(
             'Cancel IPO',
@@ -41,7 +58,7 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
             'No',
             null,
             'Yes',
-            props.cancelPunchOut,
+            cancelPunchOut,
             true
         );
     };
@@ -50,22 +67,22 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
         <Container>
             <HeaderContainer>
                 <ButtonContainer>
-                    <Typography variant="h2">{`IPO-${props.ipoId}: ${props.title}`}</Typography>
+                    <Typography variant="h2">{`IPO-${ipoId}: ${title}`}</Typography>
                 </ButtonContainer>
                 <ButtonContainer>
                     <Button
-                        disabled={!props.isCancelable}
+                        disabled={!isCancelable}
                         variant="outlined"
                         onClick={(): void => confirmCancelIpo()}
                     >
                         <EdsIcon name="calendar_reject" /> Cancel IPO
                     </Button>
-                    {props.showEditButton && (
+                    {showEditButton && (
                         <>
                             <ButtonSpacer />
-                            <Link to={`/EditIPO/${props.ipoId}`}>
+                            <Link to={`/EditIPO/${ipoId}`}>
                                 <Button
-                                    disabled={!props.isEditable}
+                                    disabled={!isEditable}
                                     variant="outlined"
                                 >
                                     <EdsIcon name="edit" /> Edit
@@ -73,13 +90,25 @@ const ViewIPOHeader = (props: ProgressBarProps): JSX.Element => {
                             </Link>
                         </>
                     )}
+                    {isAdmin && (
+                        <>
+                            <ButtonSpacer />
+                            <Switch
+                                default
+                                checked={isUsingAdminRights}
+                                onChange={(): void =>
+                                    setIsUsingAdminRights(
+                                        (prevValue: boolean) => !prevValue
+                                    )
+                                }
+                                label={'Admin mode'}
+                            />
+                        </>
+                    )}
                 </ButtonContainer>
             </HeaderContainer>
             <ProgressBarContainer>
-                <ProgressBar
-                    steps={props.steps}
-                    currentStep={props.currentStep}
-                />
+                <ProgressBar steps={steps} currentStep={currentStep} />
             </ProgressBarContainer>
         </Container>
     );

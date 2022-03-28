@@ -25,6 +25,7 @@ interface GeneralInfoProps {
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
+    isUsingAdminRights: boolean;
 }
 
 const GeneralInfo = ({
@@ -36,6 +37,7 @@ const GeneralInfo = ({
     unaccept,
     uncomplete,
     unsign,
+    isUsingAdminRights,
 }: GeneralInfoProps): JSX.Element => {
     const [participants, setParticipants] = useState<Participant[]>([]);
 
@@ -138,6 +140,7 @@ const GeneralInfo = ({
                 unaccept={unaccept}
                 uncomplete={uncomplete}
                 unsign={unsign}
+                isUsingAdminRights={isUsingAdminRights}
             />
         </Container>
     );

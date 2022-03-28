@@ -42,6 +42,7 @@ interface ParticipantsTableProps {
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
+    isUsingAdminRights: boolean;
 }
 
 const ParticipantsTable = ({
@@ -54,6 +55,7 @@ const ParticipantsTable = ({
     unaccept,
     uncomplete,
     unsign,
+    isUsingAdminRights,
 }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [editAttendedDisabled, setEditAttendedDisabled] =
@@ -65,7 +67,7 @@ const ParticipantsTable = ({
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
 
     useEffect(() => {
-        const participant = participants.find((p) => p.canSign);
+        const participant = participants.find((p) => p.isSigner);
         if (
             participant &&
             participant.sortKey === 0 &&
@@ -133,7 +135,8 @@ const ParticipantsTable = ({
             status: string,
             canUpdate: boolean,
             attNoteData: AttNoteData[],
-            loading: boolean
+            loading: boolean,
+            isUsingAdminRights
         ): JSX.Element => (
             <SignatureButtons
                 participant={participant}
@@ -150,6 +153,7 @@ const ParticipantsTable = ({
                 uncomplete={uncomplete}
                 unsign={unsign}
                 canUpdate={canUpdate}
+                isUsingAdminRights={isUsingAdminRights}
             />
         ),
         [status]
@@ -398,7 +402,8 @@ const ParticipantsTable = ({
                                                 status,
                                                 canUpdate,
                                                 attNoteData,
-                                                loading
+                                                loading,
+                                                isUsingAdminRights
                                             )}
                                         </Typography>
                                     </Table.Cell>

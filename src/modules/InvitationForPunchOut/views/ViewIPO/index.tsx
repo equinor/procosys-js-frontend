@@ -1,5 +1,6 @@
 import {
     AcceptIPODto,
+    IpoApiError,
     SignIPODto,
 } from '../../http/InvitationForPunchOutApiClient';
 import {
@@ -14,7 +15,7 @@ import {
 } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
 import { IpoCustomEvents, IpoStatusEnum } from '../enums';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
 
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
@@ -34,6 +35,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
+import { useCurrentPlant } from '@procosys/core/PlantContext';
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
@@ -68,6 +70,10 @@ const ViewIPO = (): JSX.Element => {
     const [comments, setComments] = useState<IpoComment[]>([]);
     const [loadingComments, setLoadingComments] = useState<boolean>(false);
     const analytics = useAnalytics();
+    const [isUsingAdminRights, setIsUsingAdminRights] =
+        useState<boolean>(false);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const { permissions } = useCurrentPlant();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -141,6 +147,10 @@ const ViewIPO = (): JSX.Element => {
         }
     }, [invitation]);
 
+    useEffect(() => {
+        setIsAdmin(permissions.includes('IPO/ADMIN'));
+    });
+
     const getInvitation = async (
         requestCanceller?: (cancelCallback: Canceler) => void
     ): Promise<void> => {
@@ -151,6 +161,7 @@ const ViewIPO = (): JSX.Element => {
             );
             setInvitation(response);
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -166,6 +177,7 @@ const ViewIPO = (): JSX.Element => {
             );
             setComments(response);
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -196,6 +208,7 @@ const ViewIPO = (): JSX.Element => {
                 });
             await getComments();
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -242,6 +255,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Participants updated');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -272,6 +286,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out completed');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -301,6 +316,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out uncompleted');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -332,6 +348,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out accepted');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -359,6 +376,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out unaccepted');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -387,6 +405,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out signed');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -414,6 +433,7 @@ const ViewIPO = (): JSX.Element => {
             await getInvitation();
             showSnackbarNotification('Punch-out unsigned');
         } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
         }
@@ -435,6 +455,7 @@ const ViewIPO = (): JSX.Element => {
                     'Invitation for punch-out is cancelled.'
                 );
             } catch (error) {
+                if (!(error instanceof IpoApiError)) return;
                 console.error(error.message, error.data);
                 showSnackbarNotification(error.message);
             }
@@ -463,6 +484,9 @@ const ViewIPO = (): JSX.Element => {
                             invitation.status == IpoStatusEnum.COMPLETED
                         }
                         cancelPunchOut={cancelPunchOut}
+                        isAdmin={isAdmin}
+                        isUsingAdminRights={isUsingAdminRights}
+                        setIsUsingAdminRights={setIsUsingAdminRights}
                     />
                     <InvitationContentContainer>
                         <TabsContainer>
@@ -492,6 +516,9 @@ const ViewIPO = (): JSX.Element => {
                                                 unaccept={unacceptPunchOut}
                                                 uncomplete={uncompletePunchOut}
                                                 unsign={unsignPunchOut}
+                                                isUsingAdminRights={
+                                                    isUsingAdminRights
+                                                }
                                             />
                                         </Tabs.Panel>
                                         <Tabs.Panel>

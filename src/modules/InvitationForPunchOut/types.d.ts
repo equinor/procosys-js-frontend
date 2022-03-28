@@ -50,7 +50,7 @@ type ExternalEmail = {
 };
 
 export type Participant = {
-    id?: number; // TODO: make optional
+    id?: number;
     organization: SelectItem;
     sortKey: number | null;
     type: string;

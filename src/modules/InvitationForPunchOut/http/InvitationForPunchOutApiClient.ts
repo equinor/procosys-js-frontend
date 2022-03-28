@@ -54,7 +54,7 @@ type ParticipantInvitationResponse = {
     id: number;
     organization: string;
     sortKey: number;
-    canSign: boolean;
+    isSigner: boolean;
     rowVersion: string;
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;

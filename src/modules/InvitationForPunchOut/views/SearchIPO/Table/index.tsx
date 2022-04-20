@@ -1,11 +1,11 @@
 import { Container, CustomLink } from './index.style';
 import React, { useEffect, useState } from 'react';
 import { IPO } from '../types';
-import { Tooltip } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { Query, TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable, { TableSorting } from '@procosys/components/Table';
+import { Tooltip } from '@mui/material';
 
 interface InvitationsTableProps {
     getIPOs: (

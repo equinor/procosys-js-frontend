@@ -9,13 +9,14 @@ import {
     TagList,
 } from './TagDetails.style';
 import React, { useEffect, useState } from 'react';
-
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import IconButton from '@material-ui/core/IconButton';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { Tag } from '../types';
 import { Typography } from '@equinor/eds-core-react';
+import {
+    KeyboardArrowUp,
+    KeyboardArrowDown,
+    DeleteOutline,
+} from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 
 interface TagDetailsProps {
     selectedTags: Tag[];
@@ -56,9 +57,9 @@ const TagDetails = ({
                         onClick={(): void => toggleDetails(tag.tagNo)}
                     >
                         {isExpanded ? (
-                            <KeyboardArrowUpIcon />
+                            <KeyboardArrowUp />
                         ) : (
-                            <KeyboardArrowDownIcon />
+                            <KeyboardArrowDown />
                         )}
                     </IconButton>
                     <CollapseInfo>{tag.tagNo}</CollapseInfo>
@@ -68,7 +69,7 @@ const TagDetails = ({
                             title="Remove"
                             onClick={(): void => removeTag(tag.tagNo)}
                         >
-                            <DeleteOutlineIcon />
+                            <DeleteOutline />
                         </IconButton>
                     )}
                 </Collapse>

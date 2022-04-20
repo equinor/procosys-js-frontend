@@ -1,12 +1,11 @@
 import { CellValue, IdType } from 'react-table';
 import { ColumnFilterProps, DefaultFilter, SelectFilter } from './types';
-import { MenuItem, Select } from '@material-ui/core';
-
 import { ColumnFilter } from './style';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import React from 'react';
 import { TextField } from '@equinor/eds-core-react';
 import styled from 'styled-components';
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { FilterList } from '@mui/icons-material';
 
 const TableFilterField = styled(TextField)`
     width: calc(100% - 5px);
@@ -40,7 +39,7 @@ export const DefaultColumnFilter = ({
                     setFilter(e.target.value || undefined);
                 }}
                 value={column.filterValue}
-                inputIcon={<FilterListIcon />}
+                inputIcon={<FilterList />}
                 type="search"
             />
         </ColumnFilter>
@@ -64,7 +63,7 @@ export const SelectColumnFilter = ({
 
     const selectValue = filterValue || '_all_';
 
-    const handleChange = (e: React.ChangeEvent<{ value: unknown }>): void => {
+    const handleChange = (e: SelectChangeEvent<unknown>): void => {
         setFilter(
             (e.target.value as string) === '_all_'
                 ? undefined

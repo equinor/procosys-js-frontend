@@ -18,8 +18,6 @@ import Spinner from '@procosys/components/Spinner';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import { Tooltip } from '@material-ui/core';
-import styled from 'styled-components';
 import {
     ButtonContainer,
     ButtonSpacer,
@@ -31,6 +29,7 @@ import {
     Title,
 } from './SharedCode/Dialogs.style';
 import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
+import { Tooltip } from '@mui/material';
 
 const errorIcon = (
     <EdsIcon

@@ -41,10 +41,10 @@ import {
 } from '../QuickSearch/style';
 import QuickSearchPreviewHit from '../QuickSearch/QuickSearchPreviewHit';
 import Spinner from '@procosys/components/Spinner';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import useClickOutsideNotifier from '@procosys/hooks/useClickOutsideNotifier';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Canceler } from '@procosys/http/HttpClient';
+import { KeyboardArrowRight } from '@mui/icons-material';
 
 type PlantItem = {
     text: string;
@@ -587,7 +587,7 @@ const Header: React.FC = (): JSX.Element => {
                                                             Commissioning
                                                             packages
                                                         </span>
-                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                        <KeyboardArrowRight className="arrowIcon" />
                                                     </QuickSearchPreviewSection>
                                                 )}
 
@@ -615,7 +615,7 @@ const Header: React.FC = (): JSX.Element => {
                                                         }
                                                     >
                                                         <span>MC packages</span>
-                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                        <KeyboardArrowRight className="arrowIcon" />
                                                     </QuickSearchPreviewSection>
                                                 )}
 
@@ -643,7 +643,7 @@ const Header: React.FC = (): JSX.Element => {
                                                         }
                                                     >
                                                         <span>Tags</span>
-                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                        <KeyboardArrowRight className="arrowIcon" />
                                                     </QuickSearchPreviewSection>
                                                 )}
 
@@ -673,7 +673,7 @@ const Header: React.FC = (): JSX.Element => {
                                                         <span>
                                                             Punch List items
                                                         </span>
-                                                        <KeyboardArrowRightIcon className="arrowIcon" />
+                                                        <KeyboardArrowRight className="arrowIcon" />
                                                     </QuickSearchPreviewSection>
                                                 )}
 

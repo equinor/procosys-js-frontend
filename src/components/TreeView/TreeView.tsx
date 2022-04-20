@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import {
     TreeContainer,
     NodeContainer,
@@ -10,6 +7,7 @@ import {
     NodeLink,
 } from './style';
 import Spinner from '../Spinner';
+import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -226,10 +224,8 @@ const TreeView = ({
                 }}
                 spinner={loading == node.id}
             >
-                {isExpanded && loading != node.id && <KeyboardArrowDownIcon />}
-                {!isExpanded && loading != node.id && (
-                    <KeyboardArrowRightIcon />
-                )}
+                {isExpanded && loading != node.id && <KeyboardArrowDown />}
+                {!isExpanded && loading != node.id && <KeyboardArrowRight />}
                 {loading == node.id && <Spinner />}
             </ExpandCollapseIcon>
         );

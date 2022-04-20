@@ -23,7 +23,7 @@ import {
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
-import { TextField as DateTimeField } from '@material-ui/core';
+import { TextField as DateTimeField } from '@mui/material';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';

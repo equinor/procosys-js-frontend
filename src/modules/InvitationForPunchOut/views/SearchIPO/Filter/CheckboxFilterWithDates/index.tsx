@@ -9,10 +9,9 @@ import React, { ChangeEvent, useState } from 'react';
 
 import Checkbox from '../../../../../../components/Checkbox';
 import EdsIcon from '@procosys/components/EdsIcon';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { Typography } from '@equinor/eds-core-react';
 import { formatForDatePicker } from '@procosys/core/services/DateService';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
 interface CheckboxFilterWithDatesProps {
     title: string;
@@ -55,11 +54,7 @@ const CheckboxFilterWithDates = ({
             >
                 <EdsIcon name={icon} />
                 <CollapseInfo>{title}</CollapseInfo>
-                {isExpanded ? (
-                    <KeyboardArrowUpIcon />
-                ) : (
-                    <KeyboardArrowDownIcon />
-                )}
+                {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {isExpanded && (
                 <div>

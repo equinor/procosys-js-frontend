@@ -1,5 +1,4 @@
-import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
-
+import { SvgIconProps, SvgIcon } from '@mui/material';
 import React from 'react';
 
 const PressureIcon = (props: SvgIconProps): JSX.Element => {

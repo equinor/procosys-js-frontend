@@ -29,8 +29,6 @@ import CompleteDialog from './Dialogs/CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';
 import EdsIcon from '../../../../components/EdsIcon';
 import Flyout from './../../../../components/Flyout';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import OptionsDropdown from '../../../../components/OptionsDropdown';
 import PreservedDialog from './Dialogs/PreservedDialog';
 import { ProjectDetails } from '../../types';
@@ -41,7 +39,6 @@ import ScopeFilter from './ScopeFilter/ScopeFilter';
 import Spinner from '@procosys/components/Spinner';
 import StartPreservationDialog from './Dialogs/StartPreservationDialog';
 import TagFlyout from './TagFlyout/TagFlyout';
-import { Tooltip } from '@material-ui/core';
 import TransferDialog from './Dialogs/TransferDialog';
 import { Typography } from '@equinor/eds-core-react';
 import VoidDialog from './Dialogs/VoidDialog';
@@ -55,6 +52,8 @@ import ScopeOverviewTable from './ScopeOverviewTable';
 import UndoStartPreservationDialog from './Dialogs/UndoStartPreservationDialog';
 import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
 import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 export const getFirstUpcomingRequirement = (
     tag: PreservedTag
@@ -1013,12 +1012,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             >
                                 {!showActions && (
                                     <>
-                                        Show actions <KeyboardArrowUpIcon />
+                                        Show actions <KeyboardArrowUp />
                                     </>
                                 )}
                                 {showActions && (
                                     <>
-                                        Hide actions <KeyboardArrowDownIcon />
+                                        Hide actions <KeyboardArrowDown />
                                     </>
                                 )}
                             </StyledButton>

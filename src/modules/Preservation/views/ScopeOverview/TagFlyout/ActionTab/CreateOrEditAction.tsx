@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 
 import ActionAttachments from './ActionAttachments';
-import { TextField as DateTimeField } from '@material-ui/core';
+import { TextField as DateTimeField } from '@mui/material';
 import Spinner from '@procosys/components/Spinner';
 import {
     formatForDatePicker,

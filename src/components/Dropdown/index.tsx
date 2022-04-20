@@ -8,9 +8,8 @@ import {
     TopTextContainer,
 } from './style';
 import React, { useEffect, useRef, useState } from 'react';
-
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useClickOutsideNotifier } from './../../hooks';
+import { KeyboardArrowDown } from '@mui/icons-material';
 
 export interface DropdownProps {
     disabled?: boolean;
@@ -43,7 +42,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     const listRef = useRef<HTMLUListElement>(null);
     children = children ? React.Children.toArray(children) : [];
 
-    if (!Icon) Icon = <KeyboardArrowDownIcon />;
+    if (!Icon) Icon = <KeyboardArrowDown />;
 
     useClickOutsideNotifier(() => {
         if (onFilter) {

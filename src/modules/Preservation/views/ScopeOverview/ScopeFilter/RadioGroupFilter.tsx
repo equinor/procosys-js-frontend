@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
-import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { Radio } from '@equinor/eds-core-react';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import { RadioGroup, FormControlLabel } from '@mui/material';
 
 interface Option {
     title: string;
@@ -60,11 +60,7 @@ const RadioGroupFilter = ({
             >
                 <EdsIcon name={icon} />
                 <CollapseInfo>{label}</CollapseInfo>
-                {isExpanded ? (
-                    <KeyboardArrowUpIcon />
-                ) : (
-                    <KeyboardArrowDownIcon />
-                )}
+                {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {isExpanded && (
                 <ExpandedContainer>

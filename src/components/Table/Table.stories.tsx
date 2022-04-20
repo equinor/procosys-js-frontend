@@ -3,9 +3,9 @@ import Table, { TableProperties } from '@procosys/components/Table';
 import { Story, Meta } from '@storybook/react';
 import styled from 'styled-components';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { PreservedTag } from '@procosys/modules/Preservation/views/ScopeOverview/types';
 import { SelectColumnFilter } from './filters';
+import { CheckBox } from '@mui/icons-material';
 
 const Wrapper = styled.div`
     display: flex;
@@ -61,7 +61,7 @@ const columns = [
         field: 'isVoided',
         Cell: (rowData: TableOptions<PreservedTag>): JSX.Element => {
             return rowData.row.values.Voided === 'Voided' ? (
-                <CheckBoxIcon color="disabled" />
+                <CheckBox color="disabled" />
             ) : (
                 <></>
             );
@@ -134,7 +134,7 @@ const filteredColumns = [
         field: 'isVoided',
         Cell: (rowData: TableOptions<PreservedTag>): JSX.Element => {
             return rowData.row.values.Voided === 'Voided' ? (
-                <CheckBoxIcon color="disabled" />
+                <CheckBox color="disabled" />
             ) : (
                 <></>
             );

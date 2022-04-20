@@ -10,13 +10,12 @@ import {
     AddActionContainer,
     StyledButton,
 } from './ActionTab.style';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EdsIcon from '../../../../../../components/EdsIcon';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { Canceler } from 'axios';
 import { Button } from '@equinor/eds-core-react';
 import CreateOrEditAction from './CreateOrEditAction';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 const attachmentIcon = <EdsIcon name="attach_file" size={16} />;
 const notificationIcon = <EdsIcon name="notifications" size={16} />;
@@ -112,9 +111,9 @@ const ActionTab = ({
                         variant="ghost_icon"
                     >
                         {isExpanded ? (
-                            <KeyboardArrowUpIcon />
+                            <KeyboardArrowUp />
                         ) : (
-                            <KeyboardArrowDownIcon />
+                            <KeyboardArrowDown />
                         )}
                     </Button>
                     <CollapseInfo

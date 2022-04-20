@@ -10,9 +10,8 @@ import {
     TitleContent,
 } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { useClickOutsideNotifier } from './../../hooks';
+import { KeyboardArrowRight, KeyboardArrowDown } from '@mui/icons-material';
 
 export type SelectItem = {
     text: string;
@@ -138,7 +137,7 @@ const Select = ({
                     <ItemContent>
                         {itm.icon || null}
                         {itm.text}
-                        <KeyboardArrowRightIcon className="arrowIcon" />
+                        <KeyboardArrowRight className="arrowIcon" />
                     </ItemContent>
                     <CascadingItem>
                         {createNodesForItems(itm.children)}
@@ -164,7 +163,7 @@ const Select = ({
                 {children}
 
                 <DropdownIcon voided={isVoided} disabled={disabled}>
-                    <KeyboardArrowDownIcon />
+                    <KeyboardArrowDown />
                 </DropdownIcon>
             </DropdownButton>
             {isOpen && data.length > 0 && !disabled && (

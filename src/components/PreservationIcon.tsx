@@ -1,15 +1,17 @@
+import {
+    BatteryChargingFullOutlined,
+    FlashOnOutlined,
+    BuildOutlined,
+    PowerOutlined,
+    RotateRight,
+    AddToPhotosOutlined,
+} from '@mui/icons-material';
 import React from 'react';
 
 import AreaIcon from '../assets/icons/Area';
-import BatteryChargingFullOutlinedIcon from '@material-ui/icons/BatteryChargingFullOutlined';
 import BearingIcon from '../assets/icons/Bearing';
-import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
-import FlashOnOutlinedIcon from '@material-ui/icons/FlashOnOutlined';
 import N2Icon from '../assets/icons/N2';
-import OtherIcon from '@material-ui/icons/AddToPhotosOutlined';
-import PowerOutlinedIcon from '@material-ui/icons/PowerOutlined';
 import PressureIcon from '../assets/icons/Pressure';
-import RotateRightIcon from '@material-ui/icons/RotateRightOutlined';
 import ThermostatIcon from '../assets/icons/Thermostat';
 
 export interface IconProps {
@@ -40,25 +42,25 @@ const PreservationIcon = ({ variant }: IconProps): JSX.Element | null => {
         case 'Area':
             return <AreaIcon />;
         case 'Battery':
-            return <BatteryChargingFullOutlinedIcon />;
+            return <BatteryChargingFullOutlined />;
         case 'Bearings':
             return <BearingIcon />;
         case 'Electrical':
-            return <FlashOnOutlinedIcon />;
+            return <FlashOnOutlined />;
         case 'Heating':
             return <ThermostatIcon />;
         case 'Installation':
-            return <BuildOutlinedIcon />;
+            return <BuildOutlined />;
         case 'Power':
-            return <PowerOutlinedIcon />;
+            return <PowerOutlined />;
         case 'Nitrogen':
             return <N2Icon />;
         case 'Pressure':
             return <PressureIcon />;
         case 'Rotate':
-            return <RotateRightIcon />;
+            return <RotateRight />;
         default:
-            return <OtherIcon />;
+            return <AddToPhotosOutlined />;
     }
 };
 

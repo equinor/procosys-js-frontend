@@ -5,7 +5,7 @@ import {
     RequirementIcon,
 } from './RequirementIcons.style';
 import PreservationIcon from '../../../../components/PreservationIcon';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 
 const isRequirementOverdue = (requirement: Requirement): boolean =>
     requirement.nextDueWeeks < 0;

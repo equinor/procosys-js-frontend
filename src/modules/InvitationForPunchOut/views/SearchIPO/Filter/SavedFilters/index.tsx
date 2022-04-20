@@ -12,9 +12,9 @@ import {
 } from './index.style';
 import { SavedIPOFilter, IPOFilter } from '../../types';
 import EdsIcon from '@procosys/components/EdsIcon';
-import CloseIcon from '@material-ui/icons/Close';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
+import { Close } from '@mui/icons-material';
 
 const deleteIcon = <EdsIcon name="delete_to_trash" size={16} />;
 const defaultTrueIcon = <EdsIcon name="star_filled" size={16} />;
@@ -165,7 +165,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                             props.onCloseRequest();
                         }}
                     >
-                        <CloseIcon />
+                        <Close />
                     </Button>
                 </Header>
                 <Divider />
@@ -230,7 +230,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
                         props.onCloseRequest();
                     }}
                 >
-                    <CloseIcon />
+                    <Close />
                 </Button>
             </Header>
             <Divider />

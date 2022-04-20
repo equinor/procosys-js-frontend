@@ -266,6 +266,18 @@ type CompleteAcceptBaseIPODto = {
     participantRowVersion: string;
 };
 
+export type AttendedStatusDto = {
+    id: number;
+    attended: boolean;
+    rowVersion?: string;
+};
+
+export type AttendedNotesDto = {
+    id: number;
+    note: string;
+    rowVersion?: string;
+};
+
 export type AttendedAndNotesDto = {
     id: number;
     attended: boolean;
@@ -1009,6 +1021,56 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 settings
             );
             return result.data;
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /**
+     * Attended status
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async attendedStatus(
+        id: number,
+        participantDetails: AttendedStatusDto[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = `/Invitations/${id}/AttendedStatus`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.put(
+                endpoint,
+                participantDetails,
+                settings
+            );
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /**
+     * Attended notes
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async attendedNotes(
+        id: number,
+        participantDetails: AttendedNotesDto[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = `/Invitations/${id}/Note`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.put(
+                endpoint,
+                participantDetails,
+                settings
+            );
         } catch (error) {
             throw new IpoApiError(error as AxiosError);
         }

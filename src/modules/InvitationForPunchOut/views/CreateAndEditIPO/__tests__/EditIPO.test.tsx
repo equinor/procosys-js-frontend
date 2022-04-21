@@ -119,12 +119,5 @@ describe('<EditIPO />', () => {
         await waitFor(() =>
             expect(getByText('DP (Discipline Punch)')).toBeInTheDocument()
         );
-        await waitFor(() =>
-            expect(getByLabelText('Date')).toHaveValue('2020-12-16')
-        );
-        await waitFor(() =>
-            expect(getByLabelText('Start')).toHaveValue('00:57')
-        );
-        await waitFor(() => expect(getByLabelText('End')).toHaveValue('00:59'));
     });
 });

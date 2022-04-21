@@ -695,21 +695,21 @@ const ScopeFilter = ({
             <RadioGroupFilter
                 options={PRESERVATION_STATUS}
                 onChange={onPreservationStatusFilterChanged}
-                value={tagListFilter.preservationStatus}
+                value={localTagListFilter.preservationStatus}
                 label="Preservation status"
                 icon={'calendar_today'}
             />
             <RadioGroupFilter
                 options={ACTION_STATUS}
                 onChange={onActionStatusFilterChanged}
-                value={tagListFilter.actionStatus}
+                value={localTagListFilter.actionStatus}
                 label="Preservation actions"
                 icon={'notifications'}
             />
             <RadioGroupFilter
                 options={VOIDED}
                 onChange={onVoidedFilterChanged}
-                value={tagListFilter.voidedFilter}
+                value={localTagListFilter.voidedFilter}
                 label="Voided/unvoided tags"
                 icon={'delete_forever'}
             />

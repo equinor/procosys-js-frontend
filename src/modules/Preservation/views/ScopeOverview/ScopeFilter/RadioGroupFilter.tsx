@@ -3,11 +3,16 @@ import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Radio } from '@equinor/eds-core-react';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
-import { RadioGroup, FormControlLabel } from '@mui/material';
+import styled from 'styled-components';
 
+export const UnstyledList = styled.ul`
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+`;
 interface Option {
     title: string;
-    value: string;
+    value: string | null;
     default?: boolean;
 }
 
@@ -29,16 +34,10 @@ const RadioGroupFilter = ({
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const [isActiveFilter, setIsActiveFilter] = useState<boolean>(false);
 
-    const [inputName] = useState(() => {
-        if (label) return label.toLowerCase().replace(' ', '_');
-        return `RadioGroup_${Date.now()}`;
-    });
-
     const onSelectionChanged = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        newValue: string
+        e: React.ChangeEvent<HTMLInputElement>
     ): void => {
-        onChange(newValue);
+        onChange(e.target.value);
     };
 
     useEffect(() => {
@@ -64,24 +63,21 @@ const RadioGroupFilter = ({
             </Collapse>
             {isExpanded && (
                 <ExpandedContainer>
-                    <RadioGroup
-                        value={value}
-                        name={inputName}
-                        onChange={onSelectionChanged}
-                    >
+                    <UnstyledList>
                         {options.map((option) => (
-                            <FormControlLabel
-                                key={option.value}
-                                value={option.value}
-                                label={option.title}
-                                checked={
-                                    (!value && option.default) ||
-                                    option.value === value
-                                }
-                                control={<Radio />}
-                            />
+                            <li key={option.value}>
+                                <Radio
+                                    label={option.title}
+                                    value={option.value}
+                                    checked={
+                                        (!value && option.default) ||
+                                        value === option.value
+                                    }
+                                    onChange={onSelectionChanged}
+                                />
+                            </li>
                         ))}
-                    </RadioGroup>
+                    </UnstyledList>
                 </ExpandedContainer>
             )}
         </>

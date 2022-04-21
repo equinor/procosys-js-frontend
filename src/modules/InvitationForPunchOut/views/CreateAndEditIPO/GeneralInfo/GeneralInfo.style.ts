@@ -47,6 +47,7 @@ export const DateTimeContainer = styled.div`
         input {
             background-color: ${tokens.colors.ui.background__light.rgba};
             color: var(--text--default);
+            height: 10px;
         }
         label {
             color: var(--text--default);

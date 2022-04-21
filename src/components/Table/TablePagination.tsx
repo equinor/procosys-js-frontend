@@ -53,7 +53,6 @@ export function TablePagination<T extends Record<string, unknown>>({
         [setPageSize]
     );
 
-    // TODO: check how this looks
     return rowCount ? (
         <MuiTablePagination
             component="div"

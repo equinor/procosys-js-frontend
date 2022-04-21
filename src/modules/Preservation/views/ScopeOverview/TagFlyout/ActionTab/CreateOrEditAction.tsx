@@ -3,17 +3,12 @@ import {
     ButtonContainer,
     ButtonSpacer,
     Container,
+    DateContainer,
     Header,
     InputContainer,
 } from './CreateOrEditAction.style';
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
-import React, {
-    ChangeEvent,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import ActionAttachments from './ActionAttachments';
 import { TextField as DateTimeField } from '@mui/material';
@@ -25,6 +20,7 @@ import {
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { Label } from '@equinor/eds-core-react';
 
 const moduleName = 'PreservationCreateorEditAction';
 
@@ -174,11 +170,11 @@ const CreateOrEditAction = ({
                     }
                 />
             </InputContainer>
-            <InputContainer>
+            <DateContainer>
+                <Label label="Date" />
                 <DateTimeField
                     InputProps={{ inputProps: { max: '2121-01-01' } }}
                     id="actionDate"
-                    label="Date"
                     type="date"
                     value={formatForDatePicker(newDueTimeUtc, 'yyyy-MM-dd')}
                     InputLabelProps={{
@@ -190,7 +186,7 @@ const CreateOrEditAction = ({
                         >
                     ): void => setNewDueTimeUtc(new Date(event.target.value))}
                 />
-            </InputContainer>
+            </DateContainer>
 
             {actionId && (
                 <AttachmentsContainer>

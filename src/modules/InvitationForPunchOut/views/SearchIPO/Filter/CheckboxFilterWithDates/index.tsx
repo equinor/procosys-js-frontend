@@ -12,6 +12,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { Typography } from '@equinor/eds-core-react';
 import { formatForDatePicker } from '@procosys/core/services/DateService';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
+import { Label } from '@equinor/eds-core-react';
 
 interface CheckboxFilterWithDatesProps {
     title: string;
@@ -87,32 +88,33 @@ const CheckboxFilterWithDates = ({
                         {dateFields.map((value, index) => {
                             const dateValue = dateValues[index];
                             return (
-                                <DateField
-                                    InputProps={{
-                                        inputProps: { max: '2121-01-01' },
-                                    }}
-                                    key={value.id}
-                                    label={value.title}
-                                    type="date"
-                                    value={formatForDatePicker(
-                                        dateValue,
-                                        'yyyy-MM-dd'
-                                    )}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onChange={(
-                                        event: ChangeEvent<
-                                            | HTMLInputElement
-                                            | HTMLTextAreaElement
-                                        >
-                                    ): void =>
-                                        onDateChange(
-                                            value.id as dateFilterParamType,
-                                            event.target.value
-                                        )
-                                    }
-                                />
+                                <div key={value.id}>
+                                    <Label label={value.title} />
+                                    <DateField
+                                        InputProps={{
+                                            inputProps: { max: '2121-01-01' },
+                                        }}
+                                        type="date"
+                                        value={formatForDatePicker(
+                                            dateValue,
+                                            'yyyy-MM-dd'
+                                        )}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        onChange={(
+                                            event: ChangeEvent<
+                                                | HTMLInputElement
+                                                | HTMLTextAreaElement
+                                            >
+                                        ): void =>
+                                            onDateChange(
+                                                value.id as dateFilterParamType,
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                </div>
                             );
                         })}
                     </DatesContainer>

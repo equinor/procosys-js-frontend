@@ -64,6 +64,7 @@ type ExternalEmail = {
 
 export type Invitation = {
     canEdit: boolean;
+    canCancel: boolean;
     projectName: string;
     title: string;
     description: string;

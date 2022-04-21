@@ -1,10 +1,19 @@
-import { configure, render, waitFor } from '@testing-library/react';
+import { configure, getByText, render, waitFor } from '@testing-library/react';
 
 import EditIPO from '../EditIPO';
 import { Invitation } from '../../ViewIPO/types';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
+import ViewIPOHeader from '../../ViewIPO/ViewIPOHeader';
+import { Step } from '@procosys/modules/InvitationForPunchOut/types';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
+
+const initialSteps: Step[] = [
+    { title: 'Invitation for punch-out sent', isCompleted: true },
+    { title: 'Punch-out completed', isCompleted: false },
+    { title: 'Punch-out accepted by company', isCompleted: false },
+];
 
 const mockRoles = [
     {
@@ -26,6 +35,7 @@ const mockRoles = [
 
 const mockInvitation: Invitation = {
     canEdit: false,
+    canCancel: true,
     projectName: 'projectName',
     title: 'titleA',
     description: 'descriptionA',
@@ -119,5 +129,57 @@ describe('<EditIPO />', () => {
         await waitFor(() =>
             expect(getByText('DP (Discipline Punch)')).toBeInTheDocument()
         );
+    });
+
+    it('Should not display "Cancel IPO"-button when canCancel is false', async () => {
+        const { queryByText } = render(
+            <ViewIPOHeader
+                ipoId={1}
+                steps={initialSteps}
+                currentStep={1}
+                title={'test'}
+                organizer="test"
+                participants={[]}
+                isEditable={true}
+                showEditButton={true}
+                canCancel={false}
+                cancelPunchOut={(): void => {
+                    /*mock*/
+                }}
+                isAdmin={false}
+                isUsingAdminRights={false}
+                setIsUsingAdminRights={(): void => {
+                    /*mock*/
+                }}
+            />
+        );
+
+        expect(queryByText('Cancel IPO')).not.toBeInTheDocument();
+    });
+
+    it('Should display "Cancel IPO"-button when canCancel is true', async () => {
+        const { queryByText } = render(
+            <ViewIPOHeader
+                ipoId={1}
+                steps={initialSteps}
+                currentStep={1}
+                title={'test'}
+                organizer="test"
+                participants={[]}
+                isEditable={true}
+                showEditButton={true}
+                canCancel={true}
+                cancelPunchOut={(): void => {
+                    /*mock*/
+                }}
+                isAdmin={false}
+                isUsingAdminRights={false}
+                setIsUsingAdminRights={(): void => {
+                    /*mock*/
+                }}
+            />
+        );
+
+        expect(queryByText('Cancel IPO')).toBeInTheDocument();
     });
 });

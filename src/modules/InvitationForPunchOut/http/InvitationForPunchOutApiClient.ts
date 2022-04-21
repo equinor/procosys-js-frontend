@@ -16,6 +16,7 @@ export class IpoApiError extends ProCoSysApiError {
 
 type InvitationResponse = {
     canEdit: boolean;
+    canCancel: boolean;
     projectName: string;
     title: string;
     description: string;
@@ -373,7 +374,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -396,7 +397,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -430,7 +431,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -460,7 +461,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -483,7 +484,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -504,7 +505,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.get(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -549,7 +550,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -595,7 +596,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -616,7 +617,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.get(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -644,7 +645,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -664,7 +665,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.get(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -685,7 +686,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.get(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -707,7 +708,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.get(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -732,7 +733,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             });
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -765,7 +766,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.post(endpoint, formData, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -793,7 +794,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -821,7 +822,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -852,7 +853,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -879,7 +880,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             });
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -909,7 +910,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -936,7 +937,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             });
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -959,7 +960,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             });
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -985,7 +986,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             });
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -1010,7 +1011,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -1035,7 +1036,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -1063,7 +1064,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
     /**
@@ -1094,7 +1095,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -1126,7 +1127,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 settings
             );
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -1148,7 +1149,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 data: { rowVersion: rowVersion },
             });
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 
@@ -1186,7 +1187,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             const result = await this.client.get<BlobPart>(endpoint, settings);
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error);
+            throw new IpoApiError(error as AxiosError);
         }
     }
 }

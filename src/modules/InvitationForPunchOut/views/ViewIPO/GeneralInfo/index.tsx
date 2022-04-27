@@ -12,19 +12,19 @@ import {
     getFormattedDate,
     getFormattedTime,
 } from '@procosys/core/services/DateService';
-
 import React, { useEffect, useState } from 'react';
 import { Typography } from '@equinor/eds-core-react';
+import { AttendedStatusDto } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 
 interface GeneralInfoProps {
     invitation: Invitation;
     complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
-    update: (e: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
+    updateAttendedStatus: (attendedStatus: AttendedStatusDto) => Promise<any>;
     isUsingAdminRights: boolean;
 }
 
@@ -32,11 +32,11 @@ const GeneralInfo = ({
     invitation,
     complete,
     accept,
-    update,
     sign,
     unaccept,
     uncomplete,
     unsign,
+    updateAttendedStatus,
     isUsingAdminRights,
 }: GeneralInfoProps): JSX.Element => {
     const [participants, setParticipants] = useState<Participant[]>([]);
@@ -135,11 +135,11 @@ const GeneralInfo = ({
                 status={invitation.status}
                 complete={complete}
                 accept={accept}
-                update={update}
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
                 unsign={unsign}
+                updateAttendedStatus={updateAttendedStatus}
                 isUsingAdminRights={isUsingAdminRights}
             />
         </Container>

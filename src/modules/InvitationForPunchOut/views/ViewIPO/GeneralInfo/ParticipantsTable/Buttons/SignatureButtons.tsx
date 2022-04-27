@@ -34,7 +34,6 @@ interface SignatureButtonsProps {
     unsetDirtyStateFor: (componentName: string) => void;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    update: (attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;

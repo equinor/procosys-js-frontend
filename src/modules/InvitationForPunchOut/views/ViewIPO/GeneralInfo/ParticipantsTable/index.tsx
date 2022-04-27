@@ -24,6 +24,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import SignatureButtons from './Buttons/SignatureButtons';
+import { AttendedStatusDto } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 
 export type AttNoteData = {
     id: number;
@@ -37,11 +38,11 @@ interface ParticipantsTableProps {
     status: string;
     complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
     accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    update: (attNoteData: AttNoteData[]) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
+    updateAttendedStatus: (attendedStatus: AttendedStatusDto) => Promise<any>;
     isUsingAdminRights: boolean;
 }
 
@@ -50,11 +51,11 @@ const ParticipantsTable = ({
     status,
     complete,
     accept,
-    update,
     sign,
     unaccept,
     uncomplete,
     unsign,
+    updateAttendedStatus,
     isUsingAdminRights,
 }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -147,7 +148,6 @@ const ParticipantsTable = ({
                 unsetDirtyStateFor={unsetDirtyStateFor}
                 complete={complete}
                 accept={accept}
-                update={update}
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
@@ -358,11 +358,15 @@ const ParticipantsTable = ({
                                                           .attended
                                                     : false
                                             }
-                                            onChange={(): void =>
-                                                handleEditAttended(
-                                                    participant.id
-                                                )
-                                            }
+                                            onChange={(): void => {
+                                                updateAttendedStatus({
+                                                    id: participant.id,
+                                                    attended:
+                                                        !participant.attended,
+                                                    rowVersion:
+                                                        participant.rowVersion,
+                                                });
+                                            }}
                                         />
                                     </Table.Cell>
                                     <Table.Cell
@@ -387,6 +391,7 @@ const ParticipantsTable = ({
                                                     participant.id
                                                 )
                                             }
+                                            // onBlur={}
                                         />
                                     </Table.Cell>
                                     <Table.Cell

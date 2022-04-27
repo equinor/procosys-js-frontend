@@ -1,5 +1,6 @@
 import {
     AcceptIPODto,
+    AttendedStatusDto,
     IpoApiError,
     SignIPODto,
 } from '../../http/InvitationForPunchOutApiClient';
@@ -242,18 +243,37 @@ const ViewIPO = (): JSX.Element => {
         setSteps(modifiedSteps);
     };
 
-    const updateParticipants = async (
-        attNoteData: AttNoteData[]
+    // const updateParticipants = async (
+    //     attNoteData: AttNoteData[]
+    // ): Promise<any> => {
+    //     try {
+    //         await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
+    //         invitation &&
+    //             analytics.trackUserAction(
+    //                 IpoCustomEvents.UPDATED_PARTICIPANTS,
+    //                 { project: invitation.projectName, type: invitation.type }
+    //             );
+    //         await getInvitation();
+    //         showSnackbarNotification('Participants updated');
+    //     } catch (error) {
+    //         if (!(error instanceof IpoApiError)) return;
+    //         console.error(error.message, error.data);
+    //         showSnackbarNotification(error.message);
+    //     }
+    // };
+
+    const updateAttendedStatus = async (
+        attendedStatus: AttendedStatusDto
     ): Promise<any> => {
         try {
-            await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
+            await apiClient.updateAttendedStatus(params.ipoId, attendedStatus);
             invitation &&
                 analytics.trackUserAction(
                     IpoCustomEvents.UPDATED_PARTICIPANTS,
                     { project: invitation.projectName, type: invitation.type }
                 );
             await getInvitation();
-            showSnackbarNotification('Participants updated');
+            showSnackbarNotification('Attended status updated');
         } catch (error) {
             if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
@@ -261,6 +281,22 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
+    const updateNotes = async (attNoteData: AttNoteData[]): Promise<any> => {
+        try {
+            await apiClient.updateNotes(params.ipoId, attNoteData);
+            invitation &&
+                analytics.trackUserAction(
+                    IpoCustomEvents.UPDATED_PARTICIPANTS,
+                    { project: invitation.projectName, type: invitation.type }
+                );
+            await getInvitation();
+            showSnackbarNotification('Note has been updated');
+        } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
     const completePunchOut = async (
         participant: Participant,
         attNoteData: AttNoteData[]
@@ -512,10 +548,12 @@ const ViewIPO = (): JSX.Element => {
                                                 accept={acceptPunchOut}
                                                 complete={completePunchOut}
                                                 sign={signPunchOut}
-                                                update={updateParticipants}
                                                 unaccept={unacceptPunchOut}
                                                 uncomplete={uncompletePunchOut}
                                                 unsign={unsignPunchOut}
+                                                updateAttendedStatus={
+                                                    updateAttendedStatus
+                                                }
                                                 isUsingAdminRights={
                                                     isUsingAdminRights
                                                 }

@@ -269,20 +269,20 @@ type CompleteAcceptBaseIPODto = {
 export type AttendedStatusDto = {
     id: number;
     attended: boolean;
-    rowVersion?: string;
+    rowVersion: string;
 };
 
 export type NotesDto = {
     id: number;
     note: string;
-    rowVersion?: string;
+    rowVersion: string;
 };
 
 export type AttendedAndNotesDto = {
     id: number;
     attended: boolean;
     note: string;
-    rowVersion?: string;
+    rowVersion: string;
 };
 
 export type CompleteIPODto = {
@@ -1033,7 +1033,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async updateAttendedStatus(
         id: number,
-        participantDetails: AttendedStatusDto[],
+        participantDetails: AttendedStatusDto,
         setRequestCanceller?: RequestCanceler
     ): Promise<void> {
         const endpoint = `/Invitations/${id}/AttendedStatus`;

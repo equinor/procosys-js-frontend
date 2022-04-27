@@ -272,7 +272,7 @@ export type AttendedStatusDto = {
     rowVersion?: string;
 };
 
-export type AttendedNotesDto = {
+export type NotesDto = {
     id: number;
     note: string;
     rowVersion?: string;
@@ -1031,7 +1031,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async attendedStatus(
+    async updateAttendedStatus(
         id: number,
         participantDetails: AttendedStatusDto[],
         setRequestCanceller?: RequestCanceler
@@ -1056,9 +1056,9 @@ class InvitationForPunchOutApiClient extends ApiClient {
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
-    async attendedNotes(
+    async updateNotes(
         id: number,
-        participantDetails: AttendedNotesDto[],
+        participantDetails: NotesDto[],
         setRequestCanceller?: RequestCanceler
     ): Promise<void> {
         const endpoint = `/Invitations/${id}/Note`;

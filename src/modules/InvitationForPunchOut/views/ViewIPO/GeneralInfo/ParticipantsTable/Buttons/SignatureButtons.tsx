@@ -52,12 +52,10 @@ const SignatureButtons = ({
     unsetDirtyStateFor,
     complete,
     accept,
-    update,
     sign,
     unaccept,
     uncomplete,
     unsign,
-    canUpdate,
     isUsingAdminRights,
 }: SignatureButtonsProps): JSX.Element => {
     const handleButtonClick = async (
@@ -79,28 +77,15 @@ const SignatureButtons = ({
 
     const getUnCompleteAndUpdateParticipantsButtons = (): JSX.Element => {
         return (
-            <>
-                <SignatureButtonWithTooltip
-                    name={'Update'}
-                    tooltip={tooltipUpdate}
-                    onClick={(): Promise<void> =>
-                        handleButtonClick(async (): Promise<any> => {
-                            return await update(attNoteData);
-                        })
-                    }
-                    disabled={!canUpdate || loading}
-                />
-                <span> </span>
-                <SignatureButton
-                    name={'Uncomplete'}
-                    onClick={(): Promise<void> =>
-                        handleButtonClick(async (): Promise<any> => {
-                            return await uncomplete(participant);
-                        })
-                    }
-                    disabled={loading}
-                />
-            </>
+            <SignatureButton
+                name={'Uncomplete'}
+                onClick={(): Promise<void> =>
+                    handleButtonClick(async (): Promise<any> => {
+                        return await uncomplete(participant);
+                    })
+                }
+                disabled={loading}
+            />
         );
     };
 

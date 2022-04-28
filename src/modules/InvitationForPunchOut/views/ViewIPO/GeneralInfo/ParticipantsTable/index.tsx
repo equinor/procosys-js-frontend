@@ -88,6 +88,9 @@ const ParticipantsTable = ({
             status === IpoStatusEnum.COMPLETED
         ) {
             setEditNotesDisabled(false);
+        } else if (isUsingAdminRights) {
+            setEditAttendedDisabled(false);
+            setEditNotesDisabled(false);
         } else {
             setEditAttendedDisabled(true);
             setEditNotesDisabled(true);
@@ -347,7 +350,10 @@ const ParticipantsTable = ({
                                     >
                                         <Switch
                                             id={`attendance${participant.id}`}
-                                            disabled={editAttendedDisabled}
+                                            disabled={
+                                                editAttendedDisabled &&
+                                                !participant.isSigner
+                                            }
                                             default
                                             label={
                                                 attNoteData[index]
@@ -384,7 +390,10 @@ const ParticipantsTable = ({
                                     >
                                         <TextField
                                             id={`textfield${participant.id}`}
-                                            disabled={editNotesDisabled}
+                                            disabled={
+                                                editNotesDisabled &&
+                                                !participant.isSigner
+                                            }
                                             defaultValue={
                                                 participant.note
                                                     ? participant.note

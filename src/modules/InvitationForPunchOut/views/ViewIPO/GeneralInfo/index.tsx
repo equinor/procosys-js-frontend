@@ -14,7 +14,10 @@ import {
 } from '@procosys/core/services/DateService';
 import React, { useEffect, useState } from 'react';
 import { Typography } from '@equinor/eds-core-react';
-import { AttendedStatusDto } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
+import {
+    AttendedStatusDto,
+    NotesDto,
+} from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 
 interface GeneralInfoProps {
     invitation: Invitation;
@@ -25,6 +28,7 @@ interface GeneralInfoProps {
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
     updateAttendedStatus: (attendedStatus: AttendedStatusDto) => Promise<any>;
+    updateNotes: (notes: NotesDto) => Promise<any>;
     isUsingAdminRights: boolean;
 }
 
@@ -37,6 +41,7 @@ const GeneralInfo = ({
     uncomplete,
     unsign,
     updateAttendedStatus,
+    updateNotes,
     isUsingAdminRights,
 }: GeneralInfoProps): JSX.Element => {
     const [participants, setParticipants] = useState<Participant[]>([]);
@@ -140,6 +145,7 @@ const GeneralInfo = ({
                 uncomplete={uncomplete}
                 unsign={unsign}
                 updateAttendedStatus={updateAttendedStatus}
+                updateNotes={updateNotes}
                 isUsingAdminRights={isUsingAdminRights}
             />
         </Container>

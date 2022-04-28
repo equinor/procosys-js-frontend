@@ -24,7 +24,10 @@ import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import SignatureButtons from './Buttons/SignatureButtons';
-import { AttendedStatusDto } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
+import {
+    AttendedStatusDto,
+    NotesDto,
+} from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 
 export type AttNoteData = {
     id: number;
@@ -43,6 +46,7 @@ interface ParticipantsTableProps {
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
     updateAttendedStatus: (attendedStatus: AttendedStatusDto) => Promise<any>;
+    updateNotes: (notes: NotesDto) => Promise<any>;
     isUsingAdminRights: boolean;
 }
 
@@ -56,6 +60,7 @@ const ParticipantsTable = ({
     uncomplete,
     unsign,
     updateAttendedStatus,
+    updateNotes,
     isUsingAdminRights,
 }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -159,15 +164,15 @@ const ParticipantsTable = ({
         [status]
     );
 
-    const handleEditAttended = (id: number): void => {
-        const updateData = [...attNoteData];
-        const index = updateData.findIndex((x) => x.id === id);
-        updateData[index] = {
-            ...updateData[index],
-            attended: !updateData[index].attended,
-        };
-        setAttNoteData([...updateData]);
-    };
+    // const handleEditAttended = (id: number): void => {
+    //     const updateData = [...attNoteData];
+    //     const index = updateData.findIndex((x) => x.id === id);
+    //     updateData[index] = {
+    //         ...updateData[index],
+    //         attended: !updateData[index].attended,
+    //     };
+    //     setAttNoteData([...updateData]);
+    // };
 
     const handleEditNotes = (event: any, id: number): void => {
         event.preventDefault();
@@ -391,7 +396,17 @@ const ParticipantsTable = ({
                                                     participant.id
                                                 )
                                             }
-                                            // onBlur={}
+                                            onBlur={(): void => {
+                                                updateNotes({
+                                                    id: participant.id,
+                                                    note: attNoteData[index]
+                                                        ? attNoteData[index]
+                                                              .note
+                                                        : participant.note,
+                                                    rowVersion:
+                                                        participant.rowVersion,
+                                                });
+                                            }}
                                         />
                                     </Table.Cell>
                                     <Table.Cell

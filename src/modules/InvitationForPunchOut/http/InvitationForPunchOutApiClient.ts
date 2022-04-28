@@ -1058,7 +1058,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async updateNotes(
         id: number,
-        participantDetails: NotesDto[],
+        participantDetails: NotesDto,
         setRequestCanceller?: RequestCanceler
     ): Promise<void> {
         const endpoint = `/Invitations/${id}/Note`;

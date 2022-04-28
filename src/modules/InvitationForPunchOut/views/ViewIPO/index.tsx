@@ -1,6 +1,7 @@
 import {
     AcceptIPODto,
     AttendedStatusDto,
+    NotesDto,
     IpoApiError,
     SignIPODto,
 } from '../../http/InvitationForPunchOutApiClient';
@@ -18,7 +19,6 @@ import { Invitation, IpoComment, Participant } from './types';
 import { IpoCustomEvents, IpoStatusEnum } from '../enums';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
-
 import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Button } from '@equinor/eds-core-react';
@@ -281,9 +281,9 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
-    const updateNotes = async (attNoteData: AttNoteData[]): Promise<any> => {
+    const updateNotes = async (attendedNotes: NotesDto): Promise<any> => {
         try {
-            await apiClient.updateNotes(params.ipoId, attNoteData);
+            await apiClient.updateNotes(params.ipoId, attendedNotes);
             invitation &&
                 analytics.trackUserAction(
                     IpoCustomEvents.UPDATED_PARTICIPANTS,
@@ -297,6 +297,7 @@ const ViewIPO = (): JSX.Element => {
             showSnackbarNotification(error.message);
         }
     };
+
     const completePunchOut = async (
         participant: Participant,
         attNoteData: AttNoteData[]
@@ -554,6 +555,7 @@ const ViewIPO = (): JSX.Element => {
                                                 updateAttendedStatus={
                                                     updateAttendedStatus
                                                 }
+                                                updateNotes={updateNotes}
                                                 isUsingAdminRights={
                                                     isUsingAdminRights
                                                 }

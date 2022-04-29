@@ -16,6 +16,7 @@ export class IpoApiError extends ProCoSysApiError {
 
 type InvitationResponse = {
     canEdit: boolean;
+    canCancel: boolean;
     projectName: string;
     title: string;
     description: string;

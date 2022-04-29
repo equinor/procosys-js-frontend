@@ -5,6 +5,7 @@ export enum OutlookResponseType {
     NONE = 'None',
     UNKNOWN = 'Unknown',
     DECLINED = 'Declined',
+    ORGANIZER = 'Organizer',
 }
 
 export enum ReportIdEnum {

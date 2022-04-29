@@ -95,7 +95,7 @@ const ParticipantsTable = ({
             setEditAttendedDisabled(true);
             setEditNotesDisabled(true);
         }
-    }, [participants, status]);
+    }, [participants, status, isUsingAdminRights]);
 
     useEffect(() => {
         if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
@@ -114,18 +114,22 @@ const ParticipantsTable = ({
                 : participant.functionalRole
                 ? participant.functionalRole
                 : participant.externalEmail;
-            const attendedStatus =
-                status === IpoStatusEnum.PLANNED
-                    ? participant.person
-                        ? participant.person.response
-                            ? participant.person.response ===
-                              OutlookResponseType.ATTENDING
-                            : false
-                        : (x as FunctionalRole | ExternalEmail).response
-                        ? (x as FunctionalRole | ExternalEmail).response ===
-                          OutlookResponseType.ATTENDING
-                        : false
-                    : participant.attended;
+
+            const attendedStatus = participant.attended
+                ? participant.attended
+                : participant.person
+                ? participant.person.response
+                    ? participant.person.response ===
+                          OutlookResponseType.ATTENDING ||
+                      participant.person.response ===
+                          OutlookResponseType.ORGANIZER
+                    : participant.attended
+                : (x as FunctionalRole | ExternalEmail).response
+                ? (x as FunctionalRole | ExternalEmail).response ===
+                      OutlookResponseType.ATTENDING ||
+                  (x as FunctionalRole | ExternalEmail).response ===
+                      OutlookResponseType.ORGANIZER
+                : participant.attended;
 
             return {
                 id: participant.id,
@@ -167,15 +171,15 @@ const ParticipantsTable = ({
         [status]
     );
 
-    // const handleEditAttended = (id: number): void => {
-    //     const updateData = [...attNoteData];
-    //     const index = updateData.findIndex((x) => x.id === id);
-    //     updateData[index] = {
-    //         ...updateData[index],
-    //         attended: !updateData[index].attended,
-    //     };
-    //     setAttNoteData([...updateData]);
-    // };
+    const handleEditAttended = (id: number): void => {
+        const updateData = [...attNoteData];
+        const index = updateData.findIndex((x) => x.id === id);
+        updateData[index] = {
+            ...updateData[index],
+            attended: !updateData[index].attended,
+        };
+        setAttNoteData([...updateData]);
+    };
 
     const handleEditNotes = (event: any, id: number): void => {
         event.preventDefault();
@@ -367,16 +371,21 @@ const ParticipantsTable = ({
                                                 attNoteData[index]
                                                     ? attNoteData[index]
                                                           .attended
-                                                    : false
+                                                    : true
                                             }
                                             onChange={(): void => {
                                                 updateAttendedStatus({
                                                     id: participant.id,
-                                                    attended:
-                                                        !participant.attended,
+                                                    attended: attNoteData[index]
+                                                        ? !attNoteData[index]
+                                                              .attended
+                                                        : !participant.attended,
                                                     rowVersion:
                                                         participant.rowVersion,
                                                 });
+                                                handleEditAttended(
+                                                    participant.id
+                                                );
                                             }}
                                         />
                                     </Table.Cell>

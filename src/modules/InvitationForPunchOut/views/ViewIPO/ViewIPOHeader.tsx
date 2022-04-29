@@ -25,7 +25,7 @@ type ProgressBarProps = {
     organizer: string;
     isEditable: boolean;
     showEditButton: boolean;
-    isCancelable: boolean;
+    canCancel: boolean;
     cancelPunchOut: () => void;
     isAdmin: boolean;
     isUsingAdminRights: boolean;
@@ -41,7 +41,7 @@ const ViewIPOHeader = ({
     organizer,
     isEditable,
     showEditButton,
-    isCancelable,
+    canCancel,
     cancelPunchOut,
     isAdmin,
     isUsingAdminRights,
@@ -70,13 +70,14 @@ const ViewIPOHeader = ({
                     <Typography variant="h2">{`IPO-${ipoId}: ${title}`}</Typography>
                 </ButtonContainer>
                 <ButtonContainer>
-                    <Button
-                        disabled={!isCancelable}
-                        variant="outlined"
-                        onClick={(): void => confirmCancelIpo()}
-                    >
-                        <EdsIcon name="calendar_reject" /> Cancel IPO
-                    </Button>
+                    {canCancel && (
+                        <Button
+                            variant="outlined"
+                            onClick={(): void => confirmCancelIpo()}
+                        >
+                            <EdsIcon name="calendar_reject" /> Cancel IPO
+                        </Button>
+                    )}
                     {showEditButton && (
                         <>
                             <ButtonSpacer />

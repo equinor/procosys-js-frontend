@@ -64,38 +64,10 @@ const ParticipantsTable = ({
     isUsingAdminRights,
 }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [editAttendedDisabled, setEditAttendedDisabled] =
-        useState<boolean>(true);
-    const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>([]);
     const [cleanData, setCleanData] = useState<AttNoteData[]>([]);
     const [canUpdate, setCanUpdate] = useState<boolean>(false);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
-    useEffect(() => {
-        const participant = participants.find((p) => p.isSigner);
-        if (
-            participant &&
-            participant.sortKey === 0 &&
-            (status === IpoStatusEnum.PLANNED ||
-                status === IpoStatusEnum.COMPLETED)
-        ) {
-            setEditAttendedDisabled(false);
-            setEditNotesDisabled(false);
-        } else if (
-            participant &&
-            participant.sortKey === 1 &&
-            status === IpoStatusEnum.COMPLETED
-        ) {
-            setEditNotesDisabled(false);
-        } else if (isUsingAdminRights) {
-            setEditAttendedDisabled(false);
-            setEditNotesDisabled(false);
-        } else {
-            setEditAttendedDisabled(true);
-            setEditNotesDisabled(true);
-        }
-    }, [participants, status, isUsingAdminRights]);
 
     useEffect(() => {
         if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
@@ -115,6 +87,7 @@ const ParticipantsTable = ({
                 ? participant.functionalRole
                 : participant.externalEmail;
 
+            // TODO: change attendedStatus once backend is fixed
             const attendedStatus = participant.attended
                 ? participant.attended
                 : participant.person
@@ -355,8 +328,10 @@ const ParticipantsTable = ({
                                         <Switch
                                             id={`attendance${participant.id}`}
                                             disabled={
-                                                editAttendedDisabled &&
-                                                !participant.isSigner
+                                                !(
+                                                    participant.canEditAttendedStatusAndNote ||
+                                                    isUsingAdminRights
+                                                )
                                             }
                                             default
                                             label={
@@ -400,8 +375,10 @@ const ParticipantsTable = ({
                                         <TextField
                                             id={`textfield${participant.id}`}
                                             disabled={
-                                                editNotesDisabled &&
-                                                !participant.isSigner
+                                                !(
+                                                    participant.canEditAttendedStatusAndNote ||
+                                                    isUsingAdminRights
+                                                )
                                             }
                                             defaultValue={
                                                 participant.note

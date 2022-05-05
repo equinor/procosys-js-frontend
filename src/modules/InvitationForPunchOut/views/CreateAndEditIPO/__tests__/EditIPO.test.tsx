@@ -36,6 +36,7 @@ const mockRoles = [
 const mockInvitation: Invitation = {
     canEdit: false,
     canCancel: true,
+    canDelete: true,
     projectName: 'projectName',
     title: 'titleA',
     description: 'descriptionA',
@@ -143,12 +144,17 @@ describe('<EditIPO />', () => {
             <ViewIPOHeader
                 ipoId={1}
                 steps={initialSteps}
+                isCancelled={false}
                 currentStep={1}
                 title={'test'}
                 organizer="test"
                 participants={[]}
                 isEditable={true}
                 showEditButton={true}
+                canDelete={false}
+                deletePunchOut={(): void => {
+                    /*mock*/
+                }}
                 canCancel={false}
                 cancelPunchOut={(): void => {
                     /*mock*/
@@ -169,12 +175,17 @@ describe('<EditIPO />', () => {
             <ViewIPOHeader
                 ipoId={1}
                 steps={initialSteps}
+                isCancelled={false}
                 currentStep={1}
                 title={'test'}
                 organizer="test"
                 participants={[]}
                 isEditable={true}
                 showEditButton={true}
+                canDelete={false}
+                deletePunchOut={(): void => {
+                    /*mock*/
+                }}
                 canCancel={true}
                 cancelPunchOut={(): void => {
                     /*mock*/
@@ -188,5 +199,98 @@ describe('<EditIPO />', () => {
         );
 
         expect(queryByText('Cancel IPO')).toBeInTheDocument();
+    });
+
+    it('Should display "Delete IPO"-button when canDelete is true', async () => {
+        const { queryByText } = render(
+            <ViewIPOHeader
+                ipoId={1}
+                steps={initialSteps}
+                isCancelled={false}
+                currentStep={1}
+                title={'test'}
+                organizer="test"
+                participants={[]}
+                isEditable={true}
+                showEditButton={true}
+                canDelete={true}
+                deletePunchOut={(): void => {
+                    /*mock*/
+                }}
+                canCancel={true}
+                cancelPunchOut={(): void => {
+                    /*mock*/
+                }}
+                isAdmin={false}
+                isUsingAdminRights={false}
+                setIsUsingAdminRights={(): void => {
+                    /*mock*/
+                }}
+            />
+        );
+
+        expect(queryByText('Delete IPO')).toBeInTheDocument();
+    });
+
+    it('Should display "Delete IPO"-button when isCancelled is true, isUsingAdminRights is true and canDelete is false', async () => {
+        const { queryByText } = render(
+            <ViewIPOHeader
+                ipoId={1}
+                steps={initialSteps}
+                isCancelled={true}
+                currentStep={1}
+                title={'test'}
+                organizer="test"
+                participants={[]}
+                isEditable={true}
+                showEditButton={true}
+                canDelete={false}
+                deletePunchOut={(): void => {
+                    /*mock*/
+                }}
+                canCancel={true}
+                cancelPunchOut={(): void => {
+                    /*mock*/
+                }}
+                isAdmin={false}
+                isUsingAdminRights={true}
+                setIsUsingAdminRights={(): void => {
+                    /*mock*/
+                }}
+            />
+        );
+
+        expect(queryByText('Delete IPO')).toBeInTheDocument();
+    });
+
+    it('Should not display "Delete IPO"-button when isCancelled is true, isUsingAdminRights is false and canDelete is false', async () => {
+        const { queryByText } = render(
+            <ViewIPOHeader
+                ipoId={1}
+                steps={initialSteps}
+                isCancelled={true}
+                currentStep={1}
+                title={'test'}
+                organizer="test"
+                participants={[]}
+                isEditable={true}
+                showEditButton={true}
+                canDelete={false}
+                deletePunchOut={(): void => {
+                    /*mock*/
+                }}
+                canCancel={true}
+                cancelPunchOut={(): void => {
+                    /*mock*/
+                }}
+                isAdmin={false}
+                isUsingAdminRights={false}
+                setIsUsingAdminRights={(): void => {
+                    /*mock*/
+                }}
+            />
+        );
+
+        expect(queryByText('Delete IPO')).not.toBeInTheDocument();
     });
 });

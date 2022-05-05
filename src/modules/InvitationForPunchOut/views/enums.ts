@@ -28,6 +28,7 @@ export enum IpoCustomEvents {
     CREATED = 'IPO_Created',
     EDITED = 'IPO_Edited',
     CANCELED = 'IPO_Canceled',
+    DELETED = 'IPO_Deleted',
     COMPLETED = 'IPO_Completed',
     UNCOMPLETED = 'IPO_Uncompleted',
     ACCEPTED = 'IPO_Accepted',

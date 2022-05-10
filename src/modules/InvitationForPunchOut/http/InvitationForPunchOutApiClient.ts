@@ -17,6 +17,7 @@ export class IpoApiError extends ProCoSysApiError {
 type InvitationResponse = {
     canEdit: boolean;
     canCancel: boolean;
+    canDelete: boolean;
     projectName: string;
     title: string;
     description: string;
@@ -1009,6 +1010,29 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 { rowVersion: rowVersion },
                 settings
             );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /**
+     * Delete PunchOut
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async deletePunchOut(
+        id: number,
+        rowVersion: string,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = `/Invitations/${id}/Delete`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+        try {
+            const result = await this.client.delete(endpoint, {
+                data: { rowVersion: rowVersion },
+            });
             return result.data;
         } catch (error) {
             throw new IpoApiError(error as AxiosError);

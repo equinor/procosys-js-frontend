@@ -13,11 +13,11 @@ import HistoryDetails from './HistoryDetails';
 import PreservedRequirement from './PreservedRequirement';
 import ProcosysTable from '@procosys/components/Table';
 import Spinner from '@procosys/components/Spinner';
-import { Tooltip } from '@material-ui/core';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { showSnackbarNotification } from '../../../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
 import { usePreservationContext } from '../../../../context/PreservationContext';
+import { Tooltip } from '@mui/material';
 
 interface HistoryLogItem {
     id: number;

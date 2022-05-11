@@ -1,4 +1,6 @@
-import TreeView, { TreeViewNode } from '../../../../../components/TreeView';
+import TreeView, {
+    TreeViewNode,
+} from '../../../../../components/TreeView/TreeView';
 
 import { Container } from './LibraryTreeview.style';
 import { LibraryType } from '../Library';

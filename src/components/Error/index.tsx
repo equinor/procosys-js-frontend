@@ -1,7 +1,7 @@
 import { Container } from './style';
 import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
-import WarningOutlinedIcon from '@material-ui/icons/WarningOutlined';
+import { WarningOutlined } from '@mui/icons-material';
 
 export type ErrorProps = {
     title?: string;
@@ -9,7 +9,7 @@ export type ErrorProps = {
     medium?: boolean;
 };
 
-type size = 'inherit' | 'default' | 'small' | 'large';
+type size = 'inherit' | 'medium' | 'small' | 'large';
 
 /**
  *
@@ -22,11 +22,11 @@ const Error = ({
 }: ErrorProps): JSX.Element => {
     let size: size = 'small';
 
-    size = (medium && 'default') || size;
+    size = (medium && 'medium') || size;
     size = (large && 'large') || size;
     return (
         <Container>
-            <WarningOutlinedIcon fontSize={size} />
+            <WarningOutlined fontSize={size} />
 
             {<Typography variant="h1">{title || 'Unknown error'}</Typography>}
         </Container>

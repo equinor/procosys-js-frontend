@@ -41,8 +41,8 @@ import { DefaultColumnFilter } from './filters';
 import { ResizeHandle } from './ResizeHandle';
 import Spinner from '../Spinner';
 import { TablePagination } from './TablePagination';
-import { TableSortLabel } from '@material-ui/core';
 import { Typography } from '@equinor/eds-core-react';
+import { TableSortLabel } from '@mui/material';
 
 export interface DataQuery {
     pageSize: number;

@@ -8,14 +8,12 @@ import {
     StyledAccordionHeader,
     StyledAccordionPanel,
 } from './style';
-
 import { Accordion } from '@equinor/eds-core-react';
 import { Button } from '@equinor/eds-core-react';
 import Checkbox from '@procosys/components/Checkbox';
-import { Checkbox as EdsCheckbox } from '@equinor/eds-core-react';
-import CloseIcon from '@material-ui/icons/Close';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { Typography } from '@equinor/eds-core-react';
+import { Close } from '@mui/icons-material';
 
 export interface QuickSearchFiltersProps {
     plantFilterExpanded: boolean;
@@ -78,7 +76,7 @@ const QuickSearchFilters = ({
                             title="Close"
                             onClick={(): void => setShowFilter(false)}
                         >
-                            <CloseIcon />
+                            <Close />
                         </Button>
                     </FlexDiv>
                 </Header>

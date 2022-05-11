@@ -11,17 +11,19 @@ import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 
 import CheckboxFilterWithDates from './CheckboxFilterWithDates';
-import CloseIcon from '@material-ui/icons/Close';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { IpoStatusEnum } from '../../enums';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Popover from '@material-ui/core/Popover';
 import SavedFilters from './SavedFilters';
-import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 import SelectFilter from './SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 import { isValidDate } from '@procosys/core/services/DateService';
+import {
+    BookmarksOutlined,
+    Close,
+    KeyboardArrowDown,
+    KeyboardArrowUp,
+} from '@mui/icons-material';
+import { Popover } from '@mui/material';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -313,7 +315,7 @@ const InvitationsFilter = ({
                             setAnchorElement(event.currentTarget);
                         }}
                     >
-                        <SavedFiltersIcon />
+                        <BookmarksOutlined />
                     </Button>
                     <Button
                         variant="ghost"
@@ -322,7 +324,7 @@ const InvitationsFilter = ({
                             onCloseRequest();
                         }}
                     >
-                        <CloseIcon />
+                        <Close />
                     </Button>
                 </div>
             </Header>
@@ -376,11 +378,7 @@ const InvitationsFilter = ({
             >
                 <EdsIcon name="search" />
                 <CollapseInfo>Search</CollapseInfo>
-                {searchIsExpanded ? (
-                    <KeyboardArrowUpIcon />
-                ) : (
-                    <KeyboardArrowDownIcon />
-                )}
+                {searchIsExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {searchIsExpanded && (
                 <>

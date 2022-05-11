@@ -15,9 +15,9 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import { Canceler } from '@procosys/http/HttpClient';
 import Loading from '@procosys/components/Loading';
 import ProcosysTable from '@procosys/components/Table';
-import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { Tooltip } from '@mui/material';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;

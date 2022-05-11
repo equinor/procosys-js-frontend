@@ -13,17 +13,19 @@ import { SavedTagListFilter, TagListFilter } from '../types';
 import AreaIcon from '@procosys/assets/icons/Area';
 import { Canceler } from 'axios';
 import CheckboxFilter from './CheckboxFilter';
-import CloseIcon from '@material-ui/icons/Close';
 import EdsIcon from '@procosys/components/EdsIcon';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
-import Popover from '@material-ui/core/Popover';
 import RadioGroupFilter from './RadioGroupFilter';
 import SavedFilters from './SavedFilters';
-import SavedFiltersIcon from '@material-ui/icons/BookmarksOutlined';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../context/PreservationContext';
+import {
+    BookmarksOutlined,
+    Close,
+    KeyboardArrowDown,
+    KeyboardArrowUp,
+} from '@mui/icons-material';
+import { Popover } from '@mui/material';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -515,7 +517,7 @@ const ScopeFilter = ({
                             setAnchorElement(event.currentTarget);
                         }}
                     >
-                        <SavedFiltersIcon />
+                        <BookmarksOutlined />
                     </Button>
                     <Button
                         variant="ghost"
@@ -524,7 +526,7 @@ const ScopeFilter = ({
                             onCloseRequest();
                         }}
                     >
-                        <CloseIcon />
+                        <Close />
                     </Button>
                 </div>
             </Header>
@@ -574,11 +576,7 @@ const ScopeFilter = ({
             >
                 <EdsIcon name="search" />
                 <CollapseInfo>Search</CollapseInfo>
-                {searchIsExpanded ? (
-                    <KeyboardArrowUpIcon />
-                ) : (
-                    <KeyboardArrowDownIcon />
-                )}
+                {searchIsExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {searchIsExpanded && (
                 <>
@@ -697,21 +695,21 @@ const ScopeFilter = ({
             <RadioGroupFilter
                 options={PRESERVATION_STATUS}
                 onChange={onPreservationStatusFilterChanged}
-                value={tagListFilter.preservationStatus}
+                value={localTagListFilter.preservationStatus}
                 label="Preservation status"
                 icon={'calendar_today'}
             />
             <RadioGroupFilter
                 options={ACTION_STATUS}
                 onChange={onActionStatusFilterChanged}
-                value={tagListFilter.actionStatus}
+                value={localTagListFilter.actionStatus}
                 label="Preservation actions"
                 icon={'notifications'}
             />
             <RadioGroupFilter
                 options={VOIDED}
                 onChange={onVoidedFilterChanged}
-                value={tagListFilter.voidedFilter}
+                value={localTagListFilter.voidedFilter}
                 label="Voided/unvoided tags"
                 icon={'delete_forever'}
             />

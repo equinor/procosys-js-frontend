@@ -7,9 +7,9 @@ import RequirementIcons from '../RequirementIcons';
 import DialogTable from './SharedCode/DialogTable';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import { Tooltip } from '@material-ui/core';
 import { OverflowColumn } from './RescheduleDialog.style';
 import { MainContainer, TableContainer } from './SharedCode/Dialogs.style';
+import { Tooltip } from '@mui/material';
 
 interface VoidDialogProps {
     voidableTags: PreservedTag[];

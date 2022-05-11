@@ -40,10 +40,10 @@ import CommPkgIcon from './icons/commPkg';
 import MCPkgIcon from './icons/mcPkg';
 import TagIcon from './icons/tag';
 import styled from 'styled-components';
-import { Tooltip } from '@material-ui/core';
 import PunchIcon from './icons/punch';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { SearchSubText } from '../Header/style';
+import { Tooltip } from '@mui/material';
 
 const StyledTooltip = styled(Tooltip)`
     font-size: 14px;

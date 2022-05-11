@@ -13,7 +13,6 @@ import {
 } from './style';
 import React, { ReactNode, useRef, useState, useEffect } from 'react';
 import { useClickOutsideNotifier } from '../../../../hooks';
-import { Radio, withStyles, RadioProps } from '@material-ui/core';
 import {
     RoleParticipant,
     Person,
@@ -22,6 +21,8 @@ import EdsIcon from '../../../../components/EdsIcon';
 import Checkbox from '../../../../components/Checkbox';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
+import { withStyles } from '@mui/styles';
+import { Radio, RadioProps } from '@mui/material';
 
 const GreenRadio = withStyles({
     root: {

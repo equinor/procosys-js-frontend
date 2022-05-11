@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TreeView, {
     TreeViewProps,
     TreeViewNode,
-} from '@procosys/components/TreeView';
+} from '@procosys/components/TreeView/TreeView';
 import { Story, Meta } from '@storybook/react';
 import styled from 'styled-components';
 import { LibraryType } from '@procosys/modules/PlantConfig/views/Library/Library';

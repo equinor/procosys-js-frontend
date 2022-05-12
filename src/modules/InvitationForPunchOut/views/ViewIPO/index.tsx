@@ -1,5 +1,5 @@
 import {
-    AcceptIPODto,
+    CompleteAcceptBaseIPODto,
     AttendedStatusDto,
     NotesDto,
     IpoApiError,
@@ -245,25 +245,6 @@ const ViewIPO = (): JSX.Element => {
         setSteps(modifiedSteps);
     };
 
-    // const updateParticipants = async (
-    //     attNoteData: AttNoteData[]
-    // ): Promise<any> => {
-    //     try {
-    //         await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
-    //         invitation &&
-    //             analytics.trackUserAction(
-    //                 IpoCustomEvents.UPDATED_PARTICIPANTS,
-    //                 { project: invitation.projectName, type: invitation.type }
-    //             );
-    //         await getInvitation();
-    //         showSnackbarNotification('Participants updated');
-    //     } catch (error) {
-    //         if (!(error instanceof IpoApiError)) return;
-    //         console.error(error.message, error.data);
-    //         showSnackbarNotification(error.message);
-    //     }
-    // };
-
     const updateAttendedStatus = async (
         attendedStatus: AttendedStatusDto
     ): Promise<any> => {
@@ -300,10 +281,7 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
-    const completePunchOut = async (
-        participant: Participant,
-        attNoteData: AttNoteData[]
-    ): Promise<any> => {
+    const completePunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
@@ -316,7 +294,6 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.completePunchOut(params.ipoId, {
                 invitationRowVersion: invitation.rowVersion,
                 participantRowVersion: participant.rowVersion,
-                participants: attNoteData,
             });
             analytics.trackUserAction(IpoCustomEvents.COMPLETED, {
                 project: invitation.projectName,
@@ -361,10 +338,7 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
-    const acceptPunchOut = async (
-        participant: Participant,
-        attNoteData: AttNoteData[]
-    ): Promise<any> => {
+    const acceptPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
@@ -373,10 +347,9 @@ const ViewIPO = (): JSX.Element => {
 
         if (!signer || !invitation) return;
 
-        const acceptDetails: AcceptIPODto = {
+        const acceptDetails: CompleteAcceptBaseIPODto = {
             invitationRowVersion: invitation.rowVersion,
             participantRowVersion: participant.rowVersion,
-            participants: attNoteData,
         };
         try {
             await apiClient.acceptPunchOut(params.ipoId, acceptDetails);

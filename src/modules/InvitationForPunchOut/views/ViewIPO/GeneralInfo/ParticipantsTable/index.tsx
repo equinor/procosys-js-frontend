@@ -39,8 +39,8 @@ export type AttNoteData = {
 interface ParticipantsTableProps {
     participants: Participant[];
     status: string;
-    complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    complete: (p: Participant) => Promise<any>;
+    accept: (p: Participant) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
@@ -81,9 +81,9 @@ const ParticipantsTable = ({
 
     useEffect(() => {
         const newCleanData = participants.map((participant) => {
-            const response = participant.person.response
+            const response = participant.person
                 ? participant.person.response
-                : participant.functionalRole.response
+                : participant.functionalRole
                 ? participant.functionalRole.response
                 : participant.externalEmail.response;
 
@@ -108,14 +108,12 @@ const ParticipantsTable = ({
             participant: Participant,
             status: string,
             canUpdate: boolean,
-            attNoteData: AttNoteData[],
             loading: boolean,
             isUsingAdminRights
         ): JSX.Element => (
             <SignatureButtons
                 participant={participant}
                 status={status}
-                attNoteData={attNoteData}
                 loading={loading}
                 setLoading={setLoading}
                 unsetDirtyStateFor={unsetDirtyStateFor}
@@ -397,7 +395,6 @@ const ParticipantsTable = ({
                                                 participant,
                                                 status,
                                                 canUpdate,
-                                                attNoteData,
                                                 loading,
                                                 isUsingAdminRights
                                             )}

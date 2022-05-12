@@ -265,7 +265,7 @@ export type ParticipantDto = {
     functionalRole: FunctionalRoleDto | null;
 };
 
-type CompleteAcceptBaseIPODto = {
+export type CompleteAcceptBaseIPODto = {
     invitationRowVersion: string;
     participantRowVersion: string;
 };
@@ -288,14 +288,6 @@ export type AttendedAndNotesDto = {
     note: string;
     rowVersion: string;
 };
-
-export type CompleteIPODto = {
-    participants: AttendedAndNotesDto[];
-} & CompleteAcceptBaseIPODto;
-
-export type AcceptIPODto = {
-    participants: Omit<AttendedAndNotesDto, 'attended'>[];
-} & CompleteAcceptBaseIPODto;
 
 export type SignIPODto = {
     participantId: number;
@@ -848,7 +840,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async completePunchOut(
         id: number,
-        completeDetails: CompleteIPODto,
+        completeDetails: CompleteAcceptBaseIPODto,
         setRequestCanceller?: RequestCanceler
     ): Promise<string> {
         const endpoint = `/Invitations/${id}/Complete`;
@@ -862,7 +854,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     invitationRowVersion: completeDetails.invitationRowVersion,
                     participantRowVersion:
                         completeDetails.participantRowVersion,
-                    participants: completeDetails.participants,
                 },
                 settings
             );
@@ -906,7 +897,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async acceptPunchOut(
         id: number,
-        acceptDetails: AcceptIPODto,
+        acceptDetails: CompleteAcceptBaseIPODto,
         setRequestCanceller?: RequestCanceler
     ): Promise<PersonResponse[]> {
         const endpoint = `/Invitations/${id}/Accept`;
@@ -919,7 +910,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 {
                     invitationRowVersion: acceptDetails.invitationRowVersion,
                     participantRowVersion: acceptDetails.participantRowVersion,
-                    participants: acceptDetails.participants,
                 },
                 settings
             );

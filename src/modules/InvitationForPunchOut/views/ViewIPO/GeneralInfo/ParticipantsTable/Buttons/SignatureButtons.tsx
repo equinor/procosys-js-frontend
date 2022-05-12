@@ -19,21 +19,16 @@ const tooltipComplete = (
     </div>
 );
 
-const tooltipUpdate = (
-    <div>Update attended status and notes for participants.</div>
-);
-
 const tooltipAccept = <div>Punch round has been checked by company.</div>;
 
 interface SignatureButtonsProps {
     participant: Participant;
     status: string;
-    attNoteData: AttNoteData[];
     loading: boolean;
     setLoading: (isLoasing: boolean) => void;
     unsetDirtyStateFor: (componentName: string) => void;
-    complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
+    complete: (p: Participant) => Promise<any>;
+    accept: (p: Participant) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
@@ -45,7 +40,6 @@ interface SignatureButtonsProps {
 const SignatureButtons = ({
     participant,
     status,
-    attNoteData,
     loading,
     setLoading,
     unsetDirtyStateFor,
@@ -125,10 +119,7 @@ const SignatureButtons = ({
                             tooltip={tooltipComplete}
                             onClick={(): Promise<void> =>
                                 handleButtonClick(async (): Promise<any> => {
-                                    return await complete(
-                                        participant,
-                                        attNoteData
-                                    );
+                                    return await complete(participant);
                                 })
                             }
                             disabled={loading}
@@ -181,10 +172,7 @@ const SignatureButtons = ({
                             tooltip={tooltipAccept}
                             onClick={(): Promise<void> =>
                                 handleButtonClick(async (): Promise<any> => {
-                                    return await accept(
-                                        participant,
-                                        attNoteData
-                                    );
+                                    return await accept(participant);
                                 })
                             }
                             disabled={loading}

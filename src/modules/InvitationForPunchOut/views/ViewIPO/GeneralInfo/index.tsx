@@ -7,7 +7,7 @@ import {
     ProjectInfoDetail,
 } from './style';
 import { Invitation, Participant } from '../types';
-import ParticipantsTable, { AttNoteData } from './ParticipantsTable';
+import ParticipantsTable from './ParticipantsTable';
 import {
     getFormattedDate,
     getFormattedTime,
@@ -21,8 +21,8 @@ import {
 
 interface GeneralInfoProps {
     invitation: Invitation;
-    complete: (p: Participant, e: AttNoteData[]) => Promise<any>;
-    accept: (p: Participant, e: AttNoteData[]) => Promise<any>;
+    complete: (p: Participant) => Promise<any>;
+    accept: (p: Participant) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;

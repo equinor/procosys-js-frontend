@@ -1075,8 +1075,12 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 participantDetails,
                 settings
             );
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
 
-     * Delete PunchOut
+    /** Delete PunchOut
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */

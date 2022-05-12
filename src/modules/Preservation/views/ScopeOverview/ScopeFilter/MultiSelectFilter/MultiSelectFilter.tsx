@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Dropdown from '@procosys/components/Dropdown';
 import { Collapse, CollapseInfo } from '../ScopeFilter.style';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import {
     SelectedItemsContainer,
     Item,
@@ -10,6 +8,7 @@ import {
     FilterContainer,
 } from './MultiSelectFilter.style';
 import EdsIcon from '@procosys/components/EdsIcon';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
 interface Item {
     title: string;
@@ -95,11 +94,7 @@ const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
             >
                 {props.icon}
                 <CollapseInfo>{props.headerLabel}</CollapseInfo>
-                {isExpanded ? (
-                    <KeyboardArrowUpIcon />
-                ) : (
-                    <KeyboardArrowDownIcon />
-                )}
+                {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {isExpanded && (
                 <FilterContainer>

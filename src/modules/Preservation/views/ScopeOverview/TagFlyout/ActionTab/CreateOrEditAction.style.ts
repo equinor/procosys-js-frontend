@@ -25,6 +25,13 @@ export const InputContainer = styled.div`
     align-items: center;
 `;
 
+export const DateContainer = styled.div`
+    display: flex;
+    margin-bottom: calc(var(--grid-unit) * 2);
+    flex-direction: column;
+    width: 35%;
+`;
+
 export const AttachmentsContainer = styled.div`
     display: flex;
     margin-bottom: calc(var(--grid-unit) * 2);

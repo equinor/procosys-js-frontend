@@ -1,13 +1,11 @@
 import { Collapse, CollapseInfo } from '../index.style';
 import React, { useState } from 'react';
-
 import { FilterContainer } from './index.style';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import PersonSelector from '../PersonSelector';
 import RoleSelector from '../RoleSelector';
 import { SelectItem } from '@procosys/components/Select';
 import { rolePersonParamType } from '..';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
 type SelectProps = {
     headerLabel: string;
@@ -36,11 +34,7 @@ const SelectFilter = ({
             >
                 {icon}
                 <CollapseInfo>{headerLabel}</CollapseInfo>
-                {isExpanded ? (
-                    <KeyboardArrowUpIcon />
-                ) : (
-                    <KeyboardArrowDownIcon />
-                )}
+                {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {isExpanded && (
                 <>

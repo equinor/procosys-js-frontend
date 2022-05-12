@@ -15,14 +15,14 @@ import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagRow } from '../types';
 import { AddScopeMethod } from '../AddScope';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Loading from '../../../../../components/Loading';
 import React, { useEffect } from 'react';
 import ProcosysTable from '@procosys/components/Table';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import { Tooltip } from '@material-ui/core';
+import { CheckBox } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 const getDescriptionColumn = (row: TableOptions<TagRow>): JSX.Element => {
     const tagRow = row.value as TagRow;
@@ -221,7 +221,7 @@ const tableColumns = [
         field: 'isPreserved',
         Cell: (rowData: TableOptions<TagRow>): JSX.Element => {
             return rowData.row.values.Preserved === 'Preserved' ? (
-                <CheckBoxIcon color="disabled" />
+                <CheckBox color="disabled" />
             ) : (
                 <></>
             );

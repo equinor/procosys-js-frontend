@@ -14,14 +14,14 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 import { Tag, TagMigrationRow } from '../types';
 
 import { AddScopeMethod } from '../AddScope';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import ProcosysTable from '@procosys/components/Table';
 import React, { useEffect } from 'react';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { getFormattedDate } from '@procosys/core/services/DateService';
 import { useHistory } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
-import { Tooltip } from '@material-ui/core';
+import { CheckBox } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 type SelectMigrateTagsProps = {
     selectedTags: Tag[];
@@ -251,7 +251,7 @@ const columns = [
         field: 'heating',
         Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => {
             return rowData.row.values.Heating === 'Heating' ? (
-                <CheckBoxIcon />
+                <CheckBox />
             ) : (
                 <></>
             );
@@ -267,7 +267,7 @@ const columns = [
         field: 'special',
         Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => {
             return rowData.row.values['Special req'] !== 'No' ? (
-                <CheckBoxIcon />
+                <CheckBox />
             ) : (
                 <></>
             );
@@ -283,7 +283,7 @@ const columns = [
         field: 'isPreserved',
         Cell: (rowData: TableOptions<TagMigrationRow>): JSX.Element => {
             return rowData.row.values.Preserved === 'Preserved' ? (
-                <CheckBoxIcon />
+                <CheckBox />
             ) : (
                 <></>
             );

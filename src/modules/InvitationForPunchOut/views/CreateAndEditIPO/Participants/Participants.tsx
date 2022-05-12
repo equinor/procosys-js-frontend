@@ -19,11 +19,11 @@ import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { OrganizationMap } from '../../utils';
 import { OrganizationsEnum } from '../../enums';
-import RoleSelector from '../../../components/RoleSelector';
+import RoleSelector from '../../../components/RoleSelector/RoleSelector';
 import Spinner from '@procosys/components/Spinner';
-import { Tooltip } from '@material-ui/core';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { Tooltip } from '@mui/material';
 
 const WAIT_INTERVAL = 300;
 

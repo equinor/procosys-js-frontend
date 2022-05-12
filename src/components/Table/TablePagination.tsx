@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, ReactElement, useCallback } from 'react';
 
 import { TableInstance } from 'react-table';
-import { TablePagination as _MuiTablePagination } from '@material-ui/core';
+import { TablePagination as _MuiTablePagination } from '@mui/material';
 
 const rowsPerPageOptions = [10, 25, 50, 100, 500, 1000];
 
@@ -55,13 +55,13 @@ export function TablePagination<T extends Record<string, unknown>>({
 
     return rowCount ? (
         <MuiTablePagination
-            rowsPerPageOptions={rowsPerPageOptions}
             component="div"
+            rowsPerPageOptions={rowsPerPageOptions}
             count={rowCount}
             rowsPerPage={pageSize}
             page={pageIndex}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={onChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={onChangeRowsPerPage}
         />
     ) : null;
 }

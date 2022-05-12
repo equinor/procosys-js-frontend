@@ -26,7 +26,10 @@ type ProgressBarProps = {
     isEditable: boolean;
     showEditButton: boolean;
     canCancel: boolean;
+    canDelete: boolean;
     cancelPunchOut: () => void;
+    deletePunchOut: () => void;
+    isCancelled: boolean;
     isAdmin: boolean;
     isUsingAdminRights: boolean;
     setIsUsingAdminRights: (b: React.SetStateAction<boolean>) => void;
@@ -42,7 +45,10 @@ const ViewIPOHeader = ({
     isEditable,
     showEditButton,
     canCancel,
+    canDelete,
     cancelPunchOut,
+    deletePunchOut,
+    isCancelled,
     isAdmin,
     isUsingAdminRights,
     setIsUsingAdminRights,
@@ -63,6 +69,19 @@ const ViewIPOHeader = ({
         );
     };
 
+    const confirmDeleteIpo = (): void => {
+        showModalDialog(
+            'Delete IPO',
+            <div>Are you sure you want to delete the IPO?</div>,
+            '18vw',
+            'No',
+            null,
+            'Yes',
+            deletePunchOut,
+            true
+        );
+    };
+
     return (
         <Container>
             <HeaderContainer>
@@ -70,13 +89,27 @@ const ViewIPOHeader = ({
                     <Typography variant="h2">{`IPO-${ipoId}: ${title}`}</Typography>
                 </ButtonContainer>
                 <ButtonContainer>
+                    {(canDelete || (isCancelled && isUsingAdminRights)) && (
+                        <>
+                            <Button
+                                variant="outlined"
+                                color="danger"
+                                onClick={(): void => confirmDeleteIpo()}
+                            >
+                                <EdsIcon name="delete_forever" /> Delete IPO
+                            </Button>
+                        </>
+                    )}
                     {canCancel && (
-                        <Button
-                            variant="outlined"
-                            onClick={(): void => confirmCancelIpo()}
-                        >
-                            <EdsIcon name="calendar_reject" /> Cancel IPO
-                        </Button>
+                        <>
+                            <ButtonSpacer />
+                            <Button
+                                variant="outlined"
+                                onClick={(): void => confirmCancelIpo()}
+                            >
+                                <EdsIcon name="calendar_reject" /> Cancel IPO
+                            </Button>
+                        </>
                     )}
                     {showEditButton && (
                         <>

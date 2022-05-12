@@ -1,6 +1,6 @@
+import { Tooltip } from '@mui/material';
 import React from 'react';
 import { TableOptions, UseTableRowProps } from 'react-table';
-import { Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
 import RequirementIcons from '../../RequirementIcons';
 import { PreservedTag } from '../../types';

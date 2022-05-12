@@ -23,7 +23,7 @@ import {
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
-import { TextField as DateTimeField } from '@material-ui/core';
+import { TextField as DateTimeField } from '@mui/material';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
@@ -31,6 +31,7 @@ import { getEndTime } from '../utils';
 import { set } from 'date-fns';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
+import { Label } from '@equinor/eds-core-react';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -331,58 +332,70 @@ const GeneralInfo = ({
                 Date and time for punch round
             </Typography>
             <DateTimeContainer>
-                <DateTimeField
-                    InputProps={{ inputProps: { max: '2121-01-01' } }}
-                    id="startDate"
-                    label="Date"
-                    type="date"
-                    value={formatForDatePicker(
-                        generalInfo.startTime,
-                        'yyyy-MM-dd'
-                    )}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(
-                        event: ChangeEvent<
-                            HTMLInputElement | HTMLTextAreaElement
-                        >
-                    ): void => handleSetDate(event.target.value)}
-                />
-                <DateTimeField
-                    id="startTime"
-                    label="Start"
-                    type="time"
-                    onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
-                        e.preventDefault()
-                    }
-                    value={formatForDatePicker(generalInfo.startTime, 'HH:mm')}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(
-                        event: ChangeEvent<
-                            HTMLInputElement | HTMLTextAreaElement
-                        >
-                    ): void => handleSetTime('start', event.target.value)}
-                />
-                <DateTimeField
-                    id="endTime"
-                    label="End"
-                    type="time"
-                    onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
-                        e.preventDefault()
-                    }
-                    value={formatForDatePicker(generalInfo.endTime, 'HH:mm')}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(
-                        event: ChangeEvent<
-                            HTMLInputElement | HTMLTextAreaElement
-                        >
-                    ): void => handleSetTime('end', event.target.value)}
-                />
+                <div>
+                    <Label label={'Date'} />
+                    <DateTimeField
+                        InputProps={{ inputProps: { max: '2121-01-01' } }}
+                        id="startDate"
+                        type="date"
+                        value={formatForDatePicker(
+                            generalInfo.startTime,
+                            'yyyy-MM-dd'
+                        )}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onChange={(
+                            event: ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                            >
+                        ): void => handleSetDate(event.target.value)}
+                    />
+                </div>
+                <div>
+                    <Label label={'Start'} />
+                    <DateTimeField
+                        id="startTime"
+                        type="time"
+                        onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
+                            e.preventDefault()
+                        }
+                        value={formatForDatePicker(
+                            generalInfo.startTime,
+                            'HH:mm'
+                        )}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onChange={(
+                            event: ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                            >
+                        ): void => handleSetTime('start', event.target.value)}
+                    />
+                </div>
+                <div>
+                    <Label label={'End'} />
+                    <DateTimeField
+                        id="endTime"
+                        type="time"
+                        onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
+                            e.preventDefault()
+                        }
+                        value={formatForDatePicker(
+                            generalInfo.endTime,
+                            'HH:mm'
+                        )}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        onChange={(
+                            event: ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                            >
+                        ): void => handleSetTime('end', event.target.value)}
+                    />
+                </div>
                 {errors && errors['time'] && (
                     <ErrorContainer>
                         <EdsIcon

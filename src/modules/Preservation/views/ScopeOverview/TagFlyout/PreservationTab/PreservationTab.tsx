@@ -18,15 +18,12 @@ import {
     TagRequirementRecordValues,
 } from './../types';
 import { TextField, Typography } from '@equinor/eds-core-react';
-
-import CheckIcon from '@material-ui/icons/Check';
-import ClearIcon from '@material-ui/icons/Clear';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import Requirements from './Requirements';
 import Spinner from '../../../../../../components/Spinner';
 import { showSnackbarNotification } from './../../../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../../../context/PreservationContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
+import { Check, Clear, EditOutlined } from '@mui/icons-material';
 
 interface PreservationTabProps {
     tagDetails: TagDetails;
@@ -345,14 +342,14 @@ const PreservationTab = ({
                                 variant="ghost_icon"
                                 onClick={cancelEditRemark}
                             >
-                                <ClearIcon fontSize="small" />
+                                <Clear fontSize="small" />
                             </StyledButton>
                             <StyledButton
                                 data-testid="remarkCheckIcon"
                                 variant="ghost_icon"
                                 onClick={saveRemark}
                             >
-                                <CheckIcon fontSize="small" />
+                                <Check fontSize="small" />
                             </StyledButton>
                         </IconContainer>
                     ) : (
@@ -362,7 +359,7 @@ const PreservationTab = ({
                                 variant="ghost_icon"
                                 onClick={(): void => setEditingRemark(true)}
                             >
-                                <EditOutlinedIcon fontSize="small" />
+                                <EditOutlined fontSize="small" />
                             </StyledButton>
                         </IconContainer>
                     )}
@@ -405,14 +402,14 @@ const PreservationTab = ({
                                 variant="ghost_icon"
                                 onClick={cancelEditStorageArea}
                             >
-                                <ClearIcon fontSize="small" />
+                                <Clear fontSize="small" />
                             </StyledButton>
                             <StyledButton
                                 data-testid="storageAreaCheckIcon"
                                 variant="ghost_icon"
                                 onClick={saveStorageArea}
                             >
-                                <CheckIcon fontSize="small" />
+                                <Check fontSize="small" />
                             </StyledButton>
                         </IconContainer>
                     ) : (
@@ -424,7 +421,7 @@ const PreservationTab = ({
                                     setEditingStorageArea(true)
                                 }
                             >
-                                <EditOutlinedIcon fontSize="small" />
+                                <EditOutlined fontSize="small" />
                             </StyledButton>
                         </IconContainer>
                     )}

@@ -37,6 +37,7 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
+import { useHistory } from 'react-router-dom';
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
@@ -75,6 +76,7 @@ const ViewIPO = (): JSX.Element => {
         useState<boolean>(false);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const { permissions } = useCurrentPlant();
+    const history = useHistory();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -499,6 +501,29 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
+    const deletePunchOut = async (): Promise<any> => {
+        if (invitation) {
+            try {
+                await apiClient.deletePunchOut(
+                    params.ipoId,
+                    invitation.rowVersion
+                );
+                analytics.trackUserAction(IpoCustomEvents.DELETED, {
+                    project: invitation.projectName,
+                    type: invitation.type,
+                });
+                showSnackbarNotification(
+                    'Invitation for punch-out is deleted.'
+                );
+                history.push('/');
+            } catch (error) {
+                if (!(error instanceof IpoApiError)) return;
+                console.error(error.message, error.data);
+                showSnackbarNotification(error.message);
+            }
+        }
+    };
+
     return (
         <Container ref={moduleContainerRef}>
             {loading ? (
@@ -510,13 +535,18 @@ const ViewIPO = (): JSX.Element => {
                     <ViewIPOHeader
                         ipoId={params.ipoId}
                         steps={steps}
+                        isCancelled={
+                            invitation.status === IpoStatusEnum.CANCELED
+                        }
                         currentStep={currentStep}
                         title={invitation.title}
                         organizer={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
                         participants={invitation.participants}
                         isEditable={invitation.status == IpoStatusEnum.PLANNED}
                         showEditButton={invitation.canEdit}
+                        canDelete={invitation.canDelete}
                         canCancel={invitation.canCancel}
+                        deletePunchOut={deletePunchOut}
                         cancelPunchOut={cancelPunchOut}
                         isAdmin={isAdmin}
                         isUsingAdminRights={isUsingAdminRights}

@@ -5,7 +5,6 @@ import { tokens } from '@equinor/eds-tokens';
 import DialogTable from './SharedCode/DialogTable';
 import { TableOptions, UseTableRowProps } from 'react-table';
 import styled from 'styled-components';
-import { Tooltip } from '@material-ui/core';
 import {
     ButtonContainer,
     ButtonSpacer,
@@ -27,6 +26,7 @@ import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { Journey } from '../../AddScope/types';
 import { Content } from '@procosys/core/services/ModalDialogService/style';
+import { Tooltip } from '@mui/material';
 
 const moduleName = 'PreservationUpdateJourneyDialog';
 

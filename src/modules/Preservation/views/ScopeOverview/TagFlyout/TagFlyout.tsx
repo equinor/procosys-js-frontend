@@ -14,10 +14,7 @@ import React, { useEffect, useState } from 'react';
 import ActionTab from './ActionTab/ActionTab';
 import AttachmentTab from './AttachmentTab/AttachmentTab';
 import { Canceler } from 'axios';
-import CloseIcon from '@material-ui/icons/Close';
 import HistoryTab from './HistoryTab/HistoryTab';
-import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import PreservationTab from './PreservationTab/PreservationTab';
 import Spinner from '../../../../../components/Spinner';
 import { TagDetails } from './types';
@@ -26,6 +23,11 @@ import { showSnackbarNotification } from './../../../../../core/services/Notific
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import {
+    NotificationsOutlined,
+    PlayArrowOutlined,
+    Close,
+} from '@mui/icons-material';
 
 enum PreservationStatus {
     NotStarted = 'Not started',
@@ -202,7 +204,7 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
             {!isVoided && preservationIsNotStarted && (
                 <HeaderNotification>
                     <NotificationIcon>
-                        <NotificationsOutlinedIcon />
+                        <NotificationsOutlined />
                     </NotificationIcon>
                     <Typography
                         variant="body_long"
@@ -256,11 +258,11 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
                             disabled={isStartingPreservation}
                             onClick={startPreservation}
                         >
-                            <PlayArrowOutlinedIcon />
+                            <PlayArrowOutlined />
                         </StyledButton>
                     )}
                     <StyledButton variant="ghost" title="Close" onClick={close}>
-                        <CloseIcon />
+                        <Close />
                     </StyledButton>
                 </HeaderActions>
             </Header>

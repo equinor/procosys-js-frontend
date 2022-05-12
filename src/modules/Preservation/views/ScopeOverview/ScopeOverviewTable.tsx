@@ -17,9 +17,9 @@ import ProcosysTable from '@procosys/components/Table';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import { Tooltip } from '@material-ui/core';
 import styled from 'styled-components';
 import { JSXBreakpoints } from '@procosys/core/styling';
+import { Tooltip } from '@mui/material';
 
 interface ScopeOverviewTableProps {
     getData: (

@@ -23,8 +23,8 @@ import { TableOptions, UseTableRowProps } from 'react-table';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
-import { Tooltip } from '@material-ui/core';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
+import { Tooltip } from '@mui/material';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];

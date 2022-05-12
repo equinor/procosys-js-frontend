@@ -1,6 +1,6 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 
-export const materialUIThemeOverrides = createMuiTheme({
+export const materialUIThemeOverrides = createTheme({
     typography: {
         fontFamily: 'Equinor',
     },

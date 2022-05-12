@@ -56,7 +56,7 @@ type ParticipantInvitationResponse = {
     organization: string;
     sortKey: number;
     isSigner: boolean;
-    canEditAttendedStatusAndNotes: boolean;
+    canEditAttendedStatusAndNote: boolean;
     rowVersion: string;
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;

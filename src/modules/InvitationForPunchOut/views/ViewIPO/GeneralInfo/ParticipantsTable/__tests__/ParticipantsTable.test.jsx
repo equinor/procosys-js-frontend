@@ -28,6 +28,8 @@ const participants = [
         organization: OrganizationsEnum.External,
         isSigner: false,
         sortKey: 2,
+        isAttendedTouched: true,
+        canEditAttendedStatusAndNote: true,
         person: null,
         functionalRole: null,
         externalEmail: {
@@ -43,6 +45,8 @@ const participants = [
         id: 1,
         organization: OrganizationsEnum.TechnicalIntegrity,
         sortKey: 3,
+        isAttendedTouched: true,
+        canEditAttendedStatusAndNote: true,
         isSigner: false,
         person: null,
         functionalRole: {
@@ -63,6 +67,8 @@ const participants = [
         id: 123,
         organization: OrganizationsEnum.Contractor,
         sortKey: 0,
+        isAttendedTouched: false,
+        canEditAttendedStatusAndNote: false,
         isSigner: false,
         person: {
             firstName: 'Adwa',
@@ -93,6 +99,8 @@ const participants = [
         id: 234,
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
+        isAttendedTouched: true,
+        canEditAttendedStatusAndNote: true,
         isSigner: false,
         person: {
             firstName: 'Oakjfcv',
@@ -124,6 +132,8 @@ const participants = [
         organization: OrganizationsEnum.Contractor,
         sortKey: 4,
         isSigner: false,
+        isAttendedTouched: false,
+        canEditAttendedStatusAndNote: false,
         externalEmail: null,
         person: null,
         functionalRole: {
@@ -409,9 +419,6 @@ describe('<ParticipantsTable />', () => {
             />
         );
 
-        await waitFor(() => {
-            expect(queryByText('Update')).toBeInTheDocument();
-        });
         await waitFor(() => {
             expect(queryByText('Uncomplete')).toBeInTheDocument();
         });

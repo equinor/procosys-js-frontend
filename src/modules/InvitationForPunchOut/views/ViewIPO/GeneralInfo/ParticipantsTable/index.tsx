@@ -81,28 +81,16 @@ const ParticipantsTable = ({
 
     useEffect(() => {
         const newCleanData = participants.map((participant) => {
-            const x = participant.person
-                ? participant.person
-                : participant.functionalRole
-                ? participant.functionalRole
-                : participant.externalEmail;
-
-            // TODO: change attendedStatus once backend is fixed
-            const attendedStatus = participant.attended
-                ? participant.attended
-                : participant.person
+            const response = participant.person.response
                 ? participant.person.response
-                    ? participant.person.response ===
-                          OutlookResponseType.ATTENDING ||
-                      participant.person.response ===
-                          OutlookResponseType.ORGANIZER
-                    : participant.attended
-                : (x as FunctionalRole | ExternalEmail).response
-                ? (x as FunctionalRole | ExternalEmail).response ===
-                      OutlookResponseType.ATTENDING ||
-                  (x as FunctionalRole | ExternalEmail).response ===
-                      OutlookResponseType.ORGANIZER
-                : participant.attended;
+                : participant.functionalRole.response
+                ? participant.functionalRole.response
+                : participant.externalEmail.response;
+
+            const attendedStatus = participant.isAttendedTouched
+                ? participant.attended
+                : response === OutlookResponseType.ATTENDING ||
+                  response === OutlookResponseType.ORGANIZER;
 
             return {
                 id: participant.id,
@@ -266,13 +254,6 @@ const ParticipantsTable = ({
                                     ? participant.functionalRole.response
                                     : ''
                                 : '';
-
-                            // TODO: may need to use ID of person in func. role.
-                            // const id = participant.person
-                            //     ? participant.person
-                            //     : participant.functionalRole
-                            //     ? participant.functionalRole.id
-                            //     : participant.externalEmail.id;
 
                             const addPopover = participant.functionalRole
                                 ? participant.functionalRole.response

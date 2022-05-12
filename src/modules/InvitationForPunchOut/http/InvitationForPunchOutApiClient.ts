@@ -56,6 +56,7 @@ type ParticipantInvitationResponse = {
     id: number;
     organization: string;
     sortKey: number;
+    isAttendedTouched: boolean;
     isSigner: boolean;
     canEditAttendedStatusAndNote: boolean;
     rowVersion: string;

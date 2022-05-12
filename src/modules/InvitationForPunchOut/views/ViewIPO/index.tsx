@@ -17,9 +17,8 @@ import {
 } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
 import { IpoCustomEvents, IpoStatusEnum } from '../enums';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
-import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Button } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';

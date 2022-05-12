@@ -1,5 +1,4 @@
 import React from 'react';
-import { AttNoteData } from '..';
 import {
     ComponentName,
     IpoStatusEnum,

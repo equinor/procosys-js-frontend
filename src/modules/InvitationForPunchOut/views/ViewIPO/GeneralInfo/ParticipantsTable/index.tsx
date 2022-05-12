@@ -1,20 +1,14 @@
-import { Button, Switch, TextField } from '@equinor/eds-core-react';
-import {
-    ComponentName,
-    IpoStatusEnum,
-    OrganizationsEnum,
-} from '../../../enums';
+import { Switch, TextField } from '@equinor/eds-core-react';
+import { ComponentName, OrganizationsEnum } from '../../../enums';
 import {
     Container,
     CustomTable,
     ResponseWrapper,
     SpinnerContainer,
 } from './style';
-import { ExternalEmail, FunctionalRole, Participant } from '../../types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-
+import { Participant } from '../../types';
+import React, { useCallback, useEffect, useState } from 'react';
 import CustomPopover from './CustomPopover';
-import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
 import { OutlookResponseType } from '../../enums';

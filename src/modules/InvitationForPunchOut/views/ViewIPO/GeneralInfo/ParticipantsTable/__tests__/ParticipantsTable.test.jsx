@@ -233,6 +233,7 @@ const participants_canSign = [
     },
 ];
 
+const updateAttendedStatus = jest.fn();
 const completePunchOut = jest.fn();
 const acceptPunchOut = jest.fn();
 const mockSetDirtyStateFor = jest.fn();
@@ -461,9 +462,7 @@ describe('<ParticipantsTable />', () => {
                 isUsingAdminRights={false}
             />
         );
-        await waitFor(() => {
-            expect(queryByText('Update')).not.toBeInTheDocument();
-        });
+
         await waitFor(() => {
             expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         });
@@ -506,7 +505,7 @@ describe('<ParticipantsTable />', () => {
                 isUsingAdminRights={false}
             />
         );
-        expect(queryByText('Update')).not.toBeInTheDocument();
+
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -543,7 +542,6 @@ describe('<ParticipantsTable />', () => {
             />
         );
 
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -585,7 +583,6 @@ describe('<ParticipantsTable />', () => {
             />
         );
 
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -623,7 +620,7 @@ describe('<ParticipantsTable />', () => {
                 isUsingAdminRights={false}
             />
         );
-        expect(queryByText('Update')).not.toBeInTheDocument();
+
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -662,7 +659,6 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
@@ -680,7 +676,6 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
@@ -746,6 +741,7 @@ describe('<ParticipantsTable />', () => {
                 accept={acceptPunchOut}
                 complete={completePunchOut}
                 isUsingAdminRights={false}
+                updateAttendedStatus={updateAttendedStatus}
             />
         );
 
@@ -769,6 +765,7 @@ describe('<ParticipantsTable />', () => {
                 accept={acceptPunchOut}
                 complete={completePunchOut}
                 isUsingAdminRights={false}
+                updateAttendedStatus={updateAttendedStatus}
             />
         );
 

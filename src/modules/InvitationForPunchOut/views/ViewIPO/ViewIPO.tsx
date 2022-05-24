@@ -251,7 +251,7 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.updateAttendedStatus(params.ipoId, attendedStatus);
             invitation &&
                 analytics.trackUserAction(
-                    IpoCustomEvents.UPDATED_PARTICIPANTS,
+                    IpoCustomEvents.UPDATED_ATTENDED_STATUS,
                     { project: invitation.projectName, type: invitation.type }
                 );
             await getInvitation();
@@ -268,7 +268,7 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.updateNotes(params.ipoId, attendedNotes);
             invitation &&
                 analytics.trackUserAction(
-                    IpoCustomEvents.UPDATED_PARTICIPANTS,
+                    IpoCustomEvents.UPDATED_ATTENDED_NOTES,
                     { project: invitation.projectName, type: invitation.type }
                 );
             await getInvitation();

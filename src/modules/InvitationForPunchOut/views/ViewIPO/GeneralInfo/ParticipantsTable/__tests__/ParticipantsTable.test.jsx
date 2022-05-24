@@ -1,9 +1,5 @@
-import {
-    ComponentName,
-    IpoStatusEnum,
-    OrganizationsEnum,
-} from '../../../../enums';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { IpoStatusEnum, OrganizationsEnum } from '../../../../enums';
+import { render, waitFor } from '@testing-library/react';
 
 import { OutlookResponseType } from '../../../enums';
 import ParticipantsTable from '../ParticipantsTable';
@@ -233,7 +229,6 @@ const participants_canSign = [
     },
 ];
 
-const updateAttendedStatus = jest.fn();
 const completePunchOut = jest.fn();
 const acceptPunchOut = jest.fn();
 const mockSetDirtyStateFor = jest.fn();
@@ -708,87 +703,6 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryAllByText('Attended').length).toBe(3); // +1 for table header
         expect(queryAllByText('Did not attend').length).toBe(3);
-    });
-
-    it('Should set dirty state when entering text', async () => {
-        const { getByTestId } = renderWithTheme(
-            <ParticipantsTable
-                participants={participants}
-                status="Planned"
-                accept={acceptPunchOut}
-                complete={completePunchOut}
-                isUsingAdminRights={false}
-            />
-        );
-
-        const input = getByTestId('textfield234');
-        fireEvent.change(input, { target: { value: 'test' } });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
-    });
-
-    it('Should set dirty state when setting attendance', async () => {
-        const { getByTestId } = renderWithTheme(
-            <ParticipantsTable
-                participants={participants}
-                status="Planned"
-                accept={acceptPunchOut}
-                complete={completePunchOut}
-                isUsingAdminRights={false}
-                updateAttendedStatus={updateAttendedStatus}
-            />
-        );
-
-        const input = getByTestId('attendance234');
-        fireEvent.click(input);
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
-    });
-
-    it('Should reset dirty state when reverting to clean state', async () => {
-        const { getByTestId } = renderWithTheme(
-            <ParticipantsTable
-                participants={participants}
-                status="Planned"
-                accept={acceptPunchOut}
-                complete={completePunchOut}
-                isUsingAdminRights={false}
-                updateAttendedStatus={updateAttendedStatus}
-            />
-        );
-
-        const input = getByTestId('attendance234');
-        jest.clearAllMocks();
-        fireEvent.click(input);
-        fireEvent.click(input);
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
-        await waitFor(() => {
-            expect(mockUnsetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockUnsetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
     });
 
     it('User can accept', async () => {

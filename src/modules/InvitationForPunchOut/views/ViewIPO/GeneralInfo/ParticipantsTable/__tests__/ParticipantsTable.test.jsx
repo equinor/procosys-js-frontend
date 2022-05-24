@@ -6,7 +6,7 @@ import {
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { OutlookResponseType } from '../../../enums';
-import ParticipantsTable from '../index';
+import ParticipantsTable from '../ParticipantsTable';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { configure } from '@testing-library/dom';

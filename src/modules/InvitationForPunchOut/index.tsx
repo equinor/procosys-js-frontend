@@ -12,7 +12,7 @@ import EditIPO from './views/CreateAndEditIPO/EditIPO';
 import { Helmet } from 'react-helmet';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
 import SearchIPO from './views/SearchIPO';
-import ViewIPO from './views/ViewIPO/index';
+import ViewIPO from './views/ViewIPO/ViewIPO';
 import withAccessControl from '@procosys/core/security/withAccessControl';
 
 const InvitationForPunchOut = (): JSX.Element => {

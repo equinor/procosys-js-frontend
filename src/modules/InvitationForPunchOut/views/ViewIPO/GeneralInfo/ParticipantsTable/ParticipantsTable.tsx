@@ -16,7 +16,6 @@ import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
 import SignatureButtons from './Buttons/SignatureButtons';
 import {
     AttendedStatusDto,
@@ -59,19 +58,6 @@ const ParticipantsTable = ({
 }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>([]);
-    const [cleanData, setCleanData] = useState<AttNoteData[]>([]);
-    const [canUpdate, setCanUpdate] = useState<boolean>(false);
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
-    useEffect(() => {
-        if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
-            setDirtyStateFor(ComponentName.ParticipantsTable);
-            setCanUpdate(true);
-        } else {
-            unsetDirtyStateFor(ComponentName.ParticipantsTable);
-            setCanUpdate(false);
-        }
-    }, [attNoteData]);
 
     useEffect(() => {
         const newCleanData = participants.map((participant) => {
@@ -93,7 +79,6 @@ const ParticipantsTable = ({
                 rowVersion: participant.rowVersion,
             };
         });
-        setCleanData(newCleanData);
         setAttNoteData(newCleanData);
     }, [participants]);
 
@@ -101,7 +86,6 @@ const ParticipantsTable = ({
         (
             participant: Participant,
             status: string,
-            canUpdate: boolean,
             loading: boolean,
             isUsingAdminRights
         ): JSX.Element => (
@@ -110,14 +94,12 @@ const ParticipantsTable = ({
                 status={status}
                 loading={loading}
                 setLoading={setLoading}
-                unsetDirtyStateFor={unsetDirtyStateFor}
                 complete={complete}
                 accept={accept}
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
                 unsign={unsign}
-                canUpdate={canUpdate}
                 isUsingAdminRights={isUsingAdminRights}
             />
         ),
@@ -388,7 +370,6 @@ const ParticipantsTable = ({
                                             {getSignatureButton(
                                                 participant,
                                                 status,
-                                                canUpdate,
                                                 loading,
                                                 isUsingAdminRights
                                             )}

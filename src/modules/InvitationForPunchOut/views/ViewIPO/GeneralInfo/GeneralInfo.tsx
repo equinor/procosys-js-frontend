@@ -7,7 +7,7 @@ import {
     ProjectInfoDetail,
 } from './style';
 import { Invitation, Participant } from '../types';
-import ParticipantsTable from './ParticipantsTable';
+import ParticipantsTable from './ParticipantsTable/ParticipantsTable';
 import {
     getFormattedDate,
     getFormattedTime,

@@ -1,5 +1,5 @@
 import {
-    CompleteAcceptBaseIPODto,
+    CompleteAcceptIPODto,
     AttendedStatusDto,
     NotesDto,
     IpoApiError,
@@ -24,7 +24,7 @@ import { Button } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
 import Comments from './Comments';
 import EdsIcon from '@procosys/components/EdsIcon';
-import GeneralInfo from './GeneralInfo';
+import GeneralInfo from './GeneralInfo/GeneralInfo';
 import History from './History';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
@@ -346,7 +346,7 @@ const ViewIPO = (): JSX.Element => {
 
         if (!signer || !invitation) return;
 
-        const acceptDetails: CompleteAcceptBaseIPODto = {
+        const acceptDetails: CompleteAcceptIPODto = {
             invitationRowVersion: invitation.rowVersion,
             participantRowVersion: participant.rowVersion,
         };

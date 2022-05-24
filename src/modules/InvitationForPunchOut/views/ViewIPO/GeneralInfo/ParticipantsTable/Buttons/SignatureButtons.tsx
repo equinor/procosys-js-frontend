@@ -25,14 +25,12 @@ interface SignatureButtonsProps {
     status: string;
     loading: boolean;
     setLoading: (isLoasing: boolean) => void;
-    unsetDirtyStateFor: (componentName: string) => void;
     complete: (p: Participant) => Promise<any>;
     accept: (p: Participant) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
-    canUpdate: boolean;
     isUsingAdminRights: boolean;
 }
 
@@ -41,7 +39,6 @@ const SignatureButtons = ({
     status,
     loading,
     setLoading,
-    unsetDirtyStateFor,
     complete,
     accept,
     sign,
@@ -56,7 +53,6 @@ const SignatureButtons = ({
         setLoading(true);
         await buttonAction();
         setLoading(false);
-        unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
     const handleSignButtonClick = async (
@@ -65,20 +61,6 @@ const SignatureButtons = ({
         setLoading(true);
         await buttonAction();
         setLoading(false);
-    };
-
-    const getUnCompleteAndUpdateParticipantsButtons = (): JSX.Element => {
-        return (
-            <SignatureButton
-                name={'Uncomplete'}
-                onClick={(): Promise<void> =>
-                    handleButtonClick(async (): Promise<any> => {
-                        return await uncomplete(participant);
-                    })
-                }
-                disabled={loading}
-            />
-        );
     };
 
     const getSignButton = (): JSX.Element => {
@@ -128,7 +110,17 @@ const SignatureButtons = ({
                     (participant.isSigner || isUsingAdminRights) &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
-                    return getUnCompleteAndUpdateParticipantsButtons();
+                    return (
+                        <SignatureButton
+                            name={'Uncomplete'}
+                            onClick={(): Promise<void> =>
+                                handleButtonClick(async (): Promise<any> => {
+                                    return await uncomplete(participant);
+                                })
+                            }
+                            disabled={loading}
+                        />
+                    );
                 }
             } else {
                 if (

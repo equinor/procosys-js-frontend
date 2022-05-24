@@ -3,7 +3,7 @@ import {
     getFormattedTime,
 } from '../../../../../../core/services/DateService';
 
-import GeneralInfo from '../index';
+import GeneralInfo from '../GeneralInfo';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { render } from '@testing-library/react';

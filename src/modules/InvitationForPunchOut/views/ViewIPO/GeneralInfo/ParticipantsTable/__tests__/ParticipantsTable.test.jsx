@@ -1,12 +1,8 @@
-import {
-    ComponentName,
-    IpoStatusEnum,
-    OrganizationsEnum,
-} from '../../../../enums';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { IpoStatusEnum, OrganizationsEnum } from '../../../../enums';
+import { render, waitFor } from '@testing-library/react';
 
 import { OutlookResponseType } from '../../../enums';
-import ParticipantsTable from '../index';
+import ParticipantsTable from '../ParticipantsTable';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { configure } from '@testing-library/dom';
@@ -28,6 +24,8 @@ const participants = [
         organization: OrganizationsEnum.External,
         isSigner: false,
         sortKey: 2,
+        isAttendedTouched: true,
+        canEditAttendedStatusAndNote: true,
         person: null,
         functionalRole: null,
         externalEmail: {
@@ -43,6 +41,8 @@ const participants = [
         id: 1,
         organization: OrganizationsEnum.TechnicalIntegrity,
         sortKey: 3,
+        isAttendedTouched: true,
+        canEditAttendedStatusAndNote: true,
         isSigner: false,
         person: null,
         functionalRole: {
@@ -63,6 +63,8 @@ const participants = [
         id: 123,
         organization: OrganizationsEnum.Contractor,
         sortKey: 0,
+        isAttendedTouched: false,
+        canEditAttendedStatusAndNote: false,
         isSigner: false,
         person: {
             firstName: 'Adwa',
@@ -93,6 +95,8 @@ const participants = [
         id: 234,
         organization: OrganizationsEnum.ConstructionCompany,
         sortKey: 1,
+        isAttendedTouched: true,
+        canEditAttendedStatusAndNote: true,
         isSigner: false,
         person: {
             firstName: 'Oakjfcv',
@@ -124,6 +128,8 @@ const participants = [
         organization: OrganizationsEnum.Contractor,
         sortKey: 4,
         isSigner: false,
+        isAttendedTouched: false,
+        canEditAttendedStatusAndNote: false,
         externalEmail: null,
         person: null,
         functionalRole: {
@@ -410,9 +416,6 @@ describe('<ParticipantsTable />', () => {
         );
 
         await waitFor(() => {
-            expect(queryByText('Update')).toBeInTheDocument();
-        });
-        await waitFor(() => {
             expect(queryByText('Uncomplete')).toBeInTheDocument();
         });
         await waitFor(() => {
@@ -454,9 +457,7 @@ describe('<ParticipantsTable />', () => {
                 isUsingAdminRights={false}
             />
         );
-        await waitFor(() => {
-            expect(queryByText('Update')).not.toBeInTheDocument();
-        });
+
         await waitFor(() => {
             expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         });
@@ -499,7 +500,7 @@ describe('<ParticipantsTable />', () => {
                 isUsingAdminRights={false}
             />
         );
-        expect(queryByText('Update')).not.toBeInTheDocument();
+
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -536,7 +537,6 @@ describe('<ParticipantsTable />', () => {
             />
         );
 
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -578,7 +578,6 @@ describe('<ParticipantsTable />', () => {
             />
         );
 
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -616,7 +615,7 @@ describe('<ParticipantsTable />', () => {
                 isUsingAdminRights={false}
             />
         );
-        expect(queryByText('Update')).not.toBeInTheDocument();
+
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).toBeInTheDocument();
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
@@ -655,7 +654,6 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
@@ -673,7 +671,6 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryByText('Accept punch-out')).not.toBeInTheDocument();
         expect(queryByText('Complete punch-out')).not.toBeInTheDocument();
-        expect(queryByText('Update')).not.toBeInTheDocument();
         expect(queryByText('Uncomplete')).not.toBeInTheDocument();
         expect(queryByText('Sign punch-out')).not.toBeInTheDocument();
     });
@@ -706,85 +703,6 @@ describe('<ParticipantsTable />', () => {
 
         expect(queryAllByText('Attended').length).toBe(3); // +1 for table header
         expect(queryAllByText('Did not attend').length).toBe(3);
-    });
-
-    it('Should set dirty state when entering text', async () => {
-        const { getByTestId } = renderWithTheme(
-            <ParticipantsTable
-                participants={participants}
-                status="Planned"
-                accept={acceptPunchOut}
-                complete={completePunchOut}
-                isUsingAdminRights={false}
-            />
-        );
-
-        const input = getByTestId('textfield234');
-        fireEvent.change(input, { target: { value: 'test' } });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
-    });
-
-    it('Should set dirty state when setting attendance', async () => {
-        const { getByTestId } = renderWithTheme(
-            <ParticipantsTable
-                participants={participants}
-                status="Planned"
-                accept={acceptPunchOut}
-                complete={completePunchOut}
-                isUsingAdminRights={false}
-            />
-        );
-
-        const input = getByTestId('attendance234');
-        fireEvent.click(input);
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
-    });
-
-    it('Should reset dirty state when reverting to clean state', async () => {
-        const { getByTestId } = renderWithTheme(
-            <ParticipantsTable
-                participants={participants}
-                status="Planned"
-                accept={acceptPunchOut}
-                complete={completePunchOut}
-                isUsingAdminRights={false}
-            />
-        );
-
-        const input = getByTestId('attendance234');
-        jest.clearAllMocks();
-        fireEvent.click(input);
-        fireEvent.click(input);
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockSetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
-        await waitFor(() => {
-            expect(mockUnsetDirtyStateFor).toBeCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(mockUnsetDirtyStateFor).toBeCalledWith(
-                ComponentName.ParticipantsTable
-            );
-        });
     });
 
     it('User can accept', async () => {

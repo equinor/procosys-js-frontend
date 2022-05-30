@@ -1,20 +1,14 @@
-import { Button, Switch, TextField } from '@equinor/eds-core-react';
-import {
-    ComponentName,
-    IpoStatusEnum,
-    OrganizationsEnum,
-} from '../../../enums';
+import { Switch, TextField } from '@equinor/eds-core-react';
+import { OrganizationsEnum } from '../../../enums';
 import {
     Container,
     CustomTable,
     ResponseWrapper,
     SpinnerContainer,
 } from './style';
-import { ExternalEmail, FunctionalRole, Participant } from '../../types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-
+import { Participant } from '../../types';
+import React, { useCallback, useEffect, useState } from 'react';
 import CustomPopover from './CustomPopover';
-import CustomTooltip from './CustomTooltip';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
 import { OutlookResponseType } from '../../enums';
@@ -22,8 +16,11 @@ import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 import { getFormattedDateAndTime } from '@procosys/core/services/DateService';
-import { useDirtyContext } from '@procosys/core/DirtyContext';
 import SignatureButtons from './Buttons/SignatureButtons';
+import {
+    AttendedStatusDto,
+    NotesDto,
+} from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
 
 export type AttNoteData = {
     id: number;
@@ -35,13 +32,14 @@ export type AttNoteData = {
 interface ParticipantsTableProps {
     participants: Participant[];
     status: string;
-    complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    update: (attNoteData: AttNoteData[]) => Promise<any>;
+    complete: (p: Participant) => Promise<any>;
+    accept: (p: Participant) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
+    updateAttendedStatus: (attendedStatus: AttendedStatusDto) => Promise<any>;
+    updateNotes: (notes: NotesDto) => Promise<any>;
     isUsingAdminRights: boolean;
 }
 
@@ -50,73 +48,29 @@ const ParticipantsTable = ({
     status,
     complete,
     accept,
-    update,
     sign,
     unaccept,
     uncomplete,
     unsign,
+    updateAttendedStatus,
+    updateNotes,
     isUsingAdminRights,
 }: ParticipantsTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [editAttendedDisabled, setEditAttendedDisabled] =
-        useState<boolean>(true);
-    const [editNotesDisabled, setEditNotesDisabled] = useState<boolean>(true);
     const [attNoteData, setAttNoteData] = useState<AttNoteData[]>([]);
-    const [cleanData, setCleanData] = useState<AttNoteData[]>([]);
-    const [canUpdate, setCanUpdate] = useState<boolean>(false);
-    const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
-    useEffect(() => {
-        const participant = participants.find((p) => p.isSigner);
-        if (
-            participant &&
-            participant.sortKey === 0 &&
-            (status === IpoStatusEnum.PLANNED ||
-                status === IpoStatusEnum.COMPLETED)
-        ) {
-            setEditAttendedDisabled(false);
-            setEditNotesDisabled(false);
-        } else if (
-            participant &&
-            participant.sortKey === 1 &&
-            status === IpoStatusEnum.COMPLETED
-        ) {
-            setEditNotesDisabled(false);
-        } else {
-            setEditAttendedDisabled(true);
-            setEditNotesDisabled(true);
-        }
-    }, [participants, status]);
-
-    useEffect(() => {
-        if (JSON.stringify(attNoteData) !== JSON.stringify(cleanData)) {
-            setDirtyStateFor(ComponentName.ParticipantsTable);
-            setCanUpdate(true);
-        } else {
-            unsetDirtyStateFor(ComponentName.ParticipantsTable);
-            setCanUpdate(false);
-        }
-    }, [attNoteData]);
 
     useEffect(() => {
         const newCleanData = participants.map((participant) => {
-            const x = participant.person
-                ? participant.person
+            const response = participant.person
+                ? participant.person.response
                 : participant.functionalRole
-                ? participant.functionalRole
-                : participant.externalEmail;
-            const attendedStatus =
-                status === IpoStatusEnum.PLANNED
-                    ? participant.person
-                        ? participant.person.response
-                            ? participant.person.response ===
-                              OutlookResponseType.ATTENDING
-                            : false
-                        : (x as FunctionalRole | ExternalEmail).response
-                        ? (x as FunctionalRole | ExternalEmail).response ===
-                          OutlookResponseType.ATTENDING
-                        : false
-                    : participant.attended;
+                ? participant.functionalRole.response
+                : participant.externalEmail.response;
+
+            const attendedStatus = participant.isAttendedTouched
+                ? participant.attended
+                : response === OutlookResponseType.ATTENDING ||
+                  response === OutlookResponseType.ORGANIZER;
 
             return {
                 id: participant.id,
@@ -125,7 +79,6 @@ const ParticipantsTable = ({
                 rowVersion: participant.rowVersion,
             };
         });
-        setCleanData(newCleanData);
         setAttNoteData(newCleanData);
     }, [participants]);
 
@@ -133,26 +86,20 @@ const ParticipantsTable = ({
         (
             participant: Participant,
             status: string,
-            canUpdate: boolean,
-            attNoteData: AttNoteData[],
             loading: boolean,
             isUsingAdminRights
         ): JSX.Element => (
             <SignatureButtons
                 participant={participant}
                 status={status}
-                attNoteData={attNoteData}
                 loading={loading}
                 setLoading={setLoading}
-                unsetDirtyStateFor={unsetDirtyStateFor}
                 complete={complete}
                 accept={accept}
-                update={update}
                 sign={sign}
                 unaccept={unaccept}
                 uncomplete={uncomplete}
                 unsign={unsign}
-                canUpdate={canUpdate}
                 isUsingAdminRights={isUsingAdminRights}
             />
         ),
@@ -282,13 +229,6 @@ const ParticipantsTable = ({
                                     : ''
                                 : '';
 
-                            // TODO: may need to use ID of person in func. role.
-                            // const id = participant.person
-                            //     ? participant.person
-                            //     : participant.functionalRole
-                            //     ? participant.functionalRole.id
-                            //     : participant.externalEmail.id;
-
                             const addPopover = participant.functionalRole
                                 ? participant.functionalRole.response
                                     ? participant.functionalRole.persons.length
@@ -342,7 +282,12 @@ const ParticipantsTable = ({
                                     >
                                         <Switch
                                             id={`attendance${participant.id}`}
-                                            disabled={editAttendedDisabled}
+                                            disabled={
+                                                !(
+                                                    participant.canEditAttendedStatusAndNote ||
+                                                    isUsingAdminRights
+                                                )
+                                            }
                                             default
                                             label={
                                                 attNoteData[index]
@@ -356,13 +301,22 @@ const ParticipantsTable = ({
                                                 attNoteData[index]
                                                     ? attNoteData[index]
                                                           .attended
-                                                    : false
+                                                    : true
                                             }
-                                            onChange={(): void =>
+                                            onChange={(): void => {
+                                                updateAttendedStatus({
+                                                    id: participant.id,
+                                                    attended: attNoteData[index]
+                                                        ? !attNoteData[index]
+                                                              .attended
+                                                        : !participant.attended,
+                                                    rowVersion:
+                                                        participant.rowVersion,
+                                                });
                                                 handleEditAttended(
                                                     participant.id
-                                                )
-                                            }
+                                                );
+                                            }}
                                         />
                                     </Table.Cell>
                                     <Table.Cell
@@ -375,7 +329,12 @@ const ParticipantsTable = ({
                                     >
                                         <TextField
                                             id={`textfield${participant.id}`}
-                                            disabled={editNotesDisabled}
+                                            disabled={
+                                                !(
+                                                    participant.canEditAttendedStatusAndNote ||
+                                                    isUsingAdminRights
+                                                )
+                                            }
                                             defaultValue={
                                                 participant.note
                                                     ? participant.note
@@ -387,6 +346,17 @@ const ParticipantsTable = ({
                                                     participant.id
                                                 )
                                             }
+                                            onBlur={(): void => {
+                                                updateNotes({
+                                                    id: participant.id,
+                                                    note: attNoteData[index]
+                                                        ? attNoteData[index]
+                                                              .note
+                                                        : participant.note,
+                                                    rowVersion:
+                                                        participant.rowVersion,
+                                                });
+                                            }}
                                         />
                                     </Table.Cell>
                                     <Table.Cell
@@ -400,8 +370,6 @@ const ParticipantsTable = ({
                                             {getSignatureButton(
                                                 participant,
                                                 status,
-                                                canUpdate,
-                                                attNoteData,
                                                 loading,
                                                 isUsingAdminRights
                                             )}

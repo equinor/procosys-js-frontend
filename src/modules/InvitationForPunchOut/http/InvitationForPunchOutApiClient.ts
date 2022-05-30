@@ -1,5 +1,4 @@
 import { AxiosError, AxiosRequestConfig } from 'axios';
-
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
@@ -56,7 +55,9 @@ type ParticipantInvitationResponse = {
     id: number;
     organization: string;
     sortKey: number;
+    isAttendedTouched: boolean;
     isSigner: boolean;
+    canEditAttendedStatusAndNote: boolean;
     rowVersion: string;
     externalEmail: ExternalEmailInvitationResponse;
     person: PersonInvitationResponse;
@@ -263,25 +264,22 @@ export type ParticipantDto = {
     functionalRole: FunctionalRoleDto | null;
 };
 
-type CompleteAcceptBaseIPODto = {
+export type CompleteAcceptIPODto = {
     invitationRowVersion: string;
     participantRowVersion: string;
 };
 
-export type AttendedAndNotesDto = {
+export type AttendedStatusDto = {
     id: number;
     attended: boolean;
-    note: string;
-    rowVersion?: string;
+    rowVersion: string;
 };
 
-export type CompleteIPODto = {
-    participants: AttendedAndNotesDto[];
-} & CompleteAcceptBaseIPODto;
-
-export type AcceptIPODto = {
-    participants: Omit<AttendedAndNotesDto, 'attended'>[];
-} & CompleteAcceptBaseIPODto;
+export type NotesDto = {
+    id: number;
+    note: string;
+    rowVersion: string;
+};
 
 export type SignIPODto = {
     participantId: number;
@@ -834,7 +832,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async completePunchOut(
         id: number,
-        completeDetails: CompleteIPODto,
+        completeDetails: CompleteAcceptIPODto,
         setRequestCanceller?: RequestCanceler
     ): Promise<string> {
         const endpoint = `/Invitations/${id}/Complete`;
@@ -848,7 +846,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     invitationRowVersion: completeDetails.invitationRowVersion,
                     participantRowVersion:
                         completeDetails.participantRowVersion,
-                    participants: completeDetails.participants,
                 },
                 settings
             );
@@ -892,7 +889,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      */
     async acceptPunchOut(
         id: number,
-        acceptDetails: AcceptIPODto,
+        acceptDetails: CompleteAcceptIPODto,
         setRequestCanceller?: RequestCanceler
     ): Promise<PersonResponse[]> {
         const endpoint = `/Invitations/${id}/Accept`;
@@ -905,7 +902,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 {
                     invitationRowVersion: acceptDetails.invitationRowVersion,
                     participantRowVersion: acceptDetails.participantRowVersion,
-                    participants: acceptDetails.participants,
                 },
                 settings
             );
@@ -1017,7 +1013,49 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
-     * Delete PunchOut
+
+     * Attended status
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async updateAttendedStatus(
+        id: number,
+        participantDetails: AttendedStatusDto,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = `/Invitations/${id}/AttendedStatus`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(endpoint, participantDetails, settings);
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /**
+     * Attended notes
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async updateNotes(
+        id: number,
+        participantDetails: NotesDto,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<void> {
+        const endpoint = `/Invitations/${id}/Note`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            await this.client.put(endpoint, participantDetails, settings);
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /** Delete PunchOut
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
@@ -1034,31 +1072,6 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 data: { rowVersion: rowVersion },
             });
             return result.data;
-        } catch (error) {
-            throw new IpoApiError(error as AxiosError);
-        }
-    }
-
-    /**
-     * Attended status and notes
-     *
-     * @param setRequestCanceller Returns a function that can be called to cancel the request
-     */
-    async attendedStatusAndNotes(
-        id: number,
-        participantDetails: AttendedAndNotesDto[],
-        setRequestCanceller?: RequestCanceler
-    ): Promise<void> {
-        const endpoint = `/Invitations/${id}/AttendedStatusAndNotes`;
-        const settings: AxiosRequestConfig = {};
-        this.setupRequestCanceler(settings, setRequestCanceller);
-
-        try {
-            const result = await this.client.put(
-                endpoint,
-                participantDetails,
-                settings
-            );
         } catch (error) {
             throw new IpoApiError(error as AxiosError);
         }
@@ -1108,7 +1121,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {
-            const result = await this.client.post(
+            await this.client.post(
                 endpoint,
                 {
                     projectName: projectName,

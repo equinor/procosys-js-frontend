@@ -1,10 +1,5 @@
 import React from 'react';
-import { AttNoteData } from '..';
-import {
-    ComponentName,
-    IpoStatusEnum,
-    OrganizationsEnum,
-} from '../../../../enums';
+import { IpoStatusEnum, OrganizationsEnum } from '../../../../enums';
 import { Participant } from '../../../types';
 import SignatureButton from './SignatureButton';
 import SignatureButtonWithTooltip from './SignatureButtonWithTooltip';
@@ -19,45 +14,33 @@ const tooltipComplete = (
     </div>
 );
 
-const tooltipUpdate = (
-    <div>Update attended status and notes for participants.</div>
-);
-
 const tooltipAccept = <div>Punch round has been checked by company.</div>;
 
 interface SignatureButtonsProps {
     participant: Participant;
     status: string;
-    attNoteData: AttNoteData[];
     loading: boolean;
     setLoading: (isLoasing: boolean) => void;
-    unsetDirtyStateFor: (componentName: string) => void;
-    complete: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    accept: (p: Participant, attNoteData: AttNoteData[]) => Promise<any>;
-    update: (attNoteData: AttNoteData[]) => Promise<any>;
+    complete: (p: Participant) => Promise<any>;
+    accept: (p: Participant) => Promise<any>;
     sign: (p: Participant) => Promise<any>;
     unaccept: (p: Participant) => Promise<any>;
     uncomplete: (p: Participant) => Promise<any>;
     unsign: (p: Participant) => Promise<any>;
-    canUpdate: boolean;
     isUsingAdminRights: boolean;
 }
 
 const SignatureButtons = ({
     participant,
     status,
-    attNoteData,
     loading,
     setLoading,
-    unsetDirtyStateFor,
     complete,
     accept,
-    update,
     sign,
     unaccept,
     uncomplete,
     unsign,
-    canUpdate,
     isUsingAdminRights,
 }: SignatureButtonsProps): JSX.Element => {
     const handleButtonClick = async (
@@ -66,7 +49,6 @@ const SignatureButtons = ({
         setLoading(true);
         await buttonAction();
         setLoading(false);
-        unsetDirtyStateFor(ComponentName.ParticipantsTable);
     };
 
     const handleSignButtonClick = async (
@@ -75,33 +57,6 @@ const SignatureButtons = ({
         setLoading(true);
         await buttonAction();
         setLoading(false);
-    };
-
-    const getUnCompleteAndUpdateParticipantsButtons = (): JSX.Element => {
-        return (
-            <>
-                <SignatureButtonWithTooltip
-                    name={'Update'}
-                    tooltip={tooltipUpdate}
-                    onClick={(): Promise<void> =>
-                        handleButtonClick(async (): Promise<any> => {
-                            return await update(attNoteData);
-                        })
-                    }
-                    disabled={!canUpdate || loading}
-                />
-                <span> </span>
-                <SignatureButton
-                    name={'Uncomplete'}
-                    onClick={(): Promise<void> =>
-                        handleButtonClick(async (): Promise<any> => {
-                            return await uncomplete(participant);
-                        })
-                    }
-                    disabled={loading}
-                />
-            </>
-        );
     };
 
     const getSignButton = (): JSX.Element => {
@@ -141,10 +96,7 @@ const SignatureButtons = ({
                             tooltip={tooltipComplete}
                             onClick={(): Promise<void> =>
                                 handleButtonClick(async (): Promise<any> => {
-                                    return await complete(
-                                        participant,
-                                        attNoteData
-                                    );
+                                    return await complete(participant);
                                 })
                             }
                             disabled={loading}
@@ -154,7 +106,17 @@ const SignatureButtons = ({
                     (participant.isSigner || isUsingAdminRights) &&
                     status === IpoStatusEnum.COMPLETED
                 ) {
-                    return getUnCompleteAndUpdateParticipantsButtons();
+                    return (
+                        <SignatureButton
+                            name={'Uncomplete'}
+                            onClick={(): Promise<void> =>
+                                handleButtonClick(async (): Promise<any> => {
+                                    return await uncomplete(participant);
+                                })
+                            }
+                            disabled={loading}
+                        />
+                    );
                 }
             } else {
                 if (
@@ -197,10 +159,7 @@ const SignatureButtons = ({
                             tooltip={tooltipAccept}
                             onClick={(): Promise<void> =>
                                 handleButtonClick(async (): Promise<any> => {
-                                    return await accept(
-                                        participant,
-                                        attNoteData
-                                    );
+                                    return await accept(participant);
                                 })
                             }
                             disabled={loading}

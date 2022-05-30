@@ -1,5 +1,7 @@
 import {
-    AcceptIPODto,
+    CompleteAcceptIPODto,
+    AttendedStatusDto,
+    NotesDto,
     IpoApiError,
     SignIPODto,
 } from '../../http/InvitationForPunchOutApiClient';
@@ -15,16 +17,14 @@ import {
 } from './index.style';
 import { Invitation, IpoComment, Participant } from './types';
 import { IpoCustomEvents, IpoStatusEnum } from '../enums';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tabs, Typography } from '@equinor/eds-core-react';
-
-import { AttNoteData } from './GeneralInfo/ParticipantsTable';
 import Attachments from './Attachments';
 import { Button } from '@equinor/eds-core-react';
 import { Canceler } from 'axios';
 import Comments from './Comments';
 import EdsIcon from '@procosys/components/EdsIcon';
-import GeneralInfo from './GeneralInfo';
+import GeneralInfo from './GeneralInfo/GeneralInfo';
 import History from './History';
 import Scope from './Scope';
 import Spinner from '@procosys/components/Spinner';
@@ -244,18 +244,18 @@ const ViewIPO = (): JSX.Element => {
         setSteps(modifiedSteps);
     };
 
-    const updateParticipants = async (
-        attNoteData: AttNoteData[]
+    const updateAttendedStatus = async (
+        attendedStatus: AttendedStatusDto
     ): Promise<any> => {
         try {
-            await apiClient.attendedStatusAndNotes(params.ipoId, attNoteData);
+            await apiClient.updateAttendedStatus(params.ipoId, attendedStatus);
             invitation &&
                 analytics.trackUserAction(
-                    IpoCustomEvents.UPDATED_PARTICIPANTS,
+                    IpoCustomEvents.UPDATED_ATTENDED_STATUS,
                     { project: invitation.projectName, type: invitation.type }
                 );
             await getInvitation();
-            showSnackbarNotification('Participants updated');
+            showSnackbarNotification('Attended status updated');
         } catch (error) {
             if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
@@ -263,10 +263,24 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
-    const completePunchOut = async (
-        participant: Participant,
-        attNoteData: AttNoteData[]
-    ): Promise<any> => {
+    const updateNotes = async (attendedNotes: NotesDto): Promise<any> => {
+        try {
+            await apiClient.updateNotes(params.ipoId, attendedNotes);
+            invitation &&
+                analytics.trackUserAction(
+                    IpoCustomEvents.UPDATED_ATTENDED_NOTES,
+                    { project: invitation.projectName, type: invitation.type }
+                );
+            await getInvitation();
+            showSnackbarNotification('Note has been updated');
+        } catch (error) {
+            if (!(error instanceof IpoApiError)) return;
+            console.error(error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+    };
+
+    const completePunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
@@ -279,7 +293,6 @@ const ViewIPO = (): JSX.Element => {
             await apiClient.completePunchOut(params.ipoId, {
                 invitationRowVersion: invitation.rowVersion,
                 participantRowVersion: participant.rowVersion,
-                participants: attNoteData,
             });
             analytics.trackUserAction(IpoCustomEvents.COMPLETED, {
                 project: invitation.projectName,
@@ -324,10 +337,7 @@ const ViewIPO = (): JSX.Element => {
         }
     };
 
-    const acceptPunchOut = async (
-        participant: Participant,
-        attNoteData: AttNoteData[]
-    ): Promise<any> => {
+    const acceptPunchOut = async (participant: Participant): Promise<any> => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
@@ -336,10 +346,9 @@ const ViewIPO = (): JSX.Element => {
 
         if (!signer || !invitation) return;
 
-        const acceptDetails: AcceptIPODto = {
+        const acceptDetails: CompleteAcceptIPODto = {
             invitationRowVersion: invitation.rowVersion,
             participantRowVersion: participant.rowVersion,
-            participants: attNoteData,
         };
         try {
             await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
@@ -539,10 +548,13 @@ const ViewIPO = (): JSX.Element => {
                                                 accept={acceptPunchOut}
                                                 complete={completePunchOut}
                                                 sign={signPunchOut}
-                                                update={updateParticipants}
                                                 unaccept={unacceptPunchOut}
                                                 uncomplete={uncompletePunchOut}
                                                 unsign={unsignPunchOut}
+                                                updateAttendedStatus={
+                                                    updateAttendedStatus
+                                                }
+                                                updateNotes={updateNotes}
                                                 isUsingAdminRights={
                                                     isUsingAdminRights
                                                 }

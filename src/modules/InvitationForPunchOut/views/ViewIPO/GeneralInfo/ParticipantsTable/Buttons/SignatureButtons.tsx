@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    ComponentName,
-    IpoStatusEnum,
-    OrganizationsEnum,
-} from '../../../../enums';
+import { IpoStatusEnum, OrganizationsEnum } from '../../../../enums';
 import { Participant } from '../../../types';
 import SignatureButton from './SignatureButton';
 import SignatureButtonWithTooltip from './SignatureButtonWithTooltip';

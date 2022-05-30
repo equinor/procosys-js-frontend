@@ -1,5 +1,5 @@
 import { Switch, TextField } from '@equinor/eds-core-react';
-import { ComponentName, OrganizationsEnum } from '../../../enums';
+import { OrganizationsEnum } from '../../../enums';
 import {
     Container,
     CustomTable,

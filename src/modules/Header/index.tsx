@@ -417,11 +417,17 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Libraries</DropdownItem>
                             </a>
-                            <a
-                                href={`/${params.plant}/Search?searchType=Manufacturer%2FModel`}
-                            >
-                                <DropdownItem>Manufacturer/Model</DropdownItem>
-                            </a>
+                            {ProCoSysSettings.featureIsEnabled(
+                                'ManufacturerModelEnabled'
+                            ) && (
+                                <a
+                                    href={`/${params.plant}/Search?searchType=Manufacturer%2FModel`}
+                                >
+                                    <DropdownItem>
+                                        Manufacturer/Model
+                                    </DropdownItem>
+                                </a>
+                            )}
                             <a
                                 href={`/${params.plant}/Search?searchType=MC%20Packages`}
                             >

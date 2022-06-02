@@ -24,6 +24,7 @@ interface ConfigResponse {
         preservation: boolean;
         main: boolean;
         quickSearch: boolean;
+        ManufacturerModelEnabled: boolean;
     };
 }
 

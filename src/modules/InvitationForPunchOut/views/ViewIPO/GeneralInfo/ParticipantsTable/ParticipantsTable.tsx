@@ -61,20 +61,9 @@ const ParticipantsTable = ({
 
     useEffect(() => {
         const newCleanData = participants.map((participant) => {
-            const response = participant.person
-                ? participant.person.response
-                : participant.functionalRole
-                ? participant.functionalRole.response
-                : participant.externalEmail.response;
-
-            const attendedStatus = participant.isAttendedTouched
-                ? participant.attended
-                : response === OutlookResponseType.ATTENDING ||
-                  response === OutlookResponseType.ORGANIZER;
-
             return {
                 id: participant.id,
-                attended: attendedStatus,
+                attended: participant.attended,
                 note: participant.note ? participant.note : '',
                 rowVersion: participant.rowVersion,
             };

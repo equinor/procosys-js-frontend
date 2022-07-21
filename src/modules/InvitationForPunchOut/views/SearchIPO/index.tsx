@@ -46,14 +46,14 @@ const SearchIPO = (): JSX.Element => {
     const [pageSize, setPageSize] = useState<number>(25);
     const [filter, setFilter] = useState<IPOFilter>({ ...emptyFilter });
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
-    const { apiClient } = useInvitationForPunchOutContext();
+    const { apiClient, project, setCurrentProject } =
+        useInvitationForPunchOutContext();
     const [availableProjects, setAvailableProjects] = useState<
         ProjectDetails[]
     >([]);
     const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(
         []
     );
-    const [project, setProject] = useState<ProjectDetails>();
     const [filterForProjects, setFilterForProjects] = useState<string>('');
 
     const isFirstRender = useRef<boolean>(true);
@@ -212,7 +212,7 @@ const SearchIPO = (): JSX.Element => {
     const changeProject = (event: React.MouseEvent, index: number): void => {
         event.preventDefault();
 
-        setProject(filteredProjects[index]);
+        setCurrentProject(filteredProjects[index].id);
         setResetTablePaging(true);
         setHasProjectChanged(true);
 

@@ -46,14 +46,10 @@ const SearchIPO = (): JSX.Element => {
     const [pageSize, setPageSize] = useState<number>(25);
     const [filter, setFilter] = useState<IPOFilter>({ ...emptyFilter });
     const [resetTablePaging, setResetTablePaging] = useState<boolean>(false);
-    const { apiClient, project, setCurrentProject } =
+    const { apiClient, project, setCurrentProject, availableProjects } =
         useInvitationForPunchOutContext();
-    const [availableProjects, setAvailableProjects] = useState<
-        ProjectDetails[]
-    >([]);
-    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(
-        []
-    );
+    const [filteredProjects, setFilteredProjects] =
+        useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
 
     const isFirstRender = useRef<boolean>(true);
@@ -169,24 +165,6 @@ const SearchIPO = (): JSX.Element => {
         } catch (error) {
             showSnackbarNotification(error.message);
         }
-    }, []);
-
-    useEffect(() => {
-        let requestCanceler: Canceler;
-        (async (): Promise<void> => {
-            try {
-                setIsLoading(true);
-                const allProjects = await apiClient.getAllProjectsForUserAsync(
-                    (cancelerCallback) => (requestCanceler = cancelerCallback)
-                );
-                setAvailableProjects(allProjects);
-                setFilteredProjects(allProjects);
-            } catch (error) {
-                console.error(error);
-            }
-            setIsLoading(false);
-        })();
-        return (): void => requestCanceler && requestCanceler();
     }, []);
 
     useEffect(() => {

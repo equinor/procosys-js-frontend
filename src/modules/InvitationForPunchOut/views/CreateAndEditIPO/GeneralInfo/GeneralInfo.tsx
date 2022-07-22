@@ -184,6 +184,7 @@ const GeneralInfo = ({
                         </div>
                     )}
                     {!isLoading &&
+                        filteredProjects &&
                         filteredProjects.map((projectItem, index) => {
                             return (
                                 <DropdownItem

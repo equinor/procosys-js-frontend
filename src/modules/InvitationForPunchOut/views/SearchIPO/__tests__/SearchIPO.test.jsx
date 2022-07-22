@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 import React from 'react';
 import SearchIPO from '../../SearchIPO';
@@ -23,6 +23,7 @@ jest.mock('../../../context/InvitationForPunchOutContext', () => ({
                 getFunctionalRolesAsync: () => Promise.resolve([]),
                 getSavedIPOFilters: () => Promise.resolve([]),
             },
+            availableProjects: mockProject,
         };
     },
 }));
@@ -59,27 +60,6 @@ describe('<SearchIPO />', () => {
             expect(getByText('New IPO').closest('a')).toHaveAttribute(
                 'href',
                 '/CreateIPO'
-            )
-        );
-    });
-
-    it('Should change the link in the "New IPO" button when project is changed', async () => {
-        const history = createMemoryHistory();
-        const { getByText } = render(
-            <Router history={history}>
-                <SearchIPO />
-            </Router>
-        );
-        await waitFor(() =>
-            expect(getByText('Select project')).toBeInTheDocument()
-        );
-        fireEvent.click(getByText('Select project'));
-        await waitFor(() => expect(getByText('886')).toBeInTheDocument());
-        fireEvent.click(getByText('886'));
-        await waitFor(() =>
-            expect(getByText('New IPO').closest('a')).toHaveAttribute(
-                'href',
-                '/CreateIPO/886'
             )
         );
     });

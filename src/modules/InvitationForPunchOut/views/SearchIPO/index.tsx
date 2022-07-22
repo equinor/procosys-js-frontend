@@ -381,6 +381,7 @@ const SearchIPO = (): JSX.Element => {
                                         </div>
                                     )}
                                     {!isLoading &&
+                                        filteredProjects &&
                                         filteredProjects.map(
                                             (projectItem, index) => {
                                                 return (

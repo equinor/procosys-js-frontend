@@ -40,16 +40,6 @@ interface CommPkgTableProps {
 
 const WAIT_INTERVAL = 300;
 
-// const getSystem = (sysString: string): string => {
-//     return sysString.lastIndexOf('|') !== -1
-//         ? sysString.substr(0, sysString.lastIndexOf('|'))
-//         : sysString;
-// };
-
-// const hasSameSystem = (sysString1: string, sysString2: string): boolean => {
-//     return getSystem(sysString1) === getSystem(sysString2);
-// };
-
 const CommPkgTable = forwardRef(
     (
         {

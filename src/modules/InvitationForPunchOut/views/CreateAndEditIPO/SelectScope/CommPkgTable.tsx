@@ -40,15 +40,15 @@ interface CommPkgTableProps {
 
 const WAIT_INTERVAL = 300;
 
-const getSystem = (sysString: string): string => {
-    return sysString.lastIndexOf('|') !== -1
-        ? sysString.substr(0, sysString.lastIndexOf('|'))
-        : sysString;
-};
+// const getSystem = (sysString: string): string => {
+//     return sysString.lastIndexOf('|') !== -1
+//         ? sysString.substr(0, sysString.lastIndexOf('|'))
+//         : sysString;
+// };
 
-const hasSameSystem = (sysString1: string, sysString2: string): boolean => {
-    return getSystem(sysString1) === getSystem(sysString2);
-};
+// const hasSameSystem = (sysString1: string, sysString2: string): boolean => {
+//     return getSystem(sysString1) === getSystem(sysString2);
+// };
 
 const CommPkgTable = forwardRef(
     (
@@ -79,7 +79,7 @@ const CommPkgTable = forwardRef(
         const tableRef = useRef<any>();
 
         const hasValidSystem = useCallback(
-            (systemString: string): boolean => {
+            (systemString: string) => {
                 if (
                     selectedCommPkgScope.length === 0 &&
                     selectedMcPkgScope.length === 0
@@ -91,7 +91,7 @@ const CommPkgTable = forwardRef(
                         ? selectedCommPkgScope[0].system
                         : selectedMcPkgScope[0].system;
 
-                return hasSameSystem(systemString, currentSystemString);
+                return currentSystemString;
             },
             [selectedCommPkgScope]
         );
@@ -196,11 +196,9 @@ const CommPkgTable = forwardRef(
                         (result) => {
                             setFilteredCommPkgs(result.commPkgs);
                             setSelectAll(
-                                result.commPkgs.every((commpkg) =>
-                                    hasSameSystem(
-                                        commpkg.system,
-                                        result.commPkgs[0].system
-                                    )
+                                result.commPkgs.every(
+                                    (commpkg) => commpkg.system,
+                                    result.commPkgs[0].system
                                 )
                             );
                             setData(result.commPkgs);

@@ -59,33 +59,11 @@ const GeneralInfo = ({
     setConfirmationChecked,
     errors,
 }: GeneralInfoProps): JSX.Element => {
-    const { apiClient } = useInvitationForPunchOutContext();
-    const [availableProjects, setAvailableProjects] = useState<
-        ProjectDetails[]
-    >([]);
-    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(
-        []
-    );
+    const { apiClient, availableProjects } = useInvitationForPunchOutContext();
+    const [filteredProjects, setFilteredProjects] =
+        useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    useEffect(() => {
-        let requestCanceler: Canceler;
-        (async (): Promise<void> => {
-            try {
-                setIsLoading(true);
-                const allProjects = await apiClient.getAllProjectsForUserAsync(
-                    (cancelerCallback) => (requestCanceler = cancelerCallback)
-                );
-                setAvailableProjects(allProjects);
-                setFilteredProjects(allProjects);
-            } catch (error) {
-                console.error(error);
-            }
-            setIsLoading(false);
-        })();
-        return (): void => requestCanceler && requestCanceler();
-    }, []);
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -206,6 +184,7 @@ const GeneralInfo = ({
                         </div>
                     )}
                     {!isLoading &&
+                        filteredProjects &&
                         filteredProjects.map((projectItem, index) => {
                             return (
                                 <DropdownItem

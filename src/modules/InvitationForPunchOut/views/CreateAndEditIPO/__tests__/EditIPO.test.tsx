@@ -11,7 +11,7 @@ configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subse
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
-    { title: 'Punch-out completed', isCompleted: false },
+    { title: 'Punch-out complete', isCompleted: false },
     { title: 'Punch-out accepted by company', isCompleted: false },
 ];
 

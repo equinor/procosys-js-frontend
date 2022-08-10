@@ -89,7 +89,7 @@ const ViewIPOHeader = ({
                     <Typography variant="h2">{`IPO-${ipoId}: ${title}`}</Typography>
                 </ButtonContainer>
                 <ButtonContainer>
-                    {(canDelete || (isCancelled && isUsingAdminRights)) && (
+                    {canDelete && (
                         <>
                             <Button
                                 variant="outlined"

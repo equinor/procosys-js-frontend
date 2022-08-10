@@ -514,9 +514,20 @@ const ViewIPO = (): JSX.Element => {
                         title={invitation.title}
                         organizer={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
                         participants={invitation.participants}
-                        isEditable={invitation.status == IpoStatusEnum.PLANNED}
-                        showEditButton={invitation.canEdit}
-                        canDelete={invitation.canDelete}
+                        isEditable={
+                            invitation.status == IpoStatusEnum.PLANNED ||
+                            (isAdmin && isUsingAdminRights)
+                        }
+                        showEditButton={
+                            invitation.canEdit ||
+                            (isAdmin && isUsingAdminRights)
+                        }
+                        canDelete={
+                            invitation.canDelete ||
+                            (invitation.status === IpoStatusEnum.CANCELED &&
+                                isAdmin &&
+                                isUsingAdminRights)
+                        }
                         canCancel={invitation.canCancel}
                         deletePunchOut={deletePunchOut}
                         cancelPunchOut={cancelPunchOut}

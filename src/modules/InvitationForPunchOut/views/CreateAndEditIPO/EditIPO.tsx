@@ -614,6 +614,7 @@ const EditIPO = (): JSX.Element => {
             setConfirmationChecked={setConfirmationChecked}
             isEditMode={true}
             ipoId={params.ipoId}
+            status={invitation?.status}
         />
     );
 };

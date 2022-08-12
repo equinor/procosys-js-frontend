@@ -168,6 +168,14 @@ const SearchIPO = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
+        const allProjects: ProjectDetails = {
+            id: -1,
+            name: 'All projects',
+            description: 'All projects in plant',
+        };
+
+        availableProjects.unshift(allProjects);
+
         if (filterForProjects.length <= 0) {
             setFilteredProjects(availableProjects);
             return;

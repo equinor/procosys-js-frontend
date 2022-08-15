@@ -181,7 +181,7 @@ describe('<InvitationsFilter />', () => {
                 exportInvitationsToExcel={exportInvitationsToExcel}
             />
         );
-        expect(getByTitle('Export filtered tags to Excel')).toBeInTheDocument();
+        expect(getByTitle('Export filtered IPOs to Excel')).toBeInTheDocument();
     });
 
     it('Should call the export to excel function when excel button is clicked', async () => {
@@ -201,7 +201,7 @@ describe('<InvitationsFilter />', () => {
             />
         );
         expect(exportInvitationsToExcel).toHaveBeenCalledTimes(0);
-        getByTitle('Export filtered tags to Excel').click();
+        getByTitle('Export filtered IPOs to Excel').click();
         expect(exportInvitationsToExcel).toHaveBeenCalledTimes(1);
     });
 });

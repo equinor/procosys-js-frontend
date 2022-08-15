@@ -25,6 +25,7 @@ interface SelectedScopeProps {
     removeCommPkg: (commPkgNo: string) => void;
     removeMcPkg: (mcPkgNo: string) => void;
     multipleDisciplines: boolean;
+    isDisabled?: boolean;
 }
 
 const SelectedScope = ({
@@ -33,6 +34,7 @@ const SelectedScope = ({
     selectedMcPkgs = [],
     removeMcPkg,
     multipleDisciplines,
+    isDisabled,
 }: SelectedScopeProps): JSX.Element => {
     const numberOfPackagesSelected = (): number => {
         if (selectedMcPkgs.length > 0) {
@@ -48,12 +50,16 @@ const SelectedScope = ({
             <Accordion.Item key={commPkg.commPkgNo}>
                 <Accordion.Header>
                     {commPkg.commPkgNo}
-                    <Button
-                        variant="ghost_icon"
-                        onClick={(): void => removeCommPkg(commPkg.commPkgNo)}
-                    >
-                        <EdsIcon name="delete_to_trash"></EdsIcon>
-                    </Button>
+                    {!isDisabled && (
+                        <Button
+                            variant="ghost_icon"
+                            onClick={(): void =>
+                                removeCommPkg(commPkg.commPkgNo)
+                            }
+                        >
+                            <EdsIcon name="delete_to_trash"></EdsIcon>
+                        </Button>
+                    )}
                 </Accordion.Header>
                 <Accordion.Panel>
                     <AccordionContent>
@@ -84,12 +90,14 @@ const SelectedScope = ({
             <Accordion.Item key={mcPkg.mcPkgNo}>
                 <Accordion.Header>
                     {mcPkg.mcPkgNo}
-                    <Button
-                        variant="ghost_icon"
-                        onClick={(): void => removeMcPkg(mcPkg.mcPkgNo)}
-                    >
-                        <EdsIcon name="delete_to_trash"></EdsIcon>
-                    </Button>
+                    {!isDisabled && (
+                        <Button
+                            variant="ghost_icon"
+                            onClick={(): void => removeMcPkg(mcPkg.mcPkgNo)}
+                        >
+                            <EdsIcon name="delete_to_trash"></EdsIcon>
+                        </Button>
+                    )}
                 </Accordion.Header>
                 <Accordion.Panel>
                     <AccordionContent>

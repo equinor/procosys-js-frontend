@@ -150,6 +150,13 @@ const CreateAndEditIPO = ({
         string,
         string
     > | null>(null);
+    const [invitationStarted, setInvitationStarted] = useState<boolean>(false);
+
+    useEffect(() => {
+        setInvitationStarted(
+            status ? !(status == IpoStatusEnum.PLANNED) : false
+        );
+    }, [status]);
 
     const goToNextStep = (): void => {
         if (currentStep === StepsEnum.GeneralInfo) {
@@ -286,9 +293,7 @@ const CreateAndEditIPO = ({
                     confirmationChecked={confirmationChecked}
                     setConfirmationChecked={setConfirmationChecked}
                     errors={generalInfoErrors}
-                    isDisabled={
-                        status ? !(status == IpoStatusEnum.PLANNED) : false
-                    }
+                    isDisabled={invitationStarted}
                 />
             )}
             {currentStep == StepsEnum.Scope &&
@@ -302,6 +307,7 @@ const CreateAndEditIPO = ({
                         selectedMcPkgScope={selectedMcPkgScope}
                         setSelectedMcPkgScope={setSelectedMcPkgScope}
                         projectName={generalInfo.projectName}
+                        isDisabled={invitationStarted}
                     />
                 )}
             {currentStep == StepsEnum.Participants && (

@@ -245,19 +245,6 @@ const CommPkgTable = forwardRef(
             };
         }, [filter, pageSize, pageIndex]);
 
-        const removeAllSelectedCommPkgsInScope = (): void => {
-            const commPkgNos: string[] = [];
-            filteredCommPkgs.forEach((c) => {
-                commPkgNos.push(c.commPkgNo);
-            });
-            const newSelectedCommPkgs = selectedCommPkgScope
-                ? selectedCommPkgScope.filter(
-                      (item) => !commPkgNos.includes(item.commPkgNo)
-                  )
-                : [];
-            setSelectedCommPkgScope(newSelectedCommPkgs);
-        };
-
         const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
             if (type != 'DP') {
                 const rowsToAdd = rowData.filter((row) =>
@@ -308,7 +295,6 @@ const CommPkgTable = forwardRef(
             rowData: CommPkgRow[],
             _row: CommPkgRow
         ): void => {
-            removeAllSelectedCommPkgsInScope();
             addAllCommPkgsInScope(rowData);
         };
 

@@ -174,7 +174,13 @@ const SearchIPO = (): JSX.Element => {
             description: 'All projects in plant',
         };
 
-        availableProjects.unshift(allProjects);
+        if (availableProjects.length > 0) {
+            if (availableProjects[0].id !== -1) {
+                availableProjects.unshift(allProjects);
+            }
+        } else {
+            availableProjects.push(allProjects);
+        }
 
         if (filterForProjects.length <= 0) {
             setFilteredProjects(availableProjects);

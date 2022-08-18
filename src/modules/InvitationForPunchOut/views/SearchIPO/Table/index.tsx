@@ -106,6 +106,22 @@ const InvitationsTable = ({
         return <CustomLink to={`/${data}`}>{data}</CustomLink>;
     };
 
+    const getProjectNameColumn = (row: TableOptions<IPO>): JSX.Element => {
+        const data = (row.value as IPO).projectName;
+        return (
+            <div className="controlOverflow">
+                <Tooltip
+                    title={data || ''}
+                    arrow={true}
+                    enterDelay={200}
+                    enterNextDelay={100}
+                >
+                    <Typography>{data}</Typography>
+                </Tooltip>
+            </div>
+        );
+    };
+
     const getTitleColum = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).title;
         return (
@@ -302,6 +318,12 @@ const InvitationsTable = ({
             id: 'ipoNo',
             accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
             Cell: getIdColumn,
+        },
+        {
+            Header: 'Project',
+            id: 'projectName',
+            accessor: (d: UseTableRowProps<IPO>): UseTableRowProps<IPO> => d,
+            Cell: getProjectNameColumn,
         },
         {
             Header: 'Title',

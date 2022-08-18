@@ -18,6 +18,7 @@ export interface IPO {
     additionalConstructionCompanyReps: string[];
     mcPkgNos?: string[];
     commPkgNos?: string[];
+    projectName: string;
 }
 
 export interface IPOs {

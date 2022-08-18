@@ -51,17 +51,25 @@ export const InvitationForPunchOutContextProvider: React.FC = ({
 
         if (availableProjects.length === 0) {
             setCurrentProjectInContext({
-                id: -1,
+                id: -10,
                 name: 'No projects available',
                 description: 'No projects available',
             });
             return;
         }
 
+        if (projectId === -1) {
+            setCurrentProjectInContext({
+                id: -1,
+                name: 'All projects',
+                description: 'All projects in plant',
+            });
+        }
+
         const project = availableProjects.find((el) => el.id === projectId);
         if (project) {
             setCurrentProjectInContext(project);
-        } else {
+        } else if (projectId !== -1) {
             throw new InvalidProjectException();
         }
     };
@@ -106,7 +114,7 @@ export const InvitationForPunchOutContextProvider: React.FC = ({
                 availableProjects &&
                 availableProjects.length > 0
             ) {
-                setCurrentProject(availableProjects[0].id);
+                setCurrentProject(-1);
             }
         }
     }, [availableProjects]);

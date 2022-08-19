@@ -188,26 +188,21 @@ const CommPkgTable = forwardRef(
 
         const getCommPkgsByQuery = (query: DataQuery): void => {
             if (commPkgNo == null) {
-                if (!filter.trim()) {
-                    setData([]);
-                    setMaxRows(0);
-                } else {
-                    getCommPkgsByFilter(query.pageSize, query.pageIndex).then(
-                        (result) => {
-                            setFilteredCommPkgs(result.commPkgs);
-                            setSelectAll(
-                                result.commPkgs.every((commpkg) =>
-                                    hasSameSystem(
-                                        commpkg.system,
-                                        result.commPkgs[0].system
-                                    )
+                getCommPkgsByFilter(query.pageSize, query.pageIndex).then(
+                    (result) => {
+                        setFilteredCommPkgs(result.commPkgs);
+                        setSelectAll(
+                            result.commPkgs.every((commpkg) =>
+                                hasSameSystem(
+                                    commpkg.system,
+                                    result.commPkgs[0].system
                                 )
-                            );
-                            setData(result.commPkgs);
-                            setMaxRows(result.maxAvailable);
-                        }
-                    );
-                }
+                            )
+                        );
+                        setData(result.commPkgs);
+                        setMaxRows(result.maxAvailable);
+                    }
+                );
             } else {
                 getCommPkgsByCommPkgNo(query.pageSize, query.pageIndex).then(
                     (result) => {
@@ -244,6 +239,19 @@ const CommPkgTable = forwardRef(
                 cancelerRef.current && cancelerRef.current();
             };
         }, [filter, pageSize, pageIndex]);
+
+        const removeAllSelectedCommPkgsInScope = (): void => {
+            const commPkgNos: string[] = [];
+            filteredCommPkgs.forEach((c) => {
+                commPkgNos.push(c.commPkgNo);
+            });
+            const newSelectedCommPkgs = selectedCommPkgScope
+                ? selectedCommPkgScope.filter(
+                      (item) => !commPkgNos.includes(item.commPkgNo)
+                  )
+                : [];
+            setSelectedCommPkgScope(newSelectedCommPkgs);
+        };
 
         const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
             if (type != 'DP') {
@@ -295,6 +303,7 @@ const CommPkgTable = forwardRef(
             rowData: CommPkgRow[],
             _row: CommPkgRow
         ): void => {
+            removeAllSelectedCommPkgsInScope();
             addAllCommPkgsInScope(rowData);
         };
 

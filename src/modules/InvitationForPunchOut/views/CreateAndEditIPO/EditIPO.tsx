@@ -11,7 +11,7 @@ import {
     Step,
 } from '../../types';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
-import { ComponentName, IpoCustomEvents } from '../enums';
+import { ComponentName, IpoCustomEvents, IpoStatusEnum } from '../enums';
 import {
     ExternalEmailDto,
     FunctionalRoleDto,
@@ -342,21 +342,28 @@ const EditIPO = (): JSX.Element => {
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
 
-                // TODO: check status, and use correct API function
-
-                await apiClient.updateIpo(
-                    params.ipoId,
-                    generalInfo.title,
-                    generalInfo.poType.value,
-                    generalInfo.startTime as Date,
-                    generalInfo.endTime as Date,
-                    generalInfo.description ? generalInfo.description : null,
-                    generalInfo.location ? generalInfo.location : null,
-                    ipoParticipants,
-                    mcPkgScope,
-                    commPkgScope,
-                    invitation.rowVersion
-                );
+                if (invitation?.status != IpoStatusEnum.PLANNED) {
+                    await apiClient.updateIpoParticipants(
+                        params.ipoId,
+                        ipoParticipants
+                    );
+                } else {
+                    await apiClient.updateIpo(
+                        params.ipoId,
+                        generalInfo.title,
+                        generalInfo.poType.value,
+                        generalInfo.startTime as Date,
+                        generalInfo.endTime as Date,
+                        generalInfo.description
+                            ? generalInfo.description
+                            : null,
+                        generalInfo.location ? generalInfo.location : null,
+                        ipoParticipants,
+                        mcPkgScope,
+                        commPkgScope,
+                        invitation.rowVersion
+                    );
+                }
                 analystics.trackUserAction(IpoCustomEvents.EDITED, {
                     project: generalInfo.projectName,
                     type: generalInfo.poType.value,

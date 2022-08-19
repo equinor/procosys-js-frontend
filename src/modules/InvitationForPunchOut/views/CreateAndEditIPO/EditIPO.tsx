@@ -342,6 +342,8 @@ const EditIPO = (): JSX.Element => {
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
 
+                // TODO: check status, and use correct API function
+
                 await apiClient.updateIpo(
                     params.ipoId,
                     generalInfo.title,
@@ -543,6 +545,7 @@ const EditIPO = (): JSX.Element => {
                     externalEmail: externalEmail,
                     person: person,
                     role: roleParticipant,
+                    signedAt: participant.signedAtUtc,
                 };
                 participants.push(newParticipant);
             });

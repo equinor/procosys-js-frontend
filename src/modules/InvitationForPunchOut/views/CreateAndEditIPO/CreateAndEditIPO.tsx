@@ -315,6 +315,7 @@ const CreateAndEditIPO = ({
                     participants={participants}
                     setParticipants={setParticipants}
                     availableRoles={availableRoles ? availableRoles : []}
+                    invitationStarted={invitationStarted}
                 />
             )}
             {currentStep == StepsEnum.UploadAttachments && (

@@ -73,12 +73,14 @@ interface ParticipantsProps {
     participants: Participant[];
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
     availableRoles: RoleParticipant[];
+    invitationStarted?: boolean;
 }
 
 const Participants = ({
     participants,
     setParticipants,
     availableRoles,
+    invitationStarted,
 }: ParticipantsProps): JSX.Element => {
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
     const [personsFilter, setPersonsFilter] = useState<SelectItem>({
@@ -272,6 +274,7 @@ const Participants = ({
             externalEmail: null,
             person: null,
             role: null,
+            signedAt: null,
         };
         setParticipants([...participants, newParticipant]);
     };
@@ -394,8 +397,11 @@ const Participants = ({
                                         data={ParticipantType}
                                         label={'Type'}
                                         disabled={
+                                            (invitationStarted &&
+                                                p.signedAt &&
+                                                index < 2) ||
                                             p.organization.value ==
-                                            OrganizationsEnum.External
+                                                OrganizationsEnum.External
                                         }
                                     >
                                         {p.type}
@@ -432,6 +438,15 @@ const Participants = ({
                                                 label={'Person'}
                                                 maxHeight="300px"
                                                 variant="form"
+                                                disabled={
+                                                    index < 2
+                                                        ? invitationStarted
+                                                            ? p.signedAt
+                                                                ? true
+                                                                : false
+                                                            : false
+                                                        : false
+                                                }
                                                 onFilter={(
                                                     input: string
                                                 ): void =>
@@ -495,6 +510,15 @@ const Participants = ({
                                             }
                                             roles={getRolesCopy()}
                                             label={'Role'}
+                                            disabled={
+                                                index < 2
+                                                    ? invitationStarted
+                                                        ? p.signedAt
+                                                            ? true
+                                                            : false
+                                                        : false
+                                                    : false
+                                            }
                                         >
                                             {p.role ? (
                                                 <Tooltip

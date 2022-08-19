@@ -52,6 +52,7 @@ const initialParticipants: Participant[] = [
         externalEmail: null,
         person: null,
         role: null,
+        signedAt: null,
     },
     {
         organization: {
@@ -65,6 +66,7 @@ const initialParticipants: Participant[] = [
         externalEmail: null,
         person: null,
         role: null,
+        signedAt: null,
     },
     {
         organization: {
@@ -78,6 +80,7 @@ const initialParticipants: Participant[] = [
         externalEmail: null,
         person: null,
         role: null,
+        signedAt: null,
     },
     {
         organization: {
@@ -89,6 +92,7 @@ const initialParticipants: Participant[] = [
         externalEmail: null,
         person: null,
         role: null,
+        signedAt: null,
     },
     {
         organization: {
@@ -102,6 +106,7 @@ const initialParticipants: Participant[] = [
         externalEmail: null,
         person: null,
         role: null,
+        signedAt: null,
     },
 ];
 

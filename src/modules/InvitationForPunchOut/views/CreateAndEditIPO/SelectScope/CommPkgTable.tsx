@@ -188,26 +188,21 @@ const CommPkgTable = forwardRef(
 
         const getCommPkgsByQuery = (query: DataQuery): void => {
             if (commPkgNo == null) {
-                if (!filter.trim()) {
-                    setData([]);
-                    setMaxRows(0);
-                } else {
-                    getCommPkgsByFilter(query.pageSize, query.pageIndex).then(
-                        (result) => {
-                            setFilteredCommPkgs(result.commPkgs);
-                            setSelectAll(
-                                result.commPkgs.every((commpkg) =>
-                                    hasSameSystem(
-                                        commpkg.system,
-                                        result.commPkgs[0].system
-                                    )
+                getCommPkgsByFilter(query.pageSize, query.pageIndex).then(
+                    (result) => {
+                        setFilteredCommPkgs(result.commPkgs);
+                        setSelectAll(
+                            result.commPkgs.every((commpkg) =>
+                                hasSameSystem(
+                                    commpkg.system,
+                                    result.commPkgs[0].system
                                 )
-                            );
-                            setData(result.commPkgs);
-                            setMaxRows(result.maxAvailable);
-                        }
-                    );
-                }
+                            )
+                        );
+                        setData(result.commPkgs);
+                        setMaxRows(result.maxAvailable);
+                    }
+                );
             } else {
                 getCommPkgsByCommPkgNo(query.pageSize, query.pageIndex).then(
                     (result) => {

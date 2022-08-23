@@ -603,6 +603,34 @@ class InvitationForPunchOutApiClient extends ApiClient {
     }
 
     /**
+     * Update IPO participants
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async updateIpoParticipants(
+        ipoId: number,
+        participants: ParticipantDto[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<number> {
+        const endpoint = `/Invitations/${ipoId}/Participants`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.put(
+                endpoint,
+                {
+                    updatedParticipants: participants,
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /**
      * Get comments
      *
      * @param setRequestCanceller Returns a function that can be called to cancel the request

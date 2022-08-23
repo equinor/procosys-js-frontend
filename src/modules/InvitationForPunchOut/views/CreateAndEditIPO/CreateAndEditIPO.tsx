@@ -17,6 +17,7 @@ import Participants from './Participants/Participants';
 import SelectScope from './SelectScope/SelectScope';
 import Summary from './Summary/Summary';
 import { isEmptyObject } from './utils';
+import { IpoStatusEnum } from '../enums';
 
 const validateGeneralInfo = (
     info: GeneralInfoDetails,
@@ -115,6 +116,7 @@ interface CreateAndEditProps {
     ipoId?: number | null;
     isEditMode?: boolean;
     commPkgNoFromMain?: string | null;
+    status?: string;
 }
 
 const CreateAndEditIPO = ({
@@ -138,6 +140,7 @@ const CreateAndEditIPO = ({
     ipoId = null,
     isEditMode = false,
     commPkgNoFromMain = null,
+    status,
 }: CreateAndEditProps): JSX.Element => {
     const [currentStep, setCurrentStep] = useState<number>(
         StepsEnum.GeneralInfo
@@ -147,6 +150,13 @@ const CreateAndEditIPO = ({
         string,
         string
     > | null>(null);
+    const [invitationStarted, setInvitationStarted] = useState<boolean>(false);
+
+    useEffect(() => {
+        setInvitationStarted(
+            status ? !(status == IpoStatusEnum.PLANNED) : false
+        );
+    }, [status]);
 
     const goToNextStep = (): void => {
         if (currentStep === StepsEnum.GeneralInfo) {
@@ -283,6 +293,7 @@ const CreateAndEditIPO = ({
                     confirmationChecked={confirmationChecked}
                     setConfirmationChecked={setConfirmationChecked}
                     errors={generalInfoErrors}
+                    isDisabled={invitationStarted}
                 />
             )}
             {currentStep == StepsEnum.Scope &&
@@ -296,6 +307,7 @@ const CreateAndEditIPO = ({
                         selectedMcPkgScope={selectedMcPkgScope}
                         setSelectedMcPkgScope={setSelectedMcPkgScope}
                         projectName={generalInfo.projectName}
+                        isDisabled={invitationStarted}
                     />
                 )}
             {currentStep == StepsEnum.Participants && (
@@ -303,6 +315,7 @@ const CreateAndEditIPO = ({
                     participants={participants}
                     setParticipants={setParticipants}
                     availableRoles={availableRoles ? availableRoles : []}
+                    invitationStarted={invitationStarted}
                 />
             )}
             {currentStep == StepsEnum.UploadAttachments && (

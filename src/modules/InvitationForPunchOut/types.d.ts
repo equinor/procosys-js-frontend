@@ -58,6 +58,7 @@ export type Participant = {
     externalEmail: ExternalEmail | null;
     person: Person | null;
     role: RoleParticipant | null;
+    signedAt: Date | null | undefined;
 };
 
 export type Attachment = {

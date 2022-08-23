@@ -225,37 +225,6 @@ describe('<EditIPO />', () => {
         expect(queryByText('Delete IPO')).toBeInTheDocument();
     });
 
-    it('Should display "Delete IPO"-button when isCancelled is true, isUsingAdminRights is true and canDelete is false', async () => {
-        const { queryByText } = render(
-            <ViewIPOHeader
-                ipoId={1}
-                steps={initialSteps}
-                isCancelled={true}
-                currentStep={1}
-                title={'test'}
-                organizer="test"
-                participants={[]}
-                isEditable={true}
-                showEditButton={true}
-                canDelete={false}
-                deletePunchOut={(): void => {
-                    /*mock*/
-                }}
-                canCancel={true}
-                cancelPunchOut={(): void => {
-                    /*mock*/
-                }}
-                isAdmin={false}
-                isUsingAdminRights={true}
-                setIsUsingAdminRights={(): void => {
-                    /*mock*/
-                }}
-            />
-        );
-
-        expect(queryByText('Delete IPO')).toBeInTheDocument();
-    });
-
     it('Should not display "Delete IPO"-button when isCancelled is true, isUsingAdminRights is false and canDelete is false', async () => {
         const { queryByText } = render(
             <ViewIPOHeader

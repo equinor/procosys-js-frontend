@@ -24,6 +24,7 @@ interface SelectScopeProps {
     setSelectedMcPkgScope: React.Dispatch<React.SetStateAction<McScope>>;
     commPkgNo: string | null;
     projectName: string;
+    isDisabled?: boolean;
 }
 
 const SelectScope = ({
@@ -34,6 +35,7 @@ const SelectScope = ({
     setSelectedMcPkgScope,
     commPkgNo,
     projectName,
+    isDisabled,
 }: SelectScopeProps): JSX.Element => {
     const [currentCommPkg, setCurrentCommPkg] = useState<string | null>(null);
     const commPkgRef = useRef<any>();
@@ -92,57 +94,70 @@ const SelectScope = ({
 
     return (
         <Container>
-            <SelectComponent>
-                <Header>
-                    {currentCommPkg != null && commPkgNo == null && (
-                        <Button
-                            id="backButton"
-                            onClick={(): void => setCurrentCommPkg(null)}
-                            variant="ghost_icon"
-                        >
-                            <EdsIcon name="arrow_back" />
-                        </Button>
-                    )}
-                    <Typography variant="h2">
-                        {currentCommPkg == null
-                            ? type === 'DP'
-                                ? 'Click on the arrow next to a comm pkg to open MC scope'
-                                : 'Select commissioning packages'
-                            : type === 'DP'
-                            ? 'Select MC packages in comm pkg ' + currentCommPkg
-                            : 'Scope has been preselected'}
-                    </Typography>
-                </Header>
-                {(currentCommPkg == null ||
-                    (commPkgNo != null && type == 'MDP')) && (
-                    <div>
-                        <CommPkgTable
-                            ref={commPkgRef}
-                            selectedCommPkgScope={selectedCommPkgScope}
-                            setSelectedCommPkgScope={setSelectedCommPkgScope}
-                            selectedMcPkgScope={selectedMcPkgScope.selected}
-                            setCurrentCommPkg={setCurrentCommPkg}
-                            type={type}
-                            projectName={projectName}
-                            filter={commPkgFilter}
-                            setFilter={setCommPkgFilter}
-                            commPkgNo={commPkgNo}
-                        />
-                    </div>
-                )}
-                {currentCommPkg != null &&
-                    (commPkgNo == null ||
-                        (commPkgNo != null && type == 'DP')) && (
-                        <McPkgTable
-                            ref={mcPkgRef}
-                            selectedMcPkgScope={selectedMcPkgScope}
-                            setSelectedMcPkgScope={setSelectedMcPkgScope}
-                            projectName={projectName}
-                            commPkgNo={currentCommPkg}
-                        />
-                    )}
-            </SelectComponent>
-            <Divider />
+            {!isDisabled && (
+                <>
+                    <SelectComponent>
+                        <Header>
+                            {currentCommPkg != null && commPkgNo == null && (
+                                <Button
+                                    id="backButton"
+                                    onClick={(): void =>
+                                        setCurrentCommPkg(null)
+                                    }
+                                    variant="ghost_icon"
+                                >
+                                    <EdsIcon name="arrow_back" />
+                                </Button>
+                            )}
+                            <Typography variant="h2">
+                                {currentCommPkg == null
+                                    ? type === 'DP'
+                                        ? 'Click on the arrow next to a comm pkg to open MC scope'
+                                        : 'Select commissioning packages'
+                                    : type === 'DP'
+                                    ? 'Select MC packages in comm pkg ' +
+                                      currentCommPkg
+                                    : 'Scope has been preselected'}
+                            </Typography>
+                        </Header>
+                        {(currentCommPkg == null ||
+                            (commPkgNo != null && type == 'MDP')) && (
+                            <div>
+                                <CommPkgTable
+                                    ref={commPkgRef}
+                                    selectedCommPkgScope={selectedCommPkgScope}
+                                    setSelectedCommPkgScope={
+                                        setSelectedCommPkgScope
+                                    }
+                                    selectedMcPkgScope={
+                                        selectedMcPkgScope.selected
+                                    }
+                                    setCurrentCommPkg={setCurrentCommPkg}
+                                    type={type}
+                                    projectName={projectName}
+                                    filter={commPkgFilter}
+                                    setFilter={setCommPkgFilter}
+                                    commPkgNo={commPkgNo}
+                                />
+                            </div>
+                        )}
+                        {currentCommPkg != null &&
+                            (commPkgNo == null ||
+                                (commPkgNo != null && type == 'DP')) && (
+                                <McPkgTable
+                                    ref={mcPkgRef}
+                                    selectedMcPkgScope={selectedMcPkgScope}
+                                    setSelectedMcPkgScope={
+                                        setSelectedMcPkgScope
+                                    }
+                                    projectName={projectName}
+                                    commPkgNo={currentCommPkg}
+                                />
+                            )}
+                    </SelectComponent>
+                    <Divider />
+                </>
+            )}
             <SelectedScope
                 selectedCommPkgs={selectedCommPkgScope}
                 removeCommPkg={(commPkgNo: string): void =>
@@ -153,6 +168,7 @@ const SelectScope = ({
                     handleRemoveMcPkg(mcPkgNo)
                 }
                 multipleDisciplines={selectedMcPkgScope.multipleDisciplines}
+                isDisabled={isDisabled}
             />
         </Container>
     );

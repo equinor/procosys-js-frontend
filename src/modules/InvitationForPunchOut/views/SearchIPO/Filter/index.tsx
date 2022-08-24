@@ -300,7 +300,7 @@ const InvitationsFilter = ({
                 <div style={{ display: 'flex' }}>
                     <Button
                         variant="ghost"
-                        title="Export filtered tags to Excel"
+                        title="Export filtered IPOs to Excel"
                         onClick={exportInvitationsToExcel}
                     >
                         {ExcelIcon}

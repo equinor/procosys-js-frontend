@@ -42,21 +42,24 @@ jest.mock('@procosys/hooks/useRouter', () =>
     }))
 );
 
+const mockProject = [
+    {
+        id: 123,
+        name: 'project.name',
+        description: 'project.description',
+    },
+];
+
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
     useInvitationForPunchOutContext: (): any => {
         return {
             apiClient: {
                 getFunctionalRolesAsync: (): any => Promise.resolve(mockRoles),
                 getAllProjectsForUserAsync: (_: any): any => {
-                    return Promise.resolve([
-                        {
-                            id: 123,
-                            name: 'project.name',
-                            description: 'project.description',
-                        },
-                    ]);
+                    return Promise.resolve(mockProject);
                 },
             },
+            availableProjects: mockProject,
         };
     },
 }));

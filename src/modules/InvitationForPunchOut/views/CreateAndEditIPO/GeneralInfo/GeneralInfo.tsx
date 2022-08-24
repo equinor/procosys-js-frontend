@@ -47,6 +47,7 @@ interface GeneralInfoProps {
     confirmationChecked: boolean;
     setConfirmationChecked: React.Dispatch<React.SetStateAction<boolean>>;
     errors: Record<string, string> | null;
+    isDisabled: boolean;
 }
 
 const GeneralInfo = ({
@@ -58,34 +59,12 @@ const GeneralInfo = ({
     confirmationChecked,
     setConfirmationChecked,
     errors,
+    isDisabled,
 }: GeneralInfoProps): JSX.Element => {
-    const { apiClient } = useInvitationForPunchOutContext();
-    const [availableProjects, setAvailableProjects] = useState<
-        ProjectDetails[]
-    >([]);
-    const [filteredProjects, setFilteredProjects] = useState<ProjectDetails[]>(
-        []
-    );
+    const { availableProjects } = useInvitationForPunchOutContext();
+    const [filteredProjects, setFilteredProjects] =
+        useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    useEffect(() => {
-        let requestCanceler: Canceler;
-        (async (): Promise<void> => {
-            try {
-                setIsLoading(true);
-                const allProjects = await apiClient.getAllProjectsForUserAsync(
-                    (cancelerCallback) => (requestCanceler = cancelerCallback)
-                );
-                setAvailableProjects(allProjects);
-                setFilteredProjects(allProjects);
-            } catch (error) {
-                console.error(error);
-            }
-            setIsLoading(false);
-        })();
-        return (): void => requestCanceler && requestCanceler();
-    }, []);
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -198,14 +177,9 @@ const GeneralInfo = ({
                     variant="form"
                     text={generalInfo.projectName || 'Select'}
                     onFilter={setFilterForProjects}
-                    disabled={fromMain || isEditMode}
+                    disabled={fromMain || isEditMode || isDisabled}
                 >
-                    {isLoading && (
-                        <div style={{ margin: 'calc(var(--grid-unit))' }}>
-                            <Spinner medium />
-                        </div>
-                    )}
-                    {!isLoading &&
+                    {filteredProjects &&
                         filteredProjects.map((projectItem, index) => {
                             return (
                                 <DropdownItem
@@ -244,6 +218,7 @@ const GeneralInfo = ({
                         onChange={setPoTypeForm}
                         data={poTypes}
                         label={'Type of punch round'}
+                        disabled={isDisabled}
                     >
                         {(generalInfo.poType && generalInfo.poType.text) ||
                             'Select'}
@@ -279,6 +254,7 @@ const GeneralInfo = ({
                             return { ...gi, title: e.target.value };
                         });
                     }}
+                    disabled={isDisabled}
                 />
                 {errors && errors['title'] && (
                     <ErrorContainer>
@@ -311,6 +287,7 @@ const GeneralInfo = ({
                             return { ...gi, description: e.target.value };
                         });
                     }}
+                    disabled={isDisabled}
                 />
                 {errors && errors['description'] && (
                     <ErrorContainer>
@@ -350,6 +327,7 @@ const GeneralInfo = ({
                                 HTMLInputElement | HTMLTextAreaElement
                             >
                         ): void => handleSetDate(event.target.value)}
+                        disabled={isDisabled}
                     />
                 </div>
                 <div>
@@ -372,6 +350,7 @@ const GeneralInfo = ({
                                 HTMLInputElement | HTMLTextAreaElement
                             >
                         ): void => handleSetTime('start', event.target.value)}
+                        disabled={isDisabled}
                     />
                 </div>
                 <div>
@@ -394,6 +373,7 @@ const GeneralInfo = ({
                                 HTMLInputElement | HTMLTextAreaElement
                             >
                         ): void => handleSetTime('end', event.target.value)}
+                        disabled={isDisabled}
                     />
                 </div>
                 {errors && errors['time'] && (
@@ -429,6 +409,7 @@ const GeneralInfo = ({
                                 return { ...gi, location: e.target.value };
                             });
                         }}
+                        disabled={isDisabled}
                     />
                 </LocationContainer>
                 {errors && errors['location'] && (

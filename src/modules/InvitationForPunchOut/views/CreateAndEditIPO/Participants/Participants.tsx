@@ -73,12 +73,14 @@ interface ParticipantsProps {
     participants: Participant[];
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>;
     availableRoles: RoleParticipant[];
+    invitationStarted?: boolean;
 }
 
 const Participants = ({
     participants,
     setParticipants,
     availableRoles,
+    invitationStarted,
 }: ParticipantsProps): JSX.Element => {
     const [filteredPersons, setFilteredPersons] = useState<SelectItem[]>([]);
     const [personsFilter, setPersonsFilter] = useState<SelectItem>({
@@ -272,6 +274,7 @@ const Participants = ({
             externalEmail: null,
             person: null,
             role: null,
+            signedAt: null,
         };
         setParticipants([...participants, newParticipant]);
     };
@@ -367,6 +370,11 @@ const Participants = ({
             <FormContainer>
                 <ParticipantRowsContainer>
                     {participants.map((p, index) => {
+                        const disableEditing: boolean = invitationStarted
+                            ? p.signedAt
+                                ? true
+                                : false
+                            : false;
                         return (
                             <React.Fragment key={`participant_${index}`}>
                                 <div>
@@ -376,7 +384,7 @@ const Participants = ({
                                         }
                                         data={Organizations}
                                         label={'Organization'}
-                                        disabled={index < 2}
+                                        disabled={index < 2 || disableEditing}
                                     >
                                         {p.organization.text
                                             ? getOrganizationText(
@@ -394,8 +402,9 @@ const Participants = ({
                                         data={ParticipantType}
                                         label={'Type'}
                                         disabled={
+                                            disableEditing ||
                                             p.organization.value ==
-                                            OrganizationsEnum.External
+                                                OrganizationsEnum.External
                                         }
                                     >
                                         {p.type}
@@ -432,6 +441,7 @@ const Participants = ({
                                                 label={'Person'}
                                                 maxHeight="300px"
                                                 variant="form"
+                                                disabled={disableEditing}
                                                 onFilter={(
                                                     input: string
                                                 ): void =>
@@ -495,6 +505,7 @@ const Participants = ({
                                             }
                                             roles={getRolesCopy()}
                                             label={'Role'}
+                                            disabled={disableEditing}
                                         >
                                             {p.role ? (
                                                 <Tooltip
@@ -516,7 +527,7 @@ const Participants = ({
                                     </div>
                                 )}
                                 <div>
-                                    {index > 1 && (
+                                    {index > 1 && !disableEditing && (
                                         <>
                                             <Button
                                                 title="Delete"

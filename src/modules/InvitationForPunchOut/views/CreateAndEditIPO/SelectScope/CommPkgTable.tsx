@@ -186,9 +186,11 @@ const CommPkgTable = forwardRef(
                         (result) => {
                             setFilteredCommPkgs(result.commPkgs);
                             setSelectAll(
-                                result.commPkgs.every(
-                                    (commpkg) => commpkg.system,
-                                    result.commPkgs[0].system
+                                result.commPkgs.every((commpkg) =>
+                                    hasSameSystem(
+                                        commpkg.system,
+                                        result.commPkgs[0].system
+                                    )
                                 )
                             );
                             setData(result.commPkgs);

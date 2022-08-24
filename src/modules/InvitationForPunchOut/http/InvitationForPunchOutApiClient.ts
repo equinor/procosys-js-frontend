@@ -197,6 +197,7 @@ interface IPO {
     additionalConstructionCompanyReps: string[];
     mcPkgNos?: string[];
     commPkgNos?: string[];
+    projectName: string;
 }
 
 type IPOFilter = {
@@ -340,7 +341,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getIPOs(
-        projectName: string,
+        projectName: string | null,
         page: number,
         pageSize: number,
         orderBy: string | null,
@@ -349,6 +350,8 @@ class InvitationForPunchOutApiClient extends ApiClient {
         setRequestCanceller?: RequestCanceler
     ): Promise<IPOsResponse> {
         const endpoint = '/Invitations';
+
+        projectName = projectName == 'All projects' ? null : projectName;
         const settings: AxiosRequestConfig = {
             params: {
                 projectName: projectName,
@@ -590,6 +593,34 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     updatedMcPkgScope: mcPkgScope,
                     updatedCommPkgScope: commPkgScope,
                     rowVersion: rowVersion,
+                },
+                settings
+            );
+            return result.data;
+        } catch (error) {
+            throw new IpoApiError(error as AxiosError);
+        }
+    }
+
+    /**
+     * Update IPO participants
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async updateIpoParticipants(
+        ipoId: number,
+        participants: ParticipantDto[],
+        setRequestCanceller?: RequestCanceler
+    ): Promise<number> {
+        const endpoint = `/Invitations/${ipoId}/Participants`;
+        const settings: AxiosRequestConfig = {};
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.put(
+                endpoint,
+                {
+                    updatedParticipants: participants,
                 },
                 settings
             );
@@ -1196,13 +1227,15 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async exportInvitationsToExcel(
-        projectName: string,
+        projectName: string | null,
         sortProperty: string | null,
         sortDirection: string | null,
         iPOFilter: IPOFilter,
         setRequestCanceller?: RequestCanceler
     ): Promise<BlobPart> {
         const endpoint = '/Invitations/ExportInvitationsToExcel';
+
+        projectName = projectName == 'All projects' ? null : projectName;
 
         const settings: AxiosRequestConfig = {
             params: {

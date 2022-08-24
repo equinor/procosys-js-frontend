@@ -40,7 +40,7 @@ import { useHistory } from 'react-router-dom';
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
-    { title: 'Punch-out completed', isCompleted: false },
+    { title: 'Punch-out complete', isCompleted: false },
     { title: 'Punch-out accepted by company', isCompleted: false },
 ];
 
@@ -514,9 +514,20 @@ const ViewIPO = (): JSX.Element => {
                         title={invitation.title}
                         organizer={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
                         participants={invitation.participants}
-                        isEditable={invitation.status == IpoStatusEnum.PLANNED}
-                        showEditButton={invitation.canEdit}
-                        canDelete={invitation.canDelete}
+                        isEditable={
+                            invitation.status == IpoStatusEnum.PLANNED ||
+                            (isAdmin && isUsingAdminRights)
+                        }
+                        showEditButton={
+                            invitation.canEdit ||
+                            (isAdmin && isUsingAdminRights)
+                        }
+                        canDelete={
+                            invitation.canDelete ||
+                            (invitation.status === IpoStatusEnum.CANCELED &&
+                                isAdmin &&
+                                isUsingAdminRights)
+                        }
                         canCancel={invitation.canCancel}
                         deletePunchOut={deletePunchOut}
                         cancelPunchOut={cancelPunchOut}

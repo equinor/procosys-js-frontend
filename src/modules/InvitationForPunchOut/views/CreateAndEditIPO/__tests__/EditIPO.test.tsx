@@ -11,7 +11,7 @@ configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subse
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
-    { title: 'Punch-out completed', isCompleted: false },
+    { title: 'Punch-out complete', isCompleted: false },
     { title: 'Punch-out accepted by company', isCompleted: false },
 ];
 
@@ -216,37 +216,6 @@ describe('<EditIPO />', () => {
                 }}
                 isAdmin={false}
                 isUsingAdminRights={false}
-                setIsUsingAdminRights={(): void => {
-                    /*mock*/
-                }}
-            />
-        );
-
-        expect(queryByText('Delete IPO')).toBeInTheDocument();
-    });
-
-    it('Should display "Delete IPO"-button when isCancelled is true, isUsingAdminRights is true and canDelete is false', async () => {
-        const { queryByText } = render(
-            <ViewIPOHeader
-                ipoId={1}
-                steps={initialSteps}
-                isCancelled={true}
-                currentStep={1}
-                title={'test'}
-                organizer="test"
-                participants={[]}
-                isEditable={true}
-                showEditButton={true}
-                canDelete={false}
-                deletePunchOut={(): void => {
-                    /*mock*/
-                }}
-                canCancel={true}
-                cancelPunchOut={(): void => {
-                    /*mock*/
-                }}
-                isAdmin={false}
-                isUsingAdminRights={true}
                 setIsUsingAdminRights={(): void => {
                     /*mock*/
                 }}

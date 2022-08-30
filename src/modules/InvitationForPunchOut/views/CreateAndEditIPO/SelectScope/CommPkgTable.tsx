@@ -49,7 +49,10 @@ const getSection = (sysString: string): string => {
 // Does it have a section? If not, return true. If yes, test if section is the same
 const hasSameSection = (sysString1: string, sysString2: string): boolean => {
     // Count number of "pipes". If two, check if section is the same. If one, return true
-    if (sysString1.split('|').length - 1 == 2)
+    if (
+        sysString1.split('|').length - 1 == 2 ||
+        sysString2.split('|').length - 1 == 2
+    )
         return getSection(sysString1) === getSection(sysString2);
     else return true;
 };

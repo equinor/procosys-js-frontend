@@ -32,6 +32,7 @@ import { set } from 'date-fns';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import { Label } from '@equinor/eds-core-react';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -65,6 +66,11 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] =
         useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
+    const [date, setDate] = useState<string>(
+        formatForDatePicker(generalInfo.startTime, 'yyyy-MM-dd')
+    );
+    const [startTime, setStartTime] = useState<string | null>();
+    const [endTime, setEndTime] = useState<string>();
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -107,6 +113,7 @@ const GeneralInfo = ({
 
     const handleSetDate = (dateString: string): void => {
         const date = new Date(dateString);
+        setDate(dateString);
         if (!isValidDate(date)) {
             setGeneralInfo((gi) => {
                 return { ...gi, startTime: undefined, endTime: undefined };
@@ -134,8 +141,14 @@ const GeneralInfo = ({
         }
     };
 
-    const handleSetTime = (from: 'start' | 'end', timeString: string): void => {
+    const handleSetTime = (
+        from: 'start' | 'end',
+        timeString: string | null
+    ): void => {
+        if (timeString == null) return;
         const timeSplit = timeString.split(':');
+        console.log(timeString);
+        from === 'start' ? setStartTime(timeString) : setEndTime(timeString);
         if (timeSplit[0] && timeSplit[1]) {
             if (from === 'start') {
                 const newTime = set(
@@ -329,6 +342,20 @@ const GeneralInfo = ({
                         ): void => handleSetDate(event.target.value)}
                         disabled={isDisabled}
                     />
+                    <DatePicker
+                        renderInput={(props): JSX.Element => (
+                            <DateTimeField {...props} />
+                        )}
+                        value={date}
+                        onChange={(
+                            event: ChangeEvent<
+                                HTMLInputElement | HTMLTextAreaElement
+                            > | null
+                        ): void => {
+                            if (event) handleSetDate(event.target.value);
+                        }}
+                        disabled={isDisabled}
+                    />
                 </div>
                 <div>
                     <Label label={'Start'} />
@@ -350,6 +377,16 @@ const GeneralInfo = ({
                                 HTMLInputElement | HTMLTextAreaElement
                             >
                         ): void => handleSetTime('start', event.target.value)}
+                        disabled={isDisabled}
+                    />
+                    <TimePicker
+                        renderInput={(props): JSX.Element => (
+                            <DateTimeField {...props} />
+                        )}
+                        value={startTime}
+                        onChange={(newValue: string | null): void => {
+                            setStartTime(newValue);
+                        }}
                         disabled={isDisabled}
                     />
                 </div>

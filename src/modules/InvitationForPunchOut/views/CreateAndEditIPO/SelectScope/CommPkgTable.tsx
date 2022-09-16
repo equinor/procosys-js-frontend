@@ -52,9 +52,12 @@ const hasSameSection = (sysString1: string, sysString2: string): boolean => {
     if (
         sysString1.split('|').length - 1 == 2 ||
         sysString2.split('|').length - 1 == 2
-    )
+    ) {
+        console.log(getSection(sysString1));
+        console.log(getSection(sysString2));
+        console.log(getSection(sysString1) === getSection(sysString2));
         return getSection(sysString1) === getSection(sysString2);
-    else return true;
+    } else return true;
 };
 
 const CommPkgTable = forwardRef(
@@ -195,26 +198,29 @@ const CommPkgTable = forwardRef(
 
         const getCommPkgsByQuery = (query: DataQuery): void => {
             if (commPkgNo == null) {
-                if (!filter.trim()) {
-                    setData([]);
-                    setMaxRows(0);
-                } else {
-                    getCommPkgsByFilter(query.pageSize, query.pageIndex).then(
-                        (result) => {
-                            setFilteredCommPkgs(result.commPkgs);
-                            setSelectAll(
-                                result.commPkgs.every((commpkg) =>
-                                    hasSameSection(
+                getCommPkgsByFilter(query.pageSize, query.pageIndex).then(
+                    (result) => {
+                        setFilteredCommPkgs(result.commPkgs);
+                        setSelectAll(
+                            result.commPkgs.every((commpkg) => {
+                                const x = hasSameSection(
+                                    commpkg.system,
+                                    result.commPkgs[0].system
+                                );
+                                let y = true;
+                                if (selectedCommPkgScope[0]) {
+                                    y = hasSameSection(
                                         commpkg.system,
-                                        result.commPkgs[0].system
-                                    )
-                                )
-                            );
-                            setData(result.commPkgs);
-                            setMaxRows(result.maxAvailable);
-                        }
-                    );
-                }
+                                        selectedCommPkgScope[0].system
+                                    );
+                                }
+                                return x && y;
+                            })
+                        );
+                        setData(result.commPkgs);
+                        setMaxRows(result.maxAvailable);
+                    }
+                );
             } else {
                 getCommPkgsByCommPkgNo(query.pageSize, query.pageIndex).then(
                     (result) => {

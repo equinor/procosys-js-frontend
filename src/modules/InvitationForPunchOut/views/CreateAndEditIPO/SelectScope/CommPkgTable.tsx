@@ -53,9 +53,6 @@ const hasSameSection = (sysString1: string, sysString2: string): boolean => {
         sysString1.split('|').length - 1 == 2 ||
         sysString2.split('|').length - 1 == 2
     ) {
-        console.log(getSection(sysString1));
-        console.log(getSection(sysString2));
-        console.log(getSection(sysString1) === getSection(sysString2));
         return getSection(sysString1) === getSection(sysString2);
     } else return true;
 };

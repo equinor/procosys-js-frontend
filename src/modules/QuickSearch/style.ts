@@ -273,7 +273,7 @@ export const QuickSearchResultsContainer = styled.div`
     background: white;
     border: 1px solid lightgray;
     border-radius: 4px;
-    z-index: 20;
+    z-index: 300;
     padding-top: 8px;
     padding-bottom: 8px;
     overflow: auto;

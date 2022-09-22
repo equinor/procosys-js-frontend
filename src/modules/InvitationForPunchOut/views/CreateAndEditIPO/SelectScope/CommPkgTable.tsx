@@ -200,18 +200,24 @@ const CommPkgTable = forwardRef(
                         setFilteredCommPkgs(result.commPkgs);
                         setSelectAll(
                             result.commPkgs.every((commpkg) => {
-                                const x = hasSameSection(
-                                    commpkg.system,
-                                    result.commPkgs[0].system
-                                );
-                                let y = true;
-                                if (selectedCommPkgScope[0]) {
-                                    y = hasSameSection(
+                                const searchResultsHaveSameSection =
+                                    hasSameSection(
                                         commpkg.system,
-                                        selectedCommPkgScope[0].system
+                                        result.commPkgs[0].system
                                     );
+                                let selectedScopeAndSearchResultsHaveSameSection =
+                                    true;
+                                if (selectedCommPkgScope[0]) {
+                                    selectedScopeAndSearchResultsHaveSameSection =
+                                        hasSameSection(
+                                            commpkg.system,
+                                            selectedCommPkgScope[0].system
+                                        );
                                 }
-                                return x && y;
+                                return (
+                                    searchResultsHaveSameSection &&
+                                    selectedScopeAndSearchResultsHaveSameSection
+                                );
                             })
                         );
                         setData(result.commPkgs);

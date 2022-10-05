@@ -53,32 +53,33 @@
 //     },
 // ];
 //
-// describe('<CustomPopover />', () => {
-//     it('Should open the popover on click', async () => {
-//         const { getByTestId, getAllByRole } = await renderWithTheme(
-//             <CustomPopover participant={participants[0]} />
-//         );
-//         await act(async () => {
-//             const button = getByTestId('popover-anchor-ref');
-//             fireEvent.click(button);
-//         });
-//         const buttons = getAllByRole('button');
-//         expect(buttons).toHaveLength(2);
-//     });
-//     it('Should render every person and the correct responses for the correct people', async () => {
-//         const { getByTestId } = renderWithTheme(
-//             <CustomPopover participant={participants[0]} />
-//         );
-//         await act(async () => {
-//             const button = getByTestId('popover-anchor-ref');
-//             fireEvent.click(button);
-//         });
-//         participants[0].functionalRole.persons.forEach((person) => {
-//             const response = getByTestId(person.id.toString() + 'row', {
-//                 exact: false,
-//             });
-//             expect(response).toHaveTextContent(person.firstName);
-//             expect(response).toHaveTextContent(person.response);
-//         });
-//     });
-// });
+describe('<CustomPopover />', () => {
+    it.todo('fix tests when react is upgradeable');
+    //     it('Should open the popover on click', async () => {
+    //         const { getByTestId, getAllByRole } = await renderWithTheme(
+    //             <CustomPopover participant={participants[0]} />
+    //         );
+    //         await act(async () => {
+    //             const button = getByTestId('popover-anchor-ref');
+    //             fireEvent.click(button);
+    //         });
+    //         const buttons = getAllByRole('button');
+    //         expect(buttons).toHaveLength(2);
+    //     });
+    //     it('Should render every person and the correct responses for the correct people', async () => {
+    //         const { getByTestId } = renderWithTheme(
+    //             <CustomPopover participant={participants[0]} />
+    //         );
+    //         await act(async () => {
+    //             const button = getByTestId('popover-anchor-ref');
+    //             fireEvent.click(button);
+    //         });
+    //         participants[0].functionalRole.persons.forEach((person) => {
+    //             const response = getByTestId(person.id.toString() + 'row', {
+    //                 exact: false,
+    //             });
+    //             expect(response).toHaveTextContent(person.firstName);
+    //             expect(response).toHaveTextContent(person.response);
+    //         });
+    //     });
+});

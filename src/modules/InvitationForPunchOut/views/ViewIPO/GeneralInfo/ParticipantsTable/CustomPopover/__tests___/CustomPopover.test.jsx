@@ -1,6 +1,6 @@
 import { act, fireEvent, render } from '@testing-library/react';
 
-import CustomPopover from '../index';
+import CustomPopover from '../CustomPopover';
 import { OutlookResponseType } from '../../../../enums';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';

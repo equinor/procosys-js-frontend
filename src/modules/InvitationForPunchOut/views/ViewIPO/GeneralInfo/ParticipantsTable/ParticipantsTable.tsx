@@ -8,7 +8,7 @@ import {
 } from './style';
 import { Participant } from '../../types';
 import React, { useCallback, useEffect, useState } from 'react';
-import CustomPopover from './CustomPopover';
+import CustomPopover from './CustomPopover/CustomPopover';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
 import { OutlookResponseType } from '../../enums';

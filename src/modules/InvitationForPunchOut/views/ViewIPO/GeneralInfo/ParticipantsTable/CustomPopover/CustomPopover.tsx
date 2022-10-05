@@ -12,6 +12,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { Participant } from '../../../types';
 import { Popover } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
+import { Icon } from '@equinor/eds-core-react';
 
 interface CustomPopoverProps {
     participant: Participant;
@@ -42,10 +43,28 @@ const CustomPopover = ({ participant }: CustomPopoverProps): JSX.Element => {
             <FloatingPopover
                 onClose={togglePopover}
                 open={isActive}
-                placement="right"
+                placement="right-end"
                 anchorEl={anchorRef.current}
             >
-                <Popover.Title>{participant.functionalRole.code}</Popover.Title>
+                <Popover.Header>
+                    <Popover.Title>
+                        {participant.functionalRole.code}
+                    </Popover.Title>
+                    <Button
+                        style={{ height: '32px', width: '32px' }}
+                        variant="ghost_icon"
+                        aria-label="Close popover"
+                        onClick={togglePopover}
+                    >
+                        <EdsIcon
+                            name="close"
+                            size={24}
+                            color={
+                                tokens.colors.interactive.primary__resting.rgba
+                            }
+                        />
+                    </Button>
+                </Popover.Header>
                 <Popover.Content>
                     <CustomTable>
                         {participant.functionalRole.persons.map((person) => {

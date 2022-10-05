@@ -34,7 +34,7 @@ export default class ApiClient extends HttpClient {
                         await this.authService.getAccessTokenAsync(resource);
                     if (!accessToken) throw 'Failed to get AccessToken';
                     if (config.headers) {
-                        config.headers.common['Authorization'] =
+                        config.headers['Authorization'] =
                             'Bearer ' + accessToken.token;
                     }
                 } catch (authError) {

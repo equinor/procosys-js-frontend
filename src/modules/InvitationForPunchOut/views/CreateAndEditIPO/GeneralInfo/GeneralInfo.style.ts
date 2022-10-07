@@ -66,10 +66,20 @@ export const PoTypeContainer = styled.div`
     width: 250px;
 `;
 
+export const Column = styled.div`
+    display: grid;
+    > * {
+        margin-bottom: calc(var(--grid-unit) * 3);
+    }
+`;
+
 export const FormContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    max-width: 600px;
+    display: grid;
+    grid-template-columns: repeat(2, 600px);
+    grid-column-gap: 70px;
+    @media (max-width: 850px) {
+        grid-template-columns: repeat(1, 1fr);
+    }
     > * {
         margin-bottom: calc(var(--grid-unit) * 3);
     }

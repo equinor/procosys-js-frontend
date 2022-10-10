@@ -8,6 +8,7 @@ import {
     LocationContainer,
     PoTypeContainer,
     TextContainer,
+    Column,
 } from './GeneralInfo.style';
 import {
     GeneralInfoDetails,
@@ -170,309 +171,344 @@ const GeneralInfo = ({
 
     return (
         <FormContainer>
-            <FieldContainer>
-                <Dropdown
-                    label={'Project'}
-                    maxHeight="300px"
-                    variant="form"
-                    text={generalInfo.projectName || 'Select'}
-                    onFilter={setFilterForProjects}
-                    disabled={fromMain || isEditMode || isDisabled}
-                >
-                    {filteredProjects &&
-                        filteredProjects.map((projectItem, index) => {
-                            return (
-                                <DropdownItem
-                                    key={index}
-                                    onClick={(event: React.MouseEvent): void =>
-                                        setProjectForm(event, index)
-                                    }
-                                >
-                                    <div>{projectItem.description}</div>
-                                    <div style={{ fontSize: '12px' }}>
-                                        {projectItem.name}
-                                    </div>
-                                </DropdownItem>
-                            );
-                        })}
-                </Dropdown>
-                {errors && errors['projectName'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        >
-                            {errors['projectName']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </FieldContainer>
-            <FieldContainer>
-                <PoTypeContainer id="po-type-select">
-                    <SelectInput
-                        onChange={setPoTypeForm}
-                        data={poTypes}
-                        label={'Type of punch round'}
-                        disabled={isDisabled}
+            <Column>
+                <FieldContainer>
+                    <Dropdown
+                        label={'Project'}
+                        maxHeight="300px"
+                        variant="form"
+                        text={generalInfo.projectName || 'Select'}
+                        onFilter={setFilterForProjects}
+                        disabled={fromMain || isEditMode || isDisabled}
                     >
-                        {(generalInfo.poType && generalInfo.poType.text) ||
-                            'Select'}
-                    </SelectInput>
-                </PoTypeContainer>
-                {errors && errors['poType'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        >
-                            {errors['poType']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </FieldContainer>
-            <FieldContainer>
-                <TextField
-                    data-testid="title"
-                    id={'title'}
-                    label="Title"
-                    placeholder="Write here"
-                    defaultValue={generalInfo.title}
-                    onChange={(
-                        e: React.ChangeEvent<HTMLInputElement>
-                    ): void => {
-                        setGeneralInfo((gi) => {
-                            return { ...gi, title: e.target.value };
-                        });
-                    }}
-                    disabled={isDisabled}
-                />
-                {errors && errors['title'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        >
-                            {errors['title']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </FieldContainer>
-            <FieldContainer>
-                <TextField
-                    id="description"
-                    placeholder="Write here"
-                    label="Description"
-                    meta="Optional"
-                    defaultValue={generalInfo.description}
-                    multiline
-                    onChange={(
-                        e: React.ChangeEvent<HTMLInputElement>
-                    ): void => {
-                        setGeneralInfo((gi) => {
-                            return { ...gi, description: e.target.value };
-                        });
-                    }}
-                    disabled={isDisabled}
-                />
-                {errors && errors['description'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        >
-                            {errors['description']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </FieldContainer>
-            <Typography constiant="h5">
-                Date and time for punch round
-            </Typography>
-            <DateTimeContainer>
-                <div>
-                    <Label label={'Date'} />
-                    <DateTimeField
-                        InputProps={{ inputProps: { max: '2121-01-01' } }}
-                        id="startDate"
-                        type="date"
-                        value={formatForDatePicker(
-                            generalInfo.startTime,
-                            'yyyy-MM-dd'
-                        )}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
+                        {filteredProjects &&
+                            filteredProjects.map((projectItem, index) => {
+                                return (
+                                    <DropdownItem
+                                        key={index}
+                                        onClick={(
+                                            event: React.MouseEvent
+                                        ): void => setProjectForm(event, index)}
+                                    >
+                                        <div>{projectItem.description}</div>
+                                        <div style={{ fontSize: '12px' }}>
+                                            {projectItem.name}
+                                        </div>
+                                    </DropdownItem>
+                                );
+                            })}
+                    </Dropdown>
+                    {errors && errors['projectName'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
                             >
-                        ): void => handleSetDate(event.target.value)}
-                        disabled={isDisabled}
-                    />
-                </div>
-                <div>
-                    <Label label={'Start'} />
-                    <DateTimeField
-                        id="startTime"
-                        type="time"
-                        onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
-                            e.preventDefault()
-                        }
-                        value={formatForDatePicker(
-                            generalInfo.startTime,
-                            'HH:mm'
-                        )}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                            >
-                        ): void => handleSetTime('start', event.target.value)}
-                        disabled={isDisabled}
-                    />
-                </div>
-                <div>
-                    <Label label={'End'} />
-                    <DateTimeField
-                        id="endTime"
-                        type="time"
-                        onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
-                            e.preventDefault()
-                        }
-                        value={formatForDatePicker(
-                            generalInfo.endTime,
-                            'HH:mm'
-                        )}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                            >
-                        ): void => handleSetTime('end', event.target.value)}
-                        disabled={isDisabled}
-                    />
-                </div>
-                {errors && errors['time'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
+                                {errors['projectName']}
+                            </Typography>
+                        </ErrorContainer>
+                    )}
+                </FieldContainer>
+                <FieldContainer>
+                    <PoTypeContainer id="po-type-select">
+                        <SelectInput
+                            onChange={setPoTypeForm}
+                            data={poTypes}
+                            label={'Type of punch round'}
+                            disabled={isDisabled}
                         >
-                            {errors['time']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </DateTimeContainer>
-
-            <FieldContainer>
-                <LocationContainer>
+                            {(generalInfo.poType && generalInfo.poType.text) ||
+                                'Select'}
+                        </SelectInput>
+                    </PoTypeContainer>
+                    {errors && errors['poType'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            >
+                                {errors['poType']}
+                            </Typography>
+                        </ErrorContainer>
+                    )}
+                </FieldContainer>
+                <FieldContainer>
                     <TextField
-                        data-testid="location"
-                        id="location"
+                        data-testid="title"
+                        id={'title'}
+                        label="Title"
                         placeholder="Write here"
-                        label="Location"
-                        meta="Optional"
-                        defaultValue={generalInfo.location}
+                        defaultValue={generalInfo.title}
                         onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                         ): void => {
                             setGeneralInfo((gi) => {
-                                return { ...gi, location: e.target.value };
+                                return { ...gi, title: e.target.value };
                             });
                         }}
                         disabled={isDisabled}
                     />
-                </LocationContainer>
-                {errors && errors['location'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        >
-                            {errors['location']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </FieldContainer>
-            <FieldContainer>
-                <ConfirmationTextContainer>
-                    {isEditMode ? (
-                        <Checkbox disabled checked />
-                    ) : (
-                        <Checkbox
-                            checked={confirmationChecked}
-                            onChange={(): void =>
-                                setConfirmationChecked(
-                                    (confirmed) => !confirmed
-                                )
-                            }
-                        />
+                    {errors && errors['title'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            >
+                                {errors['title']}
+                            </Typography>
+                        </ErrorContainer>
                     )}
-                    <TextContainer>
-                        <Typography variant="body_short" fontWeight={400}>
-                            I hereby confirm that prior to common punch-out all
-                            relevant MCCR shall be signed and all punch items
-                            registered.
-                        </Typography>
-                        <br />
-                        <Typography variant="body_short" fontWeight={400}>
-                            Mechanical Completion means that the installation is
-                            built in accordance with relevant drawings and
-                            specifications. All specified tests and inspections
-                            are carried out and documented in a uniform way.
-                        </Typography>
-                    </TextContainer>
-                </ConfirmationTextContainer>
-                {errors && errors['confirmation'] && (
-                    <ErrorContainer>
-                        <EdsIcon
-                            name="error_filled"
-                            size={16}
-                            color={tokens.colors.interactive.danger__text.rgba}
+                </FieldContainer>
+                <FieldContainer>
+                    <TextField
+                        id="description"
+                        placeholder="Write here"
+                        label="Description"
+                        meta="Optional"
+                        defaultValue={generalInfo.description}
+                        multiline
+                        onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                        ): void => {
+                            setGeneralInfo((gi) => {
+                                return { ...gi, description: e.target.value };
+                            });
+                        }}
+                        disabled={isDisabled}
+                    />
+                    {errors && errors['description'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            >
+                                {errors['description']}
+                            </Typography>
+                        </ErrorContainer>
+                    )}
+                </FieldContainer>
+            </Column>
+            <Column>
+                <Typography constiant="h5">
+                    Date and time for punch round
+                </Typography>
+                <DateTimeContainer>
+                    <div>
+                        <Label label={'Date'} />
+                        <DateTimeField
+                            InputProps={{ inputProps: { max: '2121-01-01' } }}
+                            id="startDate"
+                            type="date"
+                            value={formatForDatePicker(
+                                generalInfo.startTime,
+                                'yyyy-MM-dd'
+                            )}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            onChange={(
+                                event: ChangeEvent<
+                                    HTMLInputElement | HTMLTextAreaElement
+                                >
+                            ): void => handleSetDate(event.target.value)}
+                            disabled={isDisabled}
                         />
-                        <Typography
-                            variant="caption"
-                            color={tokens.colors.interactive.danger__text.rgba}
-                        >
-                            {errors['confirmation']}
-                        </Typography>
-                    </ErrorContainer>
-                )}
-            </FieldContainer>
+                    </div>
+                    <div>
+                        <Label label={'Start'} />
+                        <DateTimeField
+                            id="startTime"
+                            type="time"
+                            onClick={(
+                                e: React.MouseEvent<HTMLDivElement>
+                            ): void => e.preventDefault()}
+                            value={formatForDatePicker(
+                                generalInfo.startTime,
+                                'HH:mm'
+                            )}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            onChange={(
+                                event: ChangeEvent<
+                                    HTMLInputElement | HTMLTextAreaElement
+                                >
+                            ): void =>
+                                handleSetTime('start', event.target.value)
+                            }
+                            disabled={isDisabled}
+                        />
+                    </div>
+                    <div>
+                        <Label label={'End'} />
+                        <DateTimeField
+                            id="endTime"
+                            type="time"
+                            onClick={(
+                                e: React.MouseEvent<HTMLDivElement>
+                            ): void => e.preventDefault()}
+                            value={formatForDatePicker(
+                                generalInfo.endTime,
+                                'HH:mm'
+                            )}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            onChange={(
+                                event: ChangeEvent<
+                                    HTMLInputElement | HTMLTextAreaElement
+                                >
+                            ): void => handleSetTime('end', event.target.value)}
+                            disabled={isDisabled}
+                        />
+                    </div>
+                    {errors && errors['time'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            >
+                                {errors['time']}
+                            </Typography>
+                        </ErrorContainer>
+                    )}
+                </DateTimeContainer>
+
+                <FieldContainer>
+                    <LocationContainer>
+                        <TextField
+                            data-testid="location"
+                            id="location"
+                            placeholder="Write here"
+                            label="Location"
+                            meta="Optional"
+                            defaultValue={generalInfo.location}
+                            onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                            ): void => {
+                                setGeneralInfo((gi) => {
+                                    return { ...gi, location: e.target.value };
+                                });
+                            }}
+                            disabled={isDisabled}
+                        />
+                    </LocationContainer>
+                    {errors && errors['location'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            >
+                                {errors['location']}
+                            </Typography>
+                        </ErrorContainer>
+                    )}
+                </FieldContainer>
+                <FieldContainer>
+                    <ConfirmationTextContainer>
+                        {isEditMode ? (
+                            <Checkbox disabled checked />
+                        ) : (
+                            <Checkbox
+                                checked={confirmationChecked}
+                                onChange={(): void =>
+                                    setConfirmationChecked(
+                                        (confirmed) => !confirmed
+                                    )
+                                }
+                            />
+                        )}
+                        <TextContainer>
+                            <Typography variant="body_short" fontWeight={400}>
+                                I hereby confirm that prior to common punch-out
+                                all relevant MCCR shall be signed and all punch
+                                items registered.
+                            </Typography>
+                            <br />
+                            <Typography variant="body_short" fontWeight={400}>
+                                Mechanical Completion means that the
+                                installation is built in accordance with
+                                relevant drawings and specifications. All
+                                specified tests and inspections are carried out
+                                and documented in a uniform way.
+                            </Typography>
+                        </TextContainer>
+                    </ConfirmationTextContainer>
+                    {errors && errors['confirmation'] && (
+                        <ErrorContainer>
+                            <EdsIcon
+                                name="error_filled"
+                                size={16}
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            />
+                            <Typography
+                                variant="caption"
+                                color={
+                                    tokens.colors.interactive.danger__text.rgba
+                                }
+                            >
+                                {errors['confirmation']}
+                            </Typography>
+                        </ErrorContainer>
+                    )}
+                </FieldContainer>
+            </Column>
         </FormContainer>
     );
 };

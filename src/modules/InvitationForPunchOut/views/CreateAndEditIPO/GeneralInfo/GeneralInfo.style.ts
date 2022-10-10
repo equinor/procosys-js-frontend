@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
+import { Breakpoints } from '@procosys/core/styling';
 
 interface DropdownProps {
     disabled?: boolean;
@@ -67,7 +68,6 @@ export const PoTypeContainer = styled.div`
 `;
 
 export const Column = styled.div`
-    display: grid;
     > * {
         margin-bottom: calc(var(--grid-unit) * 3);
     }
@@ -76,8 +76,8 @@ export const Column = styled.div`
 export const FormContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 600px);
-    grid-column-gap: 70px;
-    @media (max-width: 850px) {
+    grid-column-gap: calc(var(--grid-unit) * 8);
+    ${Breakpoints.TABLET} {
         grid-template-columns: repeat(1, 1fr);
     }
     > * {

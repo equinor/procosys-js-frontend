@@ -20,7 +20,6 @@ export const FormContainer = styled.div`
     ${Breakpoints.TABLET} {
         grid-template-columns: repeat(1, 1fr);
     }
-    flex-direction: column;
     width: 100%;
 `;
 

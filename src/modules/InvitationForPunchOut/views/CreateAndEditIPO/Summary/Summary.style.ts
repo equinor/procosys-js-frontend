@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Breakpoints } from '@procosys/core/styling';
 
 export const Container = styled.div`
     display: flex;
@@ -6,8 +7,19 @@ export const Container = styled.div`
     width: 100%;
 `;
 
+export const Column = styled.div`
+    > * {
+        margin-bottom: calc(var(--grid-unit) * 3);
+    }
+`;
+
 export const FormContainer = styled.div`
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 600px);
+    grid-column-gap: calc(var(--grid-unit) * 8);
+    ${Breakpoints.TABLET} {
+        grid-template-columns: repeat(1, 1fr);
+    }
     flex-direction: column;
     width: 100%;
 `;

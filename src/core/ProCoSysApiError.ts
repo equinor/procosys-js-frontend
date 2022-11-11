@@ -1,4 +1,5 @@
 import Axios, { AxiosError, AxiosResponse } from 'axios';
+import { isOfType } from './services/TypeGuard';
 
 interface ErrorResponse {
     ErrorCount: number;
@@ -7,6 +8,16 @@ interface ErrorResponse {
         ErrorMessage: string;
     }[];
 }
+
+export type Errors = {
+    IpoException: string[];
+    status: number;
+    title: string;
+};
+
+export type dataError = {
+    errors: Errors;
+};
 
 export class ProCoSysApiError extends Error {
     data: AxiosResponse | null;
@@ -31,7 +42,17 @@ export class ProCoSysApiError extends Error {
         } else if (error.response.status == 403) {
             super('You are not authorized to perform this operation.');
         } else if (error.response.status == 400) {
-            super(error.response.data ? `${error.response.data}` : undefined);
+            if (isOfType<dataError>(error.response.data, 'errors')) {
+                super(
+                    error.response.data
+                        ? `${error.response.data.errors.IpoException}`
+                        : undefined
+                );
+            } else {
+                super(
+                    error.response.data ? `${error.response.data}` : undefined
+                );
+            }
         } else {
             try {
                 const apiErrorResponse = error.response.data as ErrorResponse;

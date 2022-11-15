@@ -67,7 +67,9 @@ const GeneralInfo = ({
         useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [date, setDate] = useState<Date | undefined>(generalInfo.startTime);
-    const [startTime, setStartTime] = useState<string | null>(null);
+    const [startTime, setStartTime] = useState<string | null>(
+        generalInfo.endTime ? generalInfo.endTime.toString() : null
+    );
     const [endTime, setEndTime] = useState<string | null>(
         generalInfo.endTime ? generalInfo.endTime.toString() : null
     );

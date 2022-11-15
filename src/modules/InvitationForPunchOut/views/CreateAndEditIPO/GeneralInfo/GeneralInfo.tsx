@@ -155,16 +155,9 @@ const GeneralInfo = ({
                     minutes: time.getMinutes(),
                 }
             );
-            const newEndTime = generalInfo.endTime
-                ? newStart > generalInfo.endTime
-                    ? getEndTime(newStart)
-                    : set(new Date(), {
-                          hours: generalInfo.endTime.getHours(),
-                          minutes: generalInfo.endTime.getMinutes(),
-                      })
-                : getEndTime(newStart);
+            setDate(newStart);
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: newStart, endTime: newEndTime };
+                return { ...gi, startTime: newStart };
             });
         }
     };
@@ -334,18 +327,20 @@ const GeneralInfo = ({
                 <Typography constiant="h5">
                     Date and time for punch round
                 </Typography>
-                <div>
-                    <Label label={'Date'} />
-                    <DatePicker
-                        renderInput={(props): JSX.Element => (
-                            <DateTimeField {...props} />
-                        )}
-                        value={date}
-                        onChange={handleSetDate}
-                        disabled={isDisabled}
-                    />
-                </div>
-                <div>
+                <DateTimeContainer>
+                    <div>
+                        <Label label={'Date'} />
+                        <DatePicker
+                            renderInput={(props): JSX.Element => (
+                                <DateTimeField {...props} />
+                            )}
+                            value={date}
+                            onChange={handleSetDate}
+                            disabled={isDisabled}
+                        />
+                    </div>
+                </DateTimeContainer>
+                <DateTimeContainer>
                     <div>
                         <Label label={'Start'} />
                         <TimePicker
@@ -368,7 +363,7 @@ const GeneralInfo = ({
                             disabled={isDisabled}
                         />
                     </div>
-                </div>
+                </DateTimeContainer>
                 {errors && errors['time'] && (
                     <ErrorContainer>
                         <EdsIcon

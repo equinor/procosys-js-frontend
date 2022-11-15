@@ -127,6 +127,7 @@ const GeneralInfo = ({
                     date: date.getDate(),
                 }
             );
+            setStartTime(newStart.toString);
             const newEnd = set(
                 generalInfo.endTime ? generalInfo.endTime : new Date(),
                 {
@@ -135,6 +136,7 @@ const GeneralInfo = ({
                     date: date.getDate(),
                 }
             );
+            setEndTime(newEnd.toString());
             setGeneralInfo((gi) => {
                 return { ...gi, startTime: newStart, endTime: newEnd };
             });
@@ -144,18 +146,23 @@ const GeneralInfo = ({
     const handleSetStartTime = (time: Date | null): void => {
         setStartTime(time ? time.toString() : null);
         if (time == null || !isValidDate(time)) {
+            console.log('not valid start time');
             setGeneralInfo((gi) => {
                 return { ...gi, startTime: undefined };
             });
         } else {
-            const newStart = set(
-                generalInfo.startTime ? generalInfo.startTime : new Date(),
-                {
-                    hours: time.getHours(),
-                    minutes: time.getMinutes(),
-                }
-            );
-            setDate(newStart);
+            const newStart = set(date ? date : new Date(), {
+                hours: time.getHours(),
+                minutes: time.getMinutes(),
+            });
+            const newEndTime =
+                generalInfo.endTime && date
+                    ? set(date, {
+                          hours: generalInfo.endTime.getHours(),
+                          minutes: generalInfo.endTime.getMinutes(),
+                      })
+                    : getEndTime(newStart);
+            setEndTime(newEndTime.toString());
             setGeneralInfo((gi) => {
                 return { ...gi, startTime: newStart };
             });
@@ -165,17 +172,15 @@ const GeneralInfo = ({
     const handleSetEndTime = (time: Date | null): void => {
         setEndTime(time ? time.toString() : null);
         if (time == null || !isValidDate(time)) {
+            console.log('not valid end time');
             setGeneralInfo((gi) => {
                 return { ...gi, endTime: undefined };
             });
         } else {
-            const newEnd = set(
-                generalInfo.endTime ? generalInfo.endTime : new Date(),
-                {
-                    hours: time.getHours(),
-                    minutes: time.getMinutes(),
-                }
-            );
+            const newEnd = set(date ? date : new Date(), {
+                hours: time.getHours(),
+                minutes: time.getMinutes(),
+            });
             setGeneralInfo((gi) => {
                 return { ...gi, endTime: newEnd };
             });

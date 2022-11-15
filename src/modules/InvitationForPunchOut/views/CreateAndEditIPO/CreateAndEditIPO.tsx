@@ -79,6 +79,8 @@ const validateGeneralInfo = (
             });
     }
     if (startTime && endTime) {
+        console.log('start', startTime);
+        console.log('end', endTime);
         startTime >= endTime &&
             (errors = { ...errors, time: 'Start time must precede end time.' });
     }

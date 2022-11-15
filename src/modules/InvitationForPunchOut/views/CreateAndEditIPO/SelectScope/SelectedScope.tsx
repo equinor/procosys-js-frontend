@@ -50,7 +50,9 @@ const SelectedScope = ({
             <Accordion.Item key={commPkg.commPkgNo}>
                 <Accordion.Header>
                     {commPkg.commPkgNo}
-                    {!isDisabled && (
+                    {isDisabled ? (
+                        <></>
+                    ) : (
                         <Button
                             variant="ghost_icon"
                             onClick={(): void =>

@@ -11,6 +11,7 @@ import {
     Section,
     Subsection,
     TableSection,
+    Column,
 } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
 import { getFileName, getFileTypeIconName } from '../../utils';
@@ -125,171 +126,177 @@ const Summary = ({
     return (
         <Container>
             <FormContainer>
-                <Section>
-                    <Typography variant="h5">General info</Typography>
-                    <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>
-                            Selected project
-                        </Typography>
-                        <Typography variant="body_long">
-                            {generalInfo.projectName}
-                        </Typography>
-                    </Subsection>
-                    <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>
-                            Type
-                        </Typography>
-                        <Typography variant="body_long">
-                            {generalInfo.poType ? generalInfo.poType.text : '-'}
-                        </Typography>
-                    </Subsection>
-                    <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>
-                            Title
-                        </Typography>
-                        <Typography variant="body_long">
-                            {generalInfo.title}
-                        </Typography>
-                    </Subsection>
-                    <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>
-                            Description
-                        </Typography>
-                        <Typography variant="body_long">
-                            {generalInfo.description
-                                ? generalInfo.description
-                                : '-'}
-                        </Typography>
-                    </Subsection>
-                </Section>
-                <Section>
-                    <Typography variant="h5">
-                        Date and time for punch round
-                    </Typography>
-                    <div className="timeContainer">
+                <Column>
+                    <Section>
+                        <Typography variant="h5">General info</Typography>
                         <Subsection>
                             <Typography token={{ fontSize: '12px' }}>
-                                Date
+                                Selected project
                             </Typography>
                             <Typography variant="body_long">
-                                {getFormattedDate(generalInfo.startTime)}
+                                {generalInfo.projectName}
                             </Typography>
                         </Subsection>
                         <Subsection>
                             <Typography token={{ fontSize: '12px' }}>
-                                Start
+                                Type
                             </Typography>
                             <Typography variant="body_long">
-                                {getFormattedTime(generalInfo.startTime)}
+                                {generalInfo.poType
+                                    ? generalInfo.poType.text
+                                    : '-'}
                             </Typography>
                         </Subsection>
                         <Subsection>
                             <Typography token={{ fontSize: '12px' }}>
-                                End
+                                Title
                             </Typography>
                             <Typography variant="body_long">
-                                {getFormattedTime(generalInfo.endTime)}
+                                {generalInfo.title}
                             </Typography>
                         </Subsection>
-                    </div>
-                    <Subsection>
-                        <Typography token={{ fontSize: '12px' }}>
-                            Location
+                        <Subsection>
+                            <Typography token={{ fontSize: '12px' }}>
+                                Description
+                            </Typography>
+                            <Typography variant="body_long">
+                                {generalInfo.description
+                                    ? generalInfo.description
+                                    : '-'}
+                            </Typography>
+                        </Subsection>
+                    </Section>
+                    <Section>
+                        <Typography variant="h5">
+                            Date and time for punch round
                         </Typography>
-                        <Typography variant="body_long">
-                            {generalInfo.location ? generalInfo.location : '-'}
-                        </Typography>
-                    </Subsection>
-                </Section>
-
-                <Section>
-                    <Typography variant="h5">Reports added</Typography>
-                    <ReportsTable
-                        commPkgNumbers={commPkgScope.map((commPkg) => {
-                            return commPkg.commPkgNo;
-                        })}
-                        mcPkgNumbers={mcPkgScope.map((mcPkg) => {
-                            return mcPkg.mcPkgNo;
-                        })}
-                    />
-                </Section>
-
-                {commPkgScope &&
-                    generalInfo.projectName &&
-                    commPkgScope.length > 0 && (
-                        <>
-                            <Section>
-                                <Typography variant="h5">
-                                    Included Comm Packages
+                        <div className="timeContainer">
+                            <Subsection>
+                                <Typography token={{ fontSize: '12px' }}>
+                                    Date
                                 </Typography>
-                                <CommPkgsTable
-                                    commPkgScope={commPkgScope}
-                                    projectName={generalInfo.projectName}
-                                />
-                            </Section>
-                        </>
-                    )}
-                {mcPkgScope &&
-                    generalInfo.projectName &&
-                    mcPkgScope.length > 0 && (
-                        <>
-                            <Section>
-                                <Typography variant="h5">
-                                    Included MC Packages
+                                <Typography variant="body_long">
+                                    {getFormattedDate(generalInfo.startTime)}
                                 </Typography>
-                                <McPkgsTable
-                                    mcPkgScope={mcPkgScope.map((mcPkg) => {
-                                        return {
-                                            mcPkgNo: mcPkg.mcPkgNo,
-                                            description: mcPkg.description,
-                                            commPkgNo: mcPkg.commPkgNo,
-                                            system: mcPkg.system,
-                                        };
-                                    })}
-                                    projectName={generalInfo.projectName}
-                                />
-                            </Section>
-                        </>
-                    )}
+                            </Subsection>
+                            <Subsection>
+                                <Typography token={{ fontSize: '12px' }}>
+                                    Start
+                                </Typography>
+                                <Typography variant="body_long">
+                                    {getFormattedTime(generalInfo.startTime)}
+                                </Typography>
+                            </Subsection>
+                            <Subsection>
+                                <Typography token={{ fontSize: '12px' }}>
+                                    End
+                                </Typography>
+                                <Typography variant="body_long">
+                                    {getFormattedTime(generalInfo.endTime)}
+                                </Typography>
+                            </Subsection>
+                        </div>
+                        <Subsection>
+                            <Typography token={{ fontSize: '12px' }}>
+                                Location
+                            </Typography>
+                            <Typography variant="body_long">
+                                {generalInfo.location
+                                    ? generalInfo.location
+                                    : '-'}
+                            </Typography>
+                        </Subsection>
+                    </Section>
 
-                <TableSection>
-                    <Typography variant="h5">Participants</Typography>
-                    <Table>
-                        <Head>
-                            <Row>
-                                <Cell as="th" scope="col">
-                                    Organization
-                                </Cell>
-                                <Cell as="th" scope="col">
-                                    Person/Role
-                                </Cell>
-                            </Row>
-                        </Head>
-                        <Body>
-                            {participants.map((participant, i) =>
-                                getParticipants(participant, i)
-                            )}
-                        </Body>
-                    </Table>
-                </TableSection>
-                {attachmentList.length > 0 && (
+                    <Section>
+                        <Typography variant="h5">Reports added</Typography>
+                        <ReportsTable
+                            commPkgNumbers={commPkgScope.map((commPkg) => {
+                                return commPkg.commPkgNo;
+                            })}
+                            mcPkgNumbers={mcPkgScope.map((mcPkg) => {
+                                return mcPkg.mcPkgNo;
+                            })}
+                        />
+                    </Section>
+                    {attachmentList.length > 0 && (
+                        <TableSection>
+                            <Typography variant="h5">Attachments</Typography>
+                            <Table>
+                                <Head>
+                                    <Row>
+                                        <Cell as="th" width="30px" scope="col">
+                                            Type
+                                        </Cell>
+                                        <Cell as="th" scope="col">
+                                            Title
+                                        </Cell>
+                                    </Row>
+                                </Head>
+                                <Body>{attachmentList}</Body>
+                            </Table>
+                        </TableSection>
+                    )}
+                </Column>
+                <Column>
                     <TableSection>
-                        <Typography variant="h5">Attachments</Typography>
+                        <Typography variant="h5">Participants</Typography>
                         <Table>
                             <Head>
                                 <Row>
-                                    <Cell as="th" width="30px" scope="col">
-                                        Type
+                                    <Cell as="th" scope="col">
+                                        Organization
                                     </Cell>
                                     <Cell as="th" scope="col">
-                                        Title
+                                        Person/Role
                                     </Cell>
                                 </Row>
                             </Head>
-                            <Body>{attachmentList}</Body>
+                            <Body>
+                                {participants.map((participant, i) =>
+                                    getParticipants(participant, i)
+                                )}
+                            </Body>
                         </Table>
                     </TableSection>
-                )}
+                    {commPkgScope &&
+                        generalInfo.projectName &&
+                        commPkgScope.length > 0 && (
+                            <>
+                                <Section>
+                                    <Typography variant="h5">
+                                        Included Comm Packages
+                                    </Typography>
+                                    <CommPkgsTable
+                                        commPkgScope={commPkgScope}
+                                        projectName={generalInfo.projectName}
+                                    />
+                                </Section>
+                            </>
+                        )}
+                    {mcPkgScope &&
+                        generalInfo.projectName &&
+                        mcPkgScope.length > 0 && (
+                            <>
+                                <Section>
+                                    <Typography variant="h5">
+                                        Included MC Packages
+                                    </Typography>
+                                    <McPkgsTable
+                                        mcPkgScope={mcPkgScope.map((mcPkg) => {
+                                            return {
+                                                mcPkgNo: mcPkg.mcPkgNo,
+                                                description: mcPkg.description,
+                                                commPkgNo: mcPkg.commPkgNo,
+                                                system: mcPkg.system,
+                                            };
+                                        })}
+                                        projectName={generalInfo.projectName}
+                                    />
+                                </Section>
+                            </>
+                        )}
+                </Column>
             </FormContainer>
         </Container>
     );

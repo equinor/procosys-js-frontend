@@ -21,49 +21,33 @@ export class ProCoSysApiError extends Error {
             console.error('An unknown API error occured, error: ', error);
             super('Unknown error');
         } else if (error.response.status == 500) {
-            super(error.response.data);
+            super(error.response.data ? `${error.response.data}` : undefined);
         } else if (error.response.status == 409) {
             super(
                 'Data has been updated by another user. Please reload and start over!'
             );
         } else if (error.response.status == 404) {
-            super(error.response.data);
+            super(error.response.data ? `${error.response.data}` : undefined);
         } else if (error.response.status == 403) {
             super('You are not authorized to perform this operation.');
+        } else if (error.response.status == 400) {
+            super(error.response.data ? `${error.response.data}` : undefined);
         } else {
-            if (error.response.status == 400) {
-                try {
-                    // input and business validation errors
-                    let validationErrorMessage = error.response.data.title;
-                    const validationErrors = error.response.data.errors;
+            try {
+                const apiErrorResponse = error.response.data as ErrorResponse;
+                let errorMessage = `${error.response.status} (${error.response.statusText})`;
 
-                    for (const validatedField in validationErrors) {
-                        const fieldErrors =
-                            validationErrors[validatedField].join(' | ');
-                        validationErrorMessage += ` ${fieldErrors} `;
-                    }
-
-                    super(validationErrorMessage);
-                } catch (exception) {
-                    super('Failed to parse validation errors');
+                if (error.response.data) {
+                    errorMessage = apiErrorResponse.Errors.map(
+                        (err) => err.ErrorMessage
+                    ).join(', ');
                 }
-            } else {
-                try {
-                    const apiErrorResponse = error.response
-                        .data as ErrorResponse;
-                    let errorMessage = `${error.response.status} (${error.response.statusText})`;
-
-                    if (error.response.data) {
-                        errorMessage = apiErrorResponse.Errors.map(
-                            (err) => err.ErrorMessage
-                        ).join(', ');
-                    }
-                    super(errorMessage);
-                } catch (err) {
-                    super('Failed to parse errors');
-                }
+                super(errorMessage);
+            } catch (err) {
+                super('Failed to parse errors');
             }
         }
+
         this.isCancel = cancel;
         this.data = error.response || null;
     }

@@ -40,14 +40,21 @@ interface CommPkgTableProps {
 
 const WAIT_INTERVAL = 300;
 
-const getSystem = (sysString: string): string => {
-    return sysString.lastIndexOf('|') !== -1
-        ? sysString.substr(0, sysString.lastIndexOf('|'))
+const getSection = (sysString: string): string => {
+    return sysString.indexOf('|') !== -1
+        ? sysString.substr(0, sysString.indexOf('|'))
         : sysString;
 };
 
-const hasSameSystem = (sysString1: string, sysString2: string): boolean => {
-    return getSystem(sysString1) === getSystem(sysString2);
+// Does it have a section? If not, return true. If yes, test if section is the same
+const hasSameSection = (sysString1: string, sysString2: string): boolean => {
+    // Count number of "pipes". If two, check if section is the same. If one, return true
+    if (
+        sysString1.split('|').length - 1 == 2 ||
+        sysString2.split('|').length - 1 == 2
+    ) {
+        return getSection(sysString1) === getSection(sysString2);
+    } else return true;
 };
 
 const CommPkgTable = forwardRef(
@@ -78,7 +85,7 @@ const CommPkgTable = forwardRef(
         const [loading, setLoading] = useState<boolean>(false);
         const tableRef = useRef<any>();
 
-        const hasValidSystem = useCallback(
+        const hasValidSection = useCallback(
             (systemString: string): boolean => {
                 if (
                     selectedCommPkgScope.length === 0 &&
@@ -91,7 +98,7 @@ const CommPkgTable = forwardRef(
                         ? selectedCommPkgScope[0].system
                         : selectedMcPkgScope[0].system;
 
-                return hasSameSystem(systemString, currentSystemString);
+                return hasSameSection(systemString, currentSystemString);
             },
             [selectedCommPkgScope]
         );
@@ -192,12 +199,26 @@ const CommPkgTable = forwardRef(
                     (result) => {
                         setFilteredCommPkgs(result.commPkgs);
                         setSelectAll(
-                            result.commPkgs.every((commpkg) =>
-                                hasSameSystem(
-                                    commpkg.system,
-                                    result.commPkgs[0].system
-                                )
-                            )
+                            result.commPkgs.every((commpkg) => {
+                                const searchResultsHaveSameSection =
+                                    hasSameSection(
+                                        commpkg.system,
+                                        result.commPkgs[0].system
+                                    );
+                                let selectedScopeAndSearchResultsHaveSameSection =
+                                    true;
+                                if (selectedCommPkgScope[0]) {
+                                    selectedScopeAndSearchResultsHaveSameSection =
+                                        hasSameSection(
+                                            commpkg.system,
+                                            selectedCommPkgScope[0].system
+                                        );
+                                }
+                                return (
+                                    searchResultsHaveSameSection &&
+                                    selectedScopeAndSearchResultsHaveSameSection
+                                );
+                            })
                         );
                         setData(result.commPkgs);
                         setMaxRows(result.maxAvailable);
@@ -256,7 +277,7 @@ const CommPkgTable = forwardRef(
         const addAllCommPkgsInScope = (rowData: CommPkgRow[]): void => {
             if (type != 'DP') {
                 const rowsToAdd = rowData.filter((row) =>
-                    hasValidSystem(row.system)
+                    hasValidSection(row.system)
                 );
                 setSelectedCommPkgScope((scope: CommPkgRow[]) => [
                     ...scope,
@@ -268,7 +289,7 @@ const CommPkgTable = forwardRef(
         useEffect(() => {
             const _data = [...data];
             _data.forEach((d) => {
-                d.disableCheckbox = !hasValidSystem(d.system);
+                d.disableCheckbox = !hasValidSection(d.system);
             });
             setFilteredCommPkgs(_data);
         }, [selectedCommPkgScope, data]);
@@ -335,7 +356,7 @@ const CommPkgTable = forwardRef(
                 <div className="tableCell goToMcCol">
                     <Button
                         variant="ghost_icon"
-                        disabled={!hasValidSystem(commPkg.system)}
+                        disabled={!hasValidSection(commPkg.system)}
                         onClick={(): void => getMcPkgs(commPkg.commPkgNo)}
                     >
                         <EdsIcon name="chevron_right" />

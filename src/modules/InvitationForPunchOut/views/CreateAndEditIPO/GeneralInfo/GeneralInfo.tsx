@@ -66,11 +66,11 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] =
         useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [date, setDate] = useState<string>(
-        formatForDatePicker(generalInfo.startTime, 'yyyy-MM-dd')
+    const [date, setDate] = useState<Date | undefined>(generalInfo.startTime);
+    const [startTime, setStartTime] = useState<string | null>(null);
+    const [endTime, setEndTime] = useState<string | null>(
+        generalInfo.endTime ? generalInfo.endTime.toString() : null
     );
-    const [startTime, setStartTime] = useState<string | null>();
-    const [endTime, setEndTime] = useState<string>();
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -111,10 +111,10 @@ const GeneralInfo = ({
         });
     };
 
-    const handleSetDate = (dateString: string): void => {
-        const date = new Date(dateString);
-        setDate(dateString);
-        if (!isValidDate(date)) {
+    const handleSetDate = (date: Date | null): void => {
+        console.log('handle set date');
+        setDate(date ? date : undefined);
+        if (date == null || !isValidDate(date)) {
             setGeneralInfo((gi) => {
                 return { ...gi, startTime: undefined, endTime: undefined };
             });
@@ -141,43 +141,51 @@ const GeneralInfo = ({
         }
     };
 
-    const handleSetTime = (
-        from: 'start' | 'end',
-        timeString: string | null
-    ): void => {
-        if (timeString == null) return;
-        const timeSplit = timeString.split(':');
-        console.log(timeString);
-        from === 'start' ? setStartTime(timeString) : setEndTime(timeString);
-        if (timeSplit[0] && timeSplit[1]) {
-            if (from === 'start') {
-                const newTime = set(
-                    generalInfo.startTime ? generalInfo.startTime : new Date(),
-                    {
-                        hours: Number(timeSplit[0]),
-                        minutes: Number(timeSplit[1]),
-                    }
-                );
-                const newEndTime = generalInfo.endTime
-                    ? newTime > generalInfo.endTime
-                        ? getEndTime(newTime)
-                        : generalInfo.endTime
-                    : getEndTime(newTime);
-                setGeneralInfo((gi) => {
-                    return { ...gi, startTime: newTime, endTime: newEndTime };
-                });
-            } else {
-                const newEndTime = set(
-                    generalInfo.endTime ? generalInfo.endTime : new Date(),
-                    {
-                        hours: Number(timeSplit[0]),
-                        minutes: Number(timeSplit[1]),
-                    }
-                );
-                setGeneralInfo((gi) => {
-                    return { ...gi, endTime: newEndTime };
-                });
-            }
+    const handleSetStartTime = (time: Date | null): void => {
+        setStartTime(time ? time.toString() : null);
+        if (time == null || !isValidDate(time)) {
+            setGeneralInfo((gi) => {
+                return { ...gi, startTime: undefined };
+            });
+        } else {
+            const newStart = set(
+                generalInfo.startTime ? generalInfo.startTime : new Date(),
+                {
+                    hours: time.getHours(),
+                    minutes: time.getMinutes(),
+                }
+            );
+            const newEndTime = generalInfo.endTime
+                ? newStart > generalInfo.endTime
+                    ? getEndTime(newStart)
+                    : set(new Date(), {
+                          hours: generalInfo.endTime.getHours(),
+                          minutes: generalInfo.endTime.getMinutes(),
+                      })
+                : getEndTime(newStart);
+            setGeneralInfo((gi) => {
+                return { ...gi, startTime: newStart, endTime: newEndTime };
+            });
+        }
+    };
+
+    const handleSetEndTime = (time: Date | null): void => {
+        setEndTime(time ? time.toString() : null);
+        if (time == null || !isValidDate(time)) {
+            setGeneralInfo((gi) => {
+                return { ...gi, endTime: undefined };
+            });
+        } else {
+            const newEnd = set(
+                generalInfo.endTime ? generalInfo.endTime : new Date(),
+                {
+                    hours: time.getHours(),
+                    minutes: time.getMinutes(),
+                }
+            );
+            setGeneralInfo((gi) => {
+                return { ...gi, endTime: newEnd };
+            });
         }
     };
 
@@ -324,7 +332,7 @@ const GeneralInfo = ({
             <DateTimeContainer>
                 <div>
                     <Label label={'Date'} />
-                    <DateTimeField
+                    {/* <DateTimeField
                         InputProps={{ inputProps: { max: '2121-01-01' } }}
                         id="startDate"
                         type="date"
@@ -341,25 +349,19 @@ const GeneralInfo = ({
                             >
                         ): void => handleSetDate(event.target.value)}
                         disabled={isDisabled}
-                    />
+                    /> */}
                     <DatePicker
                         renderInput={(props): JSX.Element => (
                             <DateTimeField {...props} />
                         )}
                         value={date}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                            > | null
-                        ): void => {
-                            if (event) handleSetDate(event.target.value);
-                        }}
+                        onChange={handleSetDate}
                         disabled={isDisabled}
                     />
                 </div>
                 <div>
                     <Label label={'Start'} />
-                    <DateTimeField
+                    {/* <DateTimeField
                         id="startTime"
                         type="time"
                         onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
@@ -378,21 +380,27 @@ const GeneralInfo = ({
                             >
                         ): void => handleSetTime('start', event.target.value)}
                         disabled={isDisabled}
-                    />
+                    /> */}
                     <TimePicker
                         renderInput={(props): JSX.Element => (
                             <DateTimeField {...props} />
                         )}
                         value={startTime}
-                        onChange={(newValue: string | null): void => {
-                            setStartTime(newValue);
-                        }}
+                        onChange={handleSetStartTime}
                         disabled={isDisabled}
                     />
                 </div>
                 <div>
                     <Label label={'End'} />
-                    <DateTimeField
+                    <TimePicker
+                        renderInput={(props): JSX.Element => (
+                            <DateTimeField {...props} />
+                        )}
+                        value={endTime}
+                        onChange={handleSetEndTime}
+                        disabled={isDisabled}
+                    />
+                    {/* <DateTimeField
                         id="endTime"
                         type="time"
                         onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
@@ -411,7 +419,7 @@ const GeneralInfo = ({
                             >
                         ): void => handleSetTime('end', event.target.value)}
                         disabled={isDisabled}
-                    />
+                    /> */}
                 </div>
                 {errors && errors['time'] && (
                     <ErrorContainer>

@@ -44,6 +44,7 @@ const App = (): JSX.Element => {
     } else {
         locale = langs.get('no-NB');
     }
+
     return (
         <UserContextProvider>
             <MuiThemeProvider theme={materialUIThemeOverrides}>

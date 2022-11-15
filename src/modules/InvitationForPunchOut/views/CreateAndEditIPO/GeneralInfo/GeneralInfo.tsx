@@ -331,24 +331,6 @@ const GeneralInfo = ({
             <DateTimeContainer>
                 <div>
                     <Label label={'Date'} />
-                    {/* <DateTimeField
-                        InputProps={{ inputProps: { max: '2121-01-01' } }}
-                        id="startDate"
-                        type="date"
-                        value={formatForDatePicker(
-                            generalInfo.startTime,
-                            'yyyy-MM-dd'
-                        )}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                            >
-                        ): void => handleSetDate(event.target.value)}
-                        disabled={isDisabled}
-                    /> */}
                     <DatePicker
                         renderInput={(props): JSX.Element => (
                             <DateTimeField {...props} />
@@ -360,26 +342,6 @@ const GeneralInfo = ({
                 </div>
                 <div>
                     <Label label={'Start'} />
-                    {/* <DateTimeField
-                        id="startTime"
-                        type="time"
-                        onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
-                            e.preventDefault()
-                        }
-                        value={formatForDatePicker(
-                            generalInfo.startTime,
-                            'HH:mm'
-                        )}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                            >
-                        ): void => handleSetTime('start', event.target.value)}
-                        disabled={isDisabled}
-                    /> */}
                     <TimePicker
                         renderInput={(props): JSX.Element => (
                             <DateTimeField {...props} />
@@ -399,26 +361,6 @@ const GeneralInfo = ({
                         onChange={handleSetEndTime}
                         disabled={isDisabled}
                     />
-                    {/* <DateTimeField
-                        id="endTime"
-                        type="time"
-                        onClick={(e: React.MouseEvent<HTMLDivElement>): void =>
-                            e.preventDefault()
-                        }
-                        value={formatForDatePicker(
-                            generalInfo.endTime,
-                            'HH:mm'
-                        )}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={(
-                            event: ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                            >
-                        ): void => handleSetTime('end', event.target.value)}
-                        disabled={isDisabled}
-                    /> */}
                 </div>
                 {errors && errors['time'] && (
                     <ErrorContainer>

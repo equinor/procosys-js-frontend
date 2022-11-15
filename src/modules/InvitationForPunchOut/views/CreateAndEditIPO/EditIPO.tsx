@@ -441,6 +441,8 @@ const EditIPO = (): JSX.Element => {
             const poType = poTypes.find(
                 (p: SelectItem) => p.value === invitation.type
             );
+            const startTime = new Date(invitation.startTimeUtc);
+            const endTime = new Date(invitation.endTimeUtc);
             const info = {
                 ...emptyGeneralInfo,
                 projectName: invitation.projectName
@@ -451,9 +453,15 @@ const EditIPO = (): JSX.Element => {
                 description: invitation.description
                     ? invitation.description
                     : '',
-                date: new Date(invitation.startTimeUtc),
-                startTime: new Date(invitation.startTimeUtc),
-                endTime: new Date(invitation.endTimeUtc),
+                date: startTime,
+                startTime: set(new Date(), {
+                    hours: startTime.getHours(),
+                    minutes: startTime.getMinutes(),
+                }),
+                endTime: set(new Date(), {
+                    hours: endTime.getHours(),
+                    minutes: endTime.getMinutes(),
+                }),
                 location: invitation.location ? invitation.location : '',
             };
             setGeneralInfo({ ...info });

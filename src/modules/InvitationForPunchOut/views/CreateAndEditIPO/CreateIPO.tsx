@@ -31,6 +31,7 @@ import useRouter from '@procosys/hooks/useRouter';
 import { set } from 'date-fns';
 
 const initialDate = getNextHalfHourTimeString(new Date());
+const initialEnd = getEndTime(initialDate);
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectName: '',
@@ -38,8 +39,14 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     title: '',
     description: '',
     date: initialDate,
-    startTime: initialDate,
-    endTime: getEndTime(initialDate),
+    startTime: set(new Date(), {
+        hours: initialDate.getHours(),
+        minutes: initialDate.getMinutes(),
+    }),
+    endTime: set(new Date(), {
+        hours: initialEnd.getHours(),
+        minutes: initialEnd.getMinutes(),
+    }),
     location: '',
 };
 

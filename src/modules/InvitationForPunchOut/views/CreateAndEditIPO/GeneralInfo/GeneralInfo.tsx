@@ -38,7 +38,7 @@ export const poTypes: SelectItem[] = [
 ];
 
 interface GeneralInfoProps {
-    generalInfo: GeneralInfoDetails;
+    generalInfo: GeneralInfoDetails; // todo use date
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
     isEditMode: boolean;
@@ -64,7 +64,7 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] =
         useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [date, setDate] = useState<Date | undefined>(generalInfo.startTime);
+    const [date, setDate] = useState<Date | undefined>(generalInfo.date);
     const [startTime, setStartTime] = useState<string | null>(
         generalInfo.startTime ? generalInfo.startTime.toString() : null
     );
@@ -116,29 +116,11 @@ const GeneralInfo = ({
         setDate(date ? date : undefined);
         if (date == null || !isValidDate(date)) {
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: undefined, endTime: undefined };
+                return { ...gi, date: undefined };
             });
         } else {
-            const newStart = set(
-                generalInfo.startTime ? generalInfo.startTime : new Date(),
-                {
-                    year: date.getFullYear(),
-                    month: date.getMonth(),
-                    date: date.getDate(),
-                }
-            );
-            setStartTime(newStart.toString);
-            const newEnd = set(
-                generalInfo.endTime ? generalInfo.endTime : new Date(),
-                {
-                    year: date.getFullYear(),
-                    month: date.getMonth(),
-                    date: date.getDate(),
-                }
-            );
-            setEndTime(newEnd.toString());
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: newStart, endTime: newEnd };
+                return { ...gi, date: date };
             });
         }
     };
@@ -151,20 +133,19 @@ const GeneralInfo = ({
                 return { ...gi, startTime: undefined };
             });
         } else {
-            const newStart = set(date ? date : new Date(), {
+            const newStart = set(new Date(), {
                 hours: time.getHours(),
                 minutes: time.getMinutes(),
             });
-            const newEndTime =
-                generalInfo.endTime && date
-                    ? set(date, {
-                          hours: generalInfo.endTime.getHours(),
-                          minutes: generalInfo.endTime.getMinutes(),
-                      })
-                    : getEndTime(newStart);
-            setEndTime(newEndTime.toString());
+            const newEnd = generalInfo.endTime
+                ? set(new Date(), {
+                      hours: generalInfo.endTime.getHours(),
+                      minutes: generalInfo.endTime.getMinutes(),
+                  })
+                : undefined;
+            setEndTime(newEnd ? newEnd.toString() : null);
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: newStart };
+                return { ...gi, startTime: newStart, endTime: newEnd };
             });
         }
     };
@@ -177,7 +158,7 @@ const GeneralInfo = ({
                 return { ...gi, endTime: undefined };
             });
         } else {
-            const newEnd = set(date ? date : new Date(), {
+            const newEnd = set(new Date(), {
                 hours: time.getHours(),
                 minutes: time.getMinutes(),
             });

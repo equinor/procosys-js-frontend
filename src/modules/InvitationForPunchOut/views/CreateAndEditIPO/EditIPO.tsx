@@ -36,12 +36,14 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+import { set } from 'date-fns';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectName: '',
     poType: null,
     title: '',
     description: '',
+    date: new Date(),
     startTime: new Date(),
     endTime: new Date(),
     location: '',
@@ -335,12 +337,23 @@ const EditIPO = (): JSX.Element => {
             generalInfo.title &&
             generalInfo.projectName &&
             generalInfo.poType &&
-            invitation
+            invitation &&
+            generalInfo.date &&
+            generalInfo.startTime &&
+            generalInfo.endTime
         ) {
             try {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
+                const startTime = set(generalInfo.date, {
+                    hours: generalInfo.startTime.getHours(),
+                    minutes: generalInfo.startTime.getMinutes(),
+                });
+                const endTime = set(generalInfo.date, {
+                    hours: generalInfo.endTime.getHours(),
+                    minutes: generalInfo.endTime.getMinutes(),
+                });
 
                 if (invitation?.status != IpoStatusEnum.PLANNED) {
                     await apiClient.updateIpoParticipants(
@@ -352,8 +365,8 @@ const EditIPO = (): JSX.Element => {
                         params.ipoId,
                         generalInfo.title,
                         generalInfo.poType.value,
-                        generalInfo.startTime as Date,
-                        generalInfo.endTime as Date,
+                        startTime,
+                        endTime,
                         generalInfo.description
                             ? generalInfo.description
                             : null,
@@ -422,6 +435,7 @@ const EditIPO = (): JSX.Element => {
      *  Populate forms based on invitation to edit
      */
     useEffect(() => {
+        console.log('populating form based on initation to edit');
         if (invitation) {
             //General information
             const poType = poTypes.find(
@@ -437,6 +451,7 @@ const EditIPO = (): JSX.Element => {
                 description: invitation.description
                     ? invitation.description
                     : '',
+                date: new Date(invitation.startTimeUtc),
                 startTime: new Date(invitation.startTimeUtc),
                 endTime: new Date(invitation.endTimeUtc),
                 location: invitation.location ? invitation.location : '',

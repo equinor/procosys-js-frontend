@@ -28,6 +28,7 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+import { set } from 'date-fns';
 
 const initialDate = getNextHalfHourTimeString(new Date());
 
@@ -36,6 +37,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     poType: null,
     title: '',
     description: '',
+    date: initialDate,
     startTime: initialDate,
     endTime: getEndTime(initialDate),
     location: '',
@@ -309,19 +311,30 @@ const CreateIPO = (): JSX.Element => {
         if (
             generalInfo.title &&
             generalInfo.projectName &&
-            generalInfo.poType
+            generalInfo.poType &&
+            generalInfo.date &&
+            generalInfo.startTime &&
+            generalInfo.endTime
         ) {
             try {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
+                const startTime = set(generalInfo.date, {
+                    hours: generalInfo.startTime.getHours(),
+                    minutes: generalInfo.startTime.getMinutes(),
+                });
+                const endTime = set(generalInfo.date, {
+                    hours: generalInfo.endTime.getHours(),
+                    minutes: generalInfo.endTime.getMinutes(),
+                });
 
                 const newIpoId = await apiClient.createIpo(
                     generalInfo.title,
                     generalInfo.projectName,
                     generalInfo.poType.value,
-                    generalInfo.startTime as Date,
-                    generalInfo.endTime as Date,
+                    startTime,
+                    endTime,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,

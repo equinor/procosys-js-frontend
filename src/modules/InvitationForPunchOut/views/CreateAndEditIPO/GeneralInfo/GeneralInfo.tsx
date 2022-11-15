@@ -16,10 +16,7 @@ import {
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Typography } from '@equinor/eds-core-react';
-import {
-    formatForDatePicker,
-    isValidDate,
-} from '@procosys/core/services/DateService';
+import { isValidDate } from '@procosys/core/services/DateService';
 
 import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
@@ -68,7 +65,7 @@ const GeneralInfo = ({
     const [filterForProjects, setFilterForProjects] = useState<string>('');
     const [date, setDate] = useState<Date | undefined>(generalInfo.startTime);
     const [startTime, setStartTime] = useState<string | null>(
-        generalInfo.endTime ? generalInfo.endTime.toString() : null
+        generalInfo.startTime ? generalInfo.startTime.toString() : null
     );
     const [endTime, setEndTime] = useState<string | null>(
         generalInfo.endTime ? generalInfo.endTime.toString() : null

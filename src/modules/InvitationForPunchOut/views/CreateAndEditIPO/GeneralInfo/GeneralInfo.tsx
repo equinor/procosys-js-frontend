@@ -19,13 +19,10 @@ import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { isValidDate } from '@procosys/core/services/DateService';
 
-import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
 import { TextField as DateTimeField } from '@mui/material';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
-import Spinner from '@procosys/components/Spinner';
-import { getEndTime } from '../utils';
 import { set } from 'date-fns';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
@@ -38,7 +35,7 @@ export const poTypes: SelectItem[] = [
 ];
 
 interface GeneralInfoProps {
-    generalInfo: GeneralInfoDetails; // todo use date
+    generalInfo: GeneralInfoDetails;
     setGeneralInfo: React.Dispatch<React.SetStateAction<GeneralInfoDetails>>;
     fromMain: boolean;
     isEditMode: boolean;
@@ -114,7 +111,6 @@ const GeneralInfo = ({
     };
 
     const handleSetDate = (date: Date | null): void => {
-        console.log('handle set date');
         setDate(date ? date : null);
         if (date == null || !isValidDate(date)) {
             setGeneralInfo((gi) => {
@@ -130,7 +126,6 @@ const GeneralInfo = ({
     const handleSetStartTime = (time: Date | null): void => {
         setStartTime(time ? time.toString() : null);
         if (time == null || !isValidDate(time)) {
-            console.log('not valid start time');
             setGeneralInfo((gi) => {
                 return { ...gi, startTime: undefined };
             });
@@ -139,6 +134,7 @@ const GeneralInfo = ({
                 hours: time.getHours(),
                 minutes: time.getMinutes(),
             });
+            //changes end time to use current date
             const newEnd = generalInfo.endTime
                 ? set(new Date(), {
                       hours: generalInfo.endTime.getHours(),
@@ -155,7 +151,6 @@ const GeneralInfo = ({
     const handleSetEndTime = (time: Date | null): void => {
         setEndTime(time ? time.toString() : null);
         if (time == null || !isValidDate(time)) {
-            console.log('not valid end time');
             setGeneralInfo((gi) => {
                 return { ...gi, endTime: undefined };
             });

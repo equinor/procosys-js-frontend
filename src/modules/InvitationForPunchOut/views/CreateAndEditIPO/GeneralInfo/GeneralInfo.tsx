@@ -180,8 +180,22 @@ const GeneralInfo = ({
                         onFilter={setFilterForProjects}
                         disabled={fromMain || isEditMode || isDisabled}
                     >
-                        {(generalInfo.poType && generalInfo.poType.text) ||
-                            'Select'}
+                        {filteredProjects &&
+                            filteredProjects.map((projectItem, index) => {
+                                return (
+                                    <DropdownItem
+                                        key={index}
+                                        onClick={(
+                                            event: React.MouseEvent
+                                        ): void => setProjectForm(event, index)}
+                                    >
+                                        <div>{projectItem.description}</div>
+                                        <div style={{ fontSize: '12px' }}>
+                                            {projectItem.name}
+                                        </div>
+                                    </DropdownItem>
+                                );
+                            })}
                     </Dropdown>
                     {errors && errors['projectName'] && (
                         <ErrorContainer>

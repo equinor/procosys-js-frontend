@@ -3,7 +3,7 @@ import {
     LoadingDiv,
     MCPackageEntry,
     StyledCard100,
-    StyledCardHeader,
+    StyledTypographyLink,
     StyledDivider,
     StyledHeaderTitle,
     StyledHeaderTitleLink,
@@ -88,27 +88,28 @@ const RelatedMCPkgTab = ({
                     return (
                         <MCPackageEntry key={pkg.key}>
                             <StyledCard100>
-                                <StyledCardHeader
-                                    onClick={(): void =>
-                                        navigateToMCPkg(
-                                            pkg.mcPkg?.mcPkgNo as string
-                                        )
-                                    }
-                                >
+                                <Card.Header>
                                     <StyledHeaderTitleLink className="link-container">
                                         <Typography variant="caption">
                                             MC pkg.
                                         </Typography>
-                                        <Typography variant="body_short">
+                                        <StyledTypographyLink
+                                            variant="body_short"
+                                            onClick={(): void =>
+                                                navigateToMCPkg(
+                                                    pkg.mcPkg?.mcPkgNo as string
+                                                )
+                                            }
+                                        >
                                             {highlightSearchValue(
                                                 pkg.mcPkg?.mcPkgNo ?? ''
                                             )}
                                             <LinkIndicator>
                                                 <EdsIcon name="launch" />
                                             </LinkIndicator>
-                                        </Typography>
+                                        </StyledTypographyLink>
                                     </StyledHeaderTitleLink>
-                                </StyledCardHeader>
+                                </Card.Header>
                             </StyledCard100>
 
                             <StyledCard100>

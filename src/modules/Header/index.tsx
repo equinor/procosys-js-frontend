@@ -511,7 +511,7 @@ const Header: React.FC = (): JSX.Element => {
                                     e: React.KeyboardEvent<HTMLInputElement>
                                 ): void => {
                                     e.keyCode === KEYCODE_ENTER &&
-                                        goToFirstItemInResult();
+                                        goToQuicksearch();
                                 }}
                                 value={searchValue}
                                 name="procosys-qs"

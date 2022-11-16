@@ -3,7 +3,7 @@ import {
     LinkIndicator,
     StyledCard100,
     StyledCard50,
-    StyledCardHeader,
+    StyledTypographyLink,
     StyledDivider,
     StyledHeaderTitle,
     StyledHeaderTitleLink,
@@ -82,38 +82,44 @@ const PunchListItemTab = ({
     return (
         <Container>
             <StyledCard100>
-                <StyledCardHeader onClick={(): void => navigateToPunchItem()}>
+                <Card.Header>
                     <StyledHeaderTitleLink className="link-container">
                         <Typography variant="caption">
                             Punch List Item no.
                         </Typography>
-                        <Typography variant="body_short">
+                        <StyledTypographyLink
+                            variant="body_short"
+                            onClick={(): void => navigateToPunchItem()}
+                        >
                             {highlightSearchValue(
                                 punchItem.punchItem?.punchItemNo ?? ''
                             )}
                             <LinkIndicator>
                                 <EdsIcon name="launch" />
                             </LinkIndicator>
-                        </Typography>
+                        </StyledTypographyLink>
                     </StyledHeaderTitleLink>
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
 
             {punchItem.punchItem?.tagNo && (
                 <StyledCard100>
-                    <StyledCardHeader onClick={(): void => navigateToTag()}>
+                    <Card.Header>
                         <StyledHeaderTitleLink className="link-container">
                             <Typography variant="caption">Tag no.</Typography>
-                            <Typography variant="body_short">
+                            <StyledTypographyLink
+                                variant="body_short"
+                                onClick={(): void => navigateToTag()}
+                            >
                                 {highlightSearchValue(
                                     punchItem.punchItem?.tagNo ?? ''
                                 )}
                                 <LinkIndicator>
                                     <EdsIcon name="launch" />
                                 </LinkIndicator>
-                            </Typography>
+                            </StyledTypographyLink>
                         </StyledHeaderTitleLink>
-                    </StyledCardHeader>
+                    </Card.Header>
                 </StyledCard100>
             )}
 

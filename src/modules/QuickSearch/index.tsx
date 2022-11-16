@@ -610,11 +610,8 @@ const QuickSearch = (): JSX.Element => {
             ? setFilterPlants(plants as string[])
             : setFilterPlants([]);
 
-        // types
-        const types = [...new Set(items.map((res) => res.type))];
-        types.length > 0
-            ? setFilterTypes(types as string[])
-            : setFilterTypes([]);
+        // types -> always show all supported types
+        setFilterTypes(['T', 'MC', 'C', 'PI']);
     };
 
     const onCheckboxPlantFilterChange = (
@@ -673,6 +670,8 @@ const QuickSearch = (): JSX.Element => {
         ).value;
         if (!searchVal) return;
 
+        setDisplayFlyout(false);
+        setCurrentItem(undefined);
         setSearching(true);
         apiClient
             .doSearch(searchVal, searchAllPlants ? undefined : plant.id)
@@ -760,6 +759,11 @@ const QuickSearch = (): JSX.Element => {
             values.allplants = 'true';
         } else {
             values.allplants = 'false';
+        }
+
+        if (!searchAllPlants) {
+            values.plant = [];
+            setSelectedPlants([]);
         }
 
         history.replaceState(

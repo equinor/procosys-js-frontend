@@ -325,8 +325,6 @@ const GeneralInfo = ({
                             disabled={isDisabled}
                         />
                     </div>
-                </DateTimeContainer>
-                <DateTimeContainer>
                     <div>
                         <Label label={'Start'} />
                         <TimePicker

@@ -45,7 +45,7 @@ export const DateTimeContainer = styled.div`
     align-items: center;
     > div {
         margin-right: calc(var(--grid-unit) * 2);
-        width: 150px;
+        width: 160px;
         input {
             background-color: ${tokens.colors.ui.background__light.rgba};
             color: var(--text--default);

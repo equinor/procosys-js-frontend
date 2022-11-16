@@ -12,7 +12,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import en from 'date-fns/locale/en-GB';
 import us from 'date-fns/locale/en-US';
 import nb from 'date-fns/locale/nb';
-import { map } from '@equinor/eds-icons';
 
 const langs: Map<string, Locale> = new Map([
     ['en-GB', en],

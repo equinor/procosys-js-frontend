@@ -14,7 +14,7 @@ import {
     GeneralInfoDetails,
     ProjectDetails,
 } from '@procosys/modules/InvitationForPunchOut/types';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Typography } from '@equinor/eds-core-react';
 import { isValidDate } from '@procosys/core/services/DateService';

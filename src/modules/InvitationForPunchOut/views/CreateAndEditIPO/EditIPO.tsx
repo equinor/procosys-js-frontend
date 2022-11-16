@@ -346,6 +346,8 @@ const EditIPO = (): JSX.Element => {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
+                // start and end time fields always use the current date
+                // this adds date set in date field to the start and end time
                 const startTime = set(generalInfo.date, {
                     hours: generalInfo.startTime.getHours(),
                     minutes: generalInfo.startTime.getMinutes(),
@@ -435,7 +437,6 @@ const EditIPO = (): JSX.Element => {
      *  Populate forms based on invitation to edit
      */
     useEffect(() => {
-        console.log('populating form based on initation to edit');
         if (invitation) {
             //General information
             const poType = poTypes.find(
@@ -454,6 +455,7 @@ const EditIPO = (): JSX.Element => {
                     ? invitation.description
                     : '',
                 date: startTime,
+                // start and end time fields needs to use current date, not the date set in the date field
                 startTime: set(new Date(), {
                     hours: startTime.getHours(),
                     minutes: startTime.getMinutes(),

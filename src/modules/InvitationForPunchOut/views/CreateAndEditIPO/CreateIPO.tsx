@@ -327,6 +327,8 @@ const CreateIPO = (): JSX.Element => {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
+                // start and end time fields always use the current date
+                // this adds date set in date field to the start and end time
                 const startTime = set(generalInfo.date, {
                     hours: generalInfo.startTime.getHours(),
                     minutes: generalInfo.startTime.getMinutes(),

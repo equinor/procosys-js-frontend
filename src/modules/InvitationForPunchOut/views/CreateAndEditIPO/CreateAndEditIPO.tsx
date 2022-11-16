@@ -23,7 +23,6 @@ const validateGeneralInfo = (
     info: GeneralInfoDetails,
     confirmationChecked?: boolean
 ): Record<string, string> | null => {
-    console.log('validating general info');
     let errors = {};
     const {
         title,
@@ -84,8 +83,6 @@ const validateGeneralInfo = (
             });
     }
     if (startTime && endTime) {
-        console.log('start', startTime);
-        console.log('end', endTime);
         startTime >= endTime &&
             (errors = { ...errors, time: 'Start time must precede end time.' });
     }

@@ -64,7 +64,9 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] =
         useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
-    const [date, setDate] = useState<Date | undefined>(generalInfo.date);
+    const [date, setDate] = useState<Date | null>(
+        generalInfo.date ? generalInfo.date : null
+    );
     const [startTime, setStartTime] = useState<string | null>(
         generalInfo.startTime ? generalInfo.startTime.toString() : null
     );
@@ -113,7 +115,7 @@ const GeneralInfo = ({
 
     const handleSetDate = (date: Date | null): void => {
         console.log('handle set date');
-        setDate(date ? date : undefined);
+        setDate(date ? date : null);
         if (date == null || !isValidDate(date)) {
             setGeneralInfo((gi) => {
                 return { ...gi, date: undefined };

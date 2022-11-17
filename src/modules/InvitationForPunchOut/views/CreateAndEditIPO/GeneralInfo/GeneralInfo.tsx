@@ -123,38 +123,32 @@ const GeneralInfo = ({
         }
     };
 
-    const handleSetStartTime = (time: Date | null): void => {
-        setStartTime(time ? time.toString() : null);
+    const getNewTime = (time: Date | null): Date | undefined => {
         if (time == null || !isValidDate(time)) {
-            setGeneralInfo((gi) => {
-                return { ...gi, startTime: undefined };
-            });
+            return undefined;
         } else {
-            const newStart = set(new Date(), {
+            const newTime = set(new Date(), {
                 hours: time.getHours(),
                 minutes: time.getMinutes(),
             });
-            setGeneralInfo((gi) => {
-                return { ...gi, startTime: newStart };
-            });
+            return newTime;
         }
+    };
+
+    const handleSetStartTime = (time: Date | null): void => {
+        setStartTime(time ? time.toString() : null);
+        const newStart = getNewTime(time);
+        setGeneralInfo((gi) => {
+            return { ...gi, startTime: newStart };
+        });
     };
 
     const handleSetEndTime = (time: Date | null): void => {
         setEndTime(time ? time.toString() : null);
-        if (time == null || !isValidDate(time)) {
-            setGeneralInfo((gi) => {
-                return { ...gi, endTime: undefined };
-            });
-        } else {
-            const newEnd = set(new Date(), {
-                hours: time.getHours(),
-                minutes: time.getMinutes(),
-            });
-            setGeneralInfo((gi) => {
-                return { ...gi, endTime: newEnd };
-            });
-        }
+        const newEnd = getNewTime(time);
+        setGeneralInfo((gi) => {
+            return { ...gi, endTime: newEnd };
+        });
     };
 
     return (

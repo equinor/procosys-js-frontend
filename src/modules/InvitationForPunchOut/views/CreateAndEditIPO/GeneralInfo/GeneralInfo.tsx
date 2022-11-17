@@ -134,16 +134,8 @@ const GeneralInfo = ({
                 hours: time.getHours(),
                 minutes: time.getMinutes(),
             });
-            //changes end time to use current date
-            const newEnd = generalInfo.endTime
-                ? set(new Date(), {
-                      hours: generalInfo.endTime.getHours(),
-                      minutes: generalInfo.endTime.getMinutes(),
-                  })
-                : undefined;
-            setEndTime(newEnd ? newEnd.toString() : null);
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: newStart, endTime: newEnd };
+                return { ...gi, startTime: newStart };
             });
         }
     };

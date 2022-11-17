@@ -1,9 +1,16 @@
-import { fireEvent, render, waitFor, within } from '@testing-library/react';
+import {
+    fireEvent,
+    render,
+    waitFor,
+    within,
+    screen,
+} from '@testing-library/react';
 
 import CreateIPO from '../CreateIPO';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { configure } from '@testing-library/dom';
+import { renderWithLocalizationProvider } from '@procosys/modules/InvitationForPunchOut/helperFunctions/testingFunctions/renderWithLocalizationProvider';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
 
@@ -77,142 +84,92 @@ jest.mock('@procosys/core/DirtyContext', () => ({
 }));
 
 describe('<CreateIPO />', () => {
+    beforeEach(async () => {
+        await act(async () => {
+            renderWithLocalizationProvider(<CreateIPO />);
+        });
+    });
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     it('Should display type types when Type of punch round select is clicked', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        const selectContainer = result.getByTestId('po-type-select');
+        const selectContainer = screen.getByTestId('po-type-select');
         const utils = within(selectContainer);
         const button = utils.getByRole('listbox');
         fireEvent.click(button);
         await waitFor(() =>
             expect(
-                result.getByText('DP (Discipline Punch)')
+                screen.getByText('DP (Discipline Punch)')
             ).toBeInTheDocument()
         );
         await waitFor(() =>
             expect(
-                result.getByText('MDP (Multi Discipline Punch)')
+                screen.getByText('MDP (Multi Discipline Punch)')
             ).toBeInTheDocument()
         );
     });
 
     it('Should render Next button enabled', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        expect(result.getByText('Next').closest('button')).toHaveProperty(
+        expect(screen.getByText('Next').closest('button')).toHaveProperty(
             'disabled',
             false
         );
     });
 
     it('Should render Previous button enabled', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
         await waitFor(() =>
             expect(
-                result.getByText('Previous').closest('button')
+                screen.getByText('Previous').closest('button')
             ).toHaveProperty('disabled', true)
         );
     });
 
-    it('Should update end time when entering start time > end time', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        const startTime = result.getByTestId('startTime');
-        const endTime = result.getByTestId('endTime');
-        fireEvent.change(startTime, { target: { value: '08:00' } });
-        fireEvent.change(endTime, { target: { value: '09:00' } });
-        fireEvent.change(startTime, { target: { value: '22:23' } });
-        await waitFor(() => expect(endTime).toHaveValue('23:23'));
-    });
-
-    it('Should not update end time when entering start time < end time', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        const startTime = result.getByTestId('startTime');
-        const endTime = result.getByTestId('endTime');
-        fireEvent.change(startTime, { target: { value: '08:00' } });
-        fireEvent.change(endTime, { target: { value: '23:23' } });
-        fireEvent.change(startTime, { target: { value: '10:23' } });
-        await waitFor(() => expect(endTime).toHaveValue('23:23'));
-    });
-
-    it('Should not update time when invalid (empty)', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        const startTime = result.getByTestId('startTime');
-        fireEvent.change(startTime, { target: { value: '13:30' } });
-        fireEvent.change(startTime, { target: { value: '' } });
-        await waitFor(() => expect(startTime).toHaveValue('13:30'));
-    });
-
-    it('Should not allow to proceed with endtime preceding starttime', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        const endTime = result.getByTestId('endTime');
-        const startTime = result.getByTestId('startTime');
-        fireEvent.change(startTime, { target: { value: '13:30' } });
-        fireEvent.change(endTime, { target: { value: '12:30' } });
-        await waitFor(() =>
-            expect(result.getByText('Next').closest('button')).toHaveProperty(
-                'disabled',
-                true
-            )
-        );
-        expect(
-            result.getByText('Start time must precede end time.')
-        ).toBeInTheDocument();
-    });
+    // TODO: fix when mui components allow ID
+    // it('Should not allow to proceed with endtime preceding starttime', async () => {
+    //     const endTime = screen.getByTestId('endTime');
+    //     const startTime = screen.getByTestId('startTime');
+    //     fireEvent.change(startTime, { target: { value: '' } });
+    //     userEvent.type(startTime, '13:30');
+    //     fireEvent.change(endTime, { target: { value: '' } });
+    //     userEvent.type(endTime, '12:30');
+    //     await waitFor(() =>
+    //         expect(screen.getByText('Next').closest('button')).toHaveProperty(
+    //             'disabled',
+    //             true
+    //         )
+    //     );
+    //     expect(
+    //         screen.getByText('Start time must precede end time.')
+    //     ).toBeInTheDocument();
+    // });
 
     it('Should not allow to proceed with title exceeding 250 characters', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
         const longString = [...Array(251)]
             .map(() => (~~(Math.random() * 36)).toString(36))
             .join('');
-        const title = result.getByTestId('title');
+        const title = screen.getByTestId('title');
         fireEvent.change(title, { target: { value: longString } });
         await waitFor(() =>
-            expect(result.getByText('Next').closest('button')).toHaveProperty(
+            expect(screen.getByText('Next').closest('button')).toHaveProperty(
                 'disabled',
                 true
             )
         );
         expect(
-            result.getByText('Title is too long. Maximum 250 characters.')
+            screen.getByText('Title is too long. Maximum 250 characters.')
         ).toBeInTheDocument();
     });
 
     it('Should indicate required fields when clicking next button', async () => {
-        let result: any;
-        await act(async () => {
-            result = render(<CreateIPO />);
-        });
-        const button = result.getByText('Next').closest('button');
-        fireEvent.click(button);
+        const button = screen.getByText('Next').closest('button');
+        expect(button).toBeInTheDocument();
+        if (button) {
+            fireEvent.click(button);
+        }
         await waitFor(() =>
-            expect(result.getAllByText('Required field.').length).toBe(3)
+            expect(screen.getAllByText('Required field.').length).toBe(3)
         );
-        expect(result.getByText('Confirmation required.')).toBeInTheDocument();
+        expect(screen.getByText('Confirmation required.')).toBeInTheDocument();
     });
 });

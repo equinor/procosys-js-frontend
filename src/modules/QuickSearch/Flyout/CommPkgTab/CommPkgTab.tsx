@@ -2,7 +2,7 @@ import {
     Container,
     StyledCard100,
     StyledCard50,
-    StyledCardHeader,
+    StyledTypographyLink,
     StyledHeaderTitle,
     StyledHeaderTitleLink,
 } from './style';
@@ -55,19 +55,22 @@ const CommPkgTab = ({
     return (
         <Container>
             <StyledCard100>
-                <StyledCardHeader onClick={(): void => navigateToCommPkg()}>
+                <Card.Header>
                     <StyledHeaderTitleLink className="link-container">
                         <Typography variant="caption">Comm pkg.</Typography>
-                        <Typography variant="body_short">
+                        <StyledTypographyLink
+                            variant="body_short"
+                            onClick={(): void => navigateToCommPkg()}
+                        >
                             {highlightSearchValue(
                                 commPkg.commPkg?.commPkgNo ?? ''
                             )}
                             <LinkIndicator>
                                 <EdsIcon name="launch" />
                             </LinkIndicator>
-                        </Typography>
+                        </StyledTypographyLink>
                     </StyledHeaderTitleLink>
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard50>

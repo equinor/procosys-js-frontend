@@ -3,9 +3,9 @@ import {
     LinkIndicator,
     StyledCard100,
     StyledCard50,
-    StyledCardHeader,
     StyledHeaderTitle,
     StyledHeaderTitleLink,
+    StyledTypographyLink,
 } from './style';
 
 import { Card } from '@equinor/eds-core-react';
@@ -85,17 +85,20 @@ const TagTab = ({
     return (
         <Container>
             <StyledCard100>
-                <StyledCardHeader onClick={(): void => navigateToTag()}>
+                <Card.Header>
                     <StyledHeaderTitleLink className="link-container">
                         <Typography variant="caption">Tag no.</Typography>
-                        <Typography variant="body_short">
+                        <StyledTypographyLink
+                            variant="body_short"
+                            onClick={(): void => navigateToTag()}
+                        >
                             {highlightSearchValue(tag.tag?.tagNo ?? '')}
                             <LinkIndicator>
                                 <EdsIcon name="launch" />
                             </LinkIndicator>
-                        </Typography>
+                        </StyledTypographyLink>
                     </StyledHeaderTitleLink>
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
@@ -179,55 +182,61 @@ const TagTab = ({
             </StyledCard50>
 
             <StyledCard100>
-                <StyledCardHeader
-                    onClick={(): void =>
-                        tag.tag?.commPkgNo ? navigateToCommPkg() : undefined
-                    }
-                >
+                <Card.Header>
                     {tag.tag?.commPkgNo ? (
                         <StyledHeaderTitleLink className="link-container">
                             <Typography variant="caption">Comm pkg.</Typography>
-                            <Typography variant="body_short">
+                            <StyledTypographyLink
+                                variant="body_short"
+                                onClick={(): void =>
+                                    tag.tag?.commPkgNo
+                                        ? navigateToCommPkg()
+                                        : undefined
+                                }
+                            >
                                 {highlightSearchValue(tag.tag?.commPkgNo ?? '')}{' '}
                                 {tag.tag?.commPkgNo && (
                                     <LinkIndicator>
                                         <EdsIcon name="launch" />
                                     </LinkIndicator>
                                 )}
-                            </Typography>
+                            </StyledTypographyLink>
                         </StyledHeaderTitleLink>
                     ) : (
                         <StyledHeaderTitle>
                             <Typography variant="caption">Comm pkg.</Typography>
                         </StyledHeaderTitle>
                     )}
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
-                <StyledCardHeader
-                    onClick={(): void =>
-                        tag.tag?.mcPkgNo ? navigateToMCPkg() : undefined
-                    }
-                >
+                <Card.Header>
                     {tag.tag?.mcPkgNo ? (
                         <StyledHeaderTitleLink className="link-container">
                             <Typography variant="caption">MC pkg.</Typography>
-                            <Typography variant="body_short">
+                            <StyledTypographyLink
+                                variant="body_short"
+                                onClick={(): void =>
+                                    tag.tag?.mcPkgNo
+                                        ? navigateToMCPkg()
+                                        : undefined
+                                }
+                            >
                                 {highlightSearchValue(tag.tag?.mcPkgNo ?? '')}{' '}
                                 {tag.tag?.mcPkgNo && (
                                     <LinkIndicator>
                                         <EdsIcon name="launch" />
                                     </LinkIndicator>
                                 )}
-                            </Typography>
+                            </StyledTypographyLink>
                         </StyledHeaderTitleLink>
                     ) : (
                         <StyledHeaderTitle>
                             <Typography variant="caption">MC pkg.</Typography>
                         </StyledHeaderTitle>
                     )}
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
         </Container>
     );

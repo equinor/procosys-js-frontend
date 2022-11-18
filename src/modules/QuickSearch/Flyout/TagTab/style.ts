@@ -2,6 +2,7 @@ import { Card } from '@equinor/eds-core-react';
 import { Divider } from '@equinor/eds-core-react';
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { Typography } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -52,8 +53,9 @@ export const StyledHeaderTitle = styled(Card.HeaderTitle)`
     }
 `;
 
-export const StyledCardHeader = styled(Card.Header)`
+export const StyledTypographyLink = styled(Typography)`
     cursor: pointer;
+    width: fit-content;
     :hover * {
         font-weight: 500;
     }

@@ -3,7 +3,7 @@ import {
     LinkIndicator,
     StyledCard100,
     StyledCard50,
-    StyledCardHeader,
+    StyledTypographyLink,
     StyledDivider,
     StyledHeaderTitle,
     StyledHeaderTitleLink,
@@ -72,17 +72,20 @@ const MCPkgTab = ({
     return (
         <Container>
             <StyledCard100>
-                <StyledCardHeader onClick={(): void => navigateToMCPkg()}>
+                <Card.Header>
                     <StyledHeaderTitleLink className="link-container">
                         <Typography variant="caption">MC pkg.</Typography>
-                        <Typography variant="body_short">
+                        <StyledTypographyLink
+                            variant="body_short"
+                            onClick={(): void => navigateToMCPkg()}
+                        >
                             {highlightSearchValue(mcPkg.mcPkg?.mcPkgNo || '')}
                             <LinkIndicator>
                                 <EdsIcon name="launch" />
                             </LinkIndicator>
-                        </Typography>
+                        </StyledTypographyLink>
                     </StyledHeaderTitleLink>
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>
@@ -173,29 +176,32 @@ const MCPkgTab = ({
             <Typography variant="h6">Comm package info</Typography>
 
             <StyledCard100>
-                <StyledCardHeader
-                    onClick={(): void =>
-                        mcPkg.mcPkg?.commPkgNo ? navigateToCommPkg() : undefined
-                    }
-                >
+                <Card.Header>
                     {mcPkg.mcPkg?.commPkgNo ? (
                         <StyledHeaderTitleLink className="link-container">
                             <Typography variant="caption">Comm pkg.</Typography>
-                            <Typography variant="body_short">
+                            <StyledTypographyLink
+                                variant="body_short"
+                                onClick={(): void =>
+                                    mcPkg.mcPkg?.commPkgNo
+                                        ? navigateToCommPkg()
+                                        : undefined
+                                }
+                            >
                                 {highlightSearchValue(
                                     mcPkg.mcPkg?.commPkgNo || ''
                                 )}
                                 <LinkIndicator>
                                     <EdsIcon name="launch" />
                                 </LinkIndicator>
-                            </Typography>
+                            </StyledTypographyLink>
                         </StyledHeaderTitleLink>
                     ) : (
                         <StyledHeaderTitle className="link-container">
                             <Typography variant="caption">Comm pkg.</Typography>
                         </StyledHeaderTitle>
                     )}
-                </StyledCardHeader>
+                </Card.Header>
             </StyledCard100>
 
             <StyledCard100>

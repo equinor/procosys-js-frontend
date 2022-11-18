@@ -30,6 +30,7 @@ export interface QuickSearchFiltersProps {
     onCheckboxTypeFilterChange: (type: string, checked: boolean) => void;
     setSearchAllPlants: React.Dispatch<React.SetStateAction<boolean>>;
     searchAllPlants: boolean;
+    serverFilterSet: boolean;
 }
 
 const QuickSearchFilters = ({
@@ -47,6 +48,7 @@ const QuickSearchFilters = ({
     onCheckboxTypeFilterChange,
     setSearchAllPlants,
     searchAllPlants,
+    serverFilterSet,
 }: QuickSearchFiltersProps): JSX.Element => {
     const getFilterType = (type: string): string => {
         switch (type) {
@@ -102,37 +104,47 @@ const QuickSearchFilters = ({
                             </StyledAccordionHeader>
                             <StyledAccordionPanel>
                                 <AccordionContent>
-                                    {filterTypes
-                                        .sort()
-                                        .map((type: string, i: number) => {
-                                            return (
-                                                <Checkbox
-                                                    key={type}
-                                                    checked={selectedTypes.some(
-                                                        (elementId) => {
-                                                            return (
-                                                                type ===
-                                                                String(
-                                                                    elementId
-                                                                )
+                                    {serverFilterSet && (
+                                        <span>
+                                            Type filter is set in the search
+                                            string.
+                                        </span>
+                                    )}
+
+                                    {!serverFilterSet &&
+                                        filterTypes
+                                            .sort()
+                                            .map((type: string, i: number) => {
+                                                return (
+                                                    <Checkbox
+                                                        key={type}
+                                                        checked={selectedTypes.some(
+                                                            (elementId) => {
+                                                                return (
+                                                                    type ===
+                                                                    String(
+                                                                        elementId
+                                                                    )
+                                                                );
+                                                            }
+                                                        )}
+                                                        onChange={(
+                                                            checked: boolean
+                                                        ): void => {
+                                                            onCheckboxTypeFilterChange(
+                                                                type,
+                                                                checked
                                                             );
-                                                        }
-                                                    )}
-                                                    onChange={(
-                                                        checked: boolean
-                                                    ): void => {
-                                                        onCheckboxTypeFilterChange(
-                                                            type,
-                                                            checked
-                                                        );
-                                                    }}
-                                                >
-                                                    <Typography variant="body_long">
-                                                        {getFilterType(type)}
-                                                    </Typography>
-                                                </Checkbox>
-                                            );
-                                        })}
+                                                        }}
+                                                    >
+                                                        <Typography variant="body_long">
+                                                            {getFilterType(
+                                                                type
+                                                            )}
+                                                        </Typography>
+                                                    </Checkbox>
+                                                );
+                                            })}
                                 </AccordionContent>
                             </StyledAccordionPanel>
                         </Accordion.Item>

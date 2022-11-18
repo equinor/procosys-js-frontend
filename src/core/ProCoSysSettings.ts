@@ -16,7 +16,6 @@ interface FeatureFlags {
     preservation: boolean;
     main: boolean;
     quickSearch: boolean;
-    ManufacturerModelEnabled: boolean;
 }
 
 interface ConfigResponse {
@@ -148,7 +147,6 @@ class ProCoSysSettings {
             main: true,
             library: true,
             quickSearch: true,
-            ManufacturerModelEnabled: true,
         };
         this.settingsConfigurationApiClient = new SettingsApiClient(
             localSettings.configurationEndpoint
@@ -234,8 +232,6 @@ class ProCoSysSettings {
                 configurationResponse.featureFlags.preservation;
             this.featureFlags.quickSearch =
                 configurationResponse.featureFlags.quickSearch;
-            this.featureFlags.ManufacturerModelEnabled =
-                configurationResponse.featureFlags.ManufacturerModelEnabled;
         } catch (error) {
             console.error(
                 'Failed to parse Configuration from remote server',
@@ -305,9 +301,6 @@ class ProCoSysSettings {
             localSettings.featureFlags.quickSearch != undefined &&
                 (this.featureFlags.quickSearch =
                     localSettings.featureFlags.quickSearch);
-            localSettings.featureFlags.ManufacturerModelEnabled != undefined &&
-                (this.featureFlags.ManufacturerModelEnabled =
-                    localSettings.featureFlags.ManufacturerModelEnabled);
         }
     }
 }

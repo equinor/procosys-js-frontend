@@ -75,6 +75,7 @@ const QuickSearch = (): JSX.Element => {
     const [showSearchSubText, setShowSearchSubText] = useState<boolean>(true);
     const [searchAllPlants, setSearchAllPlants] = useState<boolean>(false);
     const { search } = useLocation();
+    const [serverFilterSet, setServerFilterSet] = useState<boolean>(false);
 
     useEffect(() => {
         if (!ProCoSysSettings.featureIsEnabled('quickSearch'))
@@ -98,6 +99,13 @@ const QuickSearch = (): JSX.Element => {
             if (values) {
                 if (searchVal.length > 2) {
                     setSearching(true);
+
+                    if (searchVal.indexOf(':') > -1) {
+                        setServerFilterSet(true);
+                    } else {
+                        setServerFilterSet(false);
+                    }
+
                     apiClient
                         .doSearch(searchVal, plant.id)
                         .then((searchResult: SearchResult) => {
@@ -670,6 +678,12 @@ const QuickSearch = (): JSX.Element => {
         ).value;
         if (!searchVal) return;
 
+        if (searchVal.indexOf(':') > -1) {
+            setServerFilterSet(true);
+        } else {
+            setServerFilterSet(false);
+        }
+
         setDisplayFlyout(false);
         setCurrentItem(undefined);
         setSearching(true);
@@ -970,6 +984,7 @@ const QuickSearch = (): JSX.Element => {
                     filterTypes={filterTypes}
                     selectedTypes={selectedTypes}
                     onCheckboxTypeFilterChange={onCheckboxTypeFilterChange}
+                    serverFilterSet={serverFilterSet}
                 />
             )}
         </Container>

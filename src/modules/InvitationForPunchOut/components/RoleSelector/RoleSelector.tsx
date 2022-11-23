@@ -198,9 +198,9 @@ const RoleSelector = ({
         roleIndex: number
     ): void => {
         const newValue = getNewValue(radioValue, person.radioOption);
-        setAllRoles((allRoles) => {
-            const allRolesCopy = [...allRoles];
-            allRolesCopy.forEach((role, i) => {
+        setAllRoles(() => {
+            const filteredRolesCopy = [...filteredRoles];
+            filteredRolesCopy.forEach((role, i) => {
                 if (i != roleIndex) {
                     role.persons.forEach((person) => {
                         person.radioOption = null;
@@ -210,16 +210,8 @@ const RoleSelector = ({
                     person.radioOption = newValue;
                 }
             });
-            return allRolesCopy;
+            return filteredRolesCopy;
         });
-
-        if (role.code == pickedRoleValue) {
-            const radioCheckedPersons = role.persons.filter(
-                (p) => p.radioOption
-            );
-            const selectedRole = { ...role, persons: radioCheckedPersons };
-            onChange(selectedRole);
-        }
     };
 
     const showPersons = (notify: boolean, index: number): void => {

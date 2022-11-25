@@ -14,25 +14,20 @@ import {
     GeneralInfoDetails,
     ProjectDetails,
 } from '@procosys/modules/InvitationForPunchOut/types';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 import { TextField, Typography } from '@equinor/eds-core-react';
-import {
-    formatForDatePicker,
-    isValidDate,
-} from '@procosys/core/services/DateService';
+import { isValidDate } from '@procosys/core/services/DateService';
 
-import { Canceler } from '@procosys/http/HttpClient';
 import Checkbox from '@procosys/components/Checkbox';
 import { TextField as DateTimeField } from '@mui/material';
 import Dropdown from '../../../../../components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
-import Spinner from '@procosys/components/Spinner';
-import { getEndTime } from '../utils';
 import { set } from 'date-fns';
 import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import { Label } from '@equinor/eds-core-react';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -66,6 +61,15 @@ const GeneralInfo = ({
     const [filteredProjects, setFilteredProjects] =
         useState<ProjectDetails[]>(availableProjects);
     const [filterForProjects, setFilterForProjects] = useState<string>('');
+    const [date, setDate] = useState<Date | null>(
+        generalInfo.date ? generalInfo.date : null
+    );
+    const [startTime, setStartTime] = useState<string | null>(
+        generalInfo.startTime ? generalInfo.startTime.toString() : null
+    );
+    const [endTime, setEndTime] = useState<string | null>(
+        generalInfo.endTime ? generalInfo.endTime.toString() : null
+    );
 
     useEffect(() => {
         if (filterForProjects.length <= 0) {
@@ -106,67 +110,45 @@ const GeneralInfo = ({
         });
     };
 
-    const handleSetDate = (dateString: string): void => {
-        const date = new Date(dateString);
-        if (!isValidDate(date)) {
+    const handleSetDate = (date: Date | null): void => {
+        setDate(date ? date : null);
+        if (date == null || !isValidDate(date)) {
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: undefined, endTime: undefined };
+                return { ...gi, date: undefined };
             });
         } else {
-            const newStart = set(
-                generalInfo.startTime ? generalInfo.startTime : new Date(),
-                {
-                    year: date.getFullYear(),
-                    month: date.getMonth(),
-                    date: date.getDate(),
-                }
-            );
-            const newEnd = set(
-                generalInfo.endTime ? generalInfo.endTime : new Date(),
-                {
-                    year: date.getFullYear(),
-                    month: date.getMonth(),
-                    date: date.getDate(),
-                }
-            );
             setGeneralInfo((gi) => {
-                return { ...gi, startTime: newStart, endTime: newEnd };
+                return { ...gi, date: date };
             });
         }
     };
 
-    const handleSetTime = (from: 'start' | 'end', timeString: string): void => {
-        const timeSplit = timeString.split(':');
-        if (timeSplit[0] && timeSplit[1]) {
-            if (from === 'start') {
-                const newTime = set(
-                    generalInfo.startTime ? generalInfo.startTime : new Date(),
-                    {
-                        hours: Number(timeSplit[0]),
-                        minutes: Number(timeSplit[1]),
-                    }
-                );
-                const newEndTime = generalInfo.endTime
-                    ? newTime > generalInfo.endTime
-                        ? getEndTime(newTime)
-                        : generalInfo.endTime
-                    : getEndTime(newTime);
-                setGeneralInfo((gi) => {
-                    return { ...gi, startTime: newTime, endTime: newEndTime };
-                });
-            } else {
-                const newEndTime = set(
-                    generalInfo.endTime ? generalInfo.endTime : new Date(),
-                    {
-                        hours: Number(timeSplit[0]),
-                        minutes: Number(timeSplit[1]),
-                    }
-                );
-                setGeneralInfo((gi) => {
-                    return { ...gi, endTime: newEndTime };
-                });
-            }
+    const getNewTime = (time: Date | null): Date | undefined => {
+        if (time == null || !isValidDate(time)) {
+            return undefined;
+        } else {
+            const newTime = set(new Date(), {
+                hours: time.getHours(),
+                minutes: time.getMinutes(),
+            });
+            return newTime;
         }
+    };
+
+    const handleSetStartTime = (time: Date | null): void => {
+        setStartTime(time ? time.toString() : null);
+        const newStart = getNewTime(time);
+        setGeneralInfo((gi) => {
+            return { ...gi, startTime: newStart };
+        });
+    };
+
+    const handleSetEndTime = (time: Date | null): void => {
+        setEndTime(time ? time.toString() : null);
+        const newEnd = getNewTime(time);
+        setGeneralInfo((gi) => {
+            return { ...gi, endTime: newEnd };
+        });
     };
 
     return (
@@ -331,94 +313,53 @@ const GeneralInfo = ({
                 <DateTimeContainer>
                     <div>
                         <Label label={'Date'} />
-                        <DateTimeField
-                            InputProps={{ inputProps: { max: '2121-01-01' } }}
-                            id="startDate"
-                            type="date"
-                            value={formatForDatePicker(
-                                generalInfo.startTime,
-                                'yyyy-MM-dd'
+                        <DatePicker
+                            renderInput={(props): JSX.Element => (
+                                <DateTimeField {...props} />
                             )}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            onChange={(
-                                event: ChangeEvent<
-                                    HTMLInputElement | HTMLTextAreaElement
-                                >
-                            ): void => handleSetDate(event.target.value)}
+                            value={date}
+                            onChange={handleSetDate}
                             disabled={isDisabled}
                         />
                     </div>
                     <div>
                         <Label label={'Start'} />
-                        <DateTimeField
-                            id="startTime"
-                            type="time"
-                            onClick={(
-                                e: React.MouseEvent<HTMLDivElement>
-                            ): void => e.preventDefault()}
-                            value={formatForDatePicker(
-                                generalInfo.startTime,
-                                'HH:mm'
+                        <TimePicker
+                            renderInput={(props): JSX.Element => (
+                                <DateTimeField {...props} />
                             )}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            onChange={(
-                                event: ChangeEvent<
-                                    HTMLInputElement | HTMLTextAreaElement
-                                >
-                            ): void =>
-                                handleSetTime('start', event.target.value)
-                            }
+                            value={startTime}
+                            onChange={handleSetStartTime}
                             disabled={isDisabled}
                         />
                     </div>
                     <div>
                         <Label label={'End'} />
-                        <DateTimeField
-                            id="endTime"
-                            type="time"
-                            onClick={(
-                                e: React.MouseEvent<HTMLDivElement>
-                            ): void => e.preventDefault()}
-                            value={formatForDatePicker(
-                                generalInfo.endTime,
-                                'HH:mm'
+                        <TimePicker
+                            renderInput={(props): JSX.Element => (
+                                <DateTimeField {...props} />
                             )}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            onChange={(
-                                event: ChangeEvent<
-                                    HTMLInputElement | HTMLTextAreaElement
-                                >
-                            ): void => handleSetTime('end', event.target.value)}
+                            value={endTime}
+                            onChange={handleSetEndTime}
                             disabled={isDisabled}
                         />
                     </div>
-                    {errors && errors['time'] && (
-                        <ErrorContainer>
-                            <EdsIcon
-                                name="error_filled"
-                                size={16}
-                                color={
-                                    tokens.colors.interactive.danger__text.rgba
-                                }
-                            />
-                            <Typography
-                                variant="caption"
-                                color={
-                                    tokens.colors.interactive.danger__text.rgba
-                                }
-                            >
-                                {errors['time']}
-                            </Typography>
-                        </ErrorContainer>
-                    )}
                 </DateTimeContainer>
-
+                {errors && errors['time'] && (
+                    <ErrorContainer>
+                        <EdsIcon
+                            name="error_filled"
+                            size={16}
+                            color={tokens.colors.interactive.danger__text.rgba}
+                        />
+                        <Typography
+                            variant="caption"
+                            color={tokens.colors.interactive.danger__text.rgba}
+                        >
+                            {errors['time']}
+                        </Typography>
+                    </ErrorContainer>
+                )}
                 <FieldContainer>
                     <LocationContainer>
                         <TextField

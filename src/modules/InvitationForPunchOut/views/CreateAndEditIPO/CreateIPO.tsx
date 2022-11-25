@@ -28,16 +28,25 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+import { set } from 'date-fns';
 
 const initialDate = getNextHalfHourTimeString(new Date());
+const initialEnd = getEndTime(initialDate);
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectName: '',
     poType: null,
     title: '',
     description: '',
-    startTime: initialDate,
-    endTime: getEndTime(initialDate),
+    date: initialDate,
+    startTime: set(new Date(), {
+        hours: initialDate.getHours(),
+        minutes: initialDate.getMinutes(),
+    }),
+    endTime: set(new Date(), {
+        hours: initialEnd.getHours(),
+        minutes: initialEnd.getMinutes(),
+    }),
     location: '',
 };
 
@@ -309,19 +318,32 @@ const CreateIPO = (): JSX.Element => {
         if (
             generalInfo.title &&
             generalInfo.projectName &&
-            generalInfo.poType
+            generalInfo.poType &&
+            generalInfo.date &&
+            generalInfo.startTime &&
+            generalInfo.endTime
         ) {
             try {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
+                // start and end time fields always use the current date
+                // this adds date set in date field to the start and end time
+                const startTime = set(generalInfo.date, {
+                    hours: generalInfo.startTime.getHours(),
+                    minutes: generalInfo.startTime.getMinutes(),
+                });
+                const endTime = set(generalInfo.date, {
+                    hours: generalInfo.endTime.getHours(),
+                    minutes: generalInfo.endTime.getMinutes(),
+                });
 
                 const newIpoId = await apiClient.createIpo(
                     generalInfo.title,
                     generalInfo.projectName,
                     generalInfo.poType.value,
-                    generalInfo.startTime as Date,
-                    generalInfo.endTime as Date,
+                    startTime,
+                    endTime,
                     generalInfo.description ? generalInfo.description : null,
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,

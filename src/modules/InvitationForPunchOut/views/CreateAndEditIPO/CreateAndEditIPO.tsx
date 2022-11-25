@@ -30,6 +30,7 @@ const validateGeneralInfo = (
         location,
         poType,
         projectName,
+        date,
         startTime,
         endTime,
     } = info;
@@ -49,8 +50,11 @@ const validateGeneralInfo = (
                   title: 'Title is too short. Minimum 3 characters.',
               });
 
-        (!startTime || !endTime) &&
-            (errors = { ...errors, time: 'Start and end time is required.' });
+        (!startTime || !endTime || !date) &&
+            (errors = {
+                ...errors,
+                time: 'Date, start and end time is required.',
+            });
 
         !confirmationChecked &&
             (errors = { ...errors, confirmation: 'Confirmation required.' });

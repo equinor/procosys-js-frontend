@@ -14,6 +14,7 @@ const generalInfo = {
     title: 'test title',
     description:
         'decription is looooong and we need to add some info here okay. A description describing the PO, with general info, scope, attachments, participants, and a lot more! Maybe we will add even more as we go, we will find out.',
+    date: new Date(2020, 11, 3, 10, 30),
     startTime: new Date(2020, 11, 3, 10, 30),
     endTime: new Date(2020, 11, 3, 10, 30),
     location: 'the usual spot',

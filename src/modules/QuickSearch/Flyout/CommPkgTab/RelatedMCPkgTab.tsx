@@ -105,7 +105,7 @@ const RelatedMCPkgTab = ({
                                                 pkg.mcPkg?.mcPkgNo ?? ''
                                             )}
                                             <LinkIndicator>
-                                                <EdsIcon name="launch" />
+                                                <EdsIcon name="external_link" />
                                             </LinkIndicator>
                                         </StyledTypographyLink>
                                     </StyledHeaderTitleLink>

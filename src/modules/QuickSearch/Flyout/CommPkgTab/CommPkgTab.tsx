@@ -66,7 +66,7 @@ const CommPkgTab = ({
                                 commPkg.commPkg?.commPkgNo ?? ''
                             )}
                             <LinkIndicator>
-                                <EdsIcon name="launch" />
+                                <EdsIcon name="external_link" />
                             </LinkIndicator>
                         </StyledTypographyLink>
                     </StyledHeaderTitleLink>

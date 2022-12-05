@@ -36,12 +36,14 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
+import { set } from 'date-fns';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectName: '',
     poType: null,
     title: '',
     description: '',
+    date: new Date(),
     startTime: new Date(),
     endTime: new Date(),
     location: '',
@@ -335,12 +337,25 @@ const EditIPO = (): JSX.Element => {
             generalInfo.title &&
             generalInfo.projectName &&
             generalInfo.poType &&
-            invitation
+            invitation &&
+            generalInfo.date &&
+            generalInfo.startTime &&
+            generalInfo.endTime
         ) {
             try {
                 const commPkgScope = getCommPkgScope();
                 const mcPkgScope = getMcScope();
                 const ipoParticipants = getParticipants();
+                // start and end time fields always use the current date
+                // this adds date set in date field to the start and end time
+                const startTime = set(generalInfo.date, {
+                    hours: generalInfo.startTime.getHours(),
+                    minutes: generalInfo.startTime.getMinutes(),
+                });
+                const endTime = set(generalInfo.date, {
+                    hours: generalInfo.endTime.getHours(),
+                    minutes: generalInfo.endTime.getMinutes(),
+                });
 
                 if (invitation?.status != IpoStatusEnum.PLANNED) {
                     await apiClient.updateIpoParticipants(
@@ -352,8 +367,8 @@ const EditIPO = (): JSX.Element => {
                         params.ipoId,
                         generalInfo.title,
                         generalInfo.poType.value,
-                        generalInfo.startTime as Date,
-                        generalInfo.endTime as Date,
+                        startTime,
+                        endTime,
                         generalInfo.description
                             ? generalInfo.description
                             : null,
@@ -427,6 +442,8 @@ const EditIPO = (): JSX.Element => {
             const poType = poTypes.find(
                 (p: SelectItem) => p.value === invitation.type
             );
+            const startTime = new Date(invitation.startTimeUtc);
+            const endTime = new Date(invitation.endTimeUtc);
             const info = {
                 ...emptyGeneralInfo,
                 projectName: invitation.projectName
@@ -437,8 +454,16 @@ const EditIPO = (): JSX.Element => {
                 description: invitation.description
                     ? invitation.description
                     : '',
-                startTime: new Date(invitation.startTimeUtc),
-                endTime: new Date(invitation.endTimeUtc),
+                date: startTime,
+                // start and end time fields needs to use current date, not the date set in the date field
+                startTime: set(new Date(), {
+                    hours: startTime.getHours(),
+                    minutes: startTime.getMinutes(),
+                }),
+                endTime: set(new Date(), {
+                    hours: endTime.getHours(),
+                    minutes: endTime.getMinutes(),
+                }),
                 location: invitation.location ? invitation.location : '',
             };
             setGeneralInfo({ ...info });

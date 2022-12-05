@@ -5,7 +5,7 @@ import {
     CustomTable,
     ResponseWrapper,
     SpinnerContainer,
-} from './style';
+} from './ParticipantsTable.style';
 import { Participant } from '../../types';
 import React, { useCallback, useEffect, useState } from 'react';
 import CustomPopover from './CustomPopover/CustomPopover';

@@ -1,4 +1,10 @@
-import { configure, getByText, render, waitFor } from '@testing-library/react';
+import {
+    configure,
+    getByText,
+    render,
+    waitFor,
+    screen,
+} from '@testing-library/react';
 
 import EditIPO from '../EditIPO';
 import { Invitation } from '../../ViewIPO/types';
@@ -6,6 +12,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import ViewIPOHeader from '../../ViewIPO/ViewIPOHeader';
 import { Step } from '@procosys/modules/InvitationForPunchOut/types';
+import { renderWithLocalizationProvider } from '@procosys/modules/InvitationForPunchOut/helperFunctions/testingFunctions/renderWithLocalizationProvider';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
 
@@ -114,21 +121,29 @@ jest.mock('@procosys/core/DirtyContext', () => ({
 
 describe('<EditIPO />', () => {
     it('Should display "Edit" as headline when in edit mode', async () => {
-        const { getByText, getByTestId, getByLabelText } = render(<EditIPO />);
+        renderWithLocalizationProvider(<EditIPO />);
         await waitFor(() =>
-            expect(getByText('Edit titleA')).toBeInTheDocument()
+            expect(screen.getByText('Edit titleA')).toBeInTheDocument()
         );
         await waitFor(() =>
-            expect(getByTestId('title')).toHaveProperty('value', 'titleA')
+            expect(screen.getByTestId('title')).toHaveProperty(
+                'value',
+                'titleA'
+            )
         );
         await waitFor(() =>
-            expect(getByText('descriptionA')).toBeInTheDocument()
+            expect(screen.getByText('descriptionA')).toBeInTheDocument()
         );
         await waitFor(() =>
-            expect(getByTestId('location')).toHaveProperty('value', 'locationA')
+            expect(screen.getByTestId('location')).toHaveProperty(
+                'value',
+                'locationA'
+            )
         );
         await waitFor(() =>
-            expect(getByText('DP (Discipline Punch)')).toBeInTheDocument()
+            expect(
+                screen.getByText('DP (Discipline Punch)')
+            ).toBeInTheDocument()
         );
     });
 

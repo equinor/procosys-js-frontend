@@ -176,7 +176,7 @@ const Summary = ({
                                     Date
                                 </Typography>
                                 <Typography variant="body_long">
-                                    {getFormattedDate(generalInfo.startTime)}
+                                    {getFormattedDate(generalInfo.date)}
                                 </Typography>
                             </Subsection>
                             <Subsection>

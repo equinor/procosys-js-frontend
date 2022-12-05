@@ -81,7 +81,7 @@ const MCPkgTab = ({
                         >
                             {highlightSearchValue(mcPkg.mcPkg?.mcPkgNo || '')}
                             <LinkIndicator>
-                                <EdsIcon name="launch" />
+                                <EdsIcon name="external_link" />
                             </LinkIndicator>
                         </StyledTypographyLink>
                     </StyledHeaderTitleLink>
@@ -192,7 +192,7 @@ const MCPkgTab = ({
                                     mcPkg.mcPkg?.commPkgNo || ''
                                 )}
                                 <LinkIndicator>
-                                    <EdsIcon name="launch" />
+                                    <EdsIcon name="external_link" />
                                 </LinkIndicator>
                             </StyledTypographyLink>
                         </StyledHeaderTitleLink>

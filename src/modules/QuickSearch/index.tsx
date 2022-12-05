@@ -223,7 +223,7 @@ const QuickSearch = (): JSX.Element => {
                     variant="ghost"
                     onClick={(): void => navigateToItem(doc)}
                 >
-                    <EdsIcon name="launch" />
+                    <EdsIcon name="external_link" />
                 </LinkButton>
             </DescriptionCell>
         );

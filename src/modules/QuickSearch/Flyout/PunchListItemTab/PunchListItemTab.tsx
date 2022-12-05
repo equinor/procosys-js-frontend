@@ -95,7 +95,7 @@ const PunchListItemTab = ({
                                 punchItem.punchItem?.punchItemNo ?? ''
                             )}
                             <LinkIndicator>
-                                <EdsIcon name="launch" />
+                                <EdsIcon name="external_link" />
                             </LinkIndicator>
                         </StyledTypographyLink>
                     </StyledHeaderTitleLink>
@@ -115,7 +115,7 @@ const PunchListItemTab = ({
                                     punchItem.punchItem?.tagNo ?? ''
                                 )}
                                 <LinkIndicator>
-                                    <EdsIcon name="launch" />
+                                    <EdsIcon name="external_link" />
                                 </LinkIndicator>
                             </StyledTypographyLink>
                         </StyledHeaderTitleLink>

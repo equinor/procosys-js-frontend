@@ -37,6 +37,7 @@ import {
     info_circle,
     iphone,
     launch,
+    external_link,
     link,
     lock,
     menu,
@@ -129,6 +130,7 @@ const icons = {
     menu,
     calendar_reject,
     launch,
+    external_link,
     share,
     clear,
 };

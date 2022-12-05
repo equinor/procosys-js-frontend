@@ -94,7 +94,7 @@ const TagTab = ({
                         >
                             {highlightSearchValue(tag.tag?.tagNo ?? '')}
                             <LinkIndicator>
-                                <EdsIcon name="launch" />
+                                <EdsIcon name="external_link" />
                             </LinkIndicator>
                         </StyledTypographyLink>
                     </StyledHeaderTitleLink>
@@ -197,7 +197,7 @@ const TagTab = ({
                                 {highlightSearchValue(tag.tag?.commPkgNo ?? '')}{' '}
                                 {tag.tag?.commPkgNo && (
                                     <LinkIndicator>
-                                        <EdsIcon name="launch" />
+                                        <EdsIcon name="external_link" />
                                     </LinkIndicator>
                                 )}
                             </StyledTypographyLink>
@@ -226,7 +226,7 @@ const TagTab = ({
                                 {highlightSearchValue(tag.tag?.mcPkgNo ?? '')}{' '}
                                 {tag.tag?.mcPkgNo && (
                                     <LinkIndicator>
-                                        <EdsIcon name="launch" />
+                                        <EdsIcon name="external_link" />
                                     </LinkIndicator>
                                 )}
                             </StyledTypographyLink>

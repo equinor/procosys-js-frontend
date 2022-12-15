@@ -124,5 +124,4 @@ export const TagNoContainer = styled.div<TagProps>`
 
 export const TagsGrid = styled.div`
     display: flex;
-    justify-content: flex-start;
 `;

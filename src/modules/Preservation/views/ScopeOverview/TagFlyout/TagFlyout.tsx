@@ -58,7 +58,6 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
         try {
             const details = await apiClient.getTagDetails(tagId);
             setTagDetails(details);
-            console.log(details);
         } catch (error) {
             console.error(`Get tag details failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);

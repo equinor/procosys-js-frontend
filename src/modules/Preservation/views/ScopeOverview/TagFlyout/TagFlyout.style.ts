@@ -42,7 +42,6 @@ export const NotificationIcon = styled.div`
 
 export const StatusLabel = styled.div<{ status?: string | null }>`
     margin-left: calc(var(--grid-unit) * 2);
-    margin-right: auto;
     padding: var(--grid-unit);
     border-radius: calc(var(--grid-unit) * 2);
 
@@ -121,4 +120,9 @@ export const TagNoContainer = styled.div<TagProps>`
             }
             cursor: pointer;
         `}
+`;
+
+export const TagsGrid = styled.div`
+    display: flex;
+    justify-content: flex-start;
 `;

@@ -8,6 +8,7 @@ import {
     StyledButton,
     Tabs,
     TagNoContainer,
+    TagsGrid,
 } from './TagFlyout.style';
 import React, { useEffect, useState } from 'react';
 
@@ -57,6 +58,7 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
         try {
             const details = await apiClient.getTagDetails(tagId);
             setTagDetails(details);
+            console.log(details);
         } catch (error) {
             console.error(`Get tag details failed: ${error.message}`);
             showSnackbarNotification(error.message, 5000, true);
@@ -152,6 +154,8 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
         ? tagDetails.status === PreservationStatus.Active
         : false;
     const isVoided = tagDetails ? tagDetails.isVoided : false;
+    const isVoidedInSource = tagDetails ? tagDetails.isVoidedInSource : false;
+    const isDeletedInSource = tagDetails ? tagDetails.isDeletedInSource : false;
 
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
@@ -266,13 +270,33 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
                     </StyledButton>
                 </HeaderActions>
             </Header>
-            <StatusLabel
-                status={isVoided ? 'Voided' : tagDetails && tagDetails.status}
-            >
-                <span style={{ margin: '0 var(--grid-unit)' }}>
-                    {isVoided ? 'Voided' : tagDetails && tagDetails.status}
-                </span>
-            </StatusLabel>
+            <TagsGrid>
+                <StatusLabel
+                    status={
+                        isVoided ? 'Voided' : tagDetails && tagDetails.status
+                    }
+                >
+                    <span style={{ margin: '0 var(--grid-unit)' }}>
+                        {isVoided ? 'Voided' : tagDetails && tagDetails.status}
+                    </span>
+                </StatusLabel>
+                {isVoidedInSource && (
+                    <StatusLabel status={'Voided in source'}>
+                        <span style={{ margin: '0 var(--grid-unit)' }}>
+                            {isVoidedInSource ? 'Voided in source' : ''}
+                        </span>
+                    </StatusLabel>
+                )}
+                {isDeletedInSource && (
+                    <StatusLabel
+                        status={isDeletedInSource ? 'Deleted in source' : ''}
+                    >
+                        <span style={{ margin: '0 var(--grid-unit)' }}>
+                            {isDeletedInSource ? 'Deleted in source' : ''}
+                        </span>
+                    </StatusLabel>
+                )}
+            </TagsGrid>
             <Tabs>
                 <a
                     className={

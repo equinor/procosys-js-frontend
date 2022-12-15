@@ -20,6 +20,8 @@ interface PreservedTagResponse {
             id: number;
             isNew: boolean;
             isVoided: boolean;
+            isVoidedInSource: boolean;
+            isDeletedInSource: boolean;
             mcPkgNo: string;
             mode: string;
             nextMode: string;
@@ -119,6 +121,8 @@ interface TagDetailsResponse {
     id: number;
     tagNo: string;
     isVoided: boolean;
+    isDeletedInSource: boolean;
+    isVoidedInSource: boolean;
     description: string;
     status: string;
     journey: {

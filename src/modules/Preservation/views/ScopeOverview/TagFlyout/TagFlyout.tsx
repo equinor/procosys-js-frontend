@@ -5,9 +5,11 @@ import {
     HeaderNotification,
     NotificationIcon,
     StatusLabel,
+    StatusText,
     StyledButton,
     Tabs,
     TagNoContainer,
+    TagsGrid,
 } from './TagFlyout.style';
 import React, { useEffect, useState } from 'react';
 
@@ -152,6 +154,8 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
         ? tagDetails.status === PreservationStatus.Active
         : false;
     const isVoided = tagDetails ? tagDetails.isVoided : false;
+    const isVoidedInSource = tagDetails ? tagDetails.isVoidedInSource : false;
+    const isDeletedInSource = tagDetails ? tagDetails.isDeletedInSource : false;
 
     const getTabContent = (): JSX.Element => {
         switch (activeTab) {
@@ -266,13 +270,33 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
                     </StyledButton>
                 </HeaderActions>
             </Header>
-            <StatusLabel
-                status={isVoided ? 'Voided' : tagDetails && tagDetails.status}
-            >
-                <span style={{ margin: '0 var(--grid-unit)' }}>
-                    {isVoided ? 'Voided' : tagDetails && tagDetails.status}
-                </span>
-            </StatusLabel>
+            <TagsGrid>
+                <StatusLabel
+                    status={
+                        isVoided ? 'Voided' : tagDetails && tagDetails.status
+                    }
+                >
+                    <StatusText>
+                        {isVoided ? 'Voided' : tagDetails && tagDetails.status}
+                    </StatusText>
+                </StatusLabel>
+                {isVoidedInSource && (
+                    <StatusLabel status={'Voided in source'}>
+                        <StatusText>
+                            {isVoidedInSource ? 'Voided in source' : ''}
+                        </StatusText>
+                    </StatusLabel>
+                )}
+                {isDeletedInSource && (
+                    <StatusLabel
+                        status={isDeletedInSource ? 'Deleted in source' : ''}
+                    >
+                        <StatusText>
+                            {isDeletedInSource ? 'Deleted in source' : ''}
+                        </StatusText>
+                    </StatusLabel>
+                )}
+            </TagsGrid>
             <Tabs>
                 <a
                     className={

@@ -2,6 +2,8 @@ export interface TagDetails {
     id: number;
     tagNo: string;
     isVoided: boolean;
+    isVoidedInSource: boolean;
+    isDeletedInSource: boolean;
     description: string;
     status: string;
     journey: {

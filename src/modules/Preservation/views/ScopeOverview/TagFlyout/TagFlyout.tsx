@@ -5,6 +5,7 @@ import {
     HeaderNotification,
     NotificationIcon,
     StatusLabel,
+    StatusText,
     StyledButton,
     Tabs,
     TagNoContainer,
@@ -275,24 +276,24 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
                         isVoided ? 'Voided' : tagDetails && tagDetails.status
                     }
                 >
-                    <span style={{ margin: '0 var(--grid-unit)' }}>
+                    <StatusText>
                         {isVoided ? 'Voided' : tagDetails && tagDetails.status}
-                    </span>
+                    </StatusText>
                 </StatusLabel>
                 {isVoidedInSource && (
                     <StatusLabel status={'Voided in source'}>
-                        <span style={{ margin: '0 var(--grid-unit)' }}>
+                        <StatusText>
                             {isVoidedInSource ? 'Voided in source' : ''}
-                        </span>
+                        </StatusText>
                     </StatusLabel>
                 )}
                 {isDeletedInSource && (
                     <StatusLabel
                         status={isDeletedInSource ? 'Deleted in source' : ''}
                     >
-                        <span style={{ margin: '0 var(--grid-unit)' }}>
+                        <StatusText>
                             {isDeletedInSource ? 'Deleted in source' : ''}
-                        </span>
+                        </StatusText>
                     </StatusLabel>
                 )}
             </TagsGrid>

@@ -40,11 +40,13 @@ export const NotificationIcon = styled.div`
     }
 `;
 
+export const StatusText = styled.span`
+    margin: '0 var(--grid-unit)';
+`;
 export const StatusLabel = styled.div<{ status?: string | null }>`
     margin-left: calc(var(--grid-unit) * 2);
     padding: var(--grid-unit);
     border-radius: calc(var(--grid-unit) * 2);
-
     /* todo: conditional formatting when "overdue" */
     background: ${(props): any =>
         props.status === 'Active'

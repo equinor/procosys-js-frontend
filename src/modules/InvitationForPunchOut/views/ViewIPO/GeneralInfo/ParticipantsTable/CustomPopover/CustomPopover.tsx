@@ -65,7 +65,7 @@ const CustomPopover = ({ participant }: CustomPopoverProps): JSX.Element => {
                         />
                     </Button>
                 </Popover.Header>
-                <Popover.Content>
+                <Popover.Content style={{ overflow: 'scroll' }}>
                     <CustomTable>
                         {participant.functionalRole.persons.map((person) => {
                             return (

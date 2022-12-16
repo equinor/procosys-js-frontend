@@ -202,6 +202,9 @@ const TransferDialog = ({
                         toolbarColor={
                             tokens.colors.interactive.danger__text.rgba
                         }
+                        textColor={
+                            tokens.colors.interactive.disabled__text.rgba
+                        }
                     />
                 </TableContainer>
             )}

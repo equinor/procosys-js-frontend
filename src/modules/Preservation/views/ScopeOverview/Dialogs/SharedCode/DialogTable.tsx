@@ -3,24 +3,35 @@ import { PreservedTag } from '../../types';
 import { Container } from './DialogTable.style';
 import ProcosysTable from '@procosys/components/Table';
 
-interface TableProps {
+interface RequiredTableProps {
     tags: PreservedTag[];
     columns: any[];
     toolbarText?: string;
     toolbarColor?: string;
 }
 
+interface OptionalTableProps {
+    textColor: string;
+}
+
+interface TableProps extends RequiredTableProps, OptionalTableProps {}
+
+const defaultProps: OptionalTableProps = {
+    textColor: 'black',
+};
+
 const DialogTable = ({
     tags,
     columns,
     toolbarText,
     toolbarColor,
+    textColor,
 }: TableProps): JSX.Element => {
     const numTags = tags.length;
 
     return (
         <Container>
-            <div>
+            <div style={{ color: textColor }}>
                 <ProcosysTable
                     columns={columns}
                     data={tags}
@@ -37,5 +48,7 @@ const DialogTable = ({
         </Container>
     );
 };
+
+DialogTable.defaultProps = defaultProps;
 
 export default DialogTable;

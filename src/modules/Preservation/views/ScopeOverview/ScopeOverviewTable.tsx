@@ -494,7 +494,6 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (maxHeight?: number, refreshOnResize = false) => {
                 const req = { tablePageIndex: 0, tablePageSize: pageSize };
                 setPageIndex(0);
-                getData(req);
             }
         );
     });

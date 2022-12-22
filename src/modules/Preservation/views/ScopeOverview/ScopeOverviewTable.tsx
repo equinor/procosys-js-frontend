@@ -495,17 +495,18 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 const req = { tablePageIndex: 0, tablePageSize: pageSize };
                 setPageIndex(0);
                 getData(req);
-                console.log('filter');
             }
         );
     });
 
     useEffect(() => {
-        getData(
-            { tablePageIndex: pageIndex, tablePageSize: pageSize },
-            sortBy.id,
-            sortBy.desc ? 'desc' : 'asc'
-        );
+        if (pageIndex > 0) {
+            getData(
+                { tablePageIndex: pageIndex, tablePageSize: pageSize },
+                sortBy.id,
+                sortBy.desc ? 'desc' : 'asc'
+            );
+        }
     }, [pageSize, sortBy, pageIndex]);
 
     const setSorting = (input: { id: string; desc: boolean }): void => {

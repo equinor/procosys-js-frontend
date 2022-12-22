@@ -64,7 +64,7 @@ describe('<ScopeOverviewTable />', () => {
                 showTagDetails={true}
                 getData={getData}
                 pageSize={10}
-                pageIndex={0}
+                pageIndex={1}
                 setRefreshScopeListCallback={propFunc}
             />
         );

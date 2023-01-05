@@ -220,19 +220,28 @@ const TagFlyout = ({ tagId, close, setDirty }: TagFlyoutProps): JSX.Element => {
                 </HeaderNotification>
             )}
             <Header>
-                <TagNoContainer isStandardTag={isStandardTag()}>
-                    <a
-                        href={
-                            mainTagId
-                                ? `/${plant.pathId}/Completion#Tag|${mainTagId}`
-                                : ''
-                        }
-                    >
+                {isDeletedInSource ? (
+                    <TagNoContainer isStandardTag={false}>
                         <Typography variant="h1">
+                            {' '}
                             {tagDetails ? tagDetails.tagNo : '-'}
                         </Typography>
-                    </a>
-                </TagNoContainer>
+                    </TagNoContainer>
+                ) : (
+                    <TagNoContainer isStandardTag={isStandardTag()}>
+                        <a
+                            href={
+                                mainTagId
+                                    ? `/${plant.pathId}/Completion#Tag|${mainTagId}`
+                                    : ''
+                            }
+                        >
+                            <Typography variant="h1">
+                                {tagDetails ? tagDetails.tagNo : '-'}
+                            </Typography>
+                        </a>
+                    </TagNoContainer>
+                )}
                 <HeaderActions>
                     {!isVoided && preservationIsStarted && (
                         <StyledButton

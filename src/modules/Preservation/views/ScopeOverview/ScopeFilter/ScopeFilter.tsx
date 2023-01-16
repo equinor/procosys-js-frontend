@@ -101,6 +101,10 @@ const PRESERVATION_STATUS = [
         title: 'Completed',
         value: 'Completed',
     },
+    {
+        title: 'In service',
+        value: 'InService',
+    },
 ];
 
 const ACTION_STATUS = [

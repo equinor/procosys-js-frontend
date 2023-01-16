@@ -14,9 +14,11 @@ interface TransferDialogProps {
     nonTransferableTags: PreservedTag[];
 }
 
-const OverflowColumn = styled.div`
+const OverflowColumn = styled.div<{ isVoided: boolean }>`
     text-overflow: ellipsis;
     overflow: hidden;
+    color: inherit;
+    opacity: ${(props): string => (props.isVoided ? '0.5' : '1')};
 `;
 
 const getRequirementIcons = (row: TableOptions<PreservedTag>): JSX.Element => {
@@ -33,14 +35,7 @@ const getTagNoCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn
-                style={{
-                    color: 'inherit',
-                    opacity: tag.isVoided ? '0.5' : '1',
-                }}
-            >
-                {tag.tagNo}
-            </OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>{tag.tagNo}</OverflowColumn>
         </Tooltip>
     );
 };
@@ -54,7 +49,9 @@ const getDescriptionCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.description}</OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>
+                {tag.description}
+            </OverflowColumn>
         </Tooltip>
     );
 };
@@ -68,7 +65,7 @@ const getModeCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.mode}</OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>{tag.mode}</OverflowColumn>
         </Tooltip>
     );
 };
@@ -82,7 +79,9 @@ const getResponsibleCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.responsibleCode}</OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>
+                {tag.responsibleCode}
+            </OverflowColumn>
         </Tooltip>
     );
 };
@@ -96,7 +95,9 @@ const getNextModeCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.nextMode}</OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>
+                {tag.nextMode}
+            </OverflowColumn>
         </Tooltip>
     );
 };
@@ -112,7 +113,9 @@ const getNextResponsibleCell = (
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.nextResponsibleCode}</OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>
+                {tag.nextResponsibleCode}
+            </OverflowColumn>
         </Tooltip>
     );
 };
@@ -126,7 +129,9 @@ const getStatusCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.status}</OverflowColumn>
+            <OverflowColumn isVoided={tag.isVoided}>
+                {tag.status}
+            </OverflowColumn>
         </Tooltip>
     );
 };

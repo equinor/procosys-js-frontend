@@ -553,7 +553,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         });
 
-        const inStatusButton =
+        const inServiceButton =
             inServiceTags.length > 0 ? 'Set in service' : null;
         const inServiceFunc = inServiceTags.length > 0 ? setInService : null;
 
@@ -566,7 +566,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             '80vw',
             backToListButton,
             null,
-            inStatusButton,
+            inServiceButton,
             inServiceFunc
         );
     };

@@ -33,7 +33,14 @@ const getTagNoCell = (row: TableOptions<PreservedTag>): JSX.Element => {
             enterDelay={200}
             enterNextDelay={100}
         >
-            <OverflowColumn>{tag.tagNo}</OverflowColumn>
+            <OverflowColumn
+                style={{
+                    color: 'inherit',
+                    opacity: tag.isVoided ? '0.5' : '1',
+                }}
+            >
+                {tag.tagNo}
+            </OverflowColumn>
         </Tooltip>
     );
 };
@@ -201,9 +208,6 @@ const TransferDialog = ({
                         toolbarText="tag(s) cannot be transferred"
                         toolbarColor={
                             tokens.colors.interactive.danger__text.rgba
-                        }
-                        textColor={
-                            tokens.colors.interactive.disabled__text.rgba
                         }
                     />
                 </TableContainer>

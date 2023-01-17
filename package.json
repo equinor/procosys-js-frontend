@@ -89,7 +89,7 @@
         "@equinor/eds-core-react": "0.21.0",
         "@equinor/eds-icons": "^0.14.0",
         "@equinor/eds-tokens": "^0.6.0",
-        "@microsoft/applicationinsights-react-js": "^3.1.2",
+        "@microsoft/applicationinsights-react-js": "^3.4.0",
         "@microsoft/applicationinsights-web": "^2.6.2",
         "@mui/icons-material": "^5.6.0",
         "@mui/material": "^5.6.0",

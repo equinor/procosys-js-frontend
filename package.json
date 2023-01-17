@@ -93,7 +93,7 @@
         "@microsoft/applicationinsights-web": "^2.8.9",
         "@mui/icons-material": "^5.11.0",
         "@mui/material": "^5.11.4",
-        "@mui/styled-engine-sc": "^5.5.2",
+        "@mui/styled-engine-sc": "^5.11.0",
         "@mui/styles": "^5.11.2",
         "@mui/x-date-pickers": "^5.0.14",
         "@storybook/addon-info": "^6.0.0-alpha.2",

@@ -83,7 +83,7 @@
         "webpack-dev-server": "^3.11.2"
     },
     "dependencies": {
-        "@azure/msal-browser": "^2.22.1",
+        "@azure/msal-browser": "^2.32.2",
         "@emotion/react": "^11.9.0",
         "@equinor/eds-core-react": "0.21.0",
         "@equinor/eds-icons": "^0.14.0",

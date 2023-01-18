@@ -20,4 +20,9 @@ export const TableCellRight = styled(TableCell)`
 
 export const FloatingPopover = styled(Popover)`
     margin-left: auto;
+    max-height: 300px;
+`;
+
+export const PopoverContent = styled(Popover.Content)`
+    overflow: auto;
 `;

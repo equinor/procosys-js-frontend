@@ -1,6 +1,7 @@
 import {
     CustomTable,
     FloatingPopover,
+    PopoverContent,
     TableCell,
     TableCellRight,
     TableRow,
@@ -12,7 +13,6 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { Participant } from '../../../types';
 import { Popover } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import { Icon } from '@equinor/eds-core-react';
 
 interface CustomPopoverProps {
     participant: Participant;
@@ -65,7 +65,7 @@ const CustomPopover = ({ participant }: CustomPopoverProps): JSX.Element => {
                         />
                     </Button>
                 </Popover.Header>
-                <Popover.Content style={{ overflow: 'scroll' }}>
+                <PopoverContent>
                     <CustomTable>
                         {participant.functionalRole.persons.map((person) => {
                             return (
@@ -83,7 +83,7 @@ const CustomPopover = ({ participant }: CustomPopoverProps): JSX.Element => {
                             );
                         })}
                     </CustomTable>
-                </Popover.Content>
+                </PopoverContent>
             </FloatingPopover>
         </>
     );

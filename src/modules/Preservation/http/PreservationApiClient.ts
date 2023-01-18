@@ -35,6 +35,7 @@ interface PreservedTagResponse {
             readyToBeRescheduled: boolean;
             readyToBeDuplicated: boolean;
             readyToUndoStarted: boolean;
+            readyToBeSetInService: boolean;
             isInUse: boolean;
             requirements: [
                 {
@@ -1119,6 +1120,20 @@ class PreservationApiClient extends ApiClient {
      */
     async transfer(tags: PreservedTag[]): Promise<void> {
         const endpoint = '/Tags/Transfer';
+        const settings: AxiosRequestConfig = {};
+        try {
+            await this.client.put(endpoint, tags, settings);
+        } catch (error) {
+            throw new PreservationApiError(error);
+        }
+    }
+
+    /**
+     * Set in Status on given tags
+     * @param tags  List with tag IDs
+     */
+    async setInService(tags: PreservedTag[]): Promise<void> {
+        const endpoint = '/Tags/SetInService';
         const settings: AxiosRequestConfig = {};
         try {
             await this.client.put(endpoint, tags, settings);

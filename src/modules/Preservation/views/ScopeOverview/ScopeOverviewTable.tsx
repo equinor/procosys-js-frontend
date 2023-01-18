@@ -217,6 +217,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
                     <TagLink
+                        status={tag.status}
                         isOverdue={isTagOverdue(tag)}
                         isVoided={tag.isVoided}
                         onClick={(): void => props.showTagDetails(tag)}

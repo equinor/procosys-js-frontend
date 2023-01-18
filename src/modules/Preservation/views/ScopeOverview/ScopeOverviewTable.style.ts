@@ -16,7 +16,11 @@ export const TagStatusLabel = styled.span`
     color: ${tokens.colors.interactive.primary__resting.rgba};
 `;
 
-export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
+export const TagLink = styled.span<{
+    isOverdue: boolean;
+    isVoided: boolean;
+    status: string;
+}>`
     display: block;
     overflow: hidden;
     white-space: nowrap;
@@ -26,6 +30,8 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
             ? ''
             : props.isOverdue
             ? tokens.colors.interactive.danger__text.rgba
+            : props.status === 'In service'
+            ? tokens.colors.interactive.disabled__text.rgba
             : tokens.colors.interactive.primary__resting.rgba};
     span {
         color: ${(props): string =>

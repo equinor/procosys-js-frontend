@@ -42,6 +42,7 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import TransferDialog from './Dialogs/TransferDialog';
 import { Typography } from '@equinor/eds-core-react';
 import VoidDialog from './Dialogs/VoidDialog';
+import InServiceDialog from './Dialogs/InServiceDialog';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
@@ -161,6 +162,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [preservableTagsSelected, setPreservableTagsSelected] =
         useState<boolean>();
     const [startableTagsSelected, setStartableTagsSelected] =
+        useState<boolean>();
+    const [inServiceTagsSelected, setInServiceTagsSelected] =
         useState<boolean>();
     const [transferableTagsSelected, setTransferableTagsSelected] =
         useState<boolean>();
@@ -357,6 +360,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     }, [tagListFilter]);
 
     useEffect(() => {
+        setInServiceTagsSelected(
+            selectedTags.find((t) => t.readyToBeSetInService) ? true : false
+        );
         setVoidedTagsSelected(
             selectedTags.find((t) => t.isVoided) ? true : false
         );
@@ -510,6 +516,59 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const refreshFilterValues = (): void => {
         setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
+    };
+
+    let inServiceTags: PreservedTag[];
+    let notInServiceTags: PreservedTag[];
+
+    const setInService = async (): Promise<void> => {
+        try {
+            await apiClient.setInService(
+                inServiceTags.map((t) => ({
+                    id: t.id,
+                    rowVersion: t.rowVersion,
+                }))
+            );
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification(
+                `${inServiceTags.length} tag(s) have been successfully set in service.`
+            );
+        } catch (error) {
+            console.error('Transfer failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const showInServiceDialog = (): void => {
+        inServiceTags = [];
+        notInServiceTags = [];
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeSetInService) {
+                inServiceTags.push(newTag);
+            } else {
+                notInServiceTags.push(newTag);
+            }
+        });
+
+        const inServiceButton =
+            inServiceTags.length > 0 ? 'Set in service' : null;
+        const inServiceFunc = inServiceTags.length > 0 ? setInService : null;
+
+        showModalDialog(
+            'Setting in service',
+            <InServiceDialog
+                inServiceTags={inServiceTags}
+                notInServiceTags={notInServiceTags}
+            />,
+            '80vw',
+            backToListButton,
+            null,
+            inServiceButton,
+            inServiceFunc
+        );
     };
 
     let transferableTags: PreservedTag[];
@@ -1233,6 +1292,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         }
                                     />
                                     Reschedule
+                                </DropdownItem>
+                                <DropdownItem
+                                    disabled={selectedTags.length === 0}
+                                    onClick={(): void => showInServiceDialog()}
+                                >
+                                    <EdsIcon
+                                        name="edit_text"
+                                        color={
+                                            !editableTagSelected
+                                                ? tokens.colors.interactive
+                                                      .disabled__border.rgba
+                                                : tokens.colors.text
+                                                      .static_icons__tertiary
+                                                      .rgba
+                                        }
+                                    />
+                                    Set in service
                                 </DropdownItem>
                                 <DropdownItem
                                     disabled={!voidedTagsSelected}

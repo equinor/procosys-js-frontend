@@ -81,7 +81,7 @@ module.exports = {
         port: 3000,
         /*HTML5 - Always route to index.html (React handles routing) */
         historyApiFallback: true,
-        disableHostCheck: true
+        allowedHosts: "all"
     },
     devtool: 'source-map',
     optimization: {

@@ -96,7 +96,7 @@
         "@mui/material": "^5.11.5",
         "@mui/styled-engine-sc": "^5.11.0",
         "@mui/styles": "^5.11.2",
-        "@mui/x-date-pickers": "^5.0.14",
+        "@mui/x-date-pickers": "^5.0.15",
         "@storybook/addon-info": "^6.0.0-alpha.2",
         "@storybook/builder-webpack5": "^6.5.15",
         "@storybook/manager-webpack5": "^6.5.15",

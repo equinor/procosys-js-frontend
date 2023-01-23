@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 import { Breakpoints } from '@procosys/core/styling';
+import { PreservedTag } from './types';
 
 export const Toolbar = styled.div`
     margin-top: calc(var(--grid-unit) * 2);
@@ -16,33 +17,45 @@ export const TagStatusLabel = styled.span`
     color: ${tokens.colors.interactive.primary__resting.rgba};
 `;
 
-export const TagLink = styled.span<{
+export const TableRow = styled.span<{
     isOverdue: boolean;
-    isVoided: boolean;
-    status: string;
+    tag: PreservedTag;
 }>`
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     color: ${(props): string =>
-        props.isVoided
-            ? ''
+        props.tag.isVoided
+            ? tokens.colors.interactive.disabled__text.rgba
             : props.isOverdue
             ? tokens.colors.interactive.danger__text.rgba
-            : props.status === 'In service'
+            : props.tag.status === 'In service'
             ? tokens.colors.interactive.disabled__text.rgba
-            : tokens.colors.interactive.primary__resting.rgba};
+            : ''};
     span {
-        color: ${(props): string =>
-            props.isVoided
-                ? ''
-                : props.isOverdue
-                ? tokens.colors.interactive.danger__text.rgba
-                : tokens.colors.interactive.primary__resting.rgba};
-    }
+        color: inherit;
+        `;
+
+export const TagLink = styled(TableRow)`
     text-decoration: underline;
     cursor: pointer;
+    color: ${(props): string =>
+        props.tag.isVoided
+            ? tokens.colors.interactive.disabled__text.rgba
+            : props.isOverdue
+            ? tokens.colors.interactive.danger__text.rgba
+            : props.tag.status === 'In service'
+            ? tokens.colors.interactive.disabled__text.rgba
+            : tokens.colors.interactive.primary__resting.rgba};
+`;
+
+export const ReqIcon = styled(TagLink)`
+    opacity: ${(props): string =>
+        (props.tag.isVoided || props.tag.status === 'In service') &&
+        !props.isOverdue
+            ? '0.5'
+            : '1'};
 `;
 
 export const Container = styled.div`
@@ -77,11 +90,6 @@ export const Container = styled.div`
         .MuiTouchRipple-root {
             display: none;
         }
-    }
-
-    .controlOverflow {
-        white-space: pre-wrap;
-        color: inherit;
     }
 
     //Hide requirement column in the middle

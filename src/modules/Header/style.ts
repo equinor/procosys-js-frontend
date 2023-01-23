@@ -133,6 +133,7 @@ export const StyledSearch = styled(Search)`
     display: flex;
     max-width: 500px;
     min-width: 250px;
+    outline: 1px solid var(--interactive-primary--resting);
 `;
 
 export const SearchSubText = styled.div`

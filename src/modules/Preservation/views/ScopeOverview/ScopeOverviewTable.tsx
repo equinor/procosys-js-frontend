@@ -96,14 +96,11 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 return (
                     <TableRow
                         isOverdue={
-                            requirement &&
-                            isTagOverdue(row.value as PreservedTag)
-                                ? true
-                                : false
+                            requirement && isTagOverdue(tag) ? true : false
                         }
                         tag={tag}
                     >
-                        {!requirement || (row.value as PreservedTag).isVoided
+                        {!requirement || tag.isVoided
                             ? null
                             : requirement.nextDueWeeks}
                     </TableRow>
@@ -122,14 +119,11 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 return (
                     <TableRow
                         isOverdue={
-                            requirement &&
-                            isTagOverdue(row.value as PreservedTag)
-                                ? true
-                                : false
+                            requirement && isTagOverdue(tag) ? true : false
                         }
                         tag={tag}
                     >
-                        {!requirement || (row.value as PreservedTag).isVoided
+                        {!requirement || tag.isVoided
                             ? null
                             : requirement.nextDueAsYearAndWeek}
                     </TableRow>

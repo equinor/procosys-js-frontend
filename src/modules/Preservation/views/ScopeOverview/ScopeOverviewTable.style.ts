@@ -28,10 +28,10 @@ export const TableRow = styled.span<{
     color: ${(props): string =>
         props.tag.isVoided
             ? tokens.colors.interactive.disabled__text.rgba
-            : props.isOverdue
-            ? tokens.colors.interactive.danger__text.rgba
             : props.tag.status === 'In service'
             ? tokens.colors.interactive.disabled__text.rgba
+            : props.isOverdue
+            ? tokens.colors.interactive.danger__text.rgba
             : ''};
     span {
         color: inherit;
@@ -43,10 +43,10 @@ export const TagLink = styled(TableRow)`
     color: ${(props): string =>
         props.tag.isVoided
             ? tokens.colors.interactive.disabled__text.rgba
-            : props.isOverdue
-            ? tokens.colors.interactive.danger__text.rgba
             : props.tag.status === 'In service'
             ? tokens.colors.interactive.disabled__text.rgba
+            : props.isOverdue
+            ? tokens.colors.interactive.danger__text.rgba
             : tokens.colors.interactive.primary__resting.rgba};
 `;
 

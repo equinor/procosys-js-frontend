@@ -3,6 +3,8 @@ import {
     SingleIconContainer,
     TagLink,
     TagStatusLabel,
+    TableRow,
+    ReqIcon,
 } from '@procosys/modules/Preservation/views/ScopeOverview/ScopeOverviewTable.style';
 import {
     PreservedTag,
@@ -17,9 +19,9 @@ import ProcosysTable from '@procosys/components/Table';
 import RequirementIcons from '@procosys/modules/Preservation/views/ScopeOverview/RequirementIcons';
 import { Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
-import styled from 'styled-components';
 import { JSXBreakpoints } from '@procosys/core/styling';
 import { Tooltip } from '@mui/material';
+import getColumns from './GetColumns';
 
 interface ScopeOverviewTableProps {
     getData: (
@@ -40,10 +42,6 @@ interface ScopeOverviewTableProps {
     setOrderDirection: (orderDirection: string | null) => void;
 }
 
-const StyledTooltip = styled(Tooltip)`
-    font-size: 14px;
-`;
-
 const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     enum ActionStatus {
         Closed = 'HasClosed',
@@ -56,15 +54,13 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <div
-                        style={{
-                            cursor: 'pointer',
-                            opacity: tag.isVoided ? '0.5' : '1',
-                        }}
+                    <ReqIcon
+                        isOverdue={isTagOverdue(tag)}
+                        tag={tag}
                         onClick={(): void => props.showTagDetails(tag)}
                     >
                         <RequirementIcons tag={tag} />
-                    </div>
+                    </ReqIcon>
                 );
             },
         []
@@ -75,25 +71,16 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <StyledTooltip
-                        title={tag.responsibleDescription || ''}
-                        arrow={true}
-                        enterDelay={200}
-                        enterNextDelay={100}
-                    >
-                        <div
-                            className="controlOverflow"
-                            style={{
-                                color: isTagOverdue(tag)
-                                    ? tokens.colors.interactive.danger__text
-                                          .rgba
-                                    : 'rgba(0, 0, 0, 1)',
-                                opacity: tag.isVoided ? '0.5' : '1',
-                            }}
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                        <Tooltip
+                            title={tag.responsibleDescription || ''}
+                            arrow={true}
+                            enterDelay={200}
+                            enterNextDelay={100}
                         >
-                            {tag.responsibleCode}
-                        </div>
-                    </StyledTooltip>
+                            <div>{tag.responsibleCode}</div>
+                        </Tooltip>
+                    </TableRow>
                 );
             },
         []
@@ -105,22 +92,18 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 const requirement = getFirstUpcomingRequirement(
                     row.value as PreservedTag
                 );
+                const tag = row.value as PreservedTag;
                 return (
-                    <div
-                        className="controlOverflow"
-                        style={{
-                            color:
-                                requirement &&
-                                isTagOverdue(row.value as PreservedTag)
-                                    ? tokens.colors.interactive.danger__text
-                                          .rgba
-                                    : '',
-                        }}
+                    <TableRow
+                        isOverdue={
+                            requirement && isTagOverdue(tag) ? true : false
+                        }
+                        tag={tag}
                     >
-                        {!requirement || (row.value as PreservedTag).isVoided
+                        {!requirement || tag.isVoided
                             ? null
                             : requirement.nextDueWeeks}
-                    </div>
+                    </TableRow>
                 );
             },
         []
@@ -132,22 +115,18 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 const requirement = getFirstUpcomingRequirement(
                     row.value as PreservedTag
                 );
+                const tag = row.value as PreservedTag;
                 return (
-                    <div
-                        className="controlOverflow"
-                        style={{
-                            color:
-                                requirement &&
-                                isTagOverdue(row.value as PreservedTag)
-                                    ? tokens.colors.interactive.danger__text
-                                          .rgba
-                                    : '',
-                        }}
+                    <TableRow
+                        isOverdue={
+                            requirement && isTagOverdue(tag) ? true : false
+                        }
+                        tag={tag}
                     >
-                        {!requirement || (row.value as PreservedTag).isVoided
+                        {!requirement || tag.isVoided
                             ? null
                             : requirement.nextDueAsYearAndWeek}
-                    </div>
+                    </TableRow>
                 );
             },
         []
@@ -177,35 +156,36 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 }
 
                 return (
-                    <Tooltip
-                        title={
-                            tag.actionStatus === ActionStatus.OverDue
-                                ? 'Overdue action(s)'
-                                : 'Open action(s)'
-                        }
-                        arrow={true}
-                        enterDelay={200}
-                        enterNextDelay={100}
-                    >
-                        <SingleIconContainer>
-                            <div
-                                style={{ opacity: tag.isVoided ? '0.5' : '1' }}
-                            >
-                                <EdsIcon
-                                    name="notifications"
-                                    size={24}
-                                    color={
-                                        tag.actionStatus ===
-                                        ActionStatus.OverDue
-                                            ? tokens.colors.interactive
-                                                  .danger__text.rgba
-                                            : tokens.colors.text
-                                                  .static_icons__tertiary.rgba
-                                    }
-                                />
-                            </div>
-                        </SingleIconContainer>
-                    </Tooltip>
+                    <TagLink isOverdue={isTagOverdue(tag)} tag={tag}>
+                        <Tooltip
+                            title={
+                                tag.actionStatus === ActionStatus.OverDue
+                                    ? 'Overdue action(s)'
+                                    : 'Open action(s)'
+                            }
+                            arrow={true}
+                            enterDelay={200}
+                            enterNextDelay={100}
+                        >
+                            <SingleIconContainer>
+                                <div>
+                                    <EdsIcon
+                                        name="notifications"
+                                        size={24}
+                                        color={
+                                            tag.actionStatus ===
+                                            ActionStatus.OverDue
+                                                ? tokens.colors.interactive
+                                                      .danger__text.rgba
+                                                : tokens.colors.text
+                                                      .static_icons__tertiary
+                                                      .rgba
+                                        }
+                                    />
+                                </div>
+                            </SingleIconContainer>
+                        </Tooltip>
+                    </TagLink>
                 );
             },
         []
@@ -217,9 +197,8 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
                     <TagLink
-                        status={tag.status}
                         isOverdue={isTagOverdue(tag)}
-                        isVoided={tag.isVoided}
+                        tag={tag}
                         onClick={(): void => props.showTagDetails(tag)}
                     >
                         <Tooltip
@@ -228,14 +207,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                             enterDelay={200}
                             enterNextDelay={100}
                         >
-                            <span
-                                style={{
-                                    color: 'inherit',
-                                    opacity: tag.isVoided ? '0.5' : '1',
-                                }}
-                            >
-                                {tag.tagNo}
-                            </span>
+                            <span>{tag.tagNo}</span>
                         </Tooltip>
                     </TagLink>
                 );
@@ -248,30 +220,23 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <Tooltip
-                        title={tag.description || ''}
-                        arrow={true}
-                        enterDelay={200}
-                        enterNextDelay={100}
-                    >
-                        <div
-                            className="controlOverflow"
-                            style={{
-                                color: isTagOverdue(tag)
-                                    ? tokens.colors.interactive.danger__text
-                                          .rgba
-                                    : 'rgba(0, 0, 0, 1)',
-                                opacity: tag.isVoided ? '0.5' : '1',
-                            }}
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                        <Tooltip
+                            title={tag.description || ''}
+                            arrow={true}
+                            enterDelay={200}
+                            enterNextDelay={100}
                         >
-                            {tag.description}
-                            {tag.isNew && (
-                                <TagStatusLabel role="new-indicator">
-                                    new
-                                </TagStatusLabel>
-                            )}
-                        </div>
-                    </Tooltip>
+                            <div>
+                                {tag.description}
+                                {tag.isNew && (
+                                    <TagStatusLabel role="new-indicator">
+                                        new
+                                    </TagStatusLabel>
+                                )}
+                            </div>
+                        </Tooltip>
+                    </TableRow>
                 );
             },
         []
@@ -282,33 +247,26 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <Tooltip
-                        title={
-                            tag.calloffNo
-                                ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
-                                : tag.purchaseOrderNo
-                                ? tag.purchaseOrderNo
-                                : ''
-                        }
-                        arrow={true}
-                        enterDelay={200}
-                        enterNextDelay={100}
-                    >
-                        <div
-                            className="controlOverflow"
-                            style={{
-                                color: isTagOverdue(tag)
-                                    ? tokens.colors.interactive.danger__text
-                                          .rgba
-                                    : 'rgba(0, 0, 0, 1)',
-                                opacity: tag.isVoided ? '0.5' : '1',
-                            }}
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                        <Tooltip
+                            title={
+                                tag.calloffNo
+                                    ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
+                                    : tag.purchaseOrderNo
+                                    ? tag.purchaseOrderNo
+                                    : ''
+                            }
+                            arrow={true}
+                            enterDelay={200}
+                            enterNextDelay={100}
                         >
-                            {tag.calloffNo
-                                ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
-                                : tag.purchaseOrderNo}
-                        </div>
-                    </Tooltip>
+                            <div>
+                                {tag.calloffNo
+                                    ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
+                                    : tag.purchaseOrderNo}
+                            </div>
+                        </Tooltip>
+                    </TableRow>
                 );
             },
         []
@@ -319,17 +277,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <div
-                        className="controlOverflow"
-                        style={{
-                            color: isTagOverdue(tag)
-                                ? tokens.colors.interactive.danger__text.rgba
-                                : 'rgba(0, 0, 0, 1)',
-                            opacity: tag.isVoided ? '0.5' : '1',
-                        }}
-                    >
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
                         {tag.areaCode}
-                    </div>
+                    </TableRow>
                 );
             },
         []
@@ -340,17 +290,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <div
-                        className="controlOverflow"
-                        style={{
-                            color: isTagOverdue(tag)
-                                ? tokens.colors.interactive.danger__text.rgba
-                                : 'rgba(0, 0, 0, 1)',
-                            opacity: tag.isVoided ? '0.5' : '1',
-                        }}
-                    >
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
                         {tag.disciplineCode}
-                    </div>
+                    </TableRow>
                 );
             },
         []
@@ -361,17 +303,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
             (row: TableOptions<PreservedTag>): JSX.Element => {
                 const tag = row.value as PreservedTag;
                 return (
-                    <div
-                        className="controlOverflow"
-                        style={{
-                            color: isTagOverdue(tag)
-                                ? tokens.colors.interactive.danger__text.rgba
-                                : 'rgba(0, 0, 0, 1)',
-                            opacity: tag.isVoided ? '0.5' : '1',
-                        }}
-                    >
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
                         {tag.mode}
-                    </div>
+                    </TableRow>
                 );
             },
         []
@@ -383,17 +317,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 const tag = row.row.original as PreservedTag;
 
                 return (
-                    <div
-                        className="controlOverflow"
-                        style={{
-                            color: isTagOverdue(tag)
-                                ? tokens.colors.interactive.danger__text.rgba
-                                : 'rgba(0, 0, 0, 1)',
-                            opacity: tag.isVoided ? '0.5' : '1',
-                        }}
-                    >
+                    <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
                         {tag.status}
-                    </div>
+                    </TableRow>
                 );
             },
         []
@@ -547,407 +473,3 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
 };
 
 export default ScopeOverviewTable;
-
-function getColumns(
-    getTagNoColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getDescriptionColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getDueColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getNextColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getMode: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getPOColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getAreaCode: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getResponsibleColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getDisciplineCode: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getStatus: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getRequirementColumn: (row: TableOptions<PreservedTag>) => JSX.Element,
-    getActionsHeader: () => JSX.Element,
-    getActionsColumn: (row: TableOptions<PreservedTag>) => JSX.Element
-): {
-    mobileColumns: (
-        | {
-              Header: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              defaultCanSort: boolean;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-          }
-        | {
-              Header: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-              id?: undefined;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              id: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width?: undefined;
-              maxWidth?: undefined;
-              minWidth?: undefined;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              accessor: (d: PreservedTag) => string | undefined;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width?: undefined;
-              maxWidth?: undefined;
-              minWidth?: undefined;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: JSX.Element;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              defaultCanSort: boolean;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-          }
-    )[];
-    desktopColumns: (
-        | {
-              Header: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-              id?: undefined;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              id: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width?: undefined;
-              maxWidth?: undefined;
-              minWidth?: undefined;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              accessor: (d: PreservedTag) => string | undefined;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              width?: undefined;
-              maxWidth?: undefined;
-              minWidth?: undefined;
-              defaultCanSort?: undefined;
-          }
-        | {
-              Header: string;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              defaultCanSort: boolean;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-          }
-        | {
-              Header: JSX.Element;
-              accessor: (
-                  d: UseTableRowProps<PreservedTag>
-              ) => UseTableRowProps<PreservedTag>;
-              id: string;
-              Cell: (row: TableOptions<PreservedTag>) => JSX.Element;
-              defaultCanSort: boolean;
-              width: number;
-              maxWidth: number;
-              minWidth: number;
-          }
-    )[];
-} {
-    const desktopColumns = [
-        {
-            Header: 'Tag no',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'tagNo',
-            Cell: getTagNoColumn,
-            width: 180,
-            maxWidth: 400,
-            minWidth: 150,
-        },
-        {
-            Header: 'Description',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getDescriptionColumn,
-            width: 250,
-            maxWidth: 400,
-            minWidth: 80,
-        },
-        {
-            Header: 'Due',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'due',
-            Cell: getDueColumn,
-            width: 60,
-            maxWidth: 100,
-            minWidth: 50,
-        },
-        {
-            Header: 'Next',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'Due',
-            Cell: getNextColumn,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-        },
-        {
-            Header: 'Mode',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getMode,
-            width: 200,
-            maxWidth: 400,
-            minWidth: 50,
-        },
-        {
-            Header: 'PO',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'PO',
-            Cell: getPOColumn,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-        },
-        {
-            Header: 'Area',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'Area',
-            Cell: getAreaCode,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-        },
-        {
-            Header: 'Resp',
-            id: 'responsible',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getResponsibleColumn,
-        },
-        {
-            Header: 'Disc',
-            id: 'discipline',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getDisciplineCode,
-        },
-        {
-            Header: 'Status',
-            accessor: (d: PreservedTag): string | undefined => {
-                return d.status;
-            },
-            id: 'status',
-            Cell: getStatus,
-        },
-        {
-            Header: 'Req type',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'reqtype',
-            Cell: getRequirementColumn,
-            defaultCanSort: false,
-            width: 200,
-            maxWidth: 400,
-            minWidth: 150,
-        },
-        {
-            Header: getActionsHeader(),
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'actions',
-            Cell: getActionsColumn,
-            defaultCanSort: false,
-            width: 60,
-            maxWidth: 100,
-            minWidth: 30,
-        },
-    ];
-
-    const mobileColumns = [
-        {
-            Header: 'Tag no',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'tagNo',
-            Cell: getTagNoColumn,
-            width: 180,
-            maxWidth: 400,
-            minWidth: 150,
-        },
-        {
-            Header: 'Req type',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'reqtype',
-            Cell: getRequirementColumn,
-            defaultCanSort: false,
-            width: 200,
-            maxWidth: 400,
-            minWidth: 150,
-        },
-        {
-            Header: 'Due',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'due',
-            Cell: getDueColumn,
-            width: 60,
-            maxWidth: 100,
-            minWidth: 50,
-        },
-        {
-            Header: 'Next',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'Due',
-            Cell: getNextColumn,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-        },
-        {
-            Header: 'Mode',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getMode,
-            width: 200,
-            maxWidth: 400,
-            minWidth: 50,
-        },
-        {
-            Header: 'PO',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'PO',
-            Cell: getPOColumn,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-        },
-        {
-            Header: 'Area',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'Area',
-            Cell: getAreaCode,
-            width: 100,
-            maxWidth: 150,
-            minWidth: 50,
-        },
-        {
-            Header: 'Resp',
-            id: 'responsible',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getResponsibleColumn,
-        },
-        {
-            Header: 'Disc',
-            id: 'discipline',
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            Cell: getDisciplineCode,
-        },
-        {
-            Header: 'Status',
-            accessor: (d: PreservedTag): string | undefined => {
-                return d.status;
-            },
-            id: 'status',
-            Cell: getStatus,
-        },
-        {
-            Header: getActionsHeader(),
-            accessor: (
-                d: UseTableRowProps<PreservedTag>
-            ): UseTableRowProps<PreservedTag> => d,
-            id: 'actions',
-            Cell: getActionsColumn,
-            defaultCanSort: false,
-            width: 60,
-            maxWidth: 100,
-            minWidth: 30,
-        },
-    ];
-    return { mobileColumns, desktopColumns };
-}

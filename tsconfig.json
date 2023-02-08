@@ -2,6 +2,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
+        "useUnknownInCatchVariables": false,
         "target": "ESNext",
         "allowJs": true,
         /* Files in the directory specified using the "outDir" compiler option are excluded as

@@ -9,6 +9,14 @@ interface ErrorResponse {
     }[];
 }
 
+interface PreservationErrorResponse {
+    errors: {
+        [key: string]: Array<string>;
+    };
+    status: number;
+    title: string;
+}
+
 export type Errors = {
     IpoException: string[];
     status: number;
@@ -42,7 +50,18 @@ export class ProCoSysApiError extends Error {
         } else if (error.response.status == 403) {
             super('You are not authorized to perform this operation.');
         } else if (error.response.status == 400) {
-            if (isOfType<dataError>(error.response.data, 'errors')) {
+            if (
+                isOfType<PreservationErrorResponse>(
+                    error.response.data,
+                    'errors'
+                )
+            ) {
+                super(
+                    error.response.data
+                        ? `${error.response.data.errors[''][0]}`
+                        : undefined
+                );
+            } else if (isOfType<dataError>(error.response.data, 'errors')) {
                 super(
                     error.response.data
                         ? `${error.response.data.errors.IpoException}`

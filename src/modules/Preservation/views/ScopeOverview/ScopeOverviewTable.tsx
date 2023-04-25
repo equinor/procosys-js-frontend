@@ -355,6 +355,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     const [loading, setLoading] = useState<boolean>(true);
     const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
     const columnsRef = useRef<ColumnInstance<any>[]>(columns);
+    const [firstRender, setFirstRender] = useState<boolean>(true);
 
     const setColumns = (newValue: any[]): void => {
         columnsRef.current = newValue;
@@ -424,14 +425,17 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 getData(req);
             }
         );
-    });
+        setFirstRender(false);
+    }, []);
 
     useEffect(() => {
-        getData(
-            { tablePageIndex: pageIndex, tablePageSize: pageSize },
-            sortBy.id,
-            sortBy.desc ? 'desc' : 'asc'
-        );
+        if (!firstRender) {
+            getData(
+                { tablePageIndex: pageIndex, tablePageSize: pageSize },
+                sortBy.id,
+                sortBy.desc ? 'desc' : 'asc'
+            );
+        }
     }, [pageSize, sortBy, pageIndex]);
 
     const setSorting = (input: { id: string; desc: boolean }): void => {

@@ -418,24 +418,24 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        props.setRefreshScopeListCallback(
-            (maxHeight?: number, refreshOnResize = false) => {
-                const req = { tablePageIndex: 0, tablePageSize: pageSize };
-                setPageIndex(0);
-                getData(req);
-            }
-        );
-        setFirstRender(false);
-    }, []);
-
-    useEffect(() => {
         if (!firstRender) {
-            getData(
-                { tablePageIndex: pageIndex, tablePageSize: pageSize },
-                sortBy.id,
-                sortBy.desc ? 'desc' : 'asc'
+            props.setRefreshScopeListCallback(
+                (maxHeight?: number, refreshOnResize = false) => {
+                    const req = { tablePageIndex: 0, tablePageSize: pageSize };
+                    setPageIndex(0);
+                    getData(req);
+                }
             );
         }
+    });
+
+    useEffect(() => {
+        getData(
+            { tablePageIndex: pageIndex, tablePageSize: pageSize },
+            sortBy.id,
+            sortBy.desc ? 'desc' : 'asc'
+        );
+        setFirstRender(false);
     }, [pageSize, sortBy, pageIndex]);
 
     const setSorting = (input: { id: string; desc: boolean }): void => {

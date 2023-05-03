@@ -177,7 +177,7 @@ const InvitationsFilter = ({
                 setSelectedFilterIndex(filterIndex);
                 if (
                     JSON.stringify(localFilter) !=
-                    savedFilters[filterIndex].criteria
+                    savedFilters[filterIndex]?.criteria
                 ) {
                     setSelectedSavedFilterTitle(null);
                     setSelectedFilterIndex(null);

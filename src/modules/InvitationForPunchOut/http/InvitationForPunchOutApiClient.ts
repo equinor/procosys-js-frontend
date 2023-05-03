@@ -1114,7 +1114,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async getSavedIPOFilters(
-        projectName: string,
+        projectName: string | null,
         setRequestCanceller?: RequestCanceler
     ): Promise<SavedIPOFilterResponse[]> {
         const endpoint = '/Persons/SavedFilters';
@@ -1141,7 +1141,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
      * @param setRequestCanceller Returns a function that can be called to cancel the request
      */
     async addSavedIPOFilter(
-        projectName: string,
+        projectName: string | null,
         title: string,
         defaultFilter: boolean,
         criteria: string,

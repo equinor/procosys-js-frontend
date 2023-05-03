@@ -88,7 +88,9 @@ const SearchIPO = (): JSX.Element => {
             return;
         }
         try {
-            const response = await apiClient.getSavedIPOFilters(project.name);
+            const response = await apiClient.getSavedIPOFilters(
+                project.name === 'All projects' ? null : project.name
+            );
             setSavedFilters(response);
         } catch (error) {
             console.error(
@@ -102,9 +104,7 @@ const SearchIPO = (): JSX.Element => {
     };
 
     useEffect((): void => {
-        if (project && project.id != -1) {
-            updateSavedFilters();
-        }
+        updateSavedFilters();
     }, [project]);
 
     const getDefaultFilter = (): SavedIPOFilter | undefined => {
@@ -119,8 +119,6 @@ const SearchIPO = (): JSX.Element => {
 
     useEffect((): void => {
         if (hasProjectChanged) {
-            if (project && project.id === -1) return;
-
             if (savedFilters) {
                 const defaultFilter = getDefaultFilter();
                 if (defaultFilter) {

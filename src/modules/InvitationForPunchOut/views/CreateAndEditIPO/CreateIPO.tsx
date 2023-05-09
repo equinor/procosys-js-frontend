@@ -121,8 +121,11 @@ const initialParticipants: Participant[] = [
 
 const CreateIPO = (): JSX.Element => {
     const user = useCurrentUser();
-    const params =
-        useParams<{ ipoId: any; projectName: any; commPkgNo: any }>();
+    const params = useParams<{
+        ipoId: any;
+        projectName: any;
+        commPkgNo: any;
+    }>();
 
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },

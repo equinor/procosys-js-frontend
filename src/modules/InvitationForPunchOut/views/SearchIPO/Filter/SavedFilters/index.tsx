@@ -54,7 +54,7 @@ const SavedFilters = (props: SavedFiltersProps): JSX.Element => {
         }
         try {
             await apiClient.addSavedIPOFilter(
-                props.project.name,
+                props.project.id === -1 ? null : props.project.name,
                 newFilterTitle,
                 newFilterIsDefault,
                 JSON.stringify(props.ipoFilter)

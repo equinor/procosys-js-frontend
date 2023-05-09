@@ -26,6 +26,9 @@ import {
     KeyboardArrowUp,
 } from '@mui/icons-material';
 import { Popover } from '@mui/material';
+import OptionsDropdown from '../../../../../components/OptionsDropdown';
+import { DropdownItem } from '../ScopeOverview.style';
+import { Tooltip } from '@mui/material';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -38,7 +41,7 @@ interface ScopeFilterProps {
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
-    exportTagsToExcel: () => void;
+    setExportwithHistory: React.Dispatch<React.SetStateAction<boolean>>;
     triggerFilterValuesRefresh: number;
 }
 
@@ -172,7 +175,7 @@ const ScopeFilter = ({
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
     numberOfTags,
-    exportTagsToExcel,
+    setExportwithHistory,
     triggerFilterValuesRefresh,
 }: ScopeFilterProps): JSX.Element => {
     const {
@@ -504,13 +507,39 @@ const ScopeFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    <Button
-                        variant="ghost"
-                        title="Export filtered tags to Excel"
-                        onClick={exportTagsToExcel}
-                    >
-                        {ExcelIcon}
-                    </Button>
+                    <OptionsDropdown icon="microsoft_excel" variant="ghost">
+                        <Tooltip
+                            title="Filter to max 100 tags to export history"
+                            disableHoverListener={
+                                numberOfTags && numberOfTags < 100
+                                    ? true
+                                    : false
+                            }
+                            style={{ textAlign: 'center' }}
+                        >
+                            <div>
+                                <DropdownItem
+                                    disabled={
+                                        numberOfTags && numberOfTags > 100
+                                            ? true
+                                            : false
+                                    }
+                                    onClick={(): void => {
+                                        setExportwithHistory(true);
+                                    }}
+                                >
+                                    Export with history
+                                </DropdownItem>
+                            </div>
+                        </Tooltip>
+                        <DropdownItem
+                            onClick={(): void => {
+                                setExportwithHistory(false);
+                            }}
+                        >
+                            Export without history
+                        </DropdownItem>
+                    </OptionsDropdown>
                     <Button
                         variant="ghost"
                         title="Open saved filters"

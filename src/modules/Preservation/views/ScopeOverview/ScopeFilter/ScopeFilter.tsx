@@ -509,7 +509,7 @@ const ScopeFilter = ({
                 <div style={{ display: 'flex' }}>
                     <OptionsDropdown icon="microsoft_excel" variant="ghost">
                         <Tooltip
-                            title="Filter to max 100 tags to export history"
+                            title="Cannot export more than 100 tags with history. Filter down to max 100 tags to enable this feature."
                             disableHoverListener={
                                 numberOfTags && numberOfTags < 100
                                     ? true

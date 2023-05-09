@@ -934,6 +934,46 @@ class PreservationApiClient extends ApiClient {
     }
 
     /**
+     * Export tags with history to excel
+     *
+     * @param setRequestCanceller Returns a function that can be called to cancel the request
+     */
+    async exportTagsWithHistoryToExcel(
+        projectName: string,
+        sortProperty: string | null,
+        sortDirection: string | null,
+        tagFilter: TagListFilter,
+        exportHistory: boolean,
+        setRequestCanceller?: RequestCanceler
+    ): Promise<BlobPart> {
+        const endpoint = '/Tags/ExportTagsWithHistoryToExcel';
+
+        const settings: AxiosRequestConfig = {
+            params: {
+                projectName: projectName,
+                exportHistory: exportHistory,
+                property: sortProperty,
+                direction: sortDirection,
+                ...tagFilter,
+            },
+            responseType: 'blob',
+        };
+
+        settings.paramsSerializer = (p): string => {
+            return Qs.stringify(p);
+        };
+
+        this.setupRequestCanceler(settings, setRequestCanceller);
+
+        try {
+            const result = await this.client.get<BlobPart>(endpoint, settings);
+            return result.data;
+        } catch (error) {
+            throw new PreservationApiError(error);
+        }
+    }
+
+    /**
      * Get saved tag list filters
      */
     async getSavedTagListFilters(

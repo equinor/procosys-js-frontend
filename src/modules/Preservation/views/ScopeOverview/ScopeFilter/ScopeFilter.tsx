@@ -41,7 +41,7 @@ interface ScopeFilterProps {
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
-    setExportwithHistory: React.Dispatch<React.SetStateAction<boolean>>;
+    exportTagsToExcel: (exportHistory: boolean) => void;
     triggerFilterValuesRefresh: number;
 }
 
@@ -175,7 +175,7 @@ const ScopeFilter = ({
     selectedSavedFilterTitle,
     setSelectedSavedFilterTitle,
     numberOfTags,
-    setExportwithHistory,
+    exportTagsToExcel,
     triggerFilterValuesRefresh,
 }: ScopeFilterProps): JSX.Element => {
     const {
@@ -508,6 +508,13 @@ const ScopeFilter = ({
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
                     <OptionsDropdown icon="microsoft_excel" variant="ghost">
+                        <DropdownItem
+                            onClick={(): void => {
+                                exportTagsToExcel(false);
+                            }}
+                        >
+                            Export without history
+                        </DropdownItem>
                         <Tooltip
                             title="Cannot export more than 100 tags with history. Filter down to max 100 tags to enable this feature."
                             disableHoverListener={
@@ -525,20 +532,13 @@ const ScopeFilter = ({
                                             : false
                                     }
                                     onClick={(): void => {
-                                        setExportwithHistory(true);
+                                        exportTagsToExcel(true);
                                     }}
                                 >
                                     Export with history
                                 </DropdownItem>
                             </div>
                         </Tooltip>
-                        <DropdownItem
-                            onClick={(): void => {
-                                setExportwithHistory(false);
-                            }}
-                        >
-                            Export without history
-                        </DropdownItem>
                     </OptionsDropdown>
                     <Button
                         variant="ghost"

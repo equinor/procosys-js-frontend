@@ -104,6 +104,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                                     key={index}
                                     role="option"
                                     tabIndex={0}
+                                    onClick={(): void => setIsOpen(false)}
                                 >
                                     {item}
                                 </DropdownItem>

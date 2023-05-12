@@ -13,6 +13,7 @@ import { useClickOutsideNotifier } from '../../hooks';
 export type DropdownProps = {
     disabled?: boolean;
     text?: string;
+    closeOnClick?: boolean;
     children?: React.ReactNode;
     /** EdsIcon name */
     icon?: string;
@@ -25,6 +26,7 @@ const KEYCODE_ESCAPE = 27;
 
 const OptionsDropdown: React.FC<DropdownProps> = ({
     disabled = false,
+    closeOnClick = false,
     text = '',
     icon,
     children,
@@ -89,6 +91,7 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                 )}
                 {text}
             </DropdownButton>
+
             {isOpen && (
                 <ul
                     ref={listRef}
@@ -104,7 +107,9 @@ const OptionsDropdown: React.FC<DropdownProps> = ({
                                     key={index}
                                     role="option"
                                     tabIndex={0}
-                                    onClick={(): void => setIsOpen(false)}
+                                    onClick={(): void => {
+                                        closeOnClick && setIsOpen(false);
+                                    }}
                                 >
                                     {item}
                                 </DropdownItem>

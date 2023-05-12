@@ -507,7 +507,11 @@ const ScopeFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    <OptionsDropdown icon="microsoft_excel" variant="ghost">
+                    <OptionsDropdown
+                        icon="microsoft_excel"
+                        variant="ghost"
+                        closeOnClick={true}
+                    >
                         <DropdownItem
                             onClick={(): void => {
                                 exportTagsToExcel(false);

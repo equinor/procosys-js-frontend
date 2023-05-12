@@ -211,7 +211,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const moduleHeaderContainerRef = useRef<HTMLDivElement>(null);
     const [moduleHeaderHeight, setModuleHeaderHeight] = useState<number>(250);
-    const [exportWithHistory, setExportwithHistory] = useState<boolean>(false);
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
@@ -458,13 +457,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return undefined;
     };
 
-    useEffect((): void => {
-        if (!isFirstRender.current) {
-            exportTagsToExcel();
-        }
-    }, [exportWithHistory]);
-
-    const exportTagsToExcel = async (): Promise<void> => {
+    const exportTagsToExcel = async (withHistory: boolean): Promise<void> => {
         try {
             showSnackbarNotification('Exporting filtered tags to Excel...');
             await apiClient
@@ -473,7 +466,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     orderByField,
                     orderDirection,
                     tagListFilter,
-                    exportWithHistory
+                    withHistory
                 )
                 .then((response) => {
                     const outputFilename = `Preservation tags-${project.name}.xlsx`;
@@ -1486,7 +1479,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         }
                         selectedSavedFilterTitle={selectedSavedFilterTitle}
                         numberOfTags={numberOfTags}
-                        setExportwithHistory={setExportwithHistory}
+                        exportTagsToExcel={exportTagsToExcel}
                     />
                 </FilterContainer>
             )}

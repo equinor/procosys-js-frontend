@@ -26,6 +26,9 @@ import {
     KeyboardArrowUp,
 } from '@mui/icons-material';
 import { Popover } from '@mui/material';
+import OptionsDropdown from '../../../../../components/OptionsDropdown';
+import { DropdownItem } from '../ScopeOverview.style';
+import { Tooltip } from '@mui/material';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -38,7 +41,7 @@ interface ScopeFilterProps {
     selectedSavedFilterTitle: string | null;
     setSelectedSavedFilterTitle: (savedFilterTitle: string | null) => void;
     numberOfTags: number | undefined;
-    exportTagsToExcel: () => void;
+    exportTagsToExcel: (exportHistory: boolean) => void;
     triggerFilterValuesRefresh: number;
 }
 
@@ -504,13 +507,43 @@ const ScopeFilter = ({
             <Header filterActive={filterActive}>
                 <Typography variant="h1">Filter</Typography>
                 <div style={{ display: 'flex' }}>
-                    <Button
+                    <OptionsDropdown
+                        icon="microsoft_excel"
                         variant="ghost"
-                        title="Export filtered tags to Excel"
-                        onClick={exportTagsToExcel}
+                        closeOnClick={true}
                     >
-                        {ExcelIcon}
-                    </Button>
+                        <DropdownItem
+                            onClick={(): void => {
+                                exportTagsToExcel(false);
+                            }}
+                        >
+                            Export without history
+                        </DropdownItem>
+                        <Tooltip
+                            title="Cannot export more than 100 tags with history. Filter down to max 100 tags to enable this feature."
+                            disableHoverListener={
+                                numberOfTags && numberOfTags < 100
+                                    ? true
+                                    : false
+                            }
+                            style={{ textAlign: 'center' }}
+                        >
+                            <div>
+                                <DropdownItem
+                                    disabled={
+                                        numberOfTags && numberOfTags > 100
+                                            ? true
+                                            : false
+                                    }
+                                    onClick={(): void => {
+                                        exportTagsToExcel(true);
+                                    }}
+                                >
+                                    Export with history
+                                </DropdownItem>
+                            </div>
+                        </Tooltip>
+                    </OptionsDropdown>
                     <Button
                         variant="ghost"
                         title="Open saved filters"

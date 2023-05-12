@@ -457,15 +457,16 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return undefined;
     };
 
-    const exportTagsToExcel = async (): Promise<void> => {
+    const exportTagsToExcel = async (withHistory: boolean): Promise<void> => {
         try {
             showSnackbarNotification('Exporting filtered tags to Excel...');
             await apiClient
-                .exportTagsToExcel(
+                .exportTagsWithHistoryToExcel(
                     project.name,
                     orderByField,
                     orderDirection,
-                    tagListFilter
+                    tagListFilter,
+                    withHistory
                 )
                 .then((response) => {
                     const outputFilename = `Preservation tags-${project.name}.xlsx`;

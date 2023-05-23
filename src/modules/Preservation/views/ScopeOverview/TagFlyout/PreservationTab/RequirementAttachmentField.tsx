@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { TagRequirementField } from '../types';
 import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
@@ -64,6 +64,7 @@ const RequirementAttachmentField = ({
 
     const recordAttachment = async (file: File): Promise<void> => {
         try {
+            console.log('adding file to ' + requirementId);
             setIsLoading(true);
             await apiClient.recordAttachmentOnTagRequirement(
                 tagId,
@@ -116,9 +117,18 @@ const RequirementAttachmentField = ({
     };
 
     const handleSubmitFile = (e: any): void => {
+        console.log('handled submit file on ' + requirementId);
         e.preventDefault();
         const file = e.target.files[0];
         recordAttachment(file);
+    };
+
+    const inputFileRef = useRef<HTMLInputElement>(null);
+
+    const handleAddFile = (): void => {
+        if (inputFileRef.current) {
+            inputFileRef.current.click();
+        }
     };
 
     if (isLoading) {
@@ -144,13 +154,14 @@ const RequirementAttachmentField = ({
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{ marginTop: 'var(--grid-unit)' }}>
                     <form>
-                        <label htmlFor="uploadFile">
-                            <SelectFileButton>Select file</SelectFileButton>
-                        </label>
+                        <SelectFileButton onClick={handleAddFile}>
+                            Select file
+                        </SelectFileButton>
                         <input
                             id="uploadFile"
                             style={{ display: 'none' }}
                             type="file"
+                            ref={inputFileRef}
                             onChange={handleSubmitFile}
                         />
                     </form>

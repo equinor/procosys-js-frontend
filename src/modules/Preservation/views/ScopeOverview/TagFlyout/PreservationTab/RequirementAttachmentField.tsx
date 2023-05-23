@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { TagRequirementField } from '../types';
 import { usePreservationContext } from '@procosys/modules/Preservation/context/PreservationContext';
@@ -121,6 +121,14 @@ const RequirementAttachmentField = ({
         recordAttachment(file);
     };
 
+    const inputFileRef = useRef<HTMLInputElement>(null);
+
+    const handleAddFile = (): void => {
+        if (inputFileRef.current) {
+            inputFileRef.current.click();
+        }
+    };
+
     if (isLoading) {
         return (
             <div style={{ margin: 'calc(var(--grid-unit) * 5) auto' }}>
@@ -144,13 +152,14 @@ const RequirementAttachmentField = ({
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{ marginTop: 'var(--grid-unit)' }}>
                     <form>
-                        <label htmlFor="uploadFile">
-                            <SelectFileButton>Select file</SelectFileButton>
-                        </label>
+                        <SelectFileButton onClick={handleAddFile}>
+                            Select file
+                        </SelectFileButton>
                         <input
                             id="uploadFile"
                             style={{ display: 'none' }}
                             type="file"
+                            ref={inputFileRef}
                             onChange={handleSubmitFile}
                         />
                     </form>

@@ -308,7 +308,6 @@ const Requirements = ({
         <div>
             {requirements.map((requirement) => {
                 const isOverdue = requirement.nextDueWeeks < 0;
-
                 return (
                     <Container key={requirement.id}>
                         <Section>

@@ -265,8 +265,6 @@ const Requirements = ({
         requirementId: number,
         field: TagRequirementField
     ): JSX.Element => {
-        console.log('field for ' + requirementId);
-        console.log('field: ' + field.id);
         switch (field.fieldType.toLowerCase()) {
             case 'info':
                 return (
@@ -310,7 +308,6 @@ const Requirements = ({
         <div>
             {requirements.map((requirement) => {
                 const isOverdue = requirement.nextDueWeeks < 0;
-                console.log(requirement.id);
                 return (
                     <Container key={requirement.id}>
                         <Section>

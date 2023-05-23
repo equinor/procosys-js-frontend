@@ -64,7 +64,6 @@ const RequirementAttachmentField = ({
 
     const recordAttachment = async (file: File): Promise<void> => {
         try {
-            console.log('adding file to ' + requirementId);
             setIsLoading(true);
             await apiClient.recordAttachmentOnTagRequirement(
                 tagId,
@@ -117,7 +116,6 @@ const RequirementAttachmentField = ({
     };
 
     const handleSubmitFile = (e: any): void => {
-        console.log('handled submit file on ' + requirementId);
         e.preventDefault();
         const file = e.target.files[0];
         recordAttachment(file);

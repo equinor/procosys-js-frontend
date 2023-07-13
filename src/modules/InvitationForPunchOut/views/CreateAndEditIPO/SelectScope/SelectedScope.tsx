@@ -11,6 +11,7 @@ import {
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
+import { Icon } from '@equinor/eds-core-react';
 
 const multipleDisciplinesWarning = (
     <div>
@@ -59,7 +60,7 @@ const SelectedScope = ({
                                 removeCommPkg(commPkg.commPkgNo)
                             }
                         >
-                            <EdsIcon name="delete_to_trash"></EdsIcon>
+                            <Icon data="delete_to_trash"></Icon>
                         </Button>
                     )}
                 </Accordion.Header>
@@ -97,7 +98,7 @@ const SelectedScope = ({
                             variant="ghost_icon"
                             onClick={(): void => removeMcPkg(mcPkg.mcPkgNo)}
                         >
-                            <EdsIcon name="delete_to_trash"></EdsIcon>
+                            <Icon data="delete_to_trash"></Icon>
                         </Button>
                     )}
                 </Accordion.Header>

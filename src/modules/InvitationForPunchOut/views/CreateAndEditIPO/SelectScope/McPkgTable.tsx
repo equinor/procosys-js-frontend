@@ -59,12 +59,16 @@ const McPkgTable = forwardRef(
                         .getMcPkgsAsync(projectName, commPkgNo)
                         .then((mcPkgs) =>
                             mcPkgs.map((mcPkg): McPkgRow => {
+                                console.log(mcPkg);
                                 return {
                                     mcPkgNo: mcPkg.mcPkgNo,
                                     description: mcPkg.description,
                                     discipline: mcPkg.disciplineCode,
                                     system: mcPkg.system,
                                     commPkgNo: commPkgNo,
+                                    status: mcPkg.status,
+                                    m01: mcPkg.m01,
+                                    m02: mcPkg.m02,
                                     tableData: {
                                         isSelected:
                                             selectedMcPkgScope.selected.some(

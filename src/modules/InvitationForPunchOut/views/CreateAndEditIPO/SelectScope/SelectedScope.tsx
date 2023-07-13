@@ -112,12 +112,22 @@ const SelectedScope = ({
                             </Typography>
                         </div>
                         <div>
+                            <Typography variant="caption">Status</Typography>
+                            <Typography variant="body_long">
+                                {mcPkg.status}
+                            </Typography>
+                        </div>
+                        <div>
                             <Typography variant="caption">M-01 date</Typography>
-                            <Typography variant="body_long">-</Typography>
+                            <Typography variant="body_long">
+                                {mcPkg.m01 ? mcPkg.m01 : '-'}
+                            </Typography>
                         </div>
                         <div>
                             <Typography variant="caption">M-02 date</Typography>
-                            <Typography variant="body_long">-</Typography>
+                            <Typography variant="body_long">
+                                {mcPkg.m02 ? mcPkg.m02 : '-'}
+                            </Typography>
                         </div>
                     </AccordionContent>
                 </Accordion.Panel>

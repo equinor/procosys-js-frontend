@@ -100,6 +100,9 @@ export interface McPkgRow {
     tableData?: {
         isSelected: boolean;
     };
+    m01?: string;
+    m02?: string;
+    status?: string;
 }
 
 export interface McScope {

@@ -59,7 +59,6 @@ const McPkgTable = forwardRef(
                         .getMcPkgsAsync(projectName, commPkgNo)
                         .then((mcPkgs) =>
                             mcPkgs.map((mcPkg): McPkgRow => {
-                                console.log(mcPkg);
                                 return {
                                     mcPkgNo: mcPkg.mcPkgNo,
                                     description: mcPkg.description,

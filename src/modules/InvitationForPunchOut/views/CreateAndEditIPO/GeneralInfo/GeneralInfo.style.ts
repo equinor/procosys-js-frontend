@@ -61,7 +61,9 @@ export const DateTimeContainer = styled.div`
 `;
 
 export const LocationContainer = styled.div`
-    width: 300px;
+    display: flex;
+    width: 400px;
+    gap: 20px;
 `;
 
 export const PoTypeContainer = styled.div`

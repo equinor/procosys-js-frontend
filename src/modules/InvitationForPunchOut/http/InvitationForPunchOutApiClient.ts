@@ -527,6 +527,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
         participants: ParticipantDto[],
         mcPkgScope: string[] | null,
         commPkgScope: string[] | null,
+        isOnline: boolean,
         setRequestCanceller?: RequestCanceler
     ): Promise<number> {
         const endpoint = '/Invitations';
@@ -547,6 +548,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     participants: participants,
                     mcPkgScope: mcPkgScope,
                     commPkgScope: commPkgScope,
+                    isOnline: isOnline,
                 },
                 settings
             );

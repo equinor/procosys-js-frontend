@@ -82,6 +82,7 @@ export type Invitation = {
     };
     startTimeUtc: string;
     endTimeUtc: string;
+    isOnline?: boolean;
     participants: Participant[];
     mcPkgScope: McPkgScope[];
     commPkgScope: CommPkgScope[];

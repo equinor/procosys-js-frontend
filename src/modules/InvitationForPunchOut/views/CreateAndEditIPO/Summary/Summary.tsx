@@ -27,6 +27,7 @@ import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
 import React from 'react';
 import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
 import { getAttachmentDownloadLink } from '../utils';
+import { Checkbox } from '@equinor/eds-core-react';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -205,6 +206,12 @@ const Summary = ({
                                     ? generalInfo.location
                                     : '-'}
                             </Typography>
+                        </Subsection>
+                        <Subsection>
+                            <Typography token={{ fontSize: '12px' }}>
+                                Teamsmeeting
+                            </Typography>
+                            <Checkbox disabled checked={generalInfo.isOnline} />
                         </Subsection>
                     </Section>
 

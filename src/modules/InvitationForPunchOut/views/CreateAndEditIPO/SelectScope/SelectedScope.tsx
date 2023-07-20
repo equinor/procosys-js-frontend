@@ -11,6 +11,7 @@ import {
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 const multipleDisciplinesWarning = (
     <div>
@@ -120,13 +121,13 @@ const SelectedScope = ({
                         <div>
                             <Typography variant="caption">M-01 date</Typography>
                             <Typography variant="body_long">
-                                {mcPkg.m01 ? mcPkg.m01 : '-'}
+                                {mcPkg.m01 ? getFormattedDate(mcPkg.m01) : '-'}
                             </Typography>
                         </div>
                         <div>
                             <Typography variant="caption">M-02 date</Typography>
                             <Typography variant="body_long">
-                                {mcPkg.m02 ? mcPkg.m02 : '-'}
+                                {mcPkg.m02 ? getFormattedDate(mcPkg.m02) : '-'}
                             </Typography>
                         </div>
                     </AccordionContent>

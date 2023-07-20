@@ -52,6 +52,14 @@ const McPkgTable = forwardRef(
         const tableRef = useRef<any>();
 
         useEffect(() => {
+            const _data = [...availableMcPkgs];
+            _data.forEach((d) => {
+                if (d.operationHandoverStatus === 'ACCEPTED') {
+                    d.disableCheckbox = true;
+                }
+            });
+        }, [selectedMcPkgScope, availableMcPkgs]);
+        useEffect(() => {
             let requestCanceler: Canceler;
             (async (): Promise<void> => {
                 try {
@@ -72,6 +80,8 @@ const McPkgTable = forwardRef(
                                                     mc.mcPkgNo == mcPkg.mcPkgNo
                                             ),
                                     },
+                                    operationHandoverStatus:
+                                        mcPkg.operationHandoverStatus,
                                 };
                             })
                         );

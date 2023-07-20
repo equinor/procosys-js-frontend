@@ -129,6 +129,8 @@ const CommPkgTable = forwardRef(
                                     (c) => c.commPkgNo == commPkg.commPkgNo
                                 ),
                             },
+                            operationHandoverStatus:
+                                commPkg.operationHandoverStatus,
                         };
                     }
                 );
@@ -171,6 +173,8 @@ const CommPkgTable = forwardRef(
                                 tableData: {
                                     isSelected: true,
                                 },
+                                operationHandoverStatus:
+                                    commPkg.operationHandoverStatus,
                             };
                         }
                     );
@@ -290,6 +294,9 @@ const CommPkgTable = forwardRef(
             const _data = [...data];
             _data.forEach((d) => {
                 d.disableCheckbox = !hasValidSection(d.system);
+                if (d.operationHandoverStatus === 'ACCEPTED') {
+                    d.disableCheckbox = true;
+                }
             });
             setFilteredCommPkgs(_data);
         }, [selectedCommPkgScope, data]);

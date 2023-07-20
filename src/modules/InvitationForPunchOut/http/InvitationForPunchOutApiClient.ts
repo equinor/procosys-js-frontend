@@ -30,6 +30,7 @@ type InvitationResponse = {
     participants: ParticipantInvitationResponse[];
     mcPkgScope: McPkgScopeResponse[];
     commPkgScope: CommPkgScopeResponse[];
+    isOnline: boolean;
 };
 
 type McPkgScopeResponse = {

@@ -395,15 +395,13 @@ const GeneralInfo = ({
                                     <Checkbox
                                         checked={isOnline}
                                         onChange={(): void => {
+                                            setIsOnline(!isOnline);
                                             setGeneralInfo((gi) => {
                                                 return {
                                                     ...gi,
                                                     isOnline: !isOnline,
                                                 };
                                             });
-                                            setIsOnline(
-                                                (isOnline) => !isOnline
-                                            );
                                         }}
                                     >
                                         Make Teams meeting

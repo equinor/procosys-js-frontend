@@ -48,6 +48,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
         minutes: initialEnd.getMinutes(),
     }),
     location: '',
+    isOnline: false,
 };
 
 const initialParticipants: Participant[] = [
@@ -143,7 +144,6 @@ const CreateIPO = (): JSX.Element => {
         useState<GeneralInfoDetails>(initialGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] =
         useState<boolean>(false);
-    const [isOnline, setIsOnline] = useState<boolean>(false);
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<
         CommPkgRow[]
     >([]);
@@ -353,7 +353,7 @@ const CreateIPO = (): JSX.Element => {
                     ipoParticipants,
                     mcPkgScope,
                     commPkgScope,
-                    isOnline
+                    generalInfo.isOnline ? generalInfo.isOnline : false
                 );
                 analystics.trackUserAction(IpoCustomEvents.CREATED, {
                     project: generalInfo.projectName,

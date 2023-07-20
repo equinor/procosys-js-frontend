@@ -441,7 +441,6 @@ const EditIPO = (): JSX.Element => {
      *  Populate forms based on invitation to edit
      */
     useEffect(() => {
-        console.log(invitation);
         if (invitation) {
             //General information
             const poType = poTypes.find(

@@ -141,6 +141,7 @@ interface CommPkgResponse {
     description: string;
     system: string;
     status: string;
+    operationHandoverStatus: string;
 }
 
 interface McPkgResponse {
@@ -149,6 +150,7 @@ interface McPkgResponse {
     description: string;
     system: string;
     disciplineCode: string;
+    operationHandoverStatus: string;
 }
 
 interface PersonResponse {

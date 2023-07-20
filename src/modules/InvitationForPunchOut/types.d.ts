@@ -89,6 +89,7 @@ export interface CommPkgRow {
     tableData?: {
         isSelected: boolean;
     };
+    operationHandoverStatus?: string;
 }
 
 export interface McPkgRow {
@@ -100,6 +101,8 @@ export interface McPkgRow {
     tableData?: {
         isSelected: boolean;
     };
+    operationHandoverStatus?: string;
+    disableCheckbox?: boolean;
 }
 
 export interface McScope {

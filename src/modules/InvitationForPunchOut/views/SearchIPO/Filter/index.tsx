@@ -93,6 +93,10 @@ const ipoStatuses: FilterInput[] = [
         id: IpoStatusEnum.ACCEPTED,
         title: 'Accepted',
     },
+    {
+        id: IpoStatusEnum.SCOPEHANDEDOVER,
+        title: 'Scope handed over',
+    },
 ];
 
 const punchOutDateFields: FilterInput[] = [

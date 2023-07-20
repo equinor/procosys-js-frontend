@@ -49,11 +49,17 @@ const stepsWhenCanceled: Step[] = [
     { title: 'Punch-out is canceled', isCompleted: true },
 ];
 
+const stepsWhenHandedOver: Step[] = [
+    { title: 'Invitation for punch-out sent', isCompleted: true },
+    { title: 'Punch-out is handed over', isCompleted: true },
+];
+
 enum StepsEnum {
     Planned = 1,
     Completed = 2,
     Accepted = 3,
     Canceled = 4,
+    ScopeHandedOver = 5,
 }
 
 const ipoHeaderSize = 136;
@@ -142,6 +148,10 @@ const ViewIPO = (): JSX.Element => {
                 case StepsEnum[4]:
                     setSteps(stepsWhenCanceled);
                     setCurrentStep(StepsEnum.Canceled + 1);
+                    break;
+                case StepsEnum[5]:
+                    setSteps(stepsWhenHandedOver);
+                    setCurrentStep(StepsEnum.ScopeHandedOver + 1);
                     break;
                 default:
                     setCurrentStep(StepsEnum.Planned + 1);

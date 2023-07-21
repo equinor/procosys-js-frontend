@@ -12,6 +12,7 @@ import {
     Subsection,
     TableSection,
     Column,
+    LocationDetails,
 } from './Summary.style';
 import { Table, Typography } from '@equinor/eds-core-react';
 import { getFileName, getFileTypeIconName } from '../../utils';
@@ -27,7 +28,7 @@ import McPkgsTable from '../../ViewIPO/Scope/McPkgsTable';
 import React from 'react';
 import ReportsTable from '../../ViewIPO/Scope/ReportsTable';
 import { getAttachmentDownloadLink } from '../utils';
-import { Checkbox } from '@equinor/eds-core-react';
+import Checkbox from '@procosys/components/Checkbox';
 
 const { Body, Row, Cell, Head } = Table;
 
@@ -201,17 +202,20 @@ const Summary = ({
                             <Typography token={{ fontSize: '12px' }}>
                                 Location
                             </Typography>
-                            <Typography variant="body_long">
-                                {generalInfo.location
-                                    ? generalInfo.location
-                                    : '-'}
-                            </Typography>
-                        </Subsection>
-                        <Subsection>
-                            <Typography token={{ fontSize: '12px' }}>
-                                Teamsmeeting
-                            </Typography>
-                            <Checkbox disabled checked={generalInfo.isOnline} />
+                            <LocationDetails>
+                                <Typography variant="body_long">
+                                    {generalInfo.location
+                                        ? generalInfo.location
+                                        : '-'}
+                                </Typography>
+
+                                <Checkbox
+                                    disabled
+                                    checked={generalInfo.isOnline}
+                                >
+                                    Teams meeting
+                                </Checkbox>
+                            </LocationDetails>
                         </Subsection>
                     </Section>
 

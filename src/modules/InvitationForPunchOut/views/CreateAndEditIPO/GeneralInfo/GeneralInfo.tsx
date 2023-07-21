@@ -9,6 +9,7 @@ import {
     PoTypeContainer,
     TextContainer,
     Column,
+    TeamsMeetingContainer,
 } from './GeneralInfo.style';
 import {
     GeneralInfoDetails,
@@ -391,7 +392,7 @@ const GeneralInfo = ({
                                 title="Can't be changed later"
                                 placement="bottom"
                             >
-                                <span>
+                                <TeamsMeetingContainer>
                                     <Checkbox
                                         checked={isOnline}
                                         onChange={(): void => {
@@ -406,7 +407,7 @@ const GeneralInfo = ({
                                     >
                                         Make Teams meeting
                                     </Checkbox>
-                                </span>
+                                </TeamsMeetingContainer>
                             </Tooltip>
                         )}
                     </LocationContainer>

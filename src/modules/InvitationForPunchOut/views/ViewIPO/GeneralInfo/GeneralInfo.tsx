@@ -18,6 +18,7 @@ import {
     AttendedStatusDto,
     NotesDto,
 } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
+import Checkbox from '@procosys/components/Checkbox';
 
 interface GeneralInfoProps {
     invitation: Invitation;
@@ -126,10 +127,16 @@ const GeneralInfo = ({
                     <Typography token={{ fontSize: '12px' }}>
                         Location
                     </Typography>
-                    <Typography variant="body_long">
-                        {invitation.location ? invitation.location : '-'}
-                    </Typography>
+                    <DetailContainer>
+                        <Typography variant="body_long">
+                            {invitation.location ? invitation.location : '-'}
+                        </Typography>
+                        <Checkbox checked={invitation.isOnline} disabled>
+                            Teams meeting
+                        </Checkbox>
+                    </DetailContainer>
                 </ProjectInfoDetail>
+                <ProjectInfoDetail></ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>
                 <Typography variant="h5">Participants</Typography>

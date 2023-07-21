@@ -527,8 +527,6 @@ const ViewIPO = (): JSX.Element => {
                         participants={invitation.participants}
                         isEditable={
                             invitation.status == IpoStatusEnum.PLANNED ||
-                            invitation.status ==
-                                IpoStatusEnum.SCOPEHANDEDOVER ||
                             (isAdmin && isUsingAdminRights)
                         }
                         showEditButton={

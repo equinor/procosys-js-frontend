@@ -53,7 +53,6 @@ const stepsWhenHandedOver: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
     { title: 'Punch-out complete', isCompleted: true },
     { title: 'Punch-out accepted by company', isCompleted: true },
-    { title: 'Punch-out handed over to company', isCompleted: true },
 ];
 
 enum StepsEnum {

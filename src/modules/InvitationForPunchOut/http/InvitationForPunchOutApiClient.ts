@@ -149,6 +149,9 @@ interface McPkgResponse {
     description: string;
     system: string;
     disciplineCode: string;
+    m01: string;
+    m02: string;
+    status: string;
 }
 
 interface PersonResponse {

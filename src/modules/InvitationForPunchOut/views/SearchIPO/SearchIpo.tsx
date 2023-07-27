@@ -18,7 +18,7 @@ import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import InvitationsFilter from './Filter/InvitationsFilter';
-import InvitationsTable from './Table';
+import InvitationsTable from './Table/InvitationsTable';
 import { Link } from 'react-router-dom';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 import { SelectItem } from '@procosys/components/Select';

@@ -1,4 +1,4 @@
-import { Container, CustomLink } from './index.style';
+import { Container, CustomLink } from './InvitationsTable.style';
 import React, { useEffect, useState } from 'react';
 import { IPO } from '../types';
 import { Typography } from '@equinor/eds-core-react';

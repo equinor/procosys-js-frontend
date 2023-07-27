@@ -405,6 +405,15 @@ const CommPkgTable = forwardRef(
                 Header: 'Comm status',
                 accessor: 'status',
             },
+            {
+                Header: 'Signed RFOC',
+                accessor: (
+                    d: UseTableRowProps<McPkgRow>
+                ): UseTableRowProps<McPkgRow> => d,
+                Cell: getRFOCColumns,
+                width: 200,
+                maxWidth: 500,
+            },
             ...(type == 'DP'
                 ? [
                       {
@@ -419,15 +428,6 @@ const CommPkgTable = forwardRef(
                       },
                   ]
                 : []),
-            {
-                Header: 'Signed RFOC',
-                accessor: (
-                    d: UseTableRowProps<McPkgRow>
-                ): UseTableRowProps<McPkgRow> => d,
-                Cell: getRFOCColumns,
-                width: 200,
-                maxWidth: 500,
-            },
         ];
 
         return (

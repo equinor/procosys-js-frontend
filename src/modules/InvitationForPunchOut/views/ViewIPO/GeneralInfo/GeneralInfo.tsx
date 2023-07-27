@@ -47,6 +47,14 @@ const GeneralInfo = ({
 }: GeneralInfoProps): JSX.Element => {
     const [participants, setParticipants] = useState<Participant[]>([]);
 
+    const getLocationText = (): string => {
+        if (invitation.location && invitation.isOnline)
+            return `${invitation.location} and Teams meeting`;
+        else if (invitation.location) return invitation.location;
+        else if (invitation.isOnline) return 'Teams meeting';
+        else return '-';
+    };
+
     useEffect(() => {
         const newParticipants = invitation.participants.sort(
             (p1, p2): number => p1.sortKey - p2.sortKey
@@ -129,11 +137,8 @@ const GeneralInfo = ({
                     </Typography>
                     <DetailContainer>
                         <Typography variant="body_long">
-                            {invitation.location ? invitation.location : '-'}
+                            {getLocationText()}
                         </Typography>
-                        <Checkbox checked={invitation.isOnline} disabled>
-                            Teams meeting
-                        </Checkbox>
                     </DetailContainer>
                 </ProjectInfoDetail>
                 <ProjectInfoDetail></ProjectInfoDetail>

@@ -1,5 +1,5 @@
 import React from 'react';
-import RoleSelector from '../index';
+import RoleSelector from '../RoleSelector';
 import { render } from '@testing-library/react';
 
 const roles = [

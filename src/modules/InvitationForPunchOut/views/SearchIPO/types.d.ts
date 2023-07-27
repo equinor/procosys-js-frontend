@@ -1,7 +1,9 @@
+import { IpoStatusEnum } from '../enums';
+
 export interface IPO {
     id: number;
     title: string;
-    status: string;
+    status: IpoStatusEnum;
     type: string;
     createdAtUtc: Date;
     startTimeUtc: Date;

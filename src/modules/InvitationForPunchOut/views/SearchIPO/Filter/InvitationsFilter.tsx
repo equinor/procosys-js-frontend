@@ -10,11 +10,11 @@ import {
 import { IPOFilter, ProjectDetails, SavedIPOFilter } from '../types';
 import React, { useEffect, useRef, useState } from 'react';
 
-import CheckboxFilterWithDates from './CheckboxFilterWithDates';
+import CheckboxFilterWithDates from './CheckboxFilterWithDates/CheckboxFilterWithDates';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { IpoStatusEnum } from '../../enums';
 import SavedFilters from './SavedFilters';
-import SelectFilter from './SelectFilter';
+import SelectFilter from './SelectFilter/SelectFilter';
 import { SelectItem } from '@procosys/components/Select';
 import { isValidDate } from '@procosys/core/services/DateService';
 import {
@@ -95,7 +95,7 @@ const ipoStatuses: FilterInput[] = [
     },
     {
         id: IpoStatusEnum.SCOPEHANDEDOVER,
-        title: 'Scope handed over',
+        title: 'Scope Handed Over',
     },
 ];
 

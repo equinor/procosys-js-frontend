@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import React from 'react';
-import SelectFilter from '../index';
+import SelectFilter from '../SelectFilter';
 
 const roles = [
     {

@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 
 import React from 'react';
-import SearchIPO from '../../SearchIPO';
+import SearchIPO from '../SearchIpo';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 

@@ -10,14 +10,14 @@ import {
     LeftPartOfHeader,
     StyledButton,
     TooltipText,
-} from './index.style';
+} from './SearchIpo.style';
 import { IPOFilter, IPOs, SavedIPOFilter } from './types';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Canceler } from 'axios';
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
-import InvitationsFilter from './Filter';
+import InvitationsFilter from './Filter/InvitationsFilter';
 import InvitationsTable from './Table';
 import { Link } from 'react-router-dom';
 import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';

@@ -1,11 +1,11 @@
-import { Container, DropdownItem } from './index.style';
+import { Container, DropdownItem } from './RoleSelector.style';
 import React, { useEffect, useState } from 'react';
 
 import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
-import { rolePersonParamType } from '..';
+import { rolePersonParamType } from '../InvitationsFilter';
 
 interface RoleSelectorProps {
     functionalRoleCode: string;

@@ -9,6 +9,7 @@ import {
     PoTypeContainer,
     TextContainer,
     Column,
+    TeamsMeetingContainer,
 } from './GeneralInfo.style';
 import {
     GeneralInfoDetails,
@@ -28,6 +29,7 @@ import { tokens } from '@equinor/eds-tokens';
 import { useInvitationForPunchOutContext } from '../../../context/InvitationForPunchOutContext';
 import { Label } from '@equinor/eds-core-react';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { Tooltip } from '@equinor/eds-core-react';
 
 export const poTypes: SelectItem[] = [
     { text: 'DP (Discipline Punch)', value: 'DP' },
@@ -69,6 +71,9 @@ const GeneralInfo = ({
     );
     const [endTime, setEndTime] = useState<string | null>(
         generalInfo.endTime ? generalInfo.endTime.toString() : null
+    );
+    const [isOnline, setIsOnline] = useState<boolean>(
+        generalInfo.isOnline ? generalInfo.isOnline : false
     );
 
     useEffect(() => {
@@ -378,6 +383,33 @@ const GeneralInfo = ({
                             }}
                             disabled={isDisabled}
                         />
+                        {isEditMode ? (
+                            <Checkbox disabled checked={isOnline}>
+                                Create Teams meeting
+                            </Checkbox>
+                        ) : (
+                            <Tooltip
+                                title="Can't be changed later"
+                                placement="bottom"
+                            >
+                                <TeamsMeetingContainer>
+                                    <Checkbox
+                                        checked={isOnline}
+                                        onChange={(): void => {
+                                            setIsOnline(!isOnline);
+                                            setGeneralInfo((gi) => {
+                                                return {
+                                                    ...gi,
+                                                    isOnline: !isOnline,
+                                                };
+                                            });
+                                        }}
+                                    >
+                                        Create Teams meeting
+                                    </Checkbox>
+                                </TeamsMeetingContainer>
+                            </Tooltip>
+                        )}
                     </LocationContainer>
                     {errors && errors['location'] && (
                         <ErrorContainer>

@@ -61,7 +61,14 @@ export const DateTimeContainer = styled.div`
 `;
 
 export const LocationContainer = styled.div`
-    width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+`;
+
+export const TeamsMeetingContainer = styled.span`
+    width: 550px;
 `;
 
 export const PoTypeContainer = styled.div`

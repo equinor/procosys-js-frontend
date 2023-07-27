@@ -141,7 +141,6 @@ const GeneralInfo = ({
                         </Typography>
                     </DetailContainer>
                 </ProjectInfoDetail>
-                <ProjectInfoDetail></ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>
                 <Typography variant="h5">Participants</Typography>

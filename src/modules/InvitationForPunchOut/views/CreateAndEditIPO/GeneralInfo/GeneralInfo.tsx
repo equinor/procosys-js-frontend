@@ -405,7 +405,7 @@ const GeneralInfo = ({
                                             });
                                         }}
                                     >
-                                        Make Teams meeting
+                                        Create Teams meeting
                                     </Checkbox>
                                 </TeamsMeetingContainer>
                             </Tooltip>

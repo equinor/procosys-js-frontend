@@ -6,7 +6,7 @@ import Dropdown from '@procosys/components/Dropdown';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { SelectItem } from '@procosys/components/Select';
 import Spinner from '@procosys/components/Spinner';
-import { rolePersonParamType } from '..';
+import { rolePersonParamType } from '../InvitationsFilter';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 

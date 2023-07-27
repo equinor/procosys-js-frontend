@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import InvitationsFilter from '../index';
+import InvitationsFilter from '../InvitationsFilter';
 import React from 'react';
 
 const emptyFilter = {

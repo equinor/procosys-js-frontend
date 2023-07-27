@@ -1,10 +1,10 @@
 import { Collapse, CollapseInfo } from '../index.style';
 import React, { useState } from 'react';
-import { FilterContainer } from './index.style';
-import PersonSelector from '../PersonSelector';
-import RoleSelector from '../RoleSelector';
+import { FilterContainer } from './SelectFilter.style';
+import PersonSelector from '../PersonSelector/PersonSelector';
+import RoleSelector from '../RoleSelector/RoleSelector';
 import { SelectItem } from '@procosys/components/Select';
-import { rolePersonParamType } from '..';
+import { rolePersonParamType } from '../InvitationsFilter';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
 type SelectProps = {

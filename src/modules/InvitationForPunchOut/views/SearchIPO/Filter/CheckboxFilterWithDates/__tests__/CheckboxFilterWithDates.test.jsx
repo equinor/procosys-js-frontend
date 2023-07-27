@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import CheckboxFilterWithDates from '../index';
+import CheckboxFilterWithDates from '../CheckboxFilterWithDates';
 import React from 'react';
 
 const checkboxItems = [

@@ -100,15 +100,16 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
                 const { onChange, ...propsWithoutOnChange } =
                     getToggleAllRowsSelectedProps();
                 //Function to select all rows where checkbox isn't disabled
-                const overridenOnChange = (
-                    event: React.ChangeEvent<HTMLInputElement>
-                ): void => {
+                const overridenOnChange = (): void => {
                     rows.forEach((row) => {
                         if (!row.original.disableCheckbox) {
-                            toggleRowSelected(
-                                row.id,
-                                event.currentTarget.checked
-                            );
+                            let toggleTo = true;
+                            if (
+                                propsWithoutOnChange.checked ||
+                                propsWithoutOnChange.indeterminate
+                            )
+                                toggleTo = false;
+                            toggleRowSelected(row.id, toggleTo);
                         }
                     });
                 };

@@ -18,6 +18,7 @@ import {
     AttendedStatusDto,
     NotesDto,
 } from '@procosys/modules/InvitationForPunchOut/http/InvitationForPunchOutApiClient';
+import Checkbox from '@procosys/components/Checkbox';
 
 interface GeneralInfoProps {
     invitation: Invitation;
@@ -45,6 +46,14 @@ const GeneralInfo = ({
     isUsingAdminRights,
 }: GeneralInfoProps): JSX.Element => {
     const [participants, setParticipants] = useState<Participant[]>([]);
+
+    const getLocationText = (): string => {
+        if (invitation.location && invitation.isOnline)
+            return `${invitation.location} and Teams meeting`;
+        else if (invitation.location) return invitation.location;
+        else if (invitation.isOnline) return 'Teams meeting';
+        else return '-';
+    };
 
     useEffect(() => {
         const newParticipants = invitation.participants.sort(
@@ -126,9 +135,11 @@ const GeneralInfo = ({
                     <Typography token={{ fontSize: '12px' }}>
                         Location
                     </Typography>
-                    <Typography variant="body_long">
-                        {invitation.location ? invitation.location : '-'}
-                    </Typography>
+                    <DetailContainer>
+                        <Typography variant="body_long">
+                            {getLocationText()}
+                        </Typography>
+                    </DetailContainer>
                 </ProjectInfoDetail>
             </ProjectInfoContainer>
             <HeaderContainer>

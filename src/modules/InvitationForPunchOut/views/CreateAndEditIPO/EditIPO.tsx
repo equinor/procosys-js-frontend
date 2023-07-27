@@ -47,6 +47,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
     startTime: new Date(),
     endTime: new Date(),
     location: '',
+    isOnline: false,
 };
 
 const EditIPO = (): JSX.Element => {
@@ -66,6 +67,9 @@ const EditIPO = (): JSX.Element => {
         useState<GeneralInfoDetails>(emptyGeneralInfo);
     const [confirmationChecked, setConfirmationChecked] =
         useState<boolean>(true);
+    const [isOnline, setIsOnline] = useState<boolean>(
+        generalInfo.isOnline ? generalInfo.isOnline : false
+    );
     const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<
         CommPkgRow[]
     >([]);
@@ -465,6 +469,7 @@ const EditIPO = (): JSX.Element => {
                     minutes: endTime.getMinutes(),
                 }),
                 location: invitation.location ? invitation.location : '',
+                isOnline: invitation.isOnline,
             };
             setGeneralInfo({ ...info });
             setInitialGeneralInfo({ ...info });

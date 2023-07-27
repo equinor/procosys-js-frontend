@@ -385,7 +385,7 @@ const GeneralInfo = ({
                         />
                         {isEditMode ? (
                             <Checkbox disabled checked={isOnline}>
-                                Make Teams meeting
+                                Create Teams meeting
                             </Checkbox>
                         ) : (
                             <Tooltip

@@ -45,6 +45,11 @@ export const Subsection = styled.div`
     }
 `;
 
+export const LocationDetails = styled.div`
+    display: flex;
+    align-items: cente;
+`;
+
 export const TableSection = styled.div`
     margin-top: calc(var(--grid-unit) * 2);
     margin-bottom: calc(var(--grid-unit) * 4);

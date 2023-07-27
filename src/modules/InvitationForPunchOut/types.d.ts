@@ -19,6 +19,7 @@ export type GeneralInfoDetails = {
     date: Date | undefined;
     startTime: Date | undefined;
     endTime: Date | undefined;
+    isOnline?: boolean;
     location?: string | null;
 };
 

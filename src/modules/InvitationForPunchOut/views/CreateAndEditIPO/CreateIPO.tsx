@@ -48,6 +48,7 @@ const emptyGeneralInfo: GeneralInfoDetails = {
         minutes: initialEnd.getMinutes(),
     }),
     location: '',
+    isOnline: false,
 };
 
 const initialParticipants: Participant[] = [
@@ -351,7 +352,8 @@ const CreateIPO = (): JSX.Element => {
                     generalInfo.location ? generalInfo.location : null,
                     ipoParticipants,
                     mcPkgScope,
-                    commPkgScope
+                    commPkgScope,
+                    generalInfo.isOnline ? generalInfo.isOnline : false
                 );
                 analystics.trackUserAction(IpoCustomEvents.CREATED, {
                     project: generalInfo.projectName,

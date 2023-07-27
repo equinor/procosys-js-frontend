@@ -1,4 +1,4 @@
-import PersonSelector from '../index';
+import PersonSelector from '../PersonSelector';
 import React from 'react';
 import { render } from '@testing-library/react';
 

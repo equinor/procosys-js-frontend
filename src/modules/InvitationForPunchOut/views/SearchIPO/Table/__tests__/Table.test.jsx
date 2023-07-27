@@ -1,4 +1,4 @@
-import InvitationsTable from '../index';
+import InvitationsTable from '../InvitationsTable';
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 

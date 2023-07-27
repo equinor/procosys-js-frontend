@@ -11,7 +11,7 @@ import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 import EditIPO from './views/CreateAndEditIPO/EditIPO';
 import { Helmet } from 'react-helmet';
 import { InvitationForPunchOutContextProvider } from './context/InvitationForPunchOutContext';
-import SearchIPO from './views/SearchIPO';
+import SearchIPO from './views/SearchIPO/SearchIpo';
 import ViewIPO from './views/ViewIPO/ViewIPO';
 import withAccessControl from '@procosys/core/security/withAccessControl';
 

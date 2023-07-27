@@ -21,7 +21,7 @@ const UserGreeting = React.lazy(() => import('./../modules/UserGreeting'));
 const Preservation = React.lazy(() => import('./../modules/Preservation'));
 const PlantConfig = React.lazy(() => import('./../modules/PlantConfig'));
 const InvitationForPunchOut = React.lazy(
-    () => import('./../modules/InvitationForPunchOut')
+    () => import('../modules/InvitationForPunchOut/InvitationForPunchOut')
 );
 
 const Page404 = (): JSX.Element => {

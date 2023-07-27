@@ -6,6 +6,7 @@ import { getFormattedDate } from '@procosys/core/services/DateService';
 import { Query, TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable, { TableSorting } from '@procosys/components/Table';
 import { Tooltip } from '@mui/material';
+import { IpoStatusEnum } from '../../enums';
 
 interface InvitationsTableProps {
     getIPOs: (
@@ -336,7 +337,9 @@ const InvitationsTable = ({
             Header: 'Status',
             id: 'status',
             accessor: (d: IPO): string | undefined => {
-                return d.status;
+                if (d.status == IpoStatusEnum.SCOPEHANDEDOVER)
+                    return 'Scope handed over';
+                else return d.status;
             },
             Cell: (rowData: TableOptions<IPO>): JSX.Element => {
                 return <Typography>{rowData.row.values.status}</Typography>;

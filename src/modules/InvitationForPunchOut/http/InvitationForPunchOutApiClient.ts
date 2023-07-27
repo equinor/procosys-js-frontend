@@ -5,6 +5,7 @@ import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
+import { IpoStatusEnum } from '../views/enums';
 
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError) {
@@ -180,7 +181,7 @@ interface FunctionalRoleResponse {
 interface IPO {
     id: number;
     title: string;
-    status: string;
+    status: IpoStatusEnum;
     type: string;
     createdAtUtc: Date;
     startTimeUtc: Date;

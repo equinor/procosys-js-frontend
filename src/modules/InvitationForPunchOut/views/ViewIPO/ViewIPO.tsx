@@ -51,8 +51,7 @@ const stepsWhenCanceled: Step[] = [
 
 const stepsWhenHandedOver: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
-    { title: 'Punch-out complete', isCompleted: true },
-    { title: 'Punch-out accepted by company', isCompleted: true },
+    { title: 'Punch-out scope handed over', isCompleted: true },
 ];
 
 enum StepsEnum {
@@ -536,6 +535,10 @@ const ViewIPO = (): JSX.Element => {
                         canDelete={
                             invitation.canDelete ||
                             (invitation.status === IpoStatusEnum.CANCELED &&
+                                isAdmin &&
+                                isUsingAdminRights) ||
+                            (invitation.status ===
+                                IpoStatusEnum.SCOPEHANDEDOVER &&
                                 isAdmin &&
                                 isUsingAdminRights)
                         }

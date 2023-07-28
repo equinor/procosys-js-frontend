@@ -25,6 +25,8 @@ import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { Tooltip } from '@mui/material';
+import Checkbox from '@procosys/components/Checkbox';
+import { OperationHandoverStatusEnum } from '../../enums';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
@@ -129,6 +131,8 @@ const CommPkgTable = forwardRef(
                                     (c) => c.commPkgNo == commPkg.commPkgNo
                                 ),
                             },
+                            operationHandoverStatus:
+                                commPkg.operationHandoverStatus,
                         };
                     }
                 );
@@ -171,6 +175,8 @@ const CommPkgTable = forwardRef(
                                 tableData: {
                                     isSelected: true,
                                 },
+                                operationHandoverStatus:
+                                    commPkg.operationHandoverStatus,
                             };
                         }
                     );
@@ -290,6 +296,9 @@ const CommPkgTable = forwardRef(
             const _data = [...data];
             _data.forEach((d) => {
                 d.disableCheckbox = !hasValidSection(d.system);
+                if (d.operationHandoverStatus === 'ACCEPTED') {
+                    d.disableCheckbox = true;
+                }
             });
             setFilteredCommPkgs(_data);
         }, [selectedCommPkgScope, data]);
@@ -344,6 +353,16 @@ const CommPkgTable = forwardRef(
             );
         };
 
+        const getRFOCColumns = (row: TableOptions<McPkgRow>): JSX.Element => {
+            const commPkg = row.value as CommPkgRow;
+            return (
+                <Checkbox
+                    disabled
+                    checked={commPkg.operationHandoverStatus === 'ACCEPTED'}
+                />
+            );
+        };
+
         const getMcPkgs = (commPkgNo: string): void => {
             setCurrentCommPkg(commPkgNo);
         };
@@ -386,6 +405,15 @@ const CommPkgTable = forwardRef(
             {
                 Header: 'Comm status',
                 accessor: 'status',
+            },
+            {
+                Header: 'Signed RFOC',
+                accessor: (
+                    d: UseTableRowProps<McPkgRow>
+                ): UseTableRowProps<McPkgRow> => d,
+                Cell: getRFOCColumns,
+                width: 200,
+                maxWidth: 500,
             },
             ...(type == 'DP'
                 ? [

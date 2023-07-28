@@ -375,11 +375,7 @@ const CommPkgTable = forwardRef(
                 <div className="tableCell goToMcCol">
                     <Button
                         variant="ghost_icon"
-                        disabled={
-                            !hasValidSection(commPkg.system) ||
-                            commPkg.operationHandoverStatus ==
-                                OperationHandoverStatusEnum.ACCEPTED
-                        }
+                        disabled={!hasValidSection(commPkg.system)}
                         onClick={(): void => getMcPkgs(commPkg.commPkgNo)}
                     >
                         <EdsIcon name="chevron_right" />

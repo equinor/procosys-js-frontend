@@ -21,6 +21,7 @@ export enum IpoStatusEnum {
     PLANNED = 'Planned',
     COMPLETED = 'Completed',
     ACCEPTED = 'Accepted',
+    SCOPEHANDEDOVER = 'ScopeHandedOver',
     CANCELED = 'Canceled',
 }
 

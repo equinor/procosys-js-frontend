@@ -5,7 +5,7 @@ import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
-import { OperationHandoverStatusEnum } from '../views/enums';
+import { OperationHandoverStatusEnum, IpoStatusEnum } from '../views/enums';
 
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError) {
@@ -31,6 +31,7 @@ type InvitationResponse = {
     participants: ParticipantInvitationResponse[];
     mcPkgScope: McPkgScopeResponse[];
     commPkgScope: CommPkgScopeResponse[];
+    isOnline: boolean;
 };
 
 type McPkgScopeResponse = {
@@ -152,6 +153,9 @@ interface McPkgResponse {
     system: string;
     disciplineCode: string;
     operationHandoverStatus: OperationHandoverStatusEnum;
+    m01: string;
+    m02: string;
+    status: string;
 }
 
 interface PersonResponse {
@@ -183,7 +187,7 @@ interface FunctionalRoleResponse {
 interface IPO {
     id: number;
     title: string;
-    status: string;
+    status: IpoStatusEnum;
     type: string;
     createdAtUtc: Date;
     startTimeUtc: Date;
@@ -530,6 +534,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
         participants: ParticipantDto[],
         mcPkgScope: string[] | null,
         commPkgScope: string[] | null,
+        isOnline: boolean,
         setRequestCanceller?: RequestCanceler
     ): Promise<number> {
         const endpoint = '/Invitations';
@@ -550,6 +555,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                     participants: participants,
                     mcPkgScope: mcPkgScope,
                     commPkgScope: commPkgScope,
+                    isOnline: isOnline,
                 },
                 settings
             );

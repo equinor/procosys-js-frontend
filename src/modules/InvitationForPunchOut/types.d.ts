@@ -20,6 +20,7 @@ export type GeneralInfoDetails = {
     date: Date | undefined;
     startTime: Date | undefined;
     endTime: Date | undefined;
+    isOnline?: boolean;
     location?: string | null;
 };
 
@@ -104,6 +105,9 @@ export interface McPkgRow {
     };
     operationHandoverStatus?: OperationHandoverStatusEnum;
     disableCheckbox?: boolean;
+    m01?: string;
+    m02?: string;
+    status?: string;
 }
 
 export interface McScope {

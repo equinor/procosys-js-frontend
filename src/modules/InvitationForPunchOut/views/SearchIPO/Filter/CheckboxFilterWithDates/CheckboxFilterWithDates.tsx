@@ -2,7 +2,7 @@ import {
     CheckboxFilterValue,
     dateFilterParamType,
     filterParamType,
-} from '../index';
+} from '../InvitationsFilter';
 import { CheckboxSection, DateField, DatesContainer } from './index.style';
 import { Collapse, CollapseInfo } from '../index.style';
 import React, { ChangeEvent, useState } from 'react';

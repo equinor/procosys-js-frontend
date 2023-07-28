@@ -1,4 +1,5 @@
 import { SelectItem } from '../../components/Select';
+import { OperationHandoverStatusEnum } from './views/enums';
 
 export type ProjectDetails = {
     id: number;
@@ -89,7 +90,7 @@ export interface CommPkgRow {
     tableData?: {
         isSelected: boolean;
     };
-    operationHandoverStatus?: string;
+    operationHandoverStatus?: OperationHandoverStatusEnum;
 }
 
 export interface McPkgRow {
@@ -101,7 +102,7 @@ export interface McPkgRow {
     tableData?: {
         isSelected: boolean;
     };
-    operationHandoverStatus?: string;
+    operationHandoverStatus?: OperationHandoverStatusEnum;
     disableCheckbox?: boolean;
 }
 

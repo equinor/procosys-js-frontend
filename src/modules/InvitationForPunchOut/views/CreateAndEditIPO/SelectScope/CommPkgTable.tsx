@@ -26,6 +26,7 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { Tooltip } from '@mui/material';
 import Checkbox from '@procosys/components/Checkbox';
+import { OperationHandoverStatusEnum } from '../../enums';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
@@ -374,7 +375,11 @@ const CommPkgTable = forwardRef(
                 <div className="tableCell goToMcCol">
                     <Button
                         variant="ghost_icon"
-                        disabled={!hasValidSection(commPkg.system)}
+                        disabled={
+                            !hasValidSection(commPkg.system) ||
+                            commPkg.operationHandoverStatus ==
+                                OperationHandoverStatusEnum.ACCEPTED
+                        }
                         onClick={(): void => getMcPkgs(commPkg.commPkgNo)}
                     >
                         <EdsIcon name="chevron_right" />

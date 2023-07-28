@@ -39,3 +39,10 @@ export enum IpoCustomEvents {
     UNSIGNED = 'IPO_Unsigned',
     COMMENT_ADDED = 'IPO_CommentAdded',
 }
+
+export enum OperationHandoverStatusEnum {
+    ACCEPTED = 'ACCEPTED',
+    SENT = 'SENT',
+    UNDEFINED = 'UNDEFINED',
+    REJECTED = 'REJECTED',
+}

@@ -93,12 +93,36 @@ const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
             Header: ({
                 getToggleAllRowsSelectedProps,
                 disableSelectAll,
-            }: HeaderProps<Record<string, unknown>>): JSX.Element => (
-                <HeaderCheckbox
-                    {...getToggleAllRowsSelectedProps()}
-                    disabled={disableSelectAll}
-                />
-            ),
+                rows,
+                toggleRowSelected,
+            }: HeaderProps<Record<string, unknown>>): JSX.Element => {
+                //Remove on change form selectAllprops
+                const { onChange, ...propsWithoutOnChange } =
+                    getToggleAllRowsSelectedProps();
+                //Function to select all rows where checkbox isn't disabled
+                const overridenOnChange = (): void => {
+                    rows.forEach((row) => {
+                        if (!row.original.disableCheckbox) {
+                            let toggleTo = true;
+                            if (
+                                propsWithoutOnChange.checked ||
+                                propsWithoutOnChange.indeterminate
+                            )
+                                toggleTo = false;
+                            toggleRowSelected(row.id, toggleTo);
+                        }
+                    });
+                };
+
+                //Redefined props
+                const newProps = {
+                    onChange: overridenOnChange,
+                    ...propsWithoutOnChange,
+                };
+                return (
+                    <HeaderCheckbox {...newProps} disabled={disableSelectAll} />
+                );
+            },
             Cell: ({ row }: CellProps<Record<string, unknown>>): JSX.Element =>
                 row.original.noCheckbox ? (
                     <></>

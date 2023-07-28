@@ -18,6 +18,7 @@ import ProcosysTable from '@procosys/components/Table';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { Tooltip } from '@mui/material';
+import Checkbox from '@procosys/components/Checkbox';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;
@@ -52,6 +53,14 @@ const McPkgTable = forwardRef(
         const tableRef = useRef<any>();
 
         useEffect(() => {
+            const _data = [...availableMcPkgs];
+            _data.forEach((d) => {
+                if (d.operationHandoverStatus === 'ACCEPTED') {
+                    d.disableCheckbox = true;
+                }
+            });
+        }, [selectedMcPkgScope, availableMcPkgs]);
+        useEffect(() => {
             let requestCanceler: Canceler;
             (async (): Promise<void> => {
                 try {
@@ -75,6 +84,8 @@ const McPkgTable = forwardRef(
                                                     mc.mcPkgNo == mcPkg.mcPkgNo
                                             ),
                                     },
+                                    operationHandoverStatus:
+                                        mcPkg.operationHandoverStatus,
                                 };
                             })
                         );
@@ -192,6 +203,15 @@ const McPkgTable = forwardRef(
                 </Tooltip>
             );
         };
+        const getRFOCColumns = (row: TableOptions<McPkgRow>): JSX.Element => {
+            const mcPkg = row.value as McPkgRow;
+            return (
+                <Checkbox
+                    disabled
+                    checked={mcPkg.operationHandoverStatus === 'ACCEPTED'}
+                />
+            );
+        };
 
         const columns = [
             {
@@ -218,6 +238,15 @@ const McPkgTable = forwardRef(
                     d: UseTableRowProps<McPkgRow>
                 ): UseTableRowProps<McPkgRow> => d,
                 Cell: getDescriptionColumn,
+                width: 200,
+                maxWidth: 500,
+            },
+            {
+                Header: 'Signed RFOC',
+                accessor: (
+                    d: UseTableRowProps<McPkgRow>
+                ): UseTableRowProps<McPkgRow> => d,
+                Cell: getRFOCColumns,
                 width: 200,
                 maxWidth: 500,
             },

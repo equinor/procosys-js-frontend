@@ -5,7 +5,7 @@ import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
-import { IpoStatusEnum } from '../views/enums';
+import { OperationHandoverStatusEnum, IpoStatusEnum } from '../views/enums';
 
 export class IpoApiError extends ProCoSysApiError {
     constructor(error: AxiosError) {
@@ -143,6 +143,7 @@ interface CommPkgResponse {
     description: string;
     system: string;
     status: string;
+    operationHandoverStatus: OperationHandoverStatusEnum;
 }
 
 interface McPkgResponse {
@@ -151,6 +152,7 @@ interface McPkgResponse {
     description: string;
     system: string;
     disciplineCode: string;
+    operationHandoverStatus: OperationHandoverStatusEnum;
     m01: string;
     m02: string;
     status: string;

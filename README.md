@@ -93,5 +93,3 @@ https://webpack.js.org/
 Used to define which browsers we support, as well as integrate with polyfill loading in CSS and Babel. 
 
 https://www.npmjs.com/package/browserslist
-
-

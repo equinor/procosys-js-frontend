@@ -10,6 +10,10 @@ on: [pull_request]
 
 jobs:
   label:
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
 
     steps:

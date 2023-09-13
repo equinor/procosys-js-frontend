@@ -3533,7 +3533,7 @@
     "@microsoft/applicationinsights-shims" "2.0.2"
     "@microsoft/dynamicproto-js" "^1.1.9"
 
-"@microsoft/applicationinsights-react-js@^3.4.1":
+"@microsoft/applicationinsights-react-js@^3.4.3":
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/@microsoft/applicationinsights-react-js/-/applicationinsights-react-js-3.4.3.tgz#fc436f79c49bc8229c0399bec91195c4d3c65f5d"
   integrity sha512-+IIPDYU7DKBwByN7lK/mkMGrnWMGdyIsEZfDzBh/fKDZgGGGgH9B3WHej+vIpdwBcVaPbYx++lonTshn56C9/A==

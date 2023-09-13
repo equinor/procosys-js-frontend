@@ -699,7 +699,7 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                     placeholder="Write here"
                     helperText="Spaces are not allowed"
                     helperIcon={icon}
-                    variant={icon ? 'error' : 'default'}
+                    variant={icon ? 'error' : ''}
                     meta="Optional"
                     onChange={checkSuffix}
                 />

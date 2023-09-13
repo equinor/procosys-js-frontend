@@ -299,7 +299,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                                     }}
                                     value={noOfWeeks || ''}
                                     helperText={error}
-                                    variant={error ? 'error' : 'default'}
+                                    variant={error ? 'error' : ''}
                                     helperIcon={error ? errorIcon : ''}
                                 />
                             </FormFieldSpacer>

@@ -28,6 +28,7 @@ function getColumns(
               maxWidth: number;
               minWidth: number;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -40,6 +41,7 @@ function getColumns(
               width: number;
               maxWidth: number;
               minWidth: number;
+              field?: string;
           }
         | {
               Header: string;
@@ -52,6 +54,7 @@ function getColumns(
               minWidth: number;
               id?: undefined;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -64,6 +67,7 @@ function getColumns(
               maxWidth?: undefined;
               minWidth?: undefined;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -74,6 +78,7 @@ function getColumns(
               maxWidth?: undefined;
               minWidth?: undefined;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: JSX.Element;
@@ -86,6 +91,7 @@ function getColumns(
               width: number;
               maxWidth: number;
               minWidth: number;
+              field?: string;
           }
     )[];
     desktopColumns: (
@@ -100,6 +106,7 @@ function getColumns(
               maxWidth: number;
               minWidth: number;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -112,6 +119,7 @@ function getColumns(
               minWidth: number;
               id?: undefined;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -124,6 +132,7 @@ function getColumns(
               maxWidth?: undefined;
               minWidth?: undefined;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -134,6 +143,7 @@ function getColumns(
               maxWidth?: undefined;
               minWidth?: undefined;
               defaultCanSort?: undefined;
+              field?: string;
           }
         | {
               Header: string;
@@ -146,6 +156,7 @@ function getColumns(
               width: number;
               maxWidth: number;
               minWidth: number;
+              field?: string;
           }
         | {
               Header: JSX.Element;
@@ -158,6 +169,7 @@ function getColumns(
               width: number;
               maxWidth: number;
               minWidth: number;
+              field?: string;
           }
     )[];
 } {
@@ -172,6 +184,7 @@ function getColumns(
             width: 180,
             maxWidth: 400,
             minWidth: 150,
+            field: 'tagNo',
         },
         {
             Header: 'Description',
@@ -182,6 +195,7 @@ function getColumns(
             width: 250,
             maxWidth: 400,
             minWidth: 80,
+            field: 'description',
         },
         {
             Header: 'Due',
@@ -193,6 +207,7 @@ function getColumns(
             width: 60,
             maxWidth: 100,
             minWidth: 50,
+            field: 'due',
         },
         {
             Header: 'Next',
@@ -225,6 +240,7 @@ function getColumns(
             width: 100,
             maxWidth: 150,
             minWidth: 50,
+            field: 'PO',
         },
         {
             Header: 'Area',
@@ -236,6 +252,7 @@ function getColumns(
             width: 100,
             maxWidth: 150,
             minWidth: 50,
+            field: 'Area',
         },
         {
             Header: 'Resp',
@@ -244,6 +261,7 @@ function getColumns(
                 d: UseTableRowProps<PreservedTag>
             ): UseTableRowProps<PreservedTag> => d,
             Cell: getResponsibleColumn,
+            field: 'responsible',
         },
         {
             Header: 'Disc',
@@ -252,6 +270,7 @@ function getColumns(
                 d: UseTableRowProps<PreservedTag>
             ): UseTableRowProps<PreservedTag> => d,
             Cell: getDisciplineCode,
+            field: 'discipline',
         },
         {
             Header: 'Status',
@@ -260,6 +279,7 @@ function getColumns(
             },
             id: 'status',
             Cell: getStatus,
+            field: 'status',
         },
         {
             Header: 'Req type',
@@ -272,6 +292,7 @@ function getColumns(
             width: 200,
             maxWidth: 400,
             minWidth: 150,
+            field: 'reqtype',
         },
         {
             Header: getActionsHeader(),

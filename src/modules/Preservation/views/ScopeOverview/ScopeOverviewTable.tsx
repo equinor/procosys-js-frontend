@@ -22,6 +22,18 @@ import { tokens } from '@equinor/eds-tokens';
 import { JSXBreakpoints } from '@procosys/core/styling';
 import { Tooltip } from '@mui/material';
 import getColumns from './GetColumns';
+import { AgGridReact } from '@ag-grid-community/react';
+import useStyles from '@equinor/fusion-react-ag-grid-styles';
+import { createComponent } from '@equinor/fusion-framework-react-app';
+import { enableAgGrid } from '@equinor/fusion-framework-module-ag-grid';
+import { ColDef, ColGroupDef, ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+createComponent((config): any => {
+    enableAgGrid(config);
+});
 
 interface ScopeOverviewTableProps {
     getData: (
@@ -43,6 +55,16 @@ interface ScopeOverviewTableProps {
 }
 
 const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
+    const styles = useStyles();
+
+    const AGColumns: ColDef[] | ColGroupDef = useMemo(
+        () => [
+            {
+                field: 'tagNo',
+            },
+        ],
+        []
+    );
     enum ActionStatus {
         Closed = 'HasClosed',
         Open = 'HasOpen',
@@ -353,8 +375,8 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
     }>({ id: 'due', desc: false });
     const [data, setData] = useState<PreservedTag[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [columns, _setColumns] = useState<ColumnInstance<any>[]>([]);
-    const columnsRef = useRef<ColumnInstance<any>[]>(columns);
+    const [columns, _setColumns] = useState<ColDef[] | ColGroupDef<any>[]>([]);
+    const columnsRef = useRef<ColDef[] | ColGroupDef<any>[]>(columns);
     const [firstRender, setFirstRender] = useState<boolean>(true);
 
     const setColumns = (newValue: any[]): void => {
@@ -438,6 +460,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
         setFirstRender(false);
     }, [pageSize, sortBy, pageIndex]);
 
+    console.log(data);
+    console.log(columns);
+
     const setSorting = (input: { id: string; desc: boolean }): void => {
         if (input) {
             if (sortBy.id !== input.id || sortBy.desc !== input.desc) {
@@ -449,11 +474,361 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
         }
     };
 
+    const AGgetTagNoColumn =
+        () =>
+        (row: TableOptions<PreservedTag>): JSX.Element => {
+            const tag = row.value as PreservedTag;
+            return (
+                <TagLink
+                    isOverdue={isTagOverdue(tag)}
+                    tag={tag}
+                    onClick={(): void => props.showTagDetails(tag)}
+                >
+                    <Tooltip
+                        title={tag.tagNo || ''}
+                        arrow={true}
+                        enterDelay={200}
+                        enterNextDelay={100}
+                    >
+                        <span>{tag.tagNo}</span>
+                    </Tooltip>
+                </TagLink>
+            );
+        };
+
+    const AGColumnDefs: ColDef[] | ColGroupDef = useMemo(
+        () => [
+            {
+                headerCheckboxSelection: true,
+                checkboxSelection: true,
+                showDisabledCheckboxes: true,
+                width: 200,
+                maxWidth: 150,
+                minWidth: 30,
+                headerName: 'Tag No',
+                cellRenderer: (tag: any): JSX.Element => {
+                    return (
+                        <TagLink
+                            isOverdue={isTagOverdue(tag.data)}
+                            tag={tag.data}
+                            onClick={(): void => props.showTagDetails(tag.data)}
+                        >
+                            <Tooltip
+                                title={tag.value || ''}
+                                arrow={true}
+                                enterDelay={200}
+                                enterNextDelay={100}
+                            >
+                                <span>{tag.value}</span>
+                            </Tooltip>
+                        </TagLink>
+                    );
+                },
+                field: 'tagNo',
+            },
+            {
+                width: 200,
+                maxWidth: 200,
+                minWidth: 30,
+                headerName: 'Description',
+                cellRenderer: (tag: any): JSX.Element => {
+                    return (
+                        <TableRow
+                            isOverdue={isTagOverdue(tag.data)}
+                            tag={tag.data}
+                        >
+                            <Tooltip
+                                title={tag.value || ''}
+                                arrow={true}
+                                enterDelay={200}
+                                enterNextDelay={100}
+                            >
+                                <div>
+                                    {tag.value}
+                                    {tag.isNew && (
+                                        <TagStatusLabel role="new-indicator">
+                                            new
+                                        </TagStatusLabel>
+                                    )}
+                                </div>
+                            </Tooltip>
+                        </TableRow>
+                    );
+                },
+                field: 'description',
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Due',
+                cellRenderer: (row: any): JSX.Element => {
+                    const requirement = getFirstUpcomingRequirement(
+                        row.data as PreservedTag
+                    );
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow
+                            isOverdue={
+                                requirement && isTagOverdue(tag) ? true : false
+                            }
+                            tag={tag}
+                        >
+                            {!requirement || tag.isVoided
+                                ? null
+                                : requirement.nextDueWeeks}
+                        </TableRow>
+                    );
+                },
+                field: 'due',
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Next',
+                field: 'due',
+                cellRenderer: (row: any): JSX.Element => {
+                    const requirement = getFirstUpcomingRequirement(
+                        row.data as PreservedTag
+                    );
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow
+                            isOverdue={
+                                requirement && isTagOverdue(tag) ? true : false
+                            }
+                            tag={tag}
+                        >
+                            {!requirement || tag.isVoided
+                                ? null
+                                : requirement.nextDueAsYearAndWeek}
+                        </TableRow>
+                    );
+                },
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Mode',
+                field: 'mode',
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                            {row.value}
+                        </TableRow>
+                    );
+                },
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'PO',
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                            <Tooltip
+                                title={
+                                    tag.calloffNo
+                                        ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
+                                        : tag.purchaseOrderNo
+                                        ? tag.purchaseOrderNo
+                                        : ''
+                                }
+                                arrow={true}
+                                enterDelay={200}
+                                enterNextDelay={100}
+                            >
+                                <div>
+                                    {tag.calloffNo
+                                        ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
+                                        : tag.purchaseOrderNo}
+                                </div>
+                            </Tooltip>
+                        </TableRow>
+                    );
+                },
+                field: 'PO',
+            },
+            {
+                headerName: 'Area',
+                Cell: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                            {tag.areaCode}
+                        </TableRow>
+                    );
+                },
+                field: 'Area',
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Resp',
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                            <Tooltip
+                                title={tag.responsibleDescription || ''}
+                                arrow={true}
+                                enterDelay={200}
+                                enterNextDelay={100}
+                            >
+                                <div>{tag.responsibleCode}</div>
+                            </Tooltip>
+                        </TableRow>
+                    );
+                },
+                field: 'responsible',
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Disc',
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                            {tag.disciplineCode}
+                        </TableRow>
+                    );
+                },
+                field: 'discipline',
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Status',
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+
+                    return (
+                        <TableRow isOverdue={isTagOverdue(tag)} tag={tag}>
+                            {tag.status}
+                        </TableRow>
+                    );
+                },
+                field: 'status',
+            },
+            {
+                width: 100,
+                maxWidth: 100,
+                minWidth: 30,
+                headerName: 'Req type',
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    return (
+                        <ReqIcon
+                            isOverdue={isTagOverdue(tag)}
+                            tag={tag}
+                            onClick={(): void => props.showTagDetails(tag)}
+                        >
+                            <RequirementIcons tag={tag} />
+                        </ReqIcon>
+                    );
+                },
+                defaultCanSort: false,
+                field: 'reqtype',
+            },
+            {
+                headerGroupComponent: (): JSX.Element => {
+                    return (
+                        <SingleIconContainer>
+                            <EdsIcon
+                                name="notifications"
+                                size={24}
+                                color={
+                                    tokens.colors.text.static_icons__tertiary
+                                        .rgba
+                                }
+                            />
+                        </SingleIconContainer>
+                    );
+                },
+                cellRenderer: (row: any): JSX.Element => {
+                    const tag = row.data as PreservedTag;
+                    if (
+                        !tag.actionStatus ||
+                        tag.actionStatus === ActionStatus.Closed
+                    ) {
+                        return <div></div>;
+                    }
+
+                    return (
+                        <TagLink isOverdue={isTagOverdue(tag)} tag={tag}>
+                            <Tooltip
+                                title={
+                                    tag.actionStatus === ActionStatus.OverDue
+                                        ? 'Overdue action(s)'
+                                        : 'Open action(s)'
+                                }
+                                arrow={true}
+                                enterDelay={200}
+                                enterNextDelay={100}
+                            >
+                                <SingleIconContainer>
+                                    <div>
+                                        <EdsIcon
+                                            name="notifications"
+                                            size={24}
+                                            color={
+                                                tag.actionStatus ===
+                                                ActionStatus.OverDue
+                                                    ? tokens.colors.interactive
+                                                          .danger__text.rgba
+                                                    : tokens.colors.text
+                                                          .static_icons__tertiary
+                                                          .rgba
+                                            }
+                                        />
+                                    </div>
+                                </SingleIconContainer>
+                            </Tooltip>
+                        </TagLink>
+                    );
+                },
+                sortable: false,
+            },
+        ],
+        []
+    );
+
+    const agGridOptions = {
+        defaultColDef: {
+            resizable: true,
+            sortable: true,
+        },
+        rowSelection: 'multiple',
+        suppressRowClickSelection: true,
+    };
+
     return (
         <Container>
             <Typography variant="body_long">
                 {props.selectedTags.length} tags selected
             </Typography>
+            <div
+                className={[styles.root, 'ag-theme-alpine-fusion'].join(' ')}
+                style={{ height: 800 }}
+            >
+                <AgGridReact
+                    rowData={data}
+                    columnDefs={AGColumnDefs}
+                    gridOptions={agGridOptions}
+                ></AgGridReact>
+            </div>
             <ProcosysTable
                 loading={loading}
                 setPageSize={setPageSize}

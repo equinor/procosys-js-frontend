@@ -144,6 +144,7 @@ interface CommPkgResponse {
     system: string;
     status: string;
     operationHandoverStatus: OperationHandoverStatusEnum;
+    rfocAcceptedAt: Date;
 }
 
 interface McPkgResponse {
@@ -156,6 +157,7 @@ interface McPkgResponse {
     m01: string;
     m02: string;
     status: string;
+    rfocAcceptedAt: Date;
 }
 
 interface PersonResponse {

@@ -92,6 +92,7 @@ export interface CommPkgRow {
         isSelected: boolean;
     };
     operationHandoverStatus?: OperationHandoverStatusEnum;
+    rfocAcceptedAt?: Date;
 }
 
 export interface McPkgRow {
@@ -108,6 +109,7 @@ export interface McPkgRow {
     m01?: string;
     m02?: string;
     status?: string;
+    rfocAcceptedAt?: Date;
 }
 
 export interface McScope {

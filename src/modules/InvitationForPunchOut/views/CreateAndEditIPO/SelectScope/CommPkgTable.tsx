@@ -356,7 +356,6 @@ const CommPkgTable = forwardRef(
 
         const getRFOCColumns = (row: TableOptions<McPkgRow>): JSX.Element => {
             const commPkg = row.value as CommPkgRow;
-            console.log(commPkg);
             return <div>{getFormattedDate(commPkg.rfocAcceptedAt)}</div>;
         };
 

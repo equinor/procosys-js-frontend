@@ -809,8 +809,9 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
         defaultColDef: {
             resizable: true,
             sortable: true,
+            filter: 'agTextColumnFilter',
         },
-        rowSelection: 'multiple',
+        rowSelection: 'multiple' as any,
         suppressRowClickSelection: true,
     };
 
@@ -829,7 +830,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                     gridOptions={agGridOptions}
                 ></AgGridReact>
             </div>
-            <ProcosysTable
+            {/*<ProcosysTable
                 loading={loading}
                 setPageSize={setPageSize}
                 onSort={setSorting}
@@ -846,7 +847,7 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                 rowSelect={true}
                 orderBy={sortBy}
                 pageCount={0}
-            />
+            />*/}
         </Container>
     );
 };

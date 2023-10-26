@@ -19,6 +19,7 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { Tooltip } from '@mui/material';
 import Checkbox from '@procosys/components/Checkbox';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 interface McPkgTableProps {
     selectedMcPkgScope: McScope;
@@ -86,6 +87,7 @@ const McPkgTable = forwardRef(
                                     },
                                     operationHandoverStatus:
                                         mcPkg.operationHandoverStatus,
+                                    rfocAcceptedAt: mcPkg.rfocAcceptedAt,
                                 };
                             })
                         );
@@ -205,12 +207,7 @@ const McPkgTable = forwardRef(
         };
         const getRFOCColumns = (row: TableOptions<McPkgRow>): JSX.Element => {
             const mcPkg = row.value as McPkgRow;
-            return (
-                <Checkbox
-                    disabled
-                    checked={mcPkg.operationHandoverStatus === 'ACCEPTED'}
-                />
-            );
+            return <div>{getFormattedDate(mcPkg.rfocAcceptedAt)}</div>;
         };
 
         const columns = [
@@ -242,7 +239,7 @@ const McPkgTable = forwardRef(
                 maxWidth: 500,
             },
             {
-                Header: 'Signed RFOC',
+                Header: 'RFOC signed at',
                 accessor: (
                     d: UseTableRowProps<McPkgRow>
                 ): UseTableRowProps<McPkgRow> => d,

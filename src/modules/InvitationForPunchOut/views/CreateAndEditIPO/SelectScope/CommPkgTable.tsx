@@ -25,8 +25,7 @@ import { Canceler } from '@procosys/http/HttpClient';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { useInvitationForPunchOutContext } from '@procosys/modules/InvitationForPunchOut/context/InvitationForPunchOutContext';
 import { Tooltip } from '@mui/material';
-import Checkbox from '@procosys/components/Checkbox';
-import { OperationHandoverStatusEnum } from '../../enums';
+import { getFormattedDate } from '@procosys/core/services/DateService';
 
 interface CommPkgTableProps {
     selectedCommPkgScope: CommPkgRow[];
@@ -133,6 +132,7 @@ const CommPkgTable = forwardRef(
                             },
                             operationHandoverStatus:
                                 commPkg.operationHandoverStatus,
+                            rfocAcceptedAt: commPkg.rfocAcceptedAt,
                         };
                     }
                 );
@@ -177,6 +177,7 @@ const CommPkgTable = forwardRef(
                                 },
                                 operationHandoverStatus:
                                     commPkg.operationHandoverStatus,
+                                rfocAcceptedAt: commPkg.rfocAcceptedAt,
                             };
                         }
                     );
@@ -355,12 +356,7 @@ const CommPkgTable = forwardRef(
 
         const getRFOCColumns = (row: TableOptions<McPkgRow>): JSX.Element => {
             const commPkg = row.value as CommPkgRow;
-            return (
-                <Checkbox
-                    disabled
-                    checked={commPkg.operationHandoverStatus === 'ACCEPTED'}
-                />
-            );
+            return <div>{getFormattedDate(commPkg.rfocAcceptedAt)}</div>;
         };
 
         const getMcPkgs = (commPkgNo: string): void => {
@@ -407,7 +403,7 @@ const CommPkgTable = forwardRef(
                 accessor: 'status',
             },
             {
-                Header: 'Signed RFOC',
+                Header: 'RFOC Signed at',
                 accessor: (
                     d: UseTableRowProps<McPkgRow>
                 ): UseTableRowProps<McPkgRow> => d,

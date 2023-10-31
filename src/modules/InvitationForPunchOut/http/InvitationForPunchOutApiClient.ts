@@ -422,25 +422,16 @@ class InvitationForPunchOutApiClient extends ApiClient {
         currentPage?: number,
         setRequestCanceller?: RequestCanceler
     ): Promise<CommPkgPagingResponse> {
-        let settings: AxiosRequestConfig = {};
         const endpoint = '/Scope/CommPkgsV2';
-        if (projectName === 'All projects') {
-            settings = {
-                params: {
-                    startsWithCommPkgNo: startWith,
-                    itemsPerPage: pageSize,
-                    currentPage: currentPage,
-                },
-            };
-        } else {
-            settings = {
-                params: {
-                    projectName: projectName,
-                    startsWithCommPkgNo: startWith,
-                    itemsPerPage: pageSize,
-                    currentPage: currentPage,
-                },
-            };
+        const settings: AxiosRequestConfig = {
+            params: {
+                startsWithCommPkgNo: startWith,
+                itemsPerPage: pageSize,
+                currentPage: currentPage,
+            },
+        };
+        if (projectName !== 'All projects') {
+            settings['params']['projectName'] = projectName;
         }
 
         this.setupRequestCanceler(settings, setRequestCanceller);

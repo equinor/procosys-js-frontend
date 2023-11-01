@@ -427,12 +427,15 @@ class InvitationForPunchOutApiClient extends ApiClient {
         const endpoint = '/Scope/CommPkgsV2';
         const settings: AxiosRequestConfig = {
             params: {
-                projectName: projectName,
                 startsWithCommPkgNo: startWith,
                 itemsPerPage: pageSize,
                 currentPage: currentPage,
             },
         };
+        if (projectName !== 'All projects') {
+            settings['params']['projectName'] = projectName;
+        }
+
         this.setupRequestCanceler(settings, setRequestCanceller);
 
         try {

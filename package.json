@@ -88,8 +88,8 @@
     },
     "dependencies": {
         "@azure/msal-browser": "^3.6.0",
-        "@emotion/react": "^11.10.5",
-        "@emotion/styled": "^11.10.5",
+        "@emotion/react": "^11.11.3",
+        "@emotion/styled": "^11.11.0",
         "@equinor/eds-core-react": "0.32.4",
         "@equinor/eds-icons": "^0.17.0",
         "@equinor/eds-tokens": "^0.9.0",

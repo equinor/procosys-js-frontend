@@ -56,6 +56,11 @@ export interface TableSorting {
     desc: boolean;
 }
 
+interface AutoSizerProps {
+    height: number;
+    width: number;
+}
+
 export interface TableProperties<T extends Record<string, unknown>>
     extends TableOptions<T> {
     columns: ColumnInstance<T>[];
@@ -350,15 +355,15 @@ const ProcosysTable = forwardRef(
 
         const scrollHeader = (props: Event): void => {
             if (headerRef.current) {
-                headerRef.current.scrollLeft = (
-                    props.target as Element
-                ).scrollLeft;
+                headerRef.current.scrollLeft =
+                    // eslint-disable-next-line
+                    (props.target as Element).scrollLeft;
             }
 
             if (headerFiltersRef.current) {
-                headerFiltersRef.current.scrollLeft = (
-                    props.target as Element
-                ).scrollLeft;
+                headerFiltersRef.current.scrollLeft =
+                    // eslint-disable-next-line
+                    (props.target as Element).scrollLeft;
             }
         };
 
@@ -471,7 +476,7 @@ const ProcosysTable = forwardRef(
             </LoadingDiv>
         ) : (
             <AutoSizer style={{ height: '100%', width: '100%' }}>
-                {({ height, width }): JSX.Element => (
+                {({ height, width }: AutoSizerProps): JSX.Element => (
                     <div>
                         <div
                             style={{ justifyContent: 'flex-end', width: width }}
@@ -548,8 +553,8 @@ const ProcosysTable = forwardRef(
                                                                             ? 'desc'
                                                                             : 'asc'
                                                                         : column.isSortedDesc
-                                                                        ? 'desc'
-                                                                        : 'asc'
+                                                                          ? 'desc'
+                                                                          : 'asc'
                                                                 }
                                                                 {...column.getSortByToggleProps()}
                                                             >

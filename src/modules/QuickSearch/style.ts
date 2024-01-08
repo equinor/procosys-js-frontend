@@ -364,6 +364,7 @@ export const QuickSearchSearch = styled(Search)`
     min-width: 250px;
     margin-top: 10px;
     margin-bottom: 20px;
+    margin-left: 2px;
 `;
 
 export const SearchFieldContainer = styled.div`

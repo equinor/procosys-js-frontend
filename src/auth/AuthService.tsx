@@ -130,6 +130,7 @@ export default class AuthService implements IAuthService {
      * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirect-apis
      */
     async loadAuthModule(): Promise<void> {
+        await this.myMSALObj.initialize();
         // handle auth redired/do all initial setup for msal
         await this.myMSALObj.handleRedirectPromise();
         const acc = this.getAccount();

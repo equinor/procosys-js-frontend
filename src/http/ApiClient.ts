@@ -25,25 +25,23 @@ export default class ApiClient extends HttpClient {
     ) {
         super(baseUrl, customSettings);
         this.authService = authService;
-        this.client.interceptors.request.use(
-            async (config): Promise<AxiosRequestConfig> => {
-                if (!this.authService)
-                    throw 'Missing authService initialization in API client';
-                try {
-                    const accessToken =
-                        await this.authService.getAccessTokenAsync(resource);
-                    if (!accessToken) throw 'Failed to get AccessToken';
-                    if (config.headers) {
-                        config.headers['Authorization'] =
-                            'Bearer ' + accessToken.token;
-                    }
-                } catch (authError) {
-                    console.error('Failed to aquire token', authError);
-                    throw authError;
+        this.client.interceptors.request.use(async (config): Promise<any> => {
+            if (!this.authService)
+                throw 'Missing authService initialization in API client';
+            try {
+                const accessToken =
+                    await this.authService.getAccessTokenAsync(resource);
+                if (!accessToken) throw 'Failed to get AccessToken';
+                if (config.headers) {
+                    config.headers['Authorization'] =
+                        'Bearer ' + accessToken.token;
                 }
-
-                return config;
+            } catch (authError) {
+                console.error('Failed to aquire token', authError);
+                throw authError;
             }
-        );
+
+            return config as any; // https://github.com/axios/axios/issues/5494
+        });
     }
 }

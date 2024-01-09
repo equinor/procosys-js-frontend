@@ -337,7 +337,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
                 config.headers = {
                     ...config.headers,
                     'x-plant': plantId,
-                };
+                } as any; // https://github.com/axios/axios/issues/5494
                 return config;
             },
             (error) => Promise.reject(error)

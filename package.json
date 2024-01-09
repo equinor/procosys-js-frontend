@@ -34,7 +34,7 @@
         "@babel/plugin-proposal-private-property-in-object": "7.21.11",
         "@babel/plugin-syntax-dynamic-import": "^7.8.3",
         "@babel/plugin-transform-runtime": "^7.23.7",
-        "@babel/preset-env": "^7.23.7",
+        "@babel/preset-env": "^7.23.8",
         "@babel/preset-react": "^7.23.3",
         "@babel/preset-typescript": "^7.23.3",
         "@hot-loader/react-dom": "^17.0.2",
@@ -87,7 +87,7 @@
         "webpack-dev-server": "^4.11.1"
     },
     "dependencies": {
-        "@azure/msal-browser": "^3.6.0",
+        "@azure/msal-browser": "^3.7.0",
         "@emotion/react": "^11.11.3",
         "@emotion/styled": "^11.11.0",
         "@equinor/eds-core-react": "0.35.1",

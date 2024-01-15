@@ -46,7 +46,7 @@ interface PreservedTagResponse {
                     nextDueAsYearAndWeek: string;
                     nextDueWeeks: number;
                     readyToBePreserved: boolean;
-                }
+                },
             ];
             status: string;
             responsibleCode: string;
@@ -55,7 +55,7 @@ interface PreservedTagResponse {
             tagNo: string;
             tagType: string;
             rowVersion: string;
-        }
+        },
     ];
 }
 
@@ -205,7 +205,7 @@ interface JourneyResponse {
                 rowVersion: string;
             };
             rowVersion: string;
-        }
+        },
     ];
     rowVersion: string;
 }
@@ -240,10 +240,10 @@ interface RequirementTypeResponse {
                     showPrevious: boolean;
                     isInUse: boolean;
                     rowVersion: string;
-                }
+                },
             ];
             needsUserInput: boolean;
-        }
+        },
     ];
 }
 
@@ -329,7 +329,7 @@ interface TagRequirementsResponse {
                 isNA: boolean;
                 value: number | null;
             };
-        }
+        },
     ];
     comment: string;
     isVoided: boolean;
@@ -517,7 +517,7 @@ class PreservationApiClient extends ApiClient {
                 config.headers = {
                     ...config.headers,
                     'x-plant': plantId,
-                };
+                } as any; // https://github.com/axios/axios/issues/5494
                 return config;
             },
             (error) => Promise.reject(error)

@@ -33,51 +33,52 @@ export class ProCoSysApiError extends Error {
 
     constructor(error: AxiosError) {
         let cancel = false;
+        const _error = JSON.parse(JSON.stringify(error)) as AxiosError;
         if (Axios.isCancel(error)) {
             super('The request was cancelled');
             cancel = true;
-        } else if (!error || !error.response) {
+        } else if (!_error || !_error.response) {
             console.error('An unknown API error occured, error: ', error);
             super('Unknown error');
-        } else if (error.response.status == 500) {
-            super(error.response.data ? `${error.response.data}` : undefined);
-        } else if (error.response.status == 409) {
+        } else if (_error.response.status == 500) {
+            super(_error.response.data ? `${_error.response.data}` : undefined);
+        } else if (_error.response.status == 409) {
             super(
                 'Data has been updated by another user. Please reload and start over!'
             );
-        } else if (error.response.status == 404) {
-            super(error.response.data ? `${error.response.data}` : undefined);
-        } else if (error.response.status == 403) {
+        } else if (_error.response.status == 404) {
+            super(_error.response.data ? `${_error.response.data}` : undefined);
+        } else if (_error.response.status == 403) {
             super('You are not authorized to perform this operation.');
-        } else if (error.response.status == 400) {
+        } else if (_error.response.status == 400) {
             if (
                 isOfType<PreservationErrorResponse>(
-                    error.response.data,
+                    _error.response.data,
                     'errors'
                 )
             ) {
                 super(
-                    error.response.data
-                        ? `${error.response.data.errors[''][0]}`
+                    _error.response.data
+                        ? `${_error.response.data.errors[''][0]}`
                         : undefined
                 );
-            } else if (isOfType<dataError>(error.response.data, 'errors')) {
+            } else if (isOfType<dataError>(_error.response.data, 'errors')) {
                 super(
-                    error.response.data
-                        ? `${error.response.data.errors.IpoException}`
+                    _error.response.data
+                        ? `${_error.response.data.errors.IpoException}`
                         : undefined
                 );
             } else {
                 super(
-                    error.response.data ? `${error.response.data}` : undefined
+                    _error.response.data ? `${_error.response.data}` : undefined
                 );
             }
         } else {
             try {
-                const apiErrorResponse = error.response.data as ErrorResponse;
-                let errorMessage = `${error.response.status} (${error.response.statusText})`;
+                const apiErrorResponse = _error.response.data as ErrorResponse;
+                let errorMessage = `${_error.response.status} (${_error.response.statusText})`;
 
-                if (error.response.data) {
+                if (_error.response.data) {
                     errorMessage = apiErrorResponse.Errors.map(
                         (err) => err.ErrorMessage
                     ).join(', ');

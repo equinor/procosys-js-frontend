@@ -294,12 +294,12 @@ const QuickSearch = (): JSX.Element => {
         const pkgNo = doc.commPkg
             ? doc.commPkg.commPkgNo ?? ''
             : doc.mcPkg
-            ? doc.mcPkg.mcPkgNo ?? ''
-            : doc.tag
-            ? doc.tag.tagNo ?? ''
-            : doc.punchItem
-            ? doc.punchItem.punchItemNo ?? ''
-            : '';
+              ? doc.mcPkg.mcPkgNo ?? ''
+              : doc.tag
+                ? doc.tag.tagNo ?? ''
+                : doc.punchItem
+                  ? doc.punchItem.punchItemNo ?? ''
+                  : '';
 
         return (
             <DescriptionCell
@@ -347,12 +347,12 @@ const QuickSearch = (): JSX.Element => {
                         doc.commPkg
                             ? doc.commPkg.description ?? ''
                             : doc.mcPkg
-                            ? doc.mcPkg.description ?? ''
-                            : doc.tag
-                            ? doc.tag.description ?? ''
-                            : doc.punchItem
-                            ? doc.punchItem.description ?? ''
-                            : ''
+                              ? doc.mcPkg.description ?? ''
+                              : doc.tag
+                                ? doc.tag.description ?? ''
+                                : doc.punchItem
+                                  ? doc.punchItem.description ?? ''
+                                  : ''
                     )}
                 </ResultCell>
             </DescriptionCell>
@@ -472,18 +472,18 @@ const QuickSearch = (): JSX.Element => {
                     (a.original.commPkg
                         ? a.original.commPkg.commPkgNo
                         : a.original.mcPkg
-                        ? a.original.mcPkg.mcPkgNo
-                        : a.original.tag
-                        ? a.original.tag.tagNo
-                        : '') || '';
+                          ? a.original.mcPkg.mcPkgNo
+                          : a.original.tag
+                            ? a.original.tag.tagNo
+                            : '') || '';
                 const secondValue =
                     (b.original.commPkg
                         ? b.original.commPkg.commPkgNo
                         : b.original.mcPkg
-                        ? b.original.mcPkg.mcPkgNo
-                        : b.original.tag
-                        ? b.original.tag.tagNo
-                        : '') || '';
+                          ? b.original.mcPkg.mcPkgNo
+                          : b.original.tag
+                            ? b.original.tag.tagNo
+                            : '') || '';
                 if (firstValue > secondValue) return 1;
                 else if (firstValue < secondValue) return -1;
                 else return 0;
@@ -505,18 +505,18 @@ const QuickSearch = (): JSX.Element => {
                     a.original.type === 'C'
                         ? a.original.commPkg?.description ?? ''
                         : a.original.type === 'MC'
-                        ? a.original.mcPkg?.description ?? ''
-                        : a.original.type === 'T'
-                        ? a.original.tag?.description ?? ''
-                        : '';
+                          ? a.original.mcPkg?.description ?? ''
+                          : a.original.type === 'T'
+                            ? a.original.tag?.description ?? ''
+                            : '';
                 const secondValue =
                     b.original.type === 'C'
                         ? b.original.commPkg?.description ?? ''
                         : b.original.type === 'MC'
-                        ? b.original.mcPkg?.description ?? ''
-                        : b.original.type === 'T'
-                        ? b.original.tag?.description ?? ''
-                        : '';
+                          ? b.original.mcPkg?.description ?? ''
+                          : b.original.type === 'T'
+                            ? b.original.tag?.description ?? ''
+                            : '';
                 if (firstValue > secondValue) return 1;
                 else if (firstValue < secondValue) return -1;
                 else return 0;
@@ -853,11 +853,9 @@ const QuickSearch = (): JSX.Element => {
                             <FiltersButton
                                 onClick={(): void => toggleShowFilter()}
                                 variant={
-                                    (searchAllPlants ||
-                                        (selectedPlants &&
-                                            selectedPlants.length) ||
-                                        (selectedTypes &&
-                                            selectedTypes.length > 0)) > 0
+                                    searchAllPlants ||
+                                    (selectedPlants && selectedPlants.length) ||
+                                    (selectedTypes && selectedTypes.length > 0)
                                         ? 'contained'
                                         : 'ghost'
                                 }

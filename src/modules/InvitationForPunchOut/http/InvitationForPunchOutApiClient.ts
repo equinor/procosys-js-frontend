@@ -498,6 +498,7 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
+            if (error.message === 'canceled') return [];
             throw new IpoApiError(error as AxiosError);
         }
     }

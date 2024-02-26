@@ -72,7 +72,7 @@ stages:
 # deploy to test environment
 - stage: DeployTest
   displayName: 'Promote to test'
-  dependsOn: 'build_and_test'
+  dependsOn: 'DeployDev'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/104957_Move_New_FrontEnd_to_Radix'))  #TODO
   variables:
     envName: 'test'
@@ -100,7 +100,7 @@ stages:
 # deploy to production environment
 - stage: DeployProd
   displayName: 'Promote to production'
-  dependsOn: 'build_and_test'
+  dependsOn: 'DeployTest'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/104957_Move_New_FrontEnd_to_Radix')) #TODO
   variables:
     envName: 'prod'

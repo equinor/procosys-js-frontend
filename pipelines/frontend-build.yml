@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-    - master
+    - 104957_Move_New_FrontEnd_to_Radix #TODO
 
 resources:
   repositories:
@@ -49,7 +49,7 @@ stages:
 - stage: DeployDev
   displayName: 'Deploy to dev'
   dependsOn: 'build_and_test'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/104957_Move_New_FrontEnd_to_Radix'))  #TODO
   variables:
     envName: 'dev'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
@@ -73,7 +73,7 @@ stages:
 - stage: DeployTest
   displayName: 'Promote to test'
   dependsOn: 'build_and_test'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/104957_Move_New_FrontEnd_to_Radix'))  #TODO
   variables:
     envName: 'test'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
@@ -101,8 +101,8 @@ stages:
 - stage: DeployProd
   displayName: 'Promote to production'
   dependsOn: 'build_and_test'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-variables:
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/104957_Move_New_FrontEnd_to_Radix')) #TODO
+  variables:
     envName: 'prod'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     radixPromoteFromEnv: 'test'

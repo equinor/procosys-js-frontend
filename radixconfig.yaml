@@ -1,0 +1,64 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: procosys-js-frontend
+spec: 
+  environments:
+  - name: dev
+  - name: test
+  - name: prod
+
+  components:
+  - name: frontend
+    image: procosys.azurecr.io/procosys/frontend:{imageTagName}
+    ports:
+    - name: http
+      port: 5000
+    publicPort: http
+    environmentConfig:
+    # Development environment
+    - environment: dev
+      identity:
+        azure:
+          clientId: 30a25122-c22c-4a5c-a7b8-366d31cb2c46
+      imageTagName: latest  
+      variables:
+        pcs_authSettingsEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
+      monitoring: true
+      resources:
+        requests:
+          memory: '256Mi'
+          cpu: '100m'
+        limits:
+          memory: '256Mi'
+          cpu: '100m'      
+    - environment: test
+      identity:
+        azure:
+          clientId: 23d8e04c-9362-4870-bda2-dade6f9d0ffb
+      variables:
+        pcs_authSettingsEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
+      resources:
+        requests:
+          memory: '256Mi'
+          cpu: '100m'
+        limits:
+          memory: '256Mi'
+          cpu: '100m'      
+    - environment: prod
+      identity:
+        azure:
+          clientId: 50b15344-28c9-45b5-9616-41da16fc9dcc
+      variables:
+        pcs_authSettingsEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend/Auth'
+      resources:
+        requests:
+          memory: '256Mi'
+          cpu: '100m'
+        limits:
+          memory: '256Mi'
+          cpu: '100m'      
+  privateImageHubs:
+    procosys.azurecr.io:
+      username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
+

@@ -30,7 +30,7 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    dockerfilePath: '/.docker/Dockerfile'
+    dockerfilePath: '/Dockerfile'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   jobs:

@@ -23,7 +23,8 @@ spec:
           clientId: 30a25122-c22c-4a5c-a7b8-366d31cb2c46
       imageTagName: latest  
       variables:
-        pcs_authSettingsEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
+        pcs_configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend'
+        pcs_configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
       monitoring: true
       resources:
         requests:
@@ -37,7 +38,8 @@ spec:
         azure:
           clientId: 23d8e04c-9362-4870-bda2-dade6f9d0ffb
       variables:
-        pcs_authSettingsEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
+        pcs_configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend'
+        pcs_configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
       resources:
         requests:
           memory: '256Mi'
@@ -50,7 +52,8 @@ spec:
         azure:
           clientId: 50b15344-28c9-45b5-9616-41da16fc9dcc
       variables:
-        pcs_authSettingsEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend/Auth'
+        pcs_configurationEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend'
+        pcs_configurationScope: 'api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read'
       resources:
         requests:
           memory: '256Mi'

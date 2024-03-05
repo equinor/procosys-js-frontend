@@ -113,6 +113,22 @@ const ParticipantsTable = ({
         setAttNoteData([...updateData]);
     };
 
+
+//
+    const updateParticipantNote = (participantId, newNote, rowVersion) => {
+        const currentNote = participant.note;
+        if (newNote === currentNote) return; 
+        
+        updateNotes({
+        id: participantId,
+        note: newNote,
+        rowVersion: rowVersion,
+        });
+    };
+  
+//
+
+
     const getOrganizationText = (
         organization: string,
         sortKey: number
@@ -335,17 +351,22 @@ const ParticipantsTable = ({
                                                     participant.id
                                                 )
                                             }
+                                            // onBlur={(): void => {
+                                            //     updateNotes({
+                                            //         id: participant.id,
+                                            //         note: attNoteData[index]
+                                            //             ? attNoteData[index]
+                                            //                   .note
+                                            //             : participant.note,
+                                            //         rowVersion:
+                                            //             participant.rowVersion,
+                                            //     });
+                                            // }}
+
                                             onBlur={(): void => {
-                                                updateNotes({
-                                                    id: participant.id,
-                                                    note: attNoteData[index]
-                                                        ? attNoteData[index]
-                                                              .note
-                                                        : participant.note,
-                                                    rowVersion:
-                                                        participant.rowVersion,
-                                                });
-                                            }}
+                                                const newNote = attNoteData[index] ? attNoteData[index].note : participant.note;
+                                                updateParticipantNote(participant.id, newNote, participant.rowVersion);
+                                              }}
                                         />
                                     </Table.Cell>
                                     <Table.Cell

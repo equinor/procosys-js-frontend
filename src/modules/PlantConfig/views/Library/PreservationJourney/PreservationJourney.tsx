@@ -978,7 +978,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                                 )
                                                             }
                                                         >
-                                                            {respItem.text}
+                                                            {
+                                                                respItem.text //||  code + description 'step.responsible.code + ' - ' + step.responsible.description'
+                                                            }
                                                         </DropdownItem>
                                                     );
                                                 }

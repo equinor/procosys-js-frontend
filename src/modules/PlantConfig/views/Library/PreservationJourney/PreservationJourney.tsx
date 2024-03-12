@@ -74,6 +74,7 @@ interface Step {
         code: string;
         title: string;
         rowVersion: string;
+        description?: string;
     };
     rowVersion: string;
 }
@@ -978,9 +979,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                                 )
                                                             }
                                                         >
-                                                            {
-                                                                respItem.text //||  code + description 'step.responsible.code + ' - ' + step.responsible.description'
-                                                            }
+                                                            {respItem.text ||
+                                                                `${step.responsible.code}  -  ${step.responsible.description}`}
                                                         </DropdownItem>
                                                     );
                                                 }

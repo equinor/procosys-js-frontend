@@ -958,9 +958,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             label={'Resp'}
                                             variant="form"
                                             text={
-                                                (responsibleSelectItem &&
-                                                    responsibleSelectItem.text) ||
-                                                'Type to select'
+                                                responsibleSelectItem
+                                                    ? responsibleSelectItem.text
+                                                    : step.responsible &&
+                                                        step.responsible.code &&
+                                                        step.responsible
+                                                            .description
+                                                      ? `${step.responsible.code} - ${step.responsible.description}`
+                                                      : 'Type to select'
                                             }
                                             onFilter={setFilterForResponsibles}
                                         >
@@ -979,8 +984,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                                 )
                                                             }
                                                         >
-                                                            {respItem.text ||
-                                                                `${step.responsible.code}  -  ${step.responsible.description}`}
+                                                            {respItem.text}
                                                         </DropdownItem>
                                                     );
                                                 }

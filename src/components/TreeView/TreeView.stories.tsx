@@ -30,7 +30,7 @@ const getRegisterNodes2 = async (): Promise<TreeViewNode[]> => {
     return children;
 };
 
-const rootNodes: TreeViewNode[] = [
+export const rootNodes: TreeViewNode[] = [
     {
         id: LibraryType.TAG_FUNCTION,
         name: 'Tag functions',

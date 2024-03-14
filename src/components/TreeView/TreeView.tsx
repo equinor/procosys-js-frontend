@@ -8,7 +8,7 @@ import {
 } from './style';
 import Spinner from '../Spinner';
 import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -51,16 +51,8 @@ const TreeView = ({
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
     const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
-    // const history = useHistory();
     const [pathToExpandTree, setPathToExpandTree] =
         useState<(string | number)[]>();
-    const [path, setPath] = useState(window.location.href);
-
-    useEffect(() => {
-        const currentPath = window.location.pathname;
-        const basePath = currentPath.split('/').slice(0, 3).join('/');
-        setPath(basePath);
-    }, [window.location.pathname]);
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -258,40 +250,39 @@ const TreeView = ({
         if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
             selectNode(node);
         }
-        const finalPath = node.parentId
-            ? `${path}/${treeData.find((n) => n.id === node.parentId)?.name}/${
-                  node.name
-              }/${node.id}`
-            : `${path}/${node.name}`;
-
-        history.replaceState(null, '', finalPath);
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {
+        const finalPath = node.parentId
+            ? `${treeData.find((n) => n.id === node.parentId)?.name}/${
+                  node.name
+              }/${node.id}`
+            : `${node.name}`;
+
         return (
-            // <Link to={finalPath}>
-            <NodeName
-                hasChildren={node.getChildren ? true : false}
-                isExpanded={node.isExpanded === true}
-                isVoided={node.isVoided === true}
-                isSelected={node.isSelected === true}
-                title={node.name}
-            >
-                {node.onClick && (
-                    <NodeLink
-                        isExpanded={node.isExpanded === true}
-                        isVoided={node.isVoided === true}
-                        onClick={(): void => {
-                            handleOnClick(node);
-                        }}
-                        isSelected={node.isSelected ? true : false}
-                    >
-                        {node.name}
-                    </NodeLink>
-                )}
-                {!node.onClick && node.name}
-            </NodeName>
-            // </Link>
+            <Link to={`/${finalPath}`}>
+                <NodeName
+                    hasChildren={node.getChildren ? true : false}
+                    isExpanded={node.isExpanded === true}
+                    isVoided={node.isVoided === true}
+                    isSelected={node.isSelected === true}
+                    title={node.name}
+                >
+                    {node.onClick && (
+                        <NodeLink
+                            isExpanded={node.isExpanded === true}
+                            isVoided={node.isVoided === true}
+                            onClick={(): void => {
+                                handleOnClick(node);
+                            }}
+                            isSelected={node.isSelected ? true : false}
+                        >
+                            {node.name}
+                        </NodeLink>
+                    )}
+                    {!node.onClick && node.name}
+                </NodeName>
+            </Link>
         );
     };
 

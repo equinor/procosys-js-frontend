@@ -8,6 +8,8 @@ import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
 import { hot } from 'react-hot-loader';
 import { useRouteMatch } from 'react-router-dom';
 
+import { Route, Switch, BrowserRouter } from 'react-router-dom';
+
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
     MODE = 'Mode',
@@ -47,20 +49,34 @@ const Library = (): JSX.Element => {
             />
 
             <Divider />
-            <LibraryItemContainer
-                addPaddingRight={
-                    selectedLibraryType != LibraryType.TAG_FUNCTION
-                }
-            >
-                <LibraryItemDetails
-                    forceUpdate={update}
-                    libraryType={selectedLibraryType}
-                    libraryItem={selectedLibraryItem}
-                    setSelectedLibraryType={setSelectedLibraryType}
-                    setSelectedLibraryItem={setSelectedLibraryItem}
-                    setDirtyLibraryType={setDirtyLibraryType}
-                />
-            </LibraryItemContainer>
+            <BrowserRouter>
+                <Switch>
+                    <Route
+                        path={`/`}
+                        component={() => (
+                            <LibraryItemContainer
+                                addPaddingRight={
+                                    selectedLibraryType !=
+                                    LibraryType.TAG_FUNCTION
+                                }
+                            >
+                                <LibraryItemDetails
+                                    forceUpdate={update}
+                                    libraryType={selectedLibraryType}
+                                    libraryItem={selectedLibraryItem}
+                                    setSelectedLibraryType={
+                                        setSelectedLibraryType
+                                    }
+                                    setSelectedLibraryItem={
+                                        setSelectedLibraryItem
+                                    }
+                                    setDirtyLibraryType={setDirtyLibraryType}
+                                />
+                            </LibraryItemContainer>
+                        )}
+                    />
+                </Switch>
+            </BrowserRouter>
         </Container>
     );
 };

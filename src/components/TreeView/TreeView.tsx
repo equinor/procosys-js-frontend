@@ -8,6 +8,7 @@ import {
 } from './style';
 import Spinner from '../Spinner';
 import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
+import { Link, useHistory } from 'react-router-dom';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -50,8 +51,16 @@ const TreeView = ({
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
     const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
+    // const history = useHistory();
     const [pathToExpandTree, setPathToExpandTree] =
         useState<(string | number)[]>();
+    const [path, setPath] = useState(window.location.href);
+
+    useEffect(() => {
+        const currentPath = window.location.pathname;
+        const basePath = currentPath.split('/').slice(0, 3).join('/');
+        setPath(basePath);
+    }, [window.location.pathname]);
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -219,8 +228,8 @@ const TreeView = ({
                     loading
                         ? null
                         : isExpanded
-                        ? collapseNode(node)
-                        : await expandNode(node);
+                          ? collapseNode(node)
+                          : await expandNode(node);
                 }}
                 spinner={loading == node.id}
             >
@@ -249,10 +258,18 @@ const TreeView = ({
         if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
             selectNode(node);
         }
+        const finalPath = node.parentId
+            ? `${path}/${treeData.find((n) => n.id === node.parentId)?.name}/${
+                  node.name
+              }/${node.id}`
+            : `${path}/${node.name}`;
+
+        history.replaceState(null, '', finalPath);
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {
         return (
+            // <Link to={finalPath}>
             <NodeName
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
@@ -274,6 +291,7 @@ const TreeView = ({
                 )}
                 {!node.onClick && node.name}
             </NodeName>
+            // </Link>
         );
     };
 

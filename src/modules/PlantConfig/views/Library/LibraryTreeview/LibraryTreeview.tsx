@@ -183,9 +183,8 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         const children: TreeViewNode[] = [];
 
         try {
-            const tagFunctions = await libraryApiClient.getTagFunctions(
-                registerCode
-            );
+            const tagFunctions =
+                await libraryApiClient.getTagFunctions(registerCode);
             tagFunctions.map((tf) => {
                 children.push({
                     id: `tf_register_${registerCode}_${tf.code}`,

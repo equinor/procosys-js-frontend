@@ -86,6 +86,12 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
             background-color: ${tokens.colors.ui.background__light.rgba};
             border-bottom: 1px solid black;
         `}
+        ${(props): any =>
+        props.variant === 'error' &&
+        css`
+            background-color: ${tokens.colors.ui.background__light.rgba};
+            border: 1px solid red;
+        `}
 `;
 
 export const DropdownItem = styled.li`

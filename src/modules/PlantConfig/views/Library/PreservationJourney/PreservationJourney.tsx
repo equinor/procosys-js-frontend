@@ -955,8 +955,16 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                 newJourney.isVoided ||
                                                 step.isVoided
                                             }
-                                            label={'Resp'}
-                                            variant="form"
+                                            label={
+                                                responsibleSelectItem
+                                                    ? 'Resp'
+                                                    : 'Resp - voided'
+                                            }
+                                            variant={
+                                                responsibleSelectItem
+                                                    ? 'form'
+                                                    : 'error'
+                                            }
                                             text={
                                                 responsibleSelectItem
                                                     ? responsibleSelectItem.text

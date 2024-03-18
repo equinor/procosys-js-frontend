@@ -128,12 +128,13 @@ const ParticipantsTable = ({
         }
         return organizationText;
     };
+
     const handleEditNotesBlur = (
         id: number,
         rowVersion: string,
         note: string
-    ) => {
-        const participantData = (note: string, id: number) =>
+    ): void => {
+        const participantData = (note: string, id: number): boolean =>
             participants.some((data) => data.note === note && data.id === id);
         const exist = participantData(note, id);
 
@@ -217,31 +218,21 @@ const ParticipantsTable = ({
                         (participant: Participant, index: number) => {
                             const representative = participant.person
                                 ? `${participant.person.firstName} ${participant.person.lastName}`
-                                : participant.functionalRole
-                                  ? participant.functionalRole.code
-                                  : participant.externalEmail.externalEmail;
+                                : participant.functionalRole?.code ||
+                                  participant.externalEmail?.externalEmail ||
+                                  '';
 
-                            const response = participant.person
-                                ? participant.person.response
-                                    ? participant.person.response
-                                    : ''
-                                : participant.externalEmail
-                                  ? participant.externalEmail.response
-                                      ? participant.externalEmail.response
-                                      : ''
-                                  : participant.functionalRole
-                                    ? participant.functionalRole.response
-                                        ? participant.functionalRole.response
-                                        : ''
-                                    : '';
+                            const response =
+                                participant.person?.response ||
+                                participant.externalEmail?.response ||
+                                participant.functionalRole?.response ||
+                                '';
 
-                            const addPopover = participant.functionalRole
-                                ? participant.functionalRole.response
-                                    ? participant.functionalRole.persons.length
-                                        ? true
-                                        : false
-                                    : false
-                                : false;
+                            const addPopover = !!(
+                                participant.functionalRole &&
+                                participant.functionalRole.response &&
+                                participant.functionalRole.persons?.length
+                            );
 
                             return (
                                 <Table.Row key={participant.sortKey} as="tr">

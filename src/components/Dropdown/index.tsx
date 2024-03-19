@@ -78,7 +78,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     return (
         <Container ref={containerRef}>
             {(label || meta) && (
-                <TopTextContainer>
+                <TopTextContainer variant={variant}>
                     <div>{label}</div>
                     <div>{meta}</div>
                 </TopTextContainer>

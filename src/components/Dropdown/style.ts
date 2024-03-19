@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 import { Breakpoints } from '@procosys/core/styling';
 
+
 export const Container = styled.div`
     display: inline-block;
     position: relative;
@@ -86,6 +87,12 @@ export const DropdownButton = styled.button<DropdownButtonProps>`
             background-color: ${tokens.colors.ui.background__light.rgba};
             border-bottom: 1px solid black;
         `}
+        ${(props): any =>
+        props.variant === 'error' &&
+        css`
+            background-color: ${tokens.colors.ui.background__light.rgba};
+            border: 1px solid red;
+        `}
 `;
 
 export const DropdownItem = styled.li`
@@ -98,11 +105,17 @@ export const DropdownItem = styled.li`
     }
 `;
 
-export const TopTextContainer = styled.div`
+export const TopTextContainer = styled.div<{ variant?: string }>`
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     font-size: 12px;
+
+    ${({ variant }): any =>
+        variant === 'error' &&
+        css`
+            color: red;
+        `}
 `;
 
 export const FilterContainer = styled.li`

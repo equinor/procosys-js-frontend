@@ -74,6 +74,7 @@ interface Step {
         code: string;
         title: string;
         rowVersion: string;
+        description?: string;
     };
     rowVersion: string;
 }
@@ -954,12 +955,25 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                 newJourney.isVoided ||
                                                 step.isVoided
                                             }
-                                            label={'Resp'}
-                                            variant="form"
+                                            label={
+                                                responsibleSelectItem
+                                                    ? 'Resp'
+                                                    : 'Resp - voided'
+                                            }
+                                            variant={
+                                                responsibleSelectItem
+                                                    ? 'form'
+                                                    : 'error'
+                                            }
                                             text={
-                                                (responsibleSelectItem &&
-                                                    responsibleSelectItem.text) ||
-                                                'Type to select'
+                                                responsibleSelectItem
+                                                    ? responsibleSelectItem.text
+                                                    : step.responsible &&
+                                                        step.responsible.code &&
+                                                        step.responsible
+                                                            .description
+                                                      ? `${step.responsible.code} - ${step.responsible.description}`
+                                                      : 'Type to select'
                                             }
                                             onFilter={setFilterForResponsibles}
                                         >

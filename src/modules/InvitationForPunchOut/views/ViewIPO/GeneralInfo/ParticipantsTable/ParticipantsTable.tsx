@@ -343,7 +343,7 @@ const ParticipantsTable = ({
                                                     participant.id
                                                 )
                                             }
-                                            onBlur={() =>
+                                            onBlur={(): void =>
                                                 handleEditNotesBlur(
                                                     participant.id,
                                                     participant.rowVersion,

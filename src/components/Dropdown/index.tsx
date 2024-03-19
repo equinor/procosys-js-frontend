@@ -78,15 +78,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     return (
         <Container ref={containerRef}>
             {(label || meta) && (
-                <TopTextContainer>
-                    <div
-                        style={{
-                            color:
-                                variant === 'error' ? 'red' : '--text--default',
-                        }}
-                    >
-                        {label}
-                    </div>
+                <TopTextContainer variant={variant}>
+                    <div>{label}</div>
                     <div>{meta}</div>
                 </TopTextContainer>
             )}

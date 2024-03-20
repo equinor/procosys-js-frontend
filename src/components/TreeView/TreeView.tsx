@@ -252,38 +252,63 @@ const TreeView = ({
         }
     };
 
-    const getNodeLink = (node: NodeData): JSX.Element => {
-        const finalPath = node.parentId
-            ? `${treeData.find((n) => n.id === node.parentId)?.name}/${
-                  node.name
-              }/${node.id}`
-            : `${node.name}`;
+    const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
+        if (!node.parentId) {
+            return [node.name];
+        } else {
+            const parent = treeData.find((n) => n.id === node.parentId);
+            if (parent) {
+                const parentPath = getParentPath(parent, treeData);
+                return [...parentPath, node.name];
+            } else {
+                return [node.name];
+            }
+        }
+    };
 
-        return (
-            <Link to={`/${finalPath}`}>
-                <NodeName
-                    hasChildren={node.getChildren ? true : false}
-                    isExpanded={node.isExpanded === true}
-                    isVoided={node.isVoided === true}
-                    isSelected={node.isSelected === true}
-                    title={node.name}
-                >
-                    {node.onClick && (
-                        <NodeLink
-                            isExpanded={node.isExpanded === true}
-                            isVoided={node.isVoided === true}
-                            onClick={(): void => {
-                                handleOnClick(node);
-                            }}
-                            isSelected={node.isSelected ? true : false}
-                        >
-                            {node.name}
-                        </NodeLink>
-                    )}
-                    {!node.onClick && node.name}
-                </NodeName>
-            </Link>
+    const constructPath = (node: NodeData, treeData: NodeData[]): string => {
+        const parentPath = getParentPath(node, treeData);
+        const path = parentPath.join('/');
+
+        if (!node.parentId) {
+            return path;
+        } else {
+            return `${path}/${node.id}`;
+        }
+    };
+
+    const getNodeLink = (node: NodeData): JSX.Element => {
+        const finalPath = constructPath(node, treeData);
+
+        const linkContent = (
+            <NodeName
+                hasChildren={node.getChildren ? true : false}
+                isExpanded={node.isExpanded === true}
+                isVoided={node.isVoided === true}
+                isSelected={node.isSelected === true}
+                title={node.name}
+            >
+                {node.onClick ? (
+                    <NodeLink
+                        isExpanded={node.isExpanded === true}
+                        isVoided={node.isVoided === true}
+                        onClick={(): void => {
+                            handleOnClick(node);
+                        }}
+                        isSelected={node.isSelected ? true : false}
+                    >
+                        {node.name}
+                    </NodeLink>
+                ) : (
+                    node.name
+                )}
+            </NodeName>
         );
+        if (node.onClick) {
+            return <Link to={`/${finalPath}`}>{linkContent}</Link>;
+        } else {
+            return linkContent;
+        }
     };
 
     const getNode = (node: NodeData): JSX.Element => {

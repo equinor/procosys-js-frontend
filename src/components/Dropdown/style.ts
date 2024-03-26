@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 import { Breakpoints } from '@procosys/core/styling';
 
-
 export const Container = styled.div`
     display: inline-block;
     position: relative;

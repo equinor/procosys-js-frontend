@@ -21,7 +21,6 @@ const Preservation = (): JSX.Element => {
                         />
                         <Route
                             path={'/'}
-                            exact
                             component={Library} //TODO: WILL LATER BE ROUTED TO MAIN
                         />
                         <Route

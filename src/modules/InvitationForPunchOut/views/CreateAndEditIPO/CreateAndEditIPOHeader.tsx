@@ -33,8 +33,8 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
         props.currentStep == StepsEnum.UploadAttachments
             ? setValidNext(true)
             : props.currentStep == StepsEnum.SummaryAndCreate
-            ? setValidNext(false)
-            : setValidNext(props.steps[props.currentStep - 1].isCompleted);
+              ? setValidNext(false)
+              : setValidNext(props.steps[props.currentStep - 1].isCompleted);
     }, [props.steps, props.currentStep]);
 
     const cancel = (): void => {

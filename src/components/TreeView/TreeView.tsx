@@ -8,6 +8,7 @@ import {
 } from './style';
 import Spinner from '../Spinner';
 import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
+import { Link, useLocation } from 'react-router-dom';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -52,6 +53,7 @@ const TreeView = ({
     const [selectedNodeId, setSelectedNodeId] = useState<number | string>();
     const [pathToExpandTree, setPathToExpandTree] =
         useState<(string | number)[]>();
+    const location = useLocation();
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -219,8 +221,8 @@ const TreeView = ({
                     loading
                         ? null
                         : isExpanded
-                        ? collapseNode(node)
-                        : await expandNode(node);
+                          ? collapseNode(node)
+                          : await expandNode(node);
                 }}
                 spinner={loading == node.id}
             >
@@ -251,8 +253,35 @@ const TreeView = ({
         }
     };
 
+    const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
+        if (!node.parentId) {
+            return [node.name];
+        } else {
+            const parent = treeData.find((n) => n.id === node.parentId);
+            if (parent) {
+                const parentPath = getParentPath(parent, treeData);
+                return [...parentPath, node.name];
+            } else {
+                return [node.name];
+            }
+        }
+    };
+
+    const constructPath = (node: NodeData, treeData: NodeData[]): string => {
+        const parentPath = getParentPath(node, treeData);
+        const path = parentPath.join('/');
+
+        if (!node.parentId) {
+            return path;
+        } else {
+            return `${path}/${node.id}`;
+        }
+    };
+
     const getNodeLink = (node: NodeData): JSX.Element => {
-        return (
+        const finalPath = constructPath(node, treeData);
+
+        const linkContent = (
             <NodeName
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
@@ -260,7 +289,7 @@ const TreeView = ({
                 isSelected={node.isSelected === true}
                 title={node.name}
             >
-                {node.onClick && (
+                {node.onClick ? (
                     <NodeLink
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
@@ -271,10 +300,23 @@ const TreeView = ({
                     >
                         {node.name}
                     </NodeLink>
+                ) : (
+                    node.name
                 )}
-                {!node.onClick && node.name}
             </NodeName>
         );
+        if (node.onClick) {
+            return (
+                <Link
+                    to={`/${finalPath}`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                    {linkContent}
+                </Link>
+            );
+        } else {
+            return linkContent;
+        }
     };
 
     const getNode = (node: NodeData): JSX.Element => {
@@ -324,6 +366,39 @@ const TreeView = ({
             }
         })();
     }, [treeData]);
+
+    useEffect(() => {
+        const pathname = location.pathname;
+        const nodeNames = pathname.split('/').filter((name) => name !== '');
+
+        console.log('nodeNames', nodeNames);
+
+        let currentNode: NodeData | undefined = undefined;
+        for (const name of nodeNames) {
+            if (currentNode) {
+                const childNode: NodeData | undefined =
+                    currentNode.children?.find(
+                        (node: NodeData) => node.name === name
+                    );
+                if (childNode) {
+                    currentNode = childNode;
+                    // currentNode.isExpanded = true;
+                    expandNode(currentNode);
+                } else {
+                    break;
+                }
+            } else {
+                const rootNode = treeData.find((node) => node.name === name);
+                if (rootNode) {
+                    // rootNode.isSelected = true;
+                    // rootNode.isExpanded = true;
+                    // setSelectedNodeId(rootNode.id);
+                    expandNode(rootNode);
+                    currentNode = rootNode;
+                }
+            }
+        }
+    }, [location.pathname]);
 
     return (
         <TreeContainer>{treeData.map((node) => getNode(node))}</TreeContainer>

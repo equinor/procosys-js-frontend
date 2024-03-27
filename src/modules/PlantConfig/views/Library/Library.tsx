@@ -58,7 +58,6 @@ const Library = (): JSX.Element => {
 
     const mapSegmentsToLibraryType = (segments: string[]): string => {
         const firstSegment = segments[0]?.toLowerCase().replace(/%20/g, ' ');
-        console.log('firstSegment:', firstSegment);
         switch (firstSegment) {
             case 'tag functions': {
                 return LibraryType.TAG_FUNCTION;

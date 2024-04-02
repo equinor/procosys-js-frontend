@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Dropdown from '@procosys/components/Dropdown';
 import { Collapse, CollapseInfo } from '../ScopeFilter.style';
 import {
@@ -25,83 +25,94 @@ type MultiSelectProps = {
     icon: JSX.Element;
 };
 
-const MultiSelectFilter = (props: MultiSelectProps): JSX.Element => {
-    const [selectedItems, setSeletectedItems] = useState<Item[]>([]);
-    const [filter, setFilter] = useState<string | null>(null);
+const MultiSelectFilter = ({
+    items,
+    headerLabel,
+    inputLabel,
+    inputPlaceholder,
+    selectedItems,
+    onChange,
+    icon,
+}: MultiSelectProps): JSX.Element => {
+    const [selectedItemsState, setSelectedItemsState] = useState<Item[]>([]);
+    const [filter, setFilter] = useState<string>('');
     const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
-        if (props.items && props.selectedItems) {
-            const selected: Item[] = [];
-            props.selectedItems.map((id) => {
-                const item = props.items.find(
-                    (e) => String(e.id) == String(id)
-                );
-                if (item) {
-                    selected.push(item);
-                }
-            });
-            setSeletectedItems(selected);
-        }
-    }, [props.selectedItems]);
+        const selectedIds = selectedItems || [];
+        const selected: Item[] = selectedIds
+            .map((id) => items.find((item) => String(item.id) === String(id)))
+            .filter((item): item is Item => !!item);
+
+        setSelectedItemsState(selected);
+    }, [selectedItems, items]);
 
     const onSelect = (item: Item): void => {
-        const newItmList = [...new Set([...selectedItems, item])];
-        props.onChange(newItmList);
+        if (
+            !selectedItemsState.find(
+                (selectedItem) => selectedItem.id === item.id
+            )
+        ) {
+            const newSelectedItems = [...selectedItemsState, item];
+            setSelectedItemsState(newSelectedItems);
+            onChange(newSelectedItems);
+        }
     };
 
     const onDeselect = (item: Item): void => {
-        const newItmList = selectedItems.filter(
-            (itm) => String(itm.id) != String(item.id)
+        const newSelectedItems = selectedItemsState.filter(
+            (selectedItem) => selectedItem.id !== item.id
         );
-        props.onChange(newItmList);
+        setSelectedItemsState(newSelectedItems);
+        onChange(newSelectedItems);
     };
 
-    const selectableItems = props.items.map((itm) => {
-        if (filter && !itm.title.toLowerCase().startsWith(filter.toLowerCase()))
-            return;
-        const isSelected =
-            selectedItems.findIndex(
-                (selectedItem) => String(selectedItem.id) === String(itm.id)
-            ) > -1;
-        return (
-            <Item onClick={(): void => onSelect(itm)} key={String(itm.id)}>
-                {isSelected ? (
-                    <EdsIcon name="checkbox" />
-                ) : (
-                    <EdsIcon name="checkbox_outline" />
-                )}
-                {itm.title}
-            </Item>
-        );
-    });
+    const selectableItems = items
+        .filter(
+            (itm) =>
+                filter === '' ||
+                itm.title.toLowerCase().includes(filter.toLowerCase())
+        )
+        .map((itm) => {
+            const isSelected = selectedItemsState.some(
+                (selectedItem) => selectedItem.id === itm.id
+            );
+            return (
+                <Item key={itm.id} onClick={() => onSelect(itm)}>
+                    {isSelected ? (
+                        <EdsIcon name="checkbox" />
+                    ) : (
+                        <EdsIcon name="checkbox_outline" />
+                    )}
+                    {itm.title}
+                </Item>
+            );
+        });
 
-    const selectedItemsComponents = selectedItems.map((e) => {
-        return (
-            <SelectedItem key={e.id} onClick={(): void => onDeselect(e)}>
-                <EdsIcon name="close" size={16} /> {e.title}
-            </SelectedItem>
-        );
-    });
+    const selectedItemsComponents = selectedItemsState.map((item) => (
+        <SelectedItem key={item.id} onClick={() => onDeselect(item)}>
+            <EdsIcon name="close" size={16} /> {item.title}
+        </SelectedItem>
+    ));
 
     return (
         <>
             <Collapse
                 isExpanded={isExpanded}
-                onClick={(): void => setIsExpanded((isExpanded) => !isExpanded)}
+                onClick={() => setIsExpanded(!isExpanded)}
                 data-testid="MultiSelectHeader"
-                filterActive={selectedItems.length > 0}
+                filterActive={selectedItemsState.length > 0}
             >
-                {props.icon}
-                <CollapseInfo>{props.headerLabel}</CollapseInfo>
+                {icon}
+                <CollapseInfo>{headerLabel}</CollapseInfo>
                 {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Collapse>
             {isExpanded && (
                 <FilterContainer>
                     <Dropdown
-                        text={props.inputPlaceholder}
+                        text={inputPlaceholder}
                         onFilter={setFilter}
-                        label={props.inputLabel}
+                        label={inputLabel}
                     >
                         {selectableItems}
                     </Dropdown>

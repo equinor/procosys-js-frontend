@@ -24,6 +24,7 @@ import {
     KeyboardArrowUp,
 } from '@mui/icons-material';
 import { Popover } from '@mui/material';
+import { Progress } from '@equinor/eds-core-react';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -155,6 +156,7 @@ const InvitationsFilter = ({
     const [selectedFilterIndex, setSelectedFilterIndex] = useState<
         number | null
     >();
+    const [isExporting, setIsExporting] = useState<boolean>(false);
 
     const KEYCODE_ENTER = 13;
 
@@ -297,6 +299,17 @@ const InvitationsFilter = ({
         return true;
     };
 
+    const handleExportToExcel = async () => {
+        setIsExporting(true);
+        try {
+            await exportInvitationsToExcel();
+        } catch (error) {
+            console.error('Error exporting IPOs:', error);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     return (
         <Container>
             <Header filterActive={filterActive}>
@@ -305,9 +318,16 @@ const InvitationsFilter = ({
                     <Button
                         variant="ghost"
                         title="Export filtered IPOs to Excel"
-                        onClick={exportInvitationsToExcel}
+                        onClick={handleExportToExcel}
+                        disabled={isExporting}
+                        aria-disabled={isExporting ? true : false}
+                        aria-label={isExporting ? 'loading data' : null}
                     >
-                        {ExcelIcon}
+                        {isExporting ? (
+                            <Progress.Circular size={16} color="primary" />
+                        ) : (
+                            ExcelIcon
+                        )}
                     </Button>
                     <Button
                         variant="ghost"

@@ -12,7 +12,10 @@ import {
 } from '@procosys/modules/Preservation/views/ScopeOverview/types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ColumnInstance, TableOptions, UseTableRowProps } from 'react-table';
-import { getFirstUpcomingRequirement, isTagOverdue } from './ScopeOverview';
+import {
+    getFirstUpcomingRequirement,
+    isTagOverdue,
+} from './preservationHelpers';
 
 import EdsIcon from '@procosys/components/EdsIcon';
 import ProcosysTable from '@procosys/components/Table';
@@ -253,8 +256,8 @@ const ScopeOverviewTable = (props: ScopeOverviewTableProps): JSX.Element => {
                                 tag.calloffNo
                                     ? `${tag.purchaseOrderNo}/${tag.calloffNo}`
                                     : tag.purchaseOrderNo
-                                    ? tag.purchaseOrderNo
-                                    : ''
+                                      ? tag.purchaseOrderNo
+                                      : ''
                             }
                             arrow={true}
                             enterDelay={200}

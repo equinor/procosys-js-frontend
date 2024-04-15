@@ -42,7 +42,6 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import TransferDialog from './Dialogs/TransferDialog';
 import { Typography } from '@equinor/eds-core-react';
 import VoidDialog from './Dialogs/VoidDialog';
-import InServiceDialog from './Dialogs/InServiceDialog';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
@@ -55,86 +54,14 @@ import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
 import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
+import { updateSavedTagListFilters } from './apiCalls';
+import { showInServiceDialog } from './dialogsAndModals';
 import {
-    isFirstRender,
-    moduleAreaHeight,
-    moduleContainerRef,
-    moduleHeaderContainerRef,
-    moduleHeaderHeight,
-    numberOfFilters,
-    refreshScopeListCallback,
-    setModuleAreaHeight,
-    setModuleHeaderHeight,
-} from './useRefHooksAndStates';
-import {
-    complete,
-    preservedThisWeek,
-    remove,
-    startPreservation,
-    transfer,
-    unStartPreservation,
-    unVoidTags,
-    updateSavedTagListFilters,
-    voidTags,
-} from './apiCalls';
-import {
-    getDefaultFilter,
-    refreshScopeList,
-    changeProject,
-    refreshFilterValues,
-} from './filterAndDataManager';
-import { showInServiceDialog, transferDialog } from './dialogsAndModals';
+    getCachedFilter,
+    setCachedFilter,
+    deleteCachedFilter,
+} from './preservationHelpers';
 
-export const getFirstUpcomingRequirement = (
-    tag: PreservedTag
-): Requirement | null => {
-    if (!tag.requirements || tag.requirements.length === 0) {
-        return null;
-    }
-
-    return tag.requirements[0];
-};
-
-export const isTagOverdue = (tag: PreservedTag): boolean => {
-    const requirement = getFirstUpcomingRequirement(tag);
-    return requirement ? requirement.nextDueWeeks < 0 : false;
-};
-
-export const isTagVoided = (tag: PreservedTag): boolean => {
-    return tag.isVoided;
-};
-
-const ScopeOverviewCache = new CacheService('ScopeOverview');
-
-function getCachedFilter(projectId: number): TagListFilter | null {
-    try {
-        const cacheItem = ScopeOverviewCache.getCache(projectId + '-filter');
-        if (cacheItem) {
-            return cacheItem.data;
-        }
-    } catch (error) {
-        showSnackbarNotification(
-            'An error occured retrieving default filter values'
-        );
-        console.error('Error while retrieving cached filter values: ', error);
-    }
-    return null;
-}
-
-function setCachedFilter(projectId: number, filter: TagListFilter): void {
-    try {
-        ScopeOverviewCache.setCache(projectId + '-filter', filter);
-    } catch (error) {
-        showSnackbarNotification(
-            'An error occured when saving default filter values'
-        );
-        console.error('Error while caching filter values: ', error);
-    }
-}
-
-function deleteCachedFilter(projectId: number): void {
-    ScopeOverviewCache.delete(projectId + '-filter');
-}
 const emptyTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
     commPkgNoStartsWith: null,
@@ -230,6 +157,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const analytics = useAnalytics();
     const { plant } = useCurrentPlant();
 
+    const numberOfFilters: number = Object.values(tagListFilter).filter(
+        (v) => v && JSON.stringify(v) != '[]'
+    ).length;
+
+    const refreshScopeListCallback =
+        useRef<(maxHeight: number, refreshOnResize?: boolean) => void>();
+    const isFirstRender = useRef<boolean>(true);
+
+    const moduleHeaderContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleHeaderHeight, setModuleHeaderHeight] = useState<number>(250);
+
+    const moduleContainerRef = useRef<HTMLDivElement>(null);
+    const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
+
     useEffect((): void => {
         if (project && project.id != -1) {
             updateSavedTagListFilters({
@@ -251,23 +192,33 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 ...previousFilter,
             });
         } else if (savedTagListFilters) {
-            const defaultFilter = getDefaultFilter(
-                savedTagListFilters,
-                analytics
-            );
+            const defaultFilter = getDefaultFilter();
             if (defaultFilter) {
                 setTagListFilter({
                     ...defaultFilter,
                 });
             } else {
-                refreshScopeList({
-                    refreshScopeListCallback,
-                    moduleAreaHeight,
-                    moduleHeaderHeight,
-                });
+                refreshScopeList();
             }
         }
     }, [savedTagListFilters, project]);
+
+    const getDefaultFilter = (): TagListFilter | null => {
+        if (savedTagListFilters) {
+            const defaultFilter = savedTagListFilters.find(
+                (filter) => filter.defaultFilter
+            );
+            if (defaultFilter) {
+                try {
+                    return JSON.parse(defaultFilter.criteria);
+                } catch (error) {
+                    console.error('Failed to parse default filter');
+                    analytics.trackException(error);
+                }
+            }
+        }
+        return null;
+    };
 
     const updateModuleAreaHeightReference = (): void => {
         if (!moduleContainerRef.current) return;
@@ -311,6 +262,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         };
     }, []);
 
+    const refreshScopeList = (refreshOnResize?: boolean): void => {
+        refreshScopeListCallback.current &&
+            refreshScopeListCallback.current(
+                moduleAreaHeight - moduleHeaderHeight - 115,
+                refreshOnResize
+            );
+    };
+
     useEffect(() => {
         // filter project dropdown
         if (filterForProjects.length <= 0) {
@@ -340,11 +299,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setCachedFilter(project.id, tagListFilter);
 
         setResetTablePaging(true);
-        refreshScopeList({
-            refreshScopeListCallback,
-            moduleAreaHeight,
-            moduleHeaderHeight,
-        });
+        refreshScopeList();
     }, [tagListFilter]);
 
     useEffect(() => {
@@ -482,6 +437,31 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         }
     };
 
+    const changeProject = (event: React.MouseEvent, index: number): void => {
+        event.preventDefault();
+
+        setCurrentProject(filteredProjects[index].id);
+        setResetTablePaging(true);
+        deleteCachedFilter(project.id);
+
+        if (numberOfFilters > 0) {
+            // Reset filters on project change:
+            // When the filter is hidden, we reset the selected filters here, which further triggers a refresh of the scope list.
+            // When the filter is displayed, the filter reset and scope list refresh is handled by the filter component.
+
+            if (!displayFilter) {
+                setTagListFilter({ ...emptyTagListFilter });
+            }
+        } else {
+            // No filters, regular scope list refresh.
+            refreshScopeList();
+        }
+    };
+
+    const refreshFilterValues = (): void => {
+        setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
+    };
+
     let inServiceTags: PreservedTag[];
     let notInServiceTags: PreservedTag[];
 
@@ -493,15 +473,8 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     rowVersion: t.rowVersion,
                 }))
             );
-            refreshScopeList({
-                refreshScopeListCallback,
-                moduleAreaHeight,
-                moduleHeaderHeight,
-            });
-            refreshFilterValues({
-                triggerFilterValuesRefresh,
-                setTriggerFilterValuesRefresh,
-            });
+            refreshScopeList();
+            refreshFilterValues();
             showSnackbarNotification(
                 `${inServiceTags.length} tag(s) have been successfully set in service.`
             );
@@ -515,58 +488,78 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     let transferableTags: PreservedTag[];
     let nonTransferableTags: PreservedTag[];
 
-    // const transferDialog = (): void => {
-    //     //Tag-objects must be cloned to avoid issues with data in scope table
-    //     transferableTags = [];
-    //     nonTransferableTags = [];
+    const transfer = async (): Promise<void> => {
+        try {
+            await apiClient.transfer(
+                transferableTags.map((t) => ({
+                    id: t.id,
+                    rowVersion: t.rowVersion,
+                }))
+            );
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification(
+                `${transferableTags.length} tag(s) have been successfully transferred.`
+            );
+        } catch (error) {
+            console.error('Transfer failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
 
-    //     selectedTags.map((tag) => {
-    //         const newTag: PreservedTag = { ...tag };
-    //         if (tag.readyToBeTransferred && !tag.isVoided) {
-    //             transferableTags.push(newTag);
-    //         } else {
-    //             nonTransferableTags.push(newTag);
-    //         }
-    //     });
+    const transferDialog = (): void => {
+        //Tag-objects must be cloned to avoid issues with data in scope table
+        transferableTags = [];
+        nonTransferableTags = [];
 
-    //     const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
-    //     const transferFunc =
-    //         transferableTags.length > 0
-    //             ? () =>
-    //                   transfer({
-    //                       apiClient,
-    //                       transferableTags,
-    //                       refreshScopeList: () =>
-    //                           refreshScopeList({
-    //                               refreshScopeListCallback,
-    //                               moduleAreaHeight,
-    //                               moduleHeaderHeight,
-    //                           }),
-    //                       refreshFilterValues: () =>
-    //                           refreshFilterValues({
-    //                               triggerFilterValuesRefresh,
-    //                               setTriggerFilterValuesRefresh,
-    //                           }),
-    //                       showSnackbarNotification,
-    //                   })
-    //             : null;
+        selectedTags.map((tag) => {
+            const newTag: PreservedTag = { ...tag };
+            if (tag.readyToBeTransferred && !tag.isVoided) {
+                transferableTags.push(newTag);
+            } else {
+                nonTransferableTags.push(newTag);
+            }
+        });
 
-    //     showModalDialog(
-    //         'Transferring',
-    //         <TransferDialog
-    //             transferableTags={transferableTags}
-    //             nonTransferableTags={nonTransferableTags}
-    //         />,
-    //         '80vw',
-    //         backToListButton,
-    //         null,
-    //         transferButton,
-    //         transferFunc
-    //     );
-    // };
+        const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
+        const transferFunc = transferableTags.length > 0 ? transfer : null;
+
+        showModalDialog(
+            'Transferring',
+            <TransferDialog
+                transferableTags={transferableTags}
+                nonTransferableTags={nonTransferableTags}
+            />,
+            '80vw',
+            backToListButton,
+            null,
+            transferButton,
+            transferFunc
+        );
+    };
 
     let startableTags: PreservedTag[];
     let nonStartableTags: PreservedTag[];
+
+    const startPreservation = async (): Promise<void> => {
+        try {
+            await apiClient.startPreservation(startableTags.map((t) => t.id));
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification(
+                "Status was set to 'Active' for selected tag(s)."
+            );
+        } catch (error) {
+            console.error(
+                'Start preservation failed: ',
+                error.message,
+                error.data
+            );
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
 
     const startPreservationDialog = (): void => {
         startableTags = [];
@@ -582,26 +575,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         const startButton =
             startableTags.length > 0 ? 'Start preservation' : null;
-        const startFunc =
-            startableTags.length > 0
-                ? () =>
-                      startPreservation({
-                          apiClient,
-                          startableTags,
-                          refreshScopeList: () =>
-                              refreshScopeList({
-                                  refreshScopeListCallback,
-                                  moduleAreaHeight,
-                                  moduleHeaderHeight,
-                              }),
-                          refreshFilterValues: () =>
-                              refreshFilterValues({
-                                  triggerFilterValuesRefresh,
-                                  setTriggerFilterValuesRefresh,
-                              }),
-                          showSnackbarNotification,
-                      })
-                : null;
+        const startFunc = startableTags.length > 0 ? startPreservation : null;
 
         showModalDialog(
             'Start preservation',
@@ -620,6 +594,20 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     let preservableTags: PreservedTag[];
     let nonPreservableTags: PreservedTag[];
 
+    const preservedThisWeek = async (): Promise<void> => {
+        try {
+            await apiClient.preserve(preservableTags.map((t) => t.id));
+            refreshScopeList();
+            showSnackbarNotification(
+                'Selected tag(s) have been preserved for this week.'
+            );
+        } catch (error) {
+            console.error('Preserve failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
     const preservedDialog = (): void => {
         preservableTags = [];
         nonPreservableTags = [];
@@ -636,20 +624,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const preservedButton =
             preservableTags.length > 0 ? 'Preserved this week' : null;
         const preservedFunc =
-            preservableTags.length > 0
-                ? () =>
-                      preservedThisWeek({
-                          apiClient,
-                          preservableTags,
-                          refreshScopeList: () =>
-                              refreshScopeList({
-                                  refreshScopeListCallback,
-                                  moduleAreaHeight,
-                                  moduleHeaderHeight,
-                              }),
-                          showSnackbarNotification,
-                      })
-                : null;
+            preservableTags.length > 0 ? preservedThisWeek : null;
 
         showModalDialog(
             'Preserved this week',
@@ -668,6 +643,25 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     let completableTags: PreservedTag[] = [];
     let nonCompletableTags: PreservedTag[] = [];
 
+    const complete = async (): Promise<void> => {
+        try {
+            const tags = selectedTags.filter((tag) => tag.readyToBeCompleted);
+            await apiClient.complete(
+                tags.map((t) => ({
+                    id: t.id,
+                    rowVersion: t.rowVersion,
+                }))
+            );
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification('Selected tag(s) have been completed.');
+        } catch (error) {
+            console.error('Complete failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
     const showCompleteDialog = (): void => {
         completableTags = [];
         nonCompletableTags = [];
@@ -681,26 +675,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         });
         const completeButton = completableTags.length > 0 ? 'Complete' : null;
-        const completeFunc =
-            completableTags.length > 0
-                ? () =>
-                      complete({
-                          apiClient,
-                          selectedTags,
-                          refreshScopeList: () =>
-                              refreshScopeList({
-                                  refreshScopeListCallback,
-                                  moduleAreaHeight,
-                                  moduleHeaderHeight,
-                              }),
-                          refreshFilterValues: () =>
-                              refreshFilterValues({
-                                  triggerFilterValuesRefresh,
-                                  setTriggerFilterValuesRefresh,
-                              }),
-                          showSnackbarNotification,
-                      })
-                : null;
+        const completeFunc = completableTags.length > 0 ? complete : null;
 
         showModalDialog(
             'Complete preservation',
@@ -714,6 +689,23 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             completeButton,
             completeFunc
         );
+    };
+
+    const remove = async (removableTags: PreservedTag[]): Promise<void> => {
+        try {
+            await apiClient.remove(
+                removableTags.map((t) => ({
+                    id: t.id,
+                    rowVersion: t.rowVersion,
+                }))
+            );
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification('Selected tag(s) have been removed.');
+        } catch (error) {
+            console.error('Remove failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
     };
 
     const showRemoveDialog = (): void => {
@@ -731,23 +723,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const removeButton = removableTags.length > 0 ? 'Remove' : null;
         const removeFunc =
             removableTags.length > 0
-                ? (): Promise<void> =>
-                      remove({
-                          apiClient,
-                          removableTags,
-                          refreshScopeList: () =>
-                              refreshScopeList({
-                                  refreshScopeListCallback,
-                                  moduleAreaHeight,
-                                  moduleHeaderHeight,
-                              }),
-                          refreshFilterValues: () =>
-                              refreshFilterValues({
-                                  triggerFilterValuesRefresh,
-                                  setTriggerFilterValuesRefresh,
-                              }),
-                          showSnackbarNotification,
-                      })
+                ? (): Promise<void> => remove(removableTags)
                 : null;
 
         showModalDialog(
@@ -766,6 +742,34 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     let voidableTags: PreservedTag[] = [];
     let unvoidableTags: PreservedTag[] = [];
+
+    const voidTags = async (): Promise<void> => {
+        try {
+            for (const tag of voidableTags) {
+                await apiClient.voidTag(tag.id, tag.rowVersion);
+            }
+            refreshScopeList();
+            showSnackbarNotification('Selected tag(s) have been voided.');
+        } catch (error) {
+            console.error('Voiding failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
+    const unVoidTags = async (): Promise<void> => {
+        try {
+            for (const tag of unvoidableTags) {
+                await apiClient.unvoidTag(tag.id, tag.rowVersion);
+            }
+            refreshScopeList();
+            showSnackbarNotification('Selected tag(s) have been unvoided.');
+        } catch (error) {
+            console.error('Unvoid failed: ', error.message, error.data);
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
 
     const showVoidDialog = (voiding: boolean): void => {
         voidableTags = [];
@@ -790,31 +794,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         });
         const voidButton = voiding ? 'Void' : 'Unvoid';
-        const voidFunc = voiding
-            ? () =>
-                  voidTags({
-                      apiClient,
-                      voidableTags,
-                      refreshScopeList: () =>
-                          refreshScopeList({
-                              refreshScopeListCallback,
-                              moduleAreaHeight,
-                              moduleHeaderHeight,
-                          }),
-                      showSnackbarNotification,
-                  })
-            : () =>
-                  unVoidTags({
-                      apiClient,
-                      unvoidableTags,
-                      refreshScopeList: () =>
-                          refreshScopeList({
-                              refreshScopeListCallback,
-                              moduleAreaHeight,
-                              moduleHeaderHeight,
-                          }),
-                      showSnackbarNotification,
-                  });
+        const voidFunc = voiding ? voidTags : unVoidTags;
         const voidTitle = voiding
             ? 'Voiding following tags'
             : 'Unvoiding following tags';
@@ -837,6 +817,25 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     let unstartableTags: PreservedTag[];
     let nonUnstartableTags: PreservedTag[];
 
+    const unStartPreservation = async (): Promise<void> => {
+        try {
+            await apiClient.undoStartPreservation(unstartableTags);
+            refreshScopeList();
+            refreshFilterValues();
+            showSnackbarNotification(
+                "Status was set to 'Not started' for selected tag(s)."
+            );
+        } catch (error) {
+            console.error(
+                'Undo start preservation failed: ',
+                error.message,
+                error.data
+            );
+            showSnackbarNotification(error.message);
+        }
+        return Promise.resolve();
+    };
+
     const undoStartPreservationDialog = (): void => {
         unstartableTags = [];
         nonUnstartableTags = [];
@@ -852,25 +851,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         const undoStartButton =
             unstartableTags.length > 0 ? 'Undo "start preservation"' : null;
         const undoStartFunc =
-            unstartableTags.length > 0
-                ? () =>
-                      unStartPreservation({
-                          apiClient,
-                          unstartableTags,
-                          refreshScopeList: () =>
-                              refreshScopeList({
-                                  refreshScopeListCallback,
-                                  moduleAreaHeight,
-                                  moduleHeaderHeight,
-                              }),
-                          refreshFilterValues: () =>
-                              refreshFilterValues({
-                                  triggerFilterValuesRefresh,
-                                  setTriggerFilterValuesRefresh,
-                              }),
-                          showSnackbarNotification,
-                      })
-                : null;
+            unstartableTags.length > 0 ? unStartPreservation : null;
 
         showModalDialog(
             'Undo "start preservation"',
@@ -896,11 +877,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         // refresh scope list when flyout has updated a tag
         if (scopeIsDirty) {
-            refreshScopeList({
-                refreshScopeListCallback,
-                moduleAreaHeight,
-                moduleHeaderHeight,
-            });
+            refreshScopeList();
             setScopeIsDirty(false);
         }
     };
@@ -989,11 +966,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
     const closeReschededuleDialog = (): void => {
         setShowTagRescheduleDialog(false);
-        refreshScopeList({
-            refreshScopeListCallback,
-            moduleAreaHeight,
-            moduleHeaderHeight,
-        });
+        refreshScopeList();
     };
 
     return (
@@ -1033,29 +1006,9 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     return (
                                         <DropdownItem
                                             key={index}
-                                            onClick={(event) => {
-                                                event.preventDefault(); // Ensure default behavior is prevented here, if necessary
-                                                changeProject({
-                                                    event,
-                                                    index,
-                                                    filteredProjects, // Ensure this is the correct data type
-                                                    setCurrentProject,
-                                                    setResetTablePaging,
-                                                    deleteCachedFilter,
-                                                    tagListFilter,
-                                                    setTagListFilter,
-                                                    refreshScopeList: () =>
-                                                        refreshScopeList({
-                                                            refreshScopeListCallback,
-                                                            moduleAreaHeight,
-                                                            moduleHeaderHeight,
-                                                        }),
-                                                    numberOfFilters,
-                                                    displayFilter,
-                                                    project,
-                                                    emptyTagListFilter,
-                                                });
-                                            }}
+                                            onClick={(event): void =>
+                                                changeProject(event, index)
+                                            }
                                         >
                                             <div>{projectItem.description}</div>
                                             <div style={{ fontSize: '12px' }}>
@@ -1157,17 +1110,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                             <StyledButton
                                 variant="ghost"
                                 title="Transfer selected tag(s)"
-                                onClick={transferDialog({
-                                    apiClient,
-                                    refreshScopeList: () =>
-                                        refreshScopeList({
-                                            refreshScopeListCallback,
-                                            moduleAreaHeight,
-                                            moduleHeaderHeight,
-                                        }),
-                                    refreshFilterValues,
-                                    showSnackbarNotification,
-                                })}
+                                onClick={transferDialog}
                                 disabled={!transferableTagsSelected}
                             >
                                 <EdsIcon
@@ -1359,17 +1302,14 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 title={
                                     <TooltipText>
                                         <p>
-                                            {numberOfFilters(tagListFilter)}
-                                            active filter(s)
+                                            {numberOfFilters} active filter(s)
                                         </p>
                                         <p>
                                             Filter result {numberOfTags} items
                                         </p>
                                     </TooltipText>
                                 }
-                                disableHoverListener={
-                                    numberOfFilters(tagListFilter) < 1
-                                }
+                                disableHoverListener={numberOfFilters < 1}
                                 arrow={true}
                                 style={{ textAlign: 'center' }}
                             >
@@ -1377,7 +1317,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     <StyledButton
                                         id="filterButton"
                                         variant={
-                                            numberOfFilters(tagListFilter) > 0
+                                            numberOfFilters > 0
                                                 ? 'contained'
                                                 : 'ghost'
                                         }
@@ -1478,11 +1418,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 open={showEditRequirementsDialog}
                 onClose={(): void => {
                     setShowEditRequirementsDialog(false);
-                    refreshScopeList({
-                        refreshScopeListCallback,
-                        moduleAreaHeight,
-                        moduleHeaderHeight,
-                    });
+                    refreshScopeList();
                 }}
                 tagId={selectedTagId}
             />
@@ -1491,11 +1427,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                 open={showEditTagJourneyDialog}
                 onClose={(): void => {
                     setShowEditTagJourneyDialog(false);
-                    refreshScopeList({
-                        refreshScopeListCallback,
-                        moduleAreaHeight,
-                        moduleHeaderHeight,
-                    });
+                    refreshScopeList();
                 }}
             />
         </Container>

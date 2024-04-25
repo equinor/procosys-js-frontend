@@ -42,7 +42,6 @@ import TagFlyout from './TagFlyout/TagFlyout';
 import TransferDialog from './Dialogs/TransferDialog';
 import { Typography } from '@equinor/eds-core-react';
 import VoidDialog from './Dialogs/VoidDialog';
-import InServiceDialog from './Dialogs/InServiceDialog';
 import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import { showSnackbarNotification } from '../../../../core/services/NotificationService';
 import { tokens } from '@equinor/eds-tokens';
@@ -55,57 +54,14 @@ import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
 import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
+import { updateSavedTagListFilters } from './apiCalls';
+import { showInServiceDialog } from './dialogsAndModals';
+import {
+    getCachedFilter,
+    setCachedFilter,
+    deleteCachedFilter,
+} from './preservationHelpers';
 
-export const getFirstUpcomingRequirement = (
-    tag: PreservedTag
-): Requirement | null => {
-    if (!tag.requirements || tag.requirements.length === 0) {
-        return null;
-    }
-
-    return tag.requirements[0];
-};
-
-export const isTagOverdue = (tag: PreservedTag): boolean => {
-    const requirement = getFirstUpcomingRequirement(tag);
-    return requirement ? requirement.nextDueWeeks < 0 : false;
-};
-
-export const isTagVoided = (tag: PreservedTag): boolean => {
-    return tag.isVoided;
-};
-
-const ScopeOverviewCache = new CacheService('ScopeOverview');
-
-function getCachedFilter(projectId: number): TagListFilter | null {
-    try {
-        const cacheItem = ScopeOverviewCache.getCache(projectId + '-filter');
-        if (cacheItem) {
-            return cacheItem.data;
-        }
-    } catch (error) {
-        showSnackbarNotification(
-            'An error occured retrieving default filter values'
-        );
-        console.error('Error while retrieving cached filter values: ', error);
-    }
-    return null;
-}
-
-function setCachedFilter(projectId: number, filter: TagListFilter): void {
-    try {
-        ScopeOverviewCache.setCache(projectId + '-filter', filter);
-    } catch (error) {
-        showSnackbarNotification(
-            'An error occured when saving default filter values'
-        );
-        console.error('Error while caching filter values: ', error);
-    }
-}
-
-function deleteCachedFilter(projectId: number): void {
-    ScopeOverviewCache.delete(projectId + '-filter');
-}
 const emptyTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
     commPkgNoStartsWith: null,
@@ -131,7 +87,7 @@ interface SupportedQueryStringFilters {
     calloff: string | null;
 }
 
-const backToListButton = 'Back to list';
+export const backToListButton = 'Back to list';
 
 const ScopeOverview: React.FC = (): JSX.Element => {
     const {
@@ -215,28 +171,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
 
-    const updateSavedTagListFilters = async (): Promise<void> => {
-        setIsLoading(true);
-        try {
-            const response = await apiClient.getSavedTagListFilters(
-                project.name
-            );
-            setSavedTagListFilters(response);
-            setIsLoading(false);
-        } catch (error) {
-            console.error(
-                'Get saved filters failed: ',
-                error.message,
-                error.data
-            );
-            showSnackbarNotification(error.message, 5000);
-            setIsLoading(false);
-        }
-    };
-
     useEffect((): void => {
         if (project && project.id != -1) {
-            updateSavedTagListFilters();
+            updateSavedTagListFilters({
+                setIsLoading,
+                setSavedTagListFilters,
+                project,
+                apiClient,
+                showSnackbarNotification,
+            });
         }
     }, [project]);
 
@@ -540,36 +483,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             showSnackbarNotification(error.message);
         }
         return Promise.resolve();
-    };
-
-    const showInServiceDialog = (): void => {
-        inServiceTags = [];
-        notInServiceTags = [];
-        selectedTags.map((tag) => {
-            const newTag: PreservedTag = { ...tag };
-            if (tag.readyToBeSetInService) {
-                inServiceTags.push(newTag);
-            } else {
-                notInServiceTags.push(newTag);
-            }
-        });
-
-        const inServiceButton =
-            inServiceTags.length > 0 ? 'Set in service' : null;
-        const inServiceFunc = inServiceTags.length > 0 ? setInService : null;
-
-        showModalDialog(
-            'Setting in service',
-            <InServiceDialog
-                inServiceTags={inServiceTags}
-                notInServiceTags={notInServiceTags}
-            />,
-            '80vw',
-            backToListButton,
-            null,
-            inServiceButton,
-            inServiceFunc
-        );
     };
 
     let transferableTags: PreservedTag[];
@@ -1296,7 +1209,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                                 <DropdownItem
                                     disabled={selectedTags.length === 0}
-                                    onClick={(): void => showInServiceDialog()}
+                                    onClick={(): void =>
+                                        showInServiceDialog({
+                                            selectedTags,
+                                            setInService,
+                                        })
+                                    }
                                 >
                                     <EdsIcon
                                         name="edit_text"
@@ -1473,7 +1391,15 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                         tagListFilter={tagListFilter}
                         setTagListFilter={setTagListFilter}
                         savedTagListFilters={savedTagListFilters}
-                        refreshSavedTagListFilters={updateSavedTagListFilters}
+                        refreshSavedTagListFilters={() =>
+                            updateSavedTagListFilters({
+                                setIsLoading,
+                                setSavedTagListFilters,
+                                project,
+                                apiClient,
+                                showSnackbarNotification,
+                            })
+                        }
                         setSelectedSavedFilterTitle={
                             setSelectedSavedFilterTitle
                         }

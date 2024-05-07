@@ -84,6 +84,7 @@ export interface TableProperties<T extends Record<string, unknown>>
     noHeader?: boolean;
     toolbar?: React.ComponentType<any>;
     disableSelectAll?: boolean;
+    disablePagination?: boolean;
 }
 
 const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
@@ -199,10 +200,14 @@ const ProcosysTable = forwardRef(
                 manualSortBy: props.clientSorting ? false : true,
                 initialState: {
                     pageIndex: props.pageIndex,
-                    pageSize: props.pageSize,
+                    pageSize: props.disablePagination
+                        ? props.data.length
+                        : props.pageSize,
                     selectedRowIds: props.selectedRows || {},
                     disableSelectAll: props.disableSelectAll,
-                    sortBy: props.orderBy ? [props.orderBy] : [],
+                    sortBy: props.orderBy
+                        ? [props.orderBy]
+                        : [{ id: 'createdAt', desc: true }],
                 },
             },
             ...hooks
@@ -418,18 +423,32 @@ const ProcosysTable = forwardRef(
             tableInstance: TableInstance<Record<string, unknown>>
         ): number => {
             let itemCount = 0;
-            if (props.clientPagination) {
-                if (tableInstance.state.pageIndex > 0) {
-                    const itemsStartIndex =
-                        tableInstance.state.pageSize *
-                        tableInstance.state.pageIndex;
-                    const itemsEndIndex =
-                        itemsStartIndex + tableInstance.state.pageSize;
-                    if (tableInstance.filteredRows.length > itemsEndIndex)
-                        itemCount = tableInstance.state.pageSize;
-                    else {
-                        itemCount =
-                            tableInstance.filteredRows.length - itemsStartIndex;
+            if (props.disablePagination) {
+                return tableInstance.filteredRows.length;
+            } else {
+                if (props.clientPagination) {
+                    if (tableInstance.state.pageIndex > 0) {
+                        const itemsStartIndex =
+                            tableInstance.state.pageSize *
+                            tableInstance.state.pageIndex;
+                        const itemsEndIndex =
+                            itemsStartIndex + tableInstance.state.pageSize;
+                        if (tableInstance.filteredRows.length > itemsEndIndex)
+                            itemCount = tableInstance.state.pageSize;
+                        else {
+                            itemCount =
+                                tableInstance.filteredRows.length -
+                                itemsStartIndex;
+                        }
+                    } else {
+                        if (
+                            tableInstance.filteredRows.length <
+                            tableInstance.state.pageSize
+                        ) {
+                            itemCount = tableInstance.filteredRows.length;
+                        } else {
+                            itemCount = tableInstance.state.pageSize;
+                        }
                     }
                 } else {
                     if (
@@ -440,15 +459,6 @@ const ProcosysTable = forwardRef(
                     } else {
                         itemCount = tableInstance.state.pageSize;
                     }
-                }
-            } else {
-                if (
-                    tableInstance.filteredRows.length <
-                    tableInstance.state.pageSize
-                ) {
-                    itemCount = tableInstance.filteredRows.length;
-                } else {
-                    itemCount = tableInstance.state.pageSize;
                 }
             }
             return itemCount;

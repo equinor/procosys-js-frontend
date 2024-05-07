@@ -75,13 +75,15 @@ const AttachmentTab = ({
                         true
                     );
                 }
-            } catch (error) {
+            } catch (error: any) {
+                const errorMessage =
+                    error.data.data.errors[''][0] || error.message;
                 console.error(
                     'Upload file attachment failed: ',
                     error.message,
                     error.data
                 );
-                showSnackbarNotification(error.message, 5000, true);
+                showSnackbarNotification(errorMessage, 5000, true);
             }
         });
         setIsLoading(false);

@@ -297,7 +297,7 @@ const AttachmentList = ({
                         large ? Math.ceil(attachments.length / 25) : undefined
                     }
                     toolbar={determineToolbarButtonRender()}
-                    disablePagination={true}
+                    disablePagination
                 />
             </TableContainer>
         </Container>

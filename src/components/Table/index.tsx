@@ -201,7 +201,7 @@ const ProcosysTable = forwardRef(
                 initialState: {
                     pageIndex: props.pageIndex,
                     pageSize: props.disablePagination
-                        ? props.data.length || props.pageSize
+                        ? Math.max(props.data.length, 1)
                         : props.pageSize,
                     selectedRowIds: props.selectedRows || {},
                     disableSelectAll: props.disableSelectAll,

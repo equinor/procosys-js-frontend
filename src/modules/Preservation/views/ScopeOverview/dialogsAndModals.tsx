@@ -6,7 +6,7 @@ import { backToListButton } from './ScopeOverview';
 
 interface ShowInServiceDialogParams {
     selectedTags: PreservedTag[];
-    setInService: () => void;
+    setInService: (tags: PreservedTag[]) => void;
 }
 
 export const showInServiceDialog = ({
@@ -25,7 +25,12 @@ export const showInServiceDialog = ({
     });
 
     const inServiceButton = inServiceTags.length > 0 ? 'Set in service' : null;
-    const inServiceFunc = inServiceTags.length > 0 ? setInService : null;
+
+    const handleSetInService = (): void => {
+        if (inServiceTags.length > 0) {
+            setInService(inServiceTags);
+        }
+    };
 
     showModalDialog(
         'Setting in service',
@@ -37,6 +42,6 @@ export const showInServiceDialog = ({
         backToListButton,
         null,
         inServiceButton,
-        inServiceFunc
+        handleSetInService
     );
 };

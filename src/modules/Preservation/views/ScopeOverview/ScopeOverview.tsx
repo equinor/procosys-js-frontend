@@ -462,13 +462,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         setTriggerFilterValuesRefresh(triggerFilterValuesRefresh + 1);
     };
 
-    let inServiceTags: PreservedTag[];
-    let notInServiceTags: PreservedTag[];
-
-    const setInService = async (): Promise<void> => {
+    const setInService = async (tags: PreservedTag[]): Promise<void> => {
         try {
             await apiClient.setInService(
-                inServiceTags.map((t) => ({
+                tags.map((t) => ({
                     id: t.id,
                     rowVersion: t.rowVersion,
                 }))
@@ -476,7 +473,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             refreshScopeList();
             refreshFilterValues();
             showSnackbarNotification(
-                `${inServiceTags.length} tag(s) have been successfully set in service.`
+                `${tags.length} tag(s) have been successfully set in service.`
             );
         } catch (error) {
             console.error('Transfer failed: ', error.message, error.data);

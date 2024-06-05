@@ -25,15 +25,15 @@ export const TagLink = styled.span<{ isOverdue: boolean; isVoided: boolean }>`
         props.isVoided
             ? ''
             : props.isOverdue
-            ? tokens.colors.interactive.danger__text.rgba
-            : tokens.colors.interactive.primary__resting.rgba};
+              ? tokens.colors.interactive.danger__text.rgba
+              : tokens.colors.interactive.primary__resting.rgba};
     span {
         color: ${(props): string =>
             props.isVoided
                 ? ''
                 : props.isOverdue
-                ? tokens.colors.interactive.danger__text.rgba
-                : tokens.colors.interactive.primary__resting.rgba};
+                  ? tokens.colors.interactive.danger__text.rgba
+                  : tokens.colors.interactive.primary__resting.rgba};
     }
     text-decoration: underline;
     cursor: pointer;

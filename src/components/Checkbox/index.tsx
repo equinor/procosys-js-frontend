@@ -52,8 +52,8 @@ const Checkbox = ({
             ? disabledCheckedIcon
             : disabledIcon
         : checked
-        ? checkedCheckboxIcon
-        : checkboxIcon;
+          ? checkedCheckboxIcon
+          : checkboxIcon;
 
     const handleOnChange = (event: React.FormEvent<HTMLInputElement>): void => {
         onChange && onChange(event.currentTarget.checked);

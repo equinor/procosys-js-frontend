@@ -631,7 +631,10 @@ const ProcosysTable = forwardRef(
                                 ))}
 
                             {/* render table */}
-                            <div {...getTableBodyProps()}>
+                            <div
+                                {...getTableBodyProps()}
+                                style={{ minHeight: 120 }}
+                            >
                                 {props.data.length === 0 && (
                                     <div>No records to display</div>
                                 )}

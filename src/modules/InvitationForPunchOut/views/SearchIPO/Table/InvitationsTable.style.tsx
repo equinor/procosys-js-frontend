@@ -36,6 +36,10 @@ export const Container = styled.div`
         text-overflow: ellipsis;
         color: inherit;
     }
+    .controlOverflow > p {
+        max-height: 64px;
+        overflow-y: auto;
+    }
 `;
 
 export const CustomLink = styled(Link)`

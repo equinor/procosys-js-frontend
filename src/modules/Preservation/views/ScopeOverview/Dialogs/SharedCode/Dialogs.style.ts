@@ -2,7 +2,7 @@ import { tokens } from '@equinor/eds-tokens';
 import styled from 'styled-components';
 
 export const MainContainer = styled.div`
-    height: calc(80vh - 230px);
+    height: calc(80vh - 60px);
 `;
 
 export const TableContainer = styled.div<{ isHalfSize: boolean }>`

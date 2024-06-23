@@ -1,0 +1,40 @@
+# build environment
+FROM node:22 as build
+WORKDIR /app
+COPY package*.json ./
+COPY . .
+RUN yarn install
+
+ENV VITE_AUTH_CLIENT="30a25122-c22c-4a5c-a7b8-366d31cb2c46"
+# ENV VITE_AUTHORITY=""
+# ENV VITE_CONFIG_SCOPE="api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read"
+# ENV VITE_BASE_URL_MAIN="https://pcs-main-api-dev-pr.azurewebsites.net/api"
+# ENV VITE_BASE_URL_COMP="https://backend-procosys-completion-api-dev.radix.equinor.com"
+# ENV VITE_CONFIG_ENDPOINT="https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Configuration?"
+# ENV VITE_WEBAPI_SCOPE="api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/web_api"
+# ENV VITE_COMP_SCOPE="api://e8c158a9-a200-4897-9d5f-660e377bddc1/ReadWrite"
+# ENV VITE_APP_INSIGHTS="cf22f65-a717-421f-935d-4853dbcbe8e5"
+# ENV VITE_API_VERSION="&api-version=4.1"
+# ENV VITE_OCR_ENDPOINT="https://pcs-mc-webapp-non-prod-funcs.azurewebsites.net/api/pcs_ocr?"
+
+RUN yarn build --mode=production
+
+
+# production environment
+FROM docker.io/nginxinc/nginx-unprivileged:alpine
+
+WORKDIR /app
+## add permissions for nginx user
+COPY --from=build /app/dist /usr/share/nginx/html/frontend
+COPY .docker/nginx/ /etc/nginx/
+COPY .docker/scripts/ /etc/scripts/
+ 
+# Change the user from root to non-root- From now on, all Docker commands are run as non-root user (except for COPY)
+USER 0
+RUN chown -R nginx /usr/share/nginx/html/frontend \
+    && chown -R nginx /etc/nginx/conf.d
+USER 9999
+
+EXPOSE 5000
+
+CMD ["sh","/etc/scripts/startup.sh"]

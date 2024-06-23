@@ -16,7 +16,7 @@ for key in os.environ:
         keyVaultSecrets.append((key.replace('pcs_',''),os.environ.get(key)))
 
 # Get all files
-for filepath in glob.iglob('/usr/share/nginx/html/**/*.js', recursive=True):
+for filepath in glob.iglob('/forntend/**/*.js', recursive=True):
     print("Looking for stuff to replace in: {filepath}".format(**vars()))
     s = ""
     with open(filepath) as file:

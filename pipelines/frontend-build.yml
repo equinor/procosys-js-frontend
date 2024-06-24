@@ -13,7 +13,6 @@ resources:
 
 # Global variables for the pipeline
 variables:
- - template: templates/variables/procosys-web-variables.yml@templates
  - template: templates/variables/procosys-global-variables.yml@templates
  - template: templates/variables/frontend-variables.yml@templates
 
@@ -21,107 +20,121 @@ variables:
    value: procosys/frontend
 
 stages:
-# build_and_test stage. Yarn test, Docker build, tag and push
-- stage: build_and_test
-  displayName: 'Build & Test'
+# Build Stage
+- stage: build
+  displayName: 'Build'
   variables:
-    envName: 'build_and_test'
-    envRg: '${{ variables.envRgName }}'
+    envName: 'build'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    dockerfilePath: '/.docker/Dockerfile'
+    dockerfilePath: '/Dockerfile'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   jobs:
+   # Docker Build
   - template: /templates/pipelines/dockerbuild-frontend.yml@templates
     parameters:
-      deploymentName: 'docker_build_push'
       dependsOn: ''
-      env: '${{ variables.envName }}'
+      deploymentName: 'docker_build'
+      condition: and(always(), eq(variables['Build.Reason'], 'PullRequest'))
+      buildCommand: build
       envGroup: '${{ variables.envGroupName }}'
-      dockerfilePath: ${{ variables.dockerfilePath }}
+      dockerfilePath: '${{ variables.dockerfilePath }}'
       buildContext: '$(Build.SourcesDirectory)'
-      repository: ${{ variables.repositoryName }}
-      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+
+    # Docker Build and Push
+  - template: /templates/pipelines/dockerbuild-frontend.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'docker_build_push'
+      condition: and(always(), ne(variables['Build.Reason'], 'PullRequest'))
+      buildCommand: buildAndPush
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
 # Deploy to dev environment
-- stage: dev
-  displayName: 'Deploy to dev'
-  dependsOn: 'build_and_test'
+- stage: DeployDev
+  displayName: 'Deploy to Dev'
+  dependsOn: 'build'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
-    envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    containerRegistry: '${{ variables.containerRegistryName }}'
 
   jobs:
-  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
-      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
-      replicas: 2
+    - deployment: Deploy
+      displayName: Deploy Frontend
+      environment: '${{ variables.envGroupName }}'
+      pool:
+        vmImage: 'windows-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:   
+              # Deploy to Radix
+              - template: templates/radix-deploy.yml
+                parameters:
+                  imageTagNamesFrontend: '${{ variables.versionNumber }}$(Build.BuildId)'
 
 # deploy to test environment
-- stage: test
-  displayName: 'Deploy to test'
-  dependsOn: 'build_and_test'
+- stage: DeployTest
+  displayName: 'Deploy to Test'
+  dependsOn: 'DeployDev'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
   variables:
     envName: 'test'
-    envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    containerRegistry: '${{ variables.containerRegistryName }}'
+    radixPromoteFromEnv: 'dev'
+    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
   jobs:
-  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
-      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
-      replicas: 2
+    - deployment: Deploy
+      displayName: Promote
+      environment: '${{ variables.envGroupName }}'
+      pool:
+        vmImage: 'windows-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              # Promote to test
+              - template: templates/radix-promote-env.yml
+                parameters:
+                  fromEnvironment: $(radixPromoteFromEnv)
+                  toEnvironment: $(envName)
+                  deploymentName: $(radixJobName)
 
-      # deploy to test environment
-- stage: production
-  displayName: 'Deploy to production'
-  dependsOn: 'build_and_test'
+# deploy to prod environment
+- stage: DeployProd
+  displayName: 'Deploy to Prod'
+  dependsOn: 'DeployTest'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'prod'
-    envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.prodServiceConnection }}'
-    containerRegistry: '${{ variables.containerRegistryName }}'
+    radixPromoteFromEnv: 'test'
+    radixJobName: $[ stageDependencies.DeployTest.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] 
 
   jobs:
-  - template: /templates/pipelines/kubernetes/frontend-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/procosys/frontend:$(Build.BuildId)'
-      clusterName: 'pcs-aks-prod'
-      kvName: 'pcs-frontend-${{ variables.envName }}-kv'
-      kvRgName: 'pcs-frontend-${{ variables.envName }}-rg'
-      replicas: 3
+    - deployment: Deploy
+      displayName: Promote
+      environment: '${{ variables.envGroupName }}'
+      pool:
+        vmImage: 'windows-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              # Promote to prod
+              - template: templates/radix-promote-env.yml
+                parameters:
+                  fromEnvironment: $(radixPromoteFromEnv)
+                  toEnvironment: $(envName)
+                  deploymentName: $(radixJobName)

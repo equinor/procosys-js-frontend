@@ -6,19 +6,15 @@ COPY . .
 RUN yarn install
 
 ENV VITE_AUTH_CLIENT="50b15344-28c9-45b5-9616-41da16fc9dcc"
-# ENV VITE_AUTHORITY=""
-# ENV VITE_CONFIG_SCOPE="api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read"
-# ENV VITE_BASE_URL_MAIN="https://pcs-main-prod.azurewebsites.net/api"
-# ENV VITE_BASE_URL_COMP="https://backend-procosys-completion-api.radix.equinor.com"
-# ENV VITE_CONFIG_ENDPOINT="https://pcs-config-prod-func.azurewebsites.net/api/Frontend/Configuration?"
-# ENV VITE_WEBAPI_SCOPE="api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
-# ENV VITE_COMP_SCOPE="api://dee65816-6e0b-4816-bafe-ebd7179d5933/ReadWrite"
-# ENV VITE_APP_INSIGHTS="dfa0c6c9-7034-496d-8991-c0777a6d0d19"
-# ENV VITE_API_VERSION="&api-version=4.1"
-# ENV VITE_OCR_ENDPOINT="https://pcs-mc-webapp-prod-funcs.azurewebsites.net/api/pcs_ocr?"
+ENV VITE_AUTHORITY="https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+ENV VITE_CONFIG_SCOPE="api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read"
+ENV VITE_BASE_URL_MAIN="https://pcs-main-prod.azurewebsites.net/api"
+ENV VITE_CONFIG_ENDPOINT="https://pcs-config-prod-func.azurewebsites.net/api/Frontend/Configuration?"
+ENV VITE_WEBAPI_SCOPE="api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
+ENV VITE_APP_INSIGHTS="ed1e9f1c-5b68-44ca-afec-76ece1f08f80"
+ENV VITE_API_VERSION="&api-version=4.1"
 
 RUN yarn build --mode=production
-
 
 # production environment
 FROM docker.io/nginxinc/nginx-unprivileged:alpine

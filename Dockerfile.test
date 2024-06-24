@@ -6,16 +6,13 @@ COPY . .
 RUN yarn install
 
 ENV VITE_AUTH_CLIENT="23d8e04c-9362-4870-bda2-dade6f9d0ffb"
-# ENV VITE_AUTHORITY="https://login.microsoftonline.com/........"
-# ENV VITE_CONFIG_SCOPE="api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read"
-# ENV VITE_BASE_URL_MAIN="https://pcs-main-api-test.azurewebsites.net/api"
-# ENV VITE_BASE_URL_COMP="https://backend-procosys-completion-api-test.radix.equinor.com"
-# ENV VITE_CONFIG_ENDPOINT="https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Configuration?"
-# ENV VITE_WEBAPI_SCOPE="api://2d0ed80f-3013-422d-b8bd-2b8ac70b2ce1/web_api"
-# ENV VITE_COMP_SCOPE="api://cf2e4cc0-39fe-4604-ad64-98e392987821/ReadWrite"
-# ENV VITE_APP_INSIGHTS="fcf22f65-a717-421f-935d-4853dbcbe8e5"
-# ENV VITE_API_VERSION="&api-version=4.1"
-# ENV VITE_OCR_ENDPOINT="https://pcs-mc-webapp-non-prod-funcs.azurewebsites.net/api/pcs_ocr?"
+ENV VITE_AUTHORITY="https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+ENV VITE_CONFIG_SCOPE="api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read"
+ENV VITE_BASE_URL_MAIN="https://pcs-main-api-test.azurewebsites.net/api"
+ENV VITE_CONFIG_ENDPOINT="https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Configuration?"
+ENV VITE_WEBAPI_SCOPE="api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
+ENV VITE_APP_INSIGHTS="2e63710e-308d-45c2-99b0-95a959a3de5a"
+ENV VITE_API_VERSION="&api-version=4.1"
 
 RUN yarn build --mode=production
 

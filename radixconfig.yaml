@@ -8,61 +8,33 @@ spec:
   - name: test
   - name: prod
 
+spec:
+  environments:
+  - name: dev
+    build:
+      from: develop
+  - name: test
+    build:
+      from: test
+  - name: prod
+    build:
+      from: main
   components:
   - name: frontend
-    image: procosys.azurecr.io/procosys/frontend:{imageTagName}
+    publicPort: http
     ports:
     - name: http
       port: 5000
-    publicPort: http
     environmentConfig:
-    # Development environment
     - environment: dev
-      identity:
-        azure:
-          clientId: 30a25122-c22c-4a5c-a7b8-366d31cb2c46
-      imageTagName: latest  
+      dockerfileName: Dockerfile.dev
       variables:
-        pcs_configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend'
-        pcs_configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
-      monitoring: true
-      resources:
-        requests:
-          memory: '256Mi'
-          cpu: '100m'
-        limits:
-          memory: '256Mi'
-          cpu: '100m' 
-    # Test environment     
+        authSettingsEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
     - environment: test
-      identity:
-        azure:
-          clientId: 23d8e04c-9362-4870-bda2-dade6f9d0ffb
+      dockerfileName: Dockerfile.test
       variables:
-        pcs_configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend'
-        pcs_configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
-      resources:
-        requests:
-          memory: '256Mi'
-          cpu: '100m'
-        limits:
-          memory: '256Mi'
-          cpu: '100m'
-    # Production environment      
+        authSettingsEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
     - environment: prod
-      identity:
-        azure:
-          clientId: 50b15344-28c9-45b5-9616-41da16fc9dcc
+      dockerfileName: Dockerfile.prod
       variables:
-        pcs_configurationEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend'
-        pcs_configurationScope: 'api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read'
-      resources:
-        requests:
-          memory: '256Mi'
-          cpu: '100m'
-        limits:
-          memory: '256Mi'
-          cpu: '100m'      
-  privateImageHubs:
-    procosys.azurecr.io:
-      username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
+        authSettingsEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend/Auth'

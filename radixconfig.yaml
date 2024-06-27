@@ -12,7 +12,7 @@ spec:
       from: test
   - name: prod
     build:
-      from: main
+      from: master
   components:
   - name: frontend
     publicPort: http

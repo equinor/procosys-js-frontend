@@ -2,11 +2,6 @@ apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
   name: procosys-js-frontend
-spec: 
-  environments:
-  - name: dev
-  - name: test
-  - name: prod
 
 spec:
   environments:

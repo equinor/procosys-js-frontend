@@ -50,7 +50,7 @@ typings/
 .next
 
 # Sensitive files
-settings.json
+# settings.json
 
 #VS Code folder
 .vscode/

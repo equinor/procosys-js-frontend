@@ -16,7 +16,6 @@ ENV VITE_API_VERSION="&api-version=4.1"
 
 RUN yarn build --mode=production
 
-
 # production environment
 FROM docker.io/nginxinc/nginx-unprivileged:alpine
 

@@ -1,0 +1,4 @@
+
+{
+  "authSettingsEndpoint": "https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth?"
+}

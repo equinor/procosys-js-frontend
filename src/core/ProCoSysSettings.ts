@@ -1,7 +1,8 @@
 import { IAuthService } from 'src/auth/AuthService';
 import SettingsApiClient from '@procosys/http/SettingsApiClient';
 
-const localSettings = require('../../settings.json');
+const localSettings = require('../settings.json');
+
 //#region types
 
 interface FeatureConfig {

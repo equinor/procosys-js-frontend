@@ -3,6 +3,7 @@ FROM node:20 as build
 WORKDIR /app
 COPY package*.json ./
 COPY . .
+COPY settings.json ./
 RUN yarn install
 
 ENV VITE_AUTH_CLIENT="30a25122-c22c-4a5c-a7b8-366d31cb2c46"

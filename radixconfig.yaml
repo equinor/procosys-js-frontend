@@ -3,6 +3,7 @@ kind: RadixApplication
 metadata:
   name: procosys-js-frontend
 
+
 spec:
   environments:
   - name: dev

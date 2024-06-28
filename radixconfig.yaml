@@ -23,15 +23,15 @@ spec:
     - environment: dev
       dockerfileName: Dockerfile.dev
       variables:
-        configurationEndpoint: "https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend",
-        configurationScope: "api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read"
+          configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend',
+          configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
     - environment: test
       dockerfileName: Dockerfile.test
       variables:
-        configurationEndpoint: "https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend",
-        configurationScope: "api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read"
+          configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend',
+          configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
     - environment: prod
       dockerfileName: Dockerfile.prod
       variables:
-        configurationEndpoint: "https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend",
-        configurationScope: "api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read"
+          configurationEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend',
+          configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'

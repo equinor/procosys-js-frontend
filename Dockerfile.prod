@@ -1,7 +1,9 @@
 # build environment
 FROM node:20 as build
 WORKDIR /app
-RUN yarn build --mode=production
+COPY package*.json ./
+COPY . .
+RUN yarn install
 
 # production environment
 FROM docker.io/nginxinc/nginx-unprivileged:alpine

@@ -273,7 +273,7 @@ const Header: React.FC = (): JSX.Element => {
 
     let counter = 0;
     return (
-        <div>
+        <div style={{ backgroundColor: '#FFFF5C' }}>
             <Nav>
                 <IconContainer>
                     <Button

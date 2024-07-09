@@ -4,11 +4,11 @@ metadata:
   name: procosys-js-frontend
 spec:
   dnsExternalAlias:
-    - alias: procosystest.equinor.com
+    - alias: test.pcs-dev.net
       component: frontend
       environment: test
       useCertificateAutomation: true
-    - alias: procosys.equinor.com
+    - alias: prod.pcs-dev.net
       component: frontend
       environment: prod
       useCertificateAutomation: true

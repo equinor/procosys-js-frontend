@@ -4,15 +4,6 @@ kind: RadixApplication
 metadata:
   name: procosys-preservation-ipo
 spec:
-  dnsExternalAlias:
-    - alias: procosystest.equinor.com
-      component: frontend
-      environment: test
-      useCertificateAutomation: true
-    - alias: procosys.equinor.com
-      component: frontend
-      environment: prod
-      useCertificateAutomation: true
   environments:
   - name: dev
     build:

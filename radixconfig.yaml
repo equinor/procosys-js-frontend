@@ -4,7 +4,7 @@ metadata:
   name: procosys-js-frontend
 spec:
   dnsExternalAlias:
-    - alias: test.ipopresfrontend.procosys.equinor.com
+    - alias: test.ipopresfrontend.procosystest.equinor.com
       component: frontend
       environment: test
       useCertificateAutomation: true

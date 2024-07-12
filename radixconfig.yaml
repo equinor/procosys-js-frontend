@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: procosys-preservation-ipo
+  name: procosys-frontend
 spec:
   dnsExternalAlias:
     - alias: procosystest.equinor.com
@@ -19,7 +19,7 @@ spec:
     build:
       from: master
   components:
-  - name: frontend
+  - name: portal
     publicPort: http
     ports:
     - name: http

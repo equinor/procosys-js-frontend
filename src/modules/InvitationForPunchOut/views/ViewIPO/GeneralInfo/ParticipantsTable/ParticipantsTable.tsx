@@ -213,6 +213,7 @@ const ParticipantsTable = ({
                         </Table.Cell>
                     </Table.Row>
                 </Table.Head>
+
                 <Table.Body>
                     {participants.map(
                         (participant: Participant, index: number) => {
@@ -353,6 +354,8 @@ const ParticipantsTable = ({
                                                         : participant.note
                                                 )
                                             }
+                                            multiline
+                                            rows={1}
                                         />
                                     </Table.Cell>
                                     <Table.Cell

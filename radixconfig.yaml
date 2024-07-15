@@ -19,7 +19,7 @@ spec:
     build:
       from: master
   components:
-  - name: portal
+  - name: frontend
     publicPort: http
     ports:
     - name: http

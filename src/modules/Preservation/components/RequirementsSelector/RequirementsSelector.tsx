@@ -56,7 +56,7 @@ interface RequirementFormInput {
     rowVersion?: string;
 }
 
-const validWeekIntervals = [1, 2, 4, 6, 8, 12, 16, 24, 52];
+const validWeekIntervals = [1, 2, 3, 4, 6, 8, 12, 16, 24, 52];
 
 const RequirementsSelector = (
     props: RequirementsSelectorProps

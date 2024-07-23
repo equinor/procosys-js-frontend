@@ -300,6 +300,7 @@ const InvitationsFilter = ({
     };
 
     const handleExportToExcel = async () => {
+        const { punchOutDateFromUtc, punchOutDateToUtc } = localFilter;
         setIsExporting(true);
         try {
             await exportInvitationsToExcel();
@@ -308,6 +309,16 @@ const InvitationsFilter = ({
         } finally {
             setIsExporting(false);
         }
+    };
+    const isButtonDisabled = () => {
+        const { punchOutDateFromUtc, punchOutDateToUtc } = localFilter; 
+        if (punchOutDateFromUtc && !punchOutDateToUtc) {
+            return true;
+        }
+        if (punchOutDateFromUtc && punchOutDateToUtc) {
+            return new Date(punchOutDateFromUtc) > new Date(punchOutDateToUtc);
+        }
+        return false;
     };
 
     return (
@@ -319,8 +330,8 @@ const InvitationsFilter = ({
                         variant="ghost"
                         title="Export filtered IPOs to Excel"
                         onClick={handleExportToExcel}
-                        disabled={isExporting}
-                        aria-disabled={isExporting ? true : false}
+                        disabled={isExporting || isButtonDisabled()}
+                        aria-disabled={isExporting || isButtonDisabled() ? true : false}
                         aria-label={isExporting ? 'loading data' : null}
                     >
                         {isExporting ? (

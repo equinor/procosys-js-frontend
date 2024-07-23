@@ -166,7 +166,17 @@
       "semver": "^7.5.2",
       "http-cache-semantics": "^4.1.1",
       "json5": "^2.2.2",
-      "tar": "^6.2.1"
+      "tar": "^6.2.1",
+      "tslib": "^2.3.0", 
+      "react-is": "^17.0.2",
+      "require-from-string": "^2.0.2",
+      "@mui/system": "^5.4.1",
+      "regenerator-runtime": "^0.13.9",
+      "@storybook/addons": "^6.5.16",
+      "@storybook/channels": "^6.5.16",
+      "@storybook/components": "^6.5.16",
+      "@storybook/core-events": "^6.5.16",
+      "@storybook/theming": "^6.5.16"
     }
   }
   

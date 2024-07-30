@@ -259,7 +259,7 @@ const UpdateRequirementsDialog = ({
             console.error(errorMessageConsole, error.message, error.data);
             setValidationErrorMessage(error.message);
             throw showSnackbarNotification(
-                'Validation error. Changes are not saved.'
+                `Validation error. Changes are not saved.`
             );
         } else {
             console.error(errorMessageConsole, error.message, error.data);
@@ -328,16 +328,19 @@ const UpdateRequirementsDialog = ({
         if (requirementsOrDescriptionEdited) {
             try {
                 await updateRequirementsAndDescription(currentRowVersion);
+
+                if (tag) {
+                    showSnackbarNotification(
+                        `Changes to ${tag.tagNo} have been saved`
+                    );
+                }
             } catch (error) {
                 setShowSpinner(false);
-                throw 'error';
+                // throw 'error';
             }
         }
         unsetDirtyStateFor(moduleName);
         setShowSpinner(false);
-        if (tag) {
-            showSnackbarNotification(`Changes to ${tag.tagNo} have been saved`);
-        }
         onClose();
     };
 
@@ -345,7 +348,7 @@ const UpdateRequirementsDialog = ({
         <Scrim>
             <DialogContainer width={'80vw'}>
                 <Title>
-                    <Typography variant="h6">Update requirements</Typography>
+                    <Typography variant="h6"> Update requirements </Typography>
                 </Title>
                 <Divider />
                 <Content>
@@ -414,9 +417,8 @@ const UpdateRequirementsDialog = ({
                             !requirementsOrDescriptionEdited
                         }
                     >
-                        Save
+                        {showSpinner ? <Spinner /> : 'Save'}
                     </Button>
-                    {showSpinner && <Spinner />}
                 </ButtonContainer>
             </DialogContainer>
         </Scrim>

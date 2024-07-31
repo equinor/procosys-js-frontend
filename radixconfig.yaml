@@ -8,6 +8,14 @@ spec:
       component: frontend
       environment: test
       useCertificateAutomation: true
+    - alias: procosys.equinor.com
+      component: frontend
+      environment: test
+      useCertificateAutomation: true
+    - alias: tasktop.equinor.com
+      component: frontend
+      environment: test
+      useCertificateAutomation: true
   environments:
   - name: dev
     build:

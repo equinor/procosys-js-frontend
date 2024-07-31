@@ -10,11 +10,11 @@ spec:
       useCertificateAutomation: true
     - alias: procosys.equinor.com
       component: frontend
-      environment: test
+      environment: prod
       useCertificateAutomation: true
     - alias: tasktop.equinor.com
       component: frontend
-      environment: test
+      environment: prod
       useCertificateAutomation: true
   environments:
   - name: dev

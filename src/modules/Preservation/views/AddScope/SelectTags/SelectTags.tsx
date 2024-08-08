@@ -18,7 +18,7 @@ import { AddScopeMethod } from '../AddScope';
 import Loading from '../../../../../components/Loading';
 import React, { useEffect } from 'react';
 import ProcosysTable from '@procosys/components/Table';
-import { useHistory } from 'react-router-dom';
+import { useHistory, NavLink } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { CheckBox } from '@mui/icons-material';
@@ -320,10 +320,6 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
         };
     }, [props.selectedTags]);
 
-    const cancel = (): void => {
-        history.push('/');
-    };
-
     return (
         <Container>
             <Header>
@@ -366,9 +362,9 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         )}
                 </InnerContainer>
                 <ButtonsContainer>
-                    <Button onClick={cancel} variant="outlined">
-                        Cancel
-                    </Button>
+                    <NavLink to="/" activeClassName="active">
+                        <Button variant="outlined">Cancel</Button>
+                    </NavLink>
                     <Button
                         onClick={props.nextStep}
                         disabled={props.selectedTags.length === 0}

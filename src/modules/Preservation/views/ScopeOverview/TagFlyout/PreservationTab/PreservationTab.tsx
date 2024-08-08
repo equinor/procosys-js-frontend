@@ -180,6 +180,8 @@ const PreservationTab = ({
                 refreshTagDetails();
             }
         });
+        setDirty();
+        setTagRequirements(null);
     };
 
     const cancelEditRemark = (): void => {

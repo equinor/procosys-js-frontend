@@ -89,6 +89,7 @@ const Participants = ({
     }); //filter string and index of participant
     const { apiClient } = useInvitationForPunchOutContext();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [emailError, setEmailError] = useState<string | null>(null);
 
     const nameCombiner = (firstName: string, lastName: string): string => {
         return `${firstName} ${lastName}`;
@@ -191,16 +192,26 @@ const Participants = ({
         }
     };
 
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     const setExternalEmail = (value: string, index: number): void => {
-        setParticipants((p) => {
-            const participantsCopy = [...p];
-            participantsCopy[index].role = null;
-            participantsCopy[index].person = null;
-            participantsCopy[index].externalEmail = {
-                email: value,
-            };
-            return participantsCopy;
-        });
+        if (!validateEmail(value)) {
+            setEmailError('Invalid email address');
+        } else {
+            setEmailError(null);
+            setParticipants((p) => {
+                const participantsCopy = [...p];
+                participantsCopy[index].role = null;
+                participantsCopy[index].person = null;
+                participantsCopy[index].externalEmail = {
+                    email: value,
+                };
+                return participantsCopy;
+            });
+        }
     };
 
     const setType = (value: string, index: number): void => {
@@ -429,6 +440,10 @@ const Participants = ({
                                                     e.target.value,
                                                     index
                                                 )
+                                            }
+                                            helperText={emailError}
+                                            variant={
+                                                emailError ? 'error' : undefined
                                             }
                                         />
                                     </div>

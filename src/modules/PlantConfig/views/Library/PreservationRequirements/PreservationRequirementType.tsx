@@ -69,6 +69,7 @@ const PreservationRequirementType = (
     const [isDirtyAndValid, setIsDirtyAndValid] = useState<boolean>(false);
     const [iconList, setIconList] = useState<SelectItem[]>([]);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+    const [titleError, setTitleError] = useState<string | null>(null);
 
     const { preservationApiClient } = usePlantConfigContext();
 
@@ -105,6 +106,8 @@ const PreservationRequirementType = (
 
     //Set dirty when forms is updated
     useEffect(() => {
+        const isTitleValid = validateTitle(newRequirementType.title);
+
         if (requirementType == null && !isDirty) {
             setIsDirtyAndValid(false);
         } else {
@@ -113,7 +116,8 @@ const PreservationRequirementType = (
                 newRequirementType.code &&
                 newRequirementType.icon &&
                 newRequirementType.sortKey &&
-                newRequirementType.title
+                newRequirementType.title &&
+                !titleError
             ) {
                 setIsDirtyAndValid(true);
             } else {
@@ -130,7 +134,7 @@ const PreservationRequirementType = (
         return (): void => {
             unsetDirtyStateFor(moduleName);
         };
-    }, [newRequirementType, requirementType]);
+    }, [newRequirementType, requirementType, titleError]);
 
     const cloneRequirementType = (
         requirementType: RequirementType
@@ -317,6 +321,16 @@ const PreservationRequirementType = (
         setNewRequirementType(cloneRequirementType(newRequirementType));
     };
 
+    const validateTitle = (title: string): boolean => {
+        const hasSpecialCharacters = /[^a-zA-Z0-9 ]/g.test(title);
+        if (hasSpecialCharacters) {
+            setTitleError('Title cannot contain special characters');
+            return false;
+        }
+        setTitleError(null);
+        return true;
+    };
+
     if (isLoading) {
         return (
             <Container>
@@ -480,11 +494,15 @@ const PreservationRequirementType = (
                         onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                         ): void => {
-                            newRequirementType.title = e.target.value;
+                            const title = e.target.value;
+                            newRequirementType.title = title;
+                            validateTitle(title);
                             valueUpdated();
                         }}
                         placeholder="Write here"
                         disabled={newRequirementType.isVoided}
+                        variant={titleError && 'error'}
+                        helperText={titleError}
                     />
                 </FormFieldSpacer>
             </InputContainer>

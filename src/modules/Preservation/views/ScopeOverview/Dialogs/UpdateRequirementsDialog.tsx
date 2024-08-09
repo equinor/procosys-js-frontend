@@ -259,7 +259,7 @@ const UpdateRequirementsDialog = ({
             console.error(errorMessageConsole, error.message, error.data);
             setValidationErrorMessage(error.message);
             throw showSnackbarNotification(
-                `Validation error. Changes are not saved.`
+                'Validation error. Changes are not saved.'
             );
         } else {
             console.error(errorMessageConsole, error.message, error.data);

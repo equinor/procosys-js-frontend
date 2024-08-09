@@ -157,6 +157,7 @@ const InvitationsFilter = ({
         number | null
     >();
     const [isExporting, setIsExporting] = useState<boolean>(false);
+    const { punchOutDateFromUtc, punchOutDateToUtc } = localFilter;
 
     const KEYCODE_ENTER = 13;
 
@@ -300,7 +301,6 @@ const InvitationsFilter = ({
     };
 
     const handleExportToExcel = async () => {
-        const { punchOutDateFromUtc, punchOutDateToUtc } = localFilter;
         setIsExporting(true);
         try {
             await exportInvitationsToExcel();
@@ -310,8 +310,8 @@ const InvitationsFilter = ({
             setIsExporting(false);
         }
     };
+
     const isButtonDisabled = () => {
-        const { punchOutDateFromUtc, punchOutDateToUtc } = localFilter; 
         if (punchOutDateFromUtc && !punchOutDateToUtc) {
             return true;
         }
@@ -331,7 +331,9 @@ const InvitationsFilter = ({
                         title="Export filtered IPOs to Excel"
                         onClick={handleExportToExcel}
                         disabled={isExporting || isButtonDisabled()}
-                        aria-disabled={isExporting || isButtonDisabled() ? true : false}
+                        aria-disabled={
+                            isExporting || isButtonDisabled() ? true : false
+                        }
                         aria-label={isExporting ? 'loading data' : null}
                     >
                         {isExporting ? (

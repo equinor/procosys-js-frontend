@@ -115,9 +115,9 @@ const SelectScope = ({
                                         ? 'Click on the arrow next to a comm pkg to open MC scope'
                                         : 'Select commissioning packages'
                                     : type === 'DP'
-                                    ? 'Select MC packages in comm pkg ' +
-                                      currentCommPkg
-                                    : 'Scope has been preselected'}
+                                      ? 'Select MC packages in comm pkg ' +
+                                        currentCommPkg
+                                      : 'Scope has been preselected'}
                             </Typography>
                         </Header>
                         {(currentCommPkg == null ||

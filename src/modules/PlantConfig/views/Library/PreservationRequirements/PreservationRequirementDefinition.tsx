@@ -144,9 +144,8 @@ const PreservationRequirementDefinition = (
     const getRequirementTypes = async (): Promise<void> => {
         setIsLoading(true);
         try {
-            const response = await preservationApiClient.getRequirementTypes(
-                true
-            );
+            const response =
+                await preservationApiClient.getRequirementTypes(true);
             setRequirementTypes(response);
         } catch (error) {
             console.error(
@@ -283,8 +282,13 @@ const PreservationRequirementDefinition = (
                             const singleReqType: RequirementType =
                                 await preservationApiClient.getRequirementType(
                                     reqType.id,
-                                    (cancel: Canceler) =>
-                                        (requestCancellor = cancel)
+                                    (cancel: Canceler) => {
+                                        requestCancellor = cancel;
+                                        console.log(
+                                            'requestCancellor assigned',
+                                            requestCancellor
+                                        );
+                                    }
                                 );
                             const singleReqDef =
                                 singleReqType.requirementDefinitions.find(
@@ -304,11 +308,23 @@ const PreservationRequirementDefinition = (
                                 ); //must clone here!
                             }
                         } catch (error) {
-                            console.error(
-                                'Get requirement type failed: ',
-                                error.message,
-                                error.data
-                            );
+                            if (error.response) {
+                                console.error(
+                                    'Server responded with:',
+                                    error.response.data
+                                );
+                                if (error.response.data.errors) {
+                                    console.error(
+                                        'Validation errors:',
+                                        error.response.data.errors
+                                    );
+                                }
+                            } else {
+                                console.error(
+                                    'Add requirement definition failed:',
+                                    error.message
+                                );
+                            }
                             showSnackbarNotification(error.message, 5000);
                         }
                     }
@@ -319,7 +335,10 @@ const PreservationRequirementDefinition = (
             }
         })();
         return (): void => {
-            requestCancellor && requestCancellor();
+            if (requestCancellor) {
+                console.log('Cancelling request', requestCancellor);
+                // requestCancellor();
+            }
         };
     }, [requirementDefinitionId, requirementTypes]);
 
@@ -344,11 +363,24 @@ const PreservationRequirementDefinition = (
                     5000
                 );
             } catch (error) {
-                console.error(
-                    'Add requirement definition failed: ',
-                    error.message,
-                    error.data
-                );
+                if (error.response) {
+                    console.error('Full server response:', error.response);
+                    console.error(
+                        'Server responded with:',
+                        error.response.data
+                    );
+                    if (error.response.data.errors) {
+                        console.error(
+                            'Validation errors:',
+                            error.response.data.errors
+                        );
+                    }
+                } else {
+                    console.error(
+                        'Add requirement definition failed:',
+                        error.message
+                    );
+                }
                 showSnackbarNotification(error.message, 5000);
             }
             setIsLoading(false);

@@ -120,6 +120,7 @@ const PreservationRequirementDefinition = (
             };
         });
     });
+    const [titleError, setTitleError] = useState<string | null>(null);
 
     const createNewRequirementDefinition = (): RequirementDefinitionItem => {
         return {
@@ -690,6 +691,16 @@ const PreservationRequirementDefinition = (
         }
     };
 
+    const validateTitle = (title: string): boolean => {
+        const hasSpecialCharacters = /[^a-zA-Z0-9 ]/g.test(title);
+        if (hasSpecialCharacters) {
+            setTitleError('Title cannot contain special characters');
+            return false;
+        }
+        setTitleError(null);
+        return true;
+    };
+
     return (
         <Container>
             <Breadcrumbs>{getBreadcrumb()}</Breadcrumbs>
@@ -772,7 +783,8 @@ const PreservationRequirementDefinition = (
                         onClick={handleSave}
                         disabled={
                             newRequirementDefinition.isVoided ||
-                            !isDirtyAndValid
+                            !isDirtyAndValid ||
+                            titleError
                         }
                     >
                         Save
@@ -861,7 +873,9 @@ const PreservationRequirementDefinition = (
                         onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                         ): void => {
-                            newRequirementDefinition.title = e.target.value;
+                            const title = e.target.value;
+                            newRequirementDefinition.title = title;
+                            validateTitle(title);
                             setNewRequirementDefinition(
                                 cloneRequirementDefinition(
                                     newRequirementDefinition
@@ -870,6 +884,8 @@ const PreservationRequirementDefinition = (
                         }}
                         placeholder="Write here"
                         disabled={newRequirementDefinition.isVoided}
+                        variant={titleError ? 'error' : undefined}
+                        helperText={titleError}
                     />
                 </FormFieldSpacer>
                 <FormFieldSpacer>

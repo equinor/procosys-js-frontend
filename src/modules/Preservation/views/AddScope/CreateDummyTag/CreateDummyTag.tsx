@@ -21,7 +21,7 @@ import EdsIcon from '../../../../../components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import { useHistory } from 'react-router-dom';
+import { useHistory, NavLink } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { KeyboardArrowDown } from '@mui/icons-material';
@@ -530,10 +530,6 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         }
     }, [props.description]);
 
-    const cancel = (): void => {
-        history.push('/');
-    };
-
     return (
         <div>
             <Header>
@@ -570,8 +566,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                                     isLoading || purchaseOrderNumber
                                         ? true
                                         : false || props.duplicateTagId
-                                        ? true
-                                        : false
+                                          ? true
+                                          : false
                                 }
                             >
                                 {(props.areaType && props.areaType.text) ||
@@ -662,9 +658,9 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                             )}
                         </FormFieldSpacer>
                         <ButtonsContainer>
-                            <Button onClick={cancel} variant="outlined">
-                                Cancel
-                            </Button>
+                            <NavLink to="/" activeClassName="active">
+                                <Button variant="outlined">Cancel</Button>
+                            </NavLink>
                             <Button
                                 onClick={nextStep}
                                 disabled={

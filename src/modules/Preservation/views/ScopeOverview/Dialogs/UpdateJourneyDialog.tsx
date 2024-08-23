@@ -27,6 +27,21 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { Journey } from '../../AddScope/types';
 import { Content } from '@procosys/core/services/ModalDialogService/style';
 import { Tooltip } from '@mui/material';
+import { handleErrorFromBackend } from './SharedCode/errorHandling';
+
+interface ErrorResponse {
+    ErrorCount: number;
+    Errors: {
+        PropertyName: string;
+        ErrorMessage: string;
+    }[];
+}
+
+interface ValidationErrorResponse {
+    title: string;
+    status: number;
+    errors: { [key: string]: string[] };
+}
 
 const moduleName = 'PreservationUpdateJourneyDialog';
 
@@ -305,22 +320,6 @@ const UpdateJourneyDialog = ({
         }
     }, [step, journey]);
 
-    const handleErrorFromBackend = (
-        error: ProCoSysApiError,
-        errorMessageConsole: string
-    ): void => {
-        if (error.data && error.data.status == 400) {
-            console.error(errorMessageConsole, error.message, error.data);
-            setValidationErrorMessage(error.message);
-            throw showSnackbarNotification(
-                'Validation error. Changes are not saved.'
-            );
-        } else {
-            console.error(errorMessageConsole, error.message, error.data);
-            throw showSnackbarNotification(error.message);
-        }
-    };
-
     const updateTagJourneyAndStep = async (): Promise<void> => {
         try {
             if (step) {
@@ -333,11 +332,22 @@ const UpdateJourneyDialog = ({
                 await apiClient.updateTagStep(tagDtos, step.id);
             }
         } catch (error) {
-            if (!(error instanceof ProCoSysApiError)) return;
-            handleErrorFromBackend(
-                error,
-                'Error updating journey, step, requirements, or description'
-            );
+            const errorMessageConsole =
+                'Error updating journey, step, requirements, or description';
+            if (error instanceof ProCoSysApiError) {
+                handleErrorFromBackend(
+                    error,
+                    errorMessageConsole,
+                    setValidationErrorMessage
+                );
+            } else {
+                console.error(
+                    errorMessageConsole,
+                    'An unknown error occurred',
+                    error
+                );
+                throw showSnackbarNotification('An unknown error occurred');
+            }
         }
     };
 

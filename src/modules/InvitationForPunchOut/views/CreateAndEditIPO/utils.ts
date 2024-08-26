@@ -1,6 +1,8 @@
 import { addDays, addHours, addMinutes, set } from 'date-fns';
 
 import { Attachment } from '../../types';
+import { IpoApiError } from '../../http/InvitationForPunchOutApiClient';
+import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 
 export const getEndTime = (date: Date): Date => {
     if (date.getHours() === 23) {
@@ -44,4 +46,16 @@ export const getAttachmentDownloadLink = (
     }
 
     return undefined;
+};
+
+export const handleApiError = (error: any, customMessage?: string): void => {
+    if (!(error instanceof IpoApiError)) {
+        console.error(error);
+        showSnackbarNotification(
+            error.message || customMessage || 'Unknown error'
+        );
+    } else {
+        console.error(error.message, error.data);
+        showSnackbarNotification(error.message);
+    }
 };

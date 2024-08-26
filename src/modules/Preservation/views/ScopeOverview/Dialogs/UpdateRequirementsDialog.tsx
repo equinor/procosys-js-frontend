@@ -22,6 +22,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { Button } from '@equinor/eds-core-react';
 import Spinner from '@procosys/components/Spinner';
 import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
+import { handleErrorFromBackend } from './SharedCode/errorHandling';
 
 const moduleName = 'PreservationUpdateRequirementsDialog';
 
@@ -35,6 +36,20 @@ interface RequirementFormInput {
     isVoided?: boolean;
     isDeleted?: boolean;
     rowVersion?: string;
+}
+
+interface ErrorResponse {
+    ErrorCount: number;
+    Errors: {
+        PropertyName: string;
+        ErrorMessage: string;
+    }[];
+}
+
+interface ValidationErrorResponse {
+    title: string;
+    status: number;
+    errors: { [key: string]: string[] };
 }
 
 interface UpdateRequirementsDialogProps {
@@ -243,27 +258,12 @@ const UpdateRequirementsDialog = ({
             if (error instanceof ProCoSysApiError) {
                 handleErrorFromBackend(
                     error,
-                    'Error updating remark and storage area'
+                    'Error updating remark and storage area',
+                    setValidationErrorMessage
                 );
                 throw error.message;
             }
-            throw new Error();
-        }
-    };
-
-    const handleErrorFromBackend = (
-        error: ProCoSysApiError,
-        errorMessageConsole: string
-    ): void => {
-        if (error.data && error.data.status == 400) {
-            console.error(errorMessageConsole, error.message, error.data);
-            setValidationErrorMessage(error.message);
-            throw showSnackbarNotification(
-                'Validation error. Changes are not saved.'
-            );
-        } else {
-            console.error(errorMessageConsole, error.message, error.data);
-            throw showSnackbarNotification(error.message);
+            throw new Error('An unknown error occurred');
         }
     };
 
@@ -306,11 +306,20 @@ const UpdateRequirementsDialog = ({
                 );
             }
         } catch (error) {
-            if (!(error instanceof ProCoSysApiError)) return;
-            handleErrorFromBackend(
-                error,
-                'Error updating journey, step, requirements, or description'
-            );
+            if (error instanceof ProCoSysApiError) {
+                handleErrorFromBackend(
+                    error,
+                    'Error updating requirements or description',
+                    setValidationErrorMessage
+                );
+            } else {
+                console.error(
+                    'Error updating requirements or description',
+                    'An unknown error occurred',
+                    error
+                );
+                throw showSnackbarNotification('An unknown error occurred');
+            }
         }
     };
 

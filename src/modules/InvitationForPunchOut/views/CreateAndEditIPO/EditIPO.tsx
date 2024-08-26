@@ -30,13 +30,13 @@ import { Organization } from '../../types';
 import { OrganizationMap } from '../utils';
 import { SelectItem } from '@procosys/components/Select';
 import { poTypes } from './GeneralInfo/GeneralInfo';
-import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
 import { set } from 'date-fns';
+import { handleApiError } from './utils';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
     projectName: '',
@@ -187,13 +187,7 @@ const EditIPO = (): JSX.Element => {
                     );
                 setAvailableRoles(functionalRoles);
             } catch (error) {
-                if (!(error instanceof IpoApiError)) {
-                    console.error(error);
-                    showSnackbarNotification('Unknown error');
-                    return;
-                }
-                console.error(error.message, error.data);
-                showSnackbarNotification(error.message);
+                handleApiError(error);
             }
         },
         [params.ipoId]
@@ -299,17 +293,10 @@ const EditIPO = (): JSX.Element => {
                         );
                     }
                 } catch (error) {
-                    if (!(error instanceof IpoApiError)) {
-                        console.error(error);
-                        showSnackbarNotification('Unknown error');
-                        return;
-                    }
-                    console.error(
-                        'Upload or delete of attachment failed: ',
-                        error.message,
-                        error.data
+                    handleApiError(
+                        error,
+                        'Upload or delete of attachment failed'
                     );
-                    showSnackbarNotification(error.message);
                 }
             })
         );
@@ -325,13 +312,7 @@ const EditIPO = (): JSX.Element => {
             );
             setAttachments(response);
         } catch (error) {
-            if (!(error instanceof IpoApiError)) {
-                console.error(error);
-                showSnackbarNotification('Unknown error');
-                return;
-            }
-            console.error(error.message, error.data);
-            showSnackbarNotification(error.message);
+            handleApiError(error);
         }
     };
 
@@ -398,17 +379,7 @@ const EditIPO = (): JSX.Element => {
                 ]);
                 history.push('/' + params.ipoId);
             } catch (error) {
-                if (!(error instanceof IpoApiError)) {
-                    console.error(error);
-                    showSnackbarNotification('Unknown error');
-                    return;
-                }
-                console.error(
-                    'Save updated IPO failed: ',
-                    error.message,
-                    error.data
-                );
-                showSnackbarNotification(error.message);
+                handleApiError(error, 'Save updated IPO failed: ');
             }
         }
         setIsSaving(false);
@@ -425,13 +396,7 @@ const EditIPO = (): JSX.Element => {
                 );
                 setInvitation(response);
             } catch (error) {
-                if (!(error instanceof IpoApiError)) {
-                    console.error(error);
-                    showSnackbarNotification('Unknown error');
-                    return;
-                }
-                console.error(error.message, error.data);
-                showSnackbarNotification(error.message);
+                handleApiError(error);
             }
         },
         [params.ipoId]

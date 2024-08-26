@@ -29,20 +29,6 @@ import { Content } from '@procosys/core/services/ModalDialogService/style';
 import { Tooltip } from '@mui/material';
 import { handleErrorFromBackend } from './SharedCode/errorHandling';
 
-interface ErrorResponse {
-    ErrorCount: number;
-    Errors: {
-        PropertyName: string;
-        ErrorMessage: string;
-    }[];
-}
-
-interface ValidationErrorResponse {
-    title: string;
-    status: number;
-    errors: { [key: string]: string[] };
-}
-
 const moduleName = 'PreservationUpdateJourneyDialog';
 
 const OverflowColumn = styled.div`

@@ -38,20 +38,6 @@ interface RequirementFormInput {
     rowVersion?: string;
 }
 
-interface ErrorResponse {
-    ErrorCount: number;
-    Errors: {
-        PropertyName: string;
-        ErrorMessage: string;
-    }[];
-}
-
-interface ValidationErrorResponse {
-    title: string;
-    status: number;
-    errors: { [key: string]: string[] };
-}
-
 interface UpdateRequirementsDialogProps {
     open: boolean;
     onClose: () => void;

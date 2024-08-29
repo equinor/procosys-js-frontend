@@ -62,7 +62,7 @@ export const InvitationForPunchOutContextProvider: React.FC = ({
             setCurrentProjectInContext({
                 id: -1,
                 name: 'All projects',
-                description: 'All projects in plant ',
+                description: 'All projects in plant',
             });
         }
 

@@ -38,7 +38,7 @@ const validateGeneralInfo = (
     // when function is called with 'confirmationChecked', additional validation is performed
     // that would produce errors on initial state, or interfere when entering info
     if (typeof confirmationChecked === 'boolean') {
-        !projectName &&
+        (!projectName || projectName === 'All projects') &&
             (errors = { ...errors, projectName: 'Required field.' });
         !poType && (errors = { ...errors, poType: 'Required field.' });
 

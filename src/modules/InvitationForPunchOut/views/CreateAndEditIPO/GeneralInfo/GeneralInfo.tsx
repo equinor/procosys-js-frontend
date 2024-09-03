@@ -164,12 +164,21 @@ const GeneralInfo = ({
                         label={'Project'}
                         maxHeight="300px"
                         variant="form"
-                        text={generalInfo.projectName || 'Select'}
+                        text={
+                            generalInfo.projectName === 'All projects' ||
+                            !generalInfo.projectName
+                                ? 'Select'
+                                : generalInfo.projectName
+                        }
                         onFilter={setFilterForProjects}
                         disabled={fromMain || isEditMode || isDisabled}
                     >
                         {filteredProjects &&
                             filteredProjects.map((projectItem, index) => {
+                                if (projectItem.id === -1) {
+                                    return null;
+                                }
+
                                 return (
                                     <DropdownItem
                                         key={index}

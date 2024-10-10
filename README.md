@@ -80,7 +80,7 @@ General component styling
 https://www.styled-components.com
 
 ### TypeScript
-Better code quality and easier transition for developers coming from a typed language
+Better code quality and easier transition for developers coming from a typed language.
 
 https://Typescriptlang.org
 

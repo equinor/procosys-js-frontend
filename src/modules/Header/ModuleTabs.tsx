@@ -9,8 +9,6 @@ type ModuleTabsProps = {
 const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     const params = useParams<any>();
 
-    console.log(222, params)
-
     return (
         <SubNav>
             <a href='Completion'>Completion</a>

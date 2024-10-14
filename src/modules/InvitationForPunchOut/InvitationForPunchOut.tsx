@@ -13,11 +13,7 @@ const InvitationForPunchOut = (): JSX.Element => {
     const match = useMatch('/');
     const { pathname } = useLocation();
 
-
     const ala = useParams()
-
-
-    console.log(1212,ala,pathname)
 
     return (
         <>

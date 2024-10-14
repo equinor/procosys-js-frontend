@@ -166,21 +166,16 @@ const ViewIPO = (): JSX.Element => {
     const getInvitation = async (
         requestCanceller?: (cancelCallback: Canceler) => void
     ): Promise<void> => {
-
-        console.log('lalalalallalalalalalala',ipoId)
         try {
             const response = await apiClient.getIPO(
                 ipoId,
                 requestCanceller
             );
-            console.log('bebebebebebebebeb',ipoId)
             setInvitation(response);
         } catch (error) {
             if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
-            console.log('kakakakakak',error.message)
-
         }
     };
 
@@ -510,7 +505,7 @@ const ViewIPO = (): JSX.Element => {
             }
         }
     };
-console.log(111111,'invitation: ',{invitation,ipoId})
+
     return (
         <Container ref={moduleContainerRef}>
             {loading ? (

@@ -125,8 +125,7 @@ const CreateIPO = (): JSX.Element => {
     const ipoId = useParams().ipoId as any;
     const projectName = useParams().projectName as any;
     const commPkgNo = useParams().commPkgNo as any;
-  
-console.log(3333333,'CreateIPO', {ipoId,projectName,commPkgNo})
+
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },
         { title: 'Scope', isCompleted: false },

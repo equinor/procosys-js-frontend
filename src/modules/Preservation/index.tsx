@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useMatch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import AddScope from './views/AddScope/AddScope';
 import ClosedProjectWarning from './ClosedProjectWarning';
@@ -10,7 +10,6 @@ import ScopeOverview from './views/ScopeOverview/ScopeOverview';
 import withAccessControl from '../../core/security/withAccessControl';
 
 const Preservation = (): JSX.Element => {
-    const match = useMatch('/'); // No need for Router here
 
     return (
         <>

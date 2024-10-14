@@ -1,8 +1,9 @@
 import {
-    useHistory,
+    useNavigate,
     useLocation,
     useParams,
-    useRouteMatch,
+    useResolvedPath,
+    useMatch,
 } from 'react-router-dom';
 
 import { useMemo } from 'react';
@@ -10,19 +11,20 @@ import { useMemo } from 'react';
 const useRouter = (): any => {
     const params = useParams();
     const location = useLocation();
-    const history = useHistory();
-    const match = useRouteMatch();
+    const navigate = useNavigate();
+    const resolvedPath = useResolvedPath('');
+    const match = useMatch({ path: resolvedPath.pathname, end: false });
 
     return useMemo(() => {
         return {
-            push: history.push,
-            replace: history.replace,
+            push: navigate,
+            replace: (path: string) => navigate(path, { replace: true }),
             pathname: location.pathname,
             match,
             location,
-            history,
+            navigate,
         };
-    }, [params, match, location, history]);
+    }, [params, match, location, navigate]);
 };
 
 export default useRouter;

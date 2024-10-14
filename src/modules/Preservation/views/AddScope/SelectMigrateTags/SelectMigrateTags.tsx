@@ -18,7 +18,7 @@ import ProcosysTable from '@procosys/components/Table';
 import React, { useEffect } from 'react';
 import { SelectColumnFilter } from '@procosys/components/Table/filters';
 import { getFormattedDate } from '@procosys/core/services/DateService';
-import { useHistory, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { CheckBox } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
@@ -388,7 +388,6 @@ const columns = [
 
 const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
-    const history = useHistory();
 
     useEffect(() => {
         const selectedRows: Record<string, boolean> = {};
@@ -467,7 +466,10 @@ const SelectMigrateTags = (props: SelectMigrateTagsProps): JSX.Element => {
                     </TagsHeader>
                 </InnerContainer>
                 <ButtonsContainer>
-                    <NavLink to="/" activeClassName="active">
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) => (isActive ? 'active' : '')}
+                    >
                         <Button variant="outlined">Cancel</Button>
                     </NavLink>
 

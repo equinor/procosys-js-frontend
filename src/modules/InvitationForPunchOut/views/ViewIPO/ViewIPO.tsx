@@ -36,7 +36,7 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
 import { useParams } from 'react-router-dom';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
@@ -66,7 +66,7 @@ const ipoHeaderSize = 136;
 const ipoTabHeaderSize = 115;
 
 const ViewIPO = (): JSX.Element => {
-    const params = useParams<{ ipoId: any }>();
+    const ipoId = useParams().ipoId as any;
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [currentStep, setCurrentStep] = useState<number>(StepsEnum.Planned);
     const [activeTab, setActiveTab] = useState(0);
@@ -81,7 +81,7 @@ const ViewIPO = (): JSX.Element => {
         useState<boolean>(false);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const { permissions } = useCurrentPlant();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const moduleContainerRef = useRef<HTMLDivElement>(null);
 
@@ -166,16 +166,21 @@ const ViewIPO = (): JSX.Element => {
     const getInvitation = async (
         requestCanceller?: (cancelCallback: Canceler) => void
     ): Promise<void> => {
+
+        console.log('lalalalallalalalalalala',ipoId)
         try {
             const response = await apiClient.getIPO(
-                params.ipoId,
+                ipoId,
                 requestCanceller
             );
+            console.log('bebebebebebebebeb',ipoId)
             setInvitation(response);
         } catch (error) {
             if (!(error instanceof IpoApiError)) return;
             console.error(error.message, error.data);
             showSnackbarNotification(error.message);
+            console.log('kakakakakak',error.message)
+
         }
     };
 
@@ -184,7 +189,7 @@ const ViewIPO = (): JSX.Element => {
     ): Promise<void> => {
         try {
             const response = await apiClient.getComments(
-                params.ipoId,
+                ipoId,
                 requestCanceller
             );
             setComments(response);
@@ -212,7 +217,7 @@ const ViewIPO = (): JSX.Element => {
     const addComment = async (comment: string): Promise<void> => {
         setLoadingComments(true);
         try {
-            await apiClient.addComment(params.ipoId, comment);
+            await apiClient.addComment(ipoId, comment);
             invitation &&
                 analytics.trackUserAction(IpoCustomEvents.COMMENT_ADDED, {
                     project: invitation.projectName,
@@ -258,7 +263,7 @@ const ViewIPO = (): JSX.Element => {
         attendedStatus: AttendedStatusDto
     ): Promise<any> => {
         try {
-            await apiClient.updateAttendedStatus(params.ipoId, attendedStatus);
+            await apiClient.updateAttendedStatus(ipoId, attendedStatus);
             invitation &&
                 analytics.trackUserAction(
                     IpoCustomEvents.UPDATED_ATTENDED_STATUS,
@@ -275,7 +280,7 @@ const ViewIPO = (): JSX.Element => {
 
     const updateNotes = async (attendedNotes: NotesDto): Promise<any> => {
         try {
-            await apiClient.updateNotes(params.ipoId, attendedNotes);
+            await apiClient.updateNotes(ipoId, attendedNotes);
             invitation &&
                 analytics.trackUserAction(
                     IpoCustomEvents.UPDATED_ATTENDED_NOTES,
@@ -300,7 +305,7 @@ const ViewIPO = (): JSX.Element => {
         if (!signer || !invitation) return;
 
         try {
-            await apiClient.completePunchOut(params.ipoId, {
+            await apiClient.completePunchOut(ipoId, {
                 invitationRowVersion: invitation.rowVersion,
                 participantRowVersion: participant.rowVersion,
             });
@@ -330,7 +335,7 @@ const ViewIPO = (): JSX.Element => {
 
         try {
             await apiClient.uncompletePunchOut(
-                params.ipoId,
+                ipoId,
                 invitation.rowVersion,
                 participant.rowVersion
             );
@@ -361,7 +366,7 @@ const ViewIPO = (): JSX.Element => {
             participantRowVersion: participant.rowVersion,
         };
         try {
-            await apiClient.acceptPunchOut(params.ipoId, acceptDetails);
+            await apiClient.acceptPunchOut(ipoId, acceptDetails);
             analytics.trackUserAction(IpoCustomEvents.ACCEPTED, {
                 project: invitation.projectName,
                 type: invitation.type,
@@ -386,7 +391,7 @@ const ViewIPO = (): JSX.Element => {
 
         try {
             await apiClient.unacceptPunchOut(
-                params.ipoId,
+                ipoId,
                 invitation.rowVersion,
                 participant.rowVersion
             );
@@ -418,7 +423,7 @@ const ViewIPO = (): JSX.Element => {
         };
 
         try {
-            await apiClient.signPunchOut(params.ipoId, signDetails);
+            await apiClient.signPunchOut(ipoId, signDetails);
             analytics.trackUserAction(IpoCustomEvents.SIGNED, {
                 project: invitation.projectName,
                 type: invitation.type,
@@ -443,7 +448,7 @@ const ViewIPO = (): JSX.Element => {
 
         try {
             await apiClient.unsignPunchOut(
-                params.ipoId,
+                ipoId,
                 participant.id,
                 participant.rowVersion
             );
@@ -464,7 +469,7 @@ const ViewIPO = (): JSX.Element => {
         if (invitation) {
             try {
                 await apiClient.cancelPunchOut(
-                    params.ipoId,
+                    ipoId,
                     invitation.rowVersion
                 );
                 analytics.trackUserAction(IpoCustomEvents.CANCELED, {
@@ -487,7 +492,7 @@ const ViewIPO = (): JSX.Element => {
         if (invitation) {
             try {
                 await apiClient.deletePunchOut(
-                    params.ipoId,
+                    ipoId,
                     invitation.rowVersion
                 );
                 analytics.trackUserAction(IpoCustomEvents.DELETED, {
@@ -497,7 +502,7 @@ const ViewIPO = (): JSX.Element => {
                 showSnackbarNotification(
                     'Invitation for punch-out is deleted.'
                 );
-                history.push('/');
+                navigate('/');
             } catch (error) {
                 if (!(error instanceof IpoApiError)) return;
                 console.error(error.message, error.data);
@@ -505,7 +510,7 @@ const ViewIPO = (): JSX.Element => {
             }
         }
     };
-
+console.log(111111,'invitation: ',{invitation,ipoId})
     return (
         <Container ref={moduleContainerRef}>
             {loading ? (
@@ -515,7 +520,7 @@ const ViewIPO = (): JSX.Element => {
             ) : invitation ? (
                 <InvitationContainer>
                     <ViewIPOHeader
-                        ipoId={params.ipoId}
+                        ipoId={ipoId}
                         steps={steps}
                         isCancelled={
                             invitation.status === IpoStatusEnum.CANCELED
@@ -599,10 +604,10 @@ const ViewIPO = (): JSX.Element => {
                                             />
                                         </Tabs.Panel>
                                         <Tabs.Panel>
-                                            <Attachments ipoId={params.ipoId} />
+                                            <Attachments ipoId={ipoId} />
                                         </Tabs.Panel>
                                         <Tabs.Panel>
-                                            <History ipoId={params.ipoId} />
+                                            <History ipoId={ipoId} />
                                         </Tabs.Panel>
                                     </Tabs.Panels>
                                 </TabStyle>

@@ -1,5 +1,5 @@
 import { SubNav } from './style';
-import { NavLink, useParams } from 'react-router-dom';
+import { Link, NavLink, useParams } from 'react-router-dom';
 import React from 'react';
 
 type ModuleTabsProps = {
@@ -9,30 +9,32 @@ type ModuleTabsProps = {
 const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     const params = useParams<any>();
 
+    console.log(222, params)
+
     return (
         <SubNav>
-            <a href={`/${params.plant}/Completion`}>Completion</a>
+            <a href='Completion'>Completion</a>
             <span onClick={props.onClick}>
                 <NavLink
-                    activeClassName={'active'}
-                    to={`/${params.plant}/Preservation`}
+                   className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}
+                    to='Preservation'
                 >
                     Preservation
                 </NavLink>
             </span>
-            <a href={`/${params.plant}/WorkOrders`}>Work Orders</a>
-            <a href={`/${params.plant}/SWAP`}>Software Change Record</a>
-            <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>
+            <a href='WorkOrders'>Work Orders</a>
+            <a href='SWAP'>Software Change Record</a>
+            <a href={`PurchaseOrders#'Projectslist`}>
                 Purchase Orders
             </a>
-            <a href={`/${params.plant}/Documents`}>Document</a>
-            <a href={`/${params.plant}/Notification`}>Notification</a>
-            <a href={`/${params.plant}/Hookup`}>Hookup</a>
+            <a href='Documents'>Document</a>
+            <a href='Notification'>Notification</a>
+            <a href='Hookup'>Hookup</a>
             {__DEV__ && (
                 <span onClick={props.onClick}>
                     <NavLink
-                        activeClassName={'active'}
-                        to={`/${params.plant}/libraryv2`}
+                        className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}
+                        to='libraryv2'
                     >
                         Plant Configuration
                     </NavLink>
@@ -40,7 +42,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             )}
             {!__DEV__ && (
                 <span onClick={props.onClick}>
-                    <a href={`/${params.plant}/PlantConfig`}>
+                    <a href='PlantConfig'>
                         Plant Configuration
                     </a>
                 </span>

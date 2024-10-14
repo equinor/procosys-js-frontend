@@ -122,12 +122,11 @@ const initialParticipants: Participant[] = [
 
 const CreateIPO = (): JSX.Element => {
     const user = useCurrentUser();
-    const params = useParams<{
-        ipoId: any;
-        projectName: any;
-        commPkgNo: any;
-    }>();
-
+    const ipoId = useParams().ipoId as any;
+    const projectName = useParams().projectName as any;
+    const commPkgNo = useParams().commPkgNo as any;
+  
+console.log(3333333,'CreateIPO', {ipoId,projectName,commPkgNo})
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },
         { title: 'Scope', isCompleted: false },
@@ -138,7 +137,7 @@ const CreateIPO = (): JSX.Element => {
 
     const initialGeneralInfo = {
         ...emptyGeneralInfo,
-        projectName: params.projectName ? params.projectName : '',
+        projectName: projectName ? projectName : '',
     };
     const [generalInfo, setGeneralInfo] =
         useState<GeneralInfoDetails>(initialGeneralInfo);
@@ -162,10 +161,10 @@ const CreateIPO = (): JSX.Element => {
     const { history } = useRouter();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [projectNameFromMain] = useState<string | null>(
-        params.projectName ? decodeURIComponent(params.projectName) : null
+        projectName ? decodeURIComponent(projectName) : null
     );
     const [commPkgNoFromMain] = useState<string | null>(
-        params.commPkgNo ? decodeURIComponent(params.commPkgNo) : null
+        commPkgNo ? decodeURIComponent(commPkgNo) : null
     );
 
     const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } =
@@ -376,7 +375,7 @@ const CreateIPO = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (params.projectName && params.commPkgNo) {
+        if (projectName && commPkgNo) {
             setFromMain(true);
             setGeneralInfo((gi) => {
                 return { ...gi, projectName: projectNameFromMain };

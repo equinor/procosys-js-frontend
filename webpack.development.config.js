@@ -66,6 +66,7 @@ module.exports = {
             '@procosys/assets': path.resolve(__dirname, 'src/assets/'),
             '@procosys/http': path.resolve(__dirname, 'src/http/'),
             '@procosys/util': path.resolve(__dirname, 'src/util/'),
+            'process/browser': require.resolve('process/browser'),
         }
     },
     output: {

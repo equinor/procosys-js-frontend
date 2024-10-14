@@ -1,4 +1,4 @@
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import NoPlant from '../modules/NoPlant';
 import ProcosysRouter from './ProcosysRouter';
@@ -15,11 +15,11 @@ const Page404: React.FC = (): JSX.Element => {
 const GeneralRouter = (): JSX.Element => {
     return (
         <Router>
-            <Switch>
-                <Route path="/" exact component={NoPlant} />
-                <Route path="/:plant" component={ProcosysRouter} />
-                <Route component={Page404} />
-            </Switch>
+            <Routes>
+                <Route path="/" element={<NoPlant />} />
+                <Route path="/:plant/*" element={<ProcosysRouter />} />
+                <Route path="*" element={<Page404 />} />
+            </Routes>
         </Router>
     );
 };

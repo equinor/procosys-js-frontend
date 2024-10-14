@@ -11,7 +11,7 @@ import {
     ShowOnMobile,
     StyledSearch,
 } from './style';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
@@ -66,11 +66,13 @@ const Header: React.FC = (): JSX.Element => {
     const [quickSearchLeftPos, setQuickSearchLeftPos] = useState<number>(0);
     const [currentHit, setCurrentHit] = useState<number>(-1);
     const KEYCODE_ENTER = 13;
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map((plant) => ({
             text: plant.title,
-            value: plant.id,
+            value: plant.id.replace('PCS$', '')
         }));
     });
 
@@ -139,8 +141,6 @@ const Header: React.FC = (): JSX.Element => {
         setIsOpen(false);
     }, containerRef);
 
-    const history = useHistory();
-
     const { apiClient } = useQuickSearchContext();
 
     const [filteredPlants, setFilteredPlants] =
@@ -151,6 +151,11 @@ const Header: React.FC = (): JSX.Element => {
         setCurrentPlant(filteredPlants[plantIndex].value as string);
         setSearchValue('');
         setSearchResult(undefined);
+
+        const currentPath = location.pathname.split('/');
+        currentPath[1] = filteredPlants[plantIndex].value;
+        const newPath = currentPath.join('/');
+        navigate(newPath);
     };
 
     const cancelerRef = useRef<Canceler | null>();
@@ -241,7 +246,7 @@ const Header: React.FC = (): JSX.Element => {
 
     const goToFilteredQuicksearch = (filterType: string): void => {
         setCurrentHit(0);
-        history.push(
+        navigate(
             '/' +
                 plant.pathId +
                 '/quicksearch?query=' +
@@ -255,7 +260,7 @@ const Header: React.FC = (): JSX.Element => {
     };
 
     const goToQuicksearch = (): void => {
-        history.push('/' + plant.pathId + '/quicksearch?query=' + searchValue);
+        navigate('/' + plant.pathId + '/quicksearch?query=' + searchValue);
         setIsOpen(false);
         setSearchValue('');
         setSearchResult(undefined);

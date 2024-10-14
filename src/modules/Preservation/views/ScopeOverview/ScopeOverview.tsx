@@ -12,7 +12,7 @@ import {
     StyledButton,
     TooltipText,
 } from './ScopeOverview.style';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
     PreservedTag,
     PreservedTags,
@@ -152,7 +152,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [showEditRequirementsDialog, setShowEditRequirementsDialog] =
         useState<boolean>(false);
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const analytics = useAnalytics();
     const { plant } = useCurrentPlant();
@@ -951,7 +951,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         }
         // clear parameters in browser url
-        history.replace('/');
+        navigate('/');
     }, [location]);
 
     const navigateToOldPreservation = (): void => {

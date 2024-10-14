@@ -1,10 +1,5 @@
-import React, { ReactElement } from 'react';
-import {
-    Route,
-    BrowserRouter as Router,
-    Switch,
-    useRouteMatch,
-} from 'react-router-dom';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 import AddScope from './views/AddScope/AddScope';
 import ClosedProjectWarning from './ClosedProjectWarning';
@@ -15,47 +10,39 @@ import ScopeOverview from './views/ScopeOverview/ScopeOverview';
 import withAccessControl from '../../core/security/withAccessControl';
 
 const Preservation = (): JSX.Element => {
-    const { url } = useRouteMatch();
 
     return (
         <>
             <Helmet titleTemplate={'ProCoSys - Preservation %s'}></Helmet>
             <PreservationContextProvider>
                 <ClosedProjectWarning />
-                <Router basename={url}>
-                    <Switch>
-                        <Route
-                            path={'/AddScope/:method/:duplicateTagId?'}
-                            exact
-                            component={(): ReactElement => (
-                                <>
-                                    <Helmet>
-                                        <title>{'- AddScope'}</title>
-                                    </Helmet>
-                                    <ErrorBoundary>
-                                        <AddScope />
-                                    </ErrorBoundary>
-                                </>
-                            )}
-                        />
-                        <Route
-                            path={'/'}
-                            exact
-                            component={(): ReactElement => (
-                                <>
-                                    <ErrorBoundary>
-                                        <ScopeOverview />
-                                    </ErrorBoundary>
-                                </>
-                            )}
-                        />
-                        <Route
-                            component={(): JSX.Element => (
-                                <h2>Sorry, this page does not exist</h2>
-                            )}
-                        />
-                    </Switch>
-                </Router>
+                <Routes>
+                    <Route
+                        path="/AddScope/:method/:duplicateTagId?"
+                        element={
+                            <>
+                                <Helmet>
+                                    <title>{'- AddScope'}</title>
+                                </Helmet>
+                                <ErrorBoundary>
+                                    <AddScope />
+                                </ErrorBoundary>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/"
+                        element={
+                            <ErrorBoundary>
+                                <ScopeOverview />
+                            </ErrorBoundary>
+                        }
+                    />
+                    <Route
+                        path="*"
+                        element={<h2>Sorry, this page does not exist</h2>}
+                    />
+                </Routes>
             </PreservationContextProvider>
         </>
     );

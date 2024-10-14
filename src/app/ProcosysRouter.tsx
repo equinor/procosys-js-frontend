@@ -1,9 +1,8 @@
 import {
     Route,
-    RouteComponentProps,
-    Switch,
+    Routes,
+    useLocation,
     useParams,
-    useRouteMatch,
 } from 'react-router-dom';
 
 import { AnalyticsContextProvider } from '@procosys/core/services/Analytics/AnalyticsContext';
@@ -29,7 +28,7 @@ const Page404 = (): JSX.Element => {
 };
 
 const ProcosysRouter = (): JSX.Element => {
-    const { path } = useRouteMatch();
+    const { pathname } = useLocation();
     const { plant } = useParams() as any;
 
     return (
@@ -40,54 +39,51 @@ const ProcosysRouter = (): JSX.Element => {
                         <QuickSearchContextProvider>
                             <Header />
                             <div id="root-content">
-                                <Switch key={plant}>
+                                <Routes key={plant}>
                                     <Route
-                                        path={path}
-                                        exact
-                                        component={(
-                                            routeProps: RouteComponentProps
-                                        ): JSX.Element =>
-                                            LazyRoute(UserGreeting, routeProps)
+                                        path={'/'}
+                                        element={
+                                            <ErrorBoundary>
+                                                {LazyRoute(UserGreeting)}
+                                            </ErrorBoundary>
                                         }
                                     />
                                     <Route
-                                        path={`${path}/preservation`}
-                                        component={(
-                                            routeProps: RouteComponentProps
-                                        ): JSX.Element =>
-                                            LazyRoute(Preservation, routeProps)
+                                        path='preservation/*'
+                                        element={
+                                            <ErrorBoundary>
+                                                {LazyRoute(Preservation)}
+                                            </ErrorBoundary>
                                         }
                                     />
                                     <Route
-                                        path={`${path}/libraryv2`}
-                                        component={(
-                                            routeProps: RouteComponentProps
-                                        ): JSX.Element =>
-                                            LazyRoute(PlantConfig, routeProps)
+                                        path='libraryv2/*'
+                                        element={
+                                            <ErrorBoundary>
+                                                {LazyRoute(PlantConfig)}
+                                            </ErrorBoundary>
                                         }
                                     />
                                     <Route
-                                        path={`${path}/invitationforpunchout`}
-                                        component={(
-                                            routeProps: RouteComponentProps
-                                        ): JSX.Element =>
-                                            LazyRoute(
-                                                InvitationForPunchOut,
-                                                routeProps
-                                            )
+                                        path='invitationforpunchout/*'
+                                        element={
+                                            <ErrorBoundary>
+                                                {LazyRoute(
+                                                    InvitationForPunchOut
+                                                )}
+                                            </ErrorBoundary>
                                         }
                                     />
-
                                     <Route
-                                        path={`${path}/quicksearch`}
-                                        component={(
-                                            routeProps: RouteComponentProps
-                                        ): JSX.Element =>
-                                            LazyRoute(QuickSearch, routeProps)
+                                      path='quicksearch' // not used for the moment
+                                        element={
+                                            <ErrorBoundary>
+                                                {LazyRoute(QuickSearch)}
+                                            </ErrorBoundary>
                                         }
                                     />
-                                    <Route component={Page404} />
-                                </Switch>
+                                    <Route path="*" element={<Page404 />} />
+                                </Routes>
                             </div>
                         </QuickSearchContextProvider>
                     </ProCoSysRootLayout>

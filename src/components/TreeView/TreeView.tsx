@@ -55,7 +55,7 @@ const TreeView = ({
         useState<(string | number)[]>();
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
-    const location = useLocation();
+    const { pathname } = useLocation();
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -281,7 +281,15 @@ const TreeView = ({
     };
 
     const getNodeLink = (node: NodeData): JSX.Element => {
-        const finalPath = constructPath(node, treeData);
+        const getBasePath = (pathname: string): string => {
+            const segments = pathname.split('/').filter(Boolean);
+            const basePath = `/${segments[0]}/${segments[1]}`;
+            return basePath;
+        };
+        const baseLibraryPath = getBasePath(pathname);
+
+        const parentPath = constructPath(node, treeData);
+        const finalPath = `${baseLibraryPath}/${parentPath}`;
 
         const linkContent = (
             <NodeName
@@ -310,7 +318,7 @@ const TreeView = ({
         if (node.onClick) {
             return (
                 <Link
-                    to={`/${finalPath}`}
+                    to={finalPath}
                     style={{ textDecoration: 'none', color: 'inherit' }}
                 >
                     {linkContent}
@@ -390,6 +398,8 @@ const TreeView = ({
                     setIsNodeExpanded,
                     checkMounted
                 );
+            } else {
+                console.log('Root node not found');
             }
         }
     };
@@ -448,11 +458,11 @@ const TreeView = ({
     useEffect(() => {
         let isMounted = true;
 
-        const pathname = location.pathname;
         const nodeNames = pathname
-            .split('/')
-            .filter((name) => name !== '')
-            .map(decodeURIComponent);
+        .split('/')
+        .filter((name) => name.trim() !== '')
+        .slice(2)
+        .map(decodeURIComponent);
 
         const checkMounted = () => isMounted;
 
@@ -472,7 +482,7 @@ const TreeView = ({
         return () => {
             isMounted = false;
         };
-    }, [location.pathname, treeData, isNodeExpanded]);
+    }, [pathname, treeData, isNodeExpanded]);
 
     return (
         <TreeContainer>{treeData.map((node) => getNode(node))}</TreeContainer>

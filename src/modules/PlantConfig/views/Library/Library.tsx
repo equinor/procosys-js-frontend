@@ -1,5 +1,5 @@
 import { Container, Divider, LibraryItemContainer } from './Library.style';
-import React, { ReactElement, useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 
 import { Helmet } from 'react-helmet';
 //import withAccessControl from '../../../../core/security/withAccessControl';
@@ -7,7 +7,7 @@ import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
 import { hot } from 'react-hot-loader';
 
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -59,15 +59,12 @@ const Library = (): JSX.Element => {
     const mapSegmentsToLibraryType = (segments: string[]): string => {
         const firstSegment = segments[0]?.toLowerCase().replace(/%20/g, ' ');
         switch (firstSegment) {
-            case 'tag functions': {
+            case 'tag functions':
                 return LibraryType.TAG_FUNCTION;
-            }
-            case 'modes': {
+            case 'modes':
                 return LibraryType.MODE;
-            }
-            case 'preservation journeys': {
+            case 'preservation journeys':
                 return LibraryType.PRES_JOURNEY;
-            }
             case 'preservation requirements': {
                 const isPresReqType = segments.some((segment) =>
                     segment.toLowerCase().startsWith('rt_')
@@ -93,9 +90,8 @@ const Library = (): JSX.Element => {
                     ? LibraryType.PRES_REQUIREMENT_DEFINITION
                     : LibraryType.PRES_REQUIREMENT_TYPE;
             }
-            default: {
+            default:
                 return LibraryType.NOT_SELECTED;
-            }
         }
     };
 
@@ -130,10 +126,10 @@ const Library = (): JSX.Element => {
             />
 
             <Divider />
-            <Switch>
+            <Routes>
                 <Route
-                    path={`/`}
-                    component={(): ReactElement => (
+                    path="/"
+                    element={
                         <LibraryItemContainer
                             addPaddingRight={
                                 selectedLibraryType !== LibraryType.TAG_FUNCTION
@@ -148,9 +144,9 @@ const Library = (): JSX.Element => {
                                 setDirtyLibraryType={setDirtyLibraryType}
                             />
                         </LibraryItemContainer>
-                    )}
+                    }
                 />
-            </Switch>
+            </Routes>
         </Container>
     );
 };

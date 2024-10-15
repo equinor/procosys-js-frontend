@@ -298,7 +298,7 @@ const ProcosysTable = forwardRef(
                 const currentPath = location.pathname;
                 const id = cell.row.original?.id;
 
-                if (id && cell.column.id !== 'selection') {
+                if (id && cell.column.id && currentPath.includes('InvitationForPunchOut')) {
                     navigate(`${currentPath}/${id}`, { replace: true });
                 }
             };

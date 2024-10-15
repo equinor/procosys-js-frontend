@@ -11,7 +11,7 @@ module.exports = {
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
                 use: [{
-                    loader: 'file-loader', 
+                    loader: 'file-loader',
                     options: {
                         name: '[name].[ext]',
                         outputPath: 'v2-assets/images/'
@@ -52,6 +52,12 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.m?js$/,
+                resolve: {
+                    fullySpecified: false,  // Allow incomplete module specifiers
+                },
             }
         ]
     },
@@ -66,6 +72,7 @@ module.exports = {
             '@procosys/assets': path.resolve(__dirname, 'src/assets/'),
             '@procosys/http': path.resolve(__dirname, 'src/http/'),
             '@procosys/util': path.resolve(__dirname, 'src/util/'),
+            'process/browser': require.resolve('process/browser'),  // Polyfill for process
         }
     },
     output: {

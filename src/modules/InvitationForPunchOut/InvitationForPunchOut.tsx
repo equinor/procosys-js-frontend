@@ -1,11 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-    Route,
-    BrowserRouter as Router,
-    Switch,
-    useRouteMatch,
-} from 'react-router-dom';
-
+import { Route, Routes, useLocation, useMatch, useParams } from 'react-router-dom';
 import { Container } from './style';
 import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 import EditIPO from './views/CreateAndEditIPO/EditIPO';
@@ -16,75 +10,85 @@ import ViewIPO from './views/ViewIPO/ViewIPO';
 import withAccessControl from '@procosys/core/security/withAccessControl';
 
 const InvitationForPunchOut = (): JSX.Element => {
-    const { url } = useRouteMatch();
+    const match = useMatch('/');
+    const { pathname } = useLocation();
+
+    const ala = useParams()
+
     return (
         <>
             <Helmet titleTemplate={'ProCoSys - IPO %s'}></Helmet>
             <InvitationForPunchOutContextProvider>
                 <Container>
-                    <Router basename={url}>
-                        <Switch>
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={
+                                <>
+                                    <Helmet>
+                                        <title>{'- Search'}</title>
+                                    </Helmet>
+                                    <SearchIPO />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/CreateIPO/:projectName/:commPkgNo"
+                            element={
+                                <>
+                                    <Helmet>
+                                        <title>{'- Create'}</title>
+                                    </Helmet>
+                                    <CreateIPO />
+                                </>
+                            }
+                        />
                             <Route
-                                path={'/'}
-                                exact
-                                component={(): ReactElement => (
-                                    <>
-                                        <Helmet>
-                                            <title>{'- Search'}</title>
-                                        </Helmet>
-                                        <SearchIPO />
-                                    </>
-                                )}
-                            />
-                            <Route
-                                path={'/CreateIPO/:projectName?/:commPkgNo?'}
-                                exact
-                                component={(): ReactElement => (
-                                    <>
-                                        <Helmet>
-                                            <title>{'- Create'}</title>
-                                        </Helmet>
-                                        <CreateIPO />
-                                    </>
-                                )}
-                            />
-                            <Route
-                                path={'/EditIPO/:ipoId'}
-                                exact
-                                component={(): ReactElement => (
-                                    <>
-                                        <Helmet>
-                                            <title>{'- Edit'}</title>
-                                        </Helmet>
-                                        <EditIPO />
-                                    </>
-                                )}
-                            />
+                            path="/CreateIPO"
+                            element={
+                                <>
+                                    <Helmet>
+                                        <title>{'- Create'}</title>
+                                    </Helmet>
+                                    <CreateIPO />
+                                </>
+                            }
+                        />
 
-                            <Route
-                                path={'/:ipoId'}
-                                exact
-                                component={(): ReactElement => (
-                                    <>
-                                        <Helmet>
-                                            <title>{'- View'}</title>
-                                        </Helmet>
-                                        <ViewIPO />
-                                    </>
-                                )}
-                            />
-                            <Route
-                                component={(): ReactElement => (
-                                    <>
-                                        <Helmet>
-                                            <title>{'- NotFound'}</title>
-                                        </Helmet>
-                                        <h2>Sorry, this page does not exist</h2>
-                                    </>
-                                )}
-                            />
-                        </Switch>
-                    </Router>
+                        <Route
+                            path="/EditIPO/:ipoId"
+                            element={
+                                <>
+                                    <Helmet>
+                                        <title>{'- Edit'}</title>
+                                    </Helmet>
+                                    <EditIPO />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/:ipoId"
+                            element={
+                                <>
+                                    <Helmet>
+                                        <title>{'- View'}</title>
+                                    </Helmet>
+                                    <ViewIPO />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="*"
+                            element={
+                                <>
+                                    <Helmet>
+                                        <title>{'- NotFound'}</title>
+                                    </Helmet>
+                                    <h2>Sorry, this page does not exist 111</h2>
+                                </>
+                            }
+                        />
+                    </Routes>
                 </Container>
             </InvitationForPunchOutContextProvider>
         </>

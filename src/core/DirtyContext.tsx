@@ -1,7 +1,7 @@
-import { Prompt, useLocation } from 'react-router-dom';
-import React, { useEffect, useMemo, useState } from 'react';
-
+import { useLocation, UNSAFE_NavigationContext } from 'react-router-dom';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import propTypes from 'prop-types';
+import { History } from 'history';
 
 export interface IDirtyContext {
     isDirty: boolean;
@@ -22,6 +22,11 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     const isDirty = useMemo<boolean>(() => {
         return dirtyList.size > 0;
     }, [dirtyList]);
+
+    const unblockRef = React.useRef<any>();
+
+    const { navigator } = useContext(UNSAFE_NavigationContext);
+    const history = navigator as History;
 
     function setDirtyStateFor(componentName: string): void {
         setDirtyList((oldDirtyList) => {
@@ -66,33 +71,38 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         e.returnValue = unsavedChangesConfirmationMessage;
     }
 
-    /** Handle dirty state when trying to navigate outside application */
+    /** Handle dirty state when trying to navigate outside the application */
     useEffect(() => {
         if (isDirty) {
             window.addEventListener('beforeunload', handleBeforeUnloadEvent);
+
+            unblockRef.current = history.block((tx) => {
+                if (window.confirm(unsavedChangesConfirmationMessage)) {
+                    unblockRef.current();
+                    tx.retry();
+                }
+            });
+
             return (): void => {
                 window.removeEventListener(
                     'beforeunload',
                     handleBeforeUnloadEvent
                 );
+                if (unblockRef.current) unblockRef.current();
             };
         }
-    }, [isDirty]);
+    }, [isDirty, history]);
 
     return (
         <DirtyContext.Provider
             value={{
-                setDirtyStateFor: setDirtyStateFor,
+                setDirtyStateFor,
                 unsetDirtyStateFor,
                 unsetDirtyStateForMany,
                 clearDirtyState,
                 isDirty,
             }}
         >
-            <Prompt
-                message={unsavedChangesConfirmationMessage}
-                when={isDirty}
-            />
             {children}
         </DirtyContext.Provider>
     );

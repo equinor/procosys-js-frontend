@@ -16,7 +16,7 @@ import {
     SelectedTags,
 } from './AddScope.style';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Canceler } from 'axios';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
@@ -44,7 +44,7 @@ const AddScope = (): JSX.Element => {
     const { apiClient, project, purchaseOrderNumber } =
         usePreservationContext();
     const { procosysApiClient } = useProcosysContext();
-    const history = useHistory();
+    const navigate = useNavigate();
     const { method, duplicateTagId } = useParams() as any;
 
     const addScopeMethod = useMemo((): AddScopeMethod => {
@@ -287,7 +287,7 @@ const AddScope = (): JSX.Element => {
                     'Tag is successfully added to scope',
                     5000
                 );
-                history.push('/');
+                navigate('/');
             } else {
                 if (stepId && requirements) {
                     switch (addScopeMethod) {
@@ -340,7 +340,7 @@ const AddScope = (): JSX.Element => {
                         `${listOfTagNo.length} tag(s) successfully added to scope`,
                         5000
                     );
-                    history.push('/');
+                    navigate('/');
                 } else {
                     showSnackbarNotification(
                         'Error occured. Step or requirement is missing.',

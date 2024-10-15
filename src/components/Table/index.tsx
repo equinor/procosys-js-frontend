@@ -43,6 +43,8 @@ import Spinner from '../Spinner';
 import { TablePagination } from './TablePagination';
 import { Typography } from '@equinor/eds-core-react';
 import { TableSortLabel } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 export interface DataQuery {
     pageSize: number;
@@ -158,6 +160,8 @@ const ProcosysTable = forwardRef(
         const [counter, _setCounter] = useState<number>(1);
         const [rendered, setRendered] = useState<boolean>(false);
         const counterRef = useRef<number>(counter);
+        const navigate = useNavigate();
+        const location = useLocation();
 
         const setCounter = (newValue: number): void => {
             rowHeights.current = {};
@@ -291,7 +295,12 @@ const ProcosysTable = forwardRef(
 
         const cellClickHandler =
             (cell: Cell<Record<string, unknown>>) => (): void => {
-                onClick && cell.column.id !== 'selection' && onClick(cell.row);
+                const currentPath = location.pathname;
+                const id = cell.row.original?.id;
+
+                if (id && cell.column.id !== 'selection') {
+                    navigate(`${currentPath}/${id}`, { replace: true });
+                }
             };
 
         const RenderRow = ({

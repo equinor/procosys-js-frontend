@@ -11,7 +11,7 @@ module.exports = {
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
                 use: [{
-                    loader: 'file-loader', 
+                    loader: 'file-loader',
                     options: {
                         name: '[name].[ext]',
                         outputPath: 'v2-assets/images/'
@@ -52,6 +52,12 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.m?js$/,
+                resolve: {
+                    fullySpecified: false,  // Allow incomplete module specifiers
+                },
             }
         ]
     },

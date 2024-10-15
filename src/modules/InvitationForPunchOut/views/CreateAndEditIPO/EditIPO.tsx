@@ -59,7 +59,7 @@ const EditIPO = (): JSX.Element => {
         { title: 'Summary & update', isCompleted: true },
     ];
 
-    const params = useParams<{ ipoId: any }>();
+    const ipoId = useParams().ipoId as any;
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [generalInfo, setGeneralInfo] =
         useState<GeneralInfoDetails>(emptyGeneralInfo);
@@ -190,7 +190,7 @@ const EditIPO = (): JSX.Element => {
                 handleApiError(error);
             }
         },
-        [params.ipoId]
+        [ipoId]
     );
 
     const getCommPkgScope = (): string[] => {
@@ -307,7 +307,7 @@ const EditIPO = (): JSX.Element => {
     ): Promise<void> => {
         try {
             const response = await apiClient.getAttachments(
-                params.ipoId,
+                ipoId,
                 requestCanceller
             );
             setAttachments(response);
@@ -344,12 +344,12 @@ const EditIPO = (): JSX.Element => {
 
                 if (invitation?.status != IpoStatusEnum.PLANNED) {
                     await apiClient.updateIpoParticipants(
-                        params.ipoId,
+                        ipoId,
                         ipoParticipants
                     );
                 } else {
                     await apiClient.updateIpo(
-                        params.ipoId,
+                        ipoId,
                         generalInfo.title,
                         generalInfo.poType.value,
                         startTime,
@@ -369,7 +369,7 @@ const EditIPO = (): JSX.Element => {
                     type: generalInfo.poType.value,
                 });
 
-                await uploadOrRemoveAttachments(params.ipoId);
+                await uploadOrRemoveAttachments(ipoId);
 
                 unsetDirtyStateForMany([
                     ComponentName.GeneralInfo,
@@ -377,7 +377,7 @@ const EditIPO = (): JSX.Element => {
                     ComponentName.Participants,
                     ComponentName.Attachments,
                 ]);
-                history.push('/' + params.ipoId);
+                history.push('/' + ipoId);
             } catch (error) {
                 handleApiError(error, 'Save updated IPO failed: ');
             }
@@ -391,7 +391,7 @@ const EditIPO = (): JSX.Element => {
         ): Promise<void> => {
             try {
                 const response = await apiClient.getIPO(
-                    params.ipoId,
+                    ipoId,
                     requestCanceller
                 );
                 setInvitation(response);
@@ -399,7 +399,7 @@ const EditIPO = (): JSX.Element => {
                 handleApiError(error);
             }
         },
-        [params.ipoId]
+        [ipoId]
     );
 
     /**
@@ -561,7 +561,7 @@ const EditIPO = (): JSX.Element => {
      * For edit, fetch data for existing ipo
      */
     useEffect(() => {
-        if (params.ipoId && availableRoles) {
+        if (ipoId && availableRoles) {
             let requestCancellor: Canceler | null = null;
             (async (): Promise<void> => {
                 setIsLoading(true);
@@ -580,7 +580,7 @@ const EditIPO = (): JSX.Element => {
                 requestCancellor && requestCancellor();
             };
         }
-    }, [params.ipoId]);
+    }, [ipoId]);
 
     if (isSaving) {
         return (
@@ -618,7 +618,7 @@ const EditIPO = (): JSX.Element => {
             confirmationChecked={confirmationChecked}
             setConfirmationChecked={setConfirmationChecked}
             isEditMode={true}
-            ipoId={params.ipoId}
+            ipoId={ipoId}
             status={invitation?.status}
         />
     );

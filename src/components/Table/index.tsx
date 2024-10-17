@@ -45,7 +45,6 @@ import { Typography } from '@equinor/eds-core-react';
 import { TableSortLabel } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-
 export interface DataQuery {
     pageSize: number;
     pageIndex: number;
@@ -294,12 +293,22 @@ const ProcosysTable = forwardRef(
         }, [pageSize]);
 
         const cellClickHandler =
-            (cell: Cell<Record<string, unknown>>) => (): void => {
+            (cell: Cell<Record<string, unknown>>) =>
+            (event: React.MouseEvent): void => {
+                event.stopPropagation();
                 const currentPath = location.pathname;
                 const id = cell.row.original?.id;
 
-                if (id && cell.column.id && currentPath.includes('InvitationForPunchOut')) {
-                    navigate(`${currentPath}/${id}`, { replace: true });
+                if (
+                    id &&
+                    cell.column.id &&
+                    event.target instanceof HTMLElement &&
+                    event.target.tagName.toLowerCase() === 'a' &&
+                    currentPath.includes('InvitationForPunchOut')
+                ) {
+                    navigate(`${id}`, { replace: true });
+                } else if (id) {
+                    navigate(`${id}`);
                 }
             };
 

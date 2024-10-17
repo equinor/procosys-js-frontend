@@ -1,5 +1,12 @@
 import React, { ReactElement } from 'react';
-import { Route, Routes, useLocation, useMatch, useParams } from 'react-router-dom';
+import {
+    Outlet,
+    Route,
+    Routes,
+    useLocation,
+    useMatch,
+    useParams,
+} from 'react-router-dom';
 import { Container } from './style';
 import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 import EditIPO from './views/CreateAndEditIPO/EditIPO';
@@ -10,10 +17,14 @@ import ViewIPO from './views/ViewIPO/ViewIPO';
 import withAccessControl from '@procosys/core/security/withAccessControl';
 
 const InvitationForPunchOut = (): JSX.Element => {
-    const match = useMatch('/');
-    const { pathname } = useLocation();
-
-    const ala = useParams()
+    const CreateIPOLayout = () => (
+        <>
+            <Helmet>
+                <title>{'- Create'}</title>
+            </Helmet>
+            <CreateIPO />
+        </>
+    );
 
     return (
         <>
@@ -32,31 +43,22 @@ const InvitationForPunchOut = (): JSX.Element => {
                                 </>
                             }
                         />
-                        <Route
-                            path="/CreateIPO/:projectName/:commPkgNo"
-                            element={
-                                <>
-                                    <Helmet>
-                                        <title>{'- Create'}</title>
-                                    </Helmet>
-                                    <CreateIPO />
-                                </>
-                            }
-                        />
+
+                        <Route path="/CreateIPO" element={<CreateIPOLayout />}>
+                            <Route path="" element={<CreateIPO />} />
                             <Route
-                            path="/CreateIPO"
-                            element={
-                                <>
-                                    <Helmet>
-                                        <title>{'- Create'}</title>
-                                    </Helmet>
-                                    <CreateIPO />
-                                </>
-                            }
-                        />
+                                path="All%20projects"
+                                element={<CreateIPO />}
+                            />
+
+                            <Route
+                                path=":projectName/:commPkgNo"
+                                element={<CreateIPO />}
+                            />
+                        </Route>
 
                         <Route
-                            path="/EditIPO/:ipoId"
+                            path={`EditIPO/:ipoId`}
                             element={
                                 <>
                                     <Helmet>
@@ -67,7 +69,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                             }
                         />
                         <Route
-                            path="/:ipoId"
+                            path=":ipoId"
                             element={
                                 <>
                                     <Helmet>

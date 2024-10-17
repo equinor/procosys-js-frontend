@@ -2,8 +2,9 @@
 FROM node:20.2.0 as build
 WORKDIR /app
 COPY . /app
-RUN yarn install
-RUN yarn build --mode=production
+RUN npm i -g pnpm@9.0.5
+RUN pnpm install
+RUN pnpm build --mode=production
 
 # production environment
 FROM nginx:1.25.0-alpine

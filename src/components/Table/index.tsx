@@ -1,6 +1,7 @@
 import {
     Cell,
     CellProps,
+    Column,
     ColumnInstance,
     HeaderProps,
     Hooks,
@@ -200,7 +201,7 @@ const ProcosysTable = forwardRef(
             {
                 ...props,
                 manualPagination: props.clientPagination ? false : true,
-                defaultColumn,
+                defaultColumn: defaultColumn as unknown as Partial<Column<Record<string, unknown>>>,
                 manualSortBy: props.clientSorting ? false : true,
                 initialState: {
                     pageIndex: props.pageIndex,
@@ -547,7 +548,7 @@ const ProcosysTable = forwardRef(
                                                 >
                                                     <div>
                                                         {column.canSort &&
-                                                        column.defaultCanSort !==
+                                                            column.defaultCanSort !==
                                                             false ? (
                                                             <TableSortLabel
                                                                 active={
@@ -557,23 +558,23 @@ const ProcosysTable = forwardRef(
                                                                         ?.id !==
                                                                         undefined &&
                                                                         column.id ===
-                                                                            props.orderBy?.id.toString())
+                                                                        props.orderBy?.id.toString())
                                                                 }
                                                                 direction={
                                                                     props
                                                                         .orderBy
                                                                         ?.id !==
                                                                         undefined &&
-                                                                    column.id ===
+                                                                        column.id ===
                                                                         props.orderBy?.id.toString()
                                                                         ? props
-                                                                              .orderBy
-                                                                              ?.desc
+                                                                            .orderBy
+                                                                            ?.desc
                                                                             ? 'desc'
                                                                             : 'asc'
                                                                         : column.isSortedDesc
-                                                                          ? 'desc'
-                                                                          : 'asc'
+                                                                            ? 'desc'
+                                                                            : 'asc'
                                                                 }
                                                                 {...column.getSortByToggleProps()}
                                                             >

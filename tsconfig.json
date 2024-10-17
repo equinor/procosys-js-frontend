@@ -1,19 +1,24 @@
 {
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "useUnknownInCatchVariables": false,
+        "resolveJsonModule": true,
+        "module": "ESNext", // or ES2015/ES2020/ES2022
         "target": "ESNext",
+        "esModuleInterop": true,
+        "lib": ["esnext", "DOM", "DOM.Iterable"],
+        "allowSyntheticDefaultImports": true,
+        "useUnknownInCatchVariables": false,
+        "isolatedModules": true,
         "allowJs": true,
         /* Files in the directory specified using the "outDir" compiler option are excluded as
         *  long as "exclude" property is not specified.
         *  _Required_ when using allowJs
         */
+        "skipLibCheck": true,
         "outDir": "build/",
-        "module": "esnext",
         "moduleResolution": "node",
         "strict": true,
-        "jsx": "react",
+        "types": ["node", "jest", "@types/jest"],
+        "jsx": "react-jsx",
         "baseUrl": "./",
         "paths": {
             "@procosys/core/*": ["src/core/*"],
@@ -26,11 +31,14 @@
         }
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "./jest.setup.ts",
+        "./jest.config.ts"
     ],
     "exclude": [
         "node_modules",
         "public",
-        "build"
+        "build",
+        "**/*.test.tsx"
     ],
 }

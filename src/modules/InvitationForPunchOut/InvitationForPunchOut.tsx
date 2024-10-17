@@ -86,7 +86,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                                     <Helmet>
                                         <title>{'- NotFound'}</title>
                                     </Helmet>
-                                    <h2>Sorry, this page does not exist 111</h2>
+                                    <h2>Sorry, this page does not exist</h2>
                                 </>
                             }
                         />

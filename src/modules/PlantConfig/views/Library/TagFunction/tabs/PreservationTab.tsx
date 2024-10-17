@@ -282,4 +282,4 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
     );
 };
 
-export default hot(module)(PreservationTab);
+export default PreservationTab;

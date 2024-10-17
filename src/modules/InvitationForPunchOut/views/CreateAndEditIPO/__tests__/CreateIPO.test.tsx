@@ -4,12 +4,12 @@ import {
     waitFor,
     within,
     screen,
+    configure,
 } from '@testing-library/react';
 
 import CreateIPO from '../CreateIPO';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { configure } from '@testing-library/dom';
 import { renderWithLocalizationProvider } from '@procosys/modules/InvitationForPunchOut/helperFunctions/testingFunctions/renderWithLocalizationProvider';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests

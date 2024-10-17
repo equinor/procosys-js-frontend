@@ -5,7 +5,6 @@ import Error from './components/Error';
 import Helmet from 'react-helmet';
 import { Loading } from './components';
 import Login from './modules/Login';
-import React from 'react';
 import Root from './app/Root';
 import favicon from './assets/icons/ProCoSys_favicon16x16.png';
 import { render } from 'react-dom';

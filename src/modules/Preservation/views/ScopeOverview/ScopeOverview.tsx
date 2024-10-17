@@ -16,14 +16,12 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
     PreservedTag,
     PreservedTags,
-    Requirement,
     SavedTagListFilter,
     TagListFilter,
 } from './types';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
-import CacheService from '@procosys/core/services/CacheService';
 import { Canceler } from '@procosys/http/HttpClient';
 import CompleteDialog from './Dialogs/CompleteDialog';
 import Dropdown from '../../../../components/Dropdown';

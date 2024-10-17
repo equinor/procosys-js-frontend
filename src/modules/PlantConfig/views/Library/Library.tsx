@@ -151,4 +151,4 @@ const Library = (): JSX.Element => {
     );
 };
 
-export default hot(module)(Library);
+export default Library;

@@ -1,24 +1,25 @@
-const { defaults } = require('jest-config');
+import { JestConfigWithTsJest } from 'ts-jest';
 
-module.exports = {
+const config: JestConfigWithTsJest = {
+    preset: 'ts-jest',
     testEnvironment: "jsdom",
-    preset: 'ts-jest/presets/js-with-ts',
-    verbose: true,
-    globals: {
-        'ts-jest': {
-            babelConfig: true,
-        },
+    extensionsToTreatAsEsm: ['.ts'],
+    transform: {
+        // '^.+\\.[tj]sx?$' to process ts,js,tsx,jsx with `ts-jest`
+        // '^.+\\.m?[tj]sx?$' to process ts,js,tsx,jsx,mts,mjs,mtsx,mjsx with `ts-jest`
+        '^.+\\.tsx?$': [
+            'ts-jest',
+            {
+                useESM: true,
+            },
+        ],
     },
+    verbose: true,
     roots: ['<rootDir>/src'],
-    // transform: {
-    //     '^.+\\.jsx?$': 'babel-jest', // Adding this line solved the issue
-    //     '^.+\\.tsx?$': 'ts-jest',
-    // },
     transformIgnorePatterns: [
         '<rootDir>/node_modules/(?!(@equinor/eds-tokens|@equinor/eds-icons))',
     ],
     moduleDirectories: ['node_modules', '/src'],
-    moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
     moduleNameMapper: {
         '\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
             '<rootDir>/__mocks__/fileMock.js',
@@ -33,7 +34,7 @@ module.exports = {
         "^@procosys/util/(.*)$": ["<rootDir>/src/util/$1"],
     },
     testPathIgnorePatterns: ['/node_modules/', '/build/'],
-    setupFilesAfterEnv: ['./jest.setup.js'],
+    setupFilesAfterEnv: ['./jest.setup.ts'],
     collectCoverage: false,
     coverageReporters: ["json", "lcov", "text", "clover", "cobertura"],
     collectCoverageFrom: [
@@ -44,3 +45,5 @@ module.exports = {
     ],
     coverageDirectory: '.coverage'
 };
+
+export default config

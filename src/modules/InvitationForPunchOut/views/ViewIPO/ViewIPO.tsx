@@ -167,10 +167,7 @@ const ViewIPO = (): JSX.Element => {
         requestCanceller?: (cancelCallback: Canceler) => void
     ): Promise<void> => {
         try {
-            const response = await apiClient.getIPO(
-                ipoId,
-                requestCanceller
-            );
+            const response = await apiClient.getIPO(ipoId, requestCanceller);
             setInvitation(response);
         } catch (error) {
             if (!(error instanceof IpoApiError)) return;
@@ -294,8 +291,8 @@ const ViewIPO = (): JSX.Element => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
-            ? participant.functionalRole
-            : undefined;
+              ? participant.functionalRole
+              : undefined;
 
         if (!signer || !invitation) return;
 
@@ -323,8 +320,8 @@ const ViewIPO = (): JSX.Element => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
-            ? participant.functionalRole
-            : undefined;
+              ? participant.functionalRole
+              : undefined;
 
         if (!signer || !invitation) return;
 
@@ -351,8 +348,8 @@ const ViewIPO = (): JSX.Element => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
-            ? participant.functionalRole
-            : undefined;
+              ? participant.functionalRole
+              : undefined;
 
         if (!signer || !invitation) return;
 
@@ -379,8 +376,8 @@ const ViewIPO = (): JSX.Element => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
-            ? participant.functionalRole
-            : undefined;
+              ? participant.functionalRole
+              : undefined;
 
         if (!signer || !invitation) return;
 
@@ -407,8 +404,8 @@ const ViewIPO = (): JSX.Element => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
-            ? participant.functionalRole
-            : undefined;
+              ? participant.functionalRole
+              : undefined;
 
         if (!signer || !invitation) return;
 
@@ -436,8 +433,8 @@ const ViewIPO = (): JSX.Element => {
         const signer = participant.person
             ? participant.person
             : participant.functionalRole
-            ? participant.functionalRole
-            : undefined;
+              ? participant.functionalRole
+              : undefined;
 
         if (!signer || !invitation) return;
 
@@ -463,10 +460,7 @@ const ViewIPO = (): JSX.Element => {
     const cancelPunchOut = async (): Promise<any> => {
         if (invitation) {
             try {
-                await apiClient.cancelPunchOut(
-                    ipoId,
-                    invitation.rowVersion
-                );
+                await apiClient.cancelPunchOut(ipoId, invitation.rowVersion);
                 analytics.trackUserAction(IpoCustomEvents.CANCELED, {
                     project: invitation.projectName,
                     type: invitation.type,
@@ -486,10 +480,7 @@ const ViewIPO = (): JSX.Element => {
     const deletePunchOut = async (): Promise<any> => {
         if (invitation) {
             try {
-                await apiClient.deletePunchOut(
-                    ipoId,
-                    invitation.rowVersion
-                );
+                await apiClient.deletePunchOut(ipoId, invitation.rowVersion);
                 analytics.trackUserAction(IpoCustomEvents.DELETED, {
                     project: invitation.projectName,
                     type: invitation.type,

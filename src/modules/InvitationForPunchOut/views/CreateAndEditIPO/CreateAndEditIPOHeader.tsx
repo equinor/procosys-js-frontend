@@ -7,7 +7,7 @@ import {
 } from './CreateAndEditIPOHeader.style';
 import React, { useEffect, useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
 import { StepsEnum } from './CreateAndEditIPO';
@@ -28,6 +28,8 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
     const [validNext, setValidNext] = useState<boolean>(
         props.steps[props.currentStep - 1].isCompleted
     );
+    const { pathname } = useLocation();
+    const newPathname = pathname.replace('/EditIPO', '');
 
     useEffect(() => {
         props.currentStep == StepsEnum.UploadAttachments
@@ -55,7 +57,7 @@ const CreateAndEditIPOHeader = (props: ProgressBarProps): JSX.Element => {
 
                 <ButtonContainer>
                     {props.ipoId && (
-                        <Link to={`/${props.ipoId}`}>
+                        <Link to={`${newPathname}`}>
                             <Button variant="outlined">Cancel</Button>
                         </Link>
                     )}

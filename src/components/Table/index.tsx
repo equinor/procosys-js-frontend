@@ -296,18 +296,23 @@ const ProcosysTable = forwardRef(
             (cell: Cell<Record<string, unknown>>) =>
             (event: React.MouseEvent): void => {
                 event.stopPropagation();
-                const currentPath = location.pathname;
-                const id = cell.row.original?.id;
 
-                if (
-                    id &&
-                    cell.column.id &&
-                    event.target instanceof HTMLElement &&
-                    event.target.tagName.toLowerCase() === 'a' &&
-                    currentPath.includes('InvitationForPunchOut')
-                ) {
+                const id = cell.row.original?.id as string | undefined;
+                const currentPath = location.pathname;
+                const isInvitationForPunchOut = currentPath.includes(
+                    'InvitationForPunchOut'
+                );
+
+                if (!id) return;
+
+                const isAnchorTag =
+                    (event.target as HTMLElement)?.tagName?.toLowerCase() ===
+                    'a';
+                if (isAnchorTag && cell.column.id && isInvitationForPunchOut) {
                     navigate(`${id}`, { replace: true });
-                } else if (id) {
+                    return;
+                }
+                if (isInvitationForPunchOut) {
                     navigate(`${id}`);
                 }
             };

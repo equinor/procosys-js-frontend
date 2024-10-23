@@ -1,12 +1,5 @@
-import React, { ReactElement } from 'react';
-import {
-    Outlet,
-    Route,
-    Routes,
-    useLocation,
-    useMatch,
-    useParams,
-} from 'react-router-dom';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 import { Container } from './style';
 import CreateIPO from './views/CreateAndEditIPO/CreateIPO';
 import EditIPO from './views/CreateAndEditIPO/EditIPO';
@@ -45,7 +38,7 @@ const InvitationForPunchOut = (): JSX.Element => {
                         />
 
                         <Route path="/CreateIPO" element={<CreateIPOLayout />}>
-                            <Route path="" element={<CreateIPO />} />
+                            <Route path="/CreateIPO" element={<CreateIPO />} />
                             <Route
                                 path="All%20projects"
                                 element={<CreateIPO />}

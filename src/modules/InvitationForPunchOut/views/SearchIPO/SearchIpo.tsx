@@ -316,7 +316,7 @@ const SearchIPO = (): JSX.Element => {
                 if (error.isCancel) {
                     console.log('Request was cancelled');
                 } else {
-                    // setDataLoading(false);
+                    setDataLoading(false);
                     console.error(
                         'Get IPOs failed: ',
                         error.message,

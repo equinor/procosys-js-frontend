@@ -1,7 +1,7 @@
 const { defaults } = require('jest-config');
 
 module.exports = {
-    testEnvironment: "jsdom",
+    testEnvironment: 'jsdom',
     preset: 'ts-jest/presets/js-with-ts',
     verbose: true,
     globals: {
@@ -24,23 +24,23 @@ module.exports = {
             '<rootDir>/__mocks__/fileMock.js',
         '\\.(css|less|scss)$': '<rootDir>/__mocks__/fileMock.js',
         '(.*)/settings.json$': '<rootDir>/__mocks__/settings.mock.json',
-        "^@procosys/core/(.*)$": ["<rootDir>/src/core/$1"],
-        "^@procosys/modules/(.*)$": ["<rootDir>/src/modules/$1"],
-        "^@procosys/hooks/(.*)$": ["<rootDir>/src/hooks/$1"],
-        "^@procosys/components/(.*)$": ["<rootDir>/src/components/$1"],
-        "^@procosys/assets/(.*)$": ["<rootDir>/src/assets/$1"],
-        "^@procosys/http/(.*)$": ["<rootDir>/src/http/$1"],
-        "^@procosys/util/(.*)$": ["<rootDir>/src/util/$1"],
+        '^@procosys/core/(.*)$': ['<rootDir>/src/core/$1'],
+        '^@procosys/modules/(.*)$': ['<rootDir>/src/modules/$1'],
+        '^@procosys/hooks/(.*)$': ['<rootDir>/src/hooks/$1'],
+        '^@procosys/components/(.*)$': ['<rootDir>/src/components/$1'],
+        '^@procosys/assets/(.*)$': ['<rootDir>/src/assets/$1'],
+        '^@procosys/http/(.*)$': ['<rootDir>/src/http/$1'],
+        '^@procosys/util/(.*)$': ['<rootDir>/src/util/$1'],
     },
     testPathIgnorePatterns: ['/node_modules/', '/build/'],
     setupFilesAfterEnv: ['./jest.setup.js'],
     collectCoverage: false,
-    coverageReporters: ["json", "lcov", "text", "clover", "cobertura"],
+    coverageReporters: ['json', 'lcov', 'text', 'clover', 'cobertura'],
     collectCoverageFrom: [
         '**/src/**/*.{ts,tsx,js,jsx}',
         '!**/src/**/style.{ts,tsx,js,jsx}',
         '!**/node_modules/**',
         '!**/build/**',
     ],
-    coverageDirectory: '.coverage'
+    coverageDirectory: '.coverage',
 };

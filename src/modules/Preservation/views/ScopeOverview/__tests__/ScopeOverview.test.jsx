@@ -1,8 +1,7 @@
 import React from 'react';
 import ScopeOverview from '../ScopeOverview';
 import { render, screen } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockTags = [
     {
@@ -85,11 +84,10 @@ jest.mock('@procosys/core/DirtyContext', () => ({
 
 describe('<ScopeOverview />', () => {
     it('Should display description column', async () => {
-        const history = createMemoryHistory();
         render(
-            <Router history={history}>
+            <MemoryRouter>
                 <ScopeOverview />
-            </Router>
+            </MemoryRouter>
         );
 
         let exists = false;

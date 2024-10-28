@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import RescheduleDialog from '../Dialogs/RescheduleDialog';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
@@ -49,11 +50,13 @@ jest.mock('@procosys/core/DirtyContext', () => ({
 describe('<RescheduleDialog />', () => {
     it('Should only display non-reschedulable tags when no reschedulable tags are selected', async () => {
         const { queryByText } = render(
-            <RescheduleDialog
-                tags={nonReschedulableTags}
-                open={true}
-                onClose={() => {}}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={nonReschedulableTags}
+                    open={true}
+                    onClose={() => {}}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('tagNo2')).toBeInTheDocument();
         expect(
@@ -64,11 +67,13 @@ describe('<RescheduleDialog />', () => {
 
     it('Should display all tags when transferable and nontransferable tags are selected', async () => {
         const { queryByText } = render(
-            <RescheduleDialog
-                tags={nonReschedulableTags.concat(reschedulableTags)}
-                open={true}
-                onClose={() => {}}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={nonReschedulableTags.concat(reschedulableTags)}
+                    open={true}
+                    onClose={() => {}}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('tagNo1')).toBeInTheDocument();
         expect(queryByText('tagNo2')).toBeInTheDocument();
@@ -80,11 +85,13 @@ describe('<RescheduleDialog />', () => {
 
     it('Should render only with reschedulable tag when no non reschedulable tags are selected', async () => {
         const { queryByText } = render(
-            <RescheduleDialog
-                tags={reschedulableTags}
-                open={true}
-                onClose={() => {}}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={reschedulableTags}
+                    open={true}
+                    onClose={() => {}}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('tagNo1')).toBeInTheDocument();
         expect(queryByText('1 tag(s) will be rescheduled')).toBeInTheDocument();
@@ -93,22 +100,26 @@ describe('<RescheduleDialog />', () => {
 
     it('Should render nothing if open is false', async () => {
         const { queryByText } = render(
-            <RescheduleDialog
-                tags={reschedulableTags}
-                open={false}
-                onClose={() => {}}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={reschedulableTags}
+                    open={false}
+                    onClose={() => {}}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('Reschedule preservation')).not.toBeInTheDocument();
     });
 
     it('Reschedule button is disabled if input is not given', async () => {
         const { getByText } = render(
-            <RescheduleDialog
-                tags={reschedulableTags}
-                open={true}
-                onClose={() => {}}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={reschedulableTags}
+                    open={true}
+                    onClose={() => {}}
+                />
+            </MemoryRouter>
         );
         expect(getByText('Reschedule').closest('button').disabled).toBeTruthy();
     });
@@ -116,11 +127,13 @@ describe('<RescheduleDialog />', () => {
     it('Should enable Reschedule button only if every field has a value and the time field has a valid value', async () => {
         const onCloseSpy = jest.fn();
         const { getByText, getByTitle, getByTestId } = render(
-            <RescheduleDialog
-                tags={reschedulableTags}
-                open={true}
-                onClose={onCloseSpy}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={reschedulableTags}
+                    open={true}
+                    onClose={onCloseSpy}
+                />
+            </MemoryRouter>
         );
 
         //Set time to a valid value
@@ -170,11 +183,13 @@ describe('<RescheduleDialog />', () => {
     it('Should call onClose function when the enabled Reschedule button is clicked', async () => {
         const onCloseSpy = jest.fn();
         const { getByText, getByTitle, getByTestId } = render(
-            <RescheduleDialog
-                tags={reschedulableTags}
-                open={true}
-                onClose={onCloseSpy}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={reschedulableTags}
+                    open={true}
+                    onClose={onCloseSpy}
+                />
+            </MemoryRouter>
         );
 
         //Set time to a valid value
@@ -204,11 +219,13 @@ describe('<RescheduleDialog />', () => {
     it('Cancel button will fire the onClose function', async () => {
         const onCloseSpy = jest.fn();
         const { getByText } = render(
-            <RescheduleDialog
-                tags={reschedulableTags}
-                open={true}
-                onClose={onCloseSpy}
-            />
+            <MemoryRouter>
+                <RescheduleDialog
+                    tags={reschedulableTags}
+                    open={true}
+                    onClose={onCloseSpy}
+                />
+            </MemoryRouter>
         );
         getByText('Cancel').closest('button').click();
         await waitFor(() => expect(onCloseSpy).toBeCalledTimes(1));

@@ -2,8 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 
 import React from 'react';
 import SearchIPO from '../SearchIpo';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockProject = [
     {
@@ -30,11 +29,10 @@ jest.mock('../../../context/InvitationForPunchOutContext', () => ({
 
 describe('<SearchIPO />', () => {
     it('Should render with header and empty table', async () => {
-        const history = createMemoryHistory();
         const { getByText } = render(
-            <Router history={history}>
+            <MemoryRouter>
                 <SearchIPO />
-            </Router>
+            </MemoryRouter>
         );
         await waitFor(() =>
             expect(getByText('Invitation for punch-out')).toBeInTheDocument()
@@ -49,11 +47,10 @@ describe('<SearchIPO />', () => {
     });
 
     it('Should render "New IPO" button with correct link', async () => {
-        const history = createMemoryHistory();
         const { getByText } = render(
-            <Router history={history}>
+            <MemoryRouter>
                 <SearchIPO />
-            </Router>
+            </MemoryRouter>
         );
         await waitFor(() => expect(getByText('New IPO')).toBeInTheDocument());
         await waitFor(() =>

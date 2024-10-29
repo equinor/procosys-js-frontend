@@ -1,5 +1,5 @@
 import { SubNav } from './style';
-import { Link, NavLink, useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import React from 'react';
 
 type ModuleTabsProps = {
@@ -11,28 +11,30 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
 
     return (
         <SubNav>
-            <a href='Completion'>Completion</a>
+            <a href="Completion">Completion</a>
             <span onClick={props.onClick}>
                 <NavLink
-                   className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}
-                    to='Preservation'
+                    className={({ isActive }: { isActive: boolean }) =>
+                        isActive ? 'active' : ''
+                    }
+                    to="Preservation"
                 >
                     Preservation
                 </NavLink>
             </span>
-            <a href='WorkOrders'>Work Orders</a>
-            <a href='SWAP'>Software Change Record</a>
-            <a href={`PurchaseOrders#'Projectslist`}>
-                Purchase Orders
-            </a>
-            <a href='Documents'>Document</a>
-            <a href='Notification'>Notification</a>
-            <a href='Hookup'>Hookup</a>
+            <a href="WorkOrders">Work Orders</a>
+            <a href="SWAP">Software Change Record</a>
+            <a href={`PurchaseOrders#'Projectslist`}>Purchase Orders</a>
+            <a href="Documents">Document</a>
+            <a href="Notification">Notification</a>
+            <a href="Hookup">Hookup</a>
             {__DEV__ && (
                 <span onClick={props.onClick}>
                     <NavLink
-                        className={({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '')}
-                        to='libraryv2'
+                        className={({ isActive }: { isActive: boolean }) =>
+                            isActive ? 'active' : ''
+                        }
+                        to="libraryv2"
                     >
                         Plant Configuration
                     </NavLink>
@@ -40,9 +42,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             )}
             {!__DEV__ && (
                 <span onClick={props.onClick}>
-                    <a href='PlantConfig'>
-                        Plant Configuration
-                    </a>
+                    <a href="PlantConfig">Plant Configuration</a>
                 </span>
             )}
         </SubNav>

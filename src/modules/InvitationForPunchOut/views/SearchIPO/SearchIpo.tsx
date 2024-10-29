@@ -313,9 +313,15 @@ const SearchIPO = (): JSX.Element => {
                         return response;
                     });
             } catch (error) {
-                console.error('Get IPOs failed: ', error.message, error.data);
-                // setDataLoading(false);
-                if (!error.isCancel) {
+                if (error.isCancel) {
+                    console.log('Request was cancelled');
+                } else {
+                    setDataLoading(false);
+                    console.error(
+                        'Get IPOs failed: ',
+                        error.message,
+                        error.data
+                    );
                     showSnackbarNotification(error.message);
                 }
             }
@@ -430,8 +436,8 @@ const SearchIPO = (): JSX.Element => {
                             <Link
                                 to={
                                     project
-                                        ? `/CreateIPO/${project.name}`
-                                        : '/CreateIPO'
+                                        ? `CreateIPO/${project.name}`
+                                        : 'CreateIPO'
                                 }
                             >
                                 <Button variant="ghost">

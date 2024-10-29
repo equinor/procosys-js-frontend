@@ -1,20 +1,14 @@
-import {
-    configure,
-    getByText,
-    render,
-    waitFor,
-    screen,
-} from '@testing-library/react';
+import { configure, render, waitFor, screen } from '@testing-library/react';
 
 import EditIPO from '../EditIPO';
 import { Invitation } from '../../ViewIPO/types';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import ViewIPOHeader from '../../ViewIPO/ViewIPOHeader';
 import { Step } from '@procosys/modules/InvitationForPunchOut/types';
 import { renderWithLocalizationProvider } from '@procosys/modules/InvitationForPunchOut/helperFunctions/testingFunctions/renderWithLocalizationProvider';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
+configure({ testIdAttribute: 'id' }); // makes id attribute data-testid for subsequent tests
 
 const initialSteps: Step[] = [
     { title: 'Invitation for punch-out sent', isCompleted: true },
@@ -64,7 +58,8 @@ const mockInvitation: Invitation = {
 };
 
 jest.mock('react-router-dom', () => ({
-    useParams: (): { ipoId: any; projectId: any; commPkgNo: any } => ({
+    ...jest.requireActual('react-router-dom'),
+    useParams: () => ({
         ipoId: 1,
         projectId: '1001',
         commPkgNo: '1',
@@ -76,52 +71,47 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@procosys/hooks/useRouter', () =>
     jest.fn(() => ({
-        history: (): any => ({
-            push: jest.fn((): void => {
-                return;
-            }),
-        }),
+        history: {
+            push: jest.fn(),
+        },
     }))
 );
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
-    useInvitationForPunchOutContext: (): any => {
-        return {
-            apiClient: {
-                getAllProjectsForUserAsync: (_: any): any => {
-                    return Promise.resolve([
-                        {
-                            id: 123,
-                            name: 'project.name',
-                            description: 'project.description',
-                        },
-                    ]);
-                },
-                getIPO: (): any => Promise.resolve(mockInvitation),
-                getAttachments: (): any => {
-                    return Promise.resolve([]);
-                },
-                getFunctionalRolesAsync: (): any => Promise.resolve(mockRoles),
-            },
-        };
-    },
+    useInvitationForPunchOutContext: () => ({
+        apiClient: {
+            getAllProjectsForUserAsync: () =>
+                Promise.resolve([
+                    {
+                        id: 123,
+                        name: 'project.name',
+                        description: 'project.description',
+                    },
+                ]),
+            getIPO: () => Promise.resolve(mockInvitation),
+            getAttachments: () => Promise.resolve([]),
+            getFunctionalRolesAsync: () => Promise.resolve(mockRoles),
+        },
+    }),
 }));
 
 const mockSetDirtyStateFor = jest.fn();
 const mockUnsetDirtyStateFor = jest.fn();
 
 jest.mock('@procosys/core/DirtyContext', () => ({
-    useDirtyContext: (): any => {
-        return {
-            setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor,
-        };
-    },
+    useDirtyContext: () => ({
+        setDirtyStateFor: mockSetDirtyStateFor,
+        unsetDirtyStateFor: mockUnsetDirtyStateFor,
+    }),
 }));
 
 describe('<EditIPO />', () => {
     it('Should display "Edit" as headline when in edit mode', async () => {
-        renderWithLocalizationProvider(<EditIPO />);
+        renderWithLocalizationProvider(
+            <Router>
+                <EditIPO />
+            </Router>
+        );
         await waitFor(() =>
             expect(screen.getByText('Edit titleA')).toBeInTheDocument()
         );
@@ -149,30 +139,26 @@ describe('<EditIPO />', () => {
 
     it('Should not display "Cancel IPO"-button when canCancel is false', async () => {
         const { queryByText } = render(
-            <ViewIPOHeader
-                ipoId={1}
-                steps={initialSteps}
-                isCancelled={false}
-                currentStep={1}
-                title={'test'}
-                organizer="test"
-                participants={[]}
-                isEditable={true}
-                showEditButton={true}
-                canDelete={false}
-                deletePunchOut={(): void => {
-                    /*mock*/
-                }}
-                canCancel={false}
-                cancelPunchOut={(): void => {
-                    /*mock*/
-                }}
-                isAdmin={false}
-                isUsingAdminRights={false}
-                setIsUsingAdminRights={(): void => {
-                    /*mock*/
-                }}
-            />
+            <Router>
+                <ViewIPOHeader
+                    ipoId={1}
+                    steps={initialSteps}
+                    isCancelled={false}
+                    currentStep={1}
+                    title={'test'}
+                    organizer="test"
+                    participants={[]}
+                    isEditable={true}
+                    showEditButton={true}
+                    canDelete={false}
+                    deletePunchOut={() => {}}
+                    canCancel={false}
+                    cancelPunchOut={() => {}}
+                    isAdmin={false}
+                    isUsingAdminRights={false}
+                    setIsUsingAdminRights={() => {}}
+                />
+            </Router>
         );
 
         expect(queryByText('Cancel IPO')).not.toBeInTheDocument();
@@ -180,30 +166,26 @@ describe('<EditIPO />', () => {
 
     it('Should display "Cancel IPO"-button when canCancel is true', async () => {
         const { queryByText } = render(
-            <ViewIPOHeader
-                ipoId={1}
-                steps={initialSteps}
-                isCancelled={false}
-                currentStep={1}
-                title={'test'}
-                organizer="test"
-                participants={[]}
-                isEditable={true}
-                showEditButton={true}
-                canDelete={false}
-                deletePunchOut={(): void => {
-                    /*mock*/
-                }}
-                canCancel={true}
-                cancelPunchOut={(): void => {
-                    /*mock*/
-                }}
-                isAdmin={false}
-                isUsingAdminRights={false}
-                setIsUsingAdminRights={(): void => {
-                    /*mock*/
-                }}
-            />
+            <Router>
+                <ViewIPOHeader
+                    ipoId={1}
+                    steps={initialSteps}
+                    isCancelled={false}
+                    currentStep={1}
+                    title={'test'}
+                    organizer="test"
+                    participants={[]}
+                    isEditable={true}
+                    showEditButton={true}
+                    canDelete={false}
+                    deletePunchOut={() => {}}
+                    canCancel={true}
+                    cancelPunchOut={() => {}}
+                    isAdmin={false}
+                    isUsingAdminRights={false}
+                    setIsUsingAdminRights={() => {}}
+                />
+            </Router>
         );
 
         expect(queryByText('Cancel IPO')).toBeInTheDocument();
@@ -211,30 +193,26 @@ describe('<EditIPO />', () => {
 
     it('Should display "Delete IPO"-button when canDelete is true', async () => {
         const { queryByText } = render(
-            <ViewIPOHeader
-                ipoId={1}
-                steps={initialSteps}
-                isCancelled={false}
-                currentStep={1}
-                title={'test'}
-                organizer="test"
-                participants={[]}
-                isEditable={true}
-                showEditButton={true}
-                canDelete={true}
-                deletePunchOut={(): void => {
-                    /*mock*/
-                }}
-                canCancel={true}
-                cancelPunchOut={(): void => {
-                    /*mock*/
-                }}
-                isAdmin={false}
-                isUsingAdminRights={false}
-                setIsUsingAdminRights={(): void => {
-                    /*mock*/
-                }}
-            />
+            <Router>
+                <ViewIPOHeader
+                    ipoId={1}
+                    steps={initialSteps}
+                    isCancelled={false}
+                    currentStep={1}
+                    title={'test'}
+                    organizer="test"
+                    participants={[]}
+                    isEditable={true}
+                    showEditButton={true}
+                    canDelete={true}
+                    deletePunchOut={() => {}}
+                    canCancel={true}
+                    cancelPunchOut={() => {}}
+                    isAdmin={false}
+                    isUsingAdminRights={false}
+                    setIsUsingAdminRights={() => {}}
+                />
+            </Router>
         );
 
         expect(queryByText('Delete IPO')).toBeInTheDocument();
@@ -242,30 +220,26 @@ describe('<EditIPO />', () => {
 
     it('Should not display "Delete IPO"-button when isCancelled is true, isUsingAdminRights is false and canDelete is false', async () => {
         const { queryByText } = render(
-            <ViewIPOHeader
-                ipoId={1}
-                steps={initialSteps}
-                isCancelled={true}
-                currentStep={1}
-                title={'test'}
-                organizer="test"
-                participants={[]}
-                isEditable={true}
-                showEditButton={true}
-                canDelete={false}
-                deletePunchOut={(): void => {
-                    /*mock*/
-                }}
-                canCancel={true}
-                cancelPunchOut={(): void => {
-                    /*mock*/
-                }}
-                isAdmin={false}
-                isUsingAdminRights={false}
-                setIsUsingAdminRights={(): void => {
-                    /*mock*/
-                }}
-            />
+            <Router>
+                <ViewIPOHeader
+                    ipoId={1}
+                    steps={initialSteps}
+                    isCancelled={true}
+                    currentStep={1}
+                    title={'test'}
+                    organizer="test"
+                    participants={[]}
+                    isEditable={true}
+                    showEditButton={true}
+                    canDelete={false}
+                    deletePunchOut={() => {}}
+                    canCancel={true}
+                    cancelPunchOut={() => {}}
+                    isAdmin={false}
+                    isUsingAdminRights={false}
+                    setIsUsingAdminRights={() => {}}
+                />
+            </Router>
         );
 
         expect(queryByText('Delete IPO')).not.toBeInTheDocument();

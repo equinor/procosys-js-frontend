@@ -2,6 +2,7 @@ import { act, render, waitFor } from '@testing-library/react';
 
 import CreateDummyTag from '../CreateDummyTag';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockDisciplines = [
     {
@@ -78,9 +79,31 @@ jest.mock('../../../../../../core/ProcosysContext', () => ({
     },
 }));
 
-jest.mock('react-router-dom', () => ({
-    useHistory: () => {},
-}));
+jest.mock('react-router-dom', () => {
+    const actualReactRouterDom = jest.requireActual('react-router-dom');
+
+    return {
+        ...actualReactRouterDom,
+        useNavigate: jest.fn(),
+        useLocation: jest.fn(() => ({
+            pathname: '/some-path',
+        })),
+        NavLink: ({ to, className, children }) => {
+            const React = require('react');
+            return React.createElement(
+                'a',
+                {
+                    href: to,
+                    className:
+                        typeof className === 'function'
+                            ? className({ isActive: true })
+                            : className,
+                },
+                children
+            );
+        },
+    };
+});
 
 const mockSetDirtyStateFor = jest.fn();
 const mockUnsetDirtyStateFor = jest.fn();
@@ -100,11 +123,13 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             expect(getByText('Next').closest('button')).toHaveProperty(
                 'disabled',
@@ -118,11 +143,13 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { queryByText } = render(
-                <CreateDummyTag
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
 
             expect(queryByText('Dummy type')).toBeInTheDocument();
@@ -136,12 +163,14 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { queryByText } = render(
-                <CreateDummyTag
-                    suffix="1 2"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        suffix="1 2"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             await waitFor(() =>
                 expect(queryByText(spacesInTagNoMessage)).toBeInTheDocument()
@@ -153,14 +182,16 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    areaType={{ title: 'Normal', value: 'PreArea' }}
-                    discipline="testDiscipline"
-                    suffix="12"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        areaType={{ title: 'Normal', value: 'PreArea' }}
+                        discipline="testDiscipline"
+                        suffix="12"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             expect(getByText('Next').closest('button')).toHaveProperty(
                 'disabled',
@@ -173,15 +204,17 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    areaType={{ title: 'Supplier', value: 'PoArea' }}
-                    discipline="testDiscipline"
-                    description="test description"
-                    suffix="12"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        areaType={{ title: 'Supplier', value: 'PoArea' }}
+                        discipline="testDiscipline"
+                        description="test description"
+                        suffix="12"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             expect(getByText('Next').closest('button')).toHaveProperty(
                 'disabled',
@@ -195,15 +228,18 @@ describe('<CreateDummyTag />', () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    areaType={{ title: 'Normal', value: 'PreArea' }}
-                    discipline="E"
-                    description="description text"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        areaType={{ title: 'Normal', value: 'PreArea' }}
+                        discipline="E"
+                        description="description text"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
+
             await waitFor(() =>
                 expect(getByText('Next').closest('button')).toHaveProperty(
                     'disabled',
@@ -218,15 +254,17 @@ describe('<CreateDummyTag />', () => {
             /** For testing purposes this is considered a valid tagNo */
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    areaType={{ title: 'Supplier', value: 'PoArea' }}
-                    discipline="E"
-                    description="description text"
-                    purchaseOrder="po"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        areaType={{ title: 'Supplier', value: 'PoArea' }}
+                        discipline="E"
+                        description="description text"
+                        purchaseOrder="po"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             await waitFor(() =>
                 expect(getByText('Next').closest('button')).toHaveProperty(
@@ -241,14 +279,16 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    areaType={{ title: 'Normal', value: 'PreArea' }}
-                    discipline="E"
-                    description="description text"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        areaType={{ title: 'Normal', value: 'PreArea' }}
+                        discipline="E"
+                        description="description text"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             await waitFor(() => expect(getByText('Area')).toBeInTheDocument());
         });
@@ -258,14 +298,16 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    areaType={{ title: 'Supplier', value: 'PoArea' }}
-                    discipline="E"
-                    description="description text"
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        areaType={{ title: 'Supplier', value: 'PoArea' }}
+                        discipline="E"
+                        description="description text"
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                    />
+                </MemoryRouter>
             );
             await waitFor(() =>
                 expect(getByText('PO/Calloff')).toBeInTheDocument()
@@ -277,21 +319,26 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { getByText } = render(
-                <CreateDummyTag
-                    duplicateTagId={1}
-                    areaType={{ text: 'Area (#PRE)', value: 'PreArea' }}
-                    discipline={{
-                        code: 'DC1',
-                        description: 'Discipline description 1',
-                    }}
-                    area={{ code: 'AC1', description: 'area description 1' }}
-                    setDescription={propFunc}
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                    setDiscipline={propFunc}
-                    setAreaType={propFunc}
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        duplicateTagId={1}
+                        areaType={{ text: 'Area (#PRE)', value: 'PreArea' }}
+                        discipline={{
+                            code: 'DC1',
+                            description: 'Discipline description 1',
+                        }}
+                        area={{
+                            code: 'AC1',
+                            description: 'area description 1',
+                        }}
+                        setDescription={propFunc}
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                        setDiscipline={propFunc}
+                        setAreaType={propFunc}
+                    />
+                </MemoryRouter>
             );
 
             expect(getByText('Duplicate dummy tag')).toBeInTheDocument();
@@ -316,23 +363,28 @@ describe('<CreateDummyTag />', () => {
         await act(async () => {
             var propFunc = jest.fn();
             const { queryByText, getByTestId } = render(
-                <CreateDummyTag
-                    duplicateTagId={1}
-                    areaType={{ text: 'Area (#PRE)', value: 'PreArea' }}
-                    discipline={{
-                        code: 'DC1',
-                        description: 'Discipline description 1',
-                    }}
-                    area={{ code: 'AC1', description: 'area description 1' }}
-                    setDescription={propFunc}
-                    setSelectedTags={propFunc}
-                    setArea={propFunc}
-                    setPurchaseOrder={propFunc}
-                    setDiscipline={propFunc}
-                    setAreaType={propFunc}
-                    suffix="suffixtest"
-                    description="description test"
-                />
+                <MemoryRouter>
+                    <CreateDummyTag
+                        duplicateTagId={1}
+                        areaType={{ text: 'Area (#PRE)', value: 'PreArea' }}
+                        discipline={{
+                            code: 'DC1',
+                            description: 'Discipline description 1',
+                        }}
+                        area={{
+                            code: 'AC1',
+                            description: 'area description 1',
+                        }}
+                        setDescription={propFunc}
+                        setSelectedTags={propFunc}
+                        setArea={propFunc}
+                        setPurchaseOrder={propFunc}
+                        setDiscipline={propFunc}
+                        setAreaType={propFunc}
+                        suffix="suffixtest"
+                        description="description test"
+                    />
+                </MemoryRouter>
             );
 
             await waitFor(() =>

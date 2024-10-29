@@ -1,6 +1,7 @@
 import ProcosysTable from '..';
 import React from 'react';
 import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 const tags = require('./data.json');
 
@@ -39,19 +40,21 @@ const maxRows = 10;
 describe('<ProcosysTable />', () => {
     it('Render test', async () => {
         const { queryAllByRole, queryAllByText } = render(
-            <ProcosysTable
-                setPageSize={() => {}}
-                onSort={() => {}}
-                onSelectedChange={() => {}}
-                pageIndex={0}
-                pageSize={100}
-                columns={columns}
-                maxRowCount={maxRows}
-                data={tags.tags}
-                fetchData={() => {}}
-                loading={false}
-                pageCount={1}
-            />
+            <MemoryRouter>
+                <ProcosysTable
+                    setPageSize={() => {}}
+                    onSort={() => {}}
+                    onSelectedChange={() => {}}
+                    pageIndex={0}
+                    pageSize={100}
+                    columns={columns}
+                    maxRowCount={maxRows}
+                    data={tags.tags}
+                    fetchData={() => {}}
+                    loading={false}
+                    pageCount={1}
+                />
+            </MemoryRouter>
         );
 
         expect(queryAllByText('ACPF').length).toBe(12);

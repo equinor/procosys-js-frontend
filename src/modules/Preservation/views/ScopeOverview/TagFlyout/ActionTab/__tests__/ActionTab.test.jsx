@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react';
-
+import { MemoryRouter } from 'react-router-dom';
 import ActionTab from '../ActionTab';
 import React from 'react';
 import { getFormattedDate } from '../../../../../../../core/services/DateService';
@@ -71,7 +71,9 @@ describe('<ActionTab />', () => {
 
     it('Should open and show action details when clicking the toggle-button.', async () => {
         const { queryByText, findByTestId, findByText } = render(
-            <ActionTab tagId={100} />
+            <MemoryRouter>
+                <ActionTab tagId={100} />
+            </MemoryRouter>
         );
         const clickableElement = await findByTestId('toggle-icon-1');
 
@@ -90,7 +92,11 @@ describe('<ActionTab />', () => {
     });
 
     it('Should open and show action details when clicking the action header', async () => {
-        const { queryByText, findByText } = render(<ActionTab tagId={100} />);
+        const { queryByText, findByText } = render(
+            <MemoryRouter>
+                <ActionTab tagId={100} />
+            </MemoryRouter>
+        );
         const clickableElement = await findByText('Action 1');
 
         fireEvent.click(clickableElement);

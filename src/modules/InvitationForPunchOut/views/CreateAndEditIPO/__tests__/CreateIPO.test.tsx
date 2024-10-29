@@ -1,10 +1,4 @@
-import {
-    fireEvent,
-    render,
-    waitFor,
-    within,
-    screen,
-} from '@testing-library/react';
+import { fireEvent, waitFor, within, screen } from '@testing-library/react';
 
 import CreateIPO from '../CreateIPO';
 import React from 'react';
@@ -33,18 +27,15 @@ const mockRoles = [
 ];
 
 jest.mock('react-router-dom', () => ({
-    useParams: (): { projectId: any; commPkgNo: any } => ({
-        projectId: '1001',
-        commPkgNo: '1',
-    }),
+    ...jest.requireActual('react-router-dom'),
+    useParams: () => ({ projectId: '1001', commPkgNo: '1' }),
+    useLocation: () => ({ pathname: '/mocked-path' }),
 }));
 
 jest.mock('@procosys/hooks/useRouter', () =>
     jest.fn(() => ({
-        history: (): any => ({
-            push: jest.fn((): void => {
-                return;
-            }),
+        history: () => ({
+            push: jest.fn(() => {}),
         }),
     }))
 );
@@ -58,29 +49,23 @@ const mockProject = [
 ];
 
 jest.mock('../../../context/InvitationForPunchOutContext', () => ({
-    useInvitationForPunchOutContext: (): any => {
-        return {
-            apiClient: {
-                getFunctionalRolesAsync: (): any => Promise.resolve(mockRoles),
-                getAllProjectsForUserAsync: (_: any): any => {
-                    return Promise.resolve(mockProject);
-                },
-            },
-            availableProjects: mockProject,
-        };
-    },
+    useInvitationForPunchOutContext: () => ({
+        apiClient: {
+            getFunctionalRolesAsync: () => Promise.resolve(mockRoles),
+            getAllProjectsForUserAsync: () => Promise.resolve(mockProject),
+        },
+        availableProjects: mockProject,
+    }),
 }));
 
 const mockSetDirtyStateFor = jest.fn();
 const mockUnsetDirtyStateFor = jest.fn();
 
 jest.mock('@procosys/core/DirtyContext', () => ({
-    useDirtyContext: (): any => {
-        return {
-            setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor,
-        };
-    },
+    useDirtyContext: () => ({
+        setDirtyStateFor: mockSetDirtyStateFor,
+        unsetDirtyStateFor: mockUnsetDirtyStateFor,
+    }),
 }));
 
 describe('<CreateIPO />', () => {

@@ -2,6 +2,7 @@ import { render, waitFor, act } from '@testing-library/react';
 
 import McPkgTable from '../McPkgTable';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockSelectedMcPkgs = {
     commPkgNoParent: 'comm 01',
@@ -61,10 +62,12 @@ describe('<McPkgTable />', () => {
         var propFunc = jest.fn();
         await act(async () => {
             const { getByText } = render(
-                <McPkgTable
-                    setSelectedMcPkgScope={propFunc}
-                    selectedMcPkgScope={mockSelectedMcPkgs}
-                />
+                <MemoryRouter>
+                    <McPkgTable
+                        setSelectedMcPkgScope={propFunc}
+                        selectedMcPkgScope={mockSelectedMcPkgs}
+                    />
+                </MemoryRouter>
             );
             await waitFor(() =>
                 expect(getByText('Mc pkg')).toBeInTheDocument()
@@ -77,10 +80,12 @@ describe('<McPkgTable />', () => {
         var propFunc = jest.fn();
         await act(async () => {
             const { getByText, container } = render(
-                <McPkgTable
-                    setSelectedMcPkgScope={propFunc}
-                    selectedMcPkgScope={mockSelectedMcPkgs}
-                />
+                <MemoryRouter>
+                    <McPkgTable
+                        setSelectedMcPkgScope={propFunc}
+                        selectedMcPkgScope={mockSelectedMcPkgs}
+                    />
+                </MemoryRouter>
             );
             await waitFor(() =>
                 expect(getByText('Mc pkg')).toBeInTheDocument()

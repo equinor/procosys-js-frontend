@@ -9,7 +9,7 @@ import {
 import React, { useState } from 'react';
 
 import EdsIcon from '@procosys/components/EdsIcon';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Participant } from './types';
 import ProgressBar from '@procosys/components/ProgressBar';
 import { Step } from '../../types';
@@ -53,6 +53,11 @@ const ViewIPOHeader = ({
     isUsingAdminRights,
     setIsUsingAdminRights,
 }: ProgressBarProps): JSX.Element => {
+    const { pathname } = useLocation();
+    const pathParts = pathname.split('/');
+    pathParts.pop();
+    const newPathname = pathParts.join('/');
+
     const confirmCancelIpo = (): void => {
         showModalDialog(
             'Cancel IPO',
@@ -114,7 +119,7 @@ const ViewIPOHeader = ({
                     {showEditButton && (
                         <>
                             <ButtonSpacer />
-                            <Link to={`/EditIPO/${ipoId}`}>
+                            <Link to={`${newPathname}/EditIPO/${ipoId}`}>
                                 <Button
                                     disabled={!isEditable}
                                     variant="outlined"

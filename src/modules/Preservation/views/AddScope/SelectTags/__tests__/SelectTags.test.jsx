@@ -1,6 +1,7 @@
 import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
 import SelectTags from '../SelectTags';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../../../context/PreservationContext', () => ({
     usePreservationContext: jest.fn(() => {
@@ -14,20 +15,40 @@ jest.mock('../../../../context/PreservationContext', () => ({
     }),
 }));
 
-jest.mock('react-router-dom', () => ({
-    useHistory: () => {},
-}));
+jest.mock('react-router-dom', () => {
+    const actualReactRouterDom = jest.requireActual('react-router-dom');
+
+    return {
+        ...actualReactRouterDom,
+        useNavigate: jest.fn(),
+        useLocation: jest.fn(() => ({
+            pathname: '/some-path',
+        })),
+        NavLink: ({ to, className, children }) => {
+            const React = require('react');
+            return React.createElement(
+                'a',
+                {
+                    href: to,
+                    className:
+                        typeof className === 'function'
+                            ? className({ isActive: true })
+                            : className,
+                },
+                children
+            );
+        },
+    };
+});
 
 const mockSetDirtyStateFor = jest.fn();
 const mockUnsetDirtyStateFor = jest.fn();
 
 jest.mock('@procosys/core/DirtyContext', () => ({
-    useDirtyContext: () => {
-        return {
-            setDirtyStateFor: mockSetDirtyStateFor,
-            unsetDirtyStateFor: mockUnsetDirtyStateFor,
-        };
-    },
+    useDirtyContext: () => ({
+        setDirtyStateFor: mockSetDirtyStateFor,
+        unsetDirtyStateFor: mockUnsetDirtyStateFor,
+    }),
 }));
 
 const tableData = [
@@ -44,12 +65,14 @@ const tableData = [
 describe('Module: <SelectTags />', () => {
     it('Should render Next button disabled when no rows are selected', () => {
         const { getByText } = render(
-            <SelectTags
-                selectedTags={[]}
-                scopeTableData={[]}
-                setSelectedTags={() => void 0}
-                setSelectedTableRows={() => void 0}
-            />
+            <MemoryRouter>
+                <SelectTags
+                    selectedTags={[]}
+                    scopeTableData={[]}
+                    setSelectedTags={() => void 0}
+                    setSelectedTableRows={() => void 0}
+                />
+            </MemoryRouter>
         );
         expect(getByText('Next').closest('button')).toHaveProperty(
             'disabled',
@@ -61,12 +84,14 @@ describe('Module: <SelectTags />', () => {
         const selectedTags = [{ tagNo: 'test' }];
 
         const { getByText } = render(
-            <SelectTags
-                selectedTags={selectedTags}
-                scopeTableData={tableData}
-                setSelectedTags={() => void 0}
-                setSelectedTableRows={() => void 0}
-            />
+            <MemoryRouter>
+                <SelectTags
+                    selectedTags={selectedTags}
+                    scopeTableData={tableData}
+                    setSelectedTags={() => void 0}
+                    setSelectedTableRows={() => void 0}
+                />
+            </MemoryRouter>
         );
 
         expect(getByText('Next').closest('button')).toHaveProperty(
@@ -77,12 +102,14 @@ describe('Module: <SelectTags />', () => {
 
     it('Should render Tag info in table', () => {
         const { getByText } = render(
-            <SelectTags
-                selectedTags={[]}
-                scopeTableData={tableData}
-                setSelectedTags={() => void 0}
-                setSelectedTableRows={() => void 0}
-            />
+            <MemoryRouter>
+                <SelectTags
+                    selectedTags={[]}
+                    scopeTableData={tableData}
+                    setSelectedTags={() => void 0}
+                    setSelectedTableRows={() => void 0}
+                />
+            </MemoryRouter>
         );
 
         expect(getByText('tagno-test')).toBeInTheDocument();
@@ -97,7 +124,6 @@ describe('Module: <SelectTags />', () => {
         let i = 0;
 
         const setSelectedTags = () => {
-            // this gets called when setting up the test - ignore the first time.
             if (i === 0) {
                 i++;
                 return;
@@ -106,45 +132,32 @@ describe('Module: <SelectTags />', () => {
         };
 
         const { container } = render(
-            <SelectTags
-                selectedTags={selectedTags}
-                scopeTableData={tableData}
-                setSelectedTags={setSelectedTags}
-                setSelectedTableRows={() => 1}
-            />
+            <MemoryRouter>
+                <SelectTags
+                    selectedTags={selectedTags}
+                    scopeTableData={tableData}
+                    setSelectedTags={setSelectedTags}
+                    setSelectedTableRows={() => 1}
+                />
+            </MemoryRouter>
         );
 
         const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-        fireEvent.click(checkboxes[1]); // fist checkbox after "select all"
+        fireEvent.click(checkboxes[1]); // first checkbox after "select all"
         expect(selectedTags.length).toBe(1);
     });
 
-    it('Should render Tag info in table', () => {
-        const { getByText } = render(
-            <SelectTags
-                selectedTags={[]}
-                scopeTableData={tableData}
-                setSelectedTags={() => void 0}
-                setSelectedTableRows={() => void 0}
-            />
-        );
-
-        expect(getByText('tagno-test')).toBeInTheDocument();
-        expect(getByText('description-test')).toBeInTheDocument();
-        expect(getByText('pono-test')).toBeInTheDocument();
-        expect(getByText('commpkg-test')).toBeInTheDocument();
-        expect(getByText('mcpkgno-test')).toBeInTheDocument();
-    });
-
-    it('Should not render search field when add-scope-method is autoscope.', () => {
+    it('Should not render search field when add-scope-method is autoscope', () => {
         const { queryByText } = render(
-            <SelectTags
-                selectedTags={[]}
-                scopeTableData={tableData}
-                addScopeMethod="AddTagsAutoscope"
-                setSelectedTags={() => void 0}
-                setSelectedTableRows={() => void 0}
-            />
+            <MemoryRouter>
+                <SelectTags
+                    selectedTags={[]}
+                    scopeTableData={tableData}
+                    addScopeMethod="AddTagsAutoscope"
+                    setSelectedTags={() => void 0}
+                    setSelectedTableRows={() => void 0}
+                />
+            </MemoryRouter>
         );
         expect(
             queryByText(
@@ -155,13 +168,15 @@ describe('Module: <SelectTags />', () => {
 
     it('Should render search field when add-scope-method is manually', () => {
         const { queryByText } = render(
-            <SelectTags
-                selectedTags={[]}
-                scopeTableData={tableData}
-                addScopeMethod="AddTagsManually"
-                setSelectedTags={() => void 0}
-                setSelectedTableRows={() => void 0}
-            />
+            <MemoryRouter>
+                <SelectTags
+                    selectedTags={[]}
+                    scopeTableData={tableData}
+                    addScopeMethod="AddTagsManually"
+                    setSelectedTags={() => void 0}
+                    setSelectedTableRows={() => void 0}
+                />
+            </MemoryRouter>
         );
         expect(
             queryByText(

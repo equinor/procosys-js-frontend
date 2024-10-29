@@ -1,5 +1,6 @@
 import InvitationsTable from '../InvitationsTable';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { render, waitFor } from '@testing-library/react';
 
 const mockIPOs = [];
@@ -17,20 +18,22 @@ describe('<InvitationsTable />', () => {
 
     it('Should render with columns', async () => {
         const { getByText } = render(
-            <InvitationsTable
-                getIPOs={mockGetIPOs}
-                data-testId="invitations-table"
-                pageSize={10}
-                setPageSize={jest.fn()}
-                shouldSelectFirstPage={false}
-                setFirstPageSelected={jest.fn()}
-                projectName={'projectName'}
-                height={200}
-                update={jest.fn()}
-                filterUpdate={jest.fn()}
-                setOrderByField={jest.fn()}
-                setOrderDirection={jest.fn()}
-            />
+            <MemoryRouter>
+                <InvitationsTable
+                    getIPOs={mockGetIPOs}
+                    data-testId="invitations-table"
+                    pageSize={10}
+                    setPageSize={jest.fn()}
+                    shouldSelectFirstPage={false}
+                    setFirstPageSelected={jest.fn()}
+                    projectName={'projectName'}
+                    height={200}
+                    update={jest.fn()}
+                    filterUpdate={jest.fn()}
+                    setOrderByField={jest.fn()}
+                    setOrderDirection={jest.fn()}
+                />
+            </MemoryRouter>
         );
         await waitFor(() => expect(getByText('ID')).toBeInTheDocument());
         expect(getByText('Title')).toBeInTheDocument();

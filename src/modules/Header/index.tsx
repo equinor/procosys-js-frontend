@@ -72,7 +72,7 @@ const Header: React.FC = (): JSX.Element => {
     const [allPlants] = useState<PlantItem[]>(() => {
         return user.plants.map((plant) => ({
             text: plant.title,
-            value: plant.id.replace('PCS$', '')
+            value: plant.id.replace('PCS$', ''),
         }));
     });
 

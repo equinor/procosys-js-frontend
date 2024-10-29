@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import ScopeOverviewTable from '../ScopeOverviewTable';
 import { screen, render } from '@testing-library/react';
 
@@ -56,17 +57,19 @@ describe('<ScopeOverviewTable />', () => {
     it('Display new-indicator in table', async () => {
         var propFunc = jest.fn();
         render(
-            <ScopeOverviewTable
-                setOrderDirection={propFunc}
-                setOrderByField={propFunc}
-                selectedTags={[]}
-                setSelectedTags={propFunc}
-                showTagDetails={true}
-                getData={getData}
-                pageSize={10}
-                pageIndex={0}
-                setRefreshScopeListCallback={propFunc}
-            />
+            <MemoryRouter>
+                <ScopeOverviewTable
+                    setOrderDirection={propFunc}
+                    setOrderByField={propFunc}
+                    selectedTags={[]}
+                    setSelectedTags={propFunc}
+                    showTagDetails={true}
+                    getData={getData}
+                    pageSize={10}
+                    pageIndex={0}
+                    setRefreshScopeListCallback={propFunc}
+                />
+            </MemoryRouter>
         );
 
         let exists = false;

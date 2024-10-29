@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import PreservedDialog from '../Dialogs/PreservedDialog';
 import { render } from '@testing-library/react';
 
@@ -27,10 +28,12 @@ const nonPreservableTags = [
 describe('<PreservedDialog />', () => {
     it('Should only display nonpreservable tags when no preservable tags are selected', async () => {
         const { queryByText } = render(
-            <PreservedDialog
-                preservableTags={[]}
-                nonPreservableTags={nonPreservableTags}
-            />
+            <MemoryRouter>
+                <PreservedDialog
+                    preservableTags={[]}
+                    nonPreservableTags={nonPreservableTags}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('tagNo2')).toBeInTheDocument();
         expect(
@@ -43,10 +46,12 @@ describe('<PreservedDialog />', () => {
 
     it('Should display all tags when preservable and nonpreservable tags are selected', async () => {
         const { queryByText } = render(
-            <PreservedDialog
-                preservableTags={preservableTags}
-                nonPreservableTags={nonPreservableTags}
-            />
+            <MemoryRouter>
+                <PreservedDialog
+                    preservableTags={preservableTags}
+                    nonPreservableTags={nonPreservableTags}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('tagNo1')).toBeInTheDocument();
         expect(queryByText('tagNo2')).toBeInTheDocument();
@@ -60,10 +65,12 @@ describe('<PreservedDialog />', () => {
 
     it('Should render with only render information about preservable tag when no preservable tags are selected', async () => {
         const { queryByText } = render(
-            <PreservedDialog
-                preservableTags={preservableTags}
-                nonPreservableTags={[]}
-            />
+            <MemoryRouter>
+                <PreservedDialog
+                    preservableTags={preservableTags}
+                    nonPreservableTags={[]}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('tagNo1')).toBeInTheDocument();
         expect(

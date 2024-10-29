@@ -1,6 +1,7 @@
 import AttachmentList from '../index';
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 export const attachmentsMock = [
     {
@@ -57,22 +58,26 @@ describe('<AttachmentList />', () => {
 
     it('Should render an empty table if there are no attachments', () => {
         const { queryByText } = render(
-            <AttachmentList
-                attachments={[]}
-                disabled={false}
-                downloadAttachment={downloadAttachment}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={[]}
+                    disabled={false}
+                    downloadAttachment={downloadAttachment}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('No records to display')).toBeInTheDocument();
     });
 
     it('Should render attachments in table', () => {
         const { queryByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                downloadAttachment={downloadAttachment}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    downloadAttachment={downloadAttachment}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('No records to display')).not.toBeInTheDocument();
         expect(queryByText('Attachment 1')).toBeInTheDocument();
@@ -82,12 +87,14 @@ describe('<AttachmentList />', () => {
 
     it('Should render "add files" button and DragAndDropField if an addAttachments prop is passed', () => {
         const { queryByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                addAttachments={addAttachments}
-                downloadAttachment={downloadAttachment}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    downloadAttachment={downloadAttachment}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('Add files')).toBeInTheDocument();
         expect(
@@ -99,11 +106,13 @@ describe('<AttachmentList />', () => {
 
     it('Should not render the "add files" button and DragAndDropField if an addAttachments prop is not passed', () => {
         const { queryByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                downloadAttachment={downloadAttachment}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    downloadAttachment={downloadAttachment}
+                />
+            </MemoryRouter>
         );
         expect(queryByText('Add files')).not.toBeInTheDocument();
         expect(
@@ -115,12 +124,14 @@ describe('<AttachmentList />', () => {
 
     it('Should call the downloadAttachment function if a filename is clicked', () => {
         const { getByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                addAttachments={addAttachments}
-                downloadAttachment={downloadAttachment}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    downloadAttachment={downloadAttachment}
+                />
+            </MemoryRouter>
         );
         const fileName = getByText('Attachment 1');
         expect(fileName).toBeInTheDocument();
@@ -130,14 +141,16 @@ describe('<AttachmentList />', () => {
 
     it("Should render with more details if it's the detailed version", () => {
         const { getByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                addAttachments={addAttachments}
-                downloadAttachment={downloadAttachment}
-                large={true}
-                detailed={true}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    downloadAttachment={downloadAttachment}
+                    large={true}
+                    detailed={true}
+                />
+            </MemoryRouter>
         );
         const details = getByText('Uploaded at');
         expect(details).toBeInTheDocument();
@@ -145,12 +158,14 @@ describe('<AttachmentList />', () => {
 
     it("Should render without column headers if it's the small version", () => {
         const { queryByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                addAttachments={addAttachments}
-                downloadAttachment={downloadAttachment}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    downloadAttachment={downloadAttachment}
+                />
+            </MemoryRouter>
         );
         const header = queryByText('Title');
         expect(header).not.toBeInTheDocument();
@@ -158,13 +173,15 @@ describe('<AttachmentList />', () => {
 
     it("Should render with column headers if it's the large version", () => {
         const { getByText } = render(
-            <AttachmentList
-                attachments={attachmentsMock}
-                disabled={false}
-                addAttachments={addAttachments}
-                downloadAttachment={downloadAttachment}
-                large={true}
-            />
+            <MemoryRouter>
+                <AttachmentList
+                    attachments={attachmentsMock}
+                    disabled={false}
+                    addAttachments={addAttachments}
+                    downloadAttachment={downloadAttachment}
+                    large={true}
+                />
+            </MemoryRouter>
         );
         const header = getByText('Title');
         expect(header).toBeInTheDocument();

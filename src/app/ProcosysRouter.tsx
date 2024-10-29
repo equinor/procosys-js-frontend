@@ -1,9 +1,4 @@
-import {
-    Route,
-    Routes,
-    useLocation,
-    useParams,
-} from 'react-router-dom';
+import { Route, Routes, useLocation, useParams } from 'react-router-dom';
 
 import { AnalyticsContextProvider } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { DirtyContextProvider } from '../core/DirtyContext';
@@ -49,7 +44,7 @@ const ProcosysRouter = (): JSX.Element => {
                                         }
                                     />
                                     <Route
-                                        path='preservation/*'
+                                        path="preservation/*"
                                         element={
                                             <ErrorBoundary>
                                                 {LazyRoute(Preservation)}
@@ -57,7 +52,7 @@ const ProcosysRouter = (): JSX.Element => {
                                         }
                                     />
                                     <Route
-                                        path='libraryv2/*'
+                                        path="libraryv2/*"
                                         element={
                                             <ErrorBoundary>
                                                 {LazyRoute(PlantConfig)}
@@ -65,7 +60,7 @@ const ProcosysRouter = (): JSX.Element => {
                                         }
                                     />
                                     <Route
-                                        path='invitationforpunchout/*'
+                                        path="invitationforpunchout/*"
                                         element={
                                             <ErrorBoundary>
                                                 {LazyRoute(
@@ -75,7 +70,7 @@ const ProcosysRouter = (): JSX.Element => {
                                         }
                                     />
                                     <Route
-                                      path='quicksearch' // not used for the moment
+                                        path="quicksearch" // not used for the moment
                                         element={
                                             <ErrorBoundary>
                                                 {LazyRoute(QuickSearch)}

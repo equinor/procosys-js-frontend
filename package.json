@@ -117,7 +117,7 @@
     "date-fns": "^2.30.0",
     "decode-uri-component": "0.2.2",
     "deep-object-diff": "1.1.9",
-    "elliptic": "6.5.7",
+    "elliptic": "6.6.0",
     "express": "5.0.1",
     "follow-redirects": "^1.15.6",
     "glob-parent": "5.1.2",

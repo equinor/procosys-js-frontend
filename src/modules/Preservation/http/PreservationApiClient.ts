@@ -560,13 +560,6 @@ class PreservationApiClient extends ApiClient {
         const settings: AxiosRequestConfig = {};
         this.setupRequestCanceler(settings, setRequestCanceller);
         try {
-            console.log(11111, {
-                description,
-                newRequirements,
-                updatedRequirements,
-                deletedRequirements,
-                rowVersion,
-            });
             const result = await this.client.put(
                 endpoint,
                 {

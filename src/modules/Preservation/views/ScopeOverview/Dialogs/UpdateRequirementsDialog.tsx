@@ -283,7 +283,6 @@ const UpdateRequirementsDialog = ({
                         };
                     });
 
-                console.log(4444, { newRequirements, tag });
                 await apiClient.updateTagRequirements(
                     tag.id,
                     description,
@@ -323,7 +322,6 @@ const UpdateRequirementsDialog = ({
             }
         }
         if (requirementsOrDescriptionEdited) {
-            console.log(333, { tag, currentRowVersion });
             try {
                 await updateRequirementsAndDescription(currentRowVersion);
 

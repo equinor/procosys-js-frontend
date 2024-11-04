@@ -1221,7 +1221,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                                 <DropdownItem
                                     disabled={selectedTags.length === 0}
-                                    onClick={() =>
+                                    onClick={(): void =>
                                         showInServiceDialog({
                                             selectedTags,
                                             setInService,

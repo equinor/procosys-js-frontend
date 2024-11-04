@@ -337,7 +337,7 @@ const RescheduleDialog = (props: RescheduleDialogProps): JSX.Element | null => {
                             </FormFieldSpacer>
                         </InputContainer>
                     )}
-                    <MainContainer>
+                    <MainContainer style={{ height: '100%' }}>
                         {nonReschedulableTags.length > 0 && (
                             <TableContainer
                                 isHalfSize={reschedulableTags.length > 0}

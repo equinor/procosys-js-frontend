@@ -3,6 +3,7 @@ import { showModalDialog } from '../../../../core/services/ModalDialogService';
 import InServiceDialog from './Dialogs/InServiceDialog';
 import { PreservedTag } from './types';
 import { backToListButton } from './ScopeOverview';
+import { MemoryRouter } from 'react-router-dom';
 
 interface ShowInServiceDialogParams {
     selectedTags: PreservedTag[];
@@ -34,10 +35,12 @@ export const showInServiceDialog = ({
 
     showModalDialog(
         'Setting in service',
-        <InServiceDialog
-            inServiceTags={inServiceTags}
-            notInServiceTags={notInServiceTags}
-        />,
+        <MemoryRouter>
+            <InServiceDialog
+                inServiceTags={inServiceTags}
+                notInServiceTags={notInServiceTags}
+            />
+        </MemoryRouter>,
         '80vw',
         backToListButton,
         null,

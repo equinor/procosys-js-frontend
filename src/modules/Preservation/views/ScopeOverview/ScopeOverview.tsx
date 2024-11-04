@@ -61,6 +61,7 @@ import {
     setCachedFilter,
     deleteCachedFilter,
 } from './preservationHelpers';
+import { MemoryRouter as Router } from 'react-router-dom';
 
 const emptyTagListFilter: TagListFilter = {
     tagNoStartsWith: null,
@@ -506,12 +507,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
-        //Tag-objects must be cloned to avoid issues with data in scope table
-        transferableTags = [];
-        nonTransferableTags = [];
+        // Tag-objects must be cloned to avoid issues with data in scope table
+        const transferableTags: PreservedTag[] = [];
+        const nonTransferableTags: PreservedTag[] = [];
 
-        selectedTags.map((tag) => {
-            const newTag: PreservedTag = { ...tag };
+        selectedTags.forEach((tag) => {
+            const newTag = { ...tag };
             if (tag.readyToBeTransferred && !tag.isVoided) {
                 transferableTags.push(newTag);
             } else {
@@ -524,10 +525,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Transferring',
-            <TransferDialog
-                transferableTags={transferableTags}
-                nonTransferableTags={nonTransferableTags}
-            />,
+            <Router>
+                <TransferDialog
+                    transferableTags={transferableTags}
+                    nonTransferableTags={nonTransferableTags}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -576,10 +579,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Start preservation',
-            <StartPreservationDialog
-                startableTags={startableTags}
-                nonStartableTags={nonStartableTags}
-            />,
+            <Router>
+                <StartPreservationDialog
+                    startableTags={startableTags}
+                    nonStartableTags={nonStartableTags}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -625,10 +630,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Preserved this week',
-            <PreservedDialog
-                preservableTags={preservableTags}
-                nonPreservableTags={nonPreservableTags}
-            />,
+            <Router>
+                <PreservedDialog
+                    preservableTags={preservableTags}
+                    nonPreservableTags={nonPreservableTags}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -676,10 +683,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Complete preservation',
-            <CompleteDialog
-                completableTags={completableTags}
-                nonCompletableTags={nonCompletableTags}
-            />,
+            <Router>
+                <CompleteDialog
+                    completableTags={completableTags}
+                    nonCompletableTags={nonCompletableTags}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -725,10 +734,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Complete preservation',
-            <RemoveDialog
-                removableTags={removableTags}
-                nonRemovableTags={nonRemovableTags}
-            />,
+            <Router>
+                <RemoveDialog
+                    removableTags={removableTags}
+                    nonRemovableTags={nonRemovableTags}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -798,11 +809,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             voidTitle,
-            <VoidDialog
-                voidableTags={voidableTags}
-                unvoidableTags={unvoidableTags}
-                voiding={voiding}
-            />,
+            <Router>
+                <VoidDialog
+                    voidableTags={voidableTags}
+                    unvoidableTags={unvoidableTags}
+                    voiding={voiding}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -852,10 +865,12 @@ const ScopeOverview: React.FC = (): JSX.Element => {
 
         showModalDialog(
             'Undo "start preservation"',
-            <UndoStartPreservationDialog
-                unstartableTags={unstartableTags}
-                nonUnstartableTags={nonUnstartableTags}
-            />,
+            <Router>
+                <UndoStartPreservationDialog
+                    unstartableTags={unstartableTags}
+                    nonUnstartableTags={nonUnstartableTags}
+                />
+            </Router>,
             '80vw',
             backToListButton,
             null,
@@ -1206,7 +1221,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 </DropdownItem>
                                 <DropdownItem
                                     disabled={selectedTags.length === 0}
-                                    onClick={(): void =>
+                                    onClick={() =>
                                         showInServiceDialog({
                                             selectedTags,
                                             setInService,

@@ -39,7 +39,7 @@ export class ProCoSysApiError extends Error {
             cancel = true;
         } else if (!_error || !_error.response) {
             console.error('An unknown API error occured, error: ', error);
-            super('Unknown error');
+            super((error as Error).message || 'Unknown error');
         } else if (_error.response.status == 500) {
             super(_error.response.data ? `${_error.response.data}` : undefined);
         } else if (_error.response.status == 409) {

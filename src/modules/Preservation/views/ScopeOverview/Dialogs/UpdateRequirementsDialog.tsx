@@ -282,6 +282,8 @@ const UpdateRequirementsDialog = ({
                             rowVersion: req.rowVersion,
                         };
                     });
+
+                console.log(4444, { newRequirements, tag });
                 await apiClient.updateTagRequirements(
                     tag.id,
                     description,
@@ -321,6 +323,7 @@ const UpdateRequirementsDialog = ({
             }
         }
         if (requirementsOrDescriptionEdited) {
+            console.log(333, { tag, currentRowVersion });
             try {
                 await updateRequirementsAndDescription(currentRowVersion);
 
@@ -341,12 +344,19 @@ const UpdateRequirementsDialog = ({
 
     return (
         <Scrim>
-            <DialogContainer width={'80vw'}>
+            <DialogContainer
+                width={'80vw'}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '80vh',
+                }}
+            >
                 <Title>
                     <Typography variant="h6"> Update requirements </Typography>
                 </Title>
                 <Divider />
-                <Content>
+                <Content style={{ height: 'auto' }}>
                     {validationErrorMessage && (
                         <Typography variant="caption">
                             {validationErrorMessage}
@@ -391,6 +401,7 @@ const UpdateRequirementsDialog = ({
                             onChange={remarkOrStorageAreaChange}
                         />
                     </InputSpacer>
+
                     <Header>Requirements</Header>
                     <RequirementsSelector
                         requirementTypes={requirementTypes}
@@ -399,7 +410,7 @@ const UpdateRequirementsDialog = ({
                     />
                 </Content>
 
-                <ButtonContainer>
+                <ButtonContainer style={{ marginTop: 'auto' }}>
                     <Button onClick={onClose} variant="outlined">
                         Cancel
                     </Button>

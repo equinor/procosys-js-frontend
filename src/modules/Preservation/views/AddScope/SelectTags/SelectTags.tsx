@@ -361,10 +361,10 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                         )}
                 </InnerContainer>
                 <ButtonsContainer>
-                <NavLink
-                    to="/"
-                    className={({ isActive }) => (isActive ? 'active' : '')}
-                >
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) => (isActive ? 'active' : '')}
+                    >
                         <Button variant="outlined">Cancel</Button>
                     </NavLink>
                     <Button

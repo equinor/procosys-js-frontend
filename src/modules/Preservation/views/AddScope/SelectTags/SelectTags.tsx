@@ -18,7 +18,7 @@ import { AddScopeMethod } from '../AddScope';
 import Loading from '../../../../../components/Loading';
 import React, { useEffect } from 'react';
 import ProcosysTable from '@procosys/components/Table';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { CheckBox } from '@mui/icons-material';
@@ -250,7 +250,7 @@ const moduleName = 'PreservationAddScopeSelectTags';
 const SelectTags = (props: SelectTagsProps): JSX.Element => {
     const { project, purchaseOrderNumber } = usePreservationContext();
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-
+    const navigate = useNavigate();
     useEffect(() => {
         const selectedRows: Record<string, boolean> = {};
 
@@ -363,6 +363,10 @@ const SelectTags = (props: SelectTagsProps): JSX.Element => {
                 <ButtonsContainer>
                     <NavLink
                         to="/"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            navigate(-1);
+                        }}
                         className={({ isActive }) => (isActive ? 'active' : '')}
                     >
                         <Button variant="outlined">Cancel</Button>

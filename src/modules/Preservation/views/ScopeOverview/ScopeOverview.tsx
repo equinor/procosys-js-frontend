@@ -1046,17 +1046,17 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 disabled={project.id === -1}
                                 text="Add scope"
                             >
-                                <Link to={'/AddScope/selectTagsManual'}>
+                                <Link to={`AddScope/selectTagsManual`}>
                                     <DropdownItem>
                                         Add tags manually
                                     </DropdownItem>
                                 </Link>
-                                <Link to={'/AddScope/selectTagsAutoscope'}>
+                                <Link to={'AddScope/selectTagsAutoscope'}>
                                     <DropdownItem>
                                         Autoscope by tag function
                                     </DropdownItem>
                                 </Link>
-                                <Link to={'/AddScope/createDummyTag'}>
+                                <Link to={'AddScope/createDummyTag'}>
                                     <DropdownItem>
                                         Create dummy tag
                                     </DropdownItem>
@@ -1064,7 +1064,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 <Link
                                     to={
                                         duplicatableTagSelected
-                                            ? '/AddScope/duplicateDummyTag/' +
+                                            ? 'AddScope/duplicateDummyTag/' +
                                               (selectedTags.length == 1
                                                   ? selectedTags[0].id.toString()
                                                   : '')
@@ -1077,7 +1077,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                         Duplicate dummy tag
                                     </DropdownItem>
                                 </Link>
-                                <Link to={'/AddScope/selectMigrateTags'}>
+                                <Link to={'AddScope/selectMigrateTags'}>
                                     <DropdownItem>
                                         Migrate tags from old (temporary)
                                     </DropdownItem>

@@ -172,6 +172,13 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const moduleContainerRef = useRef<HTMLDivElement>(null);
     const [moduleAreaHeight, setModuleAreaHeight] = useState<number>(700);
 
+    const [transferableTags, setTransferableTags] = useState<PreservedTag[]>(
+        []
+    );
+    const [nonTransferableTags, setNonTransferableTags] = useState<
+        PreservedTag[]
+    >([]);
+
     useEffect((): void => {
         if (project && project.id != -1) {
             updateSavedTagListFilters({
@@ -483,13 +490,10 @@ const ScopeOverview: React.FC = (): JSX.Element => {
         return Promise.resolve();
     };
 
-    let transferableTags: PreservedTag[];
-    let nonTransferableTags: PreservedTag[];
-
-    const transfer = async (): Promise<void> => {
+    const transfer = async (tagsToTransfer: PreservedTag[]): Promise<void> => {
         try {
             await apiClient.transfer(
-                transferableTags.map((t) => ({
+                tagsToTransfer.map((t) => ({
                     id: t.id,
                     rowVersion: t.rowVersion,
                 }))
@@ -497,7 +501,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             refreshScopeList();
             refreshFilterValues();
             showSnackbarNotification(
-                `${transferableTags.length} tag(s) have been successfully transferred.`
+                `${tagsToTransfer.length} tag(s) have been successfully transferred.`
             );
         } catch (error) {
             console.error('Transfer failed: ', error.message, error.data);
@@ -507,35 +511,38 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     };
 
     const transferDialog = (): void => {
-        // Tag-objects must be cloned to avoid issues with data in scope table
-        const transferableTags: PreservedTag[] = [];
-        const nonTransferableTags: PreservedTag[] = [];
+        const newTransferableTags: PreservedTag[] = [];
+        const newNonTransferableTags: PreservedTag[] = [];
 
         selectedTags.forEach((tag) => {
             const newTag = { ...tag };
             if (tag.readyToBeTransferred && !tag.isVoided) {
-                transferableTags.push(newTag);
+                newTransferableTags.push(newTag);
             } else {
-                nonTransferableTags.push(newTag);
+                newNonTransferableTags.push(newTag);
             }
         });
 
-        const transferButton = transferableTags.length > 0 ? 'Transfer' : null;
-        const transferFunc = transferableTags.length > 0 ? transfer : null;
+        const transferButton =
+            newTransferableTags.length > 0 ? 'Transfer' : null;
+
+        setTransferableTags(newTransferableTags);
 
         showModalDialog(
             'Transferring',
             <Router>
                 <TransferDialog
-                    transferableTags={transferableTags}
-                    nonTransferableTags={nonTransferableTags}
+                    transferableTags={newTransferableTags}
+                    nonTransferableTags={newNonTransferableTags}
                 />
             </Router>,
             '80vw',
             backToListButton,
             null,
             transferButton,
-            transferFunc
+            newTransferableTags.length > 0
+                ? () => transfer(newTransferableTags)
+                : null
         );
     };
 

@@ -26,8 +26,7 @@ import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext
 import { useCurrentUser } from '../../../../core/UserContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-import { useParams } from 'react-router-dom';
-import useRouter from '@procosys/hooks/useRouter';
+import { useNavigate, useParams } from 'react-router-dom';
 import { set } from 'date-fns';
 
 const initialDate = getNextHalfHourTimeString(new Date());
@@ -125,6 +124,7 @@ const CreateIPO = (): JSX.Element => {
     const ipoId = useParams().ipoId as any;
     const projectName = useParams().projectName as any;
     const commPkgNo = useParams().commPkgNo as any;
+    const navigate = useNavigate();
 
     const initialSteps: Step[] = [
         { title: 'General info', isCompleted: false },
@@ -157,7 +157,6 @@ const CreateIPO = (): JSX.Element => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
     const { apiClient } = useInvitationForPunchOutContext();
-    const { history } = useRouter();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
     const [projectNameFromMain] = useState<string | null>(
         projectName ? decodeURIComponent(projectName) : null
@@ -364,7 +363,7 @@ const CreateIPO = (): JSX.Element => {
                     ComponentName.Attachments,
                     ComponentName.GeneralInfo,
                 ]);
-                history.push('/' + newIpoId);
+                navigate(`/${newIpoId}`);
             } catch (error) {
                 console.error('Create IPO failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);

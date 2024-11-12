@@ -363,7 +363,7 @@ const CreateIPO = (): JSX.Element => {
                     ComponentName.Attachments,
                     ComponentName.GeneralInfo,
                 ]);
-                navigate(`/${newIpoId}`);
+                navigate(-1);
             } catch (error) {
                 console.error('Create IPO failed: ', error.message, error.data);
                 showSnackbarNotification(error.message);

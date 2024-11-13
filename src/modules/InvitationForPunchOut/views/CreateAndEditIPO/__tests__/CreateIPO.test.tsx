@@ -5,6 +5,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { configure } from '@testing-library/dom';
 import { renderWithLocalizationProvider } from '@procosys/modules/InvitationForPunchOut/helperFunctions/testingFunctions/renderWithLocalizationProvider';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 configure({ testIdAttribute: 'id' }); // makes id attibute data-testid for subsequent tests
 
@@ -30,6 +31,7 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: () => ({ projectId: '1001', commPkgNo: '1' }),
     useLocation: () => ({ pathname: '/mocked-path' }),
+    useNavigate: jest.fn(),
 }));
 
 jest.mock('@procosys/hooks/useRouter', () =>
@@ -71,7 +73,11 @@ jest.mock('@procosys/core/DirtyContext', () => ({
 describe('<CreateIPO />', () => {
     beforeEach(async () => {
         await act(async () => {
-            renderWithLocalizationProvider(<CreateIPO />);
+            renderWithLocalizationProvider(
+                <Router>
+                    <CreateIPO />
+                </Router>
+            );
         });
     });
     afterEach(() => {

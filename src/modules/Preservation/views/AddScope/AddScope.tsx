@@ -340,7 +340,7 @@ const AddScope = (): JSX.Element => {
                         `${listOfTagNo.length} tag(s) successfully added to scope`,
                         5000
                     );
-                    navigate('/');
+                    navigate(-1);
                 } else {
                     showSnackbarNotification(
                         'Error occured. Step or requirement is missing.',

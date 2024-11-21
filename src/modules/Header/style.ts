@@ -8,7 +8,7 @@ export const Nav = styled.nav`
     grid-template-columns: auto auto 200px 1fr auto;
     grid-column-gap: 10px;
     grid-template-rows: 64px;
-    border-bottom: 1px solid #3caeee;
+    border-bottom: 2px solid ${tokens.colors.ui.background__light.rgba};
     font-weight: 500;
     button {
         font-size: calc(var(--grid-unit) * 2);

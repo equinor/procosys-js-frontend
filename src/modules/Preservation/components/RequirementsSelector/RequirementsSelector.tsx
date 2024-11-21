@@ -228,6 +228,7 @@ const RequirementsSelector = (
 
     const setRequirement = (reqDefValue: number, index: number): void => {
         const newRequirement = getRequirementForValue(reqDefValue);
+
         setRequirements((oldReq) => {
             const copy = [...oldReq];
 

@@ -1,12 +1,15 @@
 import CommPkgTable from '../CommPkgTable';
 import React from 'react';
 import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('<CommPkgTable />', () => {
     it('Should render table', () => {
         const propFunc = jest.fn();
         const { queryByText } = render(
-            <CommPkgTable setSelectedCommPkgScope={propFunc} />
+            <MemoryRouter>
+                <CommPkgTable setSelectedCommPkgScope={propFunc} />
+            </MemoryRouter>
         );
         expect(queryByText('Description')).toBeInTheDocument();
         expect(queryByText('Comm status')).toBeInTheDocument();
@@ -37,11 +40,13 @@ describe('<CommPkgTable />', () => {
     it('Should render the search field as disabled if the type is MDP and the commPkgNo is in the URL', () => {
         const propFunc = jest.fn();
         const { queryByPlaceholderText } = render(
-            <CommPkgTable
-                type="MDP"
-                commPkgNo={50}
-                setSelectedCommPkgScope={propFunc}
-            />
+            <MemoryRouter>
+                <CommPkgTable
+                    type="MDP"
+                    commPkgNo={50}
+                    setSelectedCommPkgScope={propFunc}
+                />
+            </MemoryRouter>
         );
         expect(queryByPlaceholderText('Search')).toBeDisabled();
     });

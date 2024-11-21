@@ -10,7 +10,6 @@ import ScopeOverview from './views/ScopeOverview/ScopeOverview';
 import withAccessControl from '../../core/security/withAccessControl';
 
 const Preservation = (): JSX.Element => {
-
     return (
         <>
             <Helmet titleTemplate={'ProCoSys - Preservation %s'}></Helmet>
@@ -18,7 +17,20 @@ const Preservation = (): JSX.Element => {
                 <ClosedProjectWarning />
                 <Routes>
                     <Route
-                        path="/AddScope/:method/:duplicateTagId?"
+                        path="AddScope/:method/:duplicateTagId?"
+                        element={
+                            <>
+                                <Helmet>
+                                    <title>{'- AddScope'}</title>
+                                </Helmet>
+                                <ErrorBoundary>
+                                    <AddScope />
+                                </ErrorBoundary>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="AddScope/:method"
                         element={
                             <>
                                 <Helmet>
@@ -40,7 +52,7 @@ const Preservation = (): JSX.Element => {
                     />
                     <Route
                         path="*"
-                        element={<h2>Sorry, this page does not exist</h2>}
+                        element={<h2>Sorry, this page does not exist 222</h2>}
                     />
                 </Routes>
             </PreservationContextProvider>

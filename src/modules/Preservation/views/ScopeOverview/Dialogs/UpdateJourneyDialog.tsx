@@ -395,7 +395,7 @@ const UpdateJourneyDialog = ({
                             </Typography>
                         )}
                     </InputSpacer>
-                    <MainContainer>
+                    <MainContainer style={{ height: '100%' }}>
                         {nonUpdateableTags.length > 0 && (
                             <TableContainer
                                 isHalfSize={updateableTags.length > 0}

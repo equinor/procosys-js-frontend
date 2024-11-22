@@ -76,7 +76,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
             return { id: plant.id, title: plant.title, pathId: plantInPath };
         });
 
-    // Move setCurrentPlant declaration above all useEffects
     const setCurrentPlant = (plantId: string): void => {
         // console.log(`Received PlantID: ${plantId}`);
         const normalizedPlantId =

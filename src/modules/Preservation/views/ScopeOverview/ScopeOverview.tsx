@@ -1165,6 +1165,36 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                 icon="more_vertical"
                                 variant="ghost"
                             >
+                                {/* //TEST START */}
+                                <DropdownItem
+                                    onClick={() => {
+                                        const analytics = useAnalytics();
+                                        console.log('DropdownItem clicked!');
+                                        try {
+                                            console.log(
+                                                'DropdownItem clicked!'
+                                            );
+                                            // Symulacja błędu
+                                            throw new Error(
+                                                'Dummy error: Test error triggered during dropdown action'
+                                            );
+
+                                            // Możesz dodać swoją właściwą logikę tutaj, jeśli błąd nie wystąpi
+                                            // np. otwieranie modala czy zmiana stanu
+                                        } catch (error) {
+                                            console.error(
+                                                'Error in CustomDropdownItem:',
+                                                error
+                                            );
+
+                                            // Rejestracja błędu w Application Insights
+                                            analytics.trackException(error);
+                                        }
+                                    }}
+                                >
+                                    Test
+                                </DropdownItem>
+                                {/* // TEST END */}
                                 <DropdownItem
                                     disabled={
                                         selectedTags.length != 1 ||

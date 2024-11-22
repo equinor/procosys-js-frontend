@@ -377,7 +377,7 @@ const EditIPO = (): JSX.Element => {
                     ComponentName.Participants,
                     ComponentName.Attachments,
                 ]);
-                navigate(`/${ipoId}`);
+                navigate(-1);
             } catch (error) {
                 handleApiError(error, 'Save updated IPO failed: ');
             }

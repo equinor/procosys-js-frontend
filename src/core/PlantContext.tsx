@@ -46,7 +46,17 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     });
     const analytics = useAnalytics();
 
+    // Validate user plants
+    if (!user || !user.plants || user.plants.length === 0) {
+        console.error(
+            'User has no plants assigned or user.plants is undefined'
+        );
+        return <ErrorComponent title="No plants available for the user" />;
+    }
+
+    // Validate plant in path
     if (!plantInPath || plantInPath === '') {
+        console.warn('Plant ID is missing in path. Setting default plant.');
         return <ErrorComponent title="Missing plant in path" />;
     }
 
@@ -55,17 +65,34 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
             const plant = user.plants.filter(
                 (plant) => plant.id === `PCS$${plantInPath}`
             )[0];
+
+            if (!plant) {
+                console.warn(
+                    `No plant found for path ID: ${plantInPath}. Using default fallback.`
+                );
+                return { id: '', title: 'Unknown Plant', pathId: plantInPath };
+            }
+
             return { id: plant.id, title: plant.title, pathId: plantInPath };
         });
 
+    // Move setCurrentPlant declaration above all useEffects
     const setCurrentPlant = (plantId: string): void => {
+        // console.log(`Received PlantID: ${plantId}`);
         const normalizedPlantId =
             (plantId.indexOf('PCS$') != -1 && plantId.replace('PCS$', '')) ||
             plantId;
+
+        console.log(`Normalized PlantID: ${normalizedPlantId}`);
         const plantsFiltered = user.plants.filter(
             (plant) => plant.id === `PCS$${normalizedPlantId}`
         );
+
         if (plantsFiltered.length <= 0) {
+            console.error(
+                `PlantID: ${plantId} does not exist. Available plants:`,
+                user.plants
+            );
             throw new InvalidParameterException(
                 `PlantID: ${plantId} does not exist`
             );
@@ -77,6 +104,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         setCurrentPlantInContext(plant);
     };
 
+    // Update path if plant changes
     useEffect(() => {
         if (!currentPlant || currentPlant.pathId === plantInPath) return;
         let newPath = `/${currentPlant.pathId}`;
@@ -84,6 +112,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         history.push(newPath);
     }, [currentPlant]);
 
+    // Fetch permissions
     useEffect(() => {
         procosysApiClient.setCurrentPlant(currentPlant.id);
         let requestCanceler: Canceler;
@@ -107,12 +136,17 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         return (): void => requestCanceler && requestCanceler();
     }, [currentPlant]);
 
+    // Set plant on path change
     useEffect(() => {
-        setCurrentPlant(plantInPath);
+        try {
+            setCurrentPlant(plantInPath);
+        } catch (error) {
+            console.error(`Failed to set current plant: ${error.message}`);
+        }
     }, [plantInPath]);
 
-    if (!currentPlant) {
-        return <Loading title="Loading plant information" />;
+    if (!currentPlant || !currentPlant.id) {
+        return <ErrorComponent title="Invalid or missing plant information" />;
     }
     if (isLoading.permissions) {
         return <Loading title="Loading plant permissions" />;

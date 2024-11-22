@@ -45,7 +45,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         permissions: true,
     });
     const analytics = useAnalytics();
-    console.log(333333, plantInPath);
+
     // Validate user plants
     if (!user || !user.plants || user.plants.length === 0) {
         console.error(

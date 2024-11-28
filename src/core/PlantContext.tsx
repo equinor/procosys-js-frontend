@@ -51,7 +51,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         console.error(
             'User has no plants assigned or user.plants is undefined'
         );
-        return <ErrorComponent title="No plants available for the user" />;
+        // return <ErrorComponent title="No plants available for the user" />;
     }
 
     // Validate plant in path
@@ -70,7 +70,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
                 console.warn(
                     `No plant found for path ID: ${plantInPath}. Using default fallback.`
                 );
-                return { id: '', title: 'Unknown Plant', pathId: plantInPath };
+                // return { id: '', title: 'Unknown Plant', pathId: plantInPath };
             }
 
             return { id: plant.id, title: plant.title, pathId: plantInPath };
@@ -135,15 +135,24 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
 
     // Set plant on path change
     useEffect(() => {
+        if (!plantInPath || typeof plantInPath !== 'string') {
+            console.warn('Invalid plantInPath:', plantInPath);
+            return;
+        }
         try {
+            console.log('Calling setCurrentPlant with:', plantInPath);
             setCurrentPlant(plantInPath);
         } catch (error) {
             console.error(`Failed to set current plant: ${error.message}`);
+            console.error('Failed to set current plant:', error);
+            console.error('Error stack:', error.stack);
         }
     }, [plantInPath]);
 
-    if (!currentPlant || !currentPlant.id) {
-        return <ErrorComponent title="Invalid or missing plant information" />;
+    // if (!currentPlant || !currentPlant.id) {
+    if (!currentPlant) {
+        // return <ErrorComponent title="Invalid or missing plant information" />;
+        return <Loading title="Loading plant information" />;
     }
     if (isLoading.permissions) {
         return <Loading title="Loading plant permissions" />;

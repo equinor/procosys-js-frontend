@@ -45,7 +45,8 @@ const InvitationForPunchOut = (): JSX.Element => {
                             />
 
                             <Route
-                                path=":projectName/:commPkgNo"
+                                // path=":projectName/:commPkgNo"
+                                path=":projectName"
                                 element={<CreateIPO />}
                             />
                         </Route>

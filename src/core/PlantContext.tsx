@@ -67,10 +67,10 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
             )[0];
 
             if (!plant) {
+                //TODO:  to remove log in the future
                 console.warn(
                     `No plant found for path ID: ${plantInPath}. Using default fallback.`
                 );
-                // return { id: '', title: 'Unknown Plant', pathId: plantInPath };
             }
 
             return { id: plant.id, title: plant.title, pathId: plantInPath };
@@ -90,8 +90,13 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
                 `PlantID: ${plantId} does not exist. Available plants:`,
                 user.plants
             );
+            // TODO:
+            // The changes added to this branch will need to be removed in the near future.
+            // The changes here involve adding more console logs aimed at identifying and diagnosing
+            // errors occurring only in production. The console logs will be removed once enough
+            // information has been gathered.
             throw new InvalidParameterException(
-                `PlantID: ${plantId} does not exist`
+                `Available plants: ${user.plants}, PlantID: ${plantId} does not exist. , plantInPath: ${plantInPath}`
             );
         }
         const plant = plantsFiltered[0] as PlantContextDetails;

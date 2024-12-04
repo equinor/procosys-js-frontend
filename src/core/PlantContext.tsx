@@ -35,12 +35,6 @@ class InvalidParameterException extends Error {}
 
 const cache = new CacheService('Default', localStorage);
 
-//  TODO:
-// The changes added to this branch will need to be removed in the near future.
-// The changes here involve adding more console logs aimed at identifying and diagnosing
-// errors occurring only in production. The console logs will be removed once enough
-// information has been gathered.
-
 export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     const user = useCurrentUser();
     const { procosysApiClient } = useProcosysContext();
@@ -73,6 +67,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
             )[0];
 
             if (!plant) {
+                //TODO:  to remove log in the future
                 console.warn(
                     `No plant found for path ID: ${plantInPath}. Using default fallback.`
                 );
@@ -95,6 +90,11 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
                 `PlantID: ${plantId} does not exist. Available plants:`,
                 user.plants
             );
+            // TODO:
+            // The changes added to this branch will need to be removed in the near future.
+            // The changes here involve adding more console logs aimed at identifying and diagnosing
+            // errors occurring only in production. The console logs will be removed once enough
+            // information has been gathered.
             throw new InvalidParameterException(
                 `Available plants: ${user.plants}, PlantID: ${plantId} does not exist. , plantInPath: ${plantInPath}`
             );

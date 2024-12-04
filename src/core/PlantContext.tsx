@@ -35,6 +35,12 @@ class InvalidParameterException extends Error {}
 
 const cache = new CacheService('Default', localStorage);
 
+//  TODO:
+// The changes added to this branch will need to be removed in the near future.
+// The changes here involve adding more console logs aimed at identifying and diagnosing
+// errors occurring only in production. The console logs will be removed once enough
+// information has been gathered.
+
 export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     const user = useCurrentUser();
     const { procosysApiClient } = useProcosysContext();

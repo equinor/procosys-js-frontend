@@ -70,7 +70,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
                 console.warn(
                     `No plant found for path ID: ${plantInPath}. Using default fallback.`
                 );
-                // return { id: '', title: 'Unknown Plant', pathId: plantInPath };
             }
 
             return { id: plant.id, title: plant.title, pathId: plantInPath };
@@ -91,7 +90,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
                 user.plants
             );
             throw new InvalidParameterException(
-                `PlantID: ${plantId} does not exist`
+                `Available plants: ${user.plants}, PlantID: ${plantId} does not exist. , plantInPath: ${plantInPath}`
             );
         }
         const plant = plantsFiltered[0] as PlantContextDetails;

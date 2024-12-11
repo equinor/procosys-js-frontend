@@ -104,7 +104,7 @@ const InvitationsTable = ({
 
     const getIdColumn = (row: TableOptions<IPO>): JSX.Element => {
         const data = (row.value as IPO).id.toString();
-        return <CustomLink to={`/${data}`}>{data}</CustomLink>;
+        return <CustomLink to={`${data}`}>{data}</CustomLink>;
     };
 
     const getProjectNameColumn = (row: TableOptions<IPO>): JSX.Element => {

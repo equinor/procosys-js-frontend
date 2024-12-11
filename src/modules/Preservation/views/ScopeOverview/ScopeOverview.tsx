@@ -70,7 +70,7 @@ const emptyTagListFilter: TagListFilter = {
     purchaseOrderNoStartsWith: null,
     callOffStartsWith: null,
     storageAreaStartsWith: null,
-    preservationStatus: null,
+    preservationStatus: [],
     actionStatus: null,
     voidedFilter: null,
     journeyIds: [],

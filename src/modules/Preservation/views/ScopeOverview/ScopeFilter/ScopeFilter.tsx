@@ -61,7 +61,8 @@ export type TagListFilterParamType =
     | 'dueFilters'
     | 'requirementTypeIds'
     | 'tagFunctionCodes'
-    | 'disciplineCodes';
+    | 'disciplineCodes'
+    | 'preservationStatus';
 
 const dueDates: FilterInput[] = [
     {
@@ -88,25 +89,20 @@ const dueDates: FilterInput[] = [
 
 const PRESERVATION_STATUS = [
     {
-        title: 'All',
-        value: 'no-filter',
-        default: true,
-    },
-    {
         title: 'Not started',
-        value: 'NotStarted',
+        id: 'NotStarted',
     },
     {
         title: 'Active',
-        value: 'Active',
+        id: 'Active',
     },
     {
         title: 'Completed',
-        value: 'Completed',
+        id: 'Completed',
     },
     {
         title: 'In service',
-        value: 'InService',
+        id: 'InService',
     },
 ];
 
@@ -153,7 +149,7 @@ const clearTagListFilter: TagListFilter = {
     purchaseOrderNoStartsWith: null,
     callOffStartsWith: null,
     storageAreaStartsWith: null,
-    preservationStatus: null,
+    preservationStatus: [],
     actionStatus: null,
     voidedFilter: null,
     journeyIds: [],
@@ -392,11 +388,25 @@ const ScopeFilter = ({
         setLocalTagListFilter(newTagListFilter);
     };
 
-    const onPreservationStatusFilterChanged = (value: string): void => {
-        const filter = value === 'no-filter' ? null : value;
-        setLocalTagListFilter((old): TagListFilter => {
-            return { ...old, preservationStatus: filter };
-        });
+    const onPreservationStatusFilterChanged = (
+        tagListFilterParam: TagListFilterParamType,
+        id: string,
+        checked: boolean
+    ): void => {
+        const newTagListFilter: TagListFilter = { ...localTagListFilter };
+        if (checked && !newTagListFilter.preservationStatus.includes(id)) {
+            newTagListFilter.preservationStatus = [
+                ...localTagListFilter.preservationStatus,
+                id,
+            ];
+        } else {
+            newTagListFilter.preservationStatus = [
+                ...localTagListFilter.preservationStatus.filter(
+                    (item) => item != id
+                ),
+            ];
+        }
+        setLocalTagListFilter(newTagListFilter);
     };
 
     const onActionStatusFilterChanged = (value: string): void => {
@@ -729,11 +739,12 @@ const ScopeFilter = ({
                 </>
             )}
 
-            <RadioGroupFilter
-                options={PRESERVATION_STATUS}
-                onChange={onPreservationStatusFilterChanged}
-                value={localTagListFilter.preservationStatus}
-                label="Preservation status"
+            <CheckboxFilter
+                filterValues={PRESERVATION_STATUS}
+                onCheckboxFilterChange={onPreservationStatusFilterChanged}
+                title="Preservation status"
+                tagListFilterParam="preservationStatus"
+                itemsChecked={localTagListFilter.preservationStatus}
                 icon={'calendar_today'}
             />
             <RadioGroupFilter

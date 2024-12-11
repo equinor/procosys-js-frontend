@@ -166,7 +166,7 @@ interface TagListFilter {
     journeyIds: string[];
     modeIds: string[];
     dueFilters: string[];
-    preservationStatus: string | null;
+    preservationStatus: string[];
     actionStatus: string | null;
 }
 

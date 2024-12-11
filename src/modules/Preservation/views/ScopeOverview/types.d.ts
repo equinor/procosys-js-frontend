@@ -60,7 +60,7 @@ export interface TagListFilter {
     requirementTypeIds: string[];
     tagFunctionCodes: string[];
     disciplineCodes: string[];
-    preservationStatus: string | null;
+    preservationStatus: string[];
     actionStatus: string | null;
     voidedFilter: string | null;
     responsibleIds: string[] | null;

@@ -29,6 +29,7 @@ import { Popover } from '@mui/material';
 import OptionsDropdown from '../../../../../components/OptionsDropdown';
 import { DropdownItem } from '../ScopeOverview.style';
 import { Tooltip } from '@mui/material';
+import id from 'date-fns/locale/id';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -62,7 +63,8 @@ export type TagListFilterParamType =
     | 'requirementTypeIds'
     | 'tagFunctionCodes'
     | 'disciplineCodes'
-    | 'preservationStatus';
+    | 'preservationStatus'
+    | 'actionStatus';
 
 const dueDates: FilterInput[] = [
     {
@@ -108,21 +110,16 @@ const PRESERVATION_STATUS = [
 
 const ACTION_STATUS = [
     {
-        title: 'All',
-        value: 'no-filter',
-        default: true,
-    },
-    {
         title: 'Open actions',
-        value: 'HasOpen',
+        id: 'HasOpen',
     },
     {
         title: 'Closed actions',
-        value: 'HasClosed',
+        id: 'HasClosed',
     },
     {
         title: 'Overdue actions',
-        value: 'HasOverDue',
+        id: 'HasOverDue',
     },
 ];
 
@@ -150,7 +147,7 @@ const clearTagListFilter: TagListFilter = {
     callOffStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: [],
-    actionStatus: null,
+    actionStatus: [],
     voidedFilter: null,
     journeyIds: [],
     modeIds: [],
@@ -386,34 +383,6 @@ const ScopeFilter = ({
             ];
         }
         setLocalTagListFilter(newTagListFilter);
-    };
-
-    const onPreservationStatusFilterChanged = (
-        tagListFilterParam: TagListFilterParamType,
-        id: string,
-        checked: boolean
-    ): void => {
-        const newTagListFilter: TagListFilter = { ...localTagListFilter };
-        if (checked && !newTagListFilter.preservationStatus.includes(id)) {
-            newTagListFilter.preservationStatus = [
-                ...localTagListFilter.preservationStatus,
-                id,
-            ];
-        } else {
-            newTagListFilter.preservationStatus = [
-                ...localTagListFilter.preservationStatus.filter(
-                    (item) => item != id
-                ),
-            ];
-        }
-        setLocalTagListFilter(newTagListFilter);
-    };
-
-    const onActionStatusFilterChanged = (value: string): void => {
-        const filter = value === 'no-filter' ? null : value;
-        setLocalTagListFilter((old): TagListFilter => {
-            return { ...old, actionStatus: filter };
-        });
     };
 
     const onVoidedFilterChanged = (value: string): void => {
@@ -741,17 +710,18 @@ const ScopeFilter = ({
 
             <CheckboxFilter
                 filterValues={PRESERVATION_STATUS}
-                onCheckboxFilterChange={onPreservationStatusFilterChanged}
+                onCheckboxFilterChange={onCheckboxFilterChange}
                 title="Preservation status"
                 tagListFilterParam="preservationStatus"
                 itemsChecked={localTagListFilter.preservationStatus}
                 icon={'calendar_today'}
             />
-            <RadioGroupFilter
-                options={ACTION_STATUS}
-                onChange={onActionStatusFilterChanged}
-                value={localTagListFilter.actionStatus}
-                label="Preservation actions"
+            <CheckboxFilter
+                filterValues={ACTION_STATUS}
+                onCheckboxFilterChange={onCheckboxFilterChange}
+                itemsChecked={localTagListFilter.actionStatus}
+                tagListFilterParam="actionStatus"
+                title="Preservation actions"
                 icon={'notifications'}
             />
             <RadioGroupFilter

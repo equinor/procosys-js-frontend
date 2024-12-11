@@ -167,7 +167,7 @@ interface TagListFilter {
     modeIds: string[];
     dueFilters: string[];
     preservationStatus: string[];
-    actionStatus: string | null;
+    actionStatus: string[];
 }
 
 interface SavedScopeFilterResponse {

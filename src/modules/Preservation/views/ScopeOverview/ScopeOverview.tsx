@@ -71,7 +71,7 @@ const emptyTagListFilter: TagListFilter = {
     callOffStartsWith: null,
     storageAreaStartsWith: null,
     preservationStatus: [],
-    actionStatus: null,
+    actionStatus: [],
     voidedFilter: null,
     journeyIds: [],
     modeIds: [],

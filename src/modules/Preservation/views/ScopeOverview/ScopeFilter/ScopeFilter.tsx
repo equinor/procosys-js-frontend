@@ -307,7 +307,12 @@ const ScopeFilter = ({
                 );
                 const tagFunctions: CheckboxFilterValue[] = [];
                 tagFunctionResp.map((item) => {
-                    tagFunctions.push({ id: item.code, title: item.code });
+                    tagFunctions.push({
+                        id: item.code,
+                        title: item.description
+                            ? `${item.code}, ${item.description}`
+                            : item.code,
+                    });
                 });
                 setTagFunctions(tagFunctions);
             } catch (error) {

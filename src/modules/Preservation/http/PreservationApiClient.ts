@@ -413,6 +413,7 @@ interface RequirementTypeFilterResponse {
 
 interface TagFunctionFilterResponse {
     code: string;
+    description: string;
 }
 
 interface TagFunctionResponse {

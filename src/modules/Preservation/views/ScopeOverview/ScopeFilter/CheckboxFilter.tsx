@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { Collapse, CollapseInfo } from './ScopeFilter.style';
+import React, { ChangeEvent, useState } from 'react';
+import {
+    Collapse,
+    CollapseInfo,
+    ScopeFilterCheckbox,
+} from './ScopeFilter.style';
 import { ExpandedContainer } from './CheckboxFilter.style';
 import { Typography } from '@equinor/eds-core-react';
-import Checkbox from '../../../../../components/Checkbox';
 import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { Checkbox } from '@equinor/eds-core-react';
 
 interface CheckboxFilterProps {
     title: string;
@@ -46,25 +50,30 @@ const CheckboxFilter = ({
                 <ExpandedContainer>
                     {filterValues.map((value) => {
                         return (
-                            <Checkbox
-                                key={value.id}
+                            <ScopeFilterCheckbox
+                                key={value.title}
                                 checked={itemsChecked.some((elementId) => {
                                     return (
                                         String(value.id) === String(elementId)
                                     );
                                 })}
-                                onChange={(checked: boolean): void => {
+                                onChange={(
+                                    e: ChangeEvent<HTMLInputElement>
+                                ): void => {
+                                    console.log(
+                                        'CheckboxFilter.tsx: ',
+                                        tagListFilterParam,
+                                        value.id,
+                                        e.target.checked
+                                    );
                                     onCheckboxFilterChange(
                                         tagListFilterParam,
                                         String(value.id),
-                                        checked
+                                        e.target.checked
                                     );
                                 }}
-                            >
-                                <Typography variant="body_long">
-                                    {value.title}
-                                </Typography>
-                            </Checkbox>
+                                label={value.title}
+                            ></ScopeFilterCheckbox>
                         );
                     })}
                 </ExpandedContainer>

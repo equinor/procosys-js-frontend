@@ -56,6 +56,12 @@ const MultiSelectFilter = ({
             const newSelectedItems = [...selectedItemsState, item];
             setSelectedItemsState(newSelectedItems);
             onChange(newSelectedItems);
+        } else {
+            const newSelectedItems = selectedItemsState.filter(
+                (selectedItem) => selectedItem.id !== item.id
+            );
+            setSelectedItemsState(newSelectedItems);
+            onChange(newSelectedItems);
         }
     };
 
@@ -113,6 +119,7 @@ const MultiSelectFilter = ({
                         text={inputPlaceholder}
                         onFilter={setFilter}
                         label={inputLabel}
+                        keepOpen={true}
                     >
                         {selectableItems}
                     </Dropdown>

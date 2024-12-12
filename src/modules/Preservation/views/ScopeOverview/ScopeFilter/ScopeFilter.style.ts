@@ -88,14 +88,3 @@ export const Link = styled.span<FilterProps>`
 export const ExpandedContainer = styled.div`
     padding-left: calc(var(--grid-unit) * 4);
 `;
-
-export const ScopeFilterCheckbox = styled(Checkbox).withConfig({
-    displayName: 'scope-filter-item-',
-})`
-    display: flex;
-    & > span:last-child {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-`;

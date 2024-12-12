@@ -459,10 +459,10 @@ const TreeView = ({
         let isMounted = true;
 
         const nodeNames = pathname
-        .split('/')
-        .filter((name) => name.trim() !== '')
-        .slice(2)
-        .map(decodeURIComponent);
+            .split('/')
+            .filter((name) => name.trim() !== '')
+            .slice(2)
+            .map(decodeURIComponent);
 
         const checkMounted = () => isMounted;
 

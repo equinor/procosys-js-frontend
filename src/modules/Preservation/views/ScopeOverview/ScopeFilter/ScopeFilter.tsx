@@ -791,7 +791,6 @@ const ScopeFilter = ({
                 onChange={responsibleFilterUpdated}
                 selectedItems={localTagListFilter.responsibleIds}
                 inputLabel="Responsible"
-                inputPlaceholder="Select responsible"
                 icon={<EdsIcon name="person" />}
             />
             <MultiSelectFilter
@@ -800,7 +799,6 @@ const ScopeFilter = ({
                 onChange={areaFilterUpdated}
                 selectedItems={localTagListFilter.areaCodes}
                 inputLabel="Area"
-                inputPlaceholder="Select area"
                 icon={<AreaIcon />}
             />
         </Container>

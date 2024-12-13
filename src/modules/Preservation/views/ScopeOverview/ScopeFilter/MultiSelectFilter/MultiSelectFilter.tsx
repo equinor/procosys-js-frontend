@@ -19,7 +19,7 @@ type MultiSelectProps = {
     items: Item[];
     headerLabel: string;
     inputLabel: string;
-    inputPlaceholder: string;
+    inputPlaceholder?: string;
     selectedItems: string[] | null;
     onChange: (selectedItems: Item[]) => void;
     icon: JSX.Element;
@@ -92,6 +92,7 @@ const MultiSelectFilter = ({
                         optionLabel={(option: Item): string => option.title}
                         selectedOptions={selectedItemsState}
                         onOptionsChange={onSelectionChanged}
+                        placeholder={inputPlaceholder}
                         multiple
                     ></Autocomplete>
                     <SelectedItemsContainer>

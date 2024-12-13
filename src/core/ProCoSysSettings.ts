@@ -217,11 +217,8 @@ class ProCoSysSettings {
                 configurationResponse.configuration.instrumentationKey;
 
             this.graphApi = configurationResponse.configuration.graphApi;
-            const preservationApi = {
-                url: 'https://localhost:47401/',
-                scope: ['api://67b2f053-30bf-4ffc-9206-ef57f631efcb/ReadWrite'],
-            };
-            this.preservationApi = preservationApi;
+            this.preservationApi =
+                configurationResponse.configuration.preservationApi;
             this.searchApi = configurationResponse.configuration.searchApi;
             this.ipoApi = configurationResponse.configuration.ipoApi;
             this.libraryApi = configurationResponse.configuration.libraryApi;

@@ -166,8 +166,8 @@ interface TagListFilter {
     journeyIds: string[];
     modeIds: string[];
     dueFilters: string[];
-    preservationStatus: string[];
-    actionStatus: string[];
+    preservationStatus: string | null;
+    actionStatus: string | null;
 }
 
 interface SavedScopeFilterResponse {
@@ -413,7 +413,6 @@ interface RequirementTypeFilterResponse {
 
 interface TagFunctionFilterResponse {
     code: string;
-    description: string;
 }
 
 interface TagFunctionResponse {

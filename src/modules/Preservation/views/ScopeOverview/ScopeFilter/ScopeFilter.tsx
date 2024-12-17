@@ -29,7 +29,6 @@ import { Popover } from '@mui/material';
 import OptionsDropdown from '../../../../../components/OptionsDropdown';
 import { DropdownItem } from '../ScopeOverview.style';
 import { Tooltip } from '@mui/material';
-import id from 'date-fns/locale/id';
 
 const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
 
@@ -62,9 +61,7 @@ export type TagListFilterParamType =
     | 'dueFilters'
     | 'requirementTypeIds'
     | 'tagFunctionCodes'
-    | 'disciplineCodes'
-    | 'preservationStatus'
-    | 'actionStatus';
+    | 'disciplineCodes';
 
 const dueDates: FilterInput[] = [
     {
@@ -91,35 +88,45 @@ const dueDates: FilterInput[] = [
 
 const PRESERVATION_STATUS = [
     {
+        title: 'All',
+        value: 'no-filter',
+        default: true,
+    },
+    {
         title: 'Not started',
-        id: 'NotStarted',
+        value: 'NotStarted',
     },
     {
         title: 'Active',
-        id: 'Active',
+        value: 'Active',
     },
     {
         title: 'Completed',
-        id: 'Completed',
+        value: 'Completed',
     },
     {
         title: 'In service',
-        id: 'InService',
+        value: 'InService',
     },
 ];
 
 const ACTION_STATUS = [
     {
+        title: 'All',
+        value: 'no-filter',
+        default: true,
+    },
+    {
         title: 'Open actions',
-        id: 'HasOpen',
+        value: 'HasOpen',
     },
     {
         title: 'Closed actions',
-        id: 'HasClosed',
+        value: 'HasClosed',
     },
     {
         title: 'Overdue actions',
-        id: 'HasOverDue',
+        value: 'HasOverDue',
     },
 ];
 
@@ -146,8 +153,8 @@ const clearTagListFilter: TagListFilter = {
     purchaseOrderNoStartsWith: null,
     callOffStartsWith: null,
     storageAreaStartsWith: null,
-    preservationStatus: [],
-    actionStatus: [],
+    preservationStatus: null,
+    actionStatus: null,
     voidedFilter: null,
     journeyIds: [],
     modeIds: [],
@@ -307,12 +314,7 @@ const ScopeFilter = ({
                 );
                 const tagFunctions: CheckboxFilterValue[] = [];
                 tagFunctionResp.map((item) => {
-                    tagFunctions.push({
-                        id: item.code,
-                        title: item.description
-                            ? `${item.code}, ${item.description}`
-                            : item.code,
-                    });
+                    tagFunctions.push({ id: item.code, title: item.code });
                 });
                 setTagFunctions(tagFunctions);
             } catch (error) {
@@ -388,6 +390,20 @@ const ScopeFilter = ({
             ];
         }
         setLocalTagListFilter(newTagListFilter);
+    };
+
+    const onPreservationStatusFilterChanged = (value: string): void => {
+        const filter = value === 'no-filter' ? null : value;
+        setLocalTagListFilter((old): TagListFilter => {
+            return { ...old, preservationStatus: filter };
+        });
+    };
+
+    const onActionStatusFilterChanged = (value: string): void => {
+        const filter = value === 'no-filter' ? null : value;
+        setLocalTagListFilter((old): TagListFilter => {
+            return { ...old, actionStatus: filter };
+        });
     };
 
     const onVoidedFilterChanged = (value: string): void => {
@@ -713,20 +729,18 @@ const ScopeFilter = ({
                 </>
             )}
 
-            <CheckboxFilter
-                filterValues={PRESERVATION_STATUS}
-                onCheckboxFilterChange={onCheckboxFilterChange}
-                title="Preservation status"
-                tagListFilterParam="preservationStatus"
-                itemsChecked={localTagListFilter.preservationStatus}
+            <RadioGroupFilter
+                options={PRESERVATION_STATUS}
+                onChange={onPreservationStatusFilterChanged}
+                value={localTagListFilter.preservationStatus}
+                label="Preservation status"
                 icon={'calendar_today'}
             />
-            <CheckboxFilter
-                filterValues={ACTION_STATUS}
-                onCheckboxFilterChange={onCheckboxFilterChange}
-                itemsChecked={localTagListFilter.actionStatus}
-                tagListFilterParam="actionStatus"
-                title="Preservation actions"
+            <RadioGroupFilter
+                options={ACTION_STATUS}
+                onChange={onActionStatusFilterChanged}
+                value={localTagListFilter.actionStatus}
+                label="Preservation actions"
                 icon={'notifications'}
             />
             <RadioGroupFilter
@@ -791,6 +805,7 @@ const ScopeFilter = ({
                 onChange={responsibleFilterUpdated}
                 selectedItems={localTagListFilter.responsibleIds}
                 inputLabel="Responsible"
+                inputPlaceholder="Select responsible"
                 icon={<EdsIcon name="person" />}
             />
             <MultiSelectFilter
@@ -799,6 +814,7 @@ const ScopeFilter = ({
                 onChange={areaFilterUpdated}
                 selectedItems={localTagListFilter.areaCodes}
                 inputLabel="Area"
+                inputPlaceholder="Select area"
                 icon={<AreaIcon />}
             />
         </Container>

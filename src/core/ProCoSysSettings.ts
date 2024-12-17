@@ -240,7 +240,6 @@ class ProCoSysSettings {
             );
             throw error;
         }
-
         try {
             this.overrideFromLocalConfiguration();
         } catch (error) {

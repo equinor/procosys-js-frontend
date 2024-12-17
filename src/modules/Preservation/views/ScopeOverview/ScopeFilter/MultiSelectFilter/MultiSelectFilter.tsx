@@ -1,14 +1,14 @@
+import { Autocomplete } from '@equinor/eds-core-react';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import EdsIcon from '@procosys/components/EdsIcon';
 import React, { useEffect, useState } from 'react';
-import Dropdown from '@procosys/components/Dropdown';
 import { Collapse, CollapseInfo } from '../ScopeFilter.style';
 import {
-    SelectedItemsContainer,
+    FilterContainer,
     Item,
     SelectedItem,
-    FilterContainer,
+    SelectedItemsContainer,
 } from './MultiSelectFilter.style';
-import EdsIcon from '@procosys/components/EdsIcon';
-import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
 interface Item {
     title: string;
@@ -19,7 +19,7 @@ type MultiSelectProps = {
     items: Item[];
     headerLabel: string;
     inputLabel: string;
-    inputPlaceholder: string;
+    inputPlaceholder?: string;
     selectedItems: string[] | null;
     onChange: (selectedItems: Item[]) => void;
     icon: JSX.Element;
@@ -47,18 +47,6 @@ const MultiSelectFilter = ({
         setSelectedItemsState(selected);
     }, [selectedItems, items]);
 
-    const onSelect = (item: Item): void => {
-        if (
-            !selectedItemsState.find(
-                (selectedItem) => selectedItem.id === item.id
-            )
-        ) {
-            const newSelectedItems = [...selectedItemsState, item];
-            setSelectedItemsState(newSelectedItems);
-            onChange(newSelectedItems);
-        }
-    };
-
     const onDeselect = (item: Item): void => {
         const newSelectedItems = selectedItemsState.filter(
             (selectedItem) => selectedItem.id !== item.id
@@ -67,27 +55,16 @@ const MultiSelectFilter = ({
         onChange(newSelectedItems);
     };
 
-    const selectableItems = items
-        .filter(
-            (itm) =>
-                filter === '' ||
-                itm.title.toLowerCase().includes(filter.toLowerCase())
-        )
-        .map((itm) => {
-            const isSelected = selectedItemsState.some(
-                (selectedItem) => selectedItem.id === itm.id
-            );
-            return (
-                <Item key={itm.id} onClick={() => onSelect(itm)}>
-                    {isSelected ? (
-                        <EdsIcon name="checkbox" />
-                    ) : (
-                        <EdsIcon name="checkbox_outline" />
-                    )}
-                    {itm.title}
-                </Item>
-            );
-        });
+    const onSelectionChanged = ({ selectedItems }: any): void => {
+        setSelectedItemsState(selectedItems);
+        onChange(selectedItems);
+    };
+
+    const selectableItems = items.filter(
+        (itm) =>
+            filter === '' ||
+            itm.title.toLowerCase().includes(filter.toLowerCase())
+    );
 
     const selectedItemsComponents = selectedItemsState.map((item) => (
         <SelectedItem key={item.id} onClick={() => onDeselect(item)}>
@@ -99,7 +76,7 @@ const MultiSelectFilter = ({
         <>
             <Collapse
                 isExpanded={isExpanded}
-                onClick={() => setIsExpanded(!isExpanded)}
+                onClick={(): void => setIsExpanded(!isExpanded)}
                 data-testid="MultiSelectHeader"
                 filterActive={selectedItemsState.length > 0}
             >
@@ -109,13 +86,15 @@ const MultiSelectFilter = ({
             </Collapse>
             {isExpanded && (
                 <FilterContainer>
-                    <Dropdown
-                        text={inputPlaceholder}
-                        onFilter={setFilter}
+                    <Autocomplete
                         label={inputLabel}
-                    >
-                        {selectableItems}
-                    </Dropdown>
+                        options={selectableItems}
+                        optionLabel={(option: Item): string => option.title}
+                        selectedOptions={selectedItemsState}
+                        onOptionsChange={onSelectionChanged}
+                        placeholder={inputPlaceholder}
+                        multiple
+                    ></Autocomplete>
                     <SelectedItemsContainer>
                         {selectedItemsComponents}
                     </SelectedItemsContainer>

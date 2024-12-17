@@ -1,6 +1,9 @@
 import styled, { css } from 'styled-components';
 
 import { tokens } from '@equinor/eds-tokens';
+import { Typography } from '@equinor/eds-core-react';
+import { Checkbox } from '@equinor/eds-core-react';
+import { Radio } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
     display: flex;
@@ -84,5 +87,9 @@ export const Link = styled.span<FilterProps>`
 `;
 
 export const ExpandedContainer = styled.div`
-    padding-left: calc(var(--grid-unit) * 4);
+    padding-left: calc(var(--grid-unit) * 2);
+`;
+
+export const ScopeFilterRadio = styled(Radio)`
+    height: 40px;
 `;

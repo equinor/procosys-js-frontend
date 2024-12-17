@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { CollapseInfo, Collapse, ExpandedContainer } from './ScopeFilter.style';
+import {
+    CollapseInfo,
+    Collapse,
+    ExpandedContainer,
+    ScopeFilterRadio,
+} from './ScopeFilter.style';
 import EdsIcon from '@procosys/components/EdsIcon';
 import { Radio } from '@equinor/eds-core-react';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
@@ -66,7 +71,7 @@ const RadioGroupFilter = ({
                     <UnstyledList>
                         {options.map((option) => (
                             <li key={option.value}>
-                                <Radio
+                                <ScopeFilterRadio
                                     label={option.title}
                                     value={option.value}
                                     checked={

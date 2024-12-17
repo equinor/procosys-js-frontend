@@ -24,6 +24,12 @@ export const FilterContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin: var(--grid-unit) calc(2 * var(--grid-unit));
+    button {
+        background-color: ${tokens.colors.ui.background__light.rgba};
+        color: ${tokens.colors.text.static_icons__tertiary.rgba};
+        border-bottom: 1px solid
+            ${tokens.colors.text.static_icons__tertiary.rgba};
+    }
 `;
 
 export const SelectedItem = styled.span`

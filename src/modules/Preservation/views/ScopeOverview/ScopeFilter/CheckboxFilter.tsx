@@ -1,9 +1,11 @@
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import EdsIcon from '@procosys/components/EdsIcon';
-import React, { ChangeEvent, useState } from 'react';
-import { ExpandedContainer, ScopeFilterCheckbox } from './CheckboxFilter.style';
-import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
+import React, { useState } from 'react';
 import { Collapse, CollapseInfo } from './ScopeFilter.style';
+import { ExpandedContainer } from './CheckboxFilter.style';
+import { Typography } from '@equinor/eds-core-react';
+import Checkbox from '../../../../../components/Checkbox';
+import { CheckboxFilterValue, TagListFilterParamType } from './ScopeFilter';
+import EdsIcon from '@procosys/components/EdsIcon';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 interface CheckboxFilterProps {
     title: string;
@@ -44,24 +46,25 @@ const CheckboxFilter = ({
                 <ExpandedContainer>
                     {filterValues.map((value) => {
                         return (
-                            <ScopeFilterCheckbox
-                                key={value.title}
+                            <Checkbox
+                                key={value.id}
                                 checked={itemsChecked.some((elementId) => {
                                     return (
                                         String(value.id) === String(elementId)
                                     );
                                 })}
-                                onChange={(
-                                    e: ChangeEvent<HTMLInputElement>
-                                ): void => {
+                                onChange={(checked: boolean): void => {
                                     onCheckboxFilterChange(
                                         tagListFilterParam,
                                         String(value.id),
-                                        e.target.checked
+                                        checked
                                     );
                                 }}
-                                label={value.title}
-                            ></ScopeFilterCheckbox>
+                            >
+                                <Typography variant="body_long">
+                                    {value.title}
+                                </Typography>
+                            </Checkbox>
                         );
                     })}
                 </ExpandedContainer>

@@ -40,6 +40,17 @@ $ docker build --force-rm -t pcs:latest -f .docker/Dockerfile .
 $ docker run -it -p 80:80 pcs:latest
 ```
 
+# How to deploy
+
+## Deploy to dev
+When you are ready to deploy your changes to dev/test create a PR and merge it into the development branch. This will trigger a build and deploy to the dev environment.
+
+## Deploy to test
+When you want your changes to test merge the develop branch into the test branch and your changes will be deployed to test.
+
+## Deploy to prod
+When you are ready to deploy to production merge the develop branch into the master branch and your changes will be deployed to production. You can **NOT** merge test to master because test has different styling than production.
+
 # Libraries
 
 ### Microsoft Authentication Library (MSAL)

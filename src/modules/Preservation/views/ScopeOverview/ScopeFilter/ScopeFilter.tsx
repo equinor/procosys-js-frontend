@@ -1,4 +1,6 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { SavedTagListFilter, TagListFilter } from '../types';
 import {
     Collapse,
     CollapseInfo,
@@ -7,30 +9,25 @@ import {
     Link,
     Section,
 } from './ScopeFilter.style';
-import React, { useEffect, useRef, useState } from 'react';
-import { SavedTagListFilter, TagListFilter } from '../types';
 
-import AreaIcon from '@procosys/assets/icons/Area';
-import { Canceler } from 'axios';
-import CheckboxFilter from './CheckboxFilter';
-import EdsIcon from '@procosys/components/EdsIcon';
-import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
-import RadioGroupFilter from './RadioGroupFilter';
-import SavedFilters from './SavedFilters';
-import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
-import { usePreservationContext } from '../../../context/PreservationContext';
 import {
     BookmarksOutlined,
     Close,
     KeyboardArrowDown,
     KeyboardArrowUp,
 } from '@mui/icons-material';
-import { Popover } from '@mui/material';
+import { Popover, Tooltip } from '@mui/material';
+import AreaIcon from '@procosys/assets/icons/Area';
+import EdsIcon from '@procosys/components/EdsIcon';
+import { Canceler } from 'axios';
 import OptionsDropdown from '../../../../../components/OptionsDropdown';
+import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
+import { usePreservationContext } from '../../../context/PreservationContext';
 import { DropdownItem } from '../ScopeOverview.style';
-import { Tooltip } from '@mui/material';
-
-const ExcelIcon = <EdsIcon name="microsoft_excel" size={16} />;
+import CheckboxFilter from './CheckboxFilter';
+import MultiSelectFilter from './MultiSelectFilter/MultiSelectFilter';
+import RadioGroupFilter from './RadioGroupFilter';
+import SavedFilters from './SavedFilters';
 
 interface ScopeFilterProps {
     onCloseRequest: () => void;
@@ -61,7 +58,9 @@ export type TagListFilterParamType =
     | 'dueFilters'
     | 'requirementTypeIds'
     | 'tagFunctionCodes'
-    | 'disciplineCodes';
+    | 'disciplineCodes'
+    | 'preservationStatus'
+    | 'actionStatus';
 
 const dueDates: FilterInput[] = [
     {
@@ -88,45 +87,35 @@ const dueDates: FilterInput[] = [
 
 const PRESERVATION_STATUS = [
     {
-        title: 'All',
-        value: 'no-filter',
-        default: true,
-    },
-    {
         title: 'Not started',
-        value: 'NotStarted',
+        id: 'NotStarted',
     },
     {
         title: 'Active',
-        value: 'Active',
+        id: 'Active',
     },
     {
         title: 'Completed',
-        value: 'Completed',
+        id: 'Completed',
     },
     {
         title: 'In service',
-        value: 'InService',
+        id: 'InService',
     },
 ];
 
 const ACTION_STATUS = [
     {
-        title: 'All',
-        value: 'no-filter',
-        default: true,
-    },
-    {
         title: 'Open actions',
-        value: 'HasOpen',
+        id: 'HasOpen',
     },
     {
         title: 'Closed actions',
-        value: 'HasClosed',
+        id: 'HasClosed',
     },
     {
         title: 'Overdue actions',
-        value: 'HasOverDue',
+        id: 'HasOverDue',
     },
 ];
 
@@ -153,8 +142,8 @@ const clearTagListFilter: TagListFilter = {
     purchaseOrderNoStartsWith: null,
     callOffStartsWith: null,
     storageAreaStartsWith: null,
-    preservationStatus: null,
-    actionStatus: null,
+    preservationStatus: [],
+    actionStatus: [],
     voidedFilter: null,
     journeyIds: [],
     modeIds: [],
@@ -314,7 +303,12 @@ const ScopeFilter = ({
                 );
                 const tagFunctions: CheckboxFilterValue[] = [];
                 tagFunctionResp.map((item) => {
-                    tagFunctions.push({ id: item.code, title: item.code });
+                    tagFunctions.push({
+                        id: item.code,
+                        title: item.description
+                            ? `${item.code}, ${item.description}`
+                            : item.code,
+                    });
                 });
                 setTagFunctions(tagFunctions);
             } catch (error) {
@@ -390,20 +384,6 @@ const ScopeFilter = ({
             ];
         }
         setLocalTagListFilter(newTagListFilter);
-    };
-
-    const onPreservationStatusFilterChanged = (value: string): void => {
-        const filter = value === 'no-filter' ? null : value;
-        setLocalTagListFilter((old): TagListFilter => {
-            return { ...old, preservationStatus: filter };
-        });
-    };
-
-    const onActionStatusFilterChanged = (value: string): void => {
-        const filter = value === 'no-filter' ? null : value;
-        setLocalTagListFilter((old): TagListFilter => {
-            return { ...old, actionStatus: filter };
-        });
     };
 
     const onVoidedFilterChanged = (value: string): void => {
@@ -729,18 +709,20 @@ const ScopeFilter = ({
                 </>
             )}
 
-            <RadioGroupFilter
-                options={PRESERVATION_STATUS}
-                onChange={onPreservationStatusFilterChanged}
-                value={localTagListFilter.preservationStatus}
-                label="Preservation status"
+            <CheckboxFilter
+                filterValues={PRESERVATION_STATUS}
+                onCheckboxFilterChange={onCheckboxFilterChange}
+                title="Preservation status"
+                tagListFilterParam="preservationStatus"
+                itemsChecked={localTagListFilter.preservationStatus}
                 icon={'calendar_today'}
             />
-            <RadioGroupFilter
-                options={ACTION_STATUS}
-                onChange={onActionStatusFilterChanged}
-                value={localTagListFilter.actionStatus}
-                label="Preservation actions"
+            <CheckboxFilter
+                filterValues={ACTION_STATUS}
+                onCheckboxFilterChange={onCheckboxFilterChange}
+                itemsChecked={localTagListFilter.actionStatus}
+                tagListFilterParam="actionStatus"
+                title="Preservation actions"
                 icon={'notifications'}
             />
             <RadioGroupFilter
@@ -805,7 +787,6 @@ const ScopeFilter = ({
                 onChange={responsibleFilterUpdated}
                 selectedItems={localTagListFilter.responsibleIds}
                 inputLabel="Responsible"
-                inputPlaceholder="Select responsible"
                 icon={<EdsIcon name="person" />}
             />
             <MultiSelectFilter
@@ -814,7 +795,6 @@ const ScopeFilter = ({
                 onChange={areaFilterUpdated}
                 selectedItems={localTagListFilter.areaCodes}
                 inputLabel="Area"
-                inputPlaceholder="Select area"
                 icon={<AreaIcon />}
             />
         </Container>

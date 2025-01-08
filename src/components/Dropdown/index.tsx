@@ -22,6 +22,7 @@ export interface DropdownProps {
     variant?: string;
     meta?: string;
     maxHeight?: string;
+    keepOpen?: boolean;
 }
 
 const KEYCODE_ESCAPE = 27;
@@ -36,6 +37,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     variant,
     meta,
     maxHeight = '80vh',
+    keepOpen,
 }: DropdownProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -123,7 +125,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                                 <DropdownItem
                                     key={index}
                                     role="option"
-                                    onClick={toggleDropdown}
+                                    onClick={
+                                        keepOpen ? undefined : toggleDropdown
+                                    }
                                     tabIndex={0}
                                 >
                                     {item}

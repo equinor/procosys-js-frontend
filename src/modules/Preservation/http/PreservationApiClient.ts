@@ -208,6 +208,11 @@ interface JourneyResponse {
         },
     ];
     rowVersion: string;
+    project?: {
+        projectId: number;
+        title: string;
+        description: string;
+    };
 }
 
 interface RequirementTypeResponse {
@@ -1376,6 +1381,7 @@ class PreservationApiClient extends ApiClient {
         journeyId: number,
         title: string,
         rowVersion: string,
+        projectId?: number,
         setRequestCanceller?: RequestCanceler
     ): Promise<void> {
         const endpoint = `/Journeys/${journeyId}`;
@@ -1386,8 +1392,9 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(
                 endpoint,
                 {
-                    title: title,
-                    rowVersion: rowVersion,
+                    title,
+                    rowVersion,
+                    projectId,
                 },
                 settings
             );

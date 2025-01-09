@@ -6,6 +6,7 @@ import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
+import { ProjectDetails } from '../types';
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -208,11 +209,7 @@ interface JourneyResponse {
         },
     ];
     rowVersion: string;
-    project?: {
-        projectId: number;
-        title: string;
-        description: string;
-    };
+    project?: ProjectDetails;
 }
 
 interface RequirementTypeResponse {
@@ -1381,7 +1378,7 @@ class PreservationApiClient extends ApiClient {
         journeyId: number,
         title: string,
         rowVersion: string,
-        projectId?: number,
+        name?: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<void> {
         const endpoint = `/Journeys/${journeyId}`;
@@ -1394,7 +1391,7 @@ class PreservationApiClient extends ApiClient {
                 {
                     title,
                     rowVersion,
-                    projectId,
+                    projectName: name,
                 },
                 settings
             );

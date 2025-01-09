@@ -1,3 +1,4 @@
+import { ProjectDetails } from '@procosys/modules/Preservation/types';
 import { Step } from './Step';
 
 export interface Journey {
@@ -7,5 +8,5 @@ export interface Journey {
     isInUse: boolean;
     steps: Step[];
     rowVersion: string;
-    projectId?: number;
+    project?: ProjectDetails;
 }

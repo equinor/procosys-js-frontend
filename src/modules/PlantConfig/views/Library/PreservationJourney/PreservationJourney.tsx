@@ -73,8 +73,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [journey, setJourney] = useState<Journey | null>(null);
-    const [selectedProject, setSelectedProject] =
-        useState<ProjectDetails | null>(null);
+    const [selectedProject, setSelectedProject] = useState<
+        ProjectDetails | undefined
+    >();
     const [newJourney, setNewJourney] = useState<Journey>(getInitialJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [modes, setModes] = useState<Mode[]>([]);
@@ -99,7 +100,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const { preservationApiClient, libraryApiClient, projects } =
         usePlantConfigContext();
-    const { procosysApiClient } = useProcosysContext();
 
     const cloneJourney = (journey: Journey): Journey => {
         return JSON.parse(JSON.stringify(journey));
@@ -232,15 +232,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     useEffect(() => {
         if (journey) {
-            setSelectedProject(
-                projects?.find(
-                    (project) => project.id === newJourney.projectId
-                ) ?? null
-            );
+            setSelectedProject(newJourney.project);
         } else {
-            setSelectedProject(null);
+            setSelectedProject(undefined);
         }
-    }, [projects, newJourney?.projectId]);
+    }, [projects, newJourney.project?.id]);
 
     const saveNewStep = async (
         journeyId: number,
@@ -294,7 +290,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                 newJourney.id,
                 newJourney.title,
                 newJourney.rowVersion,
-                newJourney.projectId
+                newJourney.project?.name
             );
             props.setDirtyLibraryType();
             return true;
@@ -340,7 +336,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         let noChangesToSave = true;
         if (
             journey?.title != newJourney.title ||
-            journey?.projectId != newJourney.projectId
+            journey?.project?.id != newJourney.project?.id
         ) {
             saveOk = await updateJourney();
             noChangesToSave = false;
@@ -400,8 +396,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
         newJourney.steps.some((step: Step) => {
             if (
-                step.mode.id === -1 ??
-                step.responsible.code === '' ??
+                step.mode.id === -1 ||
+                step.responsible.code === '' ||
                 step.title === ''
             ) {
                 errorMessage += 'Some step information is missing.';
@@ -549,8 +545,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setNewJourney(cloneJourney(newJourney));
     };
 
-    const setProjectIdValue = (value: number): void => {
-        newJourney.projectId = value;
+    const setProjectIdValue = (value: ProjectDetails): void => {
+        newJourney.project = value;
         setNewJourney(cloneJourney(newJourney));
     };
 
@@ -747,7 +743,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     /** Update canSave and isDirty when newJourney or journey changes */
     useEffect(() => {
-        if (journey == null ?? !isDirty) {
+        if (journey == null || !isDirty) {
             setCanSave(false);
             unsetDirtyStateFor(moduleName);
             return;
@@ -760,7 +756,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         }
         let breakFunction = false;
         newJourney.steps.forEach((step, i) => {
-            if (!step.title ?? step.mode.id == -1 ?? !step.responsible.code) {
+            if (!step.title || step.mode.id == -1 || !step.responsible.code) {
                 setCanSave(false);
                 breakFunction = true;
                 return;
@@ -899,9 +895,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         return (
                             <DropdownItem
                                 key={index}
-                                onClick={() =>
-                                    setProjectIdValue(projectItem.id)
-                                }
+                                onClick={() => setProjectIdValue(projectItem)}
                             >
                                 <div>{projectItem.description}</div>
                                 <div style={{ fontSize: '12px' }}>
@@ -1168,7 +1162,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                 </Button>
                                             </>
                                         }
-                                        {(step.id == -1 ??
+                                        {(step.id == -1 ||
                                             (step.isVoided &&
                                                 !step.isInUse)) && (
                                             <Button

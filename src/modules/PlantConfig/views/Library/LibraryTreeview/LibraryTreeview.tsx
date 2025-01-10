@@ -71,11 +71,12 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         const children: TreeViewNode[] = [];
         try {
             const journeys = await preservationApiClient.getJourneys(true);
+            console.log(journeys);
             const groupedJourneys = journeys.reduce(
                 (acc: { [key: string]: Journey[] }, journey) => {
                     const projectDescription = journey.project
-                        ? journey.project.description
-                        : 'Global';
+                        ? `${journey.project.name} ${journey.project.description}`
+                        : 'Journey available across projects';
                     if (!acc[projectDescription]) {
                         acc[projectDescription] = [];
                     }

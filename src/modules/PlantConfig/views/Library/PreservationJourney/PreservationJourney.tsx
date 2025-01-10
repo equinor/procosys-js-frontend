@@ -58,6 +58,8 @@ const WAIT_INTERVAL = 300;
 
 const checkboxHeightInGridUnits = 4;
 
+const sharedJourneyBreadcrumb = 'Journey available across projects';
+
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const getInitialJourney = (): Journey => {
         return {
@@ -76,6 +78,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [selectedProject, setSelectedProject] = useState<
         ProjectDetails | undefined
     >();
+    const [breadcrumbs, setBreadcrumbs] = useState<string>(
+        `${baseBreadcrumb} / ${sharedJourneyBreadcrumb}`
+    );
     const [newJourney, setNewJourney] = useState<Journey>(getInitialJourney);
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [modes, setModes] = useState<Mode[]>([]);
@@ -104,6 +109,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const cloneJourney = (journey: Journey): Journey => {
         return JSON.parse(JSON.stringify(journey));
     };
+
+    useEffect(() => {
+        setBreadcrumbs(
+            `${baseBreadcrumb} / ${
+                selectedProject?.description ?? sharedJourneyBreadcrumb
+            }`
+        );
+    }, [selectedProject]);
 
     /**
      * Get Modes
@@ -784,7 +797,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     if (isLoading) {
         return (
             <Container>
-                <Breadcrumbs>{baseBreadcrumb} /</Breadcrumbs>
+                <Breadcrumbs>{breadcrumbs} /</Breadcrumbs>
                 <Spinner large />
             </Container>
         );
@@ -793,7 +806,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     if (!isEditMode) {
         return (
             <Container>
-                <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
+                <Breadcrumbs>{breadcrumbs}</Breadcrumbs>
                 <IconContainer>
                     <Button variant="ghost" onClick={initNewJourney}>
                         {addIcon} New preservation journey
@@ -806,7 +819,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     return (
         <Container>
             <Breadcrumbs>
-                {baseBreadcrumb} / {newJourney.title}
+                {breadcrumbs} / {newJourney.title}
             </Breadcrumbs>
             {newJourney.isVoided && (
                 <Typography
@@ -886,6 +899,18 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     width: '280px',
                 }}
             >
+                <TextField
+                    id={'title'}
+                    label="Title for this journey"
+                    value={newJourney.title}
+                    onChange={(
+                        e: React.ChangeEvent<HTMLInputElement>
+                    ): void => {
+                        setJourneyTitleValue(e.target.value);
+                    }}
+                    placeholder="Write here"
+                    disabled={newJourney.isVoided}
+                />
                 <Dropdown
                     maxHeight="300px"
                     label="Project"
@@ -905,18 +930,6 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         );
                     })}
                 </Dropdown>
-                <TextField
-                    id={'title'}
-                    label="Title for this journey"
-                    value={newJourney.title}
-                    onChange={(
-                        e: React.ChangeEvent<HTMLInputElement>
-                    ): void => {
-                        setJourneyTitleValue(e.target.value);
-                    }}
-                    placeholder="Write here"
-                    disabled={newJourney.isVoided}
-                />
             </InputContainer>
 
             <StepsContainer>

@@ -38,8 +38,7 @@ import {
     Step,
 } from './types';
 import { ProjectDetails } from '@procosys/modules/Preservation/types';
-import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import e from 'express';
+import { Autocomplete } from '@equinor/eds-core-react';
 
 const addIcon = <EdsIcon name="add" />;
 const upIcon = <EdsIcon name="arrow_up" />;
@@ -58,7 +57,7 @@ const WAIT_INTERVAL = 300;
 
 const checkboxHeightInGridUnits = 4;
 
-const sharedJourneyBreadcrumb = 'Journey available across projects';
+const sharedJourneyBreadcrumb = 'All projects';
 
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const getInitialJourney = (): Journey => {
@@ -244,12 +243,12 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     }, [props.journeyId]);
 
     useEffect(() => {
-        if (journey) {
-            setSelectedProject(newJourney.project);
+        if (journey || newJourney) {
+            setSelectedProject(newJourney.project ?? journey?.project);
         } else {
             setSelectedProject(undefined);
         }
-    }, [projects, newJourney.project?.id]);
+    }, [journey?.project?.id, newJourney.project?.id]);
 
     const saveNewStep = async (
         journeyId: number,
@@ -895,8 +894,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
             <InputContainer
                 style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 'calc(var(--grid-unit) * 2)',
+                    justifyContent: 'flex-start',
                     marginTop: 'calc(var(--grid-unit) * 3)',
-                    width: '280px',
+                    width: '100%',
+                    alignItems: 'flex-end',
                 }}
             >
                 <TextField
@@ -910,26 +914,29 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     }}
                     placeholder="Write here"
                     disabled={newJourney.isVoided}
+                    style={{
+                        minWidth: '250px',
+                        width: 'fit-content',
+                    }}
                 />
-                <Dropdown
-                    maxHeight="300px"
-                    label="Project"
-                    text={selectedProject?.description ?? 'Select project'}
-                >
-                    {projects?.map((projectItem, index) => {
-                        return (
-                            <DropdownItem
-                                key={index}
-                                onClick={() => setProjectIdValue(projectItem)}
-                            >
-                                <div>{projectItem.description}</div>
-                                <div style={{ fontSize: '12px' }}>
-                                    {projectItem.name}
-                                </div>
-                            </DropdownItem>
-                        );
-                    })}
-                </Dropdown>
+
+                <Autocomplete
+                    options={projects}
+                    optionLabel={(p: ProjectDetails): string =>
+                        `${p.name} - ${p.description}`
+                    }
+                    onOptionsChange={(options: any): void => {
+                        setProjectIdValue(options.selectedItems[0]);
+                    }}
+                    initialSelectedOptions={[selectedProject]}
+                    key={selectedProject?.id}
+                    label={'Project'}
+                    placeholder={'Select project'}
+                    style={{
+                        minWidth: '300px',
+                        width: 'fit-content',
+                    }}
+                ></Autocomplete>
             </InputContainer>
 
             <StepsContainer>

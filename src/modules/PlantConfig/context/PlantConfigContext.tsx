@@ -37,7 +37,6 @@ export const PlantConfigContextProvider: React.FC = ({
             setProjects(projects);
         };
         fetchProjects();
-        console.log('fetchProjects', projects);
     }, [plant]);
 
     useMemo(() => {

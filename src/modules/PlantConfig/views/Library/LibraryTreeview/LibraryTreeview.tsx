@@ -71,7 +71,6 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         const children: TreeViewNode[] = [];
         try {
             const journeys = await preservationApiClient.getJourneys(true);
-            console.log(journeys);
             const groupedJourneys = journeys.reduce(
                 (acc: { [key: string]: Journey[] }, journey) => {
                     const projectDescription = journey.project

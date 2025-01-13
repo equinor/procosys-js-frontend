@@ -1300,7 +1300,6 @@ class PreservationApiClient extends ApiClient {
         setRequestCanceller?: RequestCanceler,
         projectName?: string
     ): Promise<JourneyResponse[]> {
-        console.log('getJourneys', projectName);
         const endpoint = '/Journeys';
         const settings: AxiosRequestConfig = {
             params: {

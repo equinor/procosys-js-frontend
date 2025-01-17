@@ -355,9 +355,7 @@ const AddScope = (): JSX.Element => {
                 error.data
             );
             showSnackbarNotification(
-                error.data != null &&
-                    error.data.data != null &&
-                    error.data.data.length > 0
+                error.data?.data?.length > 0
                     ? error.data.data[0]
                     : error.message,
                 10000

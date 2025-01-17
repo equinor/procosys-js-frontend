@@ -354,12 +354,7 @@ const AddScope = (): JSX.Element => {
                 error.message,
                 error.data
             );
-            showSnackbarNotification(
-                error.data?.data?.length > 0
-                    ? error.data.data[0]
-                    : error.message,
-                10000
-            );
+            showSnackbarNotification(error.message, 5000);
         }
         setIsSubmittingScope(false);
         return Promise.resolve();

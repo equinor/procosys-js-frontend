@@ -11,6 +11,7 @@ import {
     unsavedChangesConfirmationMessage,
     useDirtyContext,
 } from '@procosys/core/DirtyContext';
+import { Journey } from '../PreservationJourney/types';
 
 type LibraryTreeviewProps = {
     forceUpdate: React.DispatchWithoutAction;
@@ -23,7 +24,8 @@ type LibraryTreeviewProps = {
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const { isDirty } = useDirtyContext();
 
-    const { libraryApiClient, preservationApiClient } = usePlantConfigContext();
+    const { libraryApiClient, preservationApiClient, projects } =
+        usePlantConfigContext();
 
     const handleTreeviewClick = (
         libraryType: LibraryType,
@@ -68,13 +70,28 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getPresJourneyTreeNodes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await preservationApiClient
-                .getJourneys(true)
-                .then((response) => {
-                    if (response) {
-                        response.forEach((journey) =>
-                            children.push({
-                                id: 'journey_' + journey.id,
+            const journeys = await preservationApiClient.getJourneys(true);
+            const groupedJourneys = journeys.reduce(
+                (acc: { [key: string]: Journey[] }, journey) => {
+                    const projectDescription = journey.project
+                        ? `${journey.project.name} ${journey.project.description}`
+                        : 'Journey available across projects';
+                    if (!acc[projectDescription]) {
+                        acc[projectDescription] = [];
+                    }
+                    acc[projectDescription].push(journey);
+                    return acc;
+                },
+                {} as { [key: string]: Journey[] }
+            );
+            Object.keys(groupedJourneys).forEach((projectDescription) => {
+                const projectNode: TreeViewNode = {
+                    id: `project_${projectDescription}`,
+                    name: projectDescription,
+                    getChildren: async (): Promise<TreeViewNode[]> => {
+                        return groupedJourneys[projectDescription].map(
+                            (journey) => ({
+                                id: `journey_${journey.id}`,
                                 name: journey.title,
                                 isVoided: journey.isVoided,
                                 onClick: (): void =>
@@ -84,9 +101,11 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                     ),
                             })
                         );
-                    }
-                    return children;
-                });
+                    },
+                };
+                children.push(projectNode);
+            });
+            return children;
         } catch (error) {
             console.error(
                 'Get preservation journeys failed: ',

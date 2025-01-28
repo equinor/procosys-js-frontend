@@ -1353,6 +1353,7 @@ class PreservationApiClient extends ApiClient {
      */
     async addJourney(
         title: string,
+        projectName?: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<number> {
         const endpoint = '/Journeys';
@@ -1364,6 +1365,7 @@ class PreservationApiClient extends ApiClient {
                 endpoint,
                 {
                     title: title,
+                    projectName: projectName,
                 },
                 settings
             );

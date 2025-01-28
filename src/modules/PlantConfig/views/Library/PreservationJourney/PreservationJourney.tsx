@@ -68,6 +68,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             isInUse: false,
             steps: [],
             rowVersion: '',
+            project: undefined,
         };
     };
 
@@ -279,7 +280,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         let journeyId = -1;
         try {
             journeyId = await preservationApiClient.addJourney(
-                newJourney.title
+                newJourney.title,
+                newJourney.project?.name
             );
             for await (const step of newJourney.steps) {
                 await saveNewStep(journeyId, step);
@@ -438,7 +440,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const confirmDiscardingChangesIfExist = (): boolean => {
-        return !isDirty ?? confirm(unsavedChangesConfirmationMessage);
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
     };
 
     const cancel = (): void => {
@@ -540,11 +542,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const initNewJourney = (): void => {
-        if (confirmDiscardingChangesIfExist()) {
-            setNewJourney(getInitialJourney());
-            setJourney(cloneJourney(newJourney));
-            setIsEditMode(true);
+        if (isDirty) {
+            if (!confirm(unsavedChangesConfirmationMessage)) {
+                return;
+            }
         }
+        setNewJourney(getInitialJourney());
+        setJourney(cloneJourney(getInitialJourney()));
+        setIsEditMode(true);
     };
 
     const setJourneyTitleValue = (value: string): void => {
@@ -557,7 +562,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setNewJourney(cloneJourney(newJourney));
     };
 
-    const setProjectIdValue = (value: ProjectDetails): void => {
+    const setProjectValue = (value: ProjectDetails): void => {
         newJourney.project = value;
         setNewJourney(cloneJourney(newJourney));
     };
@@ -926,7 +931,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                         `${p.name} - ${p.description}`
                     }
                     onOptionsChange={(options: any): void => {
-                        setProjectIdValue(options.selectedItems[0]);
+                        setProjectValue(options.selectedItems[0]);
                     }}
                     initialSelectedOptions={[selectedProject]}
                     key={selectedProject?.id}

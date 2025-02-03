@@ -166,6 +166,11 @@ export default class AuthService implements IAuthService {
      * @param request
      */
     async attemptSsoSilent(): Promise<void> {
+        const acc = this.getAccount();
+        if (acc) {
+            this.myMSALObj.setActiveAccount(acc);
+            return
+        }
         //Fallback with loginhint
         const hint =
             new URL(window.location.href).searchParams.get('user_name') ??
@@ -173,6 +178,7 @@ export default class AuthService implements IAuthService {
 
         if (hint) {
             console.log('Attempting silent login');
+            const goBackTo = window.location.href;
 
             const silentResult = await this.myMSALObj
                 .ssoSilent({
@@ -192,6 +198,7 @@ export default class AuthService implements IAuthService {
                     'User authenticated silently:',
                     silentResult.account
                 );
+                window.location.href = goBackTo;
             } else {
                 console.error('FAILED TO LOGIN USER THIS SHOULD NOT HAPPEN');
             }

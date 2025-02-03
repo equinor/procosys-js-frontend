@@ -1,11 +1,9 @@
-import * as msal from '@azure/msal-browser';
 import {
     AccountInfo,
     AuthenticationResult,
     AuthError,
     Configuration,
     EndSessionRequest,
-    InteractionRequiredAuthError,
     LogLevel,
     PopupRequest,
     PublicClientApplication,
@@ -53,6 +51,7 @@ export default class AuthService implements IAuthService {
             auth: {
                 clientId: ProCoSysSettings.clientId,
                 authority: ProCoSysSettings.authority,
+                redirectUri: `${window.location.origin}/auth/Preservation`
             },
             cache: {
                 cacheLocation: 'sessionStorage', // This configures where your cache will be stored
@@ -94,7 +93,9 @@ export default class AuthService implements IAuthService {
         };
 
         this.silentLoginRequest = {
-            loginHint: this.getAccount()?.username,
+            loginHint:
+                new URL(window.location.href).searchParams.get('user_name') ??
+                this.getAccount()?.username,
         };
     }
 
@@ -132,13 +133,13 @@ export default class AuthService implements IAuthService {
     async loadAuthModule(): Promise<void> {
         await this.myMSALObj.initialize();
         // handle auth redired/do all initial setup for msal
-        await this.myMSALObj.handleRedirectPromise();
+        // await this.myMSALObj.handleRedirectPromise();
         const acc = this.getAccount();
-
+        //
         if (acc) {
             this.myMSALObj.setActiveAccount(acc);
         } else {
-            this.myMSALObj.loginRedirect();
+            await this.attemptSsoSilent();
         }
     }
 
@@ -162,23 +163,48 @@ export default class AuthService implements IAuthService {
      * Calls ssoSilent to attempt silent flow. If it fails due to interaction required error, it will prompt the user to login using popup.
      * @param request
      */
-    attemptSsoSilent(): void {
-        this.myMSALObj
-            .ssoSilent(this.silentLoginRequest)
-            .then(() => {
-                this.account = this.getAccount();
-                if (this.account) {
-                    this.myMSALObj.setActiveAccount(this.account);
-                } else {
-                    console.log('No account!');
-                }
-            })
-            .catch((error) => {
-                console.error('Silent Error: ' + error);
-                if (error instanceof InteractionRequiredAuthError) {
-                    this.login('loginPopup');
-                }
-            });
+    async attemptSsoSilent(): Promise<void> {
+        const goBackTo = `${window.location.origin}${window.location.pathname ?? ""}`;
+        const acc = this.getAccount();
+        if (acc) {
+            this.myMSALObj.setActiveAccount(acc);
+            return
+        }
+        //Fallback with loginhint
+        const hint =
+            new URL(window.location.href).searchParams.get('user_name') ??
+            this.getAccount()?.username;
+
+        if (hint) {
+            console.log('Attempting silent login');
+
+            const silentResult = await this.myMSALObj
+                .ssoSilent({
+                    scopes: ['openid', 'profile', 'User.Read'],
+                    loginHint:
+                        new URL(window.location.href).searchParams.get(
+                            'user_name'
+                        ) ?? this.getAccount()?.username,
+                })
+                .catch(async (error) => {
+                    await this.myMSALObj.clearCache();
+                    await this.login();
+                    window.location.href = goBackTo;
+                });
+            if (silentResult) {
+                this.myMSALObj.setActiveAccount(silentResult.account);
+                console.log(
+                    'User authenticated silently:',
+                    silentResult.account
+                );
+                window.location.href = goBackTo;
+            } else {
+                console.error('FAILED TO LOGIN USER THIS SHOULD NOT HAPPEN');
+            }
+        } else {
+            await this.login();
+            window.location.href = goBackTo;
+        }
     }
 
     /**

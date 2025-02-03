@@ -94,7 +94,9 @@ export default class AuthService implements IAuthService {
         };
 
         this.silentLoginRequest = {
-            loginHint: this.getAccount()?.username,
+            loginHint:
+                new URL(window.location.href).searchParams.get('user_name') ??
+                this.getAccount()?.username,
         };
     }
 
@@ -131,15 +133,16 @@ export default class AuthService implements IAuthService {
      */
     async loadAuthModule(): Promise<void> {
         await this.myMSALObj.initialize();
+        await this.attemptSsoSilent();
         // handle auth redired/do all initial setup for msal
-        await this.myMSALObj.handleRedirectPromise();
-        const acc = this.getAccount();
-
-        if (acc) {
-            this.myMSALObj.setActiveAccount(acc);
-        } else {
-            this.myMSALObj.loginRedirect();
-        }
+        // await this.myMSALObj.handleRedirectPromise();
+        // const acc = this.getAccount();
+        //
+        // if (acc) {
+        //     this.myMSALObj.setActiveAccount(acc);
+        // } else {
+        //     this.myMSALObj.loginRedirect();
+        // }
     }
 
     /**
@@ -162,23 +165,45 @@ export default class AuthService implements IAuthService {
      * Calls ssoSilent to attempt silent flow. If it fails due to interaction required error, it will prompt the user to login using popup.
      * @param request
      */
-    attemptSsoSilent(): void {
-        this.myMSALObj
-            .ssoSilent(this.silentLoginRequest)
-            .then(() => {
-                this.account = this.getAccount();
-                if (this.account) {
-                    this.myMSALObj.setActiveAccount(this.account);
-                } else {
-                    console.log('No account!');
-                }
-            })
-            .catch((error) => {
-                console.error('Silent Error: ' + error);
-                if (error instanceof InteractionRequiredAuthError) {
-                    this.login('loginPopup');
-                }
-            });
+    async attemptSsoSilent(): Promise<void> {
+        try {
+            // Attempt silent sign-in
+            const accounts = this.myMSALObj.getAllAccounts();
+            if (accounts.length > 0) {
+                const silentResult = await this.myMSALObj.ssoSilent({
+                    scopes: ['openid', 'profile', 'User.Read'],
+                    loginHint: accounts[0].username,
+                });
+                console.log(
+                    'User authenticated silently:',
+                    silentResult.account
+                );
+                return;
+            }
+            throw new Error('No cached accounts, requiring login.');
+        } catch (error) {
+            console.log('#############Failed to login without a login hint');
+            //Fallback with loginhint
+            try {
+                const silentResult = await this.myMSALObj.ssoSilent({
+                    scopes: ['openid', 'profile', 'User.Read'],
+                    loginHint: 'guei@equinor.com',
+                });
+                console.log(
+                    'User authenticated silently:',
+                    silentResult.account
+                );
+            } catch (error) {
+                console.warn(
+                    'Silent authentication failed, prompting login:',
+                    error
+                );
+                // Fallback to interactive login
+                this.myMSALObj.loginRedirect({
+                    scopes: ['openid', 'profile', 'User.Read'],
+                });
+            }
+        }
     }
 
     /**

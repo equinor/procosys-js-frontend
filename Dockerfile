@@ -5,17 +5,7 @@ COPY package*.json ./
 COPY . .
 RUN yarn install
 
-ENV VITE_AUTH_CLIENT="23d8e04c-9362-4870-bda2-dade6f9d0ffb"
-ENV VITE_AUTHORITY="https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-ENV VITE_CONFIG_SCOPE="api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read"
-ENV VITE_BASE_URL_MAIN="https://pcs-main-api-test.azurewebsites.net/api"
-ENV VITE_CONFIG_ENDPOINT="https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Configuration?"
-ENV VITE_WEBAPI_SCOPE="api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
-ENV VITE_APP_INSIGHTS="2e63710e-308d-45c2-99b0-95a959a3de5a"
-ENV VITE_API_VERSION="&api-version=4.1"
-
 RUN yarn build --mode=production
-
 
 # production environment
 FROM docker.io/nginxinc/nginx-unprivileged:alpine
@@ -34,4 +24,4 @@ USER 9999
 
 EXPOSE 5000
 
-CMD ["sh","/etc/scripts/startup.sh"]
+CMD ["sh","/etc/scripts/run-nginx.sh"]

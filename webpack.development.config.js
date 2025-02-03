@@ -106,13 +106,6 @@ module.exports = {
         new webpack.ProvidePlugin({
             process: 'process/browser',
         }),
-        /* Automatically creates our index.html page */
-        new HtmlWebpackPlugin({
-            title: 'ProCoSys',
-            meta: {
-                viewport: 'width=device-width, height=device-height, initial-scale=1'
-            }
-        }),
         /* Deletes our build directory when building */
         new CleanWebpackPlugin()
     ]

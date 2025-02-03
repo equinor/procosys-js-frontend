@@ -183,6 +183,7 @@ export default class AuthService implements IAuthService {
                         ) ?? this.getAccount()?.username,
                 })
                 .catch(async (error) => {
+                    await this.myMSALObj.clearCache();
                     await this.login();
                 });
             if (silentResult) {

@@ -188,7 +188,7 @@ export default class AuthService implements IAuthService {
             try {
                 const silentResult = await this.myMSALObj.ssoSilent({
                     scopes: ['openid', 'profile', 'User.Read'],
-                    loginHint: 'guei@equinor.com',
+                    loginHint: new URL(window.location.href).searchParams.get("user_name") ?? this.getAccount()?.username,
                 });
                  this.myMSALObj.setActiveAccount(silentResult.account);
                 console.log(

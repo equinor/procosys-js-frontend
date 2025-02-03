@@ -1,11 +1,9 @@
-import * as msal from '@azure/msal-browser';
 import {
     AccountInfo,
     AuthenticationResult,
     AuthError,
     Configuration,
     EndSessionRequest,
-    InteractionRequiredAuthError,
     LogLevel,
     PopupRequest,
     PublicClientApplication,
@@ -166,6 +164,7 @@ export default class AuthService implements IAuthService {
      * @param request
      */
     async attemptSsoSilent(): Promise<void> {
+        const goBackTo = window.location.href;
         const acc = this.getAccount();
         if (acc) {
             this.myMSALObj.setActiveAccount(acc);
@@ -178,7 +177,6 @@ export default class AuthService implements IAuthService {
 
         if (hint) {
             console.log('Attempting silent login');
-            const goBackTo = window.location.href;
 
             const silentResult = await this.myMSALObj
                 .ssoSilent({
@@ -191,6 +189,7 @@ export default class AuthService implements IAuthService {
                 .catch(async (error) => {
                     await this.myMSALObj.clearCache();
                     await this.login();
+                    window.location.href = goBackTo;
                 });
             if (silentResult) {
                 this.myMSALObj.setActiveAccount(silentResult.account);
@@ -204,6 +203,7 @@ export default class AuthService implements IAuthService {
             }
         } else {
             await this.login();
+            window.location.href = goBackTo;
         }
     }
 

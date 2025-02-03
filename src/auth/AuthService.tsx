@@ -166,45 +166,26 @@ export default class AuthService implements IAuthService {
      * @param request
      */
     async attemptSsoSilent(): Promise<void> {
-        try {
-            // Attempt silent sign-in
-            const accounts = this.myMSALObj.getAllAccounts();
-            if (accounts.length > 0) {
-                const silentResult = await this.myMSALObj.ssoSilent({
-                    scopes: ['openid', 'profile', 'User.Read'],
-                    loginHint: accounts[0].username,
-                });
-                 this.myMSALObj.setActiveAccount(silentResult.account);
-                console.log(
-                    'User authenticated silently:',
-                    silentResult.account
-                );
-                return;
-            }
-            throw new Error('No cached accounts, requiring login.');
-        } catch (error) {
-            console.log('#############Failed to login without a login hint');
-            //Fallback with loginhint
-            try {
-                const silentResult = await this.myMSALObj.ssoSilent({
-                    scopes: ['openid', 'profile', 'User.Read'],
-                    loginHint: new URL(window.location.href).searchParams.get("user_name") ?? this.getAccount()?.username,
-                });
-                 this.myMSALObj.setActiveAccount(silentResult.account);
-                console.log(
-                    'User authenticated silently:',
-                    silentResult.account
-                );
-            } catch (error) {
-                console.warn(
-                    'Silent authentication failed, prompting login:',
-                    error
-                );
-                // Fallback to interactive login
-                this.myMSALObj.loginRedirect({
+        //Fallback with loginhint
+        console.log('Attempting silent login');
+        const silentResult = await this.myMSALObj
+            .ssoSilent({
+                scopes: ['openid', 'profile', 'User.Read'],
+                loginHint:
+                    new URL(window.location.href).searchParams.get(
+                        'user_name'
+                    ) ?? this.getAccount()?.username,
+            })
+            .catch(async (error) => {
+                await this.myMSALObj.loginRedirect({
                     scopes: ['openid', 'profile', 'User.Read'],
                 });
-            }
+            });
+        if (silentResult) {
+            this.myMSALObj.setActiveAccount(silentResult.account);
+            console.log('User authenticated silently:', silentResult.account);
+        }else{
+            console.error("FAILED TO LOGIN USER THIS SHOULD NOT HAPPEN")
         }
     }
 

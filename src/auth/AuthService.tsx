@@ -133,16 +133,15 @@ export default class AuthService implements IAuthService {
      */
     async loadAuthModule(): Promise<void> {
         await this.myMSALObj.initialize();
-        await this.attemptSsoSilent();
         // handle auth redired/do all initial setup for msal
         // await this.myMSALObj.handleRedirectPromise();
-        // const acc = this.getAccount();
+        const acc = this.getAccount();
         //
-        // if (acc) {
-        //     this.myMSALObj.setActiveAccount(acc);
-        // } else {
-        //     this.myMSALObj.loginRedirect();
-        // }
+        if (acc) {
+            this.myMSALObj.setActiveAccount(acc);
+        } else {
+            await this.attemptSsoSilent();
+        }
     }
 
     /**

@@ -51,7 +51,7 @@ export default class AuthService implements IAuthService {
             auth: {
                 clientId: ProCoSysSettings.clientId,
                 authority: ProCoSysSettings.authority,
-                redirectUri: window.location.pathname,
+                redirectUri: `${window.location.origin}/auth/Preservation`
             },
             cache: {
                 cacheLocation: 'sessionStorage', // This configures where your cache will be stored

@@ -164,7 +164,7 @@ export default class AuthService implements IAuthService {
      * @param request
      */
     async attemptSsoSilent(): Promise<void> {
-        const goBackTo = window.location.href;
+        const goBackTo = `${window.location.origin}${window.location.pathname ?? ""}`;
         const acc = this.getAccount();
         if (acc) {
             this.myMSALObj.setActiveAccount(acc);

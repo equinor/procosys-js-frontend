@@ -174,6 +174,7 @@ export default class AuthService implements IAuthService {
                     scopes: ['openid', 'profile', 'User.Read'],
                     loginHint: accounts[0].username,
                 });
+                 this.myMSALObj.setActiveAccount(silentResult.account);
                 console.log(
                     'User authenticated silently:',
                     silentResult.account
@@ -189,6 +190,7 @@ export default class AuthService implements IAuthService {
                     scopes: ['openid', 'profile', 'User.Read'],
                     loginHint: 'guei@equinor.com',
                 });
+                 this.myMSALObj.setActiveAccount(silentResult.account);
                 console.log(
                     'User authenticated silently:',
                     silentResult.account

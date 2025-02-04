@@ -15,7 +15,7 @@ ENV VITE_WEBAPI_SCOPE="api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
 ENV VITE_APP_INSIGHTS="ed1e9f1c-5b68-44ca-afec-76ece1f08f80"
 ENV VITE_API_VERSION="&api-version=4.1"
 
-RUN pnpm build --mode=production
+RUN pnpm bundle
 
 # production environment
 FROM docker.io/nginxinc/nginx-unprivileged:alpine

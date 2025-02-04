@@ -13,8 +13,8 @@
   },
   "scripts": {
     "start": "vite",
-    "check": "tsc --noEmit",
-    "build": "vite build",
+    "build": "tsc --noEmit",
+    "bundle": "vite build",
     "test": "jest",
     "test-watch": "jest --watch",
     "lint": "./node_modules/.bin/eslint",

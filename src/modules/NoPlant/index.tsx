@@ -25,9 +25,13 @@ const NoPlant = (): JSX.Element | null => {
     }, [cachedPlant, selectedPlant, navigate]);
 
     useEffect(() => {
-        if (!cachedPlant && plants.length > 0 && !selectedPlant) {
-            const plant = plants[0].id.replace('PCS$', '');
-            setSelectedPlant(plant);
+        if (!cachedPlant) {
+            const allPlants = plants;
+            let plant = null;
+            if (allPlants.length > 0) {
+                plant = allPlants[0].id.replace('PCS$', '');
+                setSelectedPlant(plant);
+            }
             navigate(`/${plant}`, { replace: true });
         }
     }, [plants, cachedPlant, selectedPlant, navigate]);

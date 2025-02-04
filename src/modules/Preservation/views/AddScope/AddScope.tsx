@@ -340,7 +340,7 @@ const AddScope = (): JSX.Element => {
                         `${listOfTagNo.length} tag(s) successfully added to scope`,
                         5000
                     );
-                    navigate('/');
+                    navigate(-1);
                 } else {
                     showSnackbarNotification(
                         'Error occured. Step or requirement is missing.',
@@ -354,7 +354,12 @@ const AddScope = (): JSX.Element => {
                 error.message,
                 error.data
             );
-            showSnackbarNotification(error.message, 5000);
+            showSnackbarNotification(
+                error.data?.data?.length > 0
+                    ? error.data.data[0]
+                    : error.message,
+                10000
+            );
         }
         setIsSubmittingScope(false);
         return Promise.resolve();

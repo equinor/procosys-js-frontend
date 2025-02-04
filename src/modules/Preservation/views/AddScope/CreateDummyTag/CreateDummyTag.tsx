@@ -21,7 +21,7 @@ import EdsIcon from '../../../../../components/EdsIcon';
 import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { usePreservationContext } from '../../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 import { KeyboardArrowDown } from '@mui/icons-material';
@@ -97,6 +97,8 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         allAreas && disciplines ? setIsLoading(false) : setIsLoading(true);
@@ -657,7 +659,16 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
                             )}
                         </FormFieldSpacer>
                         <ButtonsContainer>
-                            <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+                            <NavLink
+                                to="/"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate(-1);
+                                }}
+                                className={({ isActive }) =>
+                                    isActive ? 'active' : ''
+                                }
+                            >
                                 <Button variant="outlined">Cancel</Button>
                             </NavLink>
                             <Button

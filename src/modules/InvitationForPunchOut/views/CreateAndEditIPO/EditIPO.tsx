@@ -15,7 +15,6 @@ import { ComponentName, IpoCustomEvents, IpoStatusEnum } from '../enums';
 import {
     ExternalEmailDto,
     FunctionalRoleDto,
-    IpoApiError,
     ParticipantDto,
     PersonDto,
     PersonInRoleDto,
@@ -33,7 +32,7 @@ import { poTypes } from './GeneralInfo/GeneralInfo';
 import { useAnalytics } from '@procosys/core/services/Analytics/AnalyticsContext';
 import { useDirtyContext } from '@procosys/core/DirtyContext';
 import { useInvitationForPunchOutContext } from '../../context/InvitationForPunchOutContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useRouter from '@procosys/hooks/useRouter';
 import { set } from 'date-fns';
 import { handleApiError } from './utils';
@@ -102,6 +101,7 @@ const EditIPO = (): JSX.Element => {
         useDirtyContext();
     const analystics = useAnalytics();
     const [steps, setSteps] = useState<Step[]>(initialSteps);
+    const navigate = useNavigate();
 
     /**
      * Check and set dirty state for all components
@@ -377,7 +377,7 @@ const EditIPO = (): JSX.Element => {
                     ComponentName.Participants,
                     ComponentName.Attachments,
                 ]);
-                history.push('/' + ipoId);
+                navigate(-1);
             } catch (error) {
                 handleApiError(error, 'Save updated IPO failed: ');
             }

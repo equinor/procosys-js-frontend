@@ -60,8 +60,16 @@ export interface TagListFilter {
     requirementTypeIds: string[];
     tagFunctionCodes: string[];
     disciplineCodes: string[];
+<<<<<<< HEAD
     preservationStatus: string | null | [];
     actionStatus: string | null | [];
+||||||| e74d2185
+    preservationStatus: string | null;
+    actionStatus: string | null;
+=======
+    preservationStatus: string[];
+    actionStatus: string[];
+>>>>>>> 5188209a3c858deee438c340be171039ca196906
     voidedFilter: string | null;
     responsibleIds: string[] | null;
     areaCodes: string[] | null;

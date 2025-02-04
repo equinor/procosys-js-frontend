@@ -159,7 +159,7 @@ export const FilterContainer = styled.div<{ maxHeight: number }>`
     padding-right: calc(var(--grid-unit) * 2);
     overflow-y: auto;
     height: ${(props): number => props.maxHeight} px;
-    min-width: 300px;
+    width: 300px;
 `;
 
 export const TooltipText = styled.span`

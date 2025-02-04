@@ -55,4 +55,15 @@ typings/
 
 #VS Code folder
 .vscode/
+<<<<<<< HEAD
 .vs/slnx.sqlite
+||||||| e74d2185
+.vs/slnx.sqlite
+=======
+.vs/slnx.sqlite
+/.vs/procosys-js-frontend/CopilotIndices/17.12.53.23981
+/.vs/procosys-js-frontend/FileContentIndex
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
+/.vs/slnx.sqlite-journal
+>>>>>>> 5188209a3c858deee438c340be171039ca196906

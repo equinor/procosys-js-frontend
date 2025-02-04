@@ -2,6 +2,8 @@ import { IAuthService } from 'src/auth/AuthService';
 import SettingsApiClient from '@procosys/http/SettingsApiClient';
 
 import localSettings from '../settings.json';
+
+const settings = localSettings as Partial<ConfigResponse & {configurationEndpoint: string, configurationScope: string, defaultScopes: string[]}>;
 //#region types
 
 interface FeatureConfig {
@@ -132,12 +134,12 @@ class ProCoSysSettings {
 
         this.instanceId = Math.floor(Math.random() * 9999);
         if (
-            !localSettings.configurationEndpoint ||
-            !localSettings.configurationScope
+            !settings.configurationEndpoint ||
+            !settings.configurationScope
         ) {
             console.error(
                 'Missing local configuration for Config API',
-                localSettings
+                settings
             );
             throw 'Missing local configuration for Config API';
         }
@@ -149,7 +151,7 @@ class ProCoSysSettings {
             quickSearch: true,
         };
         this.settingsConfigurationApiClient = new SettingsApiClient(
-            localSettings.configurationEndpoint
+            settings.configurationEndpoint
         );
 
         ProCoSysSettings.instance = this;
@@ -173,10 +175,13 @@ class ProCoSysSettings {
     }
 
     async loadConfiguration(authService: IAuthService): Promise<void> {
+        if(!settings.configurationScope){
+            throw new Error('Missing configuration scope');
+        }
         this.configurationResponse =
             this.settingsConfigurationApiClient.getConfig(
                 authService,
-                localSettings.configurationScope
+                settings.configurationScope
             );
 
         try {
@@ -248,59 +253,51 @@ class ProCoSysSettings {
         }
     }
 
-    private overrideAuthFromLocalSettings(): void {
-        // Auth elements
-        localSettings.clientId && (this.clientId = localSettings.clientId);
-        localSettings.authority && (this.authority = localSettings.authority);
-        localSettings.defaultScopes &&
-            (this.defaultScopes = localSettings.defaultScopes);
-    }
-
     private overrideFromLocalConfiguration(): void {
-        if (localSettings.configuration) {
+        if (settings.configuration) {
             // Configuration elements
             console.info(
                 'Overriding configuration from settings: ',
-                localSettings.configuration
+                settings.configuration
             );
-            localSettings.configuration.instrumentationKey &&
+            settings.configuration.instrumentationKey &&
                 (this.instrumentationKey =
-                    localSettings.configuration.instrumentationKey);
-            localSettings.configuration.graphApi &&
-                (this.graphApi = localSettings.configuration.graphApi);
-            localSettings.configuration.preservationApi &&
+                    settings.configuration.instrumentationKey);
+            settings.configuration.graphApi &&
+                (this.graphApi = settings.configuration.graphApi);
+            settings.configuration.preservationApi &&
                 (this.preservationApi =
-                    localSettings.configuration.preservationApi);
-            localSettings.configuration.searchApi &&
-                (this.searchApi = localSettings.configuration.searchApi);
-            localSettings.configuration.ipoApi &&
-                (this.ipoApi = localSettings.configuration.ipoApi);
-            localSettings.configuration.libraryApi &&
-                (this.libraryApi = localSettings.configuration.libraryApi);
-            localSettings.configuration.procosysApi &&
-                (this.procosysApi = localSettings.configuration.procosysApi);
+                    settings.configuration.preservationApi);
+            settings.configuration.searchApi &&
+                (this.searchApi = settings.configuration.searchApi);
+            settings.configuration.ipoApi &&
+                (this.ipoApi = settings.configuration.ipoApi);
+            settings.configuration.libraryApi &&
+                (this.libraryApi = settings.configuration.libraryApi);
+            settings.configuration.procosysApi &&
+                (this.procosysApi = settings.configuration.procosysApi);
         }
 
         // Feature flags
-        if (localSettings.featureFlags) {
+        if (settings.featureFlags) {
             console.info(
                 'Overriding feature flags from settings: ',
-                localSettings.featureFlags
+                settings.featureFlags
             );
 
-            localSettings.featureFlags.main != undefined &&
-                (this.featureFlags.main = localSettings.featureFlags.main);
-            localSettings.featureFlags.IPO != undefined &&
-                (this.featureFlags.IPO = localSettings.featureFlags.IPO);
-            localSettings.featureFlags.library != undefined &&
+            settings.featureFlags.main != undefined &&
+                (this.featureFlags.main = settings.featureFlags.main);
+            settings.featureFlags.IPO != undefined &&
+                (this.featureFlags.IPO = settings.featureFlags.IPO);
+            settings.featureFlags.library != undefined &&
                 (this.featureFlags.library =
-                    localSettings.featureFlags.library);
-            localSettings.featureFlags.preservation != undefined &&
+                    settings.featureFlags.library);
+            settings.featureFlags.preservation != undefined &&
                 (this.featureFlags.preservation =
-                    localSettings.featureFlags.preservation);
-            localSettings.featureFlags.quickSearch != undefined &&
+                    settings.featureFlags.preservation);
+            settings.featureFlags.quickSearch != undefined &&
                 (this.featureFlags.quickSearch =
-                    localSettings.featureFlags.quickSearch);
+                    settings.featureFlags.quickSearch);
         }
     }
 }

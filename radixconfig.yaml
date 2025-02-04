@@ -19,7 +19,7 @@ spec:
       from: develop
   - name: test
     build:
-      from: test
+      from: feat/pnpm-migrate
   - name: prod
     build:
       from: master

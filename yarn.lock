@@ -3016,13 +3016,12 @@
     webpack-hot-middleware "^2.25.1"
     webpack-virtual-modules "^0.2.2"
 
-"@storybook/builder-webpack5@8.2.0":
-  version "8.2.0"
-  resolved "https://registry.npmjs.org/@storybook/builder-webpack5/-/builder-webpack5-8.2.0.tgz"
-  integrity sha512-cZhdLUcXg1vkXpqLULLBApz23rAPOeJc4HUp4nUapvu+/wsBL924QUB8jpTo6YNXFwke7jyRGxfpY68s/ddB8A==
+"@storybook/builder-webpack5@8.5.0":
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/@storybook/builder-webpack5/-/builder-webpack5-8.5.0.tgz#e44f0a197b40e8d3caae21e9459cb9cd4accf57c"
+  integrity sha512-MyCj11cktyN2HeK8NsLv+L0Km36qAz2UGqu6j1VKJUgPelgpCCi4StCW/KaSBeOFAwGD52xjAdNu+c1h/vfiMg==
   dependencies:
-    "@storybook/core-webpack" "8.2.0"
-    "@types/node" "^18.0.0"
+    "@storybook/core-webpack" "8.5.0"
     "@types/semver" "^7.3.4"
     browser-assert "^1.2.1"
     case-sensitive-paths-webpack-plugin "^2.4.0"
@@ -3030,9 +3029,7 @@
     constants-browserify "^1.0.0"
     css-loader "^6.7.1"
     es-module-lexer "^1.5.0"
-    express "^4.19.2"
     fork-ts-checker-webpack-plugin "^8.0.0"
-    fs-extra "^11.1.0"
     html-webpack-plugin "^5.5.0"
     magic-string "^0.30.5"
     path-browserify "^1.0.1"
@@ -3312,12 +3309,11 @@
     ws "^8.2.3"
     x-default-browser "^0.4.0"
 
-"@storybook/core-webpack@8.2.0":
-  version "8.2.0"
-  resolved "https://registry.npmjs.org/@storybook/core-webpack/-/core-webpack-8.2.0.tgz"
-  integrity sha512-7a25HlNhwgElEjvRFiWT/bJvCxi83Z6BOj2U60LQ1Nwi9/X3l8Lnh5gFkkQe6mNUdlx1XfK7DSZUJxlaPxMzpw==
+"@storybook/core-webpack@8.5.0":
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/@storybook/core-webpack/-/core-webpack-8.5.0.tgz#4d4b355d3eeb8b8b1056dd98540d47b3db07bc61"
+  integrity sha512-bJAcF9TwNO2qNa7Jef4h5U9ka4399HDiHiQec1AxdqUIy/2zfbetgV6+2Fr5mtejPqJgbs7kXNGErI+fFByLGg==
   dependencies:
-    "@types/node" "^18.0.0"
     ts-dedent "^2.0.0"
 
 "@storybook/core@6.5.16":
@@ -4091,13 +4087,6 @@
   version "16.18.48"
   resolved "https://registry.npmjs.org/@types/node/-/node-16.18.48.tgz"
   integrity sha512-mlaecDKQ7rIZrYD7iiKNdzFb6e/qD5I9U1rAhq+Fd+DWvYVs+G2kv74UFHmSOlg5+i/vF3XxuR522V4u8BqO+Q==
-
-"@types/node@^18.0.0":
-  version "18.19.55"
-  resolved "https://registry.npmjs.org/@types/node/-/node-18.19.55.tgz"
-  integrity sha512-zzw5Vw52205Zr/nmErSEkN5FLqXPuKX/k5d1D7RKHATGqU7y6YfX9QxZraUzUrFGqH6XzOzG196BC35ltJC4Cw==
-  dependencies:
-    undici-types "~5.26.4"
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -7428,7 +7417,7 @@ express@5.0.1:
     utils-merge "1.0.1"
     vary "~1.1.2"
 
-express@^4.17.1, express@^4.17.3, express@^4.19.2:
+express@^4.17.1, express@^4.17.3:
   version "4.21.1"
   resolved "https://registry.npmjs.org/express/-/express-4.21.1.tgz"
   integrity sha512-YSFlK1Ee0/GC8QaO91tHcDxJiE/X4FbpAyQWkxAvG6AXCuR65YzK8ua6D9hvi/TzUfZMpc+BwuM1IPw8fmQBiQ==
@@ -13756,11 +13745,6 @@ unbox-primitive@^1.0.2:
     has-bigints "^1.0.2"
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
-
-undici-types@~5.26.4:
-  version "5.26.5"
-  resolved "https://registry.npmjs.org/undici-types/-/undici-types-5.26.5.tgz"
-  integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 undici-types@~6.19.2:
   version "6.19.8"

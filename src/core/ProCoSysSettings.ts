@@ -35,7 +35,6 @@ interface ConfigResponse {
 
 interface AuthConfigResponse {
     clientId: string;
-    authority: string;
     scopes: Array<string>;
 }
 
@@ -88,10 +87,6 @@ class ProCoSysSettings {
      */
     private authConfigResponse!: Promise<AuthConfigResponse>;
 
-    /**
-     * URI to the login authority
-     */
-    authority!: string;
     /**
      * Default scopes to ask for concent for when logging in
      */
@@ -208,7 +203,6 @@ class ProCoSysSettings {
     private mapFromAuthConfigResponse(
         authConfigResponse: AuthConfigResponse
     ): void {
-        this.authority = authConfigResponse.authority;
         this.clientId = authConfigResponse.clientId;
         this.defaultScopes = authConfigResponse.scopes;
     }

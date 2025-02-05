@@ -7,7 +7,6 @@ RUN pnpm install
 
 
 ENV VITE_AUTH_CLIENT="50b15344-28c9-45b5-9616-41da16fc9dcc"
-ENV VITE_AUTHORITY="https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
 ENV VITE_CONFIG_SCOPE="api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read"
 ENV VITE_BASE_URL_MAIN="https://pcs-main-prod.azurewebsites.net/api"
 ENV VITE_CONFIG_ENDPOINT="https://pcs-config-prod-func.azurewebsites.net/api/Frontend/Configuration?"

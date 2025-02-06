@@ -1,6 +1,5 @@
 import { SubNav } from './style';
 import { NavLink, useParams } from 'react-router-dom';
-import React from 'react';
 
 type ModuleTabsProps = {
     onClick?: () => void;
@@ -27,7 +26,6 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>Purchase Orders</a>
             <a href="Documents">Document</a>
             <a href="Notification">Notification</a>
-            <a href="Hookup">Hookup</a>
             {__DEV__ && (
                 <span onClick={props.onClick}>
                     <NavLink

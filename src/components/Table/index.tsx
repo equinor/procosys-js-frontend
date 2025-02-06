@@ -200,7 +200,7 @@ const ProcosysTable = forwardRef(
             {
                 ...props,
                 manualPagination: props.clientPagination ? false : true,
-                defaultColumn: defaultColumn as unknown as Partial<Column<Record<string, unknown>>>,
+                defaultColumn: defaultColumn,
                 manualSortBy: props.clientSorting ? false : true,
                 initialState: {
                     pageIndex: props.pageIndex,

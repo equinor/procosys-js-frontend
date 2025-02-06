@@ -1,4 +1,4 @@
-import { CellValue, IdType } from 'react-table';
+import { CellValue, FilterProps, IdType, Renderer } from 'react-table';
 import { ColumnFilterProps, DefaultFilter, SelectFilter } from './types';
 import { ColumnFilter } from './style';
 import React from 'react';
@@ -27,14 +27,15 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-export const DefaultColumnFilter = ({
-    column,
-}: ColumnFilterProps<DefaultFilter>): JSX.Element => {
-    const { setFilter, filterPlaceholder } = column;
+
+
+export const DefaultColumnFilter: Renderer<FilterProps<Record<string,unknown>>> = ({
+    column
+}): JSX.Element => {
+    const { setFilter } = column;
     return (
         <ColumnFilter>
             <TableFilterField
-                placeholder={filterPlaceholder}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                     setFilter(e.target.value || undefined);
                 }}

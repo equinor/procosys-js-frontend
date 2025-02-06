@@ -1,0 +1,39 @@
+name: "Deploy main frontend to PROD 🚀"
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: Build and deploy to prod
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Az CLI login
+        uses: azure/login@v1
+        with:
+          client-id: 1cdfeba2-68d5-43fc-8089-108014d4bf29
+          tenant-id: 3aa4a235-b6e2-48d5-9195-7fcf05b459b0
+          allow-no-subscriptions: true
+
+      - name: Get Azure principal token for Radix
+        run: |
+          token=$(az account get-access-token --resource 6dae42f8-4368-4678-94ff-3960e28e3630 --query=accessToken -otsv)
+          echo "::add-mask::$token"
+          echo "APP_SERVICE_ACCOUNT_TOKEN=$token" >> $GITHUB_ENV
+
+      - name: Build and deploy radix
+        uses: equinor/radix-github-actions@v1
+        with:
+          args: >
+            create pipeline-job build-deploy
+            --application procosys-frontend
+            --branch main
+            --environment prod
+            --follow

@@ -1,4 +1,3 @@
-
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
@@ -16,13 +15,16 @@ spec:
   environments:
   - name: dev
     build:
-      from: develop
+      from: '*'
+
   - name: test
     build:
-      from: feat/pnpm-migrate
+      from: '*'
+
   - name: prod
     build:
       from: master
+
   components:
   - name: frontend
     publicPort: http

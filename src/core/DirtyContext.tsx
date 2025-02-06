@@ -1,5 +1,11 @@
 import { useLocation, UNSAFE_NavigationContext } from 'react-router-dom';
-import React, { useEffect, useMemo, useState, useContext, PropsWithChildren } from 'react';
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+    useContext,
+    PropsWithChildren,
+} from 'react';
 import propTypes from 'prop-types';
 import { History } from 'history';
 
@@ -16,7 +22,9 @@ export const unsavedChangesConfirmationMessage =
 
 const DirtyContext = React.createContext<IDirtyContext>({} as IDirtyContext);
 
-export const DirtyContextProvider = ({ children }: PropsWithChildren): JSX.Element => {
+export const DirtyContextProvider = ({
+    children,
+}: PropsWithChildren): JSX.Element => {
     const [dirtyList, setDirtyList] = useState<Set<string>>(new Set<string>());
     const location = useLocation();
     const isDirty = useMemo<boolean>(() => {

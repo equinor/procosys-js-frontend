@@ -56,14 +56,14 @@ const QuickSearchPreviewHit = (
 
     const getNumber = (): JSX.Element => {
         const pkgNo = props.item.commPkg
-            ? props.item.commPkg.commPkgNo ?? ''
+            ? (props.item.commPkg.commPkgNo ?? '')
             : props.item.mcPkg
-            ? props.item.mcPkg.mcPkgNo ?? ''
-            : props.item.tag
-            ? props.item.tag.tagNo ?? ''
-            : props.item.punchItem
-            ? props.item.punchItem.punchItemNo ?? ''
-            : '';
+              ? (props.item.mcPkg.mcPkgNo ?? '')
+              : props.item.tag
+                ? (props.item.tag.tagNo ?? '')
+                : props.item.punchItem
+                  ? (props.item.punchItem.punchItemNo ?? '')
+                  : '';
 
         return highlightSearchValue(pkgNo);
     };
@@ -71,14 +71,14 @@ const QuickSearchPreviewHit = (
     const getDescription = (): JSX.Element => {
         return highlightSearchValue(
             props.item.commPkg
-                ? props.item.commPkg.description ?? ''
+                ? (props.item.commPkg.description ?? '')
                 : props.item.mcPkg
-                ? props.item.mcPkg.description ?? ''
-                : props.item.tag
-                ? props.item.tag.description ?? ''
-                : props.item.punchItem
-                ? props.item.punchItem.description ?? ''
-                : ''
+                  ? (props.item.mcPkg.description ?? '')
+                  : props.item.tag
+                    ? (props.item.tag.description ?? '')
+                    : props.item.punchItem
+                      ? (props.item.punchItem.description ?? '')
+                      : ''
         );
     };
 

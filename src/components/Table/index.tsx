@@ -562,7 +562,7 @@ const ProcosysTable = forwardRef(
                                                 >
                                                     <div>
                                                         {column.canSort &&
-                                                            column.defaultCanSort !==
+                                                        column.defaultCanSort !==
                                                             false ? (
                                                             <TableSortLabel
                                                                 active={
@@ -572,23 +572,23 @@ const ProcosysTable = forwardRef(
                                                                         ?.id !==
                                                                         undefined &&
                                                                         column.id ===
-                                                                        props.orderBy?.id.toString())
+                                                                            props.orderBy?.id.toString())
                                                                 }
                                                                 direction={
                                                                     props
                                                                         .orderBy
                                                                         ?.id !==
                                                                         undefined &&
-                                                                        column.id ===
+                                                                    column.id ===
                                                                         props.orderBy?.id.toString()
                                                                         ? props
-                                                                            .orderBy
-                                                                            ?.desc
+                                                                              .orderBy
+                                                                              ?.desc
                                                                             ? 'desc'
                                                                             : 'asc'
                                                                         : column.isSortedDesc
-                                                                            ? 'desc'
-                                                                            : 'asc'
+                                                                          ? 'desc'
+                                                                          : 'asc'
                                                                 }
                                                                 {...column.getSortByToggleProps()}
                                                             >

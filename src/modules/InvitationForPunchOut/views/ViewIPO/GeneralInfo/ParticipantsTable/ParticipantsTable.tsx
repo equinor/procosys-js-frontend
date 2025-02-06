@@ -75,7 +75,7 @@ const ParticipantsTable = ({
             participant: Participant,
             status: string,
             loading: boolean,
-            isUsingAdminRights: boolean,
+            isUsingAdminRights: boolean
         ): JSX.Element => (
             <SignatureButtons
                 participant={participant}

@@ -27,11 +27,9 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-
-
-export const DefaultColumnFilter: Renderer<FilterProps<Record<string,unknown>>> = ({
-    column
-}): JSX.Element => {
+export const DefaultColumnFilter: Renderer<
+    FilterProps<Record<string, unknown>>
+> = ({ column }): JSX.Element => {
     const { setFilter } = column;
     return (
         <ColumnFilter>

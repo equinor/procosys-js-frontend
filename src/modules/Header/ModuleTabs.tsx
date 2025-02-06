@@ -23,7 +23,9 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             </span>
             <a href="WorkOrders">Work Orders</a>
             <a href="SWAP">Software Change Record</a>
-            <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>Purchase Orders</a>
+            <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>
+                Purchase Orders
+            </a>
             <a href="Documents">Document</a>
             <a href="Notification">Notification</a>
             {__DEV__ && (

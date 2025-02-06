@@ -147,4 +147,4 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     );
 };
 
-export default (TagFunction);
+export default TagFunction;

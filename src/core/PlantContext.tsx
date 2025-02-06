@@ -35,7 +35,9 @@ class InvalidParameterException extends Error {}
 
 const cache = new CacheService('Default', localStorage);
 
-export const PlantContextProvider = ({ children }: PropsWithChildren): JSX.Element => {
+export const PlantContextProvider = ({
+    children,
+}: PropsWithChildren): JSX.Element => {
     const user = useCurrentUser();
     const { procosysApiClient } = useProcosysContext();
     const { location } = useRouter();

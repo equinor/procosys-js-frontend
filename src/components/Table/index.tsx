@@ -515,7 +515,7 @@ const ProcosysTable = forwardRef(
                         <div
                             style={{ justifyContent: 'flex-end', width: width }}
                         >
-                            {props.toolbar ? props.toolbar : null}
+                            {props.toolbar ? <props.toolbar /> : null}
                             {props.toolbarText && (
                                 <Typography
                                     style={{

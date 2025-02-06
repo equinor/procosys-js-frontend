@@ -7,11 +7,10 @@ import {
     SpinnerContainer,
 } from './ParticipantsTable.style';
 import { Participant } from '../../types';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import CustomPopover from './CustomPopover/CustomPopover';
 import { Organization } from '../../../../types';
 import { OrganizationMap } from '../../../utils';
-import { OutlookResponseType } from '../../enums';
 import Spinner from '@procosys/components/Spinner';
 import { Table } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
@@ -76,7 +75,7 @@ const ParticipantsTable = ({
             participant: Participant,
             status: string,
             loading: boolean,
-            isUsingAdminRights
+            isUsingAdminRights: boolean,
         ): JSX.Element => (
             <SignatureButtons
                 participant={participant}

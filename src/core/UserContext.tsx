@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 
 import { Canceler } from '../http/HttpClient';
 import Error from '../components/Error';
@@ -27,7 +27,7 @@ const Container = styled.div`
     height: 200px;
 `;
 
-export const UserContextProvider: React.FC = (props): JSX.Element => {
+export const UserContextProvider = (props: PropsWithChildren): JSX.Element => {
     const { auth, procosysApiClient } = useProcosysContext();
     const { children } = props;
     const [name, setName] = useState(() => {

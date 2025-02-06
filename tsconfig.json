@@ -5,6 +5,7 @@
         "target": "ESNext",
         "esModuleInterop": true,
         "lib": ["esnext", "DOM", "DOM.Iterable"],
+        "skipLibCheck": true,
         "allowSyntheticDefaultImports": true,
         "useUnknownInCatchVariables": false,
         "isolatedModules": true,

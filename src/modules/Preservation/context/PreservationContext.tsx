@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 
 import { Canceler } from '../../../http/HttpClient';
 import Loading from '../../../components/Loading';
@@ -31,9 +31,9 @@ class InvalidProjectException extends Error {
     }
 }
 
-export const PreservationContextProvider: React.FC = ({
+export const PreservationContextProvider = ({
     children,
-}): JSX.Element => {
+}: PropsWithChildren): JSX.Element => {
     const { procosysApiClient, auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const preservationApiClient = useMemo(

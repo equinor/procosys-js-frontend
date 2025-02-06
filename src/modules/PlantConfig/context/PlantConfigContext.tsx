@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import LibraryApiClient from '../http/LibraryApiClient';
 import propTypes from 'prop-types';
 import { useCurrentPlant } from '../../../core/PlantContext';
@@ -14,9 +14,9 @@ const PlantConfigContext = React.createContext<PlantConfigContextProps>(
     {} as PlantConfigContextProps
 );
 
-export const PlantConfigContextProvider: React.FC = ({
+export const PlantConfigContextProvider = ({
     children,
-}): JSX.Element => {
+}: PropsWithChildren): JSX.Element => {
     const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);

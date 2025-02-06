@@ -27,7 +27,11 @@ class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
         console.error('CRITICAL ERROR OCCURED');
         console.error('Error: ', error);
         console.error('ErrorInfo: ', errorInfo);
-        this.context.trackException(error);
+        if (this.context && Object.hasOwn(this.context, 'trackException')) {
+            (
+                this.context as { trackException: (a: Error) => void }
+            ).trackException(error);
+        }
     }
 
     render(): React.ReactChild {

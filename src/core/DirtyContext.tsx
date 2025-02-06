@@ -1,11 +1,5 @@
 import { useLocation, UNSAFE_NavigationContext } from 'react-router-dom';
-import React, {
-    useEffect,
-    useMemo,
-    useState,
-    useContext,
-    PropsWithChildren,
-} from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import propTypes from 'prop-types';
 import { History } from 'history';
 
@@ -22,16 +16,14 @@ export const unsavedChangesConfirmationMessage =
 
 const DirtyContext = React.createContext<IDirtyContext>({} as IDirtyContext);
 
-export const DirtyContextProvider = ({
-    children,
-}: PropsWithChildren<{}>): JSX.Element => {
+export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     const [dirtyList, setDirtyList] = useState<Set<string>>(new Set<string>());
     const location = useLocation();
     const isDirty = useMemo<boolean>(() => {
         return dirtyList.size > 0;
     }, [dirtyList]);
 
-    const unblockRef = React.useRef<undefined | VoidFunction>();
+    const unblockRef = React.useRef<any>();
 
     const { navigator } = useContext(UNSAFE_NavigationContext);
     const history = navigator as History;
@@ -86,7 +78,7 @@ export const DirtyContextProvider = ({
 
             unblockRef.current = history.block((tx) => {
                 if (window.confirm(unsavedChangesConfirmationMessage)) {
-                    unblockRef.current && unblockRef.current();
+                    unblockRef.current();
                     tx.retry();
                 }
             });

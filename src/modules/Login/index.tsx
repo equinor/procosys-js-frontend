@@ -4,4 +4,4 @@ const Login = (): JSX.Element => {
     return <Loading title="Authenticating" />;
 };
 
-export default Login;
+export default Login

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import propTypes from 'prop-types';
 import InvitationForPunchOutApiClient from '../http/InvitationForPunchOutApiClient';
 import { useCurrentPlant } from '../../../core/PlantContext';
@@ -28,9 +28,9 @@ class InvalidProjectException extends Error {
     }
 }
 
-export const InvitationForPunchOutContextProvider = ({
+export const InvitationForPunchOutContextProvider: React.FC = ({
     children,
-}: PropsWithChildren<{}>): JSX.Element => {
+}): JSX.Element => {
     const { procosysApiClient, auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const invitationForPunchOutApiClient = useMemo(

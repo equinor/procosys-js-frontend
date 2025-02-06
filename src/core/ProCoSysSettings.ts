@@ -3,13 +3,7 @@ import SettingsApiClient from '@procosys/http/SettingsApiClient';
 
 import localSettings from '../settings.json';
 
-const settings = localSettings as Partial<
-    ConfigResponse & {
-        configurationEndpoint: string;
-        configurationScope: string;
-        defaultScopes: string[];
-    }
->;
+const settings = localSettings as Partial<ConfigResponse & {configurationEndpoint: string, configurationScope: string, defaultScopes: string[]}>;
 //#region types
 
 interface FeatureConfig {
@@ -134,7 +128,10 @@ class ProCoSysSettings {
         }
 
         this.instanceId = Math.floor(Math.random() * 9999);
-        if (!settings.configurationEndpoint || !settings.configurationScope) {
+        if (
+            !settings.configurationEndpoint ||
+            !settings.configurationScope
+        ) {
             console.error(
                 'Missing local configuration for Config API',
                 settings
@@ -173,7 +170,7 @@ class ProCoSysSettings {
     }
 
     async loadConfiguration(authService: IAuthService): Promise<void> {
-        if (!settings.configurationScope) {
+        if(!settings.configurationScope){
             throw new Error('Missing configuration scope');
         }
         this.configurationResponse =
@@ -263,7 +260,8 @@ class ProCoSysSettings {
             settings.configuration.graphApi &&
                 (this.graphApi = settings.configuration.graphApi);
             settings.configuration.preservationApi &&
-                (this.preservationApi = settings.configuration.preservationApi);
+                (this.preservationApi =
+                    settings.configuration.preservationApi);
             settings.configuration.searchApi &&
                 (this.searchApi = settings.configuration.searchApi);
             settings.configuration.ipoApi &&
@@ -286,7 +284,8 @@ class ProCoSysSettings {
             settings.featureFlags.IPO != undefined &&
                 (this.featureFlags.IPO = settings.featureFlags.IPO);
             settings.featureFlags.library != undefined &&
-                (this.featureFlags.library = settings.featureFlags.library);
+                (this.featureFlags.library =
+                    settings.featureFlags.library);
             settings.featureFlags.preservation != undefined &&
                 (this.featureFlags.preservation =
                     settings.featureFlags.preservation);

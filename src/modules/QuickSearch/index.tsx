@@ -292,13 +292,13 @@ const QuickSearch = (): JSX.Element => {
     const getNumber = (row: TableOptions<ContentDocument>): JSX.Element => {
         const doc = row.value as ContentDocument;
         const pkgNo = doc.commPkg
-            ? (doc.commPkg.commPkgNo ?? '')
+            ? doc.commPkg.commPkgNo ?? ''
             : doc.mcPkg
-              ? (doc.mcPkg.mcPkgNo ?? '')
+              ? doc.mcPkg.mcPkgNo ?? ''
               : doc.tag
-                ? (doc.tag.tagNo ?? '')
+                ? doc.tag.tagNo ?? ''
                 : doc.punchItem
-                  ? (doc.punchItem.punchItemNo ?? '')
+                  ? doc.punchItem.punchItemNo ?? ''
                   : '';
 
         return (
@@ -345,13 +345,13 @@ const QuickSearch = (): JSX.Element => {
                 >
                     {highlightSearchValue(
                         doc.commPkg
-                            ? (doc.commPkg.description ?? '')
+                            ? doc.commPkg.description ?? ''
                             : doc.mcPkg
-                              ? (doc.mcPkg.description ?? '')
+                              ? doc.mcPkg.description ?? ''
                               : doc.tag
-                                ? (doc.tag.description ?? '')
+                                ? doc.tag.description ?? ''
                                 : doc.punchItem
-                                  ? (doc.punchItem.description ?? '')
+                                  ? doc.punchItem.description ?? ''
                                   : ''
                     )}
                 </ResultCell>
@@ -503,19 +503,19 @@ const QuickSearch = (): JSX.Element => {
             ): 0 | -1 | 1 => {
                 const firstValue =
                     a.original.type === 'C'
-                        ? (a.original.commPkg?.description ?? '')
+                        ? a.original.commPkg?.description ?? ''
                         : a.original.type === 'MC'
-                          ? (a.original.mcPkg?.description ?? '')
+                          ? a.original.mcPkg?.description ?? ''
                           : a.original.type === 'T'
-                            ? (a.original.tag?.description ?? '')
+                            ? a.original.tag?.description ?? ''
                             : '';
                 const secondValue =
                     b.original.type === 'C'
-                        ? (b.original.commPkg?.description ?? '')
+                        ? b.original.commPkg?.description ?? ''
                         : b.original.type === 'MC'
-                          ? (b.original.mcPkg?.description ?? '')
+                          ? b.original.mcPkg?.description ?? ''
                           : b.original.type === 'T'
-                            ? (b.original.tag?.description ?? '')
+                            ? b.original.tag?.description ?? ''
                             : '';
                 if (firstValue > secondValue) return 1;
                 else if (firstValue < secondValue) return -1;

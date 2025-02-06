@@ -15,14 +15,6 @@
     "start": "vite",
     "build": "tsc --noEmit",
     "bundle": "vite build",
-    "test": "jest",
-    "test-watch": "jest --watch",
-    "lint": "./node_modules/.bin/eslint",
-    "lint-all": "./node_modules/.bin/eslint --ext .js,.jsx,.ts,.tsx src/",
-    "prepare": "husky install",
-    "pre-commit": "lint-staged",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "pnpm lint"
@@ -61,7 +53,6 @@
     "@types/styled-components": "5.1.21",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@vitejs/plugin-react": "^2.1.0",
     "babel-jest": "29.7.0",
     "babel-loader": "9.1.3",
     "css-loader": "^5.2.7",
@@ -88,7 +79,7 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "vite": "^4.5.0",
-    "vite-plugin-babel": "^1.3.0"
+    "@vitejs/plugin-react": "^2.1.0"
   },
   "dependencies": {
     "@adobe/css-tools": "4.3.2",

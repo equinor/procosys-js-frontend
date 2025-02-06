@@ -123,12 +123,12 @@ class QuickSearchApiClient extends ApiClient {
                 item.type = item.commPkg
                     ? ResultTypeEnum.COMM_PKG
                     : item.mcPkg
-                      ? ResultTypeEnum.MC_PKG
-                      : item.tag
-                        ? ResultTypeEnum.TAG
-                        : item.punchItem
-                          ? ResultTypeEnum.PUNCH_ITEM
-                          : ResultTypeEnum.OTHER;
+                    ? ResultTypeEnum.MC_PKG
+                    : item.tag
+                    ? ResultTypeEnum.TAG
+                    : item.punchItem
+                    ? ResultTypeEnum.PUNCH_ITEM
+                    : ResultTypeEnum.OTHER;
             });
             return result.data;
         } catch (error) {
@@ -159,12 +159,12 @@ class QuickSearchApiClient extends ApiClient {
                 item.type = item.commPkg
                     ? ResultTypeEnum.COMM_PKG
                     : item.mcPkg
-                      ? ResultTypeEnum.MC_PKG
-                      : item.tag
-                        ? ResultTypeEnum.TAG
-                        : item.punchItem
-                          ? ResultTypeEnum.PUNCH_ITEM
-                          : ResultTypeEnum.OTHER;
+                    ? ResultTypeEnum.MC_PKG
+                    : item.tag
+                    ? ResultTypeEnum.TAG
+                    : item.punchItem
+                    ? ResultTypeEnum.PUNCH_ITEM
+                    : ResultTypeEnum.OTHER;
             });
             return result.data;
         } catch (error) {

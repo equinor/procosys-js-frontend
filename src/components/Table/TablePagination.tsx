@@ -46,9 +46,7 @@ export function TablePagination<T extends Record<string, unknown>>({
         [gotoPage, nextPage, pageIndex, previousPage]
     );
 
-    const onChangeRowsPerPage: React.ChangeEventHandler<
-        HTMLTextAreaElement | HTMLInputElement
-    > = useCallback(
+    const onChangeRowsPerPage = useCallback(
         (e) => {
             setPageSize(Number(e.target.value));
         },

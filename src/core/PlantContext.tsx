@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Axios from 'axios';
 import CacheService from './services/CacheService';
@@ -35,12 +35,10 @@ class InvalidParameterException extends Error {}
 
 const cache = new CacheService('Default', localStorage);
 
-export const PlantContextProvider = ({
-    children,
-}: PropsWithChildren<{}>): JSX.Element => {
+export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     const user = useCurrentUser();
     const { procosysApiClient } = useProcosysContext();
-    const { location } = useRouter();
+    const { history, location } = useRouter();
     const { plant: plantInPath } = useParams() as any;
     const [permissions, setPermissions] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState<LoadingState>({

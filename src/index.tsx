@@ -21,6 +21,7 @@ const getHelmetBaseConfig = (): JSX.Element => {
         </Helmet>
     );
 };
+
 render(
     <>
         {getHelmetBaseConfig()}

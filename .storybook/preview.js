@@ -1,8 +1,8 @@
 import '../src/assets/sass/procosys-styles.scss';
 
-import { addDecorator, addParameters } from '@storybook/react';
+import { addDecorator, addParameters } from '@storybook/react'
 
-import { withInfo } from '@storybook/addon-info';
+import { withInfo } from '@storybook/addon-info'
 
 const { jsxDecorator } = require('storybook-addon-jsx');
 
@@ -20,6 +20,7 @@ addDecorator(jsxDecorator);
 //       accent1Color: '#607d8b',
 //   },
 // };
+
 
 addDecorator(withInfo);
 addDecorator(jsxDecorator);

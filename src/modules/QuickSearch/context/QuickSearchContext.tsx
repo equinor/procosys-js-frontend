@@ -1,5 +1,5 @@
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
-import React, { PropsWithChildren, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import QuickSearchApiClient from '../http/QuickSearchApiClient';
 import propTypes from 'prop-types';
 
@@ -10,9 +10,9 @@ type QuickSearchContextProps = {
     apiClient: QuickSearchApiClient;
 };
 
-export const QuickSearchContextProvider = ({
+export const QuickSearchContextProvider: React.FC = ({
     children,
-}: PropsWithChildren<{}>): JSX.Element => {
+}): JSX.Element => {
     const { procosysApiClient, auth } = useProcosysContext();
     const apiClient = useMemo(() => new QuickSearchApiClient(auth), [auth]);
 

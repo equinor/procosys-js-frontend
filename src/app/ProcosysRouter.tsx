@@ -23,6 +23,7 @@ const Page404 = (): JSX.Element => {
 };
 
 const ProcosysRouter = (): JSX.Element => {
+    const { pathname } = useLocation();
     const { plant } = useParams() as any;
 
     return (

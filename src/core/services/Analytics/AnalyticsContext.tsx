@@ -1,7 +1,7 @@
 import { createBrowserHistory } from 'history';
 import AnalyticsService from './AppInsightsAnalytics';
 import IAnalytics from './IAnalytics';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import propTypes from 'prop-types';
 
 export const customHistory = createBrowserHistory();
@@ -9,9 +9,7 @@ export const customHistory = createBrowserHistory();
 const AnalyticsContext = React.createContext<IAnalytics>({} as IAnalytics);
 AnalyticsContext.displayName = 'AnalyticsContext';
 
-const AnalyticsContextProvider = ({
-    children,
-}: PropsWithChildren<{}>): JSX.Element => {
+const AnalyticsContextProvider: React.FC = ({ children }): JSX.Element => {
     const analytics = new AnalyticsService(customHistory);
 
     return (

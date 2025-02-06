@@ -5,13 +5,14 @@ import {
     RightSection,
 } from './PreservationTab.style';
 import { AxiosResponse, Canceler } from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@equinor/eds-core-react';
 import PreservationApiClient from '@procosys/modules/Preservation/http/PreservationApiClient';
 import { RequirementType } from './types';
 import RequirementsWidget from '../../../../../Preservation/components/RequirementsSelector/RequirementsSelector';
 import Spinner from '@procosys/components/Spinner';
+import { hot } from 'react-hot-loader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import {

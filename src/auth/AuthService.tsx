@@ -52,8 +52,7 @@ export default class AuthService implements IAuthService {
         const MSAL_CONFIG: Configuration = {
             auth: {
                 clientId: ProCoSysSettings.clientId,
-                authority:
-                    'https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0',
+                authority: "https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
             },
             cache: {
                 cacheLocation: 'sessionStorage', // This configures where your cache will be stored

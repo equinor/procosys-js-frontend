@@ -275,7 +275,6 @@ const Header: React.FC = (): JSX.Element => {
             }, 250);
         }
     };
-    console.log(params.plant);
 
     let counter = 0;
     return (

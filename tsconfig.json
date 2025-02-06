@@ -14,7 +14,6 @@
         *  long as "exclude" property is not specified.
         *  _Required_ when using allowJs
         */
-        "skipLibCheck": true,
         "outDir": "build/",
         "moduleResolution": "node",
         "strict": true,

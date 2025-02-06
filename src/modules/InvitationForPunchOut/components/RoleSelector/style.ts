@@ -13,7 +13,8 @@ export const Container = styled.div`
         white-space: nowrap;
 
         li > div {
-            box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.12),
+            box-shadow:
+                0px 3px 4px rgba(0, 0, 0, 0.12),
                 0px 2px 4px rgba(0, 0, 0, 0.14);
         }
 
@@ -22,8 +23,10 @@ export const Container = styled.div`
             box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
         }
         li:only-child > div {
-            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2),
-                0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14);
+            box-shadow:
+                0px 1px 5px rgba(0, 0, 0, 0.2),
+                0px 3px 4px rgba(0, 0, 0, 0.12),
+                0px 2px 4px rgba(0, 0, 0, 0.14);
             border-radius: 4px;
         }
 
@@ -260,7 +263,9 @@ export const Label = styled.div<{ error?: boolean }>`
 
 export const FilterContainer = styled.li`
     overflow-x: hidden;
-    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14);
+    box-shadow:
+        0px 3px 4px rgba(0, 0, 0, 0.12),
+        0px 2px 4px rgba(0, 0, 0, 0.14);
     input {
         width: 100%;
         padding: calc(var(--grid-unit) * 2);

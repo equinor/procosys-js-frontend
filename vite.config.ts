@@ -9,7 +9,7 @@ export default defineConfig({
     },
     define: {
         'process.env': {},
-        __DEV__: JSON.stringify(true)
+        __DEV__: JSON.stringify(true),
     },
     resolve: {
         alias: {
@@ -28,11 +28,10 @@ export default defineConfig({
         },
         rollupOptions: {
             output: {
-                assetFileNames: 'v2-assets/[name]-[hash][extname]', 
+                assetFileNames: 'v2-assets/[name]-[hash][extname]',
                 entryFileNames: 'v2-assets/[name]-[hash].js',
-                chunkFileNames: 'v2-assets/[name]-[hash].js'
+                chunkFileNames: 'v2-assets/[name]-[hash].js',
             },
         },
-    }
+    },
 });
-

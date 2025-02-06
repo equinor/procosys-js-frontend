@@ -16,9 +16,6 @@
     "build": "tsc --noEmit",
     "bundle": "vite build",
   },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": "pnpm lint"
-  },
   "devDependencies": {
     "@babel/cli": "^7.23.4",
     "@babel/core": "^7.23.7",

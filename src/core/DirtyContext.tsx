@@ -24,7 +24,7 @@ const DirtyContext = React.createContext<IDirtyContext>({} as IDirtyContext);
 
 export const DirtyContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const [dirtyList, setDirtyList] = useState<Set<string>>(new Set<string>());
     const location = useLocation();
     const isDirty = useMemo<boolean>(() => {

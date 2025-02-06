@@ -27,7 +27,7 @@ const Container = styled.div`
     height: 200px;
 `;
 
-export const UserContextProvider = (props: PropsWithChildren): JSX.Element => {
+export const UserContextProvider = (props: PropsWithChildren<{}>): JSX.Element => {
     const { auth, procosysApiClient } = useProcosysContext();
     const { children } = props;
     const [name, setName] = useState(() => {

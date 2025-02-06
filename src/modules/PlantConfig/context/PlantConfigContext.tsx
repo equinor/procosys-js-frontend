@@ -16,7 +16,7 @@ const PlantConfigContext = React.createContext<PlantConfigContextProps>(
 
 export const PlantConfigContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const { auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);

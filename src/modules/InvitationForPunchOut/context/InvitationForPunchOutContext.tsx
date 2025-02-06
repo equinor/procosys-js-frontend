@@ -30,7 +30,7 @@ class InvalidProjectException extends Error {
 
 export const InvitationForPunchOutContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const { procosysApiClient, auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const invitationForPunchOutApiClient = useMemo(

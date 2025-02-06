@@ -37,7 +37,7 @@ const cache = new CacheService('Default', localStorage);
 
 export const PlantContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const user = useCurrentUser();
     const { procosysApiClient } = useProcosysContext();
     const { location } = useRouter();

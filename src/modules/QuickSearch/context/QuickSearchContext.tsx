@@ -12,7 +12,7 @@ type QuickSearchContextProps = {
 
 export const QuickSearchContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const { procosysApiClient, auth } = useProcosysContext();
     const apiClient = useMemo(() => new QuickSearchApiClient(auth), [auth]);
 

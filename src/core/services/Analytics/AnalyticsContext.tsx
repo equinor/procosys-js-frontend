@@ -11,7 +11,7 @@ AnalyticsContext.displayName = 'AnalyticsContext';
 
 const AnalyticsContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const analytics = new AnalyticsService(customHistory);
 
     return (

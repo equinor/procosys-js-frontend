@@ -33,7 +33,7 @@ class InvalidProjectException extends Error {
 
 export const PreservationContextProvider = ({
     children,
-}: PropsWithChildren): JSX.Element => {
+}: PropsWithChildren<{}>): JSX.Element => {
     const { procosysApiClient, auth } = useProcosysContext();
     const { plant } = useCurrentPlant();
     const preservationApiClient = useMemo(

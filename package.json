@@ -14,7 +14,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --noEmit",
-    "bundle": "vite build",
+    "bundle": "vite build"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",

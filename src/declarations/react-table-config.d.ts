@@ -50,7 +50,7 @@ import {
 
 declare module 'react-table' {
     //eslint-disable-next-line
-  export interface Filter<RowData extends object> {
+    export interface Filter<RowData extends object> {
         column: Column<RowData>;
         operator: '=';
         value: any;
@@ -62,7 +62,7 @@ declare module 'react-table' {
     }
 
     //eslint-disable-next-line
-  export interface Query<RowData extends object> {
+    export interface Query<RowData extends object> {
         filters: Filter<RowData>[];
         page: number;
         pageSize: number;
@@ -76,7 +76,7 @@ declare module 'react-table' {
     // underlying js library, but might be cleaner if it's replaced by a more specific type that matches your
     // feature set, this is a safe default.
     //eslint-disable-next-line
-  export interface TableOptions<D extends object>
+    export interface TableOptions<D extends object>
         extends UseExpandedOptions<D>,
             UseFiltersOptions<D>,
             UseGlobalFiltersOptions<D>,
@@ -88,13 +88,13 @@ declare module 'react-table' {
             Record<string, any> {}
 
     //eslint-disable-next-line
-  export interface Hooks<D extends object>
+    export interface Hooks<D extends object>
         extends UseExpandedHooks<D>,
             UseRowSelectHooks<D>,
             UseSortByHooks<D> {}
 
     //eslint-disable-next-line
-  export interface TableInstance<D extends object = {}>
+    export interface TableInstance<D extends object = {}>
         extends UseColumnOrderInstanceProps<D>,
             UseExpandedInstanceProps<D>,
             UseFiltersInstanceProps<D>,
@@ -106,7 +106,7 @@ declare module 'react-table' {
             UseSortByInstanceProps<D> {}
 
     //eslint-disable-next-line
-  export interface TableState<D extends object = {}>
+    export interface TableState<D extends object = {}>
         extends UseColumnOrderState<D>,
             UseExpandedState<D>,
             UseFiltersState<D>,
@@ -122,7 +122,7 @@ declare module 'react-table' {
     }
 
     //eslint-disable-next-line
-  export interface ColumnInterface<D extends object = {}>
+    export interface ColumnInterface<D extends object = {}>
         extends UseFiltersColumnOptions<D>,
             UseGlobalFiltersColumnOptions<D>,
             UseGroupByColumnOptions<D>,
@@ -132,19 +132,19 @@ declare module 'react-table' {
     }
 
     //eslint-disable-next-line
-  export interface ColumnInstance<D extends object = {}>
+    export interface ColumnInstance<D extends object = {}>
         extends UseFiltersColumnProps<D>,
             UseGroupByColumnProps<D>,
             UseResizeColumnsColumnProps<D>,
             UseSortByColumnProps<D> {}
 
     //eslint-disable-next-line
-  export interface Cell<D extends object = {}, V = any>
+    export interface Cell<D extends object = {}, V = any>
         extends UseGroupByCellProps<D>,
             UseRowStateCellProps<D> {}
 
     //eslint-disable-next-line
-  export interface Row<D extends object = {}>
+    export interface Row<D extends object = {}>
         extends UseExpandedRowProps<D>,
             UseGroupByRowProps<D>,
             UseRowSelectRowProps<D>,

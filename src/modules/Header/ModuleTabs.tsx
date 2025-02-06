@@ -11,7 +11,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
 
     return (
         <SubNav>
-            <a href="Completion">Completion</a>
+            <a href={`/${params.plant}/Completion`}>Completion</a>
             <span onClick={props.onClick}>
                 <NavLink
                     className={({ isActive }: { isActive: boolean }) =>
@@ -24,7 +24,9 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             </span>
             <a href="WorkOrders">Work Orders</a>
             <a href="SWAP">Software Change Record</a>
-            <a href={`PurchaseOrders#'Projectslist`}>Purchase Orders</a>
+            <a href={`/${params.plant}/PurchaseOrders#Projectslist`}>
+                Purchase Orders
+            </a>
             <a href="Documents">Document</a>
             <a href="Notification">Notification</a>
             <a href="Hookup">Hookup</a>

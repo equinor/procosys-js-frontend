@@ -4,14 +4,13 @@ import ProCoSysSettings, { AsyncState } from '@procosys/core/ProCoSysSettings';
 import ProcosysContext, {
     createProcosysContext,
 } from '../core/ProcosysContext';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import App from './index';
 import Error from '@procosys/components/Error';
 import { Helmet } from 'react-helmet';
 import { IAuthService } from 'src/auth/AuthService';
 import Loading from '@procosys/components/Loading';
-import { hot } from 'react-hot-loader';
 
 type AppProps = {
     authService: IAuthService;
@@ -73,4 +72,4 @@ const Root = (props: AppProps): JSX.Element => {
     );
 };
 
-export default hot(module)(Root);
+export default Root;

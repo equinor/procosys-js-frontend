@@ -12,6 +12,7 @@ pids
 *.pid.lock
 
 build/
+dist/
 public/
 
 # Jest test runner coverage files

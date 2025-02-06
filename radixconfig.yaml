@@ -1,19 +1,30 @@
-
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
   name: procosys-frontend
 spec:
+  dnsExternalAlias:
+    - alias: procosystest.equinor.com
+      component: frontend
+      environment: test
+      useCertificateAutomation: true
+    - alias: procosys.equinor.com
+      component: frontend
+      environment: prod
+      useCertificateAutomation: true
   environments:
   - name: dev
     build:
-      from: develop
+      from: '*'
+
   - name: test
     build:
-      from: test
+      from: '*'
+
   - name: prod
     build:
       from: master
+
   components:
   - name: frontend
     publicPort: http

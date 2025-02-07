@@ -188,7 +188,8 @@ const AddScope = (): JSX.Element => {
             try {
                 const data = await apiClient.getJourneys(
                     false,
-                    (cancel: Canceler) => (requestCancellor = cancel)
+                    (cancel: Canceler) => (requestCancellor = cancel),
+                    project.name
                 );
                 setJourneys(data);
             } catch (error) {

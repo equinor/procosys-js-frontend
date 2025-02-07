@@ -1,17 +1,17 @@
-import { create } from '@storybook/theming'
+import { create } from '@storybook/theming';
 
 export const theme = create({
-  base: 'light',
+    base: 'light',
 
-  // Typography
-  fontBase: 'Equinor, sans-serif',
-  fontCode: 'monospace',
+    // Typography
+    fontBase: 'Equinor, sans-serif',
+    fontCode: 'monospace',
 
-  // Text colors
-  textColor: '#333',
+    // Text colors
+    textColor: '#333',
 
-  brandTitle: 'Equinor Design System - Core React',
-  brandUrl: 'https://eds.equinor.com',
-  brandImage:
-    'https://cdn.eds.equinor.com/logo/equinor-logo-horizontal.svg#red',
-})
+    brandTitle: 'Equinor Design System - Core React',
+    brandUrl: 'https://eds.equinor.com',
+    brandImage:
+        'https://cdn.eds.equinor.com/logo/equinor-logo-horizontal.svg#red',
+});

@@ -10,23 +10,25 @@ module.exports = {
         rules: [
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[ext]',
-                        outputPath: 'v2-assets/images/'
-                    }
-                }]
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'v2-assets/images/',
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(ts|tsx)$/,
                 loader: 'ts-loader',
-                exclude: /node_modules/
+                exclude: /node_modules/,
             },
             {
                 test: /\.(js|jsx)$/,
                 exclude: /(node_modules)/,
-                loader: 'babel-loader'
+                loader: 'babel-loader',
             },
             {
                 enforce: 'pre',
@@ -34,12 +36,15 @@ module.exports = {
                 loader: 'source-map-loader',
                 exclude: [
                     // these packages have problems with their sourcemaps
-                    path.resolve(__dirname, 'node_modules/react-double-scrollbar'),
+                    path.resolve(
+                        __dirname,
+                        'node_modules/react-double-scrollbar'
+                    ),
                 ],
             },
             {
                 test: /\.(scss|css)$/,
-                use: ['style-loader', 'css-loader', 'sass-loader']
+                use: ['style-loader', 'css-loader', 'sass-loader'],
             },
             {
                 test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -48,18 +53,18 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'v2-assets/fonts/'
-                        }
-                    }
-                ]
+                            outputPath: 'v2-assets/fonts/',
+                        },
+                    },
+                ],
             },
             {
                 test: /\.m?js$/,
                 resolve: {
-                    fullySpecified: false,  // Allow incomplete module specifiers
+                    fullySpecified: false, // Allow incomplete module specifiers
                 },
-            }
-        ]
+            },
+        ],
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
@@ -73,7 +78,7 @@ module.exports = {
             '@procosys/http': path.resolve(__dirname, 'src/http/'),
             '@procosys/util': path.resolve(__dirname, 'src/util/'),
             'process/browser': require.resolve('process/browser'),
-        }
+        },
     },
     output: {
         // `filename` provides a template for naming your bundles (remember to use `[name]`)
@@ -81,25 +86,25 @@ module.exports = {
         // `chunkFilename` provides a template for naming code-split bundles (optional)
         chunkFilename: 'v2-assets/[name].[contenthash].chunk.js',
         path: path.resolve(__dirname, 'build'),
-        publicPath: '/'
+        publicPath: '/',
     },
     devServer: {
         //contentBase: path.join(__dirname, 'build/'),
         port: 3000,
         /*HTML5 - Always route to index.html (React handles routing) */
         historyApiFallback: true,
-        allowedHosts: "all"
+        allowedHosts: 'all',
     },
     devtool: 'source-map',
     optimization: {
         splitChunks: {
-            chunks: 'all'
+            chunks: 'all',
         },
-        minimize: false
+        minimize: false,
     },
     plugins: [
         new webpack.DefinePlugin({
-            __DEV__: JSON.stringify(true)
+            __DEV__: JSON.stringify(true),
         }),
         // fix "process is not defined" error:
         // (do "npm install process" before running the build)
@@ -110,10 +115,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'ProCoSys',
             meta: {
-                viewport: 'width=device-width, height=device-height, initial-scale=1'
-            }
+                viewport:
+                    'width=device-width, height=device-height, initial-scale=1',
+            },
         }),
         /* Deletes our build directory when building */
-        new CleanWebpackPlugin()
-    ]
+        new CleanWebpackPlugin(),
+    ],
 };

@@ -18,7 +18,7 @@ export interface RequirementDefinition {
             showPrevious: boolean;
             isInUse: boolean;
             rowVersion: string;
-        }
+        },
     ];
     needsUserInput: boolean;
 }

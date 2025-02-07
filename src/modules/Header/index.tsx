@@ -326,7 +326,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            {window.FEATURE_FLAGS["IPO"] == true && (
+                            {window.FEATURE_FLAGS['IPO'] == true && (
                                 <Link
                                     to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}
                                 >
@@ -407,7 +407,7 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            {window.FEATURE_FLAGS["IPO"] == true && (
+                            {window.FEATURE_FLAGS['IPO'] == true && (
                                 <Link
                                     to={`/${params.plant}/InvitationForPunchOut`}
                                 >
@@ -494,7 +494,7 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    {window.FEATURE_FLAGS["quickSearch"] == true && (
+                    {window.FEATURE_FLAGS['quickSearch'] == true && (
                         <MenuContainerItem>
                             <StyledSearch
                                 placeholder={'Quick Search'}

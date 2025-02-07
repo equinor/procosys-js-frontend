@@ -28,7 +28,9 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             <a href="Documents">Document</a>
             <a href="Notification">Notification</a>
             <a href="Hookup">Hookup</a>
-            {Object.hasOwn(import.meta, "mode") && (import.meta as ImportMeta & {mode: "development"}).mode === 'development' ? (
+            {Object.hasOwn(import.meta, 'mode') &&
+            (import.meta as ImportMeta & { mode: 'development' }).mode ===
+                'development' ? (
                 <span onClick={props.onClick}>
                     <NavLink
                         className={({ isActive }: { isActive: boolean }) =>

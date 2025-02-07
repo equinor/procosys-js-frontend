@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
+import { NavLink } from 'react-router-dom';
 
 export const TreeContainer = styled.div`
     display: flex;
@@ -58,7 +59,7 @@ interface NodeNameProps {
     hasChildren: boolean;
     isExpanded: boolean;
     isVoided: boolean;
-    isSelected: boolean;
+    isSelected?: boolean;
 }
 
 export const NodeName = styled.div<NodeNameProps>`
@@ -96,11 +97,12 @@ export const NodeName = styled.div<NodeNameProps>`
 interface NodeLinkProps {
     isExpanded: boolean;
     isVoided: boolean;
-    isSelected: boolean;
 }
 
-export const NodeLink = styled.span<NodeLinkProps>`
+export const NodeLink = styled(NavLink)<NodeLinkProps>`
     cursor: pointer;
+    text-decoration: none;
+    color: inherit;
 
     ${(props): any =>
         props.isExpanded &&
@@ -112,13 +114,6 @@ export const NodeLink = styled.span<NodeLinkProps>`
         props.isVoided &&
         css`
             opacity: 0.5;
-        `}
-
-    ${(props): any =>
-        props.isSelected &&
-        css`
-            color: ${tokens.colors.interactive.primary__resting.rgba};
-            background: ${tokens.colors.ui.background__light.rgba};
         `}
 
     :hover {

@@ -35,8 +35,8 @@ spec:
       SEARCH_API_SCOPE: "api://a565f893-a478-4c28-b9ed-b26c25d6ec4d/ReadWrite"
       SEARCH_API_URL: "https://backend-procosys-search-api-prod.radix.equinor.com/"
 
-      IPO_API_SCOPE: "https://backend-procosys-ipo-api-prod.radix.equinor.com/"
-      IPO_API_URL: "api://b3399356-b2b6-44d4-a7b6-323eefc8a173/ReadWrite"
+      IPO_API_SCOPE: "api://b3399356-b2b6-44d4-a7b6-323eefc8a173/ReadWrite"
+      IPO_API_URL: "https://backend-procosys-ipo-api-prod.radix.equinor.com/"
 
       PROCOSYS_API_SCOPE: "api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
       PROCOSYS_API_URL: "https://procosyswebapi.equinor.com/api"

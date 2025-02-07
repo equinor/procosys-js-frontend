@@ -66,7 +66,6 @@ export default class AuthService implements IAuthService {
     private silentLoginRequest: SsoSilentRequest;
 
     constructor() {
-        console.log(window);
         const MSAL_CONFIG: Configuration = {
             auth: {
                 clientId: window.CLIENT_ID,
@@ -87,10 +86,10 @@ export default class AuthService implements IAuthService {
                                 console.error(message);
                                 return;
                             case LogLevel.Info:
-                                console.info(message);
+                                // console.info(message);
                                 return;
                             case LogLevel.Verbose:
-                                console.debug(message);
+                                // console.debug(message);
                                 return;
                             case LogLevel.Warning:
                                 console.warn(message);

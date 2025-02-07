@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     TreeContainer,
     NodeContainer,
@@ -45,8 +45,6 @@ const TreeView = ({
     rootNodes,
     dirtyNodeId,
     resetDirtyNode,
-    hasUnsavedChanges = false,
-    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?',
 }: TreeViewProps): JSX.Element => {
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -56,7 +54,6 @@ const TreeView = ({
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
-
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
     ): number => {
@@ -249,11 +246,25 @@ const TreeView = ({
         node.onClick && node.onClick();
     };
 
-    const handleOnClick = (node: NodeData): void => {
-        if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
-            selectNode(node);
+    useEffect(() => {
+        // This function extracts the node ID from the current path
+        const extractNodeIdFromPath = (pathname: string): string => {
+            const pathSegments = pathname.split('/').filter(Boolean);
+            return pathSegments[pathSegments.length - 1];
+        };
+        // find and select the node based on the extracted node ID
+        const nodeIndex = treeData.findIndex(
+            (node) => node.id === extractNodeIdFromPath(pathname)
+        );
+        if (nodeIndex !== -1) {
+            const node = treeData[nodeIndex];
+            if (node.onClick) {
+                node.onClick();
+                node.isSelected = true;
+                setSelectedNodeId(node.id);
+            }
         }
-    };
+    }, [pathname, treeData]);
 
     const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
         if (!node.parentId) {
@@ -287,7 +298,6 @@ const TreeView = ({
             return basePath;
         };
         const baseLibraryPath = getBasePath(pathname);
-
         const parentPath = constructPath(node, treeData);
         const finalPath = `${baseLibraryPath}/${parentPath}`;
 
@@ -296,17 +306,14 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.isSelected === true}
+                isSelected={node.id === selectedNodeId ? true : false}
                 title={node.name}
             >
                 {node.onClick ? (
                     <NodeLink
+                        to={finalPath}
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
-                        onClick={(): void => {
-                            handleOnClick(node);
-                        }}
-                        isSelected={node.isSelected ? true : false}
                     >
                         {node.name}
                     </NodeLink>
@@ -405,6 +412,7 @@ const TreeView = ({
     };
 
     useEffect(() => {
+        console.log('dirtyNodeId', dirtyNodeId);
         if (dirtyNodeId && dirtyNodeId !== '') {
             const dirtyNode = treeData.find((node) => node.id === dirtyNodeId);
 

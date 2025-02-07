@@ -2,7 +2,6 @@ import ApiClient from './ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../auth/AuthService';
 import PascalCaseConverter from '../util/PascalCaseConverter';
-import ProCoSysSettings from '../core/ProCoSysSettings';
 import { RequestCanceler } from './HttpClient';
 
 export type PlantResponse = {
@@ -46,16 +45,12 @@ interface TagIdResponse {
  */
 class ProCoSysClient extends ApiClient {
     constructor(authService: IAuthService) {
-        super(
-            authService,
-            ProCoSysSettings.procosysApi.scope.join(' '),
-            ProCoSysSettings.procosysApi.url
-        );
+        super(authService, window.PROCOSYS_API_SCOPE, window.PROCOSYS_API_URL);
         this.client.interceptors.request.use(
             (config) => {
                 config.params = {
                     ...config.params,
-                    'api-version': ProCoSysSettings.procosysApi.version,
+                    'api-version': "4.1"
                 };
                 return config;
             },

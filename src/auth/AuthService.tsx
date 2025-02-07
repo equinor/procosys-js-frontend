@@ -1,4 +1,3 @@
-import * as msal from '@azure/msal-browser';
 import {
     AccountInfo,
     AuthenticationResult,
@@ -11,8 +10,26 @@ import {
     PublicClientApplication,
     SsoSilentRequest,
 } from '@azure/msal-browser';
-import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import AuthUser from './AuthUser';
+
+declare global {
+  interface Window {
+    PRESERVATION_API_SCOPE: string;
+    PRESERVATION_API_URL: string;
+    SEARCH_API_SCOPE: string;
+    SEARCH_API_URL: string;
+    IPO_API_SCOPE: string;
+    IPO_API_URL: string;
+    PROCOSYS_API_SCOPE: string;
+    PROCOSYS_API_URL: string;
+    LIBRARY_API_SCOPE: string;
+    LIBRARY_API_URL: string;
+    INSTRUMENTATION_KEY: string;
+    CLIENT_ID: string;
+    SCOPES: string[];
+    FEATURE_FLAGS: Record<string, boolean>;
+  }
+}
 
 export interface IAuthService {
     /**
@@ -49,9 +66,10 @@ export default class AuthService implements IAuthService {
     private silentLoginRequest: SsoSilentRequest;
 
     constructor() {
+        console.log(window)
         const MSAL_CONFIG: Configuration = {
             auth: {
-                clientId: ProCoSysSettings.clientId,
+                clientId: window.CLIENT_ID,
                 authority:
                     'https://login.microsoftonline.com/3aa4a235-b6e2-48d5-9195-7fcf05b459b0',
             },
@@ -87,7 +105,7 @@ export default class AuthService implements IAuthService {
         this.account = null;
 
         this.loginRequest = {
-            scopes: ProCoSysSettings.defaultScopes,
+            scopes: window.SCOPES
         };
 
         this.profileRequest = {
@@ -139,7 +157,14 @@ export default class AuthService implements IAuthService {
         if (acc) {
             this.myMSALObj.setActiveAccount(acc);
         } else {
-            this.myMSALObj.loginRedirect();
+            try{
+                this.myMSALObj.loginRedirect().catch(x => {
+                    this.myMSALObj.clearCache();
+                    return this.loadAuthModule();
+                });
+            }catch(e){
+                console.error(e)
+            }
         }
     }
 

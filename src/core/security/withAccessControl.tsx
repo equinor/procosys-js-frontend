@@ -3,7 +3,6 @@ import { useCurrentPlant } from '../PlantContext';
 import styled from 'styled-components';
 import Error from '../../components/Error';
 import { Loading } from '../../components';
-import ProCoSysSettings from '../ProCoSysSettings';
 
 const CenterContainer = styled.div`
     display: flex;
@@ -41,8 +40,8 @@ const withAccessControl =
 
         useEffect(() => {
             if (
-                featureFlags.every((item) =>
-                    ProCoSysSettings.featureIsEnabled(item)
+                featureFlags.every(
+                    (item) => window.FEATURE_FLAGS[item] || false
                 )
             ) {
                 setFeatureEnabled(true);

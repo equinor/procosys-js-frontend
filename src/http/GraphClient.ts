@@ -1,11 +1,10 @@
 import ApiClient from './ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../auth/AuthService';
-import ProCoSysSettings from '../core/ProCoSysSettings';
 import { RequestCanceler } from './HttpClient';
 
-const RESOURCE_ID = ProCoSysSettings.graphApi.scope.join(' ');
-const BASE_URL = `${ProCoSysSettings.graphApi.url}${ProCoSysSettings.graphApi.version}`;
+const RESOURCE_ID = `https://graph.microsoft.com/User.Read`
+const BASE_URL = `https://graph.microsoft.com/v1.0`;
 
 export type ProfileResponse = {
     displayName: string;

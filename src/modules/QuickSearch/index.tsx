@@ -35,7 +35,6 @@ import queryString from 'query-string';
 import Highlighter from 'react-highlight-words';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { getFormattedDate } from '@procosys/core/services/DateService';
-import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import CommPkgIcon from './icons/commPkg';
 import MCPkgIcon from './icons/mcPkg';
 import TagIcon from './icons/tag';
@@ -78,8 +77,9 @@ const QuickSearch = (): JSX.Element => {
     const [serverFilterSet, setServerFilterSet] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!ProCoSysSettings.featureIsEnabled('quickSearch'))
+        if (window.FEATURE_FLAGS['quickSearch'] != true) {
             window.location.href = location.origin;
+        }
 
         const values = queryString.parse(search);
         if (values && values.query) {

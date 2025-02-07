@@ -1,9 +1,5 @@
-import ProCoSysSettings, { AsyncState } from '@procosys/core/ProCoSysSettings';
-
 import AuthService from './auth/AuthService';
-import Error from './components/Error';
 import Helmet from 'react-helmet';
-import { Loading } from './components';
 import Login from './modules/Login';
 import Root from './app/Root';
 import favicon from './assets/icons/ProCoSys_favicon16x16.png';
@@ -22,54 +18,30 @@ const getHelmetBaseConfig = (): JSX.Element => {
     );
 };
 
-render(
-    <>
-        {getHelmetBaseConfig()}
-        <Loading title="Loading configuration" />
-    </>,
-    element
-);
-
-const validateConfigurationState = async (): Promise<void> => {
-    await ProCoSysSettings.loadAuthConfiguration();
-
-    if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
+const authService = new AuthService();
+await authService.loadAuthModule();
+/**
+ * Prevent the application from loading itself when triggered from an iFrame
+ * This is done by the MSAL library, when trying to do a silent refresh
+ *  */
+if (window.parent != window) {
+    console.info('Aborted further app loading iFrame');
+} else {
+    if (authService.getCurrentUser() === null) {
         render(
             <>
                 {getHelmetBaseConfig()}
-                <Error title="Failed to initialize auth config" large />
+                <Login />
             </>,
             element
         );
     } else {
-        const authService = new AuthService();
-        await authService.loadAuthModule();
-        /**
-         * Prevent the application from loading itself when triggered from an iFrame
-         * This is done by the MSAL library, when trying to do a silent refresh
-         *  */
-        if (window.parent != window) {
-            console.info('Aborted further app loading iFrame');
-        } else {
-            if (authService.getCurrentUser() === null) {
-                render(
-                    <>
-                        {getHelmetBaseConfig()}
-                        <Login />
-                    </>,
-                    element
-                );
-            } else {
-                render(
-                    <>
-                        {getHelmetBaseConfig()}
-                        <Root authService={authService} />
-                    </>,
-                    element
-                );
-            }
-        }
+        render(
+            <>
+                {getHelmetBaseConfig()}
+                <Root authService={authService} />
+            </>,
+            element
+        );
     }
-};
-
-validateConfigurationState();
+}

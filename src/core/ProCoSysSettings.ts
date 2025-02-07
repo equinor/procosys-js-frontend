@@ -1,16 +1,16 @@
 import { IAuthService } from 'src/auth/AuthService';
 import SettingsApiClient from '@procosys/http/SettingsApiClient';
 
-import localSettings from '../settings.json';
-
-const settings = localSettings as Partial<
+const settings = {
+    configurationScope: (window as any).SCOPE,
+    configurationEndpoint: (window as any).ENDPOINT,
+} as Partial<
     ConfigResponse & {
         configurationEndpoint: string;
         configurationScope: string;
         defaultScopes: string[];
     }
 >;
-//#region types
 
 interface FeatureConfig {
     url: string;

@@ -19,29 +19,36 @@ const getHelmetBaseConfig = (): JSX.Element => {
 };
 
 const authService = new AuthService();
-await authService.loadAuthModule();
-/**
- * Prevent the application from loading itself when triggered from an iFrame
- * This is done by the MSAL library, when trying to do a silent refresh
- *  */
-if (window.parent != window) {
-    console.info('Aborted further app loading iFrame');
-} else {
-    if (authService.getCurrentUser() === null) {
-        render(
-            <>
-                {getHelmetBaseConfig()}
-                <Login />
-            </>,
-            element
-        );
-    } else {
-        render(
-            <>
-                {getHelmetBaseConfig()}
-                <Root authService={authService} />
-            </>,
-            element
-        );
-    }
-}
+authService
+    .loadAuthModule()
+    .then(() => {
+        /**
+         * Prevent the application from loading itself when triggered from an iFrame
+         * This is done by the MSAL library, when trying to do a silent refresh
+         *  */
+        if (window.parent != window) {
+            console.info('Aborted further app loading iFrame');
+        } else {
+            if (authService.getCurrentUser() === null) {
+                render(
+                    <>
+                        {getHelmetBaseConfig()}
+                        <Login />
+                    </>,
+                    element
+                );
+            } else {
+                render(
+                    <>
+                        {getHelmetBaseConfig()}
+                        <Root authService={authService} />
+                    </>,
+                    element
+                );
+            }
+        }
+    })
+    .catch((error) => {
+        console.error(error);
+        render(<div>Fatal error, page failed to load</div>, element);
+    });

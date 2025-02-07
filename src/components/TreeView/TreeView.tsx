@@ -247,22 +247,12 @@ const TreeView = ({
     };
 
     useEffect(() => {
-        // This function extracts the node ID from the current path
-        const extractNodeIdFromPath = (pathname: string): string => {
-            const pathSegments = pathname.split('/').filter(Boolean);
-            return pathSegments[pathSegments.length - 1];
-        };
-        // find and select the node based on the extracted node ID
-        const nodeIndex = treeData.findIndex(
-            (node) => node.id === extractNodeIdFromPath(pathname)
-        );
-        if (nodeIndex !== -1) {
-            const node = treeData[nodeIndex];
-            if (node.onClick) {
-                node.onClick();
-                node.isSelected = true;
-                setSelectedNodeId(node.id);
-            }
+        // Grabs the node id from the pathName and navigates to the node
+        const nodeId = pathname.split('/').filter(Boolean).pop();
+        const node = treeData.find((node) => node.id === nodeId);
+        if (node?.onClick) {
+            node.onClick();
+            setSelectedNodeId(node.id);
         }
     }, [pathname, treeData]);
 

@@ -18,7 +18,7 @@ USER 0
 RUN chown -R nginx /etc/nginx/conf.d \
     && chown -R nginx /app \
     && chown -R nginx /usr/share/nginx/html \
-    && chmod +x /etc/script/run-nginx.sh 
+    && chmod +x /etc/scripts/run-nginx.sh 
 
  
 USER 101

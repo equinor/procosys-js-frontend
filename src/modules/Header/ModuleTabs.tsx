@@ -41,7 +41,9 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
                 </span>
             ) : (
                 <span onClick={props.onClick}>
-                    <a href="PlantConfig">Plant Configuration</a>
+                    <a href={`/${params.plant}/PlantConfig`}>
+                        Plant Configuration
+                    </a>
                 </span>
             )}
         </SubNav>

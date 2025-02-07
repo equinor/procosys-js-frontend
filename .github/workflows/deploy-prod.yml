@@ -3,7 +3,7 @@ name: "Deploy main frontend to PROD 🚀"
 on:
   push:
     branches:
-      - main
+      - master
 
 permissions:
   contents: write
@@ -34,6 +34,6 @@ jobs:
           args: >
             create pipeline-job build-deploy
             --application procosys-frontend
-            --branch main
+            --branch master
             --environment prod
             --follow

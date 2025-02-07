@@ -57,11 +57,7 @@ function getLibraryApiError(error: any): LibraryApiError {
  */
 class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
-        super(
-            authService,
-            window.LIBRARY_API_SCOPE,
-            window.LIBRARY_API_URL
-        );
+        super(authService, window.LIBRARY_API_SCOPE, window.LIBRARY_API_URL);
         this.client.interceptors.request.use(
             (config) => {
                 config.params = {

@@ -79,11 +79,7 @@ export interface SearchResult {
 
 class QuickSearchApiClient extends ApiClient {
     constructor(authService: IAuthService) {
-        super(
-            authService,
-            window.SEARCH_API_SCOPE,
-            window.SEARCH_API_URL
-        );
+        super(authService, window.SEARCH_API_SCOPE, window.SEARCH_API_URL);
         this.client.interceptors.request.use(
             (config) => {
                 config.params = {

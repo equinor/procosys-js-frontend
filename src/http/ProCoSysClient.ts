@@ -50,7 +50,7 @@ class ProCoSysClient extends ApiClient {
             (config) => {
                 config.params = {
                     ...config.params,
-                    'api-version': "4.1"
+                    'api-version': '4.1',
                 };
                 return config;
             },

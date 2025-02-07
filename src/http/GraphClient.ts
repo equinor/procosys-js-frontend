@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../auth/AuthService';
 import { RequestCanceler } from './HttpClient';
 
-const RESOURCE_ID = `https://graph.microsoft.com/User.Read`
+const RESOURCE_ID = `https://graph.microsoft.com/User.Read`;
 const BASE_URL = `https://graph.microsoft.com/v1.0`;
 
 export type ProfileResponse = {

@@ -10,11 +10,43 @@
     </head>
     <body>
         <script>
-            var ENDPOINT = 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend';
-            var SCOPE = 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read';
+            var PRESERVATION_API_SCOPE: "api://1eb50c54-e897-4216-93d0-6ca86b0cf681/ReadWrite"
+            var PRESERVATION_API_URL: "https://backend-procosys-preservation-api-prod.radix.equinor.com/"
+            window.PRESERVATION_API_SCOPE = `${PRESERVATION_API_SCOPE}`;
+            window.PRESERVATION_API_URL = `${PRESERVATION_API_URL}`;
 
-            window.ENDPOINT = `${ENDPOINT}`;
-            window.SCOPE = `${SCOPE}`;
+            var SEARCH_API_SCOPE: "api://a565f893-a478-4c28-b9ed-b26c25d6ec4d/ReadWrite"
+            var SEARCH_API_URL: "https://backend-procosys-search-api-prod.radix.equinor.com/"
+            window.SEARCH_API_SCOPE = `${SEARCH_API_SCOPE}`;
+            window.SEARCH_API_URL = `${SEARCH_API_URL}`;
+
+            var IPO_API_SCOPE: "https://backend-procosys-ipo-api-prod.radix.equinor.com/"
+            var IPO_API_URL: "api://b3399356-b2b6-44d4-a7b6-323eefc8a173/ReadWrite"
+            window.IPO_API_SCOPE = `${IPO_API_SCOPE}`;
+            window.IPO_API_URL = `${IPO_API_URL}`;
+
+            var PROCOSYS_API_SCOPE: "api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
+            var PROCOSYS_API_URL: "https://procosyswebapi.equinor.com/api"
+            window.PROCOSYS_API_SCOPE = `${PROCOSYS_API_SCOPE}`;
+            window.PROCOSYS_API_URL = `${PROCOSYS_API_URL}`;
+
+            var LIBRARY_API_SCOPE: "api://6263b7e6-155f-411b-9503-c5c841a601e0/ReadWrite"
+            var LIBRARY_API_URL: "https://backend-procosys-library-api-prod.radix.equinor.com/"
+            window.LIBRARY_API_SCOPE = `${LIBRARY_API_SCOPE}`;
+            window.LIBRARY_API_URL = `${LIBRARY_API_URL}`;
+
+            var INSTRUMENTATION_KEY: ""
+            window.INSTRUMENTATION_KEY = `${INSTRUMENTATION_KEY}`;
+
+            var CLIENT_ID: "50b15344-28c9-45b5-9616-41da16fc9dcc"
+            window.CLIENT_ID = `${CLIENT_ID}`;
+
+            var SCOPES: '[ "api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api", "https://graph.microsoft.com/User.Read" ]'
+            window.SCOPES = JSON.parse(`${SCOPES}`);
+
+            var FEATURE_FLAGS: '{ "IPO": true, "ManufacturerModelEnabled": false, "library": true, "main": true, "preservation": true, "quickSearch": false }'
+            window.FEATURE_FLAGS = JSON.parse(`${FEATURE_FLAGS}`);
+
         </script>
     </body>
 </html>

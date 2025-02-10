@@ -13,10 +13,6 @@ spec:
       environment: prod
       useCertificateAutomation: true
   environments:
-  - name: dev
-    build:
-      from: '*'
-
   - name: test
     build:
       from: '*'
@@ -54,6 +50,5 @@ spec:
     - name: http
       port: 5000
     environmentConfig:
-    - environment: dev
     - environment: test
     - environment: prod

@@ -1,9 +1,5 @@
-import ProCoSysSettings, { AsyncState } from '@procosys/core/ProCoSysSettings';
-
 import AuthService from './auth/AuthService';
-import Error from './components/Error';
 import Helmet from 'react-helmet';
-import { Loading } from './components';
 import Login from './modules/Login';
 import Root from './app/Root';
 import favicon from './assets/icons/ProCoSys_favicon16x16.png';
@@ -22,28 +18,10 @@ const getHelmetBaseConfig = (): JSX.Element => {
     );
 };
 
-render(
-    <>
-        {getHelmetBaseConfig()}
-        <Loading title="Loading configuration" />
-    </>,
-    element
-);
-
-const validateConfigurationState = async (): Promise<void> => {
-    await ProCoSysSettings.loadAuthConfiguration();
-
-    if (ProCoSysSettings.authConfigState == AsyncState.ERROR) {
-        render(
-            <>
-                {getHelmetBaseConfig()}
-                <Error title="Failed to initialize auth config" large />
-            </>,
-            element
-        );
-    } else {
-        const authService = new AuthService();
-        await authService.loadAuthModule();
+const authService = new AuthService();
+authService
+    .loadAuthModule()
+    .then(() => {
         /**
          * Prevent the application from loading itself when triggered from an iFrame
          * This is done by the MSAL library, when trying to do a silent refresh
@@ -69,7 +47,8 @@ const validateConfigurationState = async (): Promise<void> => {
                 );
             }
         }
-    }
-};
-
-validateConfigurationState();
+    })
+    .catch((error) => {
+        console.error(error);
+        render(<div>Fatal error, page failed to load</div>, element);
+    });

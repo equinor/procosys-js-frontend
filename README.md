@@ -1,5 +1,10 @@
 # Project Completion System Javascript
-Frontend javascript application for Project Completion System (ProCoSys)
+
+## What
+Frontend javascript application for Project Completion System (ProCoSys) 
+
+## Why
+Needed a way to mix the old ProCoSys with new apps like Preservation and IPO (invitation for punch out) to get a one system feeling
 
 ## Software
 ### Required Software

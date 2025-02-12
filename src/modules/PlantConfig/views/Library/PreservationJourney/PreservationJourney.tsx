@@ -30,6 +30,16 @@ import {
     ButtonContainerLeft,
     ButtonContainerRight,
 } from '../Library.style';
+import {
+    AutoTransferMethod,
+    Journey,
+    Mode,
+    PreservationJourneyProps,
+    Step,
+} from './types';
+import { ProjectDetails } from '@procosys/modules/Preservation/types';
+import { Autocomplete } from '@equinor/eds-core-react';
+import { useLibraryContext } from '../LibraryTreeview/LibraryTreeview';
 
 const addIcon = <EdsIcon name="add" />;
 const upIcon = <EdsIcon name="arrow_up" />;
@@ -48,50 +58,7 @@ const WAIT_INTERVAL = 300;
 
 const checkboxHeightInGridUnits = 4;
 
-enum AutoTransferMethod {
-    NONE = 'None',
-    RFCC = 'OnRfccSign',
-    RFOC = 'OnRfocSign',
-}
-
-interface Journey {
-    id: number;
-    title: string;
-    isVoided: boolean;
-    isInUse: boolean;
-    steps: Step[];
-    rowVersion: string;
-}
-
-interface Step {
-    id: number;
-    title: string;
-    autoTransferMethod: string;
-    isVoided: boolean;
-    isInUse: boolean;
-    mode: Mode;
-    responsible: {
-        code: string;
-        title: string;
-        rowVersion: string;
-        description?: string;
-    };
-    rowVersion: string;
-}
-
-interface Mode {
-    id: number;
-    title: string;
-    forSupplier: boolean;
-    isVoided: boolean;
-    rowVersion: string;
-}
-
-type PreservationJourneyProps = {
-    forceUpdate: number;
-    journeyId: number;
-    setDirtyLibraryType: () => void;
-};
+const sharedJourneyBreadcrumb = 'All projects';
 
 const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const getInitialJourney = (): Journey => {
@@ -108,7 +75,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [journey, setJourney] = useState<Journey | null>(null);
-    const [newJourney, setNewJourney] = useState<Journey>(getInitialJourney);
+    const [selectedProject, setSelectedProject] = useState<
+        ProjectDetails | undefined
+    >();
+    const [breadcrumbs, setBreadcrumbs] = useState<string>(
+        `${baseBreadcrumb} / ${sharedJourneyBreadcrumb}`
+    );
+    const { newJourney, setNewJourney } = useLibraryContext();
     const [mappedModes, setMappedModes] = useState<SelectItem[]>([]);
     const [modes, setModes] = useState<Mode[]>([]);
     const [mappedResponsibles, setMappedResponsibles] = useState<SelectItem[]>(
@@ -130,22 +103,31 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         return JSON.stringify(journey) != JSON.stringify(newJourney);
     }, [journey, newJourney]);
 
-    const { preservationApiClient, libraryApiClient } = usePlantConfigContext();
+    const { preservationApiClient, libraryApiClient, projects } =
+        usePlantConfigContext();
 
     const cloneJourney = (journey: Journey): Journey => {
         return JSON.parse(JSON.stringify(journey));
     };
 
+    useEffect(() => {
+        setBreadcrumbs(
+            `${baseBreadcrumb} / ${
+                selectedProject?.description ?? sharedJourneyBreadcrumb
+            }`
+        );
+    }, [selectedProject]);
+
     /**
      * Get Modes
      */
     useEffect(() => {
-        let requestCancellor: Canceler | null = null;
+        let requestCanceler: Canceler | null = null;
         (async (): Promise<void> => {
             try {
                 const modes = await preservationApiClient.getModes(
                     false,
-                    (cancel: Canceler) => (requestCancellor = cancel)
+                    (cancel: Canceler) => (requestCanceler = cancel)
                 );
                 const mappedModes: SelectItem[] = [];
                 modes.forEach((mode) =>
@@ -183,7 +165,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         })();
 
         return (): void => {
-            requestCancellor && requestCancellor();
+            requestCanceler && requestCanceler();
         };
     }, [journey]);
 
@@ -231,21 +213,17 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const getJourney = async (journeyId: number): Promise<void> => {
         setIsLoading(true);
         try {
-            await preservationApiClient
-                .getJourney(journeyId, true)
-                .then((response) => {
-                    setJourney(response);
-                    setNewJourney(cloneJourney(response));
-                });
+            const response = await preservationApiClient.getJourney(
+                journeyId,
+                true
+            );
+            setNewJourney(response);
         } catch (error) {
             console.error(
                 'Get preservation journey failed: ',
                 error.message,
                 error.data
             );
-            if (error instanceof ProCoSysApiError) {
-                if (error.isCancel) return;
-            }
             showSnackbarNotification(error.message);
         }
         setIsLoading(false);
@@ -260,6 +238,14 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             setIsEditMode(false);
         }
     }, [props.journeyId]);
+
+    useEffect(() => {
+        if (journey || newJourney) {
+            setSelectedProject(newJourney.project ?? journey?.project);
+        } else {
+            setSelectedProject(undefined);
+        }
+    }, [journey?.project?.id, newJourney.project?.id]);
 
     const saveNewStep = async (
         journeyId: number,
@@ -312,7 +298,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             await preservationApiClient.updateJourney(
                 newJourney.id,
                 newJourney.title,
-                newJourney.rowVersion
+                newJourney.rowVersion,
+                newJourney.project?.name
             );
             props.setDirtyLibraryType();
             return true;
@@ -356,7 +343,10 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         setIsLoading(true);
         let saveOk = true;
         let noChangesToSave = true;
-        if (journey && journey.title != newJourney.title) {
+        if (
+            journey?.title != newJourney.title ||
+            journey?.project?.id != newJourney.project?.id
+        ) {
             saveOk = await updateJourney();
             noChangesToSave = false;
         }
@@ -445,7 +435,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const confirmDiscardingChangesIfExist = (): boolean => {
-        return !isDirty || confirm(unsavedChangesConfirmationMessage);
+        return !isDirty ?? confirm(unsavedChangesConfirmationMessage);
     };
 
     const cancel = (): void => {
@@ -561,6 +551,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
     const setModeValue = (value: number, index: number): void => {
         newJourney.steps[index].mode.id = value;
+        setNewJourney(cloneJourney(newJourney));
+    };
+
+    const setProjectIdValue = (value: ProjectDetails): void => {
+        newJourney.project = value;
         setNewJourney(cloneJourney(newJourney));
     };
 
@@ -798,7 +793,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     if (isLoading) {
         return (
             <Container>
-                <Breadcrumbs>{baseBreadcrumb} /</Breadcrumbs>
+                <Breadcrumbs>{breadcrumbs} /</Breadcrumbs>
                 <Spinner large />
             </Container>
         );
@@ -807,7 +802,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     if (!isEditMode) {
         return (
             <Container>
-                <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
+                <Breadcrumbs>{breadcrumbs}</Breadcrumbs>
                 <IconContainer>
                     <Button variant="ghost" onClick={initNewJourney}>
                         {addIcon} New preservation journey
@@ -820,7 +815,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     return (
         <Container>
             <Breadcrumbs>
-                {baseBreadcrumb} / {newJourney.title}
+                {breadcrumbs} / {newJourney.title}
             </Breadcrumbs>
             {newJourney.isVoided && (
                 <Typography
@@ -886,7 +881,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     <ButtonSpacer />
                     <Button
                         onClick={handleSave}
-                        disabled={newJourney.isVoided || !canSave}
+                        disabled={newJourney.isVoided ?? !canSave}
                         title={canSave ? '' : saveTitle}
                     >
                         Save
@@ -896,8 +891,13 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
 
             <InputContainer
                 style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 'calc(var(--grid-unit) * 2)',
+                    justifyContent: 'flex-start',
                     marginTop: 'calc(var(--grid-unit) * 3)',
-                    width: '280px',
+                    width: '100%',
+                    alignItems: 'flex-end',
                 }}
             >
                 <TextField
@@ -911,7 +911,30 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     }}
                     placeholder="Write here"
                     disabled={newJourney.isVoided}
+                    style={{
+                        minWidth: '250px',
+                        width: 'fit-content',
+                    }}
                 />
+
+                <Autocomplete
+                    options={projects}
+                    optionLabel={(p: ProjectDetails): string =>
+                        `${p.name} - ${p.description}`
+                    }
+                    onOptionsChange={(options: any): void => {
+                        setProjectIdValue(options.selectedItems[0]);
+                    }}
+                    initialSelectedOptions={[selectedProject]}
+                    key={selectedProject?.id}
+                    label={'Project'}
+                    placeholder={'Select project'}
+                    style={{
+                        minWidth: '300px',
+                        width: 'fit-content',
+                        overflow: 'hidden',
+                    }}
+                ></Autocomplete>
             </InputContainer>
 
             <StepsContainer>
@@ -927,7 +950,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                             );
 
                         return (
-                            <React.Fragment key={`step._${index}`}>
+                            <React.Fragment key={`step._${step.id}`}>
                                 <FormFieldSpacer>
                                     <div style={{ width: '100%' }}>
                                         <SelectInput
@@ -938,12 +961,11 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             data={mappedModes}
                                             label={'Mode'}
                                             disabled={
-                                                newJourney.isVoided ||
+                                                newJourney.isVoided ??
                                                 step.isVoided
                                             }
                                         >
-                                            {(modeSelectItem &&
-                                                modeSelectItem.text) ||
+                                            {modeSelectItem?.text ??
                                                 'Select mode'}
                                         </SelectInput>
                                     </div>
@@ -952,17 +974,17 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                     <ResponsibleDropdownContainer>
                                         <Dropdown
                                             disabled={
-                                                newJourney.isVoided ||
+                                                newJourney.isVoided ??
                                                 step.isVoided
                                             }
                                             label={
-                                                responsibleSelectItem ||
+                                                responsibleSelectItem ??
                                                 step.responsible.code === ''
                                                     ? 'Resp'
                                                     : 'Resp - voided'
                                             }
                                             variant={
-                                                responsibleSelectItem ||
+                                                responsibleSelectItem ??
                                                 step.responsible.code === ''
                                                     ? 'form'
                                                     : 'error'
@@ -983,7 +1005,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                 (respItem, filtRespIndex) => {
                                                     return (
                                                         <DropdownItem
-                                                            key={index}
+                                                            key={respItem.text}
                                                             onClick={(
                                                                 event
                                                             ): void =>
@@ -1018,7 +1040,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             }
                                             placeholder="Write here"
                                             disabled={
-                                                newJourney.isVoided ||
+                                                newJourney.isVoided ??
                                                 step.isVoided
                                             }
                                         />
@@ -1056,7 +1078,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                         AutoTransferMethod.RFCC
                                                     }
                                                     disabled={
-                                                        newJourney.isVoided ||
+                                                        newJourney.isVoided ??
                                                         step.isVoided
                                                     }
                                                     onChange={(
@@ -1091,7 +1113,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                         AutoTransferMethod.RFOC
                                                     }
                                                     disabled={
-                                                        newJourney.isVoided ||
+                                                        newJourney.isVoided ??
                                                         step.isVoided
                                                     }
                                                     onChange={(
@@ -1128,9 +1150,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                             <>
                                                 <Button
                                                     disabled={
-                                                        canSave ||
-                                                        newJourney.isVoided ||
-                                                        step.id === -1 ||
+                                                        canSave ??
+                                                        newJourney.isVoided ??
+                                                        step.id === -1 ??
                                                         newJourney.steps
                                                             .length < 2
                                                     }
@@ -1143,9 +1165,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                                                 </Button>
                                                 <Button
                                                     disabled={
-                                                        canSave ||
-                                                        newJourney.isVoided ||
-                                                        step.id === -1 ||
+                                                        canSave ??
+                                                        newJourney.isVoided ??
+                                                        step.id === -1 ??
                                                         newJourney.steps
                                                             .length < 2
                                                     }

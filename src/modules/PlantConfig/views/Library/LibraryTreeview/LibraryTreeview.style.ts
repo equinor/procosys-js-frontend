@@ -7,4 +7,5 @@ export const Container = styled.div`
     padding-top: var(--margin-module--top);
     padding-right: calc(var(--grid-unit) * 5);
     padding-left: calc(var(--grid-unit) * 5);
+    width: 20vw;
 `;

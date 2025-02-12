@@ -4,6 +4,7 @@ import { tokens } from '@equinor/eds-tokens';
 export const TreeContainer = styled.div`
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 `;
 
 interface NodeContainerProps {
@@ -15,6 +16,8 @@ export const NodeContainer = styled.div<NodeContainerProps>`
     align-items: center;
     margin-bottom: var(--grid-unit);
 
+    margin-left: ${(props): string =>
+        `calc(var(--grid-unit) * ${props.indentMultiplier} - 4px)`};
     margin-left: ${(props): string =>
         `calc(var(--grid-unit) * ${props.indentMultiplier} - 4px)`};
 `;

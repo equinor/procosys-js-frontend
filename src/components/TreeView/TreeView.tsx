@@ -272,7 +272,6 @@ const TreeView = ({
         }
     };
 
-    //const nodeId = pathname.split('/').filter(Boolean).pop();
     const node = treeData.find((node) => node.id === nodeIdFromPath);
     if (node && node.onClick) {
         node.onClick();

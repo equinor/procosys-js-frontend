@@ -59,7 +59,7 @@ interface NodeNameProps {
     hasChildren: boolean;
     isExpanded: boolean;
     isVoided: boolean;
-    isSelected?: boolean;
+    isSelected: boolean;
 }
 
 export const NodeName = styled.div<NodeNameProps>`

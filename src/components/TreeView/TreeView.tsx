@@ -54,6 +54,7 @@ const TreeView = ({
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
+    const nodeIdFromPath = pathname.split('/').filter(Boolean).pop() || '';
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
     ): number => {
@@ -246,26 +247,6 @@ const TreeView = ({
         node.onClick && node.onClick();
     };
 
-    useEffect(() => {
-        // This function extracts the node ID from the current path
-        const extractNodeIdFromPath = (pathname: string): string => {
-            const pathSegments = pathname.split('/').filter(Boolean);
-            return pathSegments[pathSegments.length - 1];
-        };
-        // find and select the node based on the extracted node ID
-        const nodeIndex = treeData.findIndex(
-            (node) => node.id === extractNodeIdFromPath(pathname)
-        );
-        if (nodeIndex !== -1) {
-            const node = treeData[nodeIndex];
-            if (node.onClick) {
-                node.onClick();
-                node.isSelected = true;
-                setSelectedNodeId(node.id);
-            }
-        }
-    }, [pathname, treeData]);
-
     const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
         if (!node.parentId) {
             return [node.name];
@@ -291,6 +272,12 @@ const TreeView = ({
         }
     };
 
+    //const nodeId = pathname.split('/').filter(Boolean).pop();
+    const node = treeData.find((node) => node.id === nodeIdFromPath);
+    if (node && node.onClick) {
+        node.onClick();
+    }
+
     const getNodeLink = (node: NodeData): JSX.Element => {
         const getBasePath = (pathname: string): string => {
             const segments = pathname.split('/').filter(Boolean);
@@ -306,7 +293,7 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.id === selectedNodeId ? true : false}
+                isSelected={node.id === nodeIdFromPath}
                 title={node.name}
             >
                 {node.onClick ? (
@@ -412,7 +399,6 @@ const TreeView = ({
     };
 
     useEffect(() => {
-        console.log('dirtyNodeId', dirtyNodeId);
         if (dirtyNodeId && dirtyNodeId !== '') {
             const dirtyNode = treeData.find((node) => node.id === dirtyNodeId);
 

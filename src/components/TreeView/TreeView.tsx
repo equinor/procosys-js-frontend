@@ -8,7 +8,8 @@ import {
 } from './style';
 import Spinner from '../Spinner';
 import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLibraryContext } from '@procosys/modules/PlantConfig/views/Library/LibraryTreeview/LibraryTreeview';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -56,6 +57,29 @@ const TreeView = ({
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+
+    const { newJourney } = useLibraryContext();
+
+    // useEffect(() => {
+    //     const getBasePath = (pathname: string): string => {
+    //         const segments = pathname.split('/').filter(Boolean);
+    //         if (segments.length < 2) return '';
+    //         return `/${segments[0]}/${segments[1]}`;
+    //     };
+
+    //     const baseLibraryPath = getBasePath(pathname);
+
+    //     if (newJourney?.project?.description && newJourney?.title) {
+    //         const updatedPath = `${baseLibraryPath}/Preservation%20journeys/${encodeURIComponent(
+    //             newJourney.project.description
+    //         )}/${encodeURIComponent(newJourney.title)}`;
+
+    //         if (pathname !== updatedPath) {
+    //             navigate(updatedPath, { replace: true });
+    //         }
+    //     }
+    // }, [newJourney, pathname, navigate]);
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -307,6 +331,7 @@ const TreeView = ({
                             handleOnClick(node);
                         }}
                         isSelected={node.isSelected ? true : false}
+                        title={node.name}
                     >
                         {node.name}
                     </NodeLink>
@@ -319,7 +344,12 @@ const TreeView = ({
             return (
                 <Link
                     to={finalPath}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    title={node.name}
+                    style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        width: '100%',
+                    }}
                 >
                     {linkContent}
                 </Link>

@@ -4,7 +4,9 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 //import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
-import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
+import LibraryTreeview, {
+    LibraryProvider,
+} from './LibraryTreeview/LibraryTreeview';
 import { hot } from 'react-hot-loader';
 
 import { Route, Routes } from 'react-router-dom';
@@ -111,43 +113,50 @@ const Library = (): JSX.Element => {
     };
 
     return (
-        <Container>
-            {selectedLibraryType && (
-                <Helmet>
-                    <title>{` - ${selectedLibraryType}`}</title>
-                </Helmet>
-            )}
-            <LibraryTreeview
-                forceUpdate={forceUpdate}
-                setSelectedLibraryType={setSelectedLibraryType}
-                setSelectedLibraryItem={setSelectedLibraryItem}
-                dirtyLibraryType={dirtyLibraryType}
-                resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
-            />
-
-            <Divider />
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <LibraryItemContainer
-                            addPaddingRight={
-                                selectedLibraryType !== LibraryType.TAG_FUNCTION
-                            }
-                        >
-                            <LibraryItemDetails
-                                forceUpdate={update}
-                                libraryType={selectedLibraryType}
-                                libraryItem={selectedLibraryItem}
-                                setSelectedLibraryType={setSelectedLibraryType}
-                                setSelectedLibraryItem={setSelectedLibraryItem}
-                                setDirtyLibraryType={setDirtyLibraryType}
-                            />
-                        </LibraryItemContainer>
-                    }
+        <LibraryProvider>
+            <Container>
+                {selectedLibraryType && (
+                    <Helmet>
+                        <title>{` - ${selectedLibraryType}`}</title>
+                    </Helmet>
+                )}
+                <LibraryTreeview
+                    forceUpdate={forceUpdate}
+                    setSelectedLibraryType={setSelectedLibraryType}
+                    setSelectedLibraryItem={setSelectedLibraryItem}
+                    dirtyLibraryType={dirtyLibraryType}
+                    resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
                 />
-            </Routes>
-        </Container>
+
+                <Divider />
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <LibraryItemContainer
+                                addPaddingRight={
+                                    selectedLibraryType !==
+                                    LibraryType.TAG_FUNCTION
+                                }
+                            >
+                                <LibraryItemDetails
+                                    forceUpdate={update}
+                                    libraryType={selectedLibraryType}
+                                    libraryItem={selectedLibraryItem}
+                                    setSelectedLibraryType={
+                                        setSelectedLibraryType
+                                    }
+                                    setSelectedLibraryItem={
+                                        setSelectedLibraryItem
+                                    }
+                                    setDirtyLibraryType={setDirtyLibraryType}
+                                />
+                            </LibraryItemContainer>
+                        }
+                    />
+                </Routes>
+            </Container>
+        </LibraryProvider>
     );
 };
 

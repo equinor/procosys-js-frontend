@@ -4,7 +4,7 @@ import TreeView, {
 
 import { Container } from './LibraryTreeview.style';
 import { LibraryType } from '../Library';
-import React from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePlantConfigContext } from '../../../context/PlantConfigContext';
 import {
@@ -282,3 +282,39 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 };
 
 export default LibraryTreeview;
+
+interface LibraryContextType {
+    newJourney: Journey;
+    setNewJourney: (journey: Journey) => void;
+}
+
+const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
+
+export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
+    const [newJourney, setNewJourney] = useState<Journey>({
+        id: -1,
+        title: '',
+        isVoided: false,
+        isInUse: false,
+        steps: [],
+        rowVersion: '',
+    });
+
+    return (
+        <LibraryContext.Provider value={{ newJourney, setNewJourney }}>
+            {children}
+        </LibraryContext.Provider>
+    );
+};
+
+export const useLibraryContext = (): LibraryContextType => {
+    const context = useContext(LibraryContext);
+    if (!context) {
+        throw new Error(
+            'useLibraryContext must be used within a LibraryProvider'
+        );
+    }
+    return context;
+};

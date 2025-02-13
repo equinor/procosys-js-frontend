@@ -272,11 +272,6 @@ const TreeView = ({
         }
     };
 
-    const node = treeData.find((node) => node.id === nodeIdFromPath);
-    if (node && node.onClick) {
-        node.onClick();
-    }
-
     const getNodeLink = (node: NodeData): JSX.Element => {
         const getBasePath = (pathname: string): string => {
             const segments = pathname.split('/').filter(Boolean);
@@ -450,7 +445,6 @@ const TreeView = ({
 
     useEffect(() => {
         let isMounted = true;
-
         const nodeNames = pathname
             .split('/')
             .filter((name) => name.trim() !== '')

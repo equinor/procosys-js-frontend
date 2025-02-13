@@ -39,12 +39,14 @@ export interface TreeViewProps {
     resetDirtyNode?: () => void;
     hasUnsavedChanges?: boolean;
     unsavedChangesConfirmationMessage?: string;
+    selectedLibraryItem: string;
 }
 
 const TreeView = ({
     rootNodes,
     dirtyNodeId,
     resetDirtyNode,
+    selectedLibraryItem,
 }: TreeViewProps): JSX.Element => {
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -54,7 +56,6 @@ const TreeView = ({
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
-    const nodeIdFromPath = pathname.split('/').filter(Boolean).pop() || '';
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
     ): number => {
@@ -287,7 +288,7 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.id === nodeIdFromPath}
+                isSelected={node.id.toString().includes(selectedLibraryItem)}
                 title={node.name}
             >
                 {node.onClick ? (

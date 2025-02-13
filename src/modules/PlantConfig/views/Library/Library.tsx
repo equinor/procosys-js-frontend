@@ -118,6 +118,7 @@ const Library = (): JSX.Element => {
                 </Helmet>
             )}
             <LibraryTreeview
+                selectedLibraryItem={selectedLibraryItem}
                 forceUpdate={forceUpdate}
                 setSelectedLibraryType={setSelectedLibraryType}
                 setSelectedLibraryItem={setSelectedLibraryItem}

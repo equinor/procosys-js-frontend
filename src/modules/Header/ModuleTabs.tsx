@@ -7,8 +7,6 @@ type ModuleTabsProps = {
 const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     const params = useParams<any>();
 
-    console.log(import.meta.env);
-
     return (
         <SubNav>
             <a href={`/${params.plant}/Completion`}>Completion</a>

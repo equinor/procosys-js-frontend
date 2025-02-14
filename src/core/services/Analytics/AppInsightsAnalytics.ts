@@ -10,10 +10,11 @@ import IAnalytics from './IAnalytics';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 class AppInsightsAnalytics implements IAnalytics {
-    _service: ApplicationInsights;
+    _service?: ApplicationInsights;
     _plant: string;
 
     constructor(history: H.History) {
+        if (window.INSTRUMENTATION_KEY) {
         const reactPlugin = new ReactPlugin() as unknown as ITelemetryPlugin;
         this._service = new ApplicationInsights({
             config: {
@@ -25,14 +26,17 @@ class AppInsightsAnalytics implements IAnalytics {
             },
         });
         this._service.loadAppInsights();
+        }
         this._plant = '';
     }
+    
 
     setCurrentPlant(plant: string): void {
         this._plant = plant;
     }
 
     trackUserAction(name: string, data?: ICustomProperties): void {
+        if(!this._service) return
         this._service.trackEvent(
             { name: name },
             { plant: this._plant, ...data }
@@ -40,6 +44,7 @@ class AppInsightsAnalytics implements IAnalytics {
     }
 
     trackException(exception: Error, id?: string): void {
+        if(!this._service) return
         const data: IExceptionTelemetry = {
             exception: exception,
         };

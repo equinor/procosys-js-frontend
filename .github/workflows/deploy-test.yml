@@ -1,4 +1,4 @@
-name: "Deploy main frontend PR to test 🚀"
+name: "Deploy main frontend PR to Test 🚀"
 
 on:
   workflow_dispatch:

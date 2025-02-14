@@ -41,6 +41,7 @@ spec:
       LIBRARY_API_URL: "https://backend-procosys-library-api-prod.radix.equinor.com/"
 
       INSTRUMENTATION_KEY: "ed1e9f1c-5b68-44ca-afec-76ece1f08f80"
+      HEADER_COLOR: "#FFFFFF"
 
       CLIENT_ID: "50b15344-28c9-45b5-9616-41da16fc9dcc"
       SCOPES: '[ "api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api", "https://graph.microsoft.com/User.Read" ]'

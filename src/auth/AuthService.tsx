@@ -28,6 +28,7 @@ declare global {
         CLIENT_ID: string;
         SCOPES: string[];
         FEATURE_FLAGS: Record<string, boolean>;
+        HEADER_COLOR: string;
     }
 }
 

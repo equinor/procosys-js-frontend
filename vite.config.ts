@@ -7,10 +7,10 @@ export default defineConfig({
     server: {
         port: 3000,
     },
-    define: {
-        'process.env': {},
-        __DEV__: JSON.stringify(true),
-    },
+    // define: {
+    //     'process.env': {},
+    //     __DEV__: JSON.stringify(true),
+    // },
     resolve: {
         alias: {
             '@procosys/core': path.resolve(__dirname, 'src/core/'),

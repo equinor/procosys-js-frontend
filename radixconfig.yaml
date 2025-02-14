@@ -1,38 +1,54 @@
-
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
   name: procosys-frontend
 spec:
+  dnsExternalAlias:
+    - alias: procosystest.equinor.com
+      component: frontend
+      environment: test
+      useCertificateAutomation: true
+    - alias: procosys.equinor.com
+      component: frontend
+      environment: prod
+      useCertificateAutomation: true
   environments:
-  - name: dev
-    build:
-      from: develop
   - name: test
     build:
-      from: test
+      from: '*'
+
   - name: prod
     build:
       from: master
+
   components:
   - name: frontend
     publicPort: http
+    variables:
+      PRESERVATION_API_SCOPE: "api://1eb50c54-e897-4216-93d0-6ca86b0cf681/ReadWrite"
+      PRESERVATION_API_URL: "https://backend-procosys-preservation-api-prod.radix.equinor.com/"
+
+      SEARCH_API_SCOPE: "api://a565f893-a478-4c28-b9ed-b26c25d6ec4d/ReadWrite"
+      SEARCH_API_URL: "https://backend-procosys-search-api-prod.radix.equinor.com/"
+
+      IPO_API_SCOPE: "api://b3399356-b2b6-44d4-a7b6-323eefc8a173/ReadWrite"
+      IPO_API_URL: "https://backend-procosys-ipo-api-prod.radix.equinor.com/"
+
+      PROCOSYS_API_SCOPE: "api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api"
+      PROCOSYS_API_URL: "https://procosyswebapi.equinor.com/api"
+
+      LIBRARY_API_SCOPE: "api://6263b7e6-155f-411b-9503-c5c841a601e0/ReadWrite"
+      LIBRARY_API_URL: "https://backend-procosys-library-api-prod.radix.equinor.com/"
+
+      INSTRUMENTATION_KEY: "ed1e9f1c-5b68-44ca-afec-76ece1f08f80"
+
+      CLIENT_ID: "50b15344-28c9-45b5-9616-41da16fc9dcc"
+      SCOPES: '[ "api://47641c40-0135-459b-8ab4-459e68dc8d08/web_api", "https://graph.microsoft.com/User.Read" ]'
+      FEATURE_FLAGS: '{ "IPO": true, "ManufacturerModelEnabled": false, "library": true, "main": true, "preservation": true, "quickSearch": false }'
+
     ports:
     - name: http
       port: 5000
     environmentConfig:
-    - environment: dev
-      dockerfileName: Dockerfile.dev
-      variables:
-        configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend/Auth'
-        configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
     - environment: test
-      dockerfileName: Dockerfile.test
-      variables:
-        configurationEndpoint: 'https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend'
-        configurationScope: 'api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read'
     - environment: prod
-      dockerfileName: Dockerfile.prod
-      variables:
-        configurationEndpoint: 'https://pcs-config-prod-func.azurewebsites.net/api/Frontend'
-        configurationScope: 'api://756f2a23-f54d-4643-bb49-62c0db4802ae/Read'

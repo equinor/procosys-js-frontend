@@ -7,7 +7,6 @@ import {
 import ApiClient from '../../../http/ApiClient';
 import { AxiosRequestConfig } from 'axios';
 import { IAuthService } from '../../../auth/AuthService';
-import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
 
@@ -58,11 +57,7 @@ function getLibraryApiError(error: any): LibraryApiError {
  */
 class LibraryApiClient extends ApiClient {
     constructor(authService: IAuthService) {
-        super(
-            authService,
-            ProCoSysSettings.libraryApi.scope.join(' '),
-            ProCoSysSettings.libraryApi.url
-        );
+        super(authService, window.LIBRARY_API_SCOPE, window.LIBRARY_API_URL);
         this.client.interceptors.request.use(
             (config) => {
                 config.params = {

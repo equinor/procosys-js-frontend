@@ -20,7 +20,6 @@ import EdsIcon from '@procosys/components/EdsIcon';
 import Flyout from '@procosys/components/Flyout';
 import ModuleTabs from './ModuleTabs';
 import OptionsDropdown from '../../components/OptionsDropdown';
-import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ProcosysLogo from '../../assets/icons/ProcosysLogo';
 import { useCurrentPlant } from '../../core/PlantContext';
 import { useCurrentUser } from '../../core/UserContext';
@@ -327,7 +326,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a href={`/${params.plant}/Documents/New`}>
                                 <DropdownItem>Document</DropdownItem>
                             </a>
-                            {ProCoSysSettings.featureIsEnabled('IPO') && (
+                            {window.FEATURE_FLAGS['IPO'] == true && (
                                 <Link
                                     to={`/${params.plant}/InvitationForPunchOut/CreateIPO`}
                                 >
@@ -408,7 +407,7 @@ const Header: React.FC = (): JSX.Element => {
                             >
                                 <DropdownItem>Hookup types</DropdownItem>
                             </a>
-                            {ProCoSysSettings.featureIsEnabled('IPO') && (
+                            {window.FEATURE_FLAGS['IPO'] == true && (
                                 <Link
                                     to={`/${params.plant}/InvitationForPunchOut`}
                                 >
@@ -495,7 +494,7 @@ const Header: React.FC = (): JSX.Element => {
                     </MenuContainerItem>
                 </MenuContainer>
                 <MenuContainer>
-                    {ProCoSysSettings.featureIsEnabled('quickSearch') && (
+                    {window.FEATURE_FLAGS['quickSearch'] == true && (
                         <MenuContainerItem>
                             <StyledSearch
                                 placeholder={'Quick Search'}

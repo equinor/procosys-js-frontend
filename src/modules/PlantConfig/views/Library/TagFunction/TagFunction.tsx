@@ -9,13 +9,12 @@ import {
     TabBarButton,
     TabBarFiller,
 } from './TagFunction.style';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TextField, Typography } from '@equinor/eds-core-react';
 
 import { Canceler } from 'axios';
 import PreservationTab from './tabs/PreservationTab';
 import Spinner from '@procosys/components/Spinner';
-import { hot } from 'react-hot-loader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
@@ -148,4 +147,4 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     );
 };
 
-export default hot(module)(TagFunction);
+export default TagFunction;

@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: PNPM setup
+        uses: ./.github/actions/pnpm-setup
+
+      - uses: dtinth/setup-github-actions-caching-for-turbo@v1
+
+      - name: Build
+        run: pnpm build

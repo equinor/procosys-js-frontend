@@ -3,7 +3,6 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
-import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
 
@@ -483,8 +482,8 @@ class PreservationApiClient extends ApiClient {
     constructor(authService: IAuthService) {
         super(
             authService,
-            ProCoSysSettings.preservationApi.scope.join(' '),
-            ProCoSysSettings.preservationApi.url
+            window.PRESERVATION_API_SCOPE,
+            window.PRESERVATION_API_URL
         );
         this.client.interceptors.request.use(
             (config) => {

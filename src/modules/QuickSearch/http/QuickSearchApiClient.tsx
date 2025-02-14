@@ -1,5 +1,4 @@
 import { ProCoSysApiError } from '@procosys/core/ProCoSysApiError';
-import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import ApiClient from '@procosys/http/ApiClient';
 import { RequestCanceler } from '@procosys/http/HttpClient';
 import { AxiosRequestConfig } from 'axios';
@@ -80,15 +79,7 @@ export interface SearchResult {
 
 class QuickSearchApiClient extends ApiClient {
     constructor(authService: IAuthService) {
-        super(
-            authService,
-            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.scope
-                ? ProCoSysSettings.searchApi.scope.join(' ')
-                : '',
-            ProCoSysSettings.searchApi && ProCoSysSettings.searchApi.url
-                ? ProCoSysSettings.searchApi.url
-                : ''
-        );
+        super(authService, window.SEARCH_API_SCOPE, window.SEARCH_API_URL);
         this.client.interceptors.request.use(
             (config) => {
                 config.params = {
@@ -123,12 +114,12 @@ class QuickSearchApiClient extends ApiClient {
                 item.type = item.commPkg
                     ? ResultTypeEnum.COMM_PKG
                     : item.mcPkg
-                    ? ResultTypeEnum.MC_PKG
-                    : item.tag
-                    ? ResultTypeEnum.TAG
-                    : item.punchItem
-                    ? ResultTypeEnum.PUNCH_ITEM
-                    : ResultTypeEnum.OTHER;
+                      ? ResultTypeEnum.MC_PKG
+                      : item.tag
+                        ? ResultTypeEnum.TAG
+                        : item.punchItem
+                          ? ResultTypeEnum.PUNCH_ITEM
+                          : ResultTypeEnum.OTHER;
             });
             return result.data;
         } catch (error) {
@@ -159,12 +150,12 @@ class QuickSearchApiClient extends ApiClient {
                 item.type = item.commPkg
                     ? ResultTypeEnum.COMM_PKG
                     : item.mcPkg
-                    ? ResultTypeEnum.MC_PKG
-                    : item.tag
-                    ? ResultTypeEnum.TAG
-                    : item.punchItem
-                    ? ResultTypeEnum.PUNCH_ITEM
-                    : ResultTypeEnum.OTHER;
+                      ? ResultTypeEnum.MC_PKG
+                      : item.tag
+                        ? ResultTypeEnum.TAG
+                        : item.punchItem
+                          ? ResultTypeEnum.PUNCH_ITEM
+                          : ResultTypeEnum.OTHER;
             });
             return result.data;
         } catch (error) {

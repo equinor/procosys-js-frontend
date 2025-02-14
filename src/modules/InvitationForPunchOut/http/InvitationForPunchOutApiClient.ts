@@ -2,7 +2,6 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import ApiClient from '../../../http/ApiClient';
 import { IAuthService } from '../../../auth/AuthService';
 import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
-import ProCoSysSettings from '../../../core/ProCoSysSettings';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
 import { OperationHandoverStatusEnum, IpoStatusEnum } from '../views/enums';
@@ -301,11 +300,7 @@ export type SignIPODto = {
  */
 class InvitationForPunchOutApiClient extends ApiClient {
     constructor(authService: IAuthService) {
-        super(
-            authService,
-            ProCoSysSettings.ipoApi.scope.join(' '),
-            ProCoSysSettings.ipoApi.url
-        );
+        super(authService, window.IPO_API_SCOPE, window.IPO_API_URL);
         this.client.interceptors.request.use(
             (config) => {
                 config.params = {

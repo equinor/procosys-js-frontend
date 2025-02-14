@@ -15,28 +15,28 @@ class AppInsightsAnalytics implements IAnalytics {
 
     constructor(history: H.History) {
         if (window.INSTRUMENTATION_KEY) {
-        const reactPlugin = new ReactPlugin() as unknown as ITelemetryPlugin;
-        this._service = new ApplicationInsights({
-            config: {
-                instrumentationKey: window.INSTRUMENTATION_KEY,
-                extensions: [reactPlugin],
-                extensionConfig: {
-                    [reactPlugin.identifier]: { history: history },
+            const reactPlugin =
+                new ReactPlugin() as unknown as ITelemetryPlugin;
+            this._service = new ApplicationInsights({
+                config: {
+                    instrumentationKey: window.INSTRUMENTATION_KEY,
+                    extensions: [reactPlugin],
+                    extensionConfig: {
+                        [reactPlugin.identifier]: { history: history },
+                    },
                 },
-            },
-        });
-        this._service.loadAppInsights();
+            });
+            this._service.loadAppInsights();
         }
         this._plant = '';
     }
-    
 
     setCurrentPlant(plant: string): void {
         this._plant = plant;
     }
 
     trackUserAction(name: string, data?: ICustomProperties): void {
-        if(!this._service) return
+        if (!this._service) return;
         this._service.trackEvent(
             { name: name },
             { plant: this._plant, ...data }
@@ -44,7 +44,7 @@ class AppInsightsAnalytics implements IAnalytics {
     }
 
     trackException(exception: Error, id?: string): void {
-        if(!this._service) return
+        if (!this._service) return;
         const data: IExceptionTelemetry = {
             exception: exception,
         };

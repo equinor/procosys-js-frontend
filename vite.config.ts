@@ -8,8 +8,7 @@ export default defineConfig({
         port: 3000,
     },
     define: {
-        'process.env': {},
-        __DEV__: JSON.stringify(true),
+        'process.env': {}
     },
     resolve: {
         alias: {

@@ -18,11 +18,11 @@ type LibraryTreeviewProps = {
     setSelectedLibraryItem: (libraryItem: string) => void;
     dirtyLibraryType: string;
     resetDirtyLibraryType: () => void;
+    selectedLibraryItem: string;
 };
 
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const { isDirty } = useDirtyContext();
-
     const { libraryApiClient, preservationApiClient } = usePlantConfigContext();
 
     const handleTreeviewClick = (
@@ -270,6 +270,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
         <Container>
             <TreeView
                 rootNodes={rootNodes}
+                selectedLibraryItem={props.selectedLibraryItem}
                 dirtyNodeId={props.dirtyLibraryType}
                 resetDirtyNode={props.resetDirtyLibraryType}
                 hasUnsavedChanges={isDirty}

@@ -7,6 +7,8 @@ type ModuleTabsProps = {
 const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
     const params = useParams<any>();
 
+    console.log(import.meta.env);
+
     return (
         <SubNav>
             <a href={`/${params.plant}/Completion`}>Completion</a>
@@ -27,8 +29,8 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
             </a>
             <a href="Documents">Document</a>
             <a href="Notification">Notification</a>
-            {(import.meta as ImportMeta & { mode?: 'development' })?.mode ===
-            'development' ? (
+            {(import.meta as ImportMeta & { env: { MODE?: 'development' } })?.env
+                ?.MODE === 'development' ? (
                 <span onClick={props.onClick}>
                     <NavLink
                         className={({ isActive }: { isActive: boolean }) =>
@@ -36,7 +38,7 @@ const ModuleTabs = (props: ModuleTabsProps): JSX.Element => {
                         }
                         to="libraryv2"
                     >
-                        Plant Configuration
+                        Library
                     </NavLink>
                 </span>
             ) : (

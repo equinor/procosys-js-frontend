@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     TreeContainer,
     NodeContainer,
@@ -39,14 +39,14 @@ export interface TreeViewProps {
     resetDirtyNode?: () => void;
     hasUnsavedChanges?: boolean;
     unsavedChangesConfirmationMessage?: string;
+    selectedLibraryItem: string;
 }
 
 const TreeView = ({
     rootNodes,
     dirtyNodeId,
     resetDirtyNode,
-    hasUnsavedChanges = false,
-    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?',
+    selectedLibraryItem,
 }: TreeViewProps): JSX.Element => {
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -56,7 +56,6 @@ const TreeView = ({
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
-
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
     ): number => {
@@ -249,12 +248,6 @@ const TreeView = ({
         node.onClick && node.onClick();
     };
 
-    const handleOnClick = (node: NodeData): void => {
-        if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
-            selectNode(node);
-        }
-    };
-
     const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
         if (!node.parentId) {
             return [node.name];
@@ -287,7 +280,6 @@ const TreeView = ({
             return basePath;
         };
         const baseLibraryPath = getBasePath(pathname);
-
         const parentPath = constructPath(node, treeData);
         const finalPath = `${baseLibraryPath}/${parentPath}`;
 
@@ -296,17 +288,14 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.isSelected === true}
+                isSelected={node.id.toString().includes(selectedLibraryItem)}
                 title={node.name}
             >
                 {node.onClick ? (
                     <NodeLink
+                        to={finalPath}
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
-                        onClick={(): void => {
-                            handleOnClick(node);
-                        }}
-                        isSelected={node.isSelected ? true : false}
                     >
                         {node.name}
                     </NodeLink>
@@ -457,7 +446,6 @@ const TreeView = ({
 
     useEffect(() => {
         let isMounted = true;
-
         const nodeNames = pathname
             .split('/')
             .filter((name) => name.trim() !== '')

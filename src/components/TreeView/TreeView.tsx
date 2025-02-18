@@ -91,7 +91,6 @@ const TreeView = ({
             children = await node.getChildren();
             setLoading(null);
         }
-
         // set parent relation for all children
         children.forEach((child) => (child.parentId = node.id));
 

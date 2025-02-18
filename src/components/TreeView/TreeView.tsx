@@ -91,7 +91,6 @@ const TreeView = ({
             children = await node.getChildren();
             setLoading(null);
         }
-
         // set parent relation for all children
         children.forEach((child) => (child.parentId = node.id));
 
@@ -288,7 +287,10 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.id.toString().includes(selectedLibraryItem)}
+                isSelected={
+                    !!selectedLibraryItem &&
+                    node.id.toString().includes(selectedLibraryItem)
+                }
                 title={node.name}
             >
                 {node.onClick ? (

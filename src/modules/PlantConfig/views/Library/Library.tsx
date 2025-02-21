@@ -9,7 +9,7 @@ import LibraryTreeview, {
 } from './LibraryTreeview/LibraryTreeview';
 import { hot } from 'react-hot-loader';
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -35,6 +35,7 @@ const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
+    const { pathname } = useLocation();
     const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
 
     useEffect(() => {
@@ -56,7 +57,7 @@ const Library = (): JSX.Element => {
 
             extractAndSetItemId(segmentsAfterLibraryV2);
         }
-    }, []);
+    }, [pathname]);
 
     const mapSegmentsToLibraryType = (segments: string[]): string => {
         const firstSegment = segments[0]?.toLowerCase().replace(/%20/g, ' ');
@@ -121,6 +122,7 @@ const Library = (): JSX.Element => {
                     </Helmet>
                 )}
                 <LibraryTreeview
+                    selectedLibraryItem={selectedLibraryItem}
                     forceUpdate={forceUpdate}
                     setSelectedLibraryType={setSelectedLibraryType}
                     setSelectedLibraryItem={setSelectedLibraryItem}

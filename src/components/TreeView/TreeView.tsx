@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     TreeContainer,
     NodeContainer,
@@ -40,14 +40,14 @@ export interface TreeViewProps {
     resetDirtyNode?: () => void;
     hasUnsavedChanges?: boolean;
     unsavedChangesConfirmationMessage?: string;
+    selectedLibraryItem: string;
 }
 
 const TreeView = ({
     rootNodes,
     dirtyNodeId,
     resetDirtyNode,
-    hasUnsavedChanges = false,
-    unsavedChangesConfirmationMessage = 'You have unsaved changes. Are you sure you want to continue?',
+    selectedLibraryItem,
 }: TreeViewProps): JSX.Element => {
     const [treeData, setTreeData] = useState<NodeData[]>(rootNodes);
     const [loading, setLoading] = useState<number | string | null>();
@@ -58,28 +58,172 @@ const TreeView = ({
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
     const navigate = useNavigate();
-
     const { newJourney } = useLibraryContext();
+    const { saveTriggered, setSaveTriggered } = useLibraryContext();
+    const previousProjectId = useRef<number | string | null>(null);
 
-    // useEffect(() => {
-    //     const getBasePath = (pathname: string): string => {
-    //         const segments = pathname.split('/').filter(Boolean);
-    //         if (segments.length < 2) return '';
-    //         return `/${segments[0]}/${segments[1]}`;
-    //     };
+    // -----------------------------------------------------------
+    const moveNewJourney = async (newJourney: any) => {
+        const childOldId = newJourney.id;
+        const childOldJourneyId = `journey_${childOldId}`;
+        const childOldTitle = newJourney.title;
 
-    //     const baseLibraryPath = getBasePath(pathname);
+        const projectName = newJourney.project.name;
+        const projectDescription = newJourney.project.description;
+        const parentNewName = `${projectName} ${projectDescription}`;
+        const parentNewProjectId = `project_${parentNewName}`;
 
-    //     if (newJourney?.project?.description && newJourney?.title) {
-    //         const updatedPath = `${baseLibraryPath}/Preservation%20journeys/${encodeURIComponent(
-    //             newJourney.project.description
-    //         )}/${encodeURIComponent(newJourney.title)}`;
+        const childOldNode = treeData.find(
+            (node) =>
+                node.id === childOldJourneyId && node.name == childOldTitle
+        );
 
-    //         if (pathname !== updatedPath) {
-    //             navigate(updatedPath, { replace: true });
-    //         }
-    //     }
-    // }, [newJourney, pathname, navigate]);
+        const parentOldNode = treeData.find(
+            (node) => node.id === childOldNode?.parentId
+        );
+
+        const parentNewNode = treeData.find(
+            (node) =>
+                node.name === parentNewName && node.id === parentNewProjectId
+        );
+
+        if (parentNewNode) {
+            if (typeof parentNewNode.getChildren === 'function') {
+                try {
+                    const children = await parentNewNode.getChildren();
+
+                    const childNode = children.find(
+                        (child) =>
+                            child.id === childOldJourneyId &&
+                            child.name === childOldTitle
+                    );
+
+                    if (childNode) {
+                        selectNode(childNode);
+
+                        const getBasePath = (pathname: string): string => {
+                            const segments = pathname
+                                .split('/')
+                                .filter(Boolean);
+                            const basePath = `/${segments[0]}/${segments[1]}`;
+                            return basePath;
+                        };
+                        const baseLibraryPath = getBasePath(
+                            window.location.pathname
+                        );
+
+                        let parentPath = constructPath(parentNewNode, treeData);
+
+                        parentPath = parentPath
+                            .split('/')
+                            .filter(
+                                (segment) => !segment.startsWith('project_')
+                            )
+                            .join('/');
+
+                        const childSegment = `${encodeURIComponent(childOldTitle)}/${encodeURIComponent(childOldJourneyId)}`;
+
+                        const fullPath = `${baseLibraryPath}/${parentPath}/${childSegment}`;
+
+                        navigate(fullPath, { replace: false });
+
+                        const nodeNames = fullPath
+                            .split('/')
+                            .filter((name) => name.trim() !== '')
+                            .slice(2)
+                            .map(decodeURIComponent);
+
+                        expandNodePath(
+                            nodeNames,
+                            treeData,
+                            expandNode,
+                            selectNode,
+                            setIsNodeExpanded,
+                            () => true
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        `Error fetching children for '${parentNewName}':`,
+                        error
+                    );
+                }
+            }
+        }
+    };
+
+    const resetNewJourney = async (newJourney: any) => {
+        const childOldId = newJourney.id;
+        const childOldJourneyId = `journey_${childOldId}`;
+        const childOldTitle = newJourney.title;
+
+        const childOldNode = treeData.find(
+            (node) =>
+                node.id === childOldJourneyId && node.name == childOldTitle
+        );
+
+        const parentOldNode = treeData.find(
+            (node) => node.id === childOldNode?.parentId
+        );
+
+        if (parentOldNode) {
+            const getBasePath = (pathname: string): string => {
+                const segments = pathname.split('/').filter(Boolean);
+                const basePath = `/${segments[0]}/${segments[1]}`;
+                return basePath;
+            };
+            const baseLibraryPath = getBasePath(window.location.pathname);
+
+            let parentPath = constructPath(parentOldNode, treeData);
+
+            parentPath = parentPath
+                .split('/')
+                .filter((segment) => !segment.startsWith('project_'))
+                .join('/');
+
+            const pathSegments = parentPath.split('/');
+            pathSegments.pop();
+            parentPath = pathSegments.join('/');
+
+            const intermediateSegment = 'Journey available across projects';
+            const childSegment = `${encodeURIComponent(childOldTitle)}/${encodeURIComponent(childOldJourneyId)}`;
+            const fullPath = `${baseLibraryPath}/${parentPath}/${encodeURIComponent(intermediateSegment)}/${childSegment}`;
+
+            navigate(fullPath, { replace: false });
+
+            const nodeNames = fullPath
+                .split('/')
+                .filter((name) => name.trim() !== '')
+                .slice(2)
+                .map(decodeURIComponent);
+
+            // expandNodePath(
+            //     nodeNames,
+            //     treeData,
+            //     expandNode,
+            //     selectNode,
+            //     setIsNodeExpanded,
+            //     () => true
+            // );
+        }
+    };
+
+    useEffect(() => {
+        if (
+            newJourney?.project &&
+            (previousProjectId.current !== newJourney.project.id ||
+                previousProjectId.current === null)
+        ) {
+            moveNewJourney(newJourney);
+        } else {
+            if (!saveTriggered) return;
+            resetNewJourney(newJourney);
+            setSaveTriggered(false);
+        }
+        previousProjectId.current = newJourney?.project?.id ?? null;
+    }, [newJourney, treeData, saveTriggered]);
+
+    // -----------------------------------------------------------
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -273,12 +417,6 @@ const TreeView = ({
         node.onClick && node.onClick();
     };
 
-    const handleOnClick = (node: NodeData): void => {
-        if (!hasUnsavedChanges || confirm(unsavedChangesConfirmationMessage)) {
-            selectNode(node);
-        }
-    };
-
     const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
         if (!node.parentId) {
             return [node.name];
@@ -320,16 +458,17 @@ const TreeView = ({
                 hasChildren={node.getChildren ? true : false}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
-                isSelected={node.isSelected === true}
+                isSelected={
+                    !!selectedLibraryItem &&
+                    node.id.toString().includes(selectedLibraryItem)
+                }
                 title={node.name}
             >
                 {node.onClick ? (
                     <NodeLink
+                        to={finalPath}
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
-                        onClick={(): void => {
-                            handleOnClick(node);
-                        }}
                         isSelected={node.isSelected ? true : false}
                         title={node.name}
                     >

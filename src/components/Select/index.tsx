@@ -32,6 +32,7 @@ export type SelectProps = {
     isVoided?: boolean;
     maxHeight?: string;
     title?: string;
+    style?: React.CSSProperties;
 };
 
 const KEYCODE_ENTER = 13;
@@ -48,6 +49,7 @@ const Select = ({
     isVoided = false,
     maxHeight,
     title,
+    style,
 }: SelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -148,7 +150,7 @@ const Select = ({
     };
 
     return (
-        <Container ref={containerRef} maxHeight={maxHeight}>
+        <Container ref={containerRef} maxHeight={maxHeight} style={style}>
             <Label isVoided={isVoided}>{label}</Label>
             <DropdownButton
                 title={title}

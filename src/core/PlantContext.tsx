@@ -168,7 +168,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
             return;
         }
         try {
-            console.log('Calling setCurrentPlant with:', plantInPath);
             setCurrentPlant(plantInPath);
         } catch (error) {
             console.error(`Failed to set current plant: ${error.message}`);
@@ -191,7 +190,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
         }
 
         try {
-            console.log('Setting current plant with:', plantInPath);
             setCurrentPlant(plantInPath);
         } catch (error) {
             console.error(`Failed to set current plant: ${error.message}`);

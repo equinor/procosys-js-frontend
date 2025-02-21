@@ -1,0 +1,4 @@
+{
+    "configurationEndpoint": "https://pcs-config-non-prod-func.azurewebsites.net/api/Frontend",
+    "configurationScope": "api://0708e202-b5ad-4d95-9735-a631c715d6a9/Read"
+  }

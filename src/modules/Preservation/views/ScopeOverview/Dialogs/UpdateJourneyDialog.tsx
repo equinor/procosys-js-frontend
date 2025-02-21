@@ -128,7 +128,7 @@ const UpdateJourneyDialog = ({
     const [tagJourneyAndStepValid, setTagJourneyAndStepValid] =
         useState<boolean>(false);
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
-    const { apiClient } = usePreservationContext();
+    const { apiClient, project } = usePreservationContext();
     const [journeys, setJourneys] = useState<Journey[]>([]);
     const [step, setStep] = useState<Step | null>(null);
     const [poTag, setPoTag] = useState<boolean>(false);
@@ -177,7 +177,8 @@ const UpdateJourneyDialog = ({
             try {
                 const data = await apiClient.getJourneys(
                     true,
-                    (cancel: Canceler) => (requestCancellor = cancel)
+                    (cancel: Canceler) => (requestCancellor = cancel),
+                    project.name
                 );
                 setJourneys(data);
             } catch (error) {

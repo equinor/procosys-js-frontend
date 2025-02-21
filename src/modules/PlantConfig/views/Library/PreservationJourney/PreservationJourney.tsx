@@ -30,16 +30,68 @@ import {
     ButtonContainerLeft,
     ButtonContainerRight,
 } from '../Library.style';
-import {
-    AutoTransferMethod,
-    Journey,
-    Mode,
-    PreservationJourneyProps,
-    Step,
-} from './types';
-import { ProjectDetails } from '@procosys/modules/Preservation/types';
+// import {
+//     AutoTransferMethod,
+//     Journey,
+//     Mode,
+//     PreservationJourneyProps,
+//     Step,
+// } from './types';
+// import { ProjectDetails } from '@procosys/modules/Preservation/types';
 import { Autocomplete } from '@equinor/eds-core-react';
 import { useLibraryContext } from '../LibraryTreeview/LibraryTreeview';
+
+type ProjectDetails = {
+    id: number;
+    name: string;
+    description: string;
+};
+
+enum AutoTransferMethod {
+    NONE = 'None',
+    RFCC = 'OnRfccSign',
+    RFOC = 'OnRfocSign',
+}
+
+interface Journey {
+    id: number;
+    title: string;
+    isVoided: boolean;
+    isInUse: boolean;
+    steps: Step[];
+    rowVersion: string;
+    project?: ProjectDetails;
+}
+
+interface Step {
+    id: number;
+    title: string;
+    autoTransferMethod: string;
+    isVoided: boolean;
+    isInUse: boolean;
+    mode: Mode;
+    responsible: {
+        code: string;
+        title: string;
+        rowVersion: string;
+        description?: string;
+    };
+    rowVersion: string;
+}
+
+interface Mode {
+    id: number;
+    title: string;
+    forSupplier: boolean;
+    isVoided: boolean;
+    rowVersion: string;
+}
+
+type PreservationJourneyProps = {
+    forceUpdate: number;
+    journeyId: number;
+    setDirtyLibraryType: () => void;
+};
 
 const addIcon = <EdsIcon name="add" />;
 const upIcon = <EdsIcon name="arrow_up" />;
@@ -94,6 +146,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const [filterForResponsibles, setFilterForResponsibles] =
         useState<string>('');
     const { setDirtyStateFor, unsetDirtyStateFor } = useDirtyContext();
+    const { saveTriggered, setSaveTriggered } = useLibraryContext();
 
     useEffect(() => {
         setIsEditMode(false);
@@ -424,9 +477,8 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const handleSave = (): void => {
-        if (!inputIsComplete()) {
-            return;
-        }
+        if (!inputIsComplete()) return;
+        setSaveTriggered(true);
         if (newJourney.id === -1) {
             saveNewJourney();
         } else {
@@ -435,7 +487,7 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     };
 
     const confirmDiscardingChangesIfExist = (): boolean => {
-        return !isDirty ?? confirm(unsavedChangesConfirmationMessage);
+        return !isDirty || confirm(unsavedChangesConfirmationMessage);
     };
 
     const cancel = (): void => {

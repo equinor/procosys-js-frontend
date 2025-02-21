@@ -5,6 +5,7 @@ import { IAuthService } from '../../../auth/AuthService';
 import { ProCoSysApiError } from '../../../core/ProCoSysApiError';
 import Qs from 'qs';
 import { RequestCanceler } from '../../../http/HttpClient';
+import { ProjectDetails } from '../types';
 
 interface PreservedTagResponse {
     maxAvailable: number;
@@ -54,6 +55,7 @@ interface PreservedTagResponse {
             tagNo: string;
             tagType: string;
             rowVersion: string;
+            project?: ProjectDetails;
         },
     ];
 }
@@ -1294,12 +1296,14 @@ class PreservationApiClient extends ApiClient {
      */
     async getJourneys(
         includeVoided: boolean,
-        setRequestCanceller?: RequestCanceler
+        setRequestCanceller?: RequestCanceler,
+        projectName?: string
     ): Promise<JourneyResponse[]> {
         const endpoint = '/Journeys';
         const settings: AxiosRequestConfig = {
             params: {
                 includeVoided: includeVoided,
+                projectName: projectName,
             },
         };
         this.setupRequestCanceler(settings, setRequestCanceller);
@@ -1375,6 +1379,7 @@ class PreservationApiClient extends ApiClient {
         journeyId: number,
         title: string,
         rowVersion: string,
+        name?: string,
         setRequestCanceller?: RequestCanceler
     ): Promise<void> {
         const endpoint = `/Journeys/${journeyId}`;
@@ -1385,8 +1390,9 @@ class PreservationApiClient extends ApiClient {
             await this.client.put(
                 endpoint,
                 {
-                    title: title,
-                    rowVersion: rowVersion,
+                    title,
+                    rowVersion,
+                    projectName: name,
                 },
                 settings
             );

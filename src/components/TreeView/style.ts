@@ -96,7 +96,7 @@ interface NodeLinkProps {
     isSelected: boolean;
 }
 
-export const NodeLink = styled(NavLink)<NodeLinkProps>`
+export const NodeLink = styled.span<NodeLinkProps>`
     cursor: pointer;
     text-decoration: none;
     color: inherit;
@@ -111,6 +111,13 @@ export const NodeLink = styled(NavLink)<NodeLinkProps>`
         props.isVoided &&
         css`
             opacity: 0.5;
+        `}
+
+    ${(props): any =>
+        props.isSelected &&
+        css`
+            color: ${tokens.colors.interactive.primary__resting.rgba};
+            background: ${tokens.colors.ui.background__light.rgba};
         `}
 
 

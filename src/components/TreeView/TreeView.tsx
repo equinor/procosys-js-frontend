@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     TreeContainer,
     NodeContainer,
@@ -10,6 +10,8 @@ import Spinner from '../Spinner';
 import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLibraryContext } from '@procosys/modules/PlantConfig/views/Library/LibraryTreeview/LibraryTreeview';
+import { Journey } from '@procosys/modules/PlantConfig/views/Library/PreservationJourney/types/Journey';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -60,170 +62,21 @@ const TreeView = ({
     const navigate = useNavigate();
     const { newJourney } = useLibraryContext();
     const { saveTriggered, setSaveTriggered } = useLibraryContext();
-    const previousProjectId = useRef<number | string | null>(null);
-
-    // -----------------------------------------------------------
-    const moveNewJourney = async (newJourney: any) => {
-        const childOldId = newJourney.id;
-        const childOldJourneyId = `journey_${childOldId}`;
-        const childOldTitle = newJourney.title;
-
-        const projectName = newJourney.project.name;
-        const projectDescription = newJourney.project.description;
-        const parentNewName = `${projectName} ${projectDescription}`;
-        const parentNewProjectId = `project_${parentNewName}`;
-
-        const childOldNode = treeData.find(
-            (node) =>
-                node.id === childOldJourneyId && node.name == childOldTitle
-        );
-
-        const parentOldNode = treeData.find(
-            (node) => node.id === childOldNode?.parentId
-        );
-
-        const parentNewNode = treeData.find(
-            (node) =>
-                node.name === parentNewName && node.id === parentNewProjectId
-        );
-
-        if (parentNewNode) {
-            if (typeof parentNewNode.getChildren === 'function') {
-                try {
-                    const children = await parentNewNode.getChildren();
-
-                    const childNode = children.find(
-                        (child) =>
-                            child.id === childOldJourneyId &&
-                            child.name === childOldTitle
-                    );
-
-                    if (childNode) {
-                        selectNode(childNode);
-
-                        const getBasePath = (pathname: string): string => {
-                            const segments = pathname
-                                .split('/')
-                                .filter(Boolean);
-                            const basePath = `/${segments[0]}/${segments[1]}`;
-                            return basePath;
-                        };
-                        const baseLibraryPath = getBasePath(
-                            window.location.pathname
-                        );
-
-                        let parentPath = constructPath(parentNewNode, treeData);
-
-                        parentPath = parentPath
-                            .split('/')
-                            .filter(
-                                (segment) => !segment.startsWith('project_')
-                            )
-                            .join('/');
-
-                        const childSegment = `${encodeURIComponent(childOldTitle)}/${encodeURIComponent(childOldJourneyId)}`;
-
-                        const fullPath = `${baseLibraryPath}/${parentPath}/${childSegment}`;
-
-                        navigate(fullPath, { replace: false });
-
-                        const nodeNames = fullPath
-                            .split('/')
-                            .filter((name) => name.trim() !== '')
-                            .slice(2)
-                            .map(decodeURIComponent);
-
-                        expandNodePath(
-                            nodeNames,
-                            treeData,
-                            expandNode,
-                            selectNode,
-                            setIsNodeExpanded,
-                            () => true
-                        );
-                    }
-                } catch (error) {
-                    console.error(
-                        `Error fetching children for '${parentNewName}':`,
-                        error
-                    );
-                }
-            }
-        }
-    };
-
-    const resetNewJourney = async (newJourney: any) => {
-        const childOldId = newJourney.id;
-        const childOldJourneyId = `journey_${childOldId}`;
-        const childOldTitle = newJourney.title;
-
-        const childOldNode = treeData.find(
-            (node) =>
-                node.id === childOldJourneyId && node.name == childOldTitle
-        );
-
-        const parentOldNode = treeData.find(
-            (node) => node.id === childOldNode?.parentId
-        );
-
-        if (parentOldNode) {
-            const getBasePath = (pathname: string): string => {
-                const segments = pathname.split('/').filter(Boolean);
-                const basePath = `/${segments[0]}/${segments[1]}`;
-                return basePath;
-            };
-            const baseLibraryPath = getBasePath(window.location.pathname);
-
-            let parentPath = constructPath(parentOldNode, treeData);
-
-            parentPath = parentPath
-                .split('/')
-                .filter((segment) => !segment.startsWith('project_'))
-                .join('/');
-
-            const pathSegments = parentPath.split('/');
-            pathSegments.pop();
-            parentPath = pathSegments.join('/');
-
-            const intermediateSegment = 'Journey available across projects';
-            const childSegment = `${encodeURIComponent(childOldTitle)}/${encodeURIComponent(childOldJourneyId)}`;
-            const fullPath = `${baseLibraryPath}/${parentPath}/${encodeURIComponent(intermediateSegment)}/${childSegment}`;
-
-            navigate(fullPath, { replace: false });
-
-            const nodeNames = fullPath
-                .split('/')
-                .filter((name) => name.trim() !== '')
-                .slice(2)
-                .map(decodeURIComponent);
-
-            // expandNodePath(
-            //     nodeNames,
-            //     treeData,
-            //     expandNode,
-            //     selectNode,
-            //     setIsNodeExpanded,
-            //     () => true
-            // );
-        }
-    };
-
-    useEffect(() => {
-        if (
-            newJourney?.project &&
-            (previousProjectId.current !== newJourney.project.id ||
-                previousProjectId.current === null)
-        ) {
-            moveNewJourney(newJourney);
-        } else {
-            if (!saveTriggered) return;
-            resetNewJourney(newJourney);
-            setSaveTriggered(false);
-        }
-        previousProjectId.current = newJourney?.project?.id ?? null;
-    }, [newJourney, treeData, saveTriggered]);
-
-    // -----------------------------------------------------------
+    const { unsetDirtyStateFor, isDirty } = useDirtyContext();
+    const moduleName = 'PreservationJourneyForm';
+    const [navigateNewJourney, setnavigateNewJourney] = useState<string | null>(
+        null
+    );
+    const [childOldNode, setChildOldNode] = useState<NodeData | null>(null);
+    const [parentOldNode, setParentOldNode] = useState<NodeData | null>(null);
+    const [childNewNode, setChildNewNode] = useState<NodeData | null>(null);
+    const [parentNewNode, setParentNewNode] = useState<NodeData | null>(null);
+    const isDataReady = !!(
+        childOldNode &&
+        parentOldNode &&
+        childNewNode &&
+        parentNewNode
+    );
 
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
@@ -417,7 +270,7 @@ const TreeView = ({
         node.onClick && node.onClick();
     };
 
-    const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
+    const getParentPath = (node: NodeData, treeData: NodeData[]): string[] => {
         if (!node.parentId) {
             return [node.name];
         } else {
@@ -442,20 +295,19 @@ const TreeView = ({
         }
     };
 
-    const getNodeLink = (node: NodeData): JSX.Element => {
-        const getBasePath = (pathname: string): string => {
-            const segments = pathname.split('/').filter(Boolean);
-            const basePath = `/${segments[0]}/${segments[1]}`;
-            return basePath;
-        };
-        const baseLibraryPath = getBasePath(pathname);
+    const getBasePath = (pathname: string): string => {
+        const segments = pathname.split('/').filter(Boolean);
+        return `/${segments[0]}/${segments[1]}`;
+    };
 
+    const getNodeLink = (node: NodeData): JSX.Element => {
+        const baseLibraryPath = getBasePath(pathname);
         const parentPath = constructPath(node, treeData);
         const finalPath = `${baseLibraryPath}/${parentPath}`;
 
         const linkContent = (
             <NodeName
-                hasChildren={node.getChildren ? true : false}
+                hasChildren={!!node.getChildren}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
                 isSelected={
@@ -466,11 +318,11 @@ const TreeView = ({
             >
                 {node.onClick ? (
                     <NodeLink
-                        to={finalPath}
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
-                        isSelected={node.isSelected ? true : false}
                         title={node.name}
+                        onClick={(): void => selectNode(node)}
+                        isSelected={node.isSelected ? true : false}
                     >
                         {node.name}
                     </NodeLink>
@@ -567,10 +419,137 @@ const TreeView = ({
                     setIsNodeExpanded,
                     checkMounted
                 );
-            } else {
-                console.log('Root node not found');
             }
         }
+    };
+
+    const storeInfoMoveNewJourney = async (
+        newJourney: Journey
+    ): Promise<void> => {
+        const childOldId = newJourney?.id;
+        const childOldJourneyId = `journey_${childOldId}`;
+        const childOldTitle = newJourney?.title;
+
+        const projectName = newJourney?.project?.name;
+        const projectDescription = newJourney?.project?.description;
+        const parentNewName = `${projectName} ${projectDescription}`;
+        const parentNewProjectId = `project_${parentNewName}`;
+
+        const childOldNode = treeData.find(
+            (node) =>
+                node.id === childOldJourneyId && node.name == childOldTitle
+        );
+
+        const parentOldNode = treeData.find(
+            (node) => node.id === childOldNode?.parentId
+        );
+
+        const parentNewNode = treeData.find(
+            (node) =>
+                node.name === parentNewName && node.id === parentNewProjectId
+        );
+
+        if (parentOldNode) {
+            setParentOldNode(parentOldNode);
+        }
+
+        if (childOldNode) {
+            setChildOldNode(childOldNode);
+        }
+
+        if (parentNewNode) {
+            if (typeof parentNewNode.getChildren === 'function') {
+                try {
+                    const children = await parentNewNode.getChildren();
+
+                    const childNewNode = children.find(
+                        (child) => child.id === childOldJourneyId
+                    );
+
+                    if (childNewNode) {
+                        setChildNewNode(childNewNode);
+                        setParentNewNode(parentNewNode);
+                        clearInfoNewJourney();
+                    }
+                } catch (error) {
+                    console.error(
+                        `Error fetching children for '${parentNewNode}':`,
+                        error
+                    );
+                }
+            }
+        }
+    };
+
+    const moveNewJourney = async (): Promise<void> => {
+        if (childOldNode && parentOldNode && childNewNode && parentNewNode) {
+            const baseLibraryPath = getBasePath(pathname);
+            const parentPath = constructPath(parentNewNode, treeData)
+                .split('/')
+                .filter((segment) => !segment.startsWith('project_'))
+                .join('/');
+            const childPath = `${childNewNode.name}/${childNewNode.id}`;
+
+            const fullPath = encodeURI(
+                `${baseLibraryPath}/${parentPath}/${childPath}`
+            );
+
+            const updatedTreeData = treeData.map((node) => {
+                if (node.id === parentOldNode.id) {
+                    return {
+                        ...node,
+                        isExpanded: false,
+                        isSelected: false,
+                    };
+                }
+                return node;
+            });
+            setTreeData(updatedTreeData);
+
+            unsetDirtyStateFor(moduleName);
+            setnavigateNewJourney(fullPath);
+            clearInfoNewJourney();
+        }
+    };
+
+    const resetNewJourney = async (newJourney: Journey): Promise<void> => {
+        const childOldId = newJourney.id;
+        const childOldJourneyId = `journey_${childOldId}`;
+        const childOldTitle = newJourney.title;
+
+        const childOldNode = treeData.find(
+            (node) => node.id === childOldJourneyId
+        );
+
+        const parentOldNode = treeData.find(
+            (node) => node.id === childOldNode?.parentId
+        );
+
+        if (parentOldNode) {
+            const baseLibraryPath = getBasePath(pathname);
+            const parentPath = constructPath(parentOldNode, treeData)
+                .split('/')
+                .filter((segment) => !segment.startsWith('project_'))
+                .slice(0, -1)
+                .join('/');
+            const journeyPath = 'Journey available across projects';
+            const childPath = `${childOldTitle}/${childOldJourneyId}`;
+
+            const fullPath = encodeURI(
+                `${baseLibraryPath}/${parentPath}/${journeyPath}/${childPath}`
+            );
+
+            unsetDirtyStateFor(moduleName);
+            setnavigateNewJourney(fullPath);
+            clearInfoNewJourney();
+        }
+    };
+
+    const clearInfoNewJourney = (): void => {
+        setChildOldNode(null);
+        setParentOldNode(null);
+        setChildNewNode(null);
+        setParentNewNode(null);
     };
 
     useEffect(() => {
@@ -598,7 +577,11 @@ const TreeView = ({
                         const node = treeData.find(
                             (node) => node.id === nodeId
                         );
-                        if (node && !node.isExpanded) {
+                        if (
+                            node &&
+                            !node.isExpanded &&
+                            node.isExpanded !== false
+                        ) {
                             await expandNode(node);
                         }
                     }
@@ -652,6 +635,28 @@ const TreeView = ({
             isMounted = false;
         };
     }, [pathname, treeData, isNodeExpanded]);
+
+    useEffect(() => {
+        storeInfoMoveNewJourney(newJourney);
+    }, [newJourney, treeData]);
+
+    useEffect(() => {
+        if (newJourney?.project && saveTriggered && isDataReady) {
+            moveNewJourney();
+            setSaveTriggered(false);
+        } else if (newJourney?.project === undefined && saveTriggered) {
+            resetNewJourney(newJourney);
+            setSaveTriggered(false);
+        }
+    }, [newJourney, treeData, saveTriggered, isDataReady]);
+
+    useEffect(() => {
+        if (!isDirty && navigateNewJourney) {
+            navigate(navigateNewJourney, { replace: false });
+            setExecutionCount(0);
+            setnavigateNewJourney(null);
+        }
+    }, [isDirty, navigateNewJourney]);
 
     return (
         <TreeContainer>{treeData.map((node) => getNode(node))}</TreeContainer>

@@ -30,68 +30,18 @@ import {
     ButtonContainerLeft,
     ButtonContainerRight,
 } from '../Library.style';
-// import {
-//     AutoTransferMethod,
-//     Journey,
-//     Mode,
-//     PreservationJourneyProps,
-//     Step,
-// } from './types';
-// import { ProjectDetails } from '@procosys/modules/Preservation/types';
+
 import { Autocomplete } from '@equinor/eds-core-react';
 import { useLibraryContext } from '../LibraryTreeview/LibraryTreeview';
 
-type ProjectDetails = {
-    id: number;
-    name: string;
-    description: string;
-};
-
-enum AutoTransferMethod {
-    NONE = 'None',
-    RFCC = 'OnRfccSign',
-    RFOC = 'OnRfocSign',
-}
-
-interface Journey {
-    id: number;
-    title: string;
-    isVoided: boolean;
-    isInUse: boolean;
-    steps: Step[];
-    rowVersion: string;
-    project?: ProjectDetails;
-}
-
-interface Step {
-    id: number;
-    title: string;
-    autoTransferMethod: string;
-    isVoided: boolean;
-    isInUse: boolean;
-    mode: Mode;
-    responsible: {
-        code: string;
-        title: string;
-        rowVersion: string;
-        description?: string;
-    };
-    rowVersion: string;
-}
-
-interface Mode {
-    id: number;
-    title: string;
-    forSupplier: boolean;
-    isVoided: boolean;
-    rowVersion: string;
-}
-
-type PreservationJourneyProps = {
-    forceUpdate: number;
-    journeyId: number;
-    setDirtyLibraryType: () => void;
-};
+import {
+    AutoTransferMethod,
+    Journey,
+    Mode,
+    PreservationJourneyProps,
+    Step,
+} from './types';
+import { ProjectDetails } from '@procosys/modules/InvitationForPunchOut/types';
 
 const addIcon = <EdsIcon name="add" />;
 const upIcon = <EdsIcon name="arrow_up" />;
@@ -266,17 +216,21 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
     const getJourney = async (journeyId: number): Promise<void> => {
         setIsLoading(true);
         try {
-            const response = await preservationApiClient.getJourney(
-                journeyId,
-                true
-            );
-            setNewJourney(response);
+            await preservationApiClient
+                .getJourney(journeyId, true)
+                .then((response) => {
+                    setJourney(response);
+                    setNewJourney(cloneJourney(response));
+                });
         } catch (error) {
             console.error(
                 'Get preservation journey failed: ',
                 error.message,
                 error.data
             );
+            if (error instanceof ProCoSysApiError) {
+                if (error.isCancel) return;
+            }
             showSnackbarNotification(error.message);
         }
         setIsLoading(false);

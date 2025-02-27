@@ -562,7 +562,22 @@ class InvitationForPunchOutApiClient extends ApiClient {
             );
             return result.data;
         } catch (error) {
-            throw new IpoApiError(error as AxiosError);
+            if (error.response.data) {
+                const errorResponse = error.response.data;
+                let errorMessages = '';
+                if (errorResponse.errors) {
+                    // Extract all error messages and join them with newline separators
+                    errorMessages = Object.values(errorResponse.errors)
+                        .flat()
+                        .join('\n');
+                } else {
+                    // Fallback
+                    errorMessages = 'An unknown error occurred.';
+                }
+                throw new Error('Error:' + errorMessages);
+            } else {
+                throw new IpoApiError(error as AxiosError);
+            }
         }
     }
 

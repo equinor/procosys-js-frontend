@@ -564,17 +564,13 @@ class InvitationForPunchOutApiClient extends ApiClient {
         } catch (error) {
             if (error.response.data) {
                 const errorResponse = error.response.data;
-                let errorMessages = '';
+        
                 if (errorResponse.errors) {
-                    // Extract all error messages and join them with newline separators
-                    errorMessages = Object.values(errorResponse.errors)
+                 throw new Error('Error: ' + Object.values(errorResponse.errors)
                         .flat()
-                        .join('\n');
-                } else {
-                    // Fallback
-                    errorMessages = 'An unknown error occurred.';
+                        .join('\n'));
                 }
-                throw new Error('Error:' + errorMessages);
+                throw new Error('Error: An unknown error occurred.');
             } else {
                 throw new IpoApiError(error as AxiosError);
             }

@@ -1,10 +1,10 @@
 name: 💄Prettify
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   prettier:

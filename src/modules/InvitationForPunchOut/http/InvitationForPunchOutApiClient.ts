@@ -564,11 +564,14 @@ class InvitationForPunchOutApiClient extends ApiClient {
         } catch (error) {
             if (error.response.data) {
                 const errorResponse = error.response.data;
-        
+
                 if (errorResponse.errors) {
-                 throw new Error('Error: ' + Object.values(errorResponse.errors)
-                        .flat()
-                        .join('\n'));
+                    throw new Error(
+                        'Error: ' +
+                            Object.values(errorResponse.errors)
+                                .flat()
+                                .join('\n')
+                    );
                 }
                 throw new Error('Error: An unknown error occurred.');
             } else {

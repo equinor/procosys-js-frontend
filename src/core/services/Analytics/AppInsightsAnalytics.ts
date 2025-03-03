@@ -7,25 +7,27 @@ import {
     ITelemetryPlugin,
 } from '@microsoft/applicationinsights-web';
 import IAnalytics from './IAnalytics';
-import ProCoSysSettings from '@procosys/core/ProCoSysSettings';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 class AppInsightsAnalytics implements IAnalytics {
-    _service: ApplicationInsights;
+    _service?: ApplicationInsights;
     _plant: string;
 
     constructor(history: H.History) {
-        const reactPlugin = new ReactPlugin() as unknown as ITelemetryPlugin;
-        this._service = new ApplicationInsights({
-            config: {
-                instrumentationKey: ProCoSysSettings.instrumentationKey,
-                extensions: [reactPlugin],
-                extensionConfig: {
-                    [reactPlugin.identifier]: { history: history },
+        if (window.INSTRUMENTATION_KEY) {
+            const reactPlugin =
+                new ReactPlugin() as unknown as ITelemetryPlugin;
+            this._service = new ApplicationInsights({
+                config: {
+                    instrumentationKey: window.INSTRUMENTATION_KEY,
+                    extensions: [reactPlugin],
+                    extensionConfig: {
+                        [reactPlugin.identifier]: { history: history },
+                    },
                 },
-            },
-        });
-        this._service.loadAppInsights();
+            });
+            this._service.loadAppInsights();
+        }
         this._plant = '';
     }
 
@@ -34,6 +36,7 @@ class AppInsightsAnalytics implements IAnalytics {
     }
 
     trackUserAction(name: string, data?: ICustomProperties): void {
+        if (!this._service) return;
         this._service.trackEvent(
             { name: name },
             { plant: this._plant, ...data }
@@ -41,6 +44,7 @@ class AppInsightsAnalytics implements IAnalytics {
     }
 
     trackException(exception: Error, id?: string): void {
+        if (!this._service) return;
         const data: IExceptionTelemetry = {
             exception: exception,
         };

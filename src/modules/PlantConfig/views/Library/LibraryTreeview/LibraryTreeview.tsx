@@ -187,7 +187,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 await libraryApiClient.getTagFunctions(registerCode);
             tagFunctions.map((tf) => {
                 children.push({
-                    id: `tf_register_${registerCode}_${tf.code}`,
+                    id: `${registerCode}&${tf.code}`,
                     name: `${tf.code}, ${tf.description}`,
                     // TODO: isVoided (need data from API)
                     onClick: (): void =>

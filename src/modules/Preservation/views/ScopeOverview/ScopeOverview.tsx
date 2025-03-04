@@ -60,7 +60,6 @@ import {
     deleteCachedFilter,
 } from './preservationHelpers';
 import { MemoryRouter as Router } from 'react-router-dom';
-1;
 
 const emptyTagListFilter: TagListFilter = {
     tagNoStartsWith: null,

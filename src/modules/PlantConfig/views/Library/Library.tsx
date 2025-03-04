@@ -32,6 +32,10 @@ const libraryTypePrefixId = [
 const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
+
+    const [registerCode, setRegisterCode] = useState('');
+    const [tagFunctionCode, setTagFunctionCode] = useState('');
+
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
     const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
     const { pathname } = useLocation();
@@ -96,13 +100,29 @@ const Library = (): JSX.Element => {
     };
 
     const extractAndSetItemId = (segments: string[]): void => {
+        const lastSegment = segments[segments.length - 1];
+        const parts = lastSegment.split('_');
+
+        // register code i always the last part of the parts array
+        const tagFunctionCode = parts[parts.length - 1];
+
+        // Set tagFunctionCode to the rest of the parts joined by '_'
+        let registerCode = parts.slice(0, parts.length - 1).join('_');
+
+        // Remove tf_register_ prefix
+        if (registerCode.toLowerCase().startsWith('tf_register_')) {
+            registerCode = registerCode.replace(/^tf_register_/i, '');
+        }
+
+        setRegisterCode(registerCode);
+        setTagFunctionCode(tagFunctionCode);
+
         const itemIdPattern = libraryTypePrefixId.join('|');
         const regex = new RegExp(`(${itemIdPattern})([^/]+)`, 'i');
         const matchedSegments = segments.join('/').match(regex);
 
         if (matchedSegments && matchedSegments.length >= 3) {
             let extractedId = matchedSegments[2];
-
             if (matchedSegments[1].toLowerCase().startsWith('tf_register_')) {
                 extractedId = extractedId.replace(/_/g, '|');
             }
@@ -140,6 +160,8 @@ const Library = (): JSX.Element => {
                                 forceUpdate={update}
                                 libraryType={selectedLibraryType}
                                 libraryItem={selectedLibraryItem}
+                                tagFunctionCode={tagFunctionCode}
+                                registerCode={registerCode}
                                 setSelectedLibraryType={setSelectedLibraryType}
                                 setSelectedLibraryItem={setSelectedLibraryItem}
                                 setDirtyLibraryType={setDirtyLibraryType}
